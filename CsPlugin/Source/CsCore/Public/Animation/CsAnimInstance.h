@@ -59,6 +59,7 @@ public:
 	template<typename T>
 	T* GetMyOwningActor() { return Cast<T>(GetMyOwningActor()); }
 
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Anim|Instance|Owner")
 	USkeletalMeshComponent* GetSkeletalMeshComponent();
 
 #pragma endregion Owner

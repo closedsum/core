@@ -30,20 +30,42 @@ public:
 	{
 	}
 
-	bool IsValidChecked(const FString& Context) const
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
 		check(Mesh.IsValidChecked(Context));
 		check(Material.IsValidChecked(Context));
 		return true;
 	}
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!Mesh.IsValid(Context, Log))
 			return false;
 		if (!Material.IsValid(Context, Log))
 			return false;
 		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		check(Mesh.IsTopValidChecked(Context));
+		check(Material.IsTopValidChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Mesh.IsTopValid(Context, Log))
+			return false;
+		if (!Material.IsTopValid(Context, Log))
+			return false;
+		return true;
+	}
+
+	FORCEINLINE void Unload()
+	{
+		Mesh.Unload();
+		Material.Unload();
 	}
 };
 

@@ -268,7 +268,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FCsManagerJavascript_OnPreReloadScript OnPreReloadScript_ScriptEvent;
 
-	void DeactivateScripts();
+	void DeactivateScripts(const bool& bForce = false);
 	void ShutdownScripts();
 
 	UPROPERTY(BlueprintAssignable)

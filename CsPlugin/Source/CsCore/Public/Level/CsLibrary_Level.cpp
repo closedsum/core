@@ -171,9 +171,27 @@ namespace NCsLevel
 			int32 Index;
 			LevelPath.FindLastChar('/', Index);
 
-			const FString LevelName = LevelPath.Right(LevelPath.Len() - Index + 1);
+			const FString LevelName = LevelPath.Right(LevelPath.Len() - Index - 1);
 
-			return LevelPath + TEXT(".") + LevelName;
+			return LevelPath;
+		}
+
+		FString FLibrary::GetSafeLongPackageName(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		{
+			const FString LevelPath = GetSafeName(Context, WorldContext, Log);
+
+			if (LevelPath.IsEmpty())
+				return FString();
+
+			int32 Index;
+			LevelPath.FindLastChar('/', Index);
+
+			if (Index == INDEX_NONE)
+				return FString();
+
+			const FString LevelName = LevelPath.Right(LevelPath.Len() - Index - 1);
+
+			return LevelPath;
 		}
 
 		#pragma endregion Name
@@ -185,9 +203,14 @@ namespace NCsLevel
 		{
 			CS_IS_PTR_NULL_CHECKED(World)
 
-			const FString Name = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
+			const FString NameAsString = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 
-			return FName(*Name);
+			checkf(!NameAsString.IsEmpty(), TEXT("%s: Failed to get Persistent Level Name from World: %s."), *Context, *(World->GetName()));
+			
+			const FName Name = FName(*NameAsString);
+
+			CS_IS_NAME_NONE_CHECKED(Name)
+			return Name;
 		}
 
 		FName FLibrary::GetFNameChecked(const FString& Context, const UObject* WorldContext)
@@ -201,14 +224,18 @@ namespace NCsLevel
 		{
 			CS_IS_PENDING_KILL_RET_VALUE(World, NAME_None)
 
-			const FString Name = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
+			const FString NameAsString = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 
-			if (Name.IsEmpty())
+			if (NameAsString.IsEmpty())
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Persistent Level Name from World: %s."), *Context, *(World->GetName())));
 				return NAME_None;
 			}
-			return FName(*Name);
+
+			const FName Name = FName(*NameAsString);
+
+			CS_IS_NAME_NONE_RET_VALUE(Name, NAME_None)
+			return Name;
 		}
 
 		FName FLibrary::GetSafeFName(const UWorld* World)
@@ -293,6 +320,20 @@ namespace NCsLevel
 			const FString MapPackageName = GetLongPackageNameChecked(Context, WorldContext);
 
 			CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(Path)
+
+			const FString URL = Path.GetLongPackageName();
+
+			return MapPackageName == URL;
+		}
+
+		bool FLibrary::SafeIsPath(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		{
+			const FString MapPackageName = GetSafeLongPackageName(Context, WorldContext, Log);
+
+			if (MapPackageName.IsEmpty())
+				return false;
+
+			CS_IS_SOFT_OBJECT_PATH_VALID(Path)
 
 			const FString URL = Path.GetLongPackageName();
 
@@ -410,6 +451,11 @@ namespace NCsLevel
 		{
 			OutPayload	  = nullptr;
 			OutLevelName  = NAME_None;
+
+			ICsGetLevelPayload* GetLevelPayload = GetSetupDataChecked<ICsGetLevelPayload>(Context, WorldContext);
+			const FCsPayload& Payload			= GetLevelPayload->GetLevelPayload();
+			OutPayload							= const_cast<FCsPayload*>(&Payload);
+			OutLevelName						= GetFNameChecked(Context, WorldContext);
 		}
 
 		bool FLibrary::GetSafePayloadAndLevelName(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)

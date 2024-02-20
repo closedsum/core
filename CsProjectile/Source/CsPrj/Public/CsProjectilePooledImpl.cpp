@@ -177,6 +177,8 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	Type(),
 	Generation(0),
 	State(NCsProjectile::EState::Inactive),
+	// Shutdown
+	bShutdown(false),
 	// ICsPooledObject
 	Cache(nullptr),
 	CacheImpl(nullptr),
@@ -535,6 +537,8 @@ void ACsProjectilePooledImpl::Shutdown()
 		Modifier.Clear();
 	}
 	Modifiers.Reset();
+	
+	bShutdown = true;
 }
 
 #pragma endregion ICsShutdown

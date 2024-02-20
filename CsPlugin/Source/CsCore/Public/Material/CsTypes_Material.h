@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "Struct/CsTypes_StructOps.h"
 #include "Types/CsTypes_View.h"
 // Log
 #include "Utility/CsLog.h"
@@ -72,8 +73,7 @@ public:
 	*/
 	FORCEINLINE UMaterialInterface* GetChecked() const
 	{
-		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialInterface::GetChecked: Mesh is NULL."));
-
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialInterface::GetChecked: Material is NULL."));
 		checkf(Material_Internal, TEXT("FCsMaterialInterface::GetChecked: Material has NOT been loaded from Path @ %s."), *(Material.ToSoftObjectPath().ToString()));
 
 		return Material_Internal;
@@ -115,6 +115,11 @@ public:
 		return Material_Internal;
 	}
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsMaterialInterface)
+	CS_STRUCT_OPS_IS_VALID(FCsMaterialInterface)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsMaterialInterface)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsMaterialInterface)
+
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
 		check(GetChecked(Context));
@@ -125,6 +130,23 @@ public:
 	{
 		if (!GetSafe(Context, Log))
 			return false;
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("%s: Material's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Material.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material's Path is NOT Valid."), *Context));
+			return nullptr;
+		}
 		return true;
 	}
 
@@ -162,6 +184,14 @@ public:
 		OutSuccess				   = Result != nullptr;
 		return Result;
 	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsMaterialInterface)
+
+	FORCEINLINE void Unload() 
+	{ 
+		Material.ResetWeakPtr();
+		Material_Internal = nullptr;
+	}
 };
 
 #pragma endregion FCsMaterialInterface
@@ -194,23 +224,127 @@ public:
 	{
 	}
 
+	/**
+	* Get the Hard reference to the UMaterialInstance asset.
+	*
+	* return Material
+	*/
 	FORCEINLINE UMaterialInstance* Get() const
 	{
 		return Material_Internal;
 	}
 
+	/**
+	* Get the pointer to the Hard reference to the UMaterialInstance asset.
+	*
+	* return Material
+	*/
+	FORCEINLINE UMaterialInstance** GetPtr() { return &Material_Internal; }
+
+	/**
+	* Get the Hard reference to the UMaterialInstance asset.
+	*
+	* @param Context	The calling context.
+	* return			Material
+	*/
 	FORCEINLINE UMaterialInstance* GetChecked() const 
 	{
-		checkf(Material_Internal, TEXT("FCsMaterialInstance::GetChecked: Material_Internal is NULL."));
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialInstance::GetChecked: Material's Path is NOT Valid."));
+		checkf(Material_Internal, TEXT("FCsMaterialInstance::GetChecked: Material has NOT been loaded from Path @ %s."), *(Material.ToSoftObjectPath().ToString()));
 
 		return Material_Internal;
 	}
 
+	/**
+	* Get the Hard reference to the UMaterialInstance asset.
+	*
+	* return Material
+	*/
 	FORCEINLINE UMaterialInstance* GetChecked(const FString& Context) const
 	{
-		checkf(Material_Internal, TEXT("%s: Material_Internal is NULL."), *Context);
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("%s: Material's Path is NOT Valid."), *Context);
+		checkf(Material_Internal, TEXT("%s: Material has NOT been loaded from Path @ %s."), *Context, *(Material.ToSoftObjectPath().ToString()));
 
 		return Material_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UMaterialInstance asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Material
+	*/
+	UMaterialInstance* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Material.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Material_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material has NOT been loaded from Path @ %s."), *Context, *(Material.ToSoftObjectPath().ToString())));
+		}
+		return Material_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UMaterialInstance asset.
+	*
+	* return Material
+	*/
+	UMaterialInstance* GetSafe()
+	{
+		if (!Material.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Material_Internal;
+	}
+
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsMaterialInstance)
+	CS_STRUCT_OPS_IS_VALID(FCsMaterialInstance)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsMaterialInstance)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsMaterialInstance)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("%s: Material's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Material.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material's Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsMaterialInstance)
+
+	FORCEINLINE void Unload()
+	{
+		Material.ResetWeakPtr();
+		Material_Internal = nullptr;
 	}
 };
 
@@ -229,13 +363,14 @@ struct CSCORE_API FCsMaterialInstanceConstant
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TSoftObjectPtr<UMaterialInstanceConstant> Material;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Material_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
 	UMaterialInstanceConstant* Material_Internal;
 
 public:
+
 	FCsMaterialInstanceConstant() :
 		Material(nullptr),
 		Material_LoadFlags(0),
@@ -243,10 +378,128 @@ public:
 	{
 	}
 
+	/**
+	* Get the Hard reference to the UMaterialInstanceConstant asset.
+	*
+	* return Material
+	*/
 	FORCEINLINE UMaterialInstanceConstant* Get() const
 	{
 		return Material_Internal;
 	}
+
+	/**
+	* Get the pointer to the Hard reference to the UMaterialInstanceConstant asset.
+	*
+	* return Material
+	*/
+	FORCEINLINE UMaterialInstanceConstant** GetPtr() { return &Material_Internal; }
+
+	/**
+	* Get the Hard reference to the UMaterialInstanceConstant asset.
+	*
+	* @param Context	The calling context.
+	* return			Material
+	*/
+	FORCEINLINE UMaterialInstanceConstant* GetChecked() const 
+	{
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialInstanceConstant::GetChecked: Material's Path is NOT Valid."));
+		checkf(Material_Internal, TEXT("FCsMaterialInstanceConstant::GetChecked: Material has NOT been loaded from Path @ %s."), *(Material.ToSoftObjectPath().ToString()));
+
+		return Material_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UMaterialInstanceConstant asset.
+	*
+	* return Material
+	*/
+	FORCEINLINE UMaterialInstanceConstant* GetChecked(const FString& Context) const
+	{
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("%s: Material's Path is NOT Valid."), *Context);
+		checkf(Material_Internal, TEXT("%s: Material has NOT been loaded from Path @ %s."), *Context, *(Material.ToSoftObjectPath().ToString()));
+
+		return Material_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UMaterialInstanceConstant asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Material
+	*/
+	UMaterialInstanceConstant* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Material.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Material_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material has NOT been loaded from Path @ %s."), *Context, *(Material.ToSoftObjectPath().ToString())));
+		}
+		return Material_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UMaterialInstanceConstant asset.
+	*
+	* return Material
+	*/
+	UMaterialInstanceConstant* GetSafe()
+	{
+		if (!Material.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Material_Internal;
+	}
+
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsMaterialInstanceConstant)
+	CS_STRUCT_OPS_IS_VALID(FCsMaterialInstanceConstant)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsMaterialInstanceConstant)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsMaterialInstanceConstant)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("%s: Material's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Material.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material's Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsMaterialInstanceConstant)
+
+	FORCEINLINE void Unload()
+	{
+		Material.ResetWeakPtr();
+		Material_Internal = nullptr;
+	}	
 };
 
 #pragma endregion FCsMaterialInstanceConstant
@@ -296,7 +549,6 @@ public:
 	FORCEINLINE const TArray<UMaterialInterface*>& GetChecked(const FString& Context) const
 	{ 
 		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: No Materials set."), *Context);
-
 		checkf(Materials.Num() == Materials_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num());
 
 		const int32 Count = Materials.Num();
@@ -323,7 +575,6 @@ public:
 	FORCEINLINE const TArray<UMaterialInterface*>& GetChecked() const
 	{
 		checkf(Materials.Num() > CS_EMPTY, TEXT("FCsTArrayMaterialInterface::GetChecked: No Materials set."));
-
 		checkf(Materials.Num() == Materials_Internal.Num(), TEXT("FCsTArrayMaterialInterface::GetChecked: Mismatch between Soft and Hard references to materials, %d != %d."), Materials.Num(), Materials_Internal.Num());
 
 		const int32 Count = Materials.Num();
@@ -351,7 +602,6 @@ public:
 	FORCEINLINE UMaterialInterface* GetChecked(const FString& Context, const int32& Index) const
 	{
 		checkf(Index >= 0 && Index < Materials_Internal.Num(), TEXT("%s: Index: %d is NOT in the range [0, %d)."), *Context, Index, Materials_Internal.Num());
-
 		return GetChecked(Context)[Index];
 	}
 
@@ -465,10 +715,14 @@ public:
 
 	bool SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsTArrayMaterialInterface)
+	CS_STRUCT_OPS_IS_VALID(FCsTArrayMaterialInterface)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsTArrayMaterialInterface)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsTArrayMaterialInterface)
+
 	bool IsValidChecked(const FString& Context) const
 	{
 		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: No Materials set."), *Context);
-
 		checkf(Materials.Num() == Materials_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num());
 
 		const int32 Count = Materials.Num();
@@ -526,6 +780,56 @@ public:
 		}
 		return true;
 	}
+
+	bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: No Materials set."), *Context);
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInterface>& SoftObject = Materials[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Materials[%d]'s Path is NOT Valid."), *Context, I);
+		}
+		return true;
+	}
+
+	bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (Materials.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Materials set."), *Context));
+			return false;
+		}
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInterface>& SoftObject = Materials[I];
+
+			if (!SoftObject.ToSoftObjectPath().IsValid())
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Materials[%d]'s Path is NOT Valid."), *Context, I));
+				return false;
+			}
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsTArrayMaterialInterface)
+
+	FORCEINLINE void Unload()
+	{
+		for (TSoftObjectPtr<UMaterialInterface>& Material : Materials)
+		{
+			Material.ResetWeakPtr();
+		}
+		Materials_Internal.Reset();
+	}
 };
 
 #pragma endregion FCsTArrayMaterialInterface
@@ -543,7 +847,7 @@ struct CSCORE_API FCsTArrayMaterialInstanceConstant
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TArray<TSoftObjectPtr<UMaterialInstanceConstant>> Materials;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Materials_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
@@ -566,6 +870,293 @@ public:
 	FORCEINLINE UMaterialInstanceConstant* Get(const int32 Index)
 	{
 		return Index < Materials_Internal.Num() ? Materials_Internal[Index] : nullptr;
+	}
+
+	/**
+	* Get the Hard references to the array of Materials of type: UMaterialInstanceConstant.
+	*
+	* @param Context	The calling context.
+	* return			Materials
+	*/
+	FORCEINLINE const TArray<UMaterialInstanceConstant*>& GetChecked(const FString& Context) const
+	{ 
+		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: No Materials set."), *Context);
+		checkf(Materials.Num() == Materials_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num());
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInstanceConstant>& SoftObject = Materials[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Materials[%d] is NULL."), *Context, I);
+
+			UMaterialInstanceConstant* Material = Materials_Internal[I];
+	
+			checkf(Material, TEXT("%s: Materials[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return Materials_Internal; 
+	}
+
+	/**
+	* Get the Hard references to the array of Materials of type: UMaterialInstanceConstant.
+	*
+	* @param Context	The calling context.
+	* return			Materials
+	*/
+	FORCEINLINE const TArray<UMaterialInstanceConstant*>& GetChecked() const
+	{
+		checkf(Materials.Num() > CS_EMPTY, TEXT("FCsTArrayMaterialInstanceConstant::GetChecked: No Materials set."));
+		checkf(Materials.Num() == Materials_Internal.Num(), TEXT("FCsTArrayMaterialInstanceConstant::GetChecked: Mismatch between Soft and Hard references to materials, %d != %d."), Materials.Num(), Materials_Internal.Num());
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInstanceConstant>& SoftObject = Materials[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("FCsTArrayMaterialInstanceConstant::GetChecked: Materials[%d] is NULL."), I);
+
+			UMaterialInstanceConstant* Material = Materials_Internal[I];
+
+			checkf(Material, TEXT("FCsTArrayMaterialInstanceConstant::GetChecked: Materials[%d] has NOT been loaded from Path @ %s."), I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return Materials_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the Material at Index of type: UMaterialInstanceConstant.
+	*
+	* @param Context	The calling context.
+	* @param Index
+	* return			Material
+	*/
+	FORCEINLINE UMaterialInstanceConstant* GetChecked(const FString& Context, const int32& Index) const
+	{
+		checkf(Index >= 0 && Index < Materials_Internal.Num(), TEXT("%s: Index: %d is NOT in the range [0, %d)."), *Context, Index, Materials_Internal.Num());
+		return GetChecked(Context)[Index];
+	}
+
+	/**
+	* Safely get the Hard reference to the array of Materials of type: UMaterialInstanceConstant.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Materials
+	*/
+	const TArray<UMaterialInstanceConstant*>* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (Materials.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Materials set."), *Context));
+			return nullptr;
+		}
+
+		if (Materials.Num() != Materials_Internal.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num()));
+			return nullptr;
+		}
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInstanceConstant>& SoftObject = Materials[I];
+
+			if (!SoftObject.ToSoftObjectPath().IsValid())
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Materials[%d] is NULL."), *Context, I));
+				return nullptr;
+			}
+
+			UMaterialInstanceConstant* Material = Materials_Internal[I];
+
+			if (!Material)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Materials[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString())));
+				return nullptr;
+			}
+		}
+		return &Materials_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the Material at Index of type: UMaterialInstanceConstant.
+	*
+	* @param Context	The calling context.
+	* @param Index
+	* @param Log		(optional)
+	* return			Materials
+	*/
+	UMaterialInstanceConstant* GetSafeAt(const FString& Context, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (Index < 0)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Index: %d is NOT Valid."), *Context, Index));
+			return nullptr;
+		}
+
+		if (Materials.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Materials set."), *Context));
+			return nullptr;
+		}
+
+		if (Materials.Num() != Materials_Internal.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num()));
+			return nullptr;
+		}
+
+		if (Index > Materials.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Index: %d > number (%d) of Materials."), *Context, Index, Materials.Num()));
+			return nullptr;
+		}
+
+		const TSoftObjectPtr<UMaterialInstanceConstant>& SoftObject = Materials[Index];
+
+		if (!SoftObject.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Materials[%d] is NULL."), *Context, Index));
+			return nullptr;
+		}
+
+		UMaterialInstanceConstant* Material = Materials_Internal[Index];
+
+		if (!Material)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Materials[%d] has NOT been loaded from Path @ %s."), *Context, Index, *(SoftObject.ToSoftObjectPath().ToString())));
+			return nullptr;
+		}
+		return Material;
+	}
+
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsTArrayMaterialInstanceConstant)
+	CS_STRUCT_OPS_IS_VALID(FCsTArrayMaterialInstanceConstant)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsTArrayMaterialInstanceConstant)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsTArrayMaterialInstanceConstant)
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: No Materials set."), *Context);
+		checkf(Materials.Num() == Materials_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num());
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInstanceConstant>& SoftObject = Materials[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Materials[%d] is NULL."), *Context, I);
+
+			UMaterialInstanceConstant* Material = Materials_Internal[I];
+
+			checkf(Material, TEXT("%s: Materials[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return true;
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (Materials.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Materials set."), *Context));
+			return false;
+		}
+
+		if (Materials.Num() != Materials_Internal.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num()));
+			return false;
+		}
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInstanceConstant>& SoftObject = Materials[I];
+
+			if (!SoftObject.ToSoftObjectPath().IsValid())
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Materials[%d] is NULL."), *Context, I));
+				return false;
+			}
+
+			UMaterialInstanceConstant* Material = Materials_Internal[I];
+
+			if (!Material)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Materials[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString())));
+				return false;
+			}
+		}
+		return true;
+	}
+
+	bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: No Materials set."), *Context);
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInstanceConstant>& SoftObject = Materials[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Materials[%d]'s Path is NOT Valid."), *Context, I);
+		}
+		return true;
+	}
+
+	bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (Materials.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Materials set."), *Context));
+			return false;
+		}
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInstanceConstant>& SoftObject = Materials[I];
+
+			if (!SoftObject.ToSoftObjectPath().IsValid())
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Materials[%d]'s Path is NOT Valid."), *Context, I));
+				return false;
+			}
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsTArrayMaterialInstanceConstant)
+
+	FORCEINLINE void Unload()
+	{
+		for (TSoftObjectPtr<UMaterialInstanceConstant>& Material : Materials)
+		{
+			Material.ResetWeakPtr();
+		}
+		Materials_Internal.Reset();
 	}
 };
 
@@ -660,6 +1251,32 @@ public:
 		if (ViewType == ECsViewType::VR)
 			return Index < MaterialsVR_Internal.Num() ? MaterialsVR_Internal[Index] : NULL;
 		return NULL;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsFpsTArrayMaterialInstanceConstant)
+
+	FORCEINLINE void Unload()
+	{
+		for (TSoftObjectPtr<UMaterialInstanceConstant>& Material : Materials1P)
+		{
+			Material.ResetWeakPtr();
+		}
+		for (TSoftObjectPtr<UMaterialInstanceConstant>& Material : Materials3P)
+		{
+			Material.ResetWeakPtr();
+		}
+		for (TSoftObjectPtr<UMaterialInstanceConstant>& Material : Materials3P_Low)
+		{
+			Material.ResetWeakPtr();
+		}
+		for (TSoftObjectPtr<UMaterialInstanceConstant>& Material : MaterialsVR)
+		{
+			Material.ResetWeakPtr();
+		}
+		Materials1P_Internal.Reset();
+		Materials3P_Internal.Reset();
+		Materials3P_Low_Internal.Reset();
+		MaterialsVR_Internal.Reset();
 	}
 };
 
@@ -1148,11 +1765,25 @@ public:
 	void CopyToMaterialAsValue(MaterialType* Mat) const;
 #undef MaterialType
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsMaterialInterface_WithParameters)
+	CS_STRUCT_OPS_IS_VALID(FCsMaterialInterface_WithParameters)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsMaterialInterface_WithParameters)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsMaterialInterface_WithParameters)
+
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsTopValidChecked(const FString& Context) const;
+	bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	void SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID) const;
 	bool SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsMaterialInterface_WithParameters)
+
+	FORCEINLINE void Unload()
+	{
+		Material.Unload();
+	}
 };
 
 class UMaterialInterface;
@@ -1282,11 +1913,25 @@ public:
 	void CopyToMaterialAsValue(MaterialType* Mat) const;
 #undef MaterialType
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsMaterialInterface_WithRangeParameters)
+	CS_STRUCT_OPS_IS_VALID(FCsMaterialInterface_WithRangeParameters)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsMaterialInterface_WithRangeParameters)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsMaterialInterface_WithRangeParameters)
+
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsTopValidChecked(const FString& Context) const;
+	bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	void SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID) const;
 	bool SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsMaterialInterface_WithRangeParameters)
+
+	FORCEINLINE void Unload()
+	{
+		Material.Unload();
+	}
 };
 
 class UMaterialInterface;
@@ -1424,8 +2069,7 @@ public:
 	*/
 	FORCEINLINE UMaterialParameterCollection* GetChecked(const FString& Context) const
 	{
-		checkf(Collection.ToSoftObjectPath().IsValid(), TEXT("%s: Collection is NULL."), *Context);
-
+		checkf(Collection.ToSoftObjectPath().IsValid(), TEXT("%s: Collection's Path is NOT Valid."), *Context);
 		checkf(Collection_Internal, TEXT("%s: Collection has NOT been loaded from Path @ %s."), *Context, *(Collection.ToSoftObjectPath().ToString()));
 
 		return Collection_Internal;
@@ -1438,8 +2082,7 @@ public:
 	*/
 	FORCEINLINE UMaterialParameterCollection* GetChecked() const
 	{
-		checkf(Collection.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialParameterCollection::GetChecked: Mesh is NULL."));
-
+		checkf(Collection.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialParameterCollection::GetChecked: Collection's Path is NOT Valid."));
 		checkf(Collection_Internal, TEXT("FCsMaterialParameterCollection::GetChecked: Collection has NOT been loaded from Path @ %s."), *(Collection.ToSoftObjectPath().ToString()));
 
 		return Collection_Internal;
@@ -1457,7 +2100,7 @@ public:
 		if (!Collection.ToSoftObjectPath().IsValid())
 		{
 			if (Log)
-				Log(FString::Printf(TEXT("%s: Collection is NULL."), *Context));
+				Log(FString::Printf(TEXT("%s: Collection's Path is NOT Valid."), *Context));
 			return nullptr;
 		}
 
@@ -1481,6 +2124,11 @@ public:
 		return Collection_Internal;
 	}
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsMaterialParameterCollection)
+	CS_STRUCT_OPS_IS_VALID(FCsMaterialParameterCollection)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsMaterialParameterCollection)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsMaterialParameterCollection)
+
 	bool IsValidChecked(const FString& Context) const
 	{
 		check(GetChecked(Context));
@@ -1492,6 +2140,31 @@ public:
 		if (!GetSafe(Context, Log))
 			return false;
 		return true;
+	}
+
+	bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Collection.ToSoftObjectPath().IsValid(), TEXT("%s: Collection's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Collection.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Collection's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsMaterialParameterCollection)
+
+	FORCEINLINE void Unload()
+	{
+		Collection.ResetWeakPtr();
+		Collection_Internal = nullptr;
 	}
 };
 

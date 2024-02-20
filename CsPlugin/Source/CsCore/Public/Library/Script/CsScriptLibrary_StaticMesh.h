@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "Types/CsTypes_StaticMesh.h"
 
 #include "CsScriptLibrary_StaticMesh.generated.h"
 
@@ -38,4 +40,25 @@ public:
 	static UStaticMesh* LoadByStringPath(const FString& Context, const FString& Path);
 
 #pragma endregion Load
+
+// Unload
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|StaticMesh", meta = (DisplayName = "Unload (FCsStaticMesh)", CompactNodeTitle = "Unload"))
+	static void FCsStaticMesh_Unload(UPARAM(ref) FCsStaticMesh& Mesh)
+	{
+		Mesh.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|StaticMesh", meta = (DisplayName = "Unload (TArray<FCsStaticMesh>)", CompactNodeTitle = "Unload"))
+	static void TArray_FCsStaticMesh_Unload(UPARAM(ref) TArray<FCsStaticMesh>& Meshes)
+	{
+		for (FCsStaticMesh& Mesh : Meshes)
+		{
+			Mesh.Unload();
+		}
+	}
+
+#pragma endregion Unload
 };

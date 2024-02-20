@@ -211,7 +211,7 @@ namespace NCsPlayer
 		#endif // #if UE_BUILD_SHIPPING
 		}
 
-		bool FLibrary::SetSafeViewTarget(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams /*=FViewTargetTransitionParams()*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafeViewTarget(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PENDING_KILL(NewViewTarget)
 			
@@ -332,6 +332,27 @@ namespace NCsPlayer
 		// FOV
 		#pragma region
 		
+		void FLibrary::SetFOVChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& FOV)
+		{
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(FOV, 0.0f)
+			CS_IS_FLOAT_LESS_THAN_CHECKED(FOV, 180.0f)
+
+			GetChecked(Context, WorldContext, ControllerId)->SetFOV(FOV);
+		}
+
+		bool FLibrary::SetSafeFOV(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& FOV, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (APlayerCameraManager* PCM = GetSafe(Context, WorldContext, ControllerId, Log))
+			{
+				CS_IS_FLOAT_GREATER_THAN(FOV, 0.0f)
+				CS_IS_FLOAT_LESS_THAN(FOV, 180.0f)
+
+				PCM->SetFOV(FOV);
+				return true;
+			}
+			return false;
+		}
+
 		void FLibrary::SetFOVChecked(const FString& Context, const APawn* Pawn, const float& FOV)
 		{
 			CS_IS_FLOAT_GREATER_THAN_CHECKED(FOV, 0.0f)
@@ -353,6 +374,24 @@ namespace NCsPlayer
 			return false;
 		}
 
+		float FLibrary::GetFOVChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			return GetChecked(Context, WorldContext, ControllerId)->GetFOVAngle();
+		}
+
+		float FLibrary::GetSafeFOV(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& FOV, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			OutSuccess = false;
+
+			if (APlayerCameraManager* PCM = GetSafe(Context, WorldContext, ControllerId, Log))
+			{
+				OutSuccess = true;
+				return PCM->GetFOVAngle();
+			}
+			return 0.0f;
+		}
+
+
 		float FLibrary::GetFOVChecked(const FString& Context, const APawn* Pawn)
 		{
 			return GetChecked(Context, Pawn)->GetFOVAngle();
@@ -371,6 +410,113 @@ namespace NCsPlayer
 		}
 
 		#pragma endregion FOV
+
+		// View
+		#pragma region
+
+			// Pitch
+
+				// Min
+
+		void FLibrary::SetViewPitchMinChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& MinPitch)
+		{
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(MinPitch, -90.0f)
+
+			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
+
+			CS_IS_FLOAT_LESS_THAN_CHECKED(MinPitch, PCM->ViewPitchMax)
+
+			PCM->ViewPitchMin = MinPitch;
+		}
+
+		bool FLibrary::SetSafeViewPitchMin(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& MinPitch, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_FLOAT_GREATER_THAN(MinPitch, -90.0f)
+
+			if (APlayerCameraManager* PCM = GetSafe(Context, WorldContext, ControllerId, Log))
+			{
+				CS_IS_FLOAT_LESS_THAN(MinPitch, PCM->ViewPitchMax)
+
+				PCM->ViewPitchMin = MinPitch;
+			}
+			return true;
+		}
+
+		void FLibrary::SetViewPitchMinChecked(const FString& Context, const APawn* Pawn, const float& MinPitch)
+		{
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(MinPitch, -90.0f)
+
+			APlayerCameraManager* PCM = GetChecked(Context, Pawn);
+
+			CS_IS_FLOAT_LESS_THAN_CHECKED(MinPitch, PCM->ViewPitchMax)
+
+			PCM->ViewPitchMin = MinPitch;
+		}
+
+		bool FLibrary::SetSafeViewPitchMin(const FString& Context, const APawn* Pawn, const float& MinPitch, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_FLOAT_GREATER_THAN(MinPitch, -90.0f)
+
+			if (APlayerCameraManager* PCM = GetSafe(Context, Pawn, Log))
+			{
+				CS_IS_FLOAT_LESS_THAN(MinPitch, PCM->ViewPitchMax)
+
+				PCM->ViewPitchMin = MinPitch;
+			}
+			return true;
+		}
+
+				// Max
+
+		void FLibrary::SetViewPitchMaxChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& MaxPitch)
+		{
+			CS_IS_FLOAT_LESS_THAN_CHECKED(MaxPitch, 90.0f)
+
+			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
+
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(MaxPitch, PCM->ViewPitchMin)
+
+			PCM->ViewPitchMax = MaxPitch;
+		}
+
+		bool FLibrary::SetSafeViewPitchMax(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& MaxPitch, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_FLOAT_LESS_THAN(MaxPitch, 90.0f)
+
+			if (APlayerCameraManager* PCM = GetSafe(Context, WorldContext, ControllerId, Log))
+			{
+				CS_IS_FLOAT_GREATER_THAN(MaxPitch, PCM->ViewPitchMin)
+
+				PCM->ViewPitchMax = MaxPitch;
+			}
+			return true;
+		}
+
+		void FLibrary::SetViewPitchMaxChecked(const FString& Context, const APawn* Pawn, const float& MaxPitch)
+		{
+			CS_IS_FLOAT_LESS_THAN_CHECKED(MaxPitch, 90.0f)
+
+			APlayerCameraManager* PCM = GetChecked(Context, Pawn);
+
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(MaxPitch, PCM->ViewPitchMin)
+
+			PCM->ViewPitchMax = MaxPitch;
+		}
+
+		bool FLibrary::SetSafeViewPitchMax(const FString& Context, const APawn* Pawn, const float& MaxPitch, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_FLOAT_LESS_THAN(MaxPitch, 90.0f)
+
+			if (APlayerCameraManager* PCM = GetSafe(Context, Pawn, Log))
+			{
+				CS_IS_FLOAT_GREATER_THAN(MaxPitch, PCM->ViewPitchMin)
+
+				PCM->ViewPitchMax = MaxPitch;
+			}
+			return true;
+		}
+
+		#pragma endregion View
 
 		#undef PlayerControllerLibrary
 		#undef ObjectLibrary

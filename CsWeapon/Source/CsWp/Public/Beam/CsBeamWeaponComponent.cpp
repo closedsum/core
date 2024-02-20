@@ -15,7 +15,7 @@
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Data/Visual/CsLibrary_Data_Skin_Visual.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
-#include "Library/CsLibrary_Camera.h"
+#include "Camera/CsLibrary_Camera.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings

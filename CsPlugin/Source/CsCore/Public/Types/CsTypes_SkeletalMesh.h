@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Struct/CsTypes_StructOps.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -57,8 +59,7 @@ public:
 	*/
 	FORCEINLINE USkeletalMesh* GetChecked(const FString& Context) const
 	{ 
-		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("%s: Mesh is NULL."), *Context);
-
+		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("%s: Mesh's Path is NOT Valid."), *Context);
 		checkf(Mesh_Internal, TEXT("%s: Mesh has NOT been loaded from Path @ %s."), *Context, *(Mesh.ToSoftObjectPath().ToString()));
 
 		return Mesh_Internal; 
@@ -71,8 +72,7 @@ public:
 	*/
 	FORCEINLINE USkeletalMesh* GetChecked() const
 	{
-		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("FCsSkeletalMesh::GetChecked: Mesh is NULL."));
-
+		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("FCsSkeletalMesh::GetChecked: Mesh's Path is NOT Valid."));
 		checkf(Mesh_Internal, TEXT("FCsSkeletalMesh::GetChecked: Mesh has NOT been loaded from Path @ %s."), *(Mesh.ToSoftObjectPath().ToString()));
 
 		return Mesh_Internal;
@@ -84,7 +84,7 @@ public:
 		{
 			if (Log)
 			{
-				Log(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
+				Log(FString::Printf(TEXT("%s: Mesh's Path is NOT Valid."), *Context));
 			}
 			return nullptr;
 		}
@@ -99,24 +99,57 @@ public:
 		return Mesh_Internal;
 	}
 
-	USkeletalMesh* GetSafe()
+	FORCEINLINE USkeletalMesh* GetSafe()
 	{
 		if (!Mesh.ToSoftObjectPath().IsValid())
 			return nullptr;
 		return Mesh_Internal;
 	}
 
-	bool IsValidChecked(const FString& Context) const
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsSkeletalMesh)
+	CS_STRUCT_OPS_IS_VALID(FCsSkeletalMesh)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsSkeletalMesh)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsSkeletalMesh)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
 		check(GetChecked(Context));
 		return true;
 	}
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!GetSafe(Context, Log))
 			return false;
 		return true;
 	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Mesh.ToSoftObjectPath().IsValid(), TEXT("%s: Mesh's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Mesh.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+			{
+				Log(FString::Printf(TEXT("%s: Mesh's Path is NOT Valid."), *Context));
+			}
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsSkeletalMesh)
+
+	FORCEINLINE void Unload()
+	{
+		Mesh.ResetWeakPtr();
+		Mesh_Internal = nullptr;
+	}
 };
+
 #pragma endregion FCsSkeletalMesh

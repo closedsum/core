@@ -5,6 +5,7 @@
 #include "Engine/GameInstance.h"
 // Types
 #include "Managers/Time/CsTypes_Time.h"
+#include "Game/CsGameInstance_Delegates.h"
 // Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 // Containers
@@ -94,11 +95,22 @@ protected:
 
 public:
 
-	void QueueExitGame();
+	virtual void QueueExitGame();
 
-	DECLARE_MULTICAST_DELEGATE(OnQueueExitGame)
+#define OnQueueExitGameEventType NCsGameInstance::FOnQueueExitGame
 
-	OnQueueExitGame OnQueueExitGame_Event;
+protected:
+
+	OnQueueExitGameEventType OnQueueExitGame_Event;
+
+public:
+
+	FORCEINLINE OnQueueExitGameEventType& GetOnQueueExitGame_Event() { return OnQueueExitGame_Event; }
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
+	FCsGameInstance_OnQueueExitGame OnQueueExitGame_ScriptEvent;
+
+#undef OnQueueExitGameEventType
 
 private:
 
@@ -163,6 +175,53 @@ protected:
 public:
 
 	FORCEINLINE bool HasFinishedTransition() const { return bFinishedTransition; }
+
+protected:
+
+#define OnStartTransitionOutEventType NCsGameInstance::NTransition::FOut_OnStart
+#define OnFinishedTransitionEventType NCsGameInstance::NTransition::FOnFinish
+
+	OnStartTransitionOutEventType TransitionOut_OnStart_Event;
+
+public:
+
+	FORCEINLINE OnStartTransitionOutEventType& GetTransitionOut_OnStart_Event() { return TransitionOut_OnStart_Event; }
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
+	FCsGameInstance_TransitionOut_OnStart TransitionOut_OnStart_ScriptEvent;
+
+protected:
+
+	OnFinishedTransitionEventType Transition_OnFinish_Event;
+
+public:
+
+	FORCEINLINE OnFinishedTransitionEventType& GetTransition_OnFinish_Event() { return Transition_OnFinish_Event; }
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
+	FCsGameInstance_Transition_OnFinish Transition_OnFinish_ScriptEvent;
+
+#undef OnStartTransitionOutEventType
+#undef OnFinishedTransitionEventType
+
+	// AsDestination
+#pragma region
+protected:
+
+#define OnStartTransitionAsDestinationEventType NCsGameInstance::NTransitionAsDestination::FOnStart
+
+	OnStartTransitionAsDestinationEventType TransitionAsDestination_OnStart_Event;
+
+public:
+
+	FORCEINLINE OnStartTransitionAsDestinationEventType& GetTransitionAsDestination_OnStart_Event() { return TransitionAsDestination_OnStart_Event; }
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
+	FCsGameInstance_TransitionAsDestination_OnStart TransitionAsDestination_OnStart_ScriptEvent;
+
+#undef OnStartTransitionAsDestinationEventType
+
+#pragma endregion AsDestination
 
 #pragma endregion Transition
 };

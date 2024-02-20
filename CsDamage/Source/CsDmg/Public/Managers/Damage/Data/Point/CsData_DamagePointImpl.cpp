@@ -186,6 +186,12 @@ void UCsData_DamagePointImpl::Load(const int32& LoadFlags)
 	bLoaded = true;
 }
 
+void UCsData_DamagePointImpl::TopLoad()
+{
+	if (!DataProxy)
+		Init();
+}
+
 void UCsData_DamagePointImpl::Unload()
 {
 

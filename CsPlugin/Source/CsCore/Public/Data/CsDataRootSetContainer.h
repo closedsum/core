@@ -76,6 +76,12 @@ public:
 
 	FORCEINLINE ICsGetDataRootSet* Get() const { return Interface; }
 
+	FORCEINLINE ICsGetDataRootSet* GetChecked(const FString& Context) const 
+	{
+		checkf(Interface, TEXT("%s: Interface is NULL."), *Context);
+		return Interface;
+	}
+
 	template<typename T>
 	FORCEINLINE T* GetChecked(const FString& Context) const
 	{
@@ -84,6 +90,17 @@ public:
 		checkf(Slice, TEXT("%s: Failed to cast Data_Internal to type: T."), *Context);
 
 		return Slice;
+	}
+
+	FORCEINLINE ICsGetDataRootSet* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const 
+	{
+		if (!Interface)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Interface is NULL. Class: %s does NOT implement the interface: ICsGetDataRootSet."), *Context));
+			return nullptr;
+		}
+		return Interface;
 	}
 };
 

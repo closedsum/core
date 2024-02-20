@@ -4,7 +4,8 @@
 #pragma once
 // Types
 #include "Types/CsTypes_Damage.h"
-#include "Engine/DataTable.h"
+// Data
+#include "Data/CsTableRowBase_Data.h"
 // Log
 #include "Utility/CsDmgLog.h"
 
@@ -110,6 +111,8 @@ public:
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
 
 	UObject* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
+
+	void Unload();
 };
 
 #pragma endregion FCsData_DamagePtr
@@ -120,7 +123,7 @@ public:
 /**
 */
 USTRUCT(BlueprintType)
-struct CSDMG_API FCsDamageDataEntry : public FTableRowBase
+struct CSDMG_API FCsDamageDataEntry : public FCsTableRowBase_Data
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -142,6 +145,17 @@ struct CSDMG_API FCsDamageDataEntry : public FTableRowBase
 		Data()
 	{
 	}
+
+// FCsTableRowBase_Data
+#pragma region
+public:
+
+	virtual void Unload() override
+	{
+		Data.Unload();
+	}
+
+#pragma endregion FCsTableRowBase_Data
 };
 
 #pragma endregion FCsDamageDataEntry

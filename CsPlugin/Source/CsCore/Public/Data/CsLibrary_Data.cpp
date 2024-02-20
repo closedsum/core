@@ -52,17 +52,62 @@ namespace NCsData
 	{
 		if (UObject* O = Data->_getUObject())
 			return PrintObjectAndClass(O);
-		return FString::Printf(TEXT("INVALID (Non-UObject)"));
+		return FString::Printf(TEXT("%s (Non-UObject)"), *(Data->GetInterfaceMap()->GetRootName().ToString()));
 	}
+
+	FString FLibrary::PrintDataAndClass(UObject* Object)
+	{
+		return FString::Printf(TEXT("Data: %s with Class: %s"), *(Object->GetName()), *(Object->GetClass()->GetName()));
+	}
+
+	FString FLibrary::PrintDataAndClass(ICsData* Data)
+	{
+		if (UObject* O = Data->_getUObject())
+			return PrintDataAndClass(O);
+		return FString::Printf(TEXT("%s (Non-UObject)"), *(Data->GetInterfaceMap()->GetRootName().ToString()));
+	}
+
+	// Convert
+	#pragma region
+
+	#define DataType NCsData::IData
+
+	DataType* FLibrary::ConvertChecked(const FString& Context, UObject* Object)
+	{
+		ICsData* UData = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsData);
+		DataType* Data = UData->_getIData();
+
+		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
+		return Data;
+	}
+
+	DataType* FLibrary::SafeConvert(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData))
+		{
+			DataType* Data = UData->_getIData();
+
+			if (!Data)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
+				return nullptr;
+			}
+			return Data;
+		}
+		return nullptr;
+	}
+
+	#undef DataType
+
+	#pragma endregion Convert
 
 	// Load
 	#pragma region
+
 	#define DataType NCsData::IData
 
 	DataType* FLibrary::SafeLoad(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL_RET_NULL(Object)
-
 		ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData);
 
 		if (!UData)
@@ -87,7 +132,53 @@ namespace NCsData
 		return SafeLoad(Context, Object, nullptr);
 	}
 
+	const DataType* FLibrary::TopLoadChecked(const FString& Context, UObject* Object)
+	{
+		ICsData* UData = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsData);
+
+		UData->TopLoad();
+
+		DataType* Data = UData->_getIData();
+
+		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
+		return Data;
+	}
+
+	const DataType* FLibrary::SafeTopLoad(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData);
+
+		if (!UData)
+			return nullptr;
+
+		UData->TopLoad();
+
+		DataType* Data = UData->_getIData();
+
+		if (!Data)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
+			return nullptr;
+		}
+		return Data;
+	}
+
+	void FLibrary::UnloadChecked(const FString& Context, UObject* Object)
+	{
+		CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsData)->Unload();
+	}
+
+	void FLibrary::Script_UnloadChecked(const FString& Context, UObject* Object)
+	{
+		check(ScriptImplementsChecked(Context, Object));
+
+		bool OutSuccess = false;
+		ICsScriptData::Execute_Script_Unload(Object, OutSuccess);
+		checkf(OutSuccess, TEXT("%s: %s does NOT implement the function: Unload (Script_Unload) properly."), *Context, *PrintDataAndClass(Object));
+	}
+
 	#undef DataType
+
 	#pragma endregion Load
 
 	// ICsScriptData

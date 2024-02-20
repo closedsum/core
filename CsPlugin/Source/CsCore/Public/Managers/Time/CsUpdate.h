@@ -16,7 +16,6 @@ class CSCORE_API UCsUpdate : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-
 class CSCORE_API ICsUpdate
 {
 	GENERATED_IINTERFACE_BODY()

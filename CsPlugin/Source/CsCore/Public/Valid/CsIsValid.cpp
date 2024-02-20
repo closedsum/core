@@ -4,3 +4,7 @@
 #include "Valid/CsIsValid.h"
 
 const FName ICsIsValid::Name = FName("ICsIsValid");
+
+UCsIsValid::UCsIsValid(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+}

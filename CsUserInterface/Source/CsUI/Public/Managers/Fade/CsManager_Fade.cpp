@@ -65,7 +65,8 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 	FadeWidget(nullptr),
 	FadeHandle(),
 	OnFadeComplete_Event(),
-	OnFadeComplete_ScriptEvent()
+	OnFadeComplete_ScriptEvent(),
+	bFadeComplete(false)
 {
 }
 
@@ -274,11 +275,41 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 
 	CS_IS_VALID_CHECKED(Params);
 
+	bFadeComplete = false;
+
+	if (Params.GetTime() == 0.0f)
+	{
+	#if !UE_BUILD_SHIPPING
+		if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
+		{
+			UE_LOG(LogCsUI, Warning, TEXT("%s: Start, Perform, and End Fade"), *Context);
+			UE_LOG(LogCsUI, Warning, TEXT(" From: %s"), *(Params.GetFrom().ToString()));
+			UE_LOG(LogCsUI, Warning, TEXT(" To: %s"), *(Params.GetTo().ToString()));
+			UE_LOG(LogCsUI, Warning, TEXT(" Percent: %f"), 1.0f);
+			UE_LOG(LogCsUI, Warning, TEXT(" ElapsedTime: %f"), 0.0f);
+		}
+	#endif // #if !UE_BUILD_SHIPPING
+
+		FadeWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		FadeWidget->SetColorAndOpacity(Params.GetTo());
+
+		if (Params.GetbCollapseOnEnd())
+		{
+			FadeWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+
+		bFadeComplete = true;
+
+		OnFadeComplete_Event.Broadcast();
+		OnFadeComplete_ScriptEvent.Broadcast();
+		return;
+	}
+
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	CoroutineSchedulerLibrary::EndChecked(Context, MyRoot, UpdateGroup, FadeHandle);
+	CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, MyRoot, UpdateGroup, FadeHandle);
 
 	PayloadType* Payload = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
@@ -294,22 +325,22 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 	CS_COROUTINE_PAYLOAD_PASS_COLOR_START
 
 	// From
-	CS_COROUTINE_PAYLOAD_PASS_COLOR(Payload, Params.From);
+	CS_COROUTINE_PAYLOAD_PASS_COLOR(Payload, Params.GetFrom());
 	// To
-	CS_COROUTINE_PAYLOAD_PASS_COLOR(Payload, Params.To);
+	CS_COROUTINE_PAYLOAD_PASS_COLOR(Payload, Params.GetTo());
 	// Time
-	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, Params.Time);
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, Params.GetTime());
 	// bCollapseOnEnd
-	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, Params.bCollapseOnEnd);
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, Params.GetbCollapseOnEnd());
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
 	{
 		UE_LOG(LogCsUI, Warning, TEXT("%s: Starting Fade"), *Context);
-		UE_LOG(LogCsUI, Warning, TEXT(" From: %s"), *(Params.From.ToString()));
-		UE_LOG(LogCsUI, Warning, TEXT(" To: %s"), *(Params.To.ToString()));
-		UE_LOG(LogCsUI, Warning, TEXT(" Time: %f"), Params.Time);
-		UE_LOG(LogCsUI, Warning, TEXT(" bCollapseOnEnd: %s"), Params.bCollapseOnEnd ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCsUI, Warning, TEXT(" From: %s"), *(Params.GetFrom().ToString()));
+		UE_LOG(LogCsUI, Warning, TEXT(" To: %s"), *(Params.GetTo().ToString()));
+		UE_LOG(LogCsUI, Warning, TEXT(" Time: %f"), Params.GetTime());
+		UE_LOG(LogCsUI, Warning, TEXT(" bCollapseOnEnd: %s"), Params.GetbCollapseOnEnd() ? TEXT("True") : TEXT("False"));
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -345,7 +376,7 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 		{
 			FadeWidget->SetColorAndOpacity(FLinearColor::LerpUsingHSV(From, To, Percent));
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
 			{
 				UE_LOG(LogCsUI, Warning, TEXT("%s: Performing Fade"), *Context);
@@ -354,7 +385,7 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 				UE_LOG(LogCsUI, Warning, TEXT(" Percent: %f"), Percent);
 				UE_LOG(LogCsUI, Warning, TEXT(" ElapsedTime: %f"), R->ElapsedTime.Time);
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 
 			CS_COROUTINE_YIELD(R);
 		}
@@ -374,6 +405,8 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 	{
 		FadeWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
+
+	bFadeComplete = true;
 
 	OnFadeComplete_Event.Broadcast();
 	OnFadeComplete_ScriptEvent.Broadcast();
@@ -432,7 +465,9 @@ void UCsManager_Fade::StopFade()
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	CoroutineSchedulerLibrary::EndChecked(Context, MyRoot, UpdateGroup, FadeHandle);
+	CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, MyRoot, UpdateGroup, FadeHandle);
+
+	bFadeComplete = false;
 }
 
 void UCsManager_Fade::ClearFade()

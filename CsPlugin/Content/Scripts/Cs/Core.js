@@ -48,6 +48,8 @@ module.exports = class FJsCore
                 o.Shutdown();
             }
             this.Objects = [];
+
+            this.Manager_Data = null;
         }
 
         /**

@@ -7,12 +7,16 @@
 // CVar
 #include "CsCVars.h"
 // Library
+#include "Data/CsLibrary_Data.h"
+	// Common
 #include "Library/Load/CsLibrary_Load.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Data/CsSettings_Data.h"
 // Data
 #include "Data/CsGetDataRootSet.h"
+#include "Data/CsTableRowBase_Data.h"
 // Utility
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 
@@ -111,9 +115,46 @@ namespace NCsDataEntryData
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsDataEntry_Data, OnDataTableChanged);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsDataEntry_Data, Unload);
 		}
 	}
 }
+
+#define USING_NS_CACHED using namespace NCsDataEntryData::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsDataEntryData::NCached; \
+	const FString& Context = Str::##__FunctionName
+
+// FTableRowBase Interface
+#pragma region
+
+void FCsDataEntry_Data::OnDataTableChanged(const UDataTable* InDataTable, const FName InRowName)
+{
+	SET_CONTEXT(OnDataTableChanged);
+
+	FCsSettings_Data_EnumStruct::Get().ECsDataEntryData.OnDataTableChanged(InDataTable, InRowName, Name, Data.GetAssetName());
+}
+
+#pragma endregion FTableRowBase Interface
+
+// FCsTableRowBase_Data Interface
+#pragma region
+
+void FCsDataEntry_Data::Unload()
+{
+	SET_CONTEXT(Unload);
+
+	if (IsValid(Data_Internal))
+	{
+		typedef NCsData::FLibrary DataLibrary;
+
+		DataLibrary::UnloadChecked(Context, Data_Internal);
+	}
+
+	Data_Internal = nullptr;
+	Data_Class = nullptr;
+}
+
+#pragma endregion FCsTableRowBase_Data Interface
 
 #if WITH_EDITOR
 
@@ -278,7 +319,6 @@ void FCsDataEntry_Data::Populate(const TSet<FSoftObjectPath>& PathSet, const TAr
 
 #endif // WITH_EDITOR
 
-
 UClass* FCsDataEntry_Data::SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) /*=&FCLog::Warning*/)
 {
 	return CS_SOFT_CLASS_PTR_LOAD(Data, UObject);
@@ -300,17 +340,6 @@ UObject* FCsDataEntry_Data::SafeLoadDefaultObject(const FString& Context, void(*
 	return nullptr;
 }
 
-#define USING_NS_CACHED using namespace NCsDataEntryData::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsDataEntryData::NCached; \
-	const FString& Context = Str::##__FunctionName
-
-void FCsDataEntry_Data::OnDataTableChanged(const UDataTable* InDataTable, const FName InRowName)
-{
-	SET_CONTEXT(OnDataTableChanged);
-
-	FCsSettings_Data_EnumStruct::Get().ECsDataEntryData.OnDataTableChanged(InDataTable, InRowName, Name, Data.GetAssetName());
-}
-
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
 
@@ -318,6 +347,41 @@ void FCsDataEntry_Data::OnDataTableChanged(const UDataTable* InDataTable, const 
 
 // FCsDataEntry_ScriptData
 #pragma region
+
+namespace NCsDataEntryScriptData
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsDataEntry_ScriptData, Unload);
+		}
+	}
+}
+
+#define USING_NS_CACHED using namespace NCsDataEntryScriptData::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsDataEntryScriptData::NCached; \
+	const FString& Context = Str::##__FunctionName
+
+// FCsTableRowBase_Data Interface
+#pragma region
+
+void FCsDataEntry_ScriptData::Unload()
+{
+	SET_CONTEXT(Unload);
+
+	if (IsValid(Data_Internal))
+	{
+		typedef NCsData::FLibrary DataLibrary;
+
+		DataLibrary::Script_UnloadChecked(Context, Data_Internal);
+	}
+
+	Data_Internal = nullptr;
+	Data_Class = nullptr;
+}
+
+#pragma endregion FCsTableRowBase_Data Interface
 
 #if WITH_EDITOR
 
@@ -482,10 +546,53 @@ void FCsDataEntry_ScriptData::Populate(const TSet<FSoftObjectPath>& PathSet, con
 
 #endif // WITH_EDITOR
 
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
+
 #pragma endregion FCsDataEntry_ScriptData
 
 // FCsDataEntry_DataTable
 #pragma region
+
+namespace NCsDataEntryDataTable
+{
+	namespace NCached
+	{
+		namespace Str 
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsDataEntry_DataTable, Unload);
+		}
+	}
+}
+
+#define USING_NS_CACHED using namespace NCsDataEntryDataTable::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsDataEntryDataTable::NCached; \
+	const FString& Context = Str::##__FunctionName
+
+// FCsTableRowBase_Data Interface
+#pragma region
+
+void FCsDataEntry_DataTable::Unload()
+{
+	SET_CONTEXT(Unload);
+
+	typedef NCsObject::FLibrary ObjectLibrary;
+
+	if (ObjectLibrary::IsValidObject(DataTable_Internal))
+	{
+		TArray<FCsTableRowBase_Data*> AllRows;
+		DataTable_Internal->GetAllRows(Context, AllRows);
+
+		for (FCsTableRowBase_Data* Row : AllRows)
+		{
+			Row->Unload();
+		}
+	}
+
+	DataTable_Internal = nullptr;
+}
+
+#pragma endregion FCsTableRowBase_Data Interface
 
 #if WITH_EDITOR
 
@@ -730,5 +837,8 @@ void FCsDataEntry_DataTable::PopulateRow(const FName& RowName, const TSet<FSoftO
 }
 
 #endif // #if WITH_EDITOR
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
 
 #pragma endregion FCsDataEntry_DataTable

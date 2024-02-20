@@ -24,8 +24,19 @@ public:
 	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 	* return				UCsManager_Level.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Level", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Manager|Level", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
 	static UCsManager_Level* Get(const FString& Context, const UObject* WorldContextObject);
+
+	/**
+	* Get the reference to UCsManager_Level from a WorldContext.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param OutSuccess		(out)
+	* return				UCsManager_Level.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Manager|Level", meta = (DisplayName = "Get (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static UCsManager_Level* GetChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
 
 #pragma endregion Get
 };

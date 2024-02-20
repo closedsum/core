@@ -7,12 +7,15 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Object/CsGetCreatedObjects.h"
 #include "Play/Mode/CsGetPlayMode.h"
+#include "PIE/CsGetPIEInfo.h"
 #include "Data/Tool/CsGetDataEntryTool.h"
 #include "UI/Tool/CsGetSlateApplicationTool.h"
 #include "Asset/Tool/CsGetAssetTool.h"
 #include "Types/Enum/Tool/CsGetEnumStructTool.h"
 #include "Data/Tool/CsGetDataTableTool.h"
 #include "SourceControl/Tool/CsGetSourceControlTool.h"
+#include "Level/Editor/Tool/CsGetLevelEditorTool.h"
+#include "Object/Environment/Tool/CsGetObjectEnvironmentTool.h"
 #include "Asset/Event/CsAsset_Event.h"
 #include "Level/Editor/Event/CsLevelEditor_Event.h"
 #include "PIE/Event/CsPIE_Event.h"
@@ -42,12 +45,15 @@ class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine,
 								 public ICsGetManagerSingleton,
 								 public ICsGetCreatedObjects,
 								 public ICsGetPlayMode,
+								 public ICsGetPIEInfo,
 								 public ICsGetDataEntryTool,
 								 public ICsGetSlateApplicationTool,
 								 public ICsGetAssetTool,
 								 public ICsGetEnumStructTool,
 								 public ICsGetDataTableTool,
 								 public ICsGetSourceControlTool,
+								 public ICsGetLevelEditorTool,
+								 public ICsGetObjectEnvironmentTool,
 								 public ICsAsset_Event,
 								 public ICsLevelEditor_Event,
 								 public ICsPIE_Event,
@@ -171,6 +177,26 @@ public:
 
 #pragma endregion PlayMode
 
+// ICsGetPIEInfo
+#pragma region
+public:
+
+#define PIEInfoType NCsPIE::FInfo
+	FORCEINLINE const PIEInfoType& GetPIEInfo() const { return PIEInfo; }
+#undef PIEInfoType
+
+#pragma endregion ICsGetPIEInfo
+
+// GetPIEInfo
+#pragma region
+private:
+
+#define PIEInfoType NCsPIE::FInfo
+	PIEInfoType PIEInfo;
+#undef PIEInfoType
+
+#pragma endregion GetPIEInfo
+
 // ICsGetDataEntryTool
 #pragma region
 public:
@@ -240,10 +266,6 @@ private:
 public:
 
 	const TArray<UObject*>& GetOpenedAssets() const { return OpenedAssets; }
-
-private:
-
-	static const TArray<UObject*>& GetOpenedAssets_Internal();
 
 #pragma endregion GetAssetTool
 
@@ -315,13 +337,53 @@ private:
 
 #pragma endregion GetSourceControlTool
 
+// ICsGetLevelEditorTool
+#pragma region
+public:
+
+#define LevelEditorToolType NCsLevel::NEditor::NTool::FImpl
+	FORCEINLINE LevelEditorToolType* GetLevelEditorTool() { return &LevelEditorTool; }
+#undef LevelEditorToolType
+
+#pragma endregion ICsGetLevelEditorTool
+
+// GetLevelEditorTool
+#pragma region
+private:
+
+#define LevelEditorToolType NCsLevel::NEditor::NTool::FImpl
+	LevelEditorToolType LevelEditorTool;
+#undef LevelEditorToolType
+
+#pragma endregion GetLevelEditorTool
+
+// ICsGetObjectEnvironmentTool
+#pragma region
+public:
+
+#define ObjectEnvironmentToolType NCsObject::NEnvironment::NTool::FImpl
+	FORCEINLINE ObjectEnvironmentToolType* GetObjectEnvironmentTool() { return &ObjectEnvironmentTool; }
+#undef ObjectEnvironmentToolType
+
+#pragma endregion ICsGetObjectEnvironmentTool
+
+// GetObjectEnvironmentTool
+#pragma region
+private:
+
+#define ObjectEnvironmentToolType NCsObject::NEnvironment::NTool::FImpl
+	ObjectEnvironmentToolType ObjectEnvironmentTool;
+#undef ObjectEnvironmentToolType
+
+#pragma endregion GetObjectEnvironmentTool
+
 // ICsAsset_Event
 #pragma region
 public:
 
-	FORCEINLINE ICsAsset_Event::FOnOpenedInEditor& GetAsset_OpenedInEditor_Event() { return Asset_OnOpenedInEditor_Event; }
-	FORCEINLINE ICsAsset_Event::FOnUniqueOpenedInEditor& GetAsset_UniqueOpenedInEditor_Event() { return Asset_OnUniqueOpenedInEditor_Event; }
-	FORCEINLINE ICsAsset_Event::FOnRequest_Close& GetAssetEditor_OnRequest_Close_Event() { return AssetEditor_OnRequest_Close_Event; }
+	FORCEINLINE NCsAsset::FOnOpenedInEditor& GetAsset_OpenedInEditor_Event() { return Asset_OnOpenedInEditor_Event; }
+	FORCEINLINE NCsAsset::FOnUniqueOpenedInEditor& GetAsset_UniqueOpenedInEditor_Event() { return Asset_OnUniqueOpenedInEditor_Event; }
+	FORCEINLINE NCsAsset::FOnRequest_Close& GetAssetEditor_OnRequest_Close_Event() { return AssetEditor_OnRequest_Close_Event; }
 	FORCEINLINE FCsAssetEditor_OnRequest_Close& GetAssetEditor_OnRequest_Close_ScriptEvent() { return AssetEditor_OnRequest_Close_ScriptEvent; }
 
 #pragma endregion ICsAsset_Event
@@ -330,9 +392,9 @@ public:
 #pragma region
 public:
 
-	ICsAsset_Event::FOnOpenedInEditor Asset_OnOpenedInEditor_Event;
-	ICsAsset_Event::FOnUniqueOpenedInEditor Asset_OnUniqueOpenedInEditor_Event;
-	ICsAsset_Event::FOnRequest_Close AssetEditor_OnRequest_Close_Event;
+	NCsAsset::FOnOpenedInEditor Asset_OnOpenedInEditor_Event;
+	NCsAsset::FOnUniqueOpenedInEditor Asset_OnUniqueOpenedInEditor_Event;
+	NCsAsset::FOnRequest_Close AssetEditor_OnRequest_Close_Event;
 
 	UPROPERTY(BlueprintAssignable)
 	FCsAssetEditor_OnRequest_Close AssetEditor_OnRequest_Close_ScriptEvent;	

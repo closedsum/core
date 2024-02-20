@@ -69,6 +69,7 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) :
 	bHasStartedFromEntry(false),
 	// Managers
 	OnQueueExitGame_Event(),
+	OnQueueExitGame_ScriptEvent(),
 	Manager_Singleton(nullptr),
 	// Editor
 	PlayMode(ECsPlayMode::ECsPlayMode_MAX),
@@ -77,7 +78,12 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) :
 	bStandaloneMobileFromEditor(false),
 	bOnStart(false),
 	// Transition
-	bFinishedTransition(false)
+	bFinishedTransition(false),
+	Transition_OnFinish_Event(),
+	Transition_OnFinish_ScriptEvent(),
+		// AsDestination
+	TransitionAsDestination_OnStart_Event(),
+	TransitionAsDestination_OnStart_ScriptEvent()
 {
 }
 
@@ -236,6 +242,7 @@ bool UCsGameInstance::CanExitGame()
 void UCsGameInstance::QueueExitGame()
 {
 	OnQueueExitGame_Event.Broadcast();
+	OnQueueExitGame_ScriptEvent.Broadcast();
 
 	ExitGame();
 }

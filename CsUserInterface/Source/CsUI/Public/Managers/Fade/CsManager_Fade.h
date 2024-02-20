@@ -6,15 +6,9 @@
 // Types
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Managers/Fade/CsTypes_Fade.h"
+#include "Managers/Fade/CsManager_Fade_Delegates.h"
 
 #include "CsManager_Fade.generated.h"
-
-// Delegates
-#pragma region
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerFade_OnFadeComplete);
-
-#pragma endregion Delegates
 
 class ICsGetManagerFade;
 struct FCsRoutine;
@@ -112,12 +106,26 @@ public:
 
 	void SafeFade(const ParamsType& Params);
 
-	DECLARE_MULTICAST_DELEGATE(FOnFadeComplete)
+#define OnCompleteEventType NCsFade::NManager::NFade::FOnComplete
 
-	FOnFadeComplete OnFadeComplete_Event;
+	OnCompleteEventType OnFadeComplete_Event;
+
+	FORCEINLINE OnCompleteEventType& GetOnFadeComplete_Event() { return OnFadeComplete_Event; }
+
+#undef OnCompleteEventType
 
 	UPROPERTY(BlueprintAssignable)
 	FCsManagerFade_OnFadeComplete OnFadeComplete_ScriptEvent;
+
+private:
+
+	bool bFadeComplete;
+
+public:
+
+	FORCEINLINE bool IsFadeComplete() const { return bFadeComplete; }
+
+	FORCEINLINE bool IsFadeActive() const { return !bFadeComplete && FadeHandle.IsValid(); }
 
 	void StopFade();
 	void ClearFade();

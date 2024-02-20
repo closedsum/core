@@ -25,7 +25,7 @@
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 	// Params
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
-#include "Library/CsLibrary_Camera.h"
+#include "Camera/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings

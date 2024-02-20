@@ -213,7 +213,7 @@ namespace NCsValid
 
 			FORCEINLINE static bool LessThanChecked(const FString& Context, const float& A, const FString& AName, const float& B)
 			{
-				checkf(A < B, TEXT("%s: %s: %d is NOT < %d."), *Context, *AName, A, B);
+				checkf(A < B, TEXT("%s: %s: %f is NOT < %f."), *Context, *AName, A, B);
 				return true;
 			}
 
@@ -222,7 +222,7 @@ namespace NCsValid
 				if (A >= B)
 				{
 					if (Log)
-						Log(FString::Printf(TEXT("%s: %s: %d is NOT < %d."), *Context, *AName, A, B));
+						Log(FString::Printf(TEXT("%s: %s: %f is NOT < %f."), *Context, *AName, A, B));
 					return false;
 				}
 				return true;
@@ -230,7 +230,7 @@ namespace NCsValid
 
 			FORCEINLINE static bool LessThanOrEqualChecked(const FString& Context, const float& A, const FString& AName, const float& B)
 			{
-				checkf(A <= B, TEXT("%s: %s: %d is NOT <= %d."), *Context, *AName, A, B);
+				checkf(A <= B, TEXT("%s: %s: %f is NOT <= %f."), *Context, *AName, A, B);
 				return true;
 			}
 
@@ -239,7 +239,7 @@ namespace NCsValid
 				if (A > B)
 				{
 					if (Log)
-						Log(FString::Printf(TEXT("%s: %s: %d is NOT <= %d."), *Context, *AName, A, B));
+						Log(FString::Printf(TEXT("%s: %s: %f is NOT <= %f."), *Context, *AName, A, B));
 					return false;
 				}
 				return true;
@@ -953,6 +953,213 @@ namespace NCsValid
 				return true;
 			}
 
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyPendingKillChecked(const FString& Context, const TArray<ValueType*>& Array, const FString& ArrayName)
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					checkf(IsValid(Array[I]), TEXT("%s: %s[%d] is NULL or Pending Kill."), *Context, *ArrayName, I);
+				}
+				return true;
+			}
+
+			template<typename ValueType, uint32 AllocatedSize>
+			FORCEINLINE static bool IsAnyPendingKillChecked(const FString& Context, const TArray<ValueType*, TFixedAllocator<AllocatedSize>>& Array, const FString& ArrayName)
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					checkf(IsValid(Array[I]), TEXT("%s: %s[%d] is NULL or Pending Kill."), *Context, *ArrayName, I);
+				}
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyPendingKill(const FString& Context, const TArray<ValueType*>& Array, const FString& ArrayName, void(*Log)(const FString&))
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (!IsValid(Array[I]))
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] is NULL or Pending Kill."), *Context, *ArrayName, I));
+						return false;
+					}
+				}
+				return true;
+			}
+
+			template<typename ValueType, uint32 AllocatedSize>
+			FORCEINLINE static bool IsAnyPendingKill(const FString& Context, const TArray<ValueType*, TFixedAllocator<AllocatedSize>>& Array, const FString& ArrayName, void(*Log)(const FString&))
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (!IsValid(Array[I]))
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] is NULL or Pending Kill."), *Context, *ArrayName, I));
+						return false;
+					}
+				}
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyPendingKillChecked(const FString& Context, const TArray<TObjectPtr<ValueType>>& Array, const FString& ArrayName)
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					ValueType* V = Array[I].Get();
+
+					checkf(IsValid(V), TEXT("%s: %s[%d] is NULL or Pending Kill."), *Context, *ArrayName, I);
+				}
+				return true;
+			}
+
+			template<typename ValueType, uint32 AllocatedSize>
+			FORCEINLINE static bool IsAnyPendingKillChecked(const FString& Context, const TArray<TObjectPtr<ValueType>, TFixedAllocator<AllocatedSize>>& Array, const FString& ArrayName)
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					ValueType* V = Array[I].Get();
+
+					checkf(IsValid(V), TEXT("%s: %s[%d] is NULL or Pending Kill."), *Context, *ArrayName, I);
+				}
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyPendingKill(const FString& Context, const TArray<TObjectPtr<ValueType>>& Array, const FString& ArrayName, void(*Log)(const FString&))
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					ValueType* V = Array[I].Get();
+
+					if (!IsValid(V))
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] is NULL or Pending Kill."), *Context, *ArrayName, I));
+						return false;
+					}
+				}
+				return true;
+			}
+
+			template<typename ValueType, uint32 AllocatedSize>
+			FORCEINLINE static bool IsAnyPendingKill(const FString& Context, const TArray<TObjectPtr<ValueType>, TFixedAllocator<AllocatedSize>>& Array, const FString& ArrayName, void(*Log)(const FString&))
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					ValueType* V = Array[I].Get();
+
+					if (!IsValid(V))
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] is NULL or Pending Kill."), *Context, *ArrayName, I));
+						return false;
+					}
+				}
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyNotValidChecked(const FString& Context, const TArray<TSoftObjectPtr<ValueType>>& Array, const FString& ArrayName)
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					checkf(Array[I].ToSoftObjectPath().IsValid(), TEXT("%s: %s[%d] is NOT Valid."), *Context, *ArrayName, I);
+				}
+				return true;
+			}
+
+			template<typename ValueType, uint32 AllocatedSize>
+			FORCEINLINE static bool IsAnyNotValidChecked(const FString& Context, const TArray<TSoftObjectPtr<ValueType>, TFixedAllocator<AllocatedSize>>& Array, const FString& ArrayName)
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyNotValidChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					checkf(Array[I].ToSoftObjectPath().IsValid(), TEXT("%s: %s[%d] is NOT Valid."), *Context, *ArrayName, I);
+				}
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyNotValid(const FString& Context, const TArray<TSoftObjectPtr<ValueType>>& Array, const FString& ArrayName, void(*Log)(const FString&))
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyNotValid: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (!Array[I].ToSoftObjectPath().IsValid())
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] is NOT Valid."), *Context, *ArrayName, I));
+						return false;
+					}
+				}
+				return true;
+			}
+
+			template<typename ValueType, uint32 AllocatedSize>
+			FORCEINLINE static bool IsAnyNotValid(const FString& Context, const TArray<TSoftObjectPtr<ValueType>, TFixedAllocator<AllocatedSize>>& Array, const FString& ArrayName, void(*Log)(const FString&))
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NArray::IsAnyNotValid: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (!Array[I].ToSoftObjectPath().IsValid())
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] is NOT Valid."), *Context, *ArrayName, I));
+						return false;
+					}
+				}
+				return true;
+			}
+
+
 			FORCEINLINE static bool IsAnyNoneChecked(const FString& Context, const TArray<FName>& Array, const FString& ArrayName)
 			{
 				const int32 Count = Array.Num();
@@ -1150,6 +1357,64 @@ namespace NCsValid
 		}
 	}
 
+	namespace NSet
+	{
+		struct CSCORE_API FLibrary final
+		{
+			template<typename ValueType>
+			FORCEINLINE static bool EmptyChecked(const FString& Context, const TSet<ValueType>& Set, const FString& SetName)
+			{
+				checkf(Set.Num() > 0, TEXT("%s: %s is EMPTY."), *Context, *SetName);
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool Empty(const FString& Context, const TSet<ValueType>& Set, const FString& SetName, void(*Log)(const FString&))
+			{
+				if (Set.Num() == 0)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is EMPTY."), *Context, *SetName));
+					return false;
+				}
+				return true;
+			}
+
+						template<typename ValueType>
+			FORCEINLINE static bool IsAnyPendingKillChecked(const FString& Context, const TSet<ValueType*>& Set, const FString& SetName)
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NSet::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Set.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					checkf(IsValid(Set[I]), TEXT("%s: %s[%d] is NULL or Pending Kill."), *Context, *SetName, I);
+				}
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyPendingKill(const FString& Context, const TSet<ValueType*>& Set, const FString& SetName, void(*Log)(const FString&))
+			{
+				static_assert(std::is_base_of<UObject, ValueType>(), "NCsValid::NSet::IsAnyPendingKillChecked: ValueType is NOT of type: UObject.");
+
+				const int32 Count = Set.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (!IsValid(Set[I]))
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] is NULL or Pending Kill."), *Context, *SetName, I));
+						return false;
+					}
+				}
+				return true;
+			}
+		};
+	}
+
 	namespace NPtr
 	{
 		struct CSCORE_API FLibrary final
@@ -1205,12 +1470,8 @@ namespace NCsValid
 			template<typename ClassType, typename OtherClassType>
 			FORCEINLINE static bool IsClassOf(const FString& Context, const ClassType* A, const FString& AName, void(*Log)(const FString&))
 			{
-				if (!A)
-				{
-					if (Log)
-						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+				if (!IsPendingKill(Context, A, AName, Log))
 					return false;
-				}
 
 				const OtherClassType* Other = Cast<OtherClassType>(A);
 
@@ -1226,7 +1487,7 @@ namespace NCsValid
 			template<typename ClassType, typename OtherClassType>
 			FORCEINLINE static bool IsClassOfChecked(const FString& Context, const ClassType* A, const FString& AName)
 			{
-				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+				check(IsPendingKillChecked(Context, A, AName));
 
 				const OtherClassType* Other = Cast<OtherClassType>(A);
 
@@ -1237,12 +1498,8 @@ namespace NCsValid
 			template<typename ClassType, typename InterfaceType>
 			FORCEINLINE static bool Implements(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
 			{
-				if (!A)
-				{
-					if (Log)
-						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+				if (!IsPendingKill(Context, A, AName, Log))
 					return false;
-				}
 
 				const InterfaceType* Other = Cast<InterfaceType>(A);
 
@@ -1258,12 +1515,8 @@ namespace NCsValid
 			template<typename ClassType, typename OtherClassType>
 			FORCEINLINE static OtherClassType* CastTo(const FString& Context, ClassType* A, const FString& AName, void(*Log)(const FString&))
 			{
-				if (!A)
-				{
-					if (Log)
-						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+				if (!IsPendingKill(Context, A, AName, Log))
 					return nullptr;
-				}
 
 				OtherClassType* Other = Cast<OtherClassType>(A);
 
@@ -1279,12 +1532,8 @@ namespace NCsValid
 			template<typename ClassType, typename OtherClassType>
 			FORCEINLINE static const OtherClassType* CastTo(const FString& Context, const ClassType* A, const FString& AName, void(*Log)(const FString&))
 			{
-				if (!A)
-				{
-					if (Log)
-						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+				if (!IsPendingKill(Context, A, AName, Log))
 					return nullptr;
-				}
 
 				const OtherClassType* Other = Cast<OtherClassType>(A);
 
@@ -1300,7 +1549,7 @@ namespace NCsValid
 			template<typename ClassType, typename OtherClassType>
 			FORCEINLINE static OtherClassType* CastToChecked(const FString& Context, ClassType* A, const FString& AName)
 			{
-				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+				check(IsPendingKillChecked(Context, A, AName));
 
 				OtherClassType* Other = Cast<OtherClassType>(A);
 
@@ -1312,7 +1561,7 @@ namespace NCsValid
 			template<typename ClassType, typename OtherClassType>
 			FORCEINLINE static const OtherClassType* CastToChecked(const FString& Context, const ClassType* A, const FString& AName)
 			{
-				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+				check(IsPendingKillChecked(Context, A, AName));
 
 				const OtherClassType* Other = Cast<OtherClassType>(A);
 
@@ -1324,12 +1573,8 @@ namespace NCsValid
 			template<typename ClassType, typename InterfaceType>
 			FORCEINLINE static InterfaceType* InterfaceCast(const FString& Context, ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
 			{
-				if (!A)
-				{
-					if (Log)
-						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+				if (!IsPendingKill(Context, A, AName, Log))
 					return nullptr;
-				}
 
 				InterfaceType* Other = Cast<InterfaceType>(A);
 
@@ -1345,12 +1590,8 @@ namespace NCsValid
 			template<typename ClassType, typename InterfaceType>
 			FORCEINLINE static const InterfaceType* InterfaceCast(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
 			{
-				if (!A)
-				{
-					if (Log)
-						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+				if (!IsPendingKill(Context, A, AName, Log))
 					return nullptr;
-				}
 
 				const InterfaceType* Other = Cast<InterfaceType>(A);
 
@@ -1366,59 +1607,53 @@ namespace NCsValid
 			template<typename ClassType, typename InterfaceType>
 			FORCEINLINE static InterfaceType* InterfaceCastChecked(const FString& Context, ClassType* A, const FString& AName, const FString& InterfaceName)
 			{
-				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+				check(IsPendingKillChecked(Context, A, AName));
 
 				InterfaceType* Other = Cast<InterfaceType>(A);
 
 				checkf(Other, TEXT("%s: %s: %s with Class: %s does NOT implement the interface: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *InterfaceName);
-
 				return Other;
 			}
 
 			template<typename ClassType, typename InterfaceType>
 			FORCEINLINE static const InterfaceType* InterfaceCastChecked(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName)
 			{
-				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+				check(IsPendingKillChecked(Context, A, AName));
 
 				const InterfaceType* Other = Cast<InterfaceType>(A);
 
 				checkf(Other, TEXT("%s: %s: %s with Class: %s does NOT implement the interface: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *InterfaceName);
-
 				return Other;
 			}
 
 			template<typename ObjectType>
 			FORCEINLINE static ObjectType* NewChecked(const FString& Context, UObject* Outer, const FString& OuterName, UClass* Class, const FString& ClassName)
 			{
-				checkf(Outer, TEXT("%s: %s is NULL."), *Context, *OuterName);
-
+				check(IsPendingKillChecked(Context, Outer, OuterName));
 				checkf(Class, TEXT("%s: %s is NULL."), *Context, *ClassName);
 
 				ObjectType* O = NewObject<ObjectType>(Outer, Class);
 
-				checkf(O, TEXT("%s: Failed to create Object from Class: %s."), *Context, *(Class->GetName()));
-				
+				checkf(O, TEXT("%s: Failed to create Object from Class: %s."), *Context, *(Class->GetName()));			
 				return O;
 			}
 
 			template<typename ObjectType>
 			FORCEINLINE static ObjectType* NewChecked(const FString& Context, UObject* Outer, const FString& OuterName, TSubclassOf<ObjectType>& Class, const FString& ClassName)
 			{
-				checkf(Outer, TEXT("%s: %s is NULL."), *Context, *OuterName);
-
+				check(IsPendingKillChecked(Context, Outer, OuterName));
 				checkf(Class.Get(), TEXT("%s: %s is NULL."), *Context, *ClassName);
 
 				ObjectType* O = NewObject<ObjectType>(Outer, Class);
 
 				checkf(O, TEXT("%s: Failed to create Object from Class: %s."), *Context, *(Class->GetName()));
-
 				return O;
 			}
 
 			template<typename ClassType, typename UInterfaceType>
 			FORCEINLINE static bool ImplementsInterfaceChecked(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName)
 			{
-				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+				check(IsPendingKillChecked(Context, A, AName));
 
 				UClass* C = A->GetClass();
 
@@ -1430,12 +1665,8 @@ namespace NCsValid
 			template<typename ClassType, typename UInterfaceType>
 			FORCEINLINE static bool ImplementsInterface(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
 			{
-				if (!A)
-				{
-					if (Log)
-						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+				if (!IsPendingKill(Context, A, AName, Log))
 					return false;
-				}
 
 				UClass* C = A->GetClass();
 
@@ -1682,13 +1913,11 @@ namespace NCsValid
 			FORCEINLINE static ActorType* SpawnChecked(const FString& Context, UWorld* World, UClass* Class, const FString& ClassName)
 			{
 				checkf(World, TEXT("%s: World is NULL."), *Context);
-
 				checkf(Class, TEXT("%s: %s is NULL."), *Context, *ClassName);
 
 				ActorType* A = World->SpawnActor<ActorType>(Class);
 
 				checkf(A, TEXT("%s: Failed to Spawn Actor of type: %s from %s of type: %s."), *Context, *(ActorType::StaticClass()->GetName()), *ClassName, *(Class->GetName()));
-
 				return A;
 			}
 		};
@@ -1707,8 +1936,7 @@ namespace NCsValid
 
 				UObject* O = A->_getUObject();
 
-				checkf(O, TEXT("%s: %s is NOT a UObject."), *Context, *AName);
-
+				checkf(IsValid(O), TEXT("%s: %s is NULL, Pending Kill or NOT a UObject."), *Context, *AName);
 				return O;
 			}
 
@@ -1724,10 +1952,10 @@ namespace NCsValid
 
 				UObject* O = A->_getUObject();
 
-				if (!O)
+				if (!IsValid(O))
 				{
 					if (Log)
-						Log(FString::Printf(TEXT("%s: %s is NOT a UObject."), *Context, *AName));
+						Log(FString::Printf(TEXT("%s: %s is Null, Pending Kill or NOT a UObject."), *Context, *AName));
 					return nullptr;
 				}
 				return O;
@@ -1831,6 +2059,8 @@ namespace NCsValid
 #if !UE_BUILD_SHIPPING
 // Assume const FString& Context has been defined
 #define CS_IS_VALID_CHECKED(__Object) __Object.IsValidChecked(Context)
+// Assume const FString& Context has been defined
+#define CS_IS_TOP_VALID_CHECKED(__Object) __Object.IsTopValidChecked(Context)
 
 // Int
 #pragma region
@@ -2075,6 +2305,18 @@ namespace NCsValid
 		check(NCsValid::NArray::FLibrary::IsAnyNullChecked<__ValueType>(Context, __Array, __temp__str__)); \
 	}
 // Assume const FString& Context has been defined
+#define CS_IS_TARRAY_ANY_PENDING_KILL_CHECKED(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NArray::FLibrary::IsAnyPendingKillChecked<__ValueType>(Context, __Array, __temp__str__)); \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_TARRAY_ANY_NOT_VALID_CHECKED(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NArray::FLibrary::IsAnyNotValidChecked<__ValueType>(Context, __Array, __temp__str__)); \
+	}
+// Assume const FString& Context has been defined
 #define CS_IS_TARRAY_ANY_NONE_CHECKED(__Array) \
 	{ \
 		static const FString __temp__str__ = #__Array; \
@@ -2142,6 +2384,24 @@ namespace NCsValid
 #pragma endregion 2D
 
 #pragma endregion Array
+
+// Set
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_TSET_EMPTY_CHECKED(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NSet::FLibrary::EmptyChecked<__ValueType>(Context, __Array, __temp__str__)); \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_TSET_ANY_PENDING_KILL_CHECKED(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NSet::FLibrary::IsAnyPendingKillChecked<__ValueType>(Context, __Array, __temp__str__)); \
+	}
+
+#pragma endregion Set
 
 // Ptr
 #pragma region
@@ -2383,6 +2643,7 @@ namespace NCsValid
 
 #else
 #define CS_IS_VALID_CHECKED(__Object)
+#define CS_IS_TOP_VALID_CHECKED(__Object)
 // Int
 #define CS_IS_INT_GREATER_THAN_CHECKED(__A, __B)
 #define CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(__A, __B)
@@ -2423,6 +2684,8 @@ namespace NCsValid
 #define CS_IS_TARRAY_GREATER_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size)
 #define CS_IS_TARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size)
 #define CS_IS_TARRAY_ANY_NULL_CHECKED(__Array, __ValueType)
+#define CS_IS_TARRAY_ANY_PENDING_KILL_CHECKED(__Array, __ValueType)
+#define CS_IS_TARRAY_ANY_NOT_VALID_CHECKED(__Array, __ValueType)
 #define CS_IS_TARRAY_ANY_NONE_CHECKED(__Array)
 	// Fixed
 #define CS_IS_TARRAY_FIXED_EMPTY_CHECKED(__Array, __ValueType, __AllocatedSize)
@@ -2434,6 +2697,9 @@ namespace NCsValid
 	// 2D
 #define CS_IS_TARRAY_2D_EMPTY_CHECKED(__Array, __ValueType)
 #define CS_IS_TARRAY_2D_ANY_NULL_CHECKED(__Array, __ValueType)
+// Set
+#define CS_IS_TSET_EMPTY_CHECKED(__Array, __ValueType)
+#define CS_IS_TSET_ANY_PENDING_KILL_CHECKED(__Array, __ValueType)
 // Ptr
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
 // Object
@@ -2618,6 +2884,48 @@ namespace NCsValid
 // Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
 #define CS_IS_VALID_RET_VALUE2(__Object, __Value) \
 	if (!__Object.IsValid(Ctxt, Log)) \
+		return __Value;
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TOP_VALID(__Object) \
+	if (!__Object.IsTopValid(Context, Log)) \
+		return false;
+// Assume const FString& Context has been defined
+#define CS_IS_TOP_VALID_NO_LOG(__Object) \
+	if (!__Object.IsTopValid(Context, nullptr)) \
+		return false;
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TOP_VALID_EXIT(__Object) \
+	if (!__Object.IsTopValid(Context, Log)) \
+		return;
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TOP_VALID_RET_NULL(__Object) \
+	if (!__Object.IsTopValid(Context, Log)) \
+		return nullptr;
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TOP_VALID_RET_VALUE(__Object, __Value) \
+	if (!__Object.IsTopValid(Context, Log)) \
+		return __Value;
+
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_TOP_VALID2(__Object) \
+	if (!__Object.IsTopValid(Ctxt, Log)) \
+		return false;
+// Assume const FString& Ctxt has been defined
+#define CS_IS_TOP_VALID_NO_LOG2(__Object) \
+	if (!__Object.IsTopValid(Ctxt, nullptr)) \
+		return false;
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_TOP_VALID_EXIT2(__Object) \
+	if (!__Object.IsTopValid(Ctxt, Log)) \
+		return;
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_TOP_VALID_RET_NULL2(__Object) \
+	if (!__Object.IsTopValid(Ctxt, Log)) \
+		return nullptr;
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_TOP_VALID_RET_VALUE2(__Object, __Value) \
+	if (!__Object.IsTopValid(Ctxt, Log)) \
 		return __Value;
 
 // Int
@@ -3073,6 +3381,18 @@ namespace NCsValid
 		if (!NCsValid::NArray::FLibrary::IsAnyNull<__ValueType>(Context, __Array, __temp__str__, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TARRAY_ANY_PENDING_KILL(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NArray::FLibrary::IsAnyPendingKill<__ValueType>(Context, __Array, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TARRAY_ANY_NOT_VALID(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NArray::FLibrary::IsAnyNotValid<__ValueType>(Context, __Array, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_TARRAY_ANY_NONE(__Array) \
 	{ \
 		static const FString __temp__str__ = #__Array; \
@@ -3146,6 +3466,36 @@ namespace NCsValid
 #pragma endregion 2D
 
 #pragma endregion Array
+
+// Set
+#pragma region
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TSET_EMPTY(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NSet::FLibrary::Empty<__ValueType>(Context, __Array, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TSET_EMPTY_EXIT(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NSet::FLibrary::Empty<__ValueType>(Context, __Array, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TSET_EMPTY_RET_NULL(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NSet::FLibrary::Empty<__ValueType>(Context, __Array, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TSET_ANY_PENDING_KILL(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NSet::FLibrary::IsAnyPendingKill<__ValueType>(Context, __Array, __temp__str__, Log)) { return false; } \
+	}
+
+#pragma endregion Set
 
 // Ptr
 #pragma region
@@ -3343,6 +3693,12 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Ptr; \
 		if (!NCsValid::NWeakObjectPtr::FLibrary::Null<__ObjectType>(Context, __Ptr, __temp__str__, Log)) { return nullptr; } \
 	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_WEAK_OBJ_PTR_NULL_RET_VALUE(__Ptr, __ObjectType, __Value) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NWeakObjectPtr::FLibrary::Null<__ObjectType>(Context, __Ptr, __temp__str__, Log)) { return __Value; } \
+	}
 
 #pragma endregion WeakObjectPtr
 
@@ -3356,10 +3712,22 @@ namespace NCsValid
 		if (!NCsValid::NSoftObjectPtr::FLibrary::IsValid<__ObjectType>(Context, __A, __temp__str__, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_OBJECT_PTR_VALID_EXIT(__A, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftObjectPtr::FLibrary::IsValid<__ObjectType>(Context, __A, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_SOFT_OBJECT_PTR_VALID_RET_NULL(__A, __ObjectType) \
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NSoftObjectPtr::FLibrary::IsValid<__ObjectType>(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_OBJECT_PTR_VALID_RET_VALUE(__A, __ObjectType, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftObjectPtr::FLibrary::IsValid<__ObjectType>(Context, __A, __temp__str__, Log)) { return __Value; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_SOFT_OBJECT_PTR_GET(__A, __ObjectType) \
@@ -3381,10 +3749,22 @@ namespace NCsValid
 		if (!NCsValid::NSoftClassPtr::FLibrary::IsValid<__ClassType>(Context, __A, __temp__str__, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_CLASS_PTR_VALID_EXIT(__A, __ClassType) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftClassPtr::FLibrary::IsValid<__ClassType>(Context, __A, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_SOFT_CLASS_PTR_VALID_RET_NULL(__A, __ClassType) \
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NSoftClassPtr::FLibrary::IsValid<__ClassType>(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_CLASS_PTR_VALID_RET_VALUE(__A, __ClassType, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftClassPtr::FLibrary::IsValid<__ClassType>(Context, __A, __temp__str__, Log)) { return __Value; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_SOFT_CLASS_PTR_GET(__A, __ClassType) \
@@ -3413,10 +3793,22 @@ namespace NCsValid
 		if (!NCsValid::NSoftObjectPath::FLibrary::IsValid(Context, __A, __temp__str__, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_OBJECT_PATH_VALID_EXIT(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftObjectPath::FLibrary::IsValid(Context, __A, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_SOFT_OBJECT_PATH_VALID_RET_NULL(__A) \
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NSoftObjectPath::FLibrary::IsValid(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_OBJECT_PATH_VALID_RET_VALUE(__A, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftObjectPath::FLibrary::IsValid(Context, __A, __temp__str__, Log)) { return __Value; } \
 	}
 
 #pragma endregion FSoftObjectPath
@@ -3441,6 +3833,12 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__Class; \
 		if (!NCsValid::NSubclassOf::FLibrary::Null<__ObjectType>(Context, __Class, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SUBCLASS_OF_NULL_RET_VALUE(__Class, __ObjectType, __Value) \
+	{ \
+		static const FString __temp__str__ = #__Class; \
+		if (!NCsValid::NSubclassOf::FLibrary::Null<__ObjectType>(Context, __Class, __temp__str__, Log)) { return __Value; } \
 	}
 
 #pragma endregion SubclassOf

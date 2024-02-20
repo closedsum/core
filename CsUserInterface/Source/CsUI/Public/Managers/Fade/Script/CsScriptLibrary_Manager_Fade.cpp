@@ -30,6 +30,8 @@ namespace NCsScriptLibraryManagerFade
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, FadeClearToBlackChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, FadeBlackToClear);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, FadeBlackToClearChecked);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, IsFadeActive);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, IsFadeActiveChecked);
 		}
 	}
 }
@@ -44,7 +46,7 @@ UCsScriptLibrary_Manager_Fade::UCsScriptLibrary_Manager_Fade(const FObjectInitia
 #define USING_NS_CACHED using namespace NCsScriptLibraryManagerFade::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerFade::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
-#define LogError &FCsLog::Error
+#define LogError &NCsUI::FLog::Error
 #define FadeManagerLibrary NCsFade::NManager::FLibrary
 
 // Get
@@ -110,6 +112,22 @@ void UCsScriptLibrary_Manager_Fade::FadeBlackToClearChecked(const FString& Conte
 	OutSuccess = true;
 	CS_SCRIPT_CHECKED(FadeManagerLibrary::FadeBlackToClearChecked(Ctxt, WorldContextObject, Time), FadeManagerLibrary::SafeFadeBlackToClear(Ctxt, WorldContextObject, Time, OutSuccess, LogError))
 }
+
+bool UCsScriptLibrary_Manager_Fade::IsFadeActive(const FString& Context, const UObject* WorldContextObject)
+{
+	CONDITIONAL_SET_CTXT(IsFadeActive);
+
+	return FadeManagerLibrary::SafeIsFadeActive(Ctxt, WorldContextObject);
+}
+
+bool UCsScriptLibrary_Manager_Fade::IsFadeActiveChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
+{
+	CONDITIONAL_SET_CTXT(IsFadeActiveChecked);
+
+	OutSuccess = true;
+	return CS_SCRIPT_GET_CHECKED(FadeManagerLibrary::IsFadeActiveChecked(Ctxt, WorldContextObject), FadeManagerLibrary::SafeIsFadeActive(Ctxt, WorldContextObject, OutSuccess, LogError));
+}
+
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
 #undef LogError

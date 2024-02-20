@@ -7,6 +7,7 @@
 // Types
 #include "Types/CsCached.h"
 // Library
+#include "Library/CsLibrary_World.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Blueprint
@@ -33,13 +34,24 @@ namespace NCsBlueprint
 		const FString& Context = Str::##__FunctionName
 	#define NO_LOG void(*Log)(const FString&) = nullptr;
 	#define ObjectLibrary NCsObject::FLibrary
+	#define WorldLibrary NCsWorld::FLibrary
 
 	// Load
 	#pragma region
 
+	UBlueprint* FLibrary::LoadChecked(const FString& Context, const FSoftObjectPath& Path)
+	{
+		return ObjectLibrary::LoadChecked<UBlueprint>(Context, Path);
+	}
+
 	UBlueprint* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		return ObjectLibrary::SafeLoad<UBlueprint>(Context, Path, Log);
+	}
+
+	UBlueprint* FLibrary::LoadChecked(const FString& Context, const FString& Path)
+	{
+		return ObjectLibrary::LoadChecked<UBlueprint>(Context, Path);
 	}
 
 	UBlueprint* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -47,10 +59,43 @@ namespace NCsBlueprint
 		return ObjectLibrary::SafeLoad<UBlueprint>(Context, Path, Log);
 	}
 
+	UBlueprintGeneratedClass* FLibrary::LoadClassChecked(const FString& Context, const TSoftObjectPtr<UBlueprint>& Blueprint)
+	{
+		CS_IS_SOFT_OBJECT_PTR_VALID_CHECKED(Blueprint, UBlueprint)
+
+		FString Path = Blueprint.ToSoftObjectPath().ToString();
+
+		if (!Path.EndsWith(TEXT("_C"), ESearchCase::CaseSensitive))
+			Path.Append(TEXT("_C"));
+
+		FSoftObjectPath SoftPath(Path);
+
+		UObject* O = SoftPath.TryLoad();
+
+		CS_IS_PENDING_KILL_CHECKED(O)
+		return (UBlueprintGeneratedClass*)(O);
+	}
+
 	#pragma endregion Load
 
 	// Get
 	#pragma region
+
+	UBlueprintGeneratedClass* FLibrary::GetClassChecked(const FString& Context, const FString& Path)
+	{
+		CS_IS_STRING_EMPTY_CHECKED(Path)
+
+		FString ClassPath = Path;
+
+		if (!ClassPath.EndsWith(NCsCached::Str::_C))
+			ClassPath.Append(NCsCached::Str::_C);
+
+		UObject* O					   = ObjectLibrary::LoadChecked(Context, ClassPath);
+		UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O);
+
+		CS_IS_PENDING_KILL_CHECKED(BpGC)
+		return (UBlueprintGeneratedClass*)(O);
+	}
 
 	UBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
@@ -76,9 +121,26 @@ namespace NCsBlueprint
 		return (UBlueprintGeneratedClass*)(O);
 	}
 
+	UBlueprintGeneratedClass* FLibrary::GetClassChecked(const FString& Context, const TSoftObjectPtr<UBlueprint>& Blueprint)
+	{
+		CS_IS_SOFT_OBJECT_PTR_VALID_CHECKED(Blueprint, UBlueprint)
+
+		const FString Path = Blueprint.ToSoftObjectPath().ToString();
+
+		return GetClassChecked(Context, Path);
+	}
+
+	UBlueprintGeneratedClass* FLibrary::GetClassChecked(const FString& Context, UBlueprint* Blueprint)
+	{
+		UBlueprintCore* BpC = CS_CAST_CHECKED(Blueprint, UBlueprint, UBlueprintCore);
+		UClass* Class		= BpC->GeneratedClass.Get();
+
+		return CS_CAST_CHECKED(Class, UClass, UBlueprintGeneratedClass);
+	}
+
 	UBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL_CHECKED(Blueprint)
+		CS_IS_PENDING_KILL_RET_NULL(Blueprint)
 
 		UBlueprintCore* BpC = CS_CAST(Blueprint, UBlueprint, UBlueprintCore);
 
@@ -225,8 +287,26 @@ namespace NCsBlueprint
 
 	#pragma endregion Is
 	
+	// Spawn
+	#pragma region
+	
+	AActor* FLibrary::SpawnAsActorChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UBlueprint>& Blueprint)
+	{
+	#if WITH_EDITOR
+		UBlueprint* Bp				   = LoadChecked(Context, Blueprint);
+		UBlueprintGeneratedClass* BpGC = GetClassChecked(Context, Bp);
+	#else
+		UBlueprintGeneratedClass* BpGC = LoadClassChecked(Context, Blueprint);
+	#endif // #if WITH_EDITOR
+
+		return WorldLibrary::SpawnChecked(Context, WorldContext, BpGC);
+	}
+
+	#pragma endregion Spawn
+
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
 	#undef NO_LOG
 	#undef ObjectLibrary
+	#undef WorldLibrary
 }

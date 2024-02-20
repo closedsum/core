@@ -939,7 +939,73 @@ namespace NCsProperty
 		return GetFloatPropertyValue(Context, Result.StructValue, Result.Struct, Result.PropertyName, OutSuccess, Log);
 	}
 
+			// Float or Double
+	#pragma region
+
+	float FLibrary::GetFloatOrDoublePropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FResult ResultType;
+		
+		ResultType Result;
+		OutSuccess = GetEndPropertyInfoByPath(Context, StructValue, Struct, Path, Result, Log);
+
+		if (!OutSuccess)
+			return 0.0f;
+
+		const float FloatValue = GetFloatPropertyValue(Context, Result.StructValue, Result.Struct, Result.PropertyName, OutSuccess, nullptr);
+
+		if (OutSuccess)
+			return FloatValue;
+
+		const double DoubleValue = GetDoublePropertyValue(Context, Result.StructValue, Result.Struct, Result.PropertyName, OutSuccess, nullptr);
+
+		if (OutSuccess)
+			return (float)DoubleValue;
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Property with name: %s from Struct: %s is NOT of type: float or double."), *Context, *(Result.PropertyName.ToString()), *(Result.Struct->GetName())));
+		return 0.0f;
+	}
+
+	#pragma endregion Float or Double
+
 	#pragma endregion Float
+
+		// Double
+	#pragma region
+
+	double* FLibrary::GetDoublePropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
+	{
+		CS_IS_PTR_NULL_CHECKED(StructValue)
+
+		FDoubleProperty* DoubleProperty = FindPropertyByNameChecked<FDoubleProperty>(Context, Struct, PropertyName);
+
+		return ContainerPtrToValuePtrChecked<double>(Context, DoubleProperty, StructValue);
+	}
+
+	double* FLibrary::GetDoublePropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(StructValue)
+
+		FDoubleProperty* DoubleProperty = FindPropertyByName<FDoubleProperty>(Context, Struct, PropertyName, Log);
+
+		if (!DoubleProperty)
+			return nullptr;
+		return ContainerPtrToValuePtr<double>(Context, DoubleProperty, StructValue, Log);
+	}
+
+	double FLibrary::GetDoublePropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FResult ResultType;
+		
+		ResultType Result;
+		OutSuccess = GetEndPropertyInfoByPath(Context, StructValue, Struct, Path, Result, Log);
+
+		if (!OutSuccess)
+			return 0.0;
+		return GetDoublePropertyValue(Context, Result.StructValue, Result.Struct, Result.PropertyName, OutSuccess, Log);
+	}
+
+	#pragma endregion Double
 
 		// Struct
 	#pragma region
@@ -1044,6 +1110,80 @@ namespace NCsProperty
 	}
 
 	#pragma endregion Rotator
+
+		// Name
+	#pragma region
+
+	FName* FLibrary::GetNamePropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
+	{
+		CS_IS_PTR_NULL_CHECKED(StructValue)
+
+		FNameProperty* NameProperty = FindPropertyByNameChecked<FNameProperty>(Context, Struct, PropertyName);
+
+		return ContainerPtrToValuePtrChecked<FName>(Context, NameProperty, StructValue);
+	}
+
+	FName* FLibrary::GetNamePropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(StructValue)
+
+		FNameProperty* NameProperty = FindPropertyByName<FNameProperty>(Context, Struct, PropertyName, Log);
+
+		if (!NameProperty)
+			return nullptr;
+		return ContainerPtrToValuePtr<FName>(Context, NameProperty, StructValue, Log);
+	}
+
+	FName FLibrary::GetNamePropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FResult ResultType;
+		
+		ResultType Result;
+		OutSuccess = GetEndPropertyInfoByPath(Context, StructValue, Struct, Path, Result, Log);
+
+		if (!OutSuccess)
+			return NAME_None;
+		return GetNamePropertyValue(Context, Result.StructValue, Result.Struct, Result.PropertyName, OutSuccess, Log);
+	}
+
+	#pragma endregion Name
+
+		// String
+	#pragma region
+
+	FString* FLibrary::GetStringPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
+	{
+		CS_IS_PTR_NULL_CHECKED(StructValue)
+
+		FStrProperty* StringProperty = FindPropertyByNameChecked<FStrProperty>(Context, Struct, PropertyName);
+
+		return ContainerPtrToValuePtrChecked<FString>(Context, StringProperty, StructValue);
+	}
+
+	FString* FLibrary::GetStringPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(StructValue)
+
+		FStrProperty* StringProperty = FindPropertyByName<FStrProperty>(Context, Struct, PropertyName, Log);
+
+		if (!StringProperty)
+			return nullptr;
+		return ContainerPtrToValuePtr<FString>(Context, StringProperty, StructValue, Log);
+	}
+
+	FString FLibrary::GetStringPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FResult ResultType;
+		
+		ResultType Result;
+		OutSuccess = GetEndPropertyInfoByPath(Context, StructValue, Struct, Path, Result, Log);
+
+		if (!OutSuccess)
+			return FString();
+		return GetStringPropertyValue(Context, Result.StructValue, Result.Struct, Result.PropertyName, OutSuccess, Log);
+	}
+
+	#pragma endregion String
 
 		// SoftObjectPtr
 	#pragma region

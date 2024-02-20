@@ -1,4 +1,6 @@
-// Copyright Studio Sai. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 
 #include "CsManager_Data_Delegates.generated.h"
@@ -21,13 +23,28 @@ namespace NCsData
 {
 	namespace NManager
 	{
-		/**
-		* Delegate type for the event when a Payload loaded asynchronously completes.
-		*  This is a synchronous event (fired on the Game Thread).
-		*
-		* @param WasSuccessful
-		* @param PayloadName
-		*/
-		DECLARE_DELEGATE_TwoParams(FOnAsyncLoadPayloadComplete, bool /*WasSuccessful*/, const FName& /*PayloadName*/);
+		namespace NOnce
+		{
+			/**
+			* Delegate type for the event when a Payload loaded asynchronously completes.
+			*  This is a synchronous event (fired on the Game Thread).
+			*
+			* @param WasSuccessful
+			* @param PayloadName
+			*/
+			DECLARE_DELEGATE_TwoParams(FOnAsyncLoadPayloadComplete, bool /*WasSuccessful*/, const FName& /*PayloadName*/);
+		}
+
+		namespace NPersistent
+		{
+			/**
+			* Delegate type for the event when a Payload loaded asynchronously completes.
+			*  This is a synchronous event (fired on the Game Thread).
+			*
+			* @param WasSuccessful
+			* @param PayloadName
+			*/
+			DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAsyncLoadPayloadComplete, bool /*WasSuccessful*/, const FName& /*PayloadName*/);
+		}
 	}
 }

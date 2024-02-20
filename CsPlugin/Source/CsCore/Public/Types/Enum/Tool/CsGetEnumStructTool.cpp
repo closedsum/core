@@ -60,6 +60,9 @@ namespace NCsEnum
 			{
 				SET_CONTEXT(AddPropertyChange);
 
+				if (!Outer)
+					return;
+
 				FPropertyChange& Change = PropertyChanges.AddDefaulted_GetRef();
 				Change.Name   = Name;
 				Change.Struct = Struct;

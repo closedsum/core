@@ -121,6 +121,12 @@ void UCsData_Skin_VisualStaticMeshAndMaterial::Load(const int32& LoadFlags)
 	bLoaded = true;
 }
 
+void UCsData_Skin_VisualStaticMeshAndMaterial::TopLoad()
+{
+	if (!DataProxy)
+		Init();
+}
+
 void UCsData_Skin_VisualStaticMeshAndMaterial::Unload()
 {
 

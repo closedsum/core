@@ -89,7 +89,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Blueprint", meta = (AutoCreateRefTerm = "Context"))
 	static UBlueprintGeneratedClass* GetGeneratedClass(const FString& Context, UBlueprint* Blueprint);
 
-
 	/**
 	* Get the Default Object associated with the Blueprint.
 	*

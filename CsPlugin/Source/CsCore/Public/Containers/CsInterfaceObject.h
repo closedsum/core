@@ -13,6 +13,8 @@ struct TCsInterfaceObject
 {
 protected:
 
+	FName Name;
+
 	/** Pointer to InterfaceType. */
 	InterfaceType* Interface;
 
@@ -36,6 +38,7 @@ protected:
 public:
 
 	TCsInterfaceObject() :
+		Name(NAME_None),
 		Interface(nullptr),
 		WeakObject(nullptr),
 		Object(nullptr),
@@ -47,6 +50,8 @@ public:
 
 
 	virtual ~TCsInterfaceObject() {}
+
+	FORCEINLINE const FName& GetName() const { return Name; }
 
 	FORCEINLINE InterfaceType* GetInterface() const
 	{
@@ -83,7 +88,6 @@ public:
 	FORCEINLINE UObject* GetObjectChecked(const FString& Context) const
 	{
 		checkf(Object, TEXT("%s: Object is NULL."), *Context);
-
 		return Object;
 	}
 
@@ -95,7 +99,6 @@ public:
 		T* O = Cast<T>(Object);
 
 		checkf(O, TEXT("%s: Failed to Cast Object: %s with Class: %s to type: %s."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()), *(T::StaticClass()->GetName()));
-
 		return O;
 	}
 
@@ -105,6 +108,7 @@ public:
 		WeakObject = Object;
 		Class	   = Object ? Object->GetClass() : nullptr;
 		bObject	   = Object != nullptr;
+		Name	   = Object ? Object->GetFName() : NAME_None;
 	}
 
 	FORCEINLINE const bool& IsObject() const
@@ -139,8 +143,14 @@ public:
 		return Interface != nullptr || (bScript && Object != nullptr);
 	}
 
+	FORCEINLINE bool IsValidObject() const
+	{
+		return WeakObject.IsValid() && WeakObject.Get() == Object && Object != nullptr;
+	}
+
 	virtual void Reset()
 	{
+		Name = NAME_None;
 		Interface = nullptr;
 		WeakObject = nullptr;
 		Object = nullptr;

@@ -102,6 +102,88 @@ namespace NCsCamera
 
 	#pragma endregion Get
 
+	// Is
+	#pragma region
+	
+	bool FLibrary::IsCameraComponent(const UActorComponent* Component)
+	{
+		return Cast<UCameraComponent>(Component) != nullptr;
+	}
+		
+	#pragma endregion Is
+
+	// Spawn
+	#pragma region
+
+		ACameraActor* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const UCameraComponent* Component)
+		{
+			CS_IS_PENDING_KILL_CHECKED(Component)
+
+			ACameraActor* Camera = WorldLibrary::SpawnChecked<ACameraActor>(Context, WorldContext);
+			
+			CopyChecked(Context, Component, Camera);
+			return Camera;				
+		}
+
+	#pragma endregion Spawn
+
+	// Copy
+	#pragma region
+
+		void FLibrary::CopyChecked(const FString& Context, const UCameraComponent* From, ACameraActor* To)
+		{
+			CS_IS_PENDING_KILL_CHECKED(From)
+			CS_IS_PENDING_KILL_CHECKED(To)
+
+			UCameraComponent* ToComponent = To->GetCameraComponent();
+
+			To->Tags = From->ComponentTags;
+
+			// Orientation
+			To->SetActorLocationAndRotation(From->GetComponentLocation(), From->GetComponentQuat());
+			To->SetActorScale3D(From->GetComponentScale());
+
+			// Properties
+			ToComponent->SetFieldOfView(From->FieldOfView);
+			ToComponent->SetOrthoWidth(From->OrthoWidth);
+			ToComponent->SetOrthoNearClipPlane(From->OrthoNearClipPlane);
+			ToComponent->SetOrthoFarClipPlane(From->OrthoFarClipPlane);
+			ToComponent->SetAspectRatio(From->AspectRatio);
+			ToComponent->SetConstraintAspectRatio(From->bConstrainAspectRatio);
+			ToComponent->SetUseFieldOfViewForLOD(From->bUseFieldOfViewForLOD);
+			ToComponent->bLockToHmd = From->bLockToHmd;
+			ToComponent->bUsePawnControlRotation = From->bUsePawnControlRotation;
+			ToComponent->SetProjectionMode(From->ProjectionMode);
+			ToComponent->SetPostProcessBlendWeight(From->PostProcessBlendWeight);
+			ToComponent->PostProcessSettings = From->PostProcessSettings;
+
+			// Visibility
+			To->SetActorHiddenInGame(From->bHiddenInGame);
+		}
+
+	#pragma endregion Copy
+
+	// Destroy
+	#pragma region
+	
+		void FLibrary::SimulateDestroyChecked(const FString& Context, UCameraComponent* Component)
+		{
+			CS_IS_PENDING_KILL_CHECKED(Component)
+
+			Component->SetVisibleFlag(false);
+			Component->SetHiddenInGame(true);
+			Component->SetComponentTickEnabled(false);
+			Component->Deactivate();
+			Component->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		}
+
+		void FLibrary::SimulateDestroyByActorComponentChecked(const FString& Context, UActorComponent* Component)
+		{
+			SimulateDestroyChecked(Context, CS_CAST_CHECKED(Component, UActorComponent, UCameraComponent));
+		}
+
+	#pragma endregion Destroy
+
 	// Location
 	#pragma region
 

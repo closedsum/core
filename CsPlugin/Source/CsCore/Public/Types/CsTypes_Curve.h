@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "Struct/CsTypes_StructOps.h"
 #include "Types/Enum/CsEnumMap.h"
 #include "Curves/RealCurve.h"
 // Log
@@ -10,7 +11,158 @@
 
 #include "CsTypes_Curve.generated.h"
 
-// UCurveFloat
+// FCsCurve
+#pragma region
+
+class UCurveBase;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsCurve
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve")
+	TSoftObjectPtr<UCurveBase> Curve;
+
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	int32 Curve_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Curve")
+	UCurveBase* Curve_Internal;
+
+public:
+
+	FCsCurve() :
+		Curve(nullptr),
+		Curve_LoadFlags(0),
+		Curve_Internal(nullptr)
+	{
+	}
+
+	/**
+	* Get the Hard reference to the UCurveBase asset.
+	*
+	* return Curve
+	*/
+	FORCEINLINE UCurveBase* Get() const { return Curve_Internal; }
+
+	/**
+	* Get the pointer to the Hard reference to the UCurveBase asset.
+	*
+	* return Curve
+	*/
+	FORCEINLINE UCurveBase** GetPtr() { return &Curve_Internal; }
+
+	/**
+	* Get the Hard reference to the UCurveBase asset.
+	*
+	* @param Context	The calling context.
+	* return			Curve
+	*/
+	FORCEINLINE UCurveBase* GetChecked(const FString& Context) const
+	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("%s: Curve's Path is NOT Valid."), *Context);
+		checkf(Curve_Internal, TEXT("%s: Curve has NOT been loaded from Path @ %s."), *Context, *(Curve.ToSoftObjectPath().ToString()));
+
+		return Curve_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UCurveBase asset.
+	*
+	* return Curve
+	*/
+	FORCEINLINE UCurveBase* GetChecked() const
+	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("FCsCurve::GetChecked: Curve's Path is NOT Valid."));
+		checkf(Curve_Internal, TEXT("FCsCurve::GetChecked: Curve has NOT been loaded from Path @ %s."), *(Curve.ToSoftObjectPath().ToString()));
+
+		return Curve_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UCurveBase asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Curve
+	*/
+	UCurveBase* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve's Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (!Curve_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve has NOT been loaded from Path @ %s."), *Context, *(Curve.ToSoftObjectPath().ToString())));
+		}
+		return Curve_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UCurveBase asset.
+	*
+	* return Curve
+	*/
+	UCurveBase* GetSafe()
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Curve_Internal;
+	}
+
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsCurve)
+	CS_STRUCT_OPS_IS_VALID(FCsCurve)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsCurve)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsCurve)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("%s: Curve's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsCurve)
+
+	FORCEINLINE void Unload()
+	{
+		Curve.ResetWeakPtr();
+		Curve_Internal = nullptr;
+	}
+};
+
+#pragma endregion FCsCurve
+
+// FCsCurveFloat
 #pragma region
 
 class UCurveFloat;
@@ -23,13 +175,14 @@ struct CSCORE_API FCsCurveFloat
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve")
 	TSoftObjectPtr<UCurveFloat> Curve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Curve_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Curve")
 	UCurveFloat* Curve_Internal;
 
 public:
+
 	FCsCurveFloat() :
 		Curve(nullptr),
 		Curve_LoadFlags(0),
@@ -59,8 +212,7 @@ public:
 	*/
 	FORCEINLINE UCurveFloat* GetChecked(const FString& Context) const
 	{
-		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("%s: Curve is NULL."), *Context);
-
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("%s: Curve's Path is NOT Valid."), *Context);
 		checkf(Curve_Internal, TEXT("%s: Curve has NOT been loaded from Path @ %s."), *Context, *(Curve.ToSoftObjectPath().ToString()));
 
 		return Curve_Internal;
@@ -73,8 +225,7 @@ public:
 	*/
 	FORCEINLINE UCurveFloat* GetChecked() const
 	{
-		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialInterface::GetChecked: Curve is NULL."));
-
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialInterface::GetChecked: Curve's Path is NOT Valid."));
 		checkf(Curve_Internal, TEXT("FCsMaterialInterface::GetChecked: Curve has NOT been loaded from Path @ %s."), *(Curve.ToSoftObjectPath().ToString()));
 
 		return Curve_Internal;
@@ -92,7 +243,7 @@ public:
 		if (!Curve.ToSoftObjectPath().IsValid())
 		{
 			if (Log)
-				Log(FString::Printf(TEXT("%s: Curve is NULL."), *Context));
+				Log(FString::Printf(TEXT("%s: Curve's Path is NOT Valid."), *Context));
 			return nullptr;
 		}
 
@@ -116,21 +267,51 @@ public:
 		return Curve_Internal;
 	}
 
-	bool IsValidChecked(const FString& Context) const
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsCurveFloat)
+	CS_STRUCT_OPS_IS_VALID(FCsCurveFloat)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsCurveFloat)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsCurveFloat)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
 		check(GetChecked(Context));
 		return true;
 	}
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!GetSafe(Context, Log))
 			return false;
 		return true;
 	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("%s: Curve's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsCurveFloat)
+
+	FORCEINLINE void Unload()
+	{
+		Curve.ResetWeakPtr();
+		Curve_Internal = nullptr;
+	}
 };
 
-#pragma endregion UCurveFloat
+#pragma endregion FCsCurveFloat
 
 // FCsCurveVector
 #pragma region
@@ -145,7 +326,7 @@ struct CSCORE_API FCsCurveVector
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve")
 	TSoftObjectPtr<UCurveVector> Curve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Curve_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Curve")
@@ -160,23 +341,279 @@ public:
 	{
 	}
 
-	FORCEINLINE bool operator==(const FCsCurveVector& B) const
-	{
-		return Curve == B.Curve && Curve_LoadFlags == B.Curve_LoadFlags && Curve_Internal == B.Curve_Internal;
-	}
+	/**
+	* Get the Hard reference to the UCurveVector asset.
+	*
+	* return Curve Vector
+	*/
+	FORCEINLINE UCurveVector* Get() const { return Curve_Internal; }
 
-	FORCEINLINE bool operator!=(const FCsCurveVector& B) const
-	{
-		return !(*this == B);
-	}
+	/**
+	* Get the pointer to the Hard reference to the UCurveVector asset.
+	*
+	* return Curve Vector
+	*/
+	FORCEINLINE UCurveVector** GetPtr() { return &Curve_Internal; }
 
-	FORCEINLINE UCurveVector* Get() const
+	/**
+	* Get the Hard reference to the UCurveVector asset.
+	*
+	* @param Context	The calling context.
+	* return			Curve Vector
+	*/
+	FORCEINLINE UCurveVector* GetChecked(const FString& Context) const
 	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("%s: Curve's Path is NOT Valid."), *Context);
+		checkf(Curve_Internal, TEXT("%s: Curve has NOT been loaded from Path @ %s."), *Context, *(Curve.ToSoftObjectPath().ToString()));
+
 		return Curve_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UCurveVector asset.
+	*
+	* return Curve Float
+	*/
+	FORCEINLINE UCurveVector* GetChecked() const
+	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("FCsCurveVector::GetChecked: Curve's Path is NOT Valid."));
+		checkf(Curve_Internal, TEXT("FCsCurveVector::GetChecked: Curve has NOT been loaded from Path @ %s."), *(Curve.ToSoftObjectPath().ToString()));
+
+		return Curve_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UCurveVector asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Curve Vector
+	*/
+	UCurveVector* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve's Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (!Curve_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve has NOT been loaded from Path @ %s."), *Context, *(Curve.ToSoftObjectPath().ToString())));
+		}
+		return Curve_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UCurveVector asset.
+	*
+	* return Curve Vector
+	*/
+	UCurveVector* GetSafe()
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Curve_Internal;
+	}
+
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsCurveVector)
+	CS_STRUCT_OPS_IS_VALID(FCsCurveVector)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsCurveVector)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsCurveVector)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("%s: Curve's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsCurveVector)
+
+	FORCEINLINE void Unload()
+	{
+		Curve.ResetWeakPtr();
+		Curve_Internal = nullptr;
 	}
 };
 
 #pragma endregion FCsCurveVector
+
+// FCsCurveLinearColor
+#pragma region
+
+class UCurveLinearColor;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsCurveLinearColor
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve")
+	TSoftObjectPtr<UCurveLinearColor> Curve;
+
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	int32 Curve_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Curve")
+	UCurveLinearColor* Curve_Internal;
+
+public:
+
+	FCsCurveLinearColor() :
+		Curve(nullptr),
+		Curve_LoadFlags(0),
+		Curve_Internal(nullptr)
+	{
+	}
+
+	/**
+	* Get the Hard reference to the UCurveLinearColor asset.
+	*
+	* return Curve Linear Color
+	*/
+	FORCEINLINE UCurveLinearColor* Get() const { return Curve_Internal; }
+
+	/**
+	* Get the pointer to the Hard reference to the UCurveLinearColor asset.
+	*
+	* return Curve Linear Color
+	*/
+	FORCEINLINE UCurveLinearColor** GetPtr() { return &Curve_Internal; }
+
+	/**
+	* Get the Hard reference to the UCurveLinearColor asset.
+	*
+	* @param Context	The calling context.
+	* return			Curve Vector
+	*/
+	FORCEINLINE UCurveLinearColor* GetChecked(const FString& Context) const
+	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("%s: Curve's Path is NOT Valid."), *Context);
+		checkf(Curve_Internal, TEXT("%s: Curve has NOT been loaded from Path @ %s."), *Context, *(Curve.ToSoftObjectPath().ToString()));
+
+		return Curve_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UCurveLinearColor asset.
+	*
+	* return Curve Linear Color
+	*/
+	FORCEINLINE UCurveLinearColor* GetChecked() const
+	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("FCsCurveLinearColor::GetChecked: Curve's Path is NOT Valid."));
+		checkf(Curve_Internal, TEXT("FCsCurveLinearColor::GetChecked: Curve has NOT been loaded from Path @ %s."), *(Curve.ToSoftObjectPath().ToString()));
+
+		return Curve_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UCurveLinearColor asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Curve Linear Color
+	*/
+	UCurveLinearColor* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve's Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (!Curve_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve has NOT been loaded from Path @ %s."), *Context, *(Curve.ToSoftObjectPath().ToString())));
+		}
+		return Curve_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UCurveVector asset.
+	*
+	* return Curve Vector
+	*/
+	UCurveLinearColor* GetSafe()
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Curve_Internal;
+	}
+
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsCurveLinearColor)
+	CS_STRUCT_OPS_IS_VALID(FCsCurveLinearColor)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsCurveLinearColor)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsCurveLinearColor)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("%s: Curve's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsCurveLinearColor)
+
+	FORCEINLINE void Unload()
+	{
+		Curve.ResetWeakPtr();
+		Curve_Internal = nullptr;
+	}
+};
+
+#pragma endregion FCsCurveLinearColor
 
 // RichCurveInterpMode
 #pragma region

@@ -143,6 +143,17 @@ namespace NCsLevel
 			*/
 			static FString GetLongPackageNameChecked(const FString& Context, const UObject* WorldContext);
 
+			/**
+			* Safely get the Long Package Name for the Persistent Level. This is usually in the form:
+			* LevelPath.LevelName
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			* return				LevelPath.LevelName
+			*/
+			static FString GetSafeLongPackageName(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+
 		#pragma endregion Name
 
 		// FName
@@ -233,7 +244,26 @@ namespace NCsLevel
 		#pragma region
 		public:
 
+			/**
+			* Check if Path is Current Persistent Level.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Path
+			* return				Whether Path is the Current Persistent Level or not.
+			*/
 			static bool IsPathChecked(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path);
+
+			/**
+			* Safely check if Path is Current Persistent Level.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Path
+			* @param Log			(optional)
+			* return				Whether Path is the Current Persistent Level or not.
+			*/
+			static bool SafeIsPath(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 		#pragma endregion Path
 

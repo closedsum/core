@@ -55,6 +55,46 @@ namespace NCsData
 		*/
 		static FString PrintObjectAndClass(ICsData* Data);
 
+		/**
+		* Print out Object as 'Data: %s with Class: %s'.
+		* 
+		* @param Object	Object to print.
+		* return		String in the format: 'Object: %s with Class: %s'.
+		*/
+		static FString PrintDataAndClass(UObject* Object);
+
+		/**
+		* Print out Data as 'Data: %s with Class: %s'.
+		* 
+		* @param Data	Data to print.
+		* return		String in the formate: 'Object: %s with Class: %s'.
+		*/
+		static FString PrintDataAndClass(ICsData* Data);
+
+	// Convert
+	#pragma region
+	public:
+
+		static DataType* ConvertChecked(const FString& Context, UObject* Object);
+
+		template<typename InterfaceType>
+		FORCEINLINE static InterfaceType* ConvertChecked(const FString& Context, UObject* Object)
+		{
+			return GetInterfaceChecked<InterfaceType>(Context, ConvertChecked(Context, Object));
+		}
+
+		static DataType* SafeConvert(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		template<typename InterfaceType>
+		FORCEINLINE static InterfaceType* SafeConvert(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			if (DataType* Data = SafeConvert(Context, Object, Log))
+				return GetSafeInterfaceChecked<InterfaceType>(Context, Data);
+			return nullptr;
+		}
+
+	#pragma endregion Convert
+
 	// Load
 	#pragma region
 	public:
@@ -114,6 +154,36 @@ namespace NCsData
 
 			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}
+
+		static const DataType* TopLoadChecked(const FString& Context, UObject* Object);
+
+		template<typename InterfaceType>
+		FORCEINLINE static const InterfaceType* TopLoadChecked(const FString& Context, UObject* Object)
+		{
+			return GetInterfaceChecked<InterfaceType>(Context, TopLoadChecked(Context, Object));
+		}
+
+		static const DataType* SafeTopLoad(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		template<typename InterfaceType>
+		static const InterfaceType* SafeTopLoad(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			if (const DataType* Data = SafeTopLoad(Context, Object, Log))
+			{
+				if (const InterfaceType* Interface = GetSafeInterfaceChecked<InterfaceType>(Context, Data))
+					return Interface;
+
+				if (Log)
+				{
+					Log(FString::Printf(TEXT("%s: %s does NOT implement the interface: %s."), *Context, *PrintDataAndClass(Object), *(InterfaceType::Name.ToString())));
+				}
+			}
+			return nullptr;
+		}
+
+		static void UnloadChecked(const FString& Context, UObject* Object);
+
+		static void Script_UnloadChecked(const FString& Context, UObject* Object);
 
 	#pragma endregion Load
 

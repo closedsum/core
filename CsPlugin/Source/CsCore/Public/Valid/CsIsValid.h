@@ -5,17 +5,26 @@
 // Interface
 #include "Containers/CsGetInterfaceMap.h"
 
+#include "CsIsValid.generated.h"
+
+
+UINTERFACE(Blueprintable)
+class CSCORE_API UCsIsValid : public UCsGetInterfaceMap
+{
+	GENERATED_UINTERFACE_BODY()
+};
+
 /**
 */
-struct CSCORE_API ICsIsValid : public ICsGetInterfaceMap
+class CSCORE_API ICsIsValid : public ICsGetInterfaceMap
 {
+	GENERATED_IINTERFACE_BODY()
+
 public:
 
 	static const FName Name;
 
 public:
-
-	virtual ~ICsIsValid(){}
 
 	virtual bool IsValidChecked(const FString& Context) const = 0;
 

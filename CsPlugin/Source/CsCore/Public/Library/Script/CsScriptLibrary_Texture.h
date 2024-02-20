@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "Types/CsTypes_Texture.h"
 
 #include "CsScriptLibrary_Texture.generated.h"
 
@@ -38,4 +40,40 @@ public:
 	static UTexture* LoadByStringPath(const FString& Context, const FString& Path);
 
 #pragma endregion Load
+
+// Unload
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Texture", meta = (DisplayName = "Unload (FCsTexture)", CompactNodeTitle = "Unload"))
+	static void FCsTexture_Unload(UPARAM(ref) FCsTexture& Texture)
+	{
+		Texture.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Texture", meta = (DisplayName = "Unload (TArray<FCsTexture>)", CompactNodeTitle = "Unload"))
+	static void TArray_FCsTexture_Unload(UPARAM(ref) TArray<FCsTexture>& Textures)
+	{
+		for (FCsTexture& Texture : Textures)
+		{
+			Texture.Unload();
+		}
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Texture", meta = (DisplayName = "Unload (FCsTexture2D)", CompactNodeTitle = "Unload"))
+	static void FCsTexture2D_Unload(UPARAM(ref) FCsTexture2D& Texture)
+	{
+		Texture.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Texture", meta = (DisplayName = "Unload (TArray<FCsTexture2D>)", CompactNodeTitle = "Unload"))
+	static void TArray_FCsTexture2D_Unload(UPARAM(ref) TArray<FCsTexture2D>& Textures)
+	{
+		for (FCsTexture2D& Texture : Textures)
+		{
+			Texture.Unload();
+		}
+	}
+
+#pragma endregion Unload
 };

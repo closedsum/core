@@ -72,6 +72,20 @@ bool FCsAnimSequenceInfo::IsValid(const FString& Context, void(*Log)(const FStri
 	return true;
 }
 
+bool FCsAnimSequenceInfo::IsTopValidChecked(const FString& Context) const
+{
+	CS_IS_TOP_VALID_CHECKED(Anim);
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(PlayRate, 0.0f)
+	return true;
+}
+
+bool FCsAnimSequenceInfo::IsTopValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_TOP_VALID(Anim)
+	CS_IS_FLOAT_GREATER_THAN(PlayRate, 0.0f)
+	return true;
+}
+
 namespace NCsAnim
 {
 	namespace NSequence
@@ -86,6 +100,18 @@ namespace NCsAnim
 		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 		{
 			CS_IS_PTR_NULL(GetAnim())
+			CS_IS_FLOAT_GREATER_THAN(GetPlayRate(), 0.0f)
+			return true;
+		}
+
+		bool FInfo::IsTopValidChecked(const FString& Context) const
+		{
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(GetPlayRate(), 0.0f)
+			return true;
+		}
+
+		bool FInfo::IsTopValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
 			CS_IS_FLOAT_GREATER_THAN(GetPlayRate(), 0.0f)
 			return true;
 		}
@@ -120,6 +146,20 @@ bool FCsAnimMontageInfo::IsValid(const FString& Context, void(*Log)(const FStrin
 	return true;
 }
 
+bool FCsAnimMontageInfo::IsTopValidChecked(const FString& Context) const
+{
+	CS_IS_TOP_VALID_CHECKED(Anim);
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(PlayRate, 0.0f)
+	return true;
+}
+
+bool FCsAnimMontageInfo::IsTopValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_TOP_VALID(Anim)
+	CS_IS_FLOAT_GREATER_THAN(PlayRate, 0.0f)
+	return true;
+}
+
 namespace NCsAnim
 {
 	namespace NMontage
@@ -134,6 +174,18 @@ namespace NCsAnim
 		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 		{
 			CS_IS_PTR_NULL(GetAnim())
+			CS_IS_FLOAT_GREATER_THAN(GetPlayRate(), 0.0f)
+			return true;
+		}
+
+		bool FInfo::IsTopValidChecked(const FString& Context) const
+		{
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(GetPlayRate(), 0.0f)
+			return true;
+		}
+
+		bool FInfo::IsTopValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
 			CS_IS_FLOAT_GREATER_THAN(GetPlayRate(), 0.0f)
 			return true;
 		}

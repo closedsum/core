@@ -5,7 +5,7 @@
 #include "CsCore.h"
 
 // CVar
-//#include "CsCVars_Manager_Data.h"
+#include "Managers/Level/CsCVars_Manager_Level.h"
 // Coroutine
 #include "Coroutine/CsRoutine.h"
 // Types
@@ -13,6 +13,7 @@
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 	// Common
+#include "Game/CsLibrary_GameInstance.h"
 #include "Level/CsLibrary_Level.h"
 #include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Valid.h"
@@ -22,6 +23,8 @@
 #include "Engine/World.h"
 // Level
 #include "Level/CsLevelScriptActor.h"
+#include "Engine/LevelStreaming.h"
+#include "Managers/Level/Event/CsLevel_Streaming_EventHandler.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -40,14 +43,21 @@ namespace NCsManagerLevel
 		{
 			// Singleton
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Init);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Initialize);
 			// Persistent Level
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Check_FinishedLoadingPersistentLevel);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
 			// Change Map
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap_TransitionAsDestination);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap_TransitionAsDestination_Internal);
+			// Transition
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, GameInstance_Transition_OnFinish);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, DestroyOtherPIEWorld);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, DestroyOtherPIEWorld_Internal);
+			// Streaming
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Level_Streaming_OnAdded);
 		}
 
 		namespace Name
@@ -55,6 +65,7 @@ namespace NCsManagerLevel
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
 			// Change Map
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, ChangeMap_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, ChangeMap_TransitionAsDestination_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, DestroyOtherPIEWorld_Internal);
 		}
 	}
@@ -67,9 +78,32 @@ UCsManager_Level* UCsManager_Level::s_Instance;
 bool UCsManager_Level::s_bShutdown = false;
 
 UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	// Change Map
+	CurrentMap(),
+	bChangeMapCompleted(false),
+	ChangeMap_OnStart_Event(),
+	ChangeMap_OnStart_ScriptEvent(),
+	ChangeMap_OnComplete_Event(),
+	ChangeMap_OnComplete_ScriptEvent(),
+	// Streaming
+	StreamingEventsByIdMap(),
+	Level_Streaming_OnLoaded_Event(),
+	Level_Streaming_OnLoaded_ScriptEvent(),
+	Level_Streaming_OnUnloaded_Event(),
+	Level_Streaming_OnUnloaded_ScriptEvent(),
+	Level_Streaming_OnShown_Event(),
+	Level_Streaming_OnShown_ScriptEvent(),
+	Level_Streaming_OnHidden_Event(),
+	Level_Streaming_OnHidden_ScriptEvent()
 {
 }
+
+#define USING_NS_CACHED using namespace NCsManagerLevel::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsManagerLevel::NCached; \
+	const FString& Context = Str::##__FunctionName
+#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
+#define WorldLibrary NCsWorld::FLibrary
 
 // Singleton
 #pragma region
@@ -198,6 +232,13 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 
 void UCsManager_Level::Initialize()
 {
+	SET_CONTEXT(Initialize);
+
+	// Bind to Delegate
+	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+	GameInstanceLibrary::GetTransition_OnFinish_EventChecked(Context, MyRoot).AddUObject(this, &UCsManager_Level::GameInstance_Transition_OnFinish);
+	NCsLevel::NStreaming::NDynamic::FDelegates::OnAdded_Event.AddUObject(this, &UCsManager_Level::Level_Streaming_OnAdded);
 }
 
 void UCsManager_Level::CleanUp()
@@ -219,8 +260,6 @@ void UCsManager_Level::SetMyRoot(UObject* InRoot)
 
 UObject* UCsManager_Level::GetWorldContext() const
 {
-	typedef NCsWorld::FLibrary WorldLibrary;
-
 	return WorldLibrary::GetSafe(MyRoot);
 }
 
@@ -229,11 +268,8 @@ UObject* UCsManager_Level::GetWorldContext() const
 
 void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 {
-	using namespace NCsManagerLevel::NCached;
+	SET_CONTEXT(Check_FinishedLoadingPersistentLevel);
 
-	const FString& Context = Str::Check_FinishedLoadingPersistentLevel;
-
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
@@ -257,11 +293,8 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 
 void UCsManager_Level::Check_FinishedLoadingPersistentLevel(const FString& MapPackageName)
 {
-	using namespace NCsManagerLevel::NCached;
+	SET_CONTEXT(Check_FinishedLoadingPersistentLevel);
 
-	const FString& Context = Str::Check_FinishedLoadingPersistentLevel;
-
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
@@ -335,40 +368,44 @@ char UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine*
 #pragma region
 
 #define ChangeMapParamsType NCsLevel::NManager::NChangeMap::FParams
+
 void UCsManager_Level::ChangeMap(const ChangeMapParamsType& Params)
 {
-#undef ChangeMapParamsType
-	using namespace NCsManagerLevel::NCached;
-
-	const FString& Context = Str::ChangeMap;
+	SET_CONTEXT(ChangeMap);
 
 	CS_IS_VALID_CHECKED(Params);
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineScheculerLibrary;
-	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
+	if (Params.IsTransitionDestination())
+	{
+		ChangeMap_TransitionAsDestination(Params);
+	}
+	else
+	{
+		typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
 
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadImplType* Payload		   = CoroutineScheculerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
+		const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+		PayloadImplType* Payload		   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
-	typedef UCsManager_Level ClassType;
-	#define COROUTINE ChangeMap_Internal
+		typedef UCsManager_Level ClassType;
+		#define COROUTINE ChangeMap_Internal
 
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+		Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
 
-	#undef COROUTINE
+		#undef COROUTINE
 
-	CS_COROUTINE_PAYLOAD_PASS_STRING_START
+		CS_COROUTINE_PAYLOAD_PASS_STRING_START
 
-	CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, Params.Map);
-	CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, Params.TransitionMap);
+		CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, Params.Map);
+		CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, Params.TransitionMap);
 
-	typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
+		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 
-	CurrentMap = LevelLibrary::GetSafeName(MyRoot);
+		CurrentMap = LevelLibrary::GetSafeName(MyRoot);
 
-	bChangeMapCompleted = false;
+		bChangeMapCompleted = false;
 
-	CoroutineScheculerLibrary::StartChecked(Context, MyRoot, Payload);
+		CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	}
 }
 
 char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
@@ -379,6 +416,9 @@ char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
 	CS_COROUTINE_READ_STRING_CONST_REF(R, TransitionMap);
 
 	CS_COROUTINE_BEGIN(R);
+
+	ChangeMap_OnStart_Event.Broadcast(CurrentMap, NewMap);
+	ChangeMap_OnStart_ScriptEvent.Broadcast(CurrentMap, NewMap);
 
 	// Transition to New Map
 	{
@@ -404,32 +444,217 @@ char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
 
 	bChangeMapCompleted = true;
 
-	OnChangeMapComplete_Event.Broadcast(CurrentMap, NewMap);
+	ChangeMap_OnComplete_Event.Broadcast(CurrentMap, NewMap);
+	ChangeMap_OnComplete_ScriptEvent.Broadcast(CurrentMap, NewMap);
 
 	CurrentMap = NewMap;
 
 	CS_COROUTINE_END(R);
 }
 
+void UCsManager_Level::ChangeMap_TransitionAsDestination(const ChangeMapParamsType& Params)
+{
+	SET_CONTEXT(ChangeMap_TransitionAsDestination);
+
+	CS_IS_VALID_CHECKED(Params);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	PayloadImplType* Payload		   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
+
+	typedef UCsManager_Level ClassType;
+	#define COROUTINE ChangeMap_TransitionAsDestination_Internal
+
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+
+	#undef COROUTINE
+
+	CS_COROUTINE_PAYLOAD_PASS_STRING_START
+
+	CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, Params.Map);
+	CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, Params.TransitionMap);
+
+	typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
+
+	CurrentMap = LevelLibrary::GetSafeName(MyRoot);
+
+	bChangeMapCompleted = false;
+
+	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+}
+
+char UCsManager_Level::ChangeMap_TransitionAsDestination_Internal(FCsRoutine* R)
+{
+	SET_CONTEXT(ChangeMap_TransitionAsDestination_Internal);
+
+	CS_COROUTINE_READ_STRING_START
+
+	CS_COROUTINE_READ_STRING_CONST_REF(R, NewMap);
+	CS_COROUTINE_READ_STRING_CONST_REF(R, TransitionMap);
+
+	CS_COROUTINE_BEGIN(R);
+
+	ChangeMap_OnStart_Event.Broadcast(CurrentMap, TransitionMap);
+	ChangeMap_OnStart_ScriptEvent.Broadcast(CurrentMap, TransitionMap);
+
+	// Transition to "New Map" (TransitionMap)
+	MyRoot->GetWorld()->ServerTravel(NewMap);
+	MyRoot->GetWorld()->SetSeamlessTravelMidpointPause(true);
+	Check_FinishedLoadingPersistentLevel(TransitionMap);
+
+	// Wait until the New Map is loaded
+	CS_COROUTINE_WAIT_UNTIL(R, HasFinishedLoadingPersistentLevel());
+
+	bChangeMapCompleted = true;
+
+	ChangeMap_OnComplete_Event.Broadcast(CurrentMap, TransitionMap);
+	ChangeMap_OnComplete_ScriptEvent.Broadcast(CurrentMap, TransitionMap);
+
+	CurrentMap = TransitionMap;
+
+	CS_COROUTINE_END(R);
+}
+
+#undef ChangeMapParamsType
+
 #pragma endregion Change Map
+
+// Transition
+#pragma region
+
+void UCsManager_Level::GameInstance_Transition_OnFinish()
+{
+	SET_CONTEXT(GameInstance_Transition_OnFinish);
+
+	StreamingEventsByIdMap.Reset();
+
+	// TODO: FUTURE: Handle Dynamic loading of levels not in the streaming list
+
+	UWorld* World = WorldLibrary::GetChecked(Context, MyRoot);
+
+	// Populate Map
+	for (ULevelStreaming* LevelStreaming : World->GetStreamingLevels())
+	{
+		if (IsValid(LevelStreaming))
+		{
+			const uint32 Id					   = LevelStreaming->GetUniqueID();
+			ACsLevel_Streaming_EventHandler* A = World->SpawnActor<ACsLevel_Streaming_EventHandler>();
+
+			StreamingEventsByIdMap.Add(Id, A);
+		}
+	}
+
+	for (ULevelStreaming* LevelStreaming : World->GetStreamingLevels())
+	{
+		if (IsValid(LevelStreaming))
+		{
+			const uint32 Id								  = LevelStreaming->GetUniqueID();
+			ACsLevel_Streaming_EventHandler* EventHandler = StreamingEventsByIdMap[Id];
+
+			EventHandler->Level = LevelStreaming;
+
+			LevelStreaming->OnLevelLoaded.AddDynamic(EventHandler, &ACsLevel_Streaming_EventHandler::OnLevelLoaded);
+			LevelStreaming->OnLevelUnloaded.AddDynamic(EventHandler, &ACsLevel_Streaming_EventHandler::OnLevelUnloaded);
+			LevelStreaming->OnLevelShown.AddDynamic(EventHandler, &ACsLevel_Streaming_EventHandler::OnLevelShown);
+			LevelStreaming->OnLevelHidden.AddDynamic(EventHandler, &ACsLevel_Streaming_EventHandler::OnLevelHidden);
+		}	
+	}
+}
+
+#pragma endregion Transition
+
+// Streaming
+#pragma region
+
+void UCsManager_Level::Level_Streaming_OnAdded(UWorld* World, ULevelStreaming* LevelStreaming)
+{
+	SET_CONTEXT(Level_Streaming_OnAdded);
+
+	if (World == WorldLibrary::GetChecked(Context, GetWorldContext()))
+	{
+		const uint32 Id					   = LevelStreaming->GetUniqueID();
+		ACsLevel_Streaming_EventHandler* A = World->SpawnActor<ACsLevel_Streaming_EventHandler>();
+
+		StreamingEventsByIdMap.Add(Id, A);
+
+		A->Level = LevelStreaming;
+
+		LevelStreaming->OnLevelLoaded.AddDynamic(A, &ACsLevel_Streaming_EventHandler::OnLevelLoaded);
+		LevelStreaming->OnLevelUnloaded.AddDynamic(A, &ACsLevel_Streaming_EventHandler::OnLevelUnloaded);
+		LevelStreaming->OnLevelShown.AddDynamic(A, &ACsLevel_Streaming_EventHandler::OnLevelShown);
+		LevelStreaming->OnLevelHidden.AddDynamic(A, &ACsLevel_Streaming_EventHandler::OnLevelHidden);
+	}
+}
+
+void UCsManager_Level::Broadcast_Level_Streaming_OnLoaded(ULevelStreaming* Level) 
+{
+#if WITH_EDITOR
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerLevelStreaming))
+	{
+		UE_LOG(LogCs, Warning, TEXT("Level Streaming: OnLoaded: %s"), *(Level->GetWorldAssetPackageName()));
+	}
+#endif // #if WITH_EDITOR
+
+	Level_Streaming_OnLoaded_Event.Broadcast(Level);
+	Level_Streaming_OnLoaded_ScriptEvent.Broadcast(Level);
+}
+
+void UCsManager_Level::Broadcast_Level_Streaming_OnUnloaded(ULevelStreaming* Level)
+{
+#if WITH_EDITOR
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerLevelStreaming))
+	{
+		UE_LOG(LogCs, Warning, TEXT("Level Streaming: OnUnloaded: %s"), *(Level->GetWorldAssetPackageName()));
+	}
+#endif // #if WITH_EDITOR
+
+	Level_Streaming_OnUnloaded_Event.Broadcast(Level);
+	Level_Streaming_OnUnloaded_ScriptEvent.Broadcast(Level);
+}
+
+void UCsManager_Level::Broadcast_Level_Streaming_OnShown(ULevelStreaming* Level)
+{
+#if WITH_EDITOR
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerLevelStreaming))
+	{
+		UE_LOG(LogCs, Warning, TEXT("Level Streaming: OnShown: %s"), *(Level->GetWorldAssetPackageName()));
+	}
+#endif // #if WITH_EDITOR
+
+	Level_Streaming_OnShown_Event.Broadcast(Level);
+	Level_Streaming_OnShown_ScriptEvent.Broadcast(Level);
+}
+
+void UCsManager_Level::Broadcast_Level_Streaming_OnHidden(ULevelStreaming* Level)
+{
+#if WITH_EDITOR
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerLevelStreaming))
+	{
+		UE_LOG(LogCs, Warning, TEXT("Level Streaming: OnHidden: %s"), *(Level->GetWorldAssetPackageName()));
+	}
+#endif // #if WITH_EDITOR
+
+	Level_Streaming_OnHidden_Event.Broadcast(Level);
+	Level_Streaming_OnHidden_ScriptEvent.Broadcast(Level);
+}
+
+#pragma endregion Streaming
 
 #if WITH_EDITOR
 
 void UCsManager_Level::DestroyOtherPIEWorld(const FString& URL)
 {
-	using namespace NCsManagerLevel::NCached;
-
-	const FString& Context = Str::DestroyOtherPIEWorld;
+	SET_CONTEXT(DestroyOtherPIEWorld);
 
 	// TODO: Check URL is not Current World
 
 	CS_IS_STRING_EMPTY_CHECKED(URL);
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineScheculerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadImplType* Payload		   = CoroutineScheculerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
+	PayloadImplType* Payload		   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
 	typedef UCsManager_Level ClassType;
 	#define COROUTINE DestroyOtherPIEWorld_Internal
@@ -451,7 +676,7 @@ void UCsManager_Level::DestroyOtherPIEWorld(const FString& URL)
 
 		bFinishedDestroyingOtherPIEWorld = false;
 
-		CoroutineScheculerLibrary::StartChecked(Context, MyRoot, Payload);
+		CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 	}
 	else
 	{
@@ -480,3 +705,8 @@ char UCsManager_Level::DestroyOtherPIEWorld_Internal(FCsRoutine* R)
 }
 
 #endif // #if WITH_EDITOR
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
+#undef CoroutineSchedulerLibrary
+#undef WorldLibrary

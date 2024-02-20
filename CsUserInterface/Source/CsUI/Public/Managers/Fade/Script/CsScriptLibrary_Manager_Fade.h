@@ -106,4 +106,24 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Manager|Fade", meta = (DisplayName = "Fade Black to Clear (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Time"))
 	static void FadeBlackToClearChecked(const FString& Context, const UObject* WorldContextObject, const float& Time, bool& OutSuccess);
+
+	/**
+	* Get whether the Fade is Active or not.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* return
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Manager|Fade", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static bool IsFadeActive(const FString& Context, const UObject* WorldContextObject);
+
+	/**
+	* Get whether the Fade is Active or not.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param OutSuccess			(out)
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Manager|Fade", meta = (DisplayName = "Is Fade Active (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static bool IsFadeActiveChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
 };

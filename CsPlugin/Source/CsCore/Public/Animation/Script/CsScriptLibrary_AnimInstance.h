@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "Animation/CsTypes_Anim.h"
 // Blueprint
 #include "Animation/AnimBlueprintGeneratedClass.h"
 
@@ -51,6 +53,18 @@ public:
 	static UAnimBlueprintGeneratedClass* LoadAndGetGeneratedClassByStringPath(const FString& Context, const FString& Path);
 
 #pragma endregion Load
+
+// Unload
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimInstance", meta = (DisplayName = "Unload (FCsAnimBlueprint)", CompactNodeTitle = "Unload"))
+	static void FCsAnimBlueprint_Unload(UPARAM(ref) FCsAnimBlueprint& AnimBlueprint)
+	{
+		AnimBlueprint.Unload();
+	}
+
+#pragma endregion Unload
 
 // Get
 #pragma region

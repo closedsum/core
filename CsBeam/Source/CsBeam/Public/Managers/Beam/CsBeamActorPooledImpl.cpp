@@ -130,6 +130,8 @@ namespace NCsBeamActorPooledImpl
 ACsBeamActorPooledImpl::ACsBeamActorPooledImpl(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer),
 	Type(),
+	// Shutdown
+	bShutdown(false),
 	// ICsPooledObject
 	Cache(nullptr),
 	CacheImpl(nullptr),
@@ -251,6 +253,7 @@ void ACsBeamActorPooledImpl::Shutdown()
 		Cache = nullptr;
 		CacheImpl = nullptr;
 	}
+	bShutdown = true;
 }
 
 #pragma endregion ICsShutdown

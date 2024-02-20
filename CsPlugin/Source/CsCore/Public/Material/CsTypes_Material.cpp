@@ -681,6 +681,40 @@ bool FCsMaterialInterface_WithParameters::IsValid(const FString& Context, void(*
 	return true;
 }
 
+bool FCsMaterialInterface_WithParameters::IsTopValidChecked(const FString& Context) const
+{
+	CS_IS_TOP_VALID_CHECKED(Material);
+	// Float
+	for (const FCsMaterialParameterFloat& Param : FloatParameters)
+	{
+		check(Param.IsValidChecked(Context, Material.Get()));
+	}
+	// Color
+	for (const FCsMaterialParameterColor& Param : ColorParameters)
+	{
+		check(Param.IsValidChecked(Context, Material.Get()));
+	}
+	return true;
+}
+
+bool FCsMaterialInterface_WithParameters::IsTopValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_TOP_VALID(Material)
+	// Float
+	for (const FCsMaterialParameterFloat& Param : FloatParameters)
+	{
+		if (!Param.IsValid(Context, Material.Get(), Log))
+			return false;
+	}
+	// Color
+	for (const FCsMaterialParameterColor& Param : ColorParameters)
+	{
+		if (!Param.IsValid(Context, Material.Get(), Log))
+			return false;
+	}
+	return true;
+}
+
 void FCsMaterialInterface_WithParameters::SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID) const
 {
 	check(IsValidChecked(Context));
@@ -946,6 +980,40 @@ bool FCsMaterialInterface_WithRangeParameters::IsValidChecked(const FString& Con
 bool FCsMaterialInterface_WithRangeParameters::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_VALID(Material)
+	// Float
+	for (const FCsMaterialParameterFloatRange& Param : FloatParameters)
+	{
+		if (!Param.IsValid(Context, Material.Get(), Log))
+			return false;
+	}
+	// Color
+	for (const FCsMaterialParameterColorRange& Param : ColorParameters)
+	{
+		if (!Param.IsValid(Context, Material.Get(), Log))
+			return false;
+	}
+	return true;
+}
+
+bool FCsMaterialInterface_WithRangeParameters::IsTopValidChecked(const FString& Context) const
+{
+	CS_IS_TOP_VALID_CHECKED(Material);
+	// Float
+	for (const FCsMaterialParameterFloatRange& Param : FloatParameters)
+	{
+		check(Param.IsValidChecked(Context, Material.Get()));
+	}
+	// Color
+	for (const FCsMaterialParameterColorRange& Param : ColorParameters)
+	{
+		check(Param.IsValidChecked(Context, Material.Get()));
+	}
+	return true;
+}
+
+bool FCsMaterialInterface_WithRangeParameters::IsTopValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_TOP_VALID(Material)
 	// Float
 	for (const FCsMaterialParameterFloatRange& Param : FloatParameters)
 	{

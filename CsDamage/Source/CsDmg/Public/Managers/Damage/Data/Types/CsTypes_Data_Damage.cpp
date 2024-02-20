@@ -4,6 +4,7 @@
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 
 // Library
+#include "Data/CsLibrary_Data.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsDmgLog.h"
@@ -83,23 +84,54 @@ bool FCsData_ECsDamageData::IsValid(const FString& Context, void(*Log)(const FSt
 // FCsData_DamagePtr
 #pragma region
 
+namespace NCsDataDamagePtr
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsData_DamagePtr, Unload);
+		}
+	}
+}
+
+#define USING_NS_CACHED using namespace NCsDataDamagePtr::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsDataDamagePtr::NCached; \
+	const FString& Context = Str::##__FunctionName
+
 UObject* FCsData_DamagePtr::SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 {
-	const FSoftObjectPath& Path = Data.ToSoftObjectPath();
-
-	if (!Path.IsValid())
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data is NOT Valid."), *Context))
-		return nullptr;
-	}
+	CS_IS_SOFT_CLASS_PTR_VALID_RET_NULL(Data, UObject)
 
 	UObject* O = Data.LoadSynchronous();
 
 	if (!O)
 	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Data at Path: %s."), *Context, *(Path.ToString())))
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Data at Path: %s."), *Context, *(Data.ToString())))
+		return nullptr;
 	}
 	return O;
 }
+
+void FCsData_DamagePtr::Unload()
+{
+	SET_CONTEXT(Unload);
+
+	if (IsValid(Data_Internal))
+	{
+		typedef NCsData::FLibrary DataLibrary;
+
+		if (DataLibrary::SafeScriptImplements(Context, Data_Internal, nullptr))
+			DataLibrary::Script_UnloadChecked(Context, Data_Internal);
+		else
+			DataLibrary::UnloadChecked(Context, Data_Internal);
+	}
+
+	Data_Internal = nullptr;
+	Data_Class = nullptr;
+}
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
 
 #pragma endregion FCsData_DamagePtr

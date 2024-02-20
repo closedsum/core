@@ -7,11 +7,15 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Level/CsManager_Level.h"
 // Settings
 #include "Managers/Level/CsSettings_Manager_Level.h"
+// Level
+#include "Engine/LevelStreaming.h"
+
 
 #if WITH_EDITOR
 // Library
@@ -39,6 +43,8 @@ namespace NCsLevel
 				}
 			}
 		}
+
+		#define ObjectLibrary NCsObject::FLibrary
 
 		// ContextRoot
 		#pragma region
@@ -100,7 +106,7 @@ namespace NCsLevel
 			UObject* ContextRoot		    = GetContextRootChecked(Context, ContextObject);
 			UCsManager_Level* Manager_Level = UCsManager_Level::Get(ContextRoot);
 
-			CS_IS_PTR_NULL_CHECKED(Manager_Level)
+			CS_IS_PENDING_KILL_CHECKED(Manager_Level)
 			return Manager_Level;
 		}
 
@@ -115,7 +121,7 @@ namespace NCsLevel
 
 			UCsManager_Level* Manager_Level = UCsManager_Level::GetSafe(Context, ContextRoot, Log);
 
-			if (!Manager_Level)
+			if (!ObjectLibrary::IsValidObject(Manager_Level))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Level."), *Context));
 			}
@@ -135,7 +141,7 @@ namespace NCsLevel
 
 			UCsManager_Level* Manager_Level = UCsManager_Level::GetSafe(Context, ContextRoot, Log);
 
-			if (!Manager_Level)
+			if (!ObjectLibrary::IsValidObject(Manager_Level))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Level."), *Context));
 			}
@@ -238,7 +244,86 @@ namespace NCsLevel
 
 		#undef ParamsType
 
+		#define OnChangeMapStartEventType NCsLevel::NManager::FChangeMap_OnStart
+		#define OnChangeMapCompleteEventType NCsLevel::NManager::FChangeMap_OnComplete
+
+		OnChangeMapStartEventType& FLibrary::GetChangeMap_OnStart_EventChecked(const FString& Context, const UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetChangeMap_OnStart_Event();
+		}
+
+		OnChangeMapCompleteEventType& FLibrary::GetChangeMap_OnComplete_EventChecked(const FString& Context, const UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetChangeMap_OnComplete_Event();
+		}
+
+		#undef OnChangeMapStartEventType
+		#undef OnChangeMapCompleteEventType
+
 		#pragma endregion Change Map
+
+		// Streaming
+		#pragma region
+
+		#define OnLevelLoadedEventType NCsLevel::NManager::NLevel::NStreaming::FOnLoaded
+		#define OnLevelUnloadedEventType NCsLevel::NManager::NLevel::NStreaming::FOnUnloaded
+		#define OnLevelShownEventType NCsLevel::NManager::NLevel::NStreaming::FOnShown
+		#define OnLevelHiddenEventType NCsLevel::NManager::NLevel::NStreaming::FOnHidden
+
+		OnLevelLoadedEventType& FLibrary::GetLevel_Streaming_OnLoaded_EventChecked(const FString& Context, UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetLevel_Streaming_OnLoaded_Event();
+		}
+
+		void FLibrary::BroadcastChecked_Level_Streaming_OnLoaded(const FString& Context, UObject* ContextObject, ULevelStreaming* Level)
+		{
+			CS_IS_PENDING_KILL_CHECKED(Level)
+
+			GetChecked(Context, ContextObject)->Broadcast_Level_Streaming_OnLoaded(Level);
+		}
+
+		OnLevelUnloadedEventType& FLibrary::GetLevel_Streaming_OnUnloaded_EventChecked(const FString& Context, UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetLevel_Streaming_OnUnloaded_Event();
+		}
+
+		void FLibrary::BroadcastChecked_Level_Streaming_OnUnloaded(const FString& Context, UObject* ContextObject, ULevelStreaming* Level)
+		{
+			CS_IS_PENDING_KILL_CHECKED(Level)
+
+			GetChecked(Context, ContextObject)->Broadcast_Level_Streaming_OnUnloaded(Level);
+		}
+
+		OnLevelShownEventType& FLibrary::GetLevel_Streaming_OnShown_EventChecked(const FString& Context, UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetLevel_Streaming_OnShown_Event();
+		}
+
+		void FLibrary::BroadcastChecked_Level_Streaming_OnShown(const FString& Context, UObject* ContextObject, ULevelStreaming* Level)
+		{
+			CS_IS_PENDING_KILL_CHECKED(Level)
+
+			GetChecked(Context, ContextObject)->Broadcast_Level_Streaming_OnShown(Level);
+		}
+
+		OnLevelHiddenEventType& FLibrary::GetLevel_Streaming_OnHidden_EventChecked(const FString& Context, UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetLevel_Streaming_OnHidden_Event();
+		}
+
+		void FLibrary::BroadcastChecked_Level_Streaming_OnHidden(const FString& Context, UObject* ContextObject, ULevelStreaming* Level)
+		{
+			CS_IS_PENDING_KILL_CHECKED(Level)
+
+			GetChecked(Context, ContextObject)->Broadcast_Level_Streaming_OnHidden(Level);
+		}
+
+		#undef OnLevelLoadedEventType
+		#undef OnLevelUnloadedEventType
+		#undef OnLevelShownEventType
+		#undef OnLevelHiddenEventType
+
+		#pragma endregion Streaming
 
 		#if WITH_EDITOR
 
@@ -253,5 +338,7 @@ namespace NCsLevel
 		}
 
 		#endif // #if WITH_EDITOR
+
+		#undef ObjectLibrary
 	}
 }

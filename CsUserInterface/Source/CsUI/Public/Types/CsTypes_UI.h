@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-#include "Engine/DataTable.h"
+// Data
+#include "Data/CsTableRowBase_Data.h"
 // Log
 #include "Utility/CsUILog.h"
 
@@ -15,7 +16,7 @@ class UUserWidget;
 class UClass;
 
 USTRUCT(BlueprintType)
-struct CSUI_API FCsUserWidget : public FTableRowBase
+struct CSUI_API FCsUserWidget : public FCsTableRowBase_Data
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -44,6 +45,20 @@ public:
 		Widget_SubclassOf(nullptr)
 	{
 	}
+
+// FCsTableRowBase_Data
+#pragma region
+public:
+
+	virtual void Unload() override 
+	{
+		Widget_Internal = nullptr;
+		Widget_Class = nullptr;
+	}
+
+#pragma endregion FCsTableRowBase_Data
+
+public:
 
 	FORCEINLINE UUserWidget* Get() const { return Widget_Internal; }
 	
@@ -129,6 +144,8 @@ public:
 		}
 		return true;
 	}
+
+
 };
 
 #pragma endregion FCsUserWidget

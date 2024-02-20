@@ -55,6 +55,78 @@ public:
 	static int32 GetIntByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
 
 	/**
+	* Get the float value by Path from Object.
+	*
+	* @param Context		The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess		(out)
+	* return				float value by Path.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Property", meta = (AutoCreateRefTerm = "Context,Path"))
+	static float GetFloatByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+	/**
+	* Get the float or double (cast to float) value by Path from Object.
+	*
+	* @param Context		The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess		(out)
+	* return				float or double (cast to float) value by Path.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Property", meta = (AutoCreateRefTerm = "Context,Path"))
+	static float GetFloatOrDoubleByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+	/**
+	* Get the FName value by Path from Object.
+	*
+	* @param Context		The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess		(out)
+	* return				FName value by Path.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Property", meta = (AutoCreateRefTerm = "Context,Path"))
+	static FName GetNameByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+	/**
+	* Get the FVector value by Path from Object.
+	*
+	* @param Context		The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess		(out)
+	* return				FVector value by Path.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Property", meta = (AutoCreateRefTerm = "Context,Path"))
+	static FVector GetVectorByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+	/**
+	* Get the FRotator value by Path from Object.
+	*
+	* @param Context		The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess		(out)
+	* return				FRotator value by Path.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Property", meta = (AutoCreateRefTerm = "Context,Path"))
+	static FRotator GetRotatorByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+	/**
+	* Get the FString value by Path from Object.
+	*
+	* @param Context		The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess		(out)
+	* return				FString value by Path.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Property", meta = (AutoCreateRefTerm = "Context,Path"))
+	static FString GetStringByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+	/**
 	* Get the SoftObjectPtr as a String value by Path from Object.
 	*
 	* @param Context		The calling context.

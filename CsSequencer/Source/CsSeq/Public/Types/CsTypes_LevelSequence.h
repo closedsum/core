@@ -1,5 +1,9 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Struct/CsTypes_StructOps.h"
 // Log
 #include "Utility/CsSeqLog.h"
 
@@ -56,7 +60,6 @@ public:
 	FORCEINLINE ULevelSequence* GetChecked(const FString& Context) const
 	{
 		checkf(Sequence.ToSoftObjectPath().IsValid(), TEXT("%s: Sequence is NULL."), *Context);
-
 		checkf(Sequence_Internal, TEXT("%s: Sequence has NOT been loaded from Path @ %s."), *Context, *(Sequence.ToSoftObjectPath().ToString()));
 
 		return Sequence_Internal;
@@ -69,8 +72,7 @@ public:
 	*/
 	FORCEINLINE ULevelSequence* GetChecked() const
 	{
-		checkf(Sequence.ToSoftObjectPath().IsValid(), TEXT("FCsLevelSequence::GetChecked: Mesh is NULL."));
-
+		checkf(Sequence.ToSoftObjectPath().IsValid(), TEXT("FCsLevelSequence::GetChecked: Sequence is NULL."));
 		checkf(Sequence_Internal, TEXT("FCsLevelSequence::GetChecked: Sequence has NOT been loaded from Path @ %s."), *(Sequence.ToSoftObjectPath().ToString()));
 
 		return Sequence_Internal;
@@ -112,6 +114,11 @@ public:
 		return Sequence_Internal;
 	}
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsLevelSequence)
+	CS_STRUCT_OPS_IS_VALID(FCsLevelSequence)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsLevelSequence)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsLevelSequence)
+
 	bool IsValidChecked(const FString& Context) const
 	{
 		check(GetChecked(Context));
@@ -123,6 +130,37 @@ public:
 		if (!GetSafe(Context, Log))
 			return false;
 		return true;
+	}
+
+	bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Sequence.ToSoftObjectPath().IsValid(), TEXT("%s: Sequence Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning) const
+	{
+		if (!Sequence.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Sequence Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+		return true;
+	}
+
+	FORCEINLINE void Reset()
+	{
+		Sequence = nullptr;
+		Sequence_Internal = nullptr;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsLevelSequence)
+
+	FORCEINLINE void Unload()
+	{
+		Sequence.ResetWeakPtr();
+		Sequence_Internal = nullptr;
 	}
 };
 

@@ -4,9 +4,11 @@
 #pragma once
 // Types
 #include "Managers/Level/CsTypes_Manager_Level.h"
+#include "Managers/Level/CsManager_Level_Delegates.h"
 
 class UObject;
 class UCsManager_Level;
+class ULevelStreaming;
 
 namespace NCsLevel
 {
@@ -227,6 +229,26 @@ namespace NCsLevel
 
 		#pragma endregion Get
 		
+		// Active
+		#pragma region
+		public:
+
+			FORCEINLINE static bool IsActiveChecked(const FString& Context, const UObject* ContextObject)
+			{
+			#if !UE_BUILD_SHIPPING
+				return GetChecked(Context, ContextObject) != nullptr;
+			#else
+				return true;
+			#endif // #if !UE_BUILD_SHIPPING
+			}
+
+			FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				return GetSafe(Context, ContextObject, Log) != nullptr;
+			}
+
+		#pragma endregion Active
+
 		// Class
 		#pragma region
 		public:
@@ -239,11 +261,11 @@ namespace NCsLevel
 		#pragma region
 		public:
 
-			static bool HasFinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot);
+			static bool HasFinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextObject);
 
-			static void Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot);
+			static void Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextObject);
 
-			static void Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot, const FString& MapPackageName);
+			static void Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextObject, const FString& MapPackageName);
 
 		#pragma endregion Persistent Level
 
@@ -251,27 +273,69 @@ namespace NCsLevel
 		#pragma region
 		public:
 
-			static bool HasChangeMapCompletedChecked(const FString& Context, const UObject* ContextRoot);
+			static bool HasChangeMapCompletedChecked(const FString& Context, const UObject* ContextObject);
 
-			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextRoot, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
-			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextRoot, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#define ParamsType NCsLevel::NManager::NChangeMap::FParams
 
-			static void ChangeMapChecked(const FString& Context, const UObject* ContextRoot, const ParamsType& Params);
+			static void ChangeMapChecked(const FString& Context, const UObject* ContextObject, const ParamsType& Params);
 
-			static bool SafeChangeMap(const FString& Context, const UObject* ContextRoot, const ParamsType& Params, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, void(*Log)(const FString&) = &FCsLog::Warning);
 
-			FORCEINLINE static bool SafeChangeMap(const FString& Context, const UObject* ContextRoot, const ParamsType& Params, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			FORCEINLINE static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
 			{
-				OutSuccess = SafeChangeMap(Context, ContextRoot, Params, Log);
+				OutSuccess = SafeChangeMap(Context, ContextObject, Params, Log);
 				return OutSuccess;
 			}
 
 		#undef ParamsType
 
+		#define OnChangeMapStartEventType NCsLevel::NManager::FChangeMap_OnStart
+		#define OnChangeMapCompleteEventType NCsLevel::NManager::FChangeMap_OnComplete
+
+			static OnChangeMapStartEventType& GetChangeMap_OnStart_EventChecked(const FString& Context, const UObject* ContextObject);
+
+			static OnChangeMapCompleteEventType& GetChangeMap_OnComplete_EventChecked(const FString& Context, const UObject* ContextObject);
+
+		#undef OnChangeMapStartEventType
+		#undef OnChangeMapCompleteEventType
+
 		#pragma endregion Change Map
+
+		// Streaming
+		#pragma region
+		public:
+
+		#define OnLevelLoadedEventType NCsLevel::NManager::NLevel::NStreaming::FOnLoaded
+		#define OnLevelUnloadedEventType NCsLevel::NManager::NLevel::NStreaming::FOnUnloaded
+		#define OnLevelShownEventType NCsLevel::NManager::NLevel::NStreaming::FOnShown
+		#define OnLevelHiddenEventType NCsLevel::NManager::NLevel::NStreaming::FOnHidden
+
+			static OnLevelLoadedEventType& GetLevel_Streaming_OnLoaded_EventChecked(const FString& Context, UObject* ContextObject);
+
+			static void BroadcastChecked_Level_Streaming_OnLoaded(const FString& Context, UObject* ContextObject, ULevelStreaming* Level);
+
+			static OnLevelUnloadedEventType& GetLevel_Streaming_OnUnloaded_EventChecked(const FString& Context, UObject* ContextObject);
+
+			static void BroadcastChecked_Level_Streaming_OnUnloaded(const FString& Context, UObject* ContextObject, ULevelStreaming* Level);
+
+			static OnLevelShownEventType& GetLevel_Streaming_OnShown_EventChecked(const FString& Context, UObject* ContextObject);
+
+			static void BroadcastChecked_Level_Streaming_OnShown(const FString& Context, UObject* ContextObject, ULevelStreaming* Level);
+
+			static OnLevelHiddenEventType& GetLevel_Streaming_OnHidden_EventChecked(const FString& Context, UObject* ContextObject);
+
+			static void BroadcastChecked_Level_Streaming_OnHidden(const FString& Context, UObject* ContextObject, ULevelStreaming* Level);
+
+		#undef OnLevelLoadedEventType
+		#undef OnLevelUnloadedEventType
+		#undef OnLevelShownEventType
+		#undef OnLevelHiddenEventType
+
+		#pragma endregion Streaming
 
 		#if WITH_EDITOR
 

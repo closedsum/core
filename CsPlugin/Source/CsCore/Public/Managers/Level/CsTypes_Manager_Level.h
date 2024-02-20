@@ -18,9 +18,15 @@ struct FCsManagerLevel_ChangeMapParams
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Managers|Level")
 	FString TransitionMap;
 
+	/** Whether the Transition Map should be the Destination Map.
+		This is used in the case when performing a Seamless Travel and "Pausing" on the Transition Map. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Managers|Level")
+	bool bTransitionAsDestination;
+
 	FCsManagerLevel_ChangeMapParams() :
 		Map(),
-		TransitionMap()
+		TransitionMap(),
+		bTransitionAsDestination(false)
 	{
 	}
 
@@ -40,19 +46,27 @@ namespace NCsLevel
 
 				FString TransitionMap;
 
+				/** Whether the Transition Map should be the Destination Map.
+					This is used in the case when performing a Seamless Travel and "Pausing" on the Transition Map. */
+				bool bTransitionAsDestination;
+
 				FParams() : 
 					Map(),
-					TransitionMap()
+					TransitionMap(),
+					bTransitionAsDestination(false)
 				{
 				}
 
 				static FParams Make(const FCsManagerLevel_ChangeMapParams& Params)
 				{
 					FParams P;
-					P.Map			= Params.Map;
-					P.TransitionMap = Params.TransitionMap;
+					P.Map					   = Params.Map;
+					P.TransitionMap			   = Params.TransitionMap;
+					P.bTransitionAsDestination = Params.bTransitionAsDestination;
 					return P;
 				}
+
+				FORCEINLINE bool IsTransitionDestination() const { return bTransitionAsDestination; }
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

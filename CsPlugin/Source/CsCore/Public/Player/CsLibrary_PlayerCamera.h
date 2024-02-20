@@ -142,7 +142,12 @@ namespace NCsPlayer
 
 			static void SetViewTargetChecked(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams = FViewTargetTransitionParams());
 
-			static bool SetSafeViewTarget(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams = FViewTargetTransitionParams(), void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafeViewTarget(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SetSafeViewTarget(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SetSafeViewTarget(Context, Pawn, NewViewTarget, TransitionParams, Log);
+				return OutSuccess;
+			}
 
 			static AActor* GetViewTargetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 
@@ -176,6 +181,15 @@ namespace NCsPlayer
 		#pragma region
 		public:
 
+			static void SetFOVChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& FOV);
+
+			static bool SetSafeFOV(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& FOV, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SetSafeFOV(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& FOV, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SetSafeFOV(Context, WorldContext, ControllerId, FOV, Log);
+				return OutSuccess;
+			}
+
 			static void SetFOVChecked(const FString& Context, const APawn* Pawn, const float& FOV);
 
 			static bool SetSafeFOV(const FString& Context, const APawn* Pawn, const float& FOV, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -183,6 +197,15 @@ namespace NCsPlayer
 			{
 				OutSuccess = SetSafeFOV(Context, Pawn, FOV, Log);
 				return OutSuccess;
+			}
+
+			static float GetFOVChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+
+			static float GetSafeFOV(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& FOV, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static float GetSafeFOV(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& FOV, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				bool OutSuccess = false;
+				return GetSafeFOV(Context, WorldContext, ControllerId, FOV, OutSuccess, Log);
 			}
 
 			static float GetFOVChecked(const FString& Context, const APawn* Pawn);
@@ -195,6 +218,54 @@ namespace NCsPlayer
 			}
 
 		#pragma endregion FOV
+
+		// View
+		#pragma region
+		public:
+	
+			// Pitch
+
+				// Min
+
+			static void SetViewPitchMinChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& MinPitch);
+
+			static bool SetSafeViewPitchMin(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& MinPitch, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SetSafeViewPitchMin(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& MinPitch, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SetSafeViewPitchMin(Context, WorldContext, ControllerId, MinPitch, Log);
+				return OutSuccess;
+			}
+
+			static void SetViewPitchMinChecked(const FString& Context, const APawn* Pawn, const float& MinPitch);
+
+			static bool SetSafeViewPitchMin(const FString& Context, const APawn* Pawn, const float& MinPitch, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SetSafeViewPitchMin(const FString& Context, const APawn* Pawn, const float& MinPitch, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SetSafeViewPitchMin(Context, Pawn, MinPitch, Log);
+				return OutSuccess;
+			}
+
+				// Max
+
+			static void SetViewPitchMaxChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& MaxPitch);
+
+			static bool SetSafeViewPitchMax(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& MaxPitch, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SetSafeViewPitchMax(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const float& MaxPitch, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SetSafeViewPitchMax(Context, WorldContext, ControllerId, MaxPitch, Log);
+				return OutSuccess;
+			}
+
+			static void SetViewPitchMaxChecked(const FString& Context, const APawn* Pawn, const float& MaxPitch);
+
+			static bool SetSafeViewPitchMax(const FString& Context, const APawn* Pawn, const float& MaxPitch, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SetSafeViewPitchMax(const FString& Context, const APawn* Pawn, const float& MaxPitch, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SetSafeViewPitchMax(Context, Pawn, MaxPitch, Log);
+				return OutSuccess;
+			}
+
+		#pragma endregion View
 		};
 	}
 }

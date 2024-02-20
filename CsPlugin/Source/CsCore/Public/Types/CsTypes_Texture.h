@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Struct/CsTypes_StructOps.h"
 // Log
 #include "Utility/CsLog.h"
 // Engine
@@ -57,8 +59,7 @@ struct CSCORE_API FCsTexture : public FTableRowBase
 	*/
 	FORCEINLINE UTexture* GetChecked(const FString& Context) const
 	{
-		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("%s: Texture is NULL."), *Context);
-
+		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("%s: Texture's Path is NOT Valid."), *Context);
 		checkf(Texture_Internal, TEXT("%s: Texture has NOT been loaded from Path @ %s."), *Context, *(Texture.ToSoftObjectPath().ToString()));
 
 		return Texture_Internal;
@@ -67,12 +68,11 @@ struct CSCORE_API FCsTexture : public FTableRowBase
 	/**
 	* Get the Hard reference to the UTexture asset.
 	*
-	* return Static Mesh
+	* return Texture
 	*/
 	FORCEINLINE UTexture* GetChecked() const
 	{
-		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("FCsTexture::GetChecked: Mesh is NULL."));
-
+		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("FCsTexture::GetChecked: Texture's Path is NOT Valid."));
 		checkf(Texture_Internal, TEXT("FCsTexture::GetChecked: Texture has NOT been loaded from Path @ %s."), *(Texture.ToSoftObjectPath().ToString()));
 
 		return Texture_Internal;
@@ -90,7 +90,7 @@ struct CSCORE_API FCsTexture : public FTableRowBase
 		if (!Texture.ToSoftObjectPath().IsValid())
 		{
 			if (Log)
-				Log(FString::Printf(TEXT("%s: Texture is NULL."), *Context));
+				Log(FString::Printf(TEXT("%s: Texture's Path is NOT Valid."), *Context));
 			return nullptr;
 		}
 
@@ -114,17 +114,47 @@ struct CSCORE_API FCsTexture : public FTableRowBase
 		return Texture_Internal;
 	}
 
-	bool IsValidChecked(const FString& Context) const
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsTexture)
+	CS_STRUCT_OPS_IS_VALID(FCsTexture)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsTexture)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsTexture)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
 		check(GetChecked(Context));
 		return true;
 	}
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!GetSafe(Context, Log))
 			return false;
 		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("%s: Texture's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Texture.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Texture's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsTexture)
+
+	FORCEINLINE void Unload()
+	{
+		Texture.ResetWeakPtr();
+		Texture_Internal = nullptr;
 	}
 };
 
@@ -178,8 +208,7 @@ struct CSCORE_API FCsTexture2D : public FTableRowBase
 	*/
 	FORCEINLINE UTexture2D* GetChecked(const FString& Context) const
 	{
-		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("%s: Texture is NULL."), *Context);
-
+		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("%s: Texture's Path is NOT Valid."), *Context);
 		checkf(Texture_Internal, TEXT("%s: Texture has NOT been loaded from Path @ %s."), *Context, *(Texture.ToSoftObjectPath().ToString()));
 
 		return Texture_Internal;
@@ -188,12 +217,11 @@ struct CSCORE_API FCsTexture2D : public FTableRowBase
 	/**
 	* Get the Hard reference to the UTexture2D asset.
 	*
-	* return Static Mesh
+	* return Texture
 	*/
 	FORCEINLINE UTexture2D* GetChecked() const
 	{
-		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("FCsTexture::GetChecked: Mesh is NULL."));
-
+		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("FCsTexture::GetChecked: Texture's Path is NOT Valid."));
 		checkf(Texture_Internal, TEXT("FCsTexture::GetChecked: Texture has NOT been loaded from Path @ %s."), *(Texture.ToSoftObjectPath().ToString()));
 
 		return Texture_Internal;
@@ -204,14 +232,14 @@ struct CSCORE_API FCsTexture2D : public FTableRowBase
 	*
 	* @param Context	The calling context.
 	* @param Log		(optional)
-	* return			Static Mesh
+	* return			Texture
 	*/
 	UTexture2D* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!Texture.ToSoftObjectPath().IsValid())
 		{
 			if (Log)
-				Log(FString::Printf(TEXT("%s: Texture is NULL."), *Context));
+				Log(FString::Printf(TEXT("%s: Texture's Path is NOT Valid."), *Context));
 			return nullptr;
 		}
 
@@ -235,17 +263,47 @@ struct CSCORE_API FCsTexture2D : public FTableRowBase
 		return Texture_Internal;
 	}
 
-	bool IsValidChecked(const FString& Context) const
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsTexture2D)
+	CS_STRUCT_OPS_IS_VALID(FCsTexture2D)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsTexture2D)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsTexture2D)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
 		check(GetChecked(Context));
 		return true;
 	}
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!GetSafe(Context, Log))
 			return false;
 		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("%s: Texture's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Texture.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Texture's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsTexture2D)
+
+	FORCEINLINE void Unload()
+	{
+		Texture.ResetWeakPtr();
+		Texture_Internal = nullptr;
 	}
 };
 

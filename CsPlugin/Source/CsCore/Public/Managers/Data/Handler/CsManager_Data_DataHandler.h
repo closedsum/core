@@ -25,6 +25,13 @@
 class UObject;
 class UDataTable;
 
+#define PropertyLibrary NCsProperty::FLibrary
+#define DataManagerLibrary NCsData::NManager::FLibrary
+#define DataLibrary NCsData::FLibrary
+#if WITH_EDITOR
+#define WorldLibrary NCsWorld::FLibrary
+#endif // #if WITH_EDITOR
+
 namespace NCsData
 {
 	namespace NManager
@@ -201,8 +208,6 @@ namespace NCsData
 					const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
 					// Data
-					typedef NCsProperty::FLibrary PropertyLibrary;
-
 					FStructProperty* DataProperty = PropertyLibrary::FindStructPropertyByName<DataContainerType>(RowStruct, Name::Data);
 
 					if (!DataProperty)
@@ -212,8 +217,6 @@ namespace NCsData
 
 					// Check which rows from the DataTable have been loaded	
 				#if WITH_EDITOR
-					typedef NCsWorld::FLibrary WorldLibrary;
-
 					if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 					{
 						if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
@@ -238,8 +241,6 @@ namespace NCsData
 						else
 					#endif // #if WITH_EDITOR
 						{
-							typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 							RowPtr = DataManagerLibrary::GetSafeDataTableRow(Context, MyRoot, DataTableSoftObject, RowName, nullptr);
 						}
 
@@ -268,11 +269,16 @@ namespace NCsData
 							}
 						#endif // #if WITH_EDITOR
 
-							typedef NCsData::FLibrary DataLibrary;
+							if (DataLibrary::SafeScriptImplements(Context, O, nullptr))
+							{
+								DataAsUObjectMap.Add(RowName, O);
+							}
+							else
+							{
+								InterfaceDataType* IData = DataLibrary::GetChecked<InterfaceDataType>(Context, O);
 
-							InterfaceDataType* IData = DataLibrary::GetChecked<InterfaceDataType>(Context, O);
-
-							DataMap.Add(RowName, IData);
+								DataMap.Add(RowName, IData);
+							}
 						}
 					}
 				}
@@ -399,11 +405,9 @@ namespace NCsData
 					// Check implemented data
 					if (InterfaceDataType** ImplDataPtr = ImplDataMap.Find(Name))
 						return *ImplDataPtr;
-
 					// Check data
 					if (InterfaceDataType** DataPtr = DataMap.Find(Name))
 						return *DataPtr;
-
 					return nullptr;
 				}
 
@@ -414,11 +418,9 @@ namespace NCsData
 					// Check implemented data
 					if (const InterfaceDataType* const * ImplDataPtr = ImplDataMap.Find(Name))
 						return *ImplDataPtr;
-
 					// Check data
 					if (const InterfaceDataType* const * DataPtr = DataMap.Find(Name))
 						return *DataPtr;
-
 					return nullptr;
 				}
 
@@ -427,7 +429,6 @@ namespace NCsData
 					InterfaceDataType* Ptr = GetData(Context, Name);
 
 					checkf(Ptr, TEXT("%s: Failed to find a Data associated with Name: %s."), *Context, *(Name.ToString()));
-
 					return Ptr;
 				}
 
@@ -436,7 +437,6 @@ namespace NCsData
 					const InterfaceDataType* Ptr = GetData(Context, Name);
 
 					checkf(Ptr, TEXT("%s: Failed to find a Data associated with Name: %s."), *Context, *(Name.ToString()));
-
 					return Ptr;
 				}
 
@@ -473,6 +473,26 @@ namespace NCsData
 					}
 					return Ptr;
 				}
+
+				FORCEINLINE UObject* GetDataAsObject(const FString& Context, const FName& Name)
+				{
+					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+
+					if (UObject** DataPtr = DataAsUObjectMap.Find(Name))
+						return *DataPtr;
+					return nullptr;
+				}
+
+				FORCEINLINE const UObject* GetDataAsObject(const FString& Context, const FName& Name) const
+				{
+					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+
+					if (const UObject* const* DataPtr = DataAsUObjectMap.Find(Name))
+						return *DataPtr;
+					return nullptr;
+				}
+
+				FORCEINLINE bool DoesDataExists(const FString& Context, const FName& Name) const { return GetData(Context, Name) != nullptr || GetDataAsObject(Context, Name) != nullptr; }
 
 				template<typename EnumMap, typename EnumType>
 				FORCEINLINE InterfaceDataType* GetData(const FString& Context, const EnumType& Type)
@@ -550,6 +570,29 @@ namespace NCsData
 					return Ptr;
 				}
 
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE UObject* GetDataAsObject(const FString& Context, const EnumType& Type)
+				{
+					using namespace NCached;
+
+					check(EnumMap::Get().IsValidEnumChecked(Context, Str::Type, Type));
+
+					return GetDataAsObject(Context, Type.GetFName());
+				}
+
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE const UObject* GetDataAsObject(const FString& Context, const EnumType& Type) const
+				{
+					using namespace NCached;
+
+					check(EnumMap::Get().IsValidEnumChecked(Context, Str::Type, Type));
+
+					return GetDataAsObject(Context, Type.GetFName());
+				}
+
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE bool DoesDataExists(const FString& Context, const EnumType& Type) const { return GetData<EnumMap, EnumType>(Context, Type) != nullptr || GetDataAsObject<EnumMap, EnumType>(Context, Type) != nullptr; }
+
 				FORCEINLINE DataInterfaceMapType* GetSafeDataInterfaceMap(const FString& Context, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					if (Name == NAME_None)
@@ -610,16 +653,17 @@ namespace NCsData
 
 				void RemapDataMap(const FString& Context)
 				{
-					typedef NCsData::FLibrary DataLibrary;
-
 					for (const TPair<FName, UObject*>& Pair : DataAsUObjectMap)
 					{
 						const FName& EntryName = Pair.Key;
 						UObject* O			   = Pair.Value;
 
-						InterfaceDataType* IData = DataLibrary::GetChecked<InterfaceDataType>(Context, O);
+						if (!DataLibrary::SafeScriptImplements(Context, O, nullptr))
+						{
+							InterfaceDataType* IData = DataLibrary::GetChecked<InterfaceDataType>(Context, O);
 
-						DataMap[EntryName] = IData;
+							DataMap[EntryName] = IData;
+						}
 					}
 				}
 
@@ -657,9 +701,17 @@ namespace NCsData
 					ImplDataInterfaceMap.Reset();
 
 					DataMap.Reset();
+					DataAsUObjectMap.Reset();
 					DataTableRowByPathMap.Reset();
 				}
 			};
 		}
 	}
 }
+
+#undef PropertyLibrary
+#undef DataManagerLibrary
+#undef DataLibrary
+#if WITH_EDITOR
+#undef WorldLibrary
+#endif // #if WITH_EDITOR

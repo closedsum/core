@@ -25,7 +25,28 @@ namespace NCsBlueprint
 		*
 		* @param Context	The calling context.
 		* @param Path		SoftObjectPath to the Blueprint to load.
-		* @param Log
+		* return			Blueprint.
+		*/
+		FORCEINLINE static UBlueprint* LoadChecked(const FString& Context, const TSoftObjectPtr<UBlueprint>& Blueprint) 
+		{
+			return LoadChecked(Context, Blueprint.ToSoftObjectPath());
+		}
+
+		/**
+		* Load the Blueprint at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the Blueprint to load.
+		* return			Blueprint.
+		*/
+		static UBlueprint* LoadChecked(const FString& Context, const FSoftObjectPath& Path);
+
+		/**
+		* Load the Blueprint at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the Blueprint to load.
+		* @param Log		(optional)
 		* return			Blueprint.
 		*/
 		static UBlueprint* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -35,10 +56,21 @@ namespace NCsBlueprint
 		*
 		* @param Context	The calling context.
 		* @param Path		FString path to the Blueprint to load.
-		* @param Log
+		* return			Blueprint.
+		*/
+		static UBlueprint* LoadChecked(const FString& Context, const FString& Path);
+
+		/**
+		* Load a Blueprint at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		FString path to the Blueprint to load.
+		* @param Log		(optional)
 		* return			Blueprint.
 		*/
 		static UBlueprint* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static UBlueprintGeneratedClass* LoadClassChecked(const FString& Context, const TSoftObjectPtr<UBlueprint>& Blueprint);
 
 	#pragma endregion Load
 
@@ -46,7 +78,13 @@ namespace NCsBlueprint
 	#pragma region
 	public:
 
+		static UBlueprintGeneratedClass* GetClassChecked(const FString& Context, const FString& Path);
+
 		static UBlueprintGeneratedClass* GetSafeClass(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static UBlueprintGeneratedClass* GetClassChecked(const FString& Context, const TSoftObjectPtr<UBlueprint>& Blueprint);
+
+		static UBlueprintGeneratedClass* GetClassChecked(const FString& Context, UBlueprint* Blueprint);
 
 		static UBlueprintGeneratedClass* GetSafeClass(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
 
@@ -76,5 +114,13 @@ namespace NCsBlueprint
 		static bool SafeIs(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion
+
+	// Spawn
+	#pragma region
+	public:
+
+		static AActor* SpawnAsActorChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UBlueprint>& Blueprint);
+
+	#pragma endregion Spawn
 	};
 }

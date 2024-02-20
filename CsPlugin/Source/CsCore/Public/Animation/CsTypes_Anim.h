@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "Struct/CsTypes_StructOps.h"
 #include "Types/CsTypes_View.h"
 // Log
 #include "Utility/CsLog.h"
@@ -105,38 +106,53 @@ public:
 	}
 
 	/**
-	* Get the Hard reference to the Anim.
+	* Get the Hard reference to the UAnimSequence asset.
 	*
-	* return Anim
+	* return Anim Sequence
 	*/
 	FORCEINLINE UAnimSequence* Get() const { return Anim_Internal; }
 
+	/**
+	* Get the pointer to the Hard reference to the UAnimSequence asset.
+	*
+	* return Anim Sequence
+	*/
 	FORCEINLINE UAnimSequence** GetPtr() { return &Anim_Internal; }
 
 	/**
-	* Get the Hard reference to the Anim.
+	* Get the Hard reference to the UAnimSequence asset.
 	*
 	* @param Context	The calling context.
-	* return			Anim
+	* return			Anim Sequence
 	*/
 	FORCEINLINE UAnimSequence* GetChecked(const FString& Context) const
 	{
-		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("%s: Anim is NULL."), *Context);
-
+		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("%s: Anim's Path is NOT Valid."), *Context);
 		checkf(Anim_Internal, TEXT("%s: Anim has NOT been loaded from Path @ %s."), *Context, *(Anim.ToSoftObjectPath().ToString()));
 
 		return Anim_Internal;
 	}
 
+	/**
+	* Get the Hard reference to the UAnimSequence asset.
+	*
+	* return			Anim Sequence
+	*/
 	FORCEINLINE UAnimSequence* GetChecked() const
 	{
-		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("FCsAnimSequence::GetChecked: Anim is NULL or the Path is NOT Valid."));
-
+		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("FCsAnimSequence::GetChecked: Anim Path's is NOT Valid."));
 		checkf(Anim_Internal, TEXT("FCsAnimSequence::GetChecked: Failed to load Anim @ %s."), *(Anim.ToSoftObjectPath().ToString()));
 
 		return Anim_Internal;
 	}
 
+	/**
+	* Safely get the Hard reference to the UAnimSequence asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Anim Sequence
+	*/
 	UAnimSequence* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!Anim.ToSoftObjectPath().IsValid())
@@ -152,12 +168,22 @@ public:
 		return Anim_Internal;
 	}
 
+	/**
+	* Safely get the Hard reference to the UAnimSequence asset.
+	*
+	* return Anim Sequence
+	*/
 	UAnimSequence* GetSafe()
 	{
 		if (!Anim.ToSoftObjectPath().IsValid())
 			return nullptr;
 		return Anim_Internal;
 	}
+
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsAnimSequence)
+	CS_STRUCT_OPS_IS_VALID(FCsAnimSequence)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsAnimSequence)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsAnimSequence)
 
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
@@ -170,6 +196,30 @@ public:
 		if (!GetSafe(Context, Log))
 			return false;
 		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("%s: Anim's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Anim.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsAnimSequence)
+
+	FORCEINLINE void Unload()
+	{
+		Anim.ResetWeakPtr();
+		Anim_Internal = nullptr;
 	}
 };
 
@@ -204,8 +254,22 @@ public:
 	void CopyToInfo(InfoType* Info);
 #undef InfoType
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsAnimSequenceInfo)
+	CS_STRUCT_OPS_IS_VALID(FCsAnimSequenceInfo)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsAnimSequenceInfo)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsAnimSequenceInfo)
+
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsTopValidChecked(const FString& Context) const;
+	bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsAnimSequenceInfo)
+
+	FORCEINLINE void Unload()
+	{
+		Anim.Unload();
+	}
 };
 
 class UAnimSequence;
@@ -236,6 +300,8 @@ namespace NCsAnim
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsTopValidChecked(const FString& Context) const;
+			bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 		};
 	}
 }
@@ -327,6 +393,20 @@ public:
 			return AnimVR_Internal;
 		return Anim3P_Internal;
 	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsFpvAnimSequence)
+
+	FORCEINLINE void Unload()
+	{
+		Anim1P.ResetWeakPtr();
+		Anim3P.ResetWeakPtr();
+		Anim3P_Low.ResetWeakPtr();
+		AnimVR.ResetWeakPtr();
+		Anim1P_Internal = nullptr;
+		Anim3P_Internal = nullptr;
+		Anim3P_Low_Internal = nullptr;
+		AnimVR_Internal = nullptr;
+	}
 };
 
 #pragma endregion FCsFpvAnimSequence
@@ -359,33 +439,59 @@ public:
 	{
 	}
 
+	/**
+	* Get the Hard reference to the UAnimMontage asset.
+	*
+	* return Anim Montage
+	*/
 	FORCEINLINE UAnimMontage* Get() const { return Anim_Internal; }
 
+	/**
+	* Get the pointer to the Hard reference to the UAnimMontage asset.
+	*
+	* return Anim Montage
+	*/
 	FORCEINLINE UAnimMontage** GetPtr() { return &Anim_Internal; }
 
+	/**
+	* Get the Hard reference to the UAnimMontage asset.
+	*
+	* @param Context	The calling context.
+	* return			Anim Montage
+	*/
 	FORCEINLINE UAnimMontage* GetChecked(const FString& Context) const
 	{
-		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("%s: Anim is NULL or the Path is NOT Valid."), *Context);
-
-		checkf(Anim_Internal, TEXT("%s: Failed to load Blueprint @ %s."), *Context, *(Anim.ToSoftObjectPath().ToString()));
+		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("%s: Anim's Path is NOT Valid."), *Context);
+		checkf(Anim_Internal, TEXT("%s: Failed to load Anim @ %s."), *Context, *(Anim.ToSoftObjectPath().ToString()));
 
 		return Anim_Internal;
 	}
 
+	/**
+	* Get the Hard reference to the UAnimMontage asset.
+	*
+	* return			Anim Montage
+	*/
 	FORCEINLINE UAnimMontage* GetChecked() const
 	{
-		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("FCsAnimMontage::GetChecked: Anim is NULL or the Path is NOT Valid."));
-
+		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("FCsAnimMontage::GetChecked: Anim's Path is NOT Valid."));
 		checkf(Anim_Internal, TEXT("FCsAnimMontage::GetChecked: Failed to load Anim @ %s."), *(Anim.ToSoftObjectPath().ToString()));
 
 		return Anim_Internal;
 	}
 
+	/**
+	* Safely get the Hard reference to the UAnimMontage asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Anim Montage
+	*/
 	UAnimMontage* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!Anim.ToSoftObjectPath().IsValid())
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim is NULL."), *Context));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim's Path is NOT Valid."), *Context));
 			return nullptr;
 		}
 
@@ -403,6 +509,11 @@ public:
 		return Anim_Internal;
 	}
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsAnimMontage)
+	CS_STRUCT_OPS_IS_VALID(FCsAnimMontage)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsAnimMontage)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsAnimMontage)
+
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
 		check(GetChecked(Context));
@@ -414,6 +525,30 @@ public:
 		if (!GetSafe(Context, Log))
 			return false;
 		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Anim.ToSoftObjectPath().IsValid(), TEXT("%s: Anim's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Anim.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Anim's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsAnimMontage)
+
+	FORCEINLINE void Unload()
+	{
+		Anim.ResetWeakPtr();
+		Anim_Internal = nullptr;
 	}
 };
 
@@ -446,8 +581,22 @@ struct CSCORE_API FCsAnimMontageInfo
 	void CopyToInfo(InfoType* Info);
 #undef InfoType
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsAnimMontageInfo)
+	CS_STRUCT_OPS_IS_VALID(FCsAnimMontageInfo)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsAnimMontageInfo)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsAnimMontageInfo)
+
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsTopValidChecked(const FString& Context) const;
+	bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsAnimMontageInfo)
+
+	FORCEINLINE void Unload()
+	{
+		Anim.Unload();
+	}
 };
 
 class UAnimMontage;
@@ -478,6 +627,8 @@ namespace NCsAnim
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsTopValidChecked(const FString& Context) const;
+			bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 		};
 	}
 }
@@ -569,6 +720,20 @@ public:
 			return AnimVR_Internal;
 		return Anim3P_Internal;
 	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsFpvAnimMontage)
+
+	FORCEINLINE void Unload()
+	{
+		Anim1P.ResetWeakPtr();
+		Anim3P.ResetWeakPtr();
+		Anim3P_Low.ResetWeakPtr();
+		AnimVR.ResetWeakPtr();
+		Anim1P_Internal = nullptr;
+		Anim3P_Internal = nullptr;
+		Anim3P_Low_Internal = nullptr;
+		AnimVR_Internal = nullptr;
+	}
 };
 
 #pragma endregion FCsFpvAnimMontage
@@ -586,7 +751,7 @@ struct CSCORE_API FCsTArrayAnimMontage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TArray<TSoftObjectPtr<UAnimMontage>> Anims;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Anims_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Material")
@@ -601,13 +766,35 @@ public:
 	{
 	}
 
+	/**
+	* Get the Hard reference to the TArray<UAnimMontage>.
+	*
+	* return Array of Anim Montages
+	*/
 	FORCEINLINE const TArray<UAnimMontage*>& Get() const { return Anims_Internal; }
 
+	/**
+	* Get the pointer to the Hard reference to the TArray<UAnimMontage>.
+	*
+	* return Array of Anim Montages
+	*/
 	FORCEINLINE TArray<UAnimMontage*>* GetPtr() { return &Anims_Internal; }
 	FORCEINLINE const TArray<UAnimMontage*>* GetPtr() const { return &Anims_Internal; }
 
+	/**
+	* Get the Hard reference to the UAnimMontage at Index.
+	*
+	* #param Index
+	* return Anim Montage
+	*/
 	FORCEINLINE UAnimMontage* Get(const int32& Index) const { return Index < Anims_Internal.Num() ? Anims_Internal[Index] : nullptr; }
 
+	/**
+	* Find which Index in the Array of Anim Montages the Anim is located.
+	*
+	* #param Anim
+	* return Index
+	*/
 	FORCEINLINE int32 Find(UAnimMontage* Anim) const
 	{
 		int32 index;
@@ -626,7 +813,6 @@ public:
 	FORCEINLINE const TArray<UAnimMontage*>& GetChecked(const FString& Context) const
 	{ 
 		checkf(Anims.Num() > CS_EMPTY, TEXT("%s: No Anims set."), *Context);
-
 		checkf(Anims.Num() == Anims_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to anims, %d != %d."), *Context, Anims.Num(), Anims_Internal.Num());
 
 		const int32 Count = Anims.Num();
@@ -635,7 +821,7 @@ public:
 		{
 			const TSoftObjectPtr<UAnimMontage>& SoftObject = Anims[I];
 
-			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Anims[%d] is NULL."), *Context, I);
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Anims[%d]'s Path is NOT Valid."), *Context, I);
 
 			UAnimMontage* Anim = Anims_Internal[I];
 	
@@ -653,7 +839,6 @@ public:
 	FORCEINLINE const TArray<UAnimMontage*>& GetChecked() const
 	{
 		checkf(Anims.Num() > CS_EMPTY, TEXT("FCsTArrayAnimMontage::GetChecked: No Anims set."));
-
 		checkf(Anims.Num() == Anims_Internal.Num(), TEXT("FCsTArrayAnimMontage::GetChecked: Mismatch between Soft and Hard references to anims, %d != %d."), Anims.Num(), Anims_Internal.Num());
 
 		const int32 Count = Anims.Num();
@@ -662,7 +847,7 @@ public:
 		{
 			const TSoftObjectPtr<UAnimMontage>& SoftObject = Anims[I];
 
-			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("FCsTArrayAnimMontage::GetChecked: Anims[%d] is NULL."), I);
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("FCsTArrayAnimMontage::GetChecked: Anims[%d]'s Path is NOT Valid."), I);
 
 			UAnimMontage* Anim = Anims_Internal[I];
 
@@ -730,7 +915,7 @@ public:
 			if (!SoftObject.ToSoftObjectPath().IsValid())
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: Anims[%d] is NULL."), *Context, I));
+					Log(FString::Printf(TEXT("%s: Anims[%d]'s Path is NOT Valid."), *Context, I));
 				return nullptr;
 			}
 
@@ -815,10 +1000,14 @@ public:
 		return GetChecked()[OutIndex];
 	}
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsTArrayAnimMontage)
+	CS_STRUCT_OPS_IS_VALID(FCsTArrayAnimMontage)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsTArrayAnimMontage)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsTArrayAnimMontage)
+
 	bool IsValidChecked(const FString& Context) const
 	{
 		checkf(Anims.Num() > CS_EMPTY, TEXT("%s: No Anims set."), *Context);
-
 		checkf(Anims.Num() == Anims_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to anims, %d != %d."), *Context, Anims.Num(), Anims_Internal.Num());
 
 		const int32 Count = Anims.Num();
@@ -827,7 +1016,7 @@ public:
 		{
 			const TSoftObjectPtr<UAnimMontage>& SoftObject = Anims[I];
 
-			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Anims[%d] is NULL."), *Context, I);
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Anims[%d]'s Path is NOT Valid."), *Context, I);
 
 			UAnimMontage* Material = Anims_Internal[I];
 
@@ -861,7 +1050,7 @@ public:
 			if (!SoftObject.ToSoftObjectPath().IsValid())
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: Anims[%d] is NULL."), *Context, I));
+					Log(FString::Printf(TEXT("%s: Anims[%d]'s Path is NOT Valid."), *Context, I));
 				return false;
 			}
 
@@ -875,6 +1064,58 @@ public:
 			}
 		}
 		return true;
+	}
+
+	bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Anims.Num() > CS_EMPTY, TEXT("%s: No Anims set."), *Context);
+		checkf(Anims.Num() == Anims_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to anims, %d != %d."), *Context, Anims.Num(), Anims_Internal.Num());
+
+		const int32 Count = Anims.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UAnimMontage>& SoftObject = Anims[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Anims[%d]'s Path is NOT Valid."), *Context, I);
+		}
+		return true;
+	}
+
+	bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (Anims.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Anims set."), *Context));
+			return false;
+		}
+
+		const int32 Count = Anims.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UAnimMontage>& SoftObject = Anims[I];
+
+			if (!SoftObject.ToSoftObjectPath().IsValid())
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Anims[%d]'s Path is NOT Valid."), *Context, I));
+				return false;
+			}
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsTArrayAnimMontage)
+
+	FORCEINLINE void Unload()
+	{
+		for (TSoftObjectPtr<UAnimMontage>& Anim : Anims)
+		{
+			Anim.ResetWeakPtr();
+		}
+		Anims_Internal.Reset();
 	}
 };
 
@@ -953,33 +1194,59 @@ public:
 	{
 	}
 
+	/**
+	* Get the Hard reference to the Class associated with the UAnimBlueprint asset.
+	*
+	* return UAnimBlueprintGeneratedClass
+	*/
 	FORCEINLINE UAnimBlueprintGeneratedClass* Get() const { return Blueprint_Internal; }
 
+	/**
+	* Get the pointer to the Hard reference to the Class associated with the UAnimBlueprint asset.
+	*
+	* return UAnimBlueprintGeneratedClass
+	*/
 	FORCEINLINE UAnimBlueprintGeneratedClass** GetPtr() { return &Blueprint_Internal; }
 
+	/**
+	* Get the Hard reference to the Class associated with the UAnimBlueprint asset.
+	*
+	* @param Context	The calling context.
+	* return			UAnimBlueprintGeneratedClass
+	*/
 	FORCEINLINE UAnimBlueprintGeneratedClass* GetChecked(const FString& Context) const
 	{
-		checkf(Blueprint.ToSoftObjectPath().IsValid(), TEXT("%s: Blueprint is NULL or the Path is NOT Valid."), *Context);
-
+		checkf(Blueprint.ToSoftObjectPath().IsValid(), TEXT("%s: Blueprint's Path is NOT Valid."), *Context);
 		checkf(Blueprint_Internal, TEXT("%s: Failed to load Blueprint @ %s."), *Context, *(Blueprint.ToSoftObjectPath().ToString()));
 
 		return Blueprint_Internal;
 	}
 
+	/**
+	* Get the Hard reference to the Class associated with the UAnimBlueprint asset.
+	*
+	* return			UAnimBlueprintGeneratedClass
+	*/
 	FORCEINLINE UAnimBlueprintGeneratedClass* GetChecked() const
 	{
-		checkf(Blueprint.ToSoftObjectPath().IsValid(), TEXT("FCsAnimBlueprint::GetChecked: Blueprint is NULL or the Path is NOT Valid."));
-
+		checkf(Blueprint.ToSoftObjectPath().IsValid(), TEXT("FCsAnimBlueprint::GetChecked: Blueprint's Path is NOT Valid."));
 		checkf(Blueprint_Internal, TEXT("FCsAnimBlueprint::GetChecked: Failed to load Blueprint @ %s."), *(Blueprint.ToSoftObjectPath().ToString()));
 
 		return Blueprint_Internal;
 	}
 
+	/**
+	* Safely get the Hard reference to the Class associated with the UAnimBlueprint asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			UAnimBlueprintGeneratedClass
+	*/
 	UAnimBlueprintGeneratedClass* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!Blueprint.ToSoftObjectPath().IsValid())
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blueprint is NULL."), *Context));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blueprint's Path is NOT Valid."), *Context));
 			return nullptr;
 		}
 
@@ -990,6 +1257,11 @@ public:
 		return Blueprint_Internal;
 	}
 
+	/**
+	* Safely get the Hard reference to the Class associated with the UAnimBlueprint asset.
+	*
+	* return			UAnimBlueprintGeneratedClass
+	*/
 	UAnimBlueprintGeneratedClass* GetSafe()
 	{
 		if (!Blueprint.ToSoftObjectPath().IsValid())
@@ -997,17 +1269,46 @@ public:
 		return Blueprint_Internal;
 	}
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsAnimBlueprint)
+	CS_STRUCT_OPS_IS_VALID(FCsAnimBlueprint)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsAnimBlueprint)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsAnimBlueprint)
+
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
-		check(GetChecked(Context));
+		checkf(Blueprint.ToSoftObjectPath().IsValid(), TEXT("%s: Blueprint's Path is NOT Valid."), *Context);
 		return true;
 	}
 
 	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
+		if (!Blueprint.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blueprint is NULL."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
 		if (!GetSafe(Context, Log))
 			return false;
 		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsAnimBlueprint)
+
+	FORCEINLINE void Unload()
+	{
+		Blueprint.ResetWeakPtr();
+		Blueprint_Internal = nullptr;
 	}
 };
 
@@ -1088,6 +1389,20 @@ public:
 			return BlueprintVR_Internal;
 		return Blueprint3P_Internal;
 	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsFpvAnimBlueprint)
+
+	FORCEINLINE void Unload()
+	{
+		Blueprint1P.ResetWeakPtr();
+		Blueprint3P.ResetWeakPtr();
+		Blueprint3P_Low.ResetWeakPtr();
+		BlueprintVR.ResetWeakPtr();
+		Blueprint1P_Internal = nullptr;
+		Blueprint3P_Internal = nullptr;
+		Blueprint3P_Low_Internal = nullptr;
+		BlueprintVR_Internal = nullptr;
+	}
 };
 
 #pragma endregion FCsFpvAnimBlueprint
@@ -1165,8 +1480,26 @@ public:
 	{
 	}
 
+	/**
+	* Get the Hard reference to the UBlendSpace1D asset.
+	*
+	* return Blend Space
+	*/
 	FORCEINLINE UBlendSpace1D* Get() const { return Blend_Internal; }
 
+	/**
+	* Get the pointer to the Hard reference to the UBlendSpace1D asset.
+	*
+	* return Blend Space
+	*/
+	FORCEINLINE UBlendSpace1D** GetPtr() { return &Blend_Internal; }
+
+	/**
+	* Get the Hard reference to the UBlendSpace1D asset.
+	*
+	* @param Context	The calling context.
+	* return			Blend Space
+	*/
 	FORCEINLINE UBlendSpace1D* GetChecked(const FString& Context) const
 	{
 		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("%s: Blend is NULL or the Path is NOT Valid."), *Context);
@@ -1176,6 +1509,11 @@ public:
 		return Blend_Internal;
 	}
 
+	/**
+	* Get the Hard reference to the UBlendSpace1D asset.
+	*
+	* return			Blend Space
+	*/
 	FORCEINLINE UBlendSpace1D* GetChecked() const
 	{
 		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("FCsBlendSpace1D::GetChecked: Blend is NULL or the Path is NOT Valid."));
@@ -1183,6 +1521,82 @@ public:
 		checkf(Blend_Internal, TEXT("FCsBlendSpace1D::GetChecked: Failed to load Blend @ %s."), *(Blend.ToSoftObjectPath().ToString()));
 
 		return Blend_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UBlendSpace1D asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Blend Space
+	*/
+	UBlendSpace1D* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Blend.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blend's Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (!Blend_Internal)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blend has NOT been loaded from Path @ %s."), *Context, *(Blend.ToSoftObjectPath().ToString())));
+		}
+		return Blend_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UBlendSpace1D asset.
+	*
+	* return			Blend Space
+	*/
+	UBlendSpace1D* GetSafe()
+	{
+		if (!Blend.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Blend_Internal;
+	}
+
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsBlendSpace1D)
+	CS_STRUCT_OPS_IS_VALID(FCsBlendSpace1D)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsBlendSpace1D)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsBlendSpace1D)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("%s: Blend's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Blend.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blend's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsBlendSpace1D)
+
+	FORCEINLINE void Unload()
+	{
+		Blend.ResetWeakPtr();
+		Blend_Internal = nullptr;
 	}
 };
 
@@ -1271,6 +1685,20 @@ public:
 			return BlendVR;
 		return Blend3P;
 	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsFpvBlendSpace1D)
+
+	FORCEINLINE void Unload()
+	{
+		Blend1P.ResetWeakPtr();
+		Blend3P.ResetWeakPtr();
+		Blend3P_Low.ResetWeakPtr();
+		BlendVR.ResetWeakPtr();
+		Blend1P_Internal = nullptr;
+		Blend3P_Internal = nullptr;
+		Blend3P_Low_Internal = nullptr;
+		BlendVR_Internal = nullptr;
+	}
 };
 
 #pragma endregion FCsFpvBlendSpace1D
@@ -1303,24 +1731,114 @@ public:
 	{
 	}
 
+	/**
+	* Get the Hard reference to the UBlendSpace asset.
+	*
+	* return Blend Space
+	*/
 	FORCEINLINE UBlendSpace* Get() const { return Blend_Internal; }
 
+	/**
+	* Get the Hard reference to the UBlendSpace asset.
+	*
+	* @param Context	The calling context.
+	* return			Blend Space
+	*/
 	FORCEINLINE UBlendSpace* GetChecked(const FString& Context) const
 	{
 		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("%s: Blend is NULL or the Path is NOT Valid."), *Context);
-
 		checkf(Blend_Internal, TEXT("%s: Failed to load Blend @ %s."), *Context, *(Blend.ToSoftObjectPath().ToString()));
 
 		return Blend_Internal;
 	}
 
+	/**
+	* Get the Hard reference to the UBlendSpace asset.
+	*
+	* return			Blend Space
+	*/
 	FORCEINLINE UBlendSpace* GetChecked() const
 	{
 		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("FCsBlendSpace1D::GetChecked: Blend is NULL or the Path is NOT Valid."));
-
 		checkf(Blend_Internal, TEXT("FCsBlendSpace1D::GetChecked: Failed to load Blend @ %s."), *(Blend.ToSoftObjectPath().ToString()));
 
 		return Blend_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UBlendSpace asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Blend Space
+	*/
+	UBlendSpace* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Blend.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blend's Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (!Blend_Internal)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blend has NOT been loaded from Path @ %s."), *Context, *(Blend.ToSoftObjectPath().ToString())));
+		}
+		return Blend_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UBlendSpace asset.
+	*
+	* return			Blend Space
+	*/
+	UBlendSpace* GetSafe()
+	{
+		if (!Blend.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Blend_Internal;
+	}
+
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsBlendSpace)
+	CS_STRUCT_OPS_IS_VALID(FCsBlendSpace)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsBlendSpace)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsBlendSpace)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("%s: Blend's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Blend.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blend's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsBlendSpace)
+
+	FORCEINLINE void Unload()
+	{
+		Blend.ResetWeakPtr();
+		Blend_Internal = nullptr;
 	}
 };
 
@@ -1411,6 +1929,20 @@ public:
 			return BlendVR;
 		return Blend3P;
 	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsFpvBlendSpace)
+
+	FORCEINLINE void Unload()
+	{
+		Blend1P.ResetWeakPtr();
+		Blend3P.ResetWeakPtr();
+		Blend3P_Low.ResetWeakPtr();
+		BlendVR.ResetWeakPtr();
+		Blend1P_Internal = nullptr;
+		Blend3P_Internal = nullptr;
+		Blend3P_Low_Internal = nullptr;
+		BlendVR_Internal = nullptr;
+	}
 };
 
 #pragma endregion FCsFpvBlendSpace
@@ -1443,9 +1975,114 @@ public:
 	{
 	}
 
-	FORCEINLINE UAimOffsetBlendSpace* Get()
+	/**
+	* Get the Hard reference to the UAimOffsetBlendSpace asset.
+	*
+	* return Aim Offset Blend Space
+	*/
+	FORCEINLINE UAimOffsetBlendSpace* Get() const { return Blend_Internal; }
+
+	/**
+	* Get the Hard reference to the UAimOffsetBlendSpace asset.
+	*
+	* @param Context	The calling context.
+	* return			Aim Offset Blend Space
+	*/
+	FORCEINLINE UAimOffsetBlendSpace* GetChecked(const FString& Context) const
 	{
+		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("%s: Blend is NULL or the Path is NOT Valid."), *Context);
+		checkf(Blend_Internal, TEXT("%s: Failed to load Blend @ %s."), *Context, *(Blend.ToSoftObjectPath().ToString()));
+
 		return Blend_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UAimOffsetBlendSpace asset.
+	*
+	* return			Aim Offset Blend Space
+	*/
+	FORCEINLINE UAimOffsetBlendSpace* GetChecked() const
+	{
+		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("FCsAimOffset::GetChecked: Blend is NULL or the Path is NOT Valid."));
+		checkf(Blend_Internal, TEXT("FCsAimOffset::GetChecked: Failed to load Blend @ %s."), *(Blend.ToSoftObjectPath().ToString()));
+
+		return Blend_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UAimOffsetBlendSpace asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Aim Offset Blend Space
+	*/
+	UAimOffsetBlendSpace* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Blend.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blend's Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (!Blend_Internal)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blend has NOT been loaded from Path @ %s."), *Context, *(Blend.ToSoftObjectPath().ToString())));
+		}
+		return Blend_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UAimOffsetBlendSpace asset.
+	*
+	* return			Aim Offset Blend Space
+	*/
+	UAimOffsetBlendSpace* GetSafe()
+	{
+		if (!Blend.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Blend_Internal;
+	}
+
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsAimOffset)
+	CS_STRUCT_OPS_IS_VALID(FCsAimOffset)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsAimOffset)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsAimOffset)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
+	{
+		checkf(Blend.ToSoftObjectPath().IsValid(), TEXT("%s: Blend's Path is NOT Valid."), *Context);
+		return true;
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Blend.ToSoftObjectPath().IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Blend's Path is NOT Valid."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsAimOffset)
+
+	FORCEINLINE void Unload()
+	{
+		Blend.ResetWeakPtr();
+		Blend_Internal = nullptr;
 	}
 };
 
@@ -1535,6 +2172,20 @@ public:
 		if (ViewType == ECsViewType::VR)
 			return BlendVR;
 		return Blend3P;
+	}
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsFpvAimOffset)
+
+	FORCEINLINE void Unload()
+	{
+		Blend1P.ResetWeakPtr();
+		Blend3P.ResetWeakPtr();
+		Blend3P_Low.ResetWeakPtr();
+		BlendVR.ResetWeakPtr();
+		Blend1P_Internal = nullptr;
+		Blend3P_Internal = nullptr;
+		Blend3P_Low_Internal = nullptr;
+		BlendVR_Internal = nullptr;
 	}
 };
 

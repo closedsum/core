@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "Animation/CsTypes_Anim.h"
 
 #include "CsScriptLibrary_BlendSpace.generated.h"
 
@@ -59,6 +61,30 @@ public:
 	static UBlendSpace1D* Load1DByStringPath(const FString& Context, const FString& Path);
 
 #pragma endregion Load
+
+// Unload
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Anim|Blend Space", meta = (DisplayName = "Unload (FCsBlendSpace1D)", CompactNodeTitle = "Unload"))
+	static void FCsBlendSpace1D_Unload(UPARAM(ref) FCsBlendSpace1D& Blend)
+	{
+		Blend.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Anim|Blend Space", meta = (DisplayName = "Unload (FCsBlendSpace)", CompactNodeTitle = "Unload"))
+	static void FCsBlendSpace_Unload(UPARAM(ref) FCsBlendSpace& Blend)
+	{
+		Blend.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Anim|Blend Space", meta = (DisplayName = "Unload (FCsAimOffset)", CompactNodeTitle = "Unload"))
+	static void FCsAimOffset_Unload(UPARAM(ref) FCsAimOffset& Blend)
+	{
+		Blend.Unload();
+	}
+
+#pragma endregion Unload
 
 // Get
 #pragma region

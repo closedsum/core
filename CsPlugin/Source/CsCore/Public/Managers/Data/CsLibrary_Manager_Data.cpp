@@ -5,6 +5,7 @@
 #include "CsCore.h"
 
 // Library
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
@@ -33,6 +34,7 @@ namespace NCsData
 			}
 		}
 
+		#define ObjectLibrary NCsObject::FLibrary
 		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 		// ContextRoot
@@ -88,7 +90,7 @@ namespace NCsData
 			UObject* ContextRoot		  = GetContextRootChecked(Context, ContextObject);
 			UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
 
-			CS_IS_PTR_NULL_CHECKED(Manager_Data)
+			CS_IS_PENDING_KILL_CHECKED(Manager_Data)
 			return Manager_Data;
 		}
 
@@ -103,7 +105,7 @@ namespace NCsData
 
 			UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
 
-			if (!Manager_Data)
+			if (!ObjectLibrary::IsValidObject(Manager_Data))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Data."), *Context));
 			}
@@ -315,9 +317,29 @@ namespace NCsData
 			return GetChecked(Context, ContextObject)->GetDataTableRowChecked(Context, SoftObject, RowStruct, RowName);
 		}
 
+		FName FLibrary::DataTable_GetEntryNameChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject)
+		{
+			return GetChecked(Context, ContextObject)->DataTable_GetEntryNameChecked(Context, SoftObject);
+		}
+
 		#pragma endregion DataTable
 
 		#pragma endregion Get
+
+		// Maps
+		#pragma region
+		
+			// Payload
+		#pragma region
+
+		bool FLibrary::DoesPayloadContainChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, const TSoftObjectPtr<UDataTable>& DataTable)
+		{
+			return GetChecked(Context, ContextObject)->DoesPayloadContain(PayloadName, DataTable);
+		}
+		
+		#pragma endregion Payload
+
+		#pragma endregion Maps
 
 		// Add
 		#pragma region
@@ -366,20 +388,26 @@ namespace NCsData
 
 		#pragma endregion Add
 
-			// Load
+		// Load
 		#pragma region
 		
 			// Payload
 		#pragma region
 
-		#define OnAsyncLoadPayloadCompleteType NCsData::NManager::FOnAsyncLoadPayloadComplete
+		#define OnAsyncLoadPayloadCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete
+		#define OnAsyncLoadPayloadCompletePersistentType NCsData::NManager::NPersistent::FOnAsyncLoadPayloadComplete
 			
-		void FLibrary::AsyncLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate)
+		OnAsyncLoadPayloadCompletePersistentType& FLibrary::GetOnAsyncLoadPayloadComplete_Persistent_EventChecked(const FString& Context, const UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetOnAsyncLoadPayloadCompleted_Persistent_Event();
+		}
+
+		void FLibrary::AsyncLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate)
 		{
 			GetChecked(Context, ContextObject)->AsyncLoadPayload(PayloadName, Delegate);
 		}
 
-		void FLibrary::AsyncAddAndLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, const FCsPayload* Payload, OnAsyncLoadPayloadCompleteType Delegate)
+		void FLibrary::AsyncAddAndLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, const FCsPayload* Payload, OnAsyncLoadPayloadCompleteOnceType Delegate)
 		{
 			CS_IS_PTR_NULL_CHECKED(Payload)
 
@@ -387,12 +415,31 @@ namespace NCsData
 			GetChecked(Context, ContextObject)->AsyncLoadPayload(PayloadName, Delegate);
 		}
 
-		#undef OnAsyncLoadPayloadCompleteType
+		void FLibrary::AsyncLoadStartupPayloadChecked(const FString& Context, const UObject* ContextObject, OnAsyncLoadPayloadCompleteOnceType Delegate)
+		{
+			GetChecked(Context, ContextObject)->AsyncLoadStartupPayload(Delegate);
+		}
+
+		bool FLibrary::SafeAsyncLoadStartupPayload(const FString& Context, const UObject* ContextObject, OnAsyncLoadPayloadCompleteOnceType Delegate, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
+				return Manager_Data->SafeAsyncLoadStartupPaylod(Context, Delegate, Log);
+			return false;
+		}
+
+		void FLibrary::UnloadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName)
+		{
+			GetChecked(Context, ContextObject)->UnloadPayload(PayloadName);
+		}
+
+		#undef OnAsyncLoadPayloadCompleteOnceType
+		#undef OnAsyncLoadPayloadCompletePersistentType
 
 		#pragma endregion Payload
 			
 		#pragma endregion Load
 
+		#undef ObjectLibrary
 		#undef GameInstanceLibrary
 	}
 }

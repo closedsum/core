@@ -45,27 +45,26 @@ namespace NCsMaterial
 		}
 	}
 
+	#define USING_NS_CACHED using namespace NCsMaterial::NLibrary::NCached;
+	#define SET_CONTEXT(__FunctionName) using namespace NCsMaterial::NLibrary::NCached; \
+		const FString& Context = Str::##__FunctionName
+	#define ObjectLibrary NCsObject::FLibrary
+
 	// Load
 	#pragma region
 
 	UMaterialInterface* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		return ObjectLibrary::SafeLoad<UMaterialInterface>(Context, Path, Log);
 	}
 
 	UMaterialInterface* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		return ObjectLibrary::SafeLoad<UMaterialInterface>(Context, Path, Log);
 	}
 
 	bool FLibrary::SafeLoad(const FString& Context, const TArray<FString>& Paths, TArray<UMaterialInterface*>& OutMaterials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		OutMaterials.Reset(Paths.Num());
 
 		bool Success = true;
@@ -117,6 +116,9 @@ namespace NCsMaterial
 	#undef PropertyLibrary
 
 	#pragma endregion Get
+
+	// Valid
+	#pragma region
 
 	bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials)
 	{
@@ -259,6 +261,27 @@ namespace NCsMaterial
 		return true;
 	}
 
+	bool FLibrary::IsValidChecked_ArrayIndex(const FString& Context, UMaterialInterface* Material, const int32& Index)
+	{
+		checkf(ObjectLibrary::IsValidObject(Material), TEXT("%s: Materials[%d] is NULL or Pending Kill."), *Context, Index);
+		return true;
+	}
+
+	bool FLibrary::IsValid_ArrayIndex(const FString& Context, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!ObjectLibrary::IsValidObject(Material))
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Materials[%d] is NULL or Pending Kill."), *Context, Index));
+			return false;
+		}
+		return true;
+	}
+
+	#pragma endregion Valid
+
+	// Set
+	#pragma region
+
 	void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material)
 	{
 		// Check Component is Valid
@@ -324,9 +347,7 @@ namespace NCsMaterial
 
 	bool FLibrary::SetSafe(UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
 	{
-		using namespace NCsMaterial::NLibrary::NCached;
-
-		const FString& Context = Str::SetSafe;
+		SET_CONTEXT(SetSafe);
 
 		return SetSafe(Context, Component, Material, Index, nullptr);
 	}
@@ -345,7 +366,7 @@ namespace NCsMaterial
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			checkf(Materials[I], TEXT("%s: Materials[%d] is NULL."), *Context, I);
+			check(IsValidChecked_ArrayIndex(Context, Materials[I], I));
 
 			Component->SetMaterial(I, Materials[I]);
 		}
@@ -369,11 +390,8 @@ namespace NCsMaterial
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-			if (!Materials[I])
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Materials[%d] is NULL."), *Context, I));
+			if (!IsValid_ArrayIndex(Context, Materials[I], I, Log))
 				return false;
-			}
 			Component->SetMaterial(I, Materials[I]);
 		}
 		return true;
@@ -381,9 +399,7 @@ namespace NCsMaterial
 
 	bool FLibrary::SetSafe(UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
 	{
-		using namespace NCsMaterial::NLibrary::NCached;
-
-		const FString& Context = Str::SetSafe;
+		SET_CONTEXT(SetSafe);
 
 		return SetSafe(Context, Component, Materials, nullptr);
 	}
@@ -402,9 +418,31 @@ namespace NCsMaterial
 
 		for (int32 Index = 0; Index < Count; ++Index)
 		{
-			checkf(Materials[Index], TEXT("%s: Materials[%d] is NULL."), *Context, Index);
+			check(IsValidChecked_ArrayIndex(Context, Materials[Index], Index));
 
 			Mesh->SetMaterial(Index, Materials[Index]);
+		}
+	}
+
+	void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, const TArray<TObjectPtr<UMaterialInterface>>& Materials)
+	{
+		// Check Mesh is Valid
+		CS_IS_PENDING_KILL_CHECKED(Mesh)
+
+		const int32 Count		  = Mesh->GetStaticMesh()->GetStaticMaterials().Num();
+		const int32 MaterialCount = Materials.Num();
+
+		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
+
+		ClearOverrideChecked(Context, Mesh);
+
+		for (int32 Index = 0; Index < Count; ++Index)
+		{
+			UMaterialInterface* Material = Materials[Index].Get();
+
+			check(IsValidChecked_ArrayIndex(Context, Material, Index));
+
+			Mesh->SetMaterial(Index, Material);
 		}
 	}
 
@@ -422,11 +460,38 @@ namespace NCsMaterial
 
 		for (int32 Index = 0; Index < Count; ++Index)
 		{
-			checkf(Materials[Index], TEXT("%s: Materials[%d] is NULL."), *Context, Index);
+			check(IsValidChecked_ArrayIndex(Context, Materials[Index], Index));
 
 			Mesh->SetMaterial(Index, Materials[Index]);
 		}
 	}
+
+	void FLibrary::SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, const TArray<TObjectPtr<UMaterialInterface>>& Materials)
+	{
+		// Check Mesh is Valid
+		CS_IS_PENDING_KILL_CHECKED(Mesh)
+
+		const int32 Count		  = Mesh->GetSkinnedAsset()->GetMaterials().Num();
+		const int32 MaterialCount = Materials.Num();
+
+		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->GetSkinnedAsset()->GetName(), Count, MaterialCount);
+
+		ClearOverrideChecked(Context, Mesh);
+
+		for (int32 Index = 0; Index < Count; ++Index)
+		{
+			UMaterialInterface* Material = Materials[Index].Get();
+
+			check(IsValidChecked_ArrayIndex(Context, Material, Index));
+
+			Mesh->SetMaterial(Index, Material);
+		}
+	}
+
+	#pragma endregion Set
+
+	// Override
+	#pragma region
 
 	void FLibrary::ClearOverrideChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index)
 	{
@@ -503,8 +568,6 @@ namespace NCsMaterial
 		CS_IS_PENDING_KILL_CHECKED(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
 		if (Index < Count)
@@ -527,8 +590,6 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		if (Index < Count)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
@@ -549,8 +610,6 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
@@ -569,8 +628,6 @@ namespace NCsMaterial
 		CS_IS_PENDING_KILL(Mesh)
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
-
-		typedef NCsObject::FLibrary ObjectLibrary;
 
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
@@ -593,8 +650,6 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		if (Index < Count)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
@@ -614,8 +669,6 @@ namespace NCsMaterial
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Index, 0)
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
-
-		typedef NCsObject::FLibrary ObjectLibrary;
 
 		if (Index < Count)
 		{
@@ -637,8 +690,6 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
@@ -658,8 +709,6 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
@@ -673,6 +722,8 @@ namespace NCsMaterial
 			Mesh->MarkRenderStateDirty();
 		return true;
 	}
+
+	#pragma endregion Override
 
 	// Scalar
 	#pragma region
@@ -861,9 +912,7 @@ namespace NCsMaterial
 
 	bool FLibrary::IsScalarParameterValid(UMaterialInterface* Material, const FName& ParamName)
 	{
-		using namespace NCsMaterial::NLibrary::NCached;
-
-		const FString& Context = Str::IsScalarParameterValid;
+		SET_CONTEXT(IsScalarParameterValid);
 
 		return IsScalarParameterValid(Context, Material, ParamName, nullptr);
 	}
@@ -1068,9 +1117,7 @@ namespace NCsMaterial
 
 	bool FLibrary::IsVectorParameterValid(UMaterialInterface* Material, const FName& ParamName)
 	{
-		using namespace NCsMaterial::NLibrary::NCached;
-
-		const FString& Context = Str::IsVectorParameterValid;
+		SET_CONTEXT(IsVectorParameterValid);
 
 		return IsVectorParameterValid(Context, Material, ParamName, nullptr);
 	}
@@ -1275,9 +1322,7 @@ namespace NCsMaterial
 
 	bool FLibrary::IsTextureParameterValid(UMaterialInterface* Material, const FName& ParamName)
 	{
-		using namespace NCsMaterial::NLibrary::NCached;
-
-		const FString& Context = Str::IsTextureParameterValid;
+		SET_CONTEXT(IsTextureParameterValid);
 
 		return IsTextureParameterValid(Context, Material, ParamName, nullptr);
 	}
@@ -1293,7 +1338,11 @@ namespace NCsMaterial
 		return Value;
 	}
 
-	#pragma endregion Scalar
+	#pragma endregion Texture
+
+	#undef USING_NS_CACHED
+	#undef SET_CONTEXT
+	#undef ObjectLibrary
 
 	namespace NMID
 	{
@@ -1332,6 +1381,9 @@ namespace NCsMaterial
 			Manager_AnimParams.Shutdown();
 		}
 
+		#define ObjectLibrary NCsObject::FLibrary
+		#define MaterialLibrary NCsMaterial::FLibrary
+
 		bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs)
 		{
 			const int32 Count = MIDs.Num();
@@ -1345,12 +1397,8 @@ namespace NCsMaterial
 
 		void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Mesh, UMaterialInterface* Material, const int32& Index, UMaterialInstanceDynamic*& OutMID)
 		{
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
 			MaterialLibrary::ClearOverrideChecked(Context, Mesh, Index);
 			MaterialLibrary::IsValidChecked(Context, Mesh, Index);
-
-			typedef NCsObject::FLibrary ObjectLibrary;
 
 			ObjectLibrary::SafeMarkAsGarbage(Context, OutMID, nullptr);
 
@@ -1361,14 +1409,10 @@ namespace NCsMaterial
 
 		bool FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Mesh, UMaterialInterface* Material, const int32& Index, UMaterialInstanceDynamic*& OutMID, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
 			if (!MaterialLibrary::SafeClearOverride(Context, Mesh, Index, Log))
 				return false;
 			if (!MaterialLibrary::IsValid(Context, Mesh, Index, Log))
 				return false;
-
-			typedef NCsObject::FLibrary ObjectLibrary;
 
 			ObjectLibrary::SafeMarkAsGarbage(Context, OutMID, nullptr);
 
@@ -1380,8 +1424,6 @@ namespace NCsMaterial
 
 		void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Mesh, const TArray<UMaterialInterface*>& Materials, TArray<UMaterialInstanceDynamic*>& OutMIDs)
 		{
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
 			MaterialLibrary::ClearOverrideChecked(Context, Mesh);
 			Destroy(OutMIDs);
 
@@ -1399,8 +1441,6 @@ namespace NCsMaterial
 
 		bool FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Mesh, const TArray<UMaterialInterface*>& Materials, TArray<UMaterialInstanceDynamic*>& OutMIDs, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
 			if (!MaterialLibrary::SafeClearOverride(Context, Mesh, Log))
 				return false;
 
@@ -1424,8 +1464,6 @@ namespace NCsMaterial
 
 		void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& OutMIDs, const TArray<UMaterialInterface*>& Materials)
 		{
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
 			MaterialLibrary::ClearOverrideChecked(Context, Mesh);
 			Destroy(OutMIDs);
 
@@ -1458,8 +1496,6 @@ namespace NCsMaterial
 
 		void FLibrary::SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& OutMIDs, const TArray<UMaterialInterface*>& Materials)
 		{
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
 			MaterialLibrary::ClearOverrideChecked(Context, Mesh);
 			Destroy(OutMIDs);
 
@@ -1494,8 +1530,6 @@ namespace NCsMaterial
 
 		void FLibrary::Destroy(TArray<UMaterialInstanceDynamic*>& OutMIDs)
 		{
-			typedef NCsObject::FLibrary ObjectLibrary;
-
 			const int32 Count = OutMIDs.Num();
 
 			for (int32 I = Count - 1; I >= 0; --I)
@@ -2949,5 +2983,8 @@ namespace NCsMaterial
 		#undef ParamsType
 
 		#pragma endregion Anim
+
+		#undef ObjectLibrary
+		#undef MaterialLibrary
 	}
 }

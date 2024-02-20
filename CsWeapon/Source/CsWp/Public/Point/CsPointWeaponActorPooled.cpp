@@ -23,7 +23,7 @@
 	// Modifier
 #include "Modifier/CsLibrary_WeaponModifier.h"
 	// Common
-#include "Library/CsLibrary_Camera.h"
+#include "Camera/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
@@ -147,6 +147,8 @@ ACsPointWeaponActorPooled::ACsPointWeaponActorPooled(const FObjectInitializer& O
 	: Super(ObjectInitializer),
 	// ICsUpdate
 	UpdateGroup(),
+	// Shutdown
+	bShutdown(false),
 	// ICsPooledObject
 	Cache(nullptr),
 	WeaponType(),
@@ -337,8 +339,9 @@ void ACsPointWeaponActorPooled::Shutdown()
 
 	CS_SAFE_DELETE_PTR(SoundImpl)
 	CS_SAFE_DELETE_PTR(FXImpl)
-}
 
+	bShutdown = true;
+}
 
 #pragma endregion ICsShutdown
 

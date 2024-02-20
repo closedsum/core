@@ -470,9 +470,44 @@ namespace NCsData
 			*/
 			static uint8* GetDataTableRowChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const UScriptStruct* RowStruct, const FName& RowName);
 
+			static FName DataTable_GetEntryNameChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject);
+
 		#pragma endregion DataTable
 
 		#pragma endregion Get
+
+		// Active
+		#pragma region
+		public:
+
+			FORCEINLINE static bool IsActiveChecked(const FString& Context, const UObject* ContextObject)
+			{
+			#if !UE_BUILD_SHIPPING
+				return GetChecked(Context, ContextObject) != nullptr;
+			#else
+				return true;
+			#endif // #if !UE_BUILD_SHIPPING
+			}
+
+			FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				return GetSafe(Context, ContextObject, Log) != nullptr;
+			}
+
+		#pragma endregion Active
+
+		// Maps
+		#pragma region
+		
+			// Payload
+		#pragma region
+		public:
+
+			static bool DoesPayloadContainChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, const TSoftObjectPtr<UDataTable>& DataTable);
+		
+		#pragma endregion Payload
+
+		#pragma endregion Maps
 
 		// Add
 		#pragma region
@@ -552,20 +587,10 @@ namespace NCsData
 		#pragma region
 		public:
 
-		#define OnAsyncLoadPayloadCompleteType NCsData::NManager::FOnAsyncLoadPayloadComplete
+		#define OnAsyncLoadPayloadCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete
+		#define OnAsyncLoadPayloadCompletePersistentType NCsData::NManager::NPersistent::FOnAsyncLoadPayloadComplete
 			
-			/**
-			* Asynchronous load a Payload by Payload Name.
-			*
-			* @param Context		The calling context.
-			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-			*						or
-			*						A reference to the GameInstance.
-			* @param PayloadName	Name of the Payload to async load.
-			* @param Delegate		Delegate called synchronously (on the Game Thread) 
-			*						when the async load completes.
-			*/
-			static void AsyncLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate);
+			static OnAsyncLoadPayloadCompletePersistentType& GetOnAsyncLoadPayloadComplete_Persistent_EventChecked(const FString& Context, const UObject* ContextObject);
 
 			/**
 			* Asynchronous load a Payload by Payload Name.
@@ -578,9 +603,50 @@ namespace NCsData
 			* @param Delegate		Delegate called synchronously (on the Game Thread) 
 			*						when the async load completes.
 			*/
-			static void AsyncAddAndLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, const FCsPayload* Payload, OnAsyncLoadPayloadCompleteType Delegate);
+			static void AsyncLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate);
 
-		#undef OnAsyncLoadPayloadCompleteType
+			/**
+			* Asynchronous load a Payload by Payload Name.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param PayloadName	Name of the Payload to async load.
+			* @param Delegate		Delegate called synchronously (on the Game Thread) 
+			*						when the async load completes.
+			*/
+			static void AsyncAddAndLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, const FCsPayload* Payload, OnAsyncLoadPayloadCompleteOnceType Delegate);
+
+			/**
+			* Asynchronous load the Startup Payload (This is set in the current DataRootSet. See UCsDeveloperSettings).
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Delegate		Delegate called synchronously (on the Game Thread) 
+			*						when the async load completes.
+			*/
+			static void AsyncLoadStartupPayloadChecked(const FString& Context, const UObject* ContextObject, OnAsyncLoadPayloadCompleteOnceType Delegate);
+
+			/**
+			* Safely Asynchronous load the Startup Payload (This is set in the current DataRootSet. See UCsDeveloperSettings).
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Delegate		Delegate called synchronously (on the Game Thread) 
+			*						when the async load completes.
+			* return
+			*/
+			static bool SafeAsyncLoadStartupPayload(const FString& Context, const UObject* ContextObject, OnAsyncLoadPayloadCompleteOnceType Delegate, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static void UnloadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName);
+
+		#undef OnAsyncLoadPayloadCompleteOnceType
+		#undef OnAsyncLoadPayloadCompletePersistentType
 
 		#pragma endregion Payload
 			

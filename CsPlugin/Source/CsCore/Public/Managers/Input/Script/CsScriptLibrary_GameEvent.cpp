@@ -31,88 +31,83 @@ UCsScriptLibrary_GameEvent::UCsScriptLibrary_GameEvent(const FObjectInitializer&
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryGameEvent::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsScriptLibraryGameEvent::NCached; \
+	const FString& Context = Str::##__FunctionName
+#define CLASS_TYPE UCsScriptLibrary_GameEvent
+#define EnumLibrary NCsEnum::FLibrary
 #define EnumMapType EMCsGameEvent
 #define EnumType FECsGameEvent
 
-void UCsScriptLibrary_GameEvent::PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
+void CLASS_TYPE::PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 {
 	NCsGameEvent::PopulateEnumMapFromSettings(Context, ContextRoot);
 }
 
-EnumType UCsScriptLibrary_GameEvent::Create(const FString& Name, const FString& DisplayName)
+EnumType CLASS_TYPE::Create(const FString& Name, const FString& DisplayName)
 {
-	using namespace NCsScriptLibraryGameEvent::NCached;
-
-	const FString& Context = Str::Create;
-
-	typedef NCsEnum::FLibrary EnumLibrary;
+	SET_CONTEXT(Create);
 
 	return EnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
 }
 
-EnumType UCsScriptLibrary_GameEvent::Get(const FString& Name)
+EnumType CLASS_TYPE::Get(const FString& Name)
 {
-	using namespace NCsScriptLibraryGameEvent::NCached;
-
-	const FString& Context = Str::Get;
-
-	typedef NCsEnum::FLibrary EnumLibrary;
+	SET_CONTEXT(Get);
 
 	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
-EnumType UCsScriptLibrary_GameEvent::GetByIndex(const int32& Index)
+EnumType CLASS_TYPE::GetByIndex(const int32& Index)
 {
-	using namespace NCsScriptLibraryGameEvent::NCached;
-
-	const FString& Context = Str::GetByIndex;
-
-	typedef NCsEnum::FLibrary EnumLibrary;
+	SET_CONTEXT(GetByIndex);
 
 	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
 
-FString UCsScriptLibrary_GameEvent::ToString(const EnumType& Enum)
+FString CLASS_TYPE::ToString(const EnumType& Enum)
 {
 	return Enum.ToString();
 }
 
-uint8 UCsScriptLibrary_GameEvent::GetCount()
+uint8 CLASS_TYPE::GetCount()
 {
 	return EnumMapType::Get().Num();
 }
 
-void UCsScriptLibrary_GameEvent::GetAll(TArray<EnumType>& OutTypes)
+void CLASS_TYPE::GetAll(TArray<EnumType>& OutTypes)
 {
-	typedef NCsEnum::FLibrary EnumLibrary;
-
 	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
-EnumType UCsScriptLibrary_GameEvent::GetMAX()
+EnumType CLASS_TYPE::GetMAX()
 {
 	return EnumMapType::Get().GetMAX();
 }
 
-bool UCsScriptLibrary_GameEvent::EqualEqual(const EnumType& A, const EnumType& B)
+bool CLASS_TYPE::EqualEqual(const EnumType& A, const EnumType& B)
 {
 	return A == B;
 }
 
-bool UCsScriptLibrary_GameEvent::NotEqual(const EnumType& A, const EnumType& B)
+bool CLASS_TYPE::NotEqual(const EnumType& A, const EnumType& B)
 {
 	return A != B;
 }
 
-bool UCsScriptLibrary_GameEvent::IsValid(const EnumType& Enum)
+bool CLASS_TYPE::IsValid(const EnumType& Enum)
 {
 	return EnumMapType::Get().IsValidEnum(Enum);
 }
 
-bool UCsScriptLibrary_GameEvent::IsValidByName(const FString& Name)
+bool CLASS_TYPE::IsValidByName(const FString& Name)
 {
 	return EnumMapType::Get().IsValidEnum(Name);
 }
 
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
+#undef CLASS_TYPE
+#undef EnumLibrary
 #undef EnumMapType
 #undef EnumType

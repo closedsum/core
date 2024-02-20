@@ -1046,7 +1046,61 @@ namespace NCsProperty
 
 		static float GetFloatPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
+			// Float or Double
+	#pragma region
+	public:
+
+		FORCEINLINE static float GetFloatOrDoublePropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = false;
+
+			// Float
+			if (float* FloatValue = GetFloatPropertyValuePtr(Context, StructValue, Struct, PropertyName, nullptr))
+			{
+				OutSuccess = true;
+				return *FloatValue;
+			}
+			// Double
+			if (double* DoubleValue = GetDoublePropertyValuePtr(Context, StructValue, Struct, PropertyName, nullptr))
+			{
+				OutSuccess = true;
+				return *DoubleValue;
+			}
+
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Property with name: %s from Struct: %s is NOT of type: float or double."), *Context, *(PropertyName.ToString()), *(Struct->GetName())));
+			return 0.0f;
+		}
+
+		static float GetFloatOrDoublePropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Float or Double
+
 	#pragma endregion Float
+
+		// Double
+	#pragma region
+	public:
+
+		static double* GetDoublePropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName);
+
+		static double* GetDoublePropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		FORCEINLINE static double GetDoublePropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = false;
+
+			if (double* Value = GetDoublePropertyValuePtr(Context, StructValue, Struct, PropertyName, Log))
+			{
+				OutSuccess = true;
+				return *Value;
+			}
+			return 0.0;
+		}
+
+		static double GetDoublePropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Double
 
 		// Enum
 	#pragma region
@@ -1168,6 +1222,54 @@ namespace NCsProperty
 		static FRotator GetRotatorPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Rotator
+
+		// Name
+	#pragma region
+	public:
+
+		static FName* GetNamePropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName);
+
+		static FName* GetNamePropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		FORCEINLINE static FName GetNamePropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = false;
+
+			if (FName* Value = GetNamePropertyValuePtr(Context, StructValue, Struct, PropertyName, Log))
+			{
+				OutSuccess = true;
+				return *Value;
+			}
+			return NAME_None;
+		}
+
+		static FName GetNamePropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Name
+
+		// String
+	#pragma region
+	public:
+
+		static FString* GetStringPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName);
+
+		static FString* GetStringPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		FORCEINLINE static FString GetStringPropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = false;
+
+			if (FString* Value = GetStringPropertyValuePtr(Context, StructValue, Struct, PropertyName, Log))
+			{
+				OutSuccess = true;
+				return *Value;
+			}
+			return FString();
+		}
+
+		static FString GetStringPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion String
 
 		// SoftObjectPtr
 	#pragma region

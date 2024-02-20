@@ -145,43 +145,54 @@ namespace NCsGameEvent
 
 		void FLibrary::ProcessGameEventInfoChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
-
-			// Check Group is Valid.
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameEventCoordinatorGroup, Group)
-			// Check Info is Valid.
 			CS_IS_VALID_CHECKED(Info);
-
-			UCsCoordinator_GameEvent* Coordinator_GameEvent = GetChecked(Context, ContextObject);
 
 			// If Group == None, Process Immediately
 			if (Group == NCsGameEventCoordinatorGroup::None)
 			{
-				Coordinator_GameEvent->ProcessGameEventInfo(Group, Info);
+				GetChecked(Context, ContextObject)->ProcessGameEventInfo(Group, Info);
 			}
 			else
 			{
-				Coordinator_GameEvent->QueueGameEventInfo(Group, Info);
+				GetChecked(Context, ContextObject)->QueueGameEventInfo(Group, Info);
 			}
+		}
+
+		bool FLibrary::SafeProcessGameEventInfo(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID(EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup, Group)
+			CS_IS_VALID(Info)
+
+			if (UCsCoordinator_GameEvent* Coordinator_GameEvent = GetSafe(Context, ContextObject, Log))
+			{ 
+				// If Group == None, Process Immediately
+				if (Group == NCsGameEventCoordinatorGroup::None)
+				{
+					Coordinator_GameEvent->ProcessGameEventInfo(Group, Info);
+				}
+				else
+				{
+					Coordinator_GameEvent->QueueGameEventInfo(Group, Info);
+				}
+				return true;
+			}
+			return false;
 		}
 
 		void FLibrary::BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FCsGameEventInfo& Info)
 		{
-			// Check Group is Valid.
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameEventCoordinatorGroup, Group)
-			// Check Info is Valid.
 			CS_IS_VALID_CHECKED(Info);
-
-			UCsCoordinator_GameEvent* Coordinator_GameEvent = GetChecked(Context, ContextObject);
 
 			// If Group == None, Process Immediately
 			if (Group == NCsGameEventCoordinatorGroup::None)
 			{
-				Coordinator_GameEvent->ProcessGameEventInfo(Group, Info);
+				GetChecked(Context, ContextObject)->ProcessGameEventInfo(Group, Info);
 			}
 			else
 			{
-				Coordinator_GameEvent->QueueGameEventInfo(Group, Info);
+				GetChecked(Context, ContextObject)->QueueGameEventInfo(Group, Info);
 			}
 		}
 

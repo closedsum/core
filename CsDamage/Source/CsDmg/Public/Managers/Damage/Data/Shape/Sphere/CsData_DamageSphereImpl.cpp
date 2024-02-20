@@ -317,6 +317,12 @@ void UCsData_DamageSphereImpl::Load(const int32& LoadFlags)
 	bLoaded = true;
 }
 
+void UCsData_DamageSphereImpl::TopLoad()
+{
+	if (!DataProxy)
+		Init();
+}
+
 void UCsData_DamageSphereImpl::Unload()
 {
 

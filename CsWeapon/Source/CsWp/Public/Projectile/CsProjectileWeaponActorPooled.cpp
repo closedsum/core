@@ -28,7 +28,7 @@
 	// Params
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
 	// Common
-#include "Library/CsLibrary_Camera.h"
+#include "Camera/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
@@ -188,6 +188,8 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	: Super(ObjectInitializer),
 	// ICsUpdate
 	UpdateGroup(),
+	// Shutdown
+	bShutdown(false),
 	// ICsPooledObject
 	Cache(nullptr),
 	WeaponType(),
@@ -408,6 +410,8 @@ void ACsProjectileWeaponActorPooled::Shutdown()
 	}
 	CS_SAFE_DELETE_PTR(SoundImpl)
 	CS_SAFE_DELETE_PTR(FXImpl)
+
+	bShutdown = true;
 }
 
 #pragma endregion ICsShutdown
@@ -1431,7 +1435,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 			// CsObject_Orientation
 			if (ICsObject_Orientation* Object_Movement = Cast<ICsObject_Orientation>(TheOwner))
 			{
-				Rotation	 = NCsRotationRules::GetRotation(Object_Movement->Orientation_GetRotation(), LocationOffsetSpaceRules);
+				Rotation	 = NCsRotationRules::GetRotation(Object_Movement->Orientation_GetRotation3f(), LocationOffsetSpaceRules);
 				IsValidOwner = true;
 			}
 			// AActor

@@ -74,7 +74,11 @@ namespace NCsWorld
 
 		static bool IsPlayInEditor(UWorld* World);
 
+		static bool IsPlayInEditor(const UObject* WorldContext);
+
 		static bool IsPlayInPIE(UWorld* World);
+
+		static bool IsPlayInPIE(const UObject* WorldContext);
 
 		static bool IsPlayInEditorPreview(UWorld* World);
 
@@ -94,12 +98,36 @@ namespace NCsWorld
 
 	#pragma endregion WorldType
 
+	public:
+
+		static const FString& GetStreamingLevelsPrefixChecked(const FString& Context, const UObject* WorldContext);
+
 	// Spawn
 	#pragma region
 	public:
 
 		static AActor* SpawnChecked(const FString& Context, const UObject* WorldContext, UClass* Class);
 
+		template<typename T>
+		static T* SpawnChecked(const FString& Context, const UObject* WorldContext)
+		{
+			AActor* A = SpawnChecked(Context, WorldContext, T::StaticClass());
+			T* Other  = Cast<T>(A);
+
+			checkf(Other, TEXT("%s: Actor with Class: %s is NOT a Child of: %s."), *Context, *(A->GetClass()->GetName()), *(T::StaticClass()->GetName()));
+			return Other;
+		}
+
 	#pragma endregion Spawn
 	};
+
+	namespace NPIE
+	{
+		class CSCORE_API FLibrary final
+		{
+		public:
+
+			static void EnableSeamlessTravelChecked(const FString& Context);
+		};
+	}
 }

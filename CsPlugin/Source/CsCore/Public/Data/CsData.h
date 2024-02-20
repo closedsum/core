@@ -59,6 +59,8 @@ public:
 	*/
 	virtual void Load(const int32& LoadFlags) = 0;
 
+	virtual void TopLoad() = 0;
+
 	/**
 	*
 	*
@@ -131,6 +133,20 @@ public:
 	FScript_Load Script_Load_Impl;
 
 	/**
+	* Delegate type for "Top" loading a Data with the given Load Flags.
+	*  The Data implements a script interface of type: ICsData and the UClass
+	*  associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true.
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	*/
+	DECLARE_DELEGATE_OneParam(FScript_TopLoad, UObject* /*Object*/);
+
+	/** Delegate type for "Top" loading a Data with the given Load Flags.
+		 The Data implements a script interface of type: ICsData and the UClass
+		 associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true. */
+	FScript_TopLoad Script_TopLoad_Impl;
+
+	/**
 	* Delegate type for unloading a Data.
 	*  The Data implements a script interface of type: ICsData and the UClass
 	*  associated with the Object have ImplementsInterface(UCsData::StaticClass()) == true.
@@ -168,6 +184,7 @@ public:
 		Script_getIData_Impl(),
 		Script_IsValid_Impl(),
 		Script_Load_Impl(),
+		Script_TopLoad_Impl(),
 		Script_Unload_Impl(),
 		Script_IsLoaded_Impl()
 	{
@@ -185,6 +202,7 @@ public:
 
 		Script_IsValid_Impl.Unbind();
 		Script_Load_Impl.Unbind();
+		Script_TopLoad_Impl.Unbind();
 		Script_Unload_Impl.Unbind();
 		Script_IsLoaded_Impl.Unbind();
 	}
@@ -216,6 +234,14 @@ public:
 			Script_Load_Impl.Execute(Object, LoadFlags);
 		else
 			Interface->Load(LoadFlags);
+	}
+
+	FORCEINLINE void TopLoad()
+	{
+		if (bScript)
+			Script_TopLoad_Impl.Execute(Object);
+		else
+			Interface->TopLoad();
 	}
 
 	FORCEINLINE void Unload()

@@ -4,7 +4,9 @@
 #pragma once
 
 class UObject;
+class UActorComponent;
 class ACameraActor;
+class UCameraComponent;
 
 namespace NCsCamera
 {
@@ -28,7 +30,6 @@ namespace NCsCamera
 	*/
 	class CSCORE_API FLibrary final
 	{
-
 	// Get
 	#pragma region
 	public:
@@ -46,6 +47,38 @@ namespace NCsCamera
 		static ACameraActor* GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag);
 
 	#pragma endregion Get
+	
+	// Is
+	#pragma region
+	public:
+
+		static bool IsCameraComponent(const UActorComponent* Component);
+		
+	#pragma endregion Is
+
+	// Spawn
+	#pragma region
+	public:
+
+		static ACameraActor* SpawnChecked(const FString& Context, const UObject* WorldContext, const UCameraComponent* Component);
+
+	#pragma endregion Spawn
+
+	// Copy
+	#pragma region
+
+		static void CopyChecked(const FString& Context, const UCameraComponent* From, ACameraActor* To);
+
+	#pragma endregion Copy
+
+	// Destroy
+	#pragma region
+	public:
+
+		static void SimulateDestroyChecked(const FString& Context, UCameraComponent* Component);
+		static void SimulateDestroyByActorComponentChecked(const FString& Context, UActorComponent* Component);
+
+	#pragma endregion Destroy
 
 	// Location
 	#pragma region

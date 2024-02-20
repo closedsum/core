@@ -41,7 +41,13 @@ namespace NCsManagerData
 	{
 		namespace Str
 		{
+			// Maps
+				// DataTable
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, UpdateDataTableRowMap);
+				// Payload
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GenerateMaps);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AddPayload);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, DoesPayloadContain);
 			// Load
 				// Data
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadData);
@@ -53,10 +59,12 @@ namespace NCsManagerData
 				// Payload
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadPayload);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayload);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadStartupPayload);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloadByGroup);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloadByGroup_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, Payload_GetPaths);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, Payload_GetPathCount);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, UnloadPayload);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AddDataCompositionObject_Loaded);
 		}
 
@@ -76,7 +84,63 @@ UCsManager_Data* UCsManager_Data::s_Instance;
 bool UCsManager_Data::s_bShutdown = false;
 
 UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	// Singleton
+		// Root
+	MyRoot(nullptr),
+	// Root Set
+	DataRootSet(),
+	// Maps
+		// Data
+	Manager_DataEntry_Data(),
+	DataEntryMap(),
+	DataEntryByPathMap(),
+	DataEntryMap_Added(),
+	DataEntryMap_Loaded(),
+	DataEntryByPathMap_Loaded(),
+	DataMap_Loaded(),
+	DataByPathMap_Loaded(),
+	DataObjectMap_Loaded(),
+	DataObjectByPathMap_Loaded(),
+		// ScriptData
+	Manager_DataEntry_ScriptData(),
+	ScriptDataEntryMap(),
+	ScriptDataEntryByPathMap(),
+	ScriptDataEntryMap_Loaded(),
+	ScriptDataEntryByPathMap_Loaded(),
+	ScriptDataMap_Loaded(),
+	ScriptDataByPathMap_Loaded(),
+	ScriptDataObjectMap_Loaded(),
+	ScriptDataObjectByPathMap_Loaded(),
+		// DataTable
+	Manager_DataEntry_DataTable(),
+	DataTableEntryMap(),
+	DataTableEntryByPathMap(),
+	DataTableEntryMap_Added(),
+	DataTableEntryRowMap_Loaded(),
+	DataTableEntryRowByPathMap_Loaded(),
+	DataTableMap_Loaded(),
+	DataTableByPathMap_Loaded(),
+	DataTableRowMap_Loaded(),
+	DataTableRowByPathMap_Loaded(),
+	DataTableHandleMap_Loaded(),
+	DataTableRowHandleMap_Loaded(),
+		// Payload
+	Manager_Payload(),
+	PayloadMap(),
+	PayloadMap_Added(),
+	PayloadMap_Loaded(),
+	PayloadHandleMap_Loaded(),
+	// Load
+		// Payload
+	OnAsyncLoadPayloadCompleted_Once_Event(),
+	OnAsyncLoadPayloadCompleted_Persistent_Event(),
+	InProgressAsyncLoadPayloads(),
+	AsyncLoadPayloadByGroupInfo(),
+	AsyncLoadPayloadByGroupHandle(),
+	// Add
+	DataObjectsAdded_Loaded(),
+	DataCompositionObjectsAdded_Loaded()
 {
 }
 
@@ -141,6 +205,26 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 	s_Instance->RemoveFromRoot();
 	s_Instance = nullptr;
 	s_bShutdown = true;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ bool UCsManager_Data::HasShutdown(const UObject* InRoot /*=nullptr*/)
+{
+#if WITH_EDITOR
+	return Get_GetManagerData(InRoot)->GetManager_Data() == nullptr;
+#else
+	return s_bShutdown;
+#endif // #if WITH_EDITOR
+}
+
+/*static*/ bool UCsManager_Data::SafeHasShutdown(const FString& Context, const UObject* InRoot /*=nullptr*/, void(*Log)(const FString&) /*=nullptr*/)
+{
+#if WITH_EDITOR
+	if (ICsGetManagerData* GetManager_Data = GetSafe_GetManagerData(Context, InRoot, Log))
+		return GetManager_Data->GetManager_Data() == nullptr;
+	return true;
+#else
+	return s_bShutdown;
 #endif // #if WITH_EDITOR
 }
 
@@ -280,20 +364,71 @@ void UCsManager_Data::CleanUp()
 {
 	// Datas
 	{
-		DataEntryMap_Added.Reset();
+		for (TPair<FName, FCsDataEntry_Data*>& Pair : DataEntryMap)
+		{
+			Pair.Value->Unload();
+		}
+
 		Manager_DataEntry_Data.Shutdown();
+		DataEntryMap.Reset();
+		DataEntryByPathMap.Reset();
+		DataEntryMap_Added.Reset();
+		DataEntryMap_Loaded.Reset();
+		DataEntryByPathMap_Loaded.Reset();
+		DataMap_Loaded.Reset();
+		DataByPathMap_Loaded.Reset();
+		DataObjectMap_Loaded.Reset();
+		DataObjectByPathMap_Loaded.Reset();
+	}
+	// ScriptDatas
+	{
+		for (TPair<FName, FCsDataEntry_ScriptData*>& Pair : ScriptDataEntryMap)
+		{
+			Pair.Value->Unload();
+		}
+
+		Manager_DataEntry_ScriptData.Shutdown();
+		ScriptDataEntryMap.Reset();
+		ScriptDataEntryByPathMap.Reset();
+		ScriptDataEntryMap_Loaded.Reset();
+		ScriptDataEntryByPathMap_Loaded.Reset();
+		ScriptDataMap_Loaded.Reset();
+		ScriptDataByPathMap_Loaded.Reset();
+		ScriptDataObjectMap_Loaded.Reset();
+		ScriptDataObjectByPathMap_Loaded.Reset();
 	}
 	// DataTables
 	{
-		DataTableEntryMap_Added.Reset();
+		for (TPair<FName, FCsDataEntry_DataTable*>& Pair : DataTableEntryMap)
+		{
+			Pair.Value->Unload();
+		}
+
 		Manager_DataEntry_DataTable.Shutdown();
+		DataTableEntryMap.Reset();
+		DataTableEntryByPathMap.Reset();
+		DataTableEntryMap_Added.Reset();
+		DataTableEntryRowMap_Loaded.Reset();
+		DataTableEntryRowByPathMap_Loaded.Reset();
+		DataTableMap_Loaded.Reset();
+		DataTableByPathMap_Loaded.Reset();
+		DataTableRowMap_Loaded.Reset();
+		DataTableRowByPathMap_Loaded.Reset();
+		DataTableHandleMap_Loaded.Reset();
+		DataTableRowHandleMap_Loaded.Reset();
 	}
 	// Payloads
 	{
-		PayloadMap_Added.Reset();
 		Manager_Payload.Shutdown();
+		PayloadMap.Reset();
+		PayloadMap_Added.Reset();
+		PayloadMap_Loaded.Reset();
 		PayloadHandleMap_Loaded.Reset();
 	}
+
+	DataObjectsAdded_Loaded.Reset();
+	DataCompositionObjectsAdded_Loaded.Reset();
+
 }
 
 	// Root
@@ -316,11 +451,13 @@ void UCsManager_Data::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Data::UpdateDataTableRowMap(const FName& EntryName, const FName& RowName, uint8* RowPtr)
 {
-	checkf(RowPtr, TEXT("UCsManager_Data::UpdateDataTableRowMap: RowPtr is NULL for DataTable with EntryName: %s and Row: %s."), *(EntryName.ToString()), *(RowName.ToString()));
+	SET_CONTEXT(UpdateDataTableRowMap);
+
+	checkf(RowPtr, TEXT("%s: RowPtr is NULL for DataTable with EntryName: %s and Row: %s."), *Context, *(EntryName.ToString()), *(RowName.ToString()));
 
 	FCsDataEntry_DataTable* Entry = DataTableEntryMap[EntryName];
 
-	checkf(Entry, TEXT("UCsManager_Data::UpdateDataTableRowMap: Entry has NOT been set for DataTable with EntryName: %s in DataTableEntryMap."), *(EntryName.ToString()));
+	checkf(Entry, TEXT("%s: Entry has NOT been set for DataTable with EntryName: %s in DataTableEntryMap."), *Context, *(EntryName.ToString()));
 
 	const FSoftObjectPath& Path = Entry->DataTable.ToSoftObjectPath();
 
@@ -357,7 +494,9 @@ void UCsManager_Data::UpdateDataTableRowMap(const FName& EntryName, const FName&
 
 void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Payload)
 {
-	checkf(PayloadName != NAME_None, TEXT("UCsManager_Data::AddPayload: PayloadName is None."));
+	SET_CONTEXT(AddPayload);
+
+	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 	if (PayloadMap_Added.Find(PayloadName))
 		return;
@@ -389,6 +528,40 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 		{
 		}
 	}
+}
+
+bool UCsManager_Data::DoesPayloadContain(const FName& PayloadName, const TSoftObjectPtr<UDataTable>& DataTable)
+{
+	SET_CONTEXT(DoesPayloadContain);
+
+	CS_IS_NAME_NONE_CHECKED(PayloadName)
+	CS_IS_SOFT_OBJECT_PTR_VALID_CHECKED(DataTable, UDataTable)
+
+	FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName);
+
+	if (!PayloadPtr)
+	{
+		PayloadPtr = PayloadMap_Added.Find(PayloadName);
+
+		if (!PayloadPtr)
+			return false;
+	}
+
+	const FCsPayload& Payload = **PayloadPtr;
+
+	for (const FCsPayload_DataTable& DT : Payload.DataTables)
+	{
+		const FCsDataEntry_DataTable* const* EntryPtr = DataTableEntryMap.Find(DT.Name);
+
+		if (EntryPtr)
+		{
+			const FCsDataEntry_DataTable& Entry = **EntryPtr;
+			
+			if (DataTable == Entry.DataTable)
+				return true;
+		}
+	}
+	return false;
 }
 
 #pragma endregion Payload
@@ -643,11 +816,9 @@ UObject* UCsManager_Data::LoadScriptData(const FSoftObjectPath& Path)
 
 UDataTable* UCsManager_Data::LoadDataTable(const FName& EntryName)
 {
-	using namespace NCsManagerData::NCached;
+	SET_CONTEXT(LoadDataTable);
 
-	const FString& Context = Str::LoadDataTable;
-
-	checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."), *Context);
+	CS_IS_NAME_NONE_CHECKED(EntryName)
 
 	if (UDataTable* Table = GetDataTable(EntryName))
 		return Table;
@@ -673,11 +844,9 @@ UDataTable* UCsManager_Data::LoadDataTable(const FName& EntryName)
 
 UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 {
-	using namespace NCsManagerData::NCached;
+	SET_CONTEXT(LoadDataTable);
 
-	const FString& Context = Str::LoadDataTable;
-
-	checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
+	CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(Path)
 
 	if (UDataTable* Table = GetDataTable(Path))
 		return Table;
@@ -703,13 +872,10 @@ UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 
 uint8* UCsManager_Data::LoadDataTableRow(const FName& EntryName, const FName& RowName)
 {
-	using namespace NCsManagerData::NCached;
+	SET_CONTEXT(LoadDataTableRow);
 
-	const FString& Context = Str::LoadDataTableRow;
-
-	checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."), *Context);
-
-	checkf(RowName != NAME_None, TEXT("%s: RowName is None."), *Context);
+	CS_IS_NAME_NONE_CHECKED(EntryName)
+	CS_IS_NAME_NONE_CHECKED(RowName)
 
 	// Check if DataTable and Row are already loaded
 	if (uint8* RowPtr = GetDataTableRow(EntryName, RowName))
@@ -836,9 +1002,9 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 	}
 }
 
-#define OnAsyncLoadPayloadCompleteType NCsData::NManager::FOnAsyncLoadPayloadComplete
+#define OnAsyncLoadPayloadCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete
 
-void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate)
+void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate)
 {
 	SET_CONTEXT(AsyncLoadPayload);
 
@@ -856,7 +1022,8 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayl
 		{
 			UE_LOG(LogCs, Warning, TEXT("%s: No Paths found for Payload: %s."), *Context, *(PayloadName.ToString()));
 
-			OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(false, PayloadName);
+			OnAsyncLoadPayloadCompleted_Once_Event.ExecuteIfBound(false, PayloadName);
+			OnAsyncLoadPayloadCompleted_Once_Event.Unbind();
 			return;
 		}
 
@@ -880,11 +1047,11 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayl
 
 		InProgressAsyncLoadPayloads.Add(Handle, PayloadName);
 	
-		OnAsyncLoadPayloadCompleted_Event = Delegate;
+		OnAsyncLoadPayloadCompleted_Once_Event = Delegate;
 	}
 }
 
-void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 {
 	const int32 Count = Payload_GetSafePathCount(Context, PayloadName, Log);
 
@@ -892,7 +1059,8 @@ void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& P
 	{
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Paths found for Payload: %s."), *Context, *(PayloadName.ToString())));
 
-		OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(false, PayloadName);
+		OnAsyncLoadPayloadCompleted_Once_Event.ExecuteIfBound(false, PayloadName);
+		OnAsyncLoadPayloadCompleted_Once_Event.Unbind();
 		return;
 	}
 
@@ -910,7 +1078,8 @@ void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& P
 	{
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Paths found for Payload: %s."), *Context, *(PayloadName.ToString())));
 
-		OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(false, PayloadName);
+		OnAsyncLoadPayloadCompleted_Once_Event.ExecuteIfBound(false, PayloadName);
+		OnAsyncLoadPayloadCompleted_Once_Event.Unbind();
 		return;
 	}
 	// Set Async Order
@@ -922,7 +1091,47 @@ void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& P
 
 	InProgressAsyncLoadPayloads.Add(Handle, PayloadName);
 
-	OnAsyncLoadPayloadCompleted_Event = Delegate;
+	OnAsyncLoadPayloadCompleted_Once_Event = Delegate;
+}
+
+void UCsManager_Data::AsyncLoadStartupPayload(OnAsyncLoadPayloadCompleteOnceType Delegate)
+{
+	SET_CONTEXT(AsyncLoadStartupPayload);
+
+	UObject* DataRootSetObject	      = DataRootSet.GetObjectChecked(Context);
+	ICsGetDataRootSet* GetDataRootSet = DataRootSet.GetChecked(Context);
+	const FCsDataRootSet& RootSet	  = GetDataRootSet->GetCsDataRootSet();
+	const FName& PayloadName		  = RootSet.StartupPayload;
+
+	checkf(PayloadName != NAME_None, TEXT("%s: %s->GetCsDataRootSet().StartupPayload: None is NOT Valid."), *Context, *(DataRootSetObject->GetName()));
+
+	AsyncLoadPayload(PayloadName, Delegate);
+}
+
+bool UCsManager_Data::SafeAsyncLoadStartupPaylod(const FString& Context, OnAsyncLoadPayloadCompleteOnceType Delegate, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+{
+	UObject* DataRootSetObject = DataRootSet.GetSafeObject(Context, Log);
+
+	if (!DataRootSetObject)
+		return false;
+
+	ICsGetDataRootSet* GetDataRootSet = DataRootSet.GetSafe(Context, Log);
+
+	if (!GetDataRootSet)
+		return false;
+
+	const FCsDataRootSet& RootSet = GetDataRootSet->GetCsDataRootSet();
+
+	const FName& PayloadName = RootSet.StartupPayload;
+
+	if (PayloadName == NAME_None)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: %s->GetCsDataRootSet().StartupPayload: None is NOT Valid."), *Context, *(DataRootSetObject->GetName()));
+		return false;
+	}
+
+	AsyncLoadPayload(PayloadName, Delegate);
+	return true;
 }
 
 void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHandle& Handle, const TArray<TSharedPtr<FStreamableHandle>>& Handles, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime)
@@ -937,14 +1146,15 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHand
 		PayloadHandleMap_Loaded[PayloadName].AddDefaulted_GetRef().Init(H);
 	}
 
-	OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(true, PayloadName);
+	OnAsyncLoadPayloadCompleted_Once_Event.ExecuteIfBound(true, PayloadName);
+	OnAsyncLoadPayloadCompleted_Persistent_Event.Broadcast(true, PayloadName);
 
 	InProgressAsyncLoadPayloads.Remove(Handle);
 
-	OnAsyncLoadPayloadCompleted_Event.Unbind();
+	OnAsyncLoadPayloadCompleted_Once_Event.Unbind();
 }
 
-void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate)
+void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate)
 {
 	SET_CONTEXT(AsyncLoadPayloadByGroup);
 
@@ -967,7 +1177,7 @@ void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncL
 	AsyncLoadPayloadByGroupInfo.PayloadName = PayloadName;
 	AsyncLoadPayloadByGroupInfo.Index	    = CS_FIRST;
 
-	OnAsyncLoadPayloadCompleted_Event = Delegate;
+	OnAsyncLoadPayloadCompleted_Once_Event = Delegate;
 
 	CS_COROUTINE_PAYLOAD_PASS_NAME_START
 
@@ -1030,8 +1240,10 @@ char UCsManager_Data::AsyncLoadPayloadByGroup_Internal(FCsRoutine* R)
 
 	LoadPayload(PayloadName);
 
-	OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(true, PayloadName);
-	OnAsyncLoadPayloadCompleted_Event.Unbind();
+	OnAsyncLoadPayloadCompleted_Once_Event.ExecuteIfBound(true, PayloadName);
+	OnAsyncLoadPayloadCompleted_Once_Event.Unbind();
+
+	OnAsyncLoadPayloadCompleted_Persistent_Event.Broadcast(true, PayloadName);
 
 	CS_COROUTINE_END(R);
 }
@@ -1050,7 +1262,26 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup(const FCsL
 	++AsyncLoadPayloadByGroupInfo.Index;
 }
 
-#undef OnAsyncLoadPayloadCompleteType
+#undef OnAsyncLoadPayloadCompleteOnceType
+
+void UCsManager_Data::UnloadPayload(const FName& PayloadName)
+{
+	SET_CONTEXT(UnloadPayload);
+
+	CS_IS_NAME_NONE_CHECKED(PayloadName)
+
+	if (FCsPayload** PayloadPtr = PayloadMap_Added.Find(PayloadName))
+	{
+		FCsPayload& Payload = **PayloadPtr;
+
+		Payload.Reset();
+		Manager_Payload.DeallocateAt(Payload.GetIndex());
+	}
+
+	PayloadMap_Added.Remove(PayloadName);
+	PayloadMap_Loaded.Remove(PayloadName);
+	PayloadHandleMap_Loaded.Remove(PayloadName);
+}
 
 #pragma endregion Payload
 
@@ -1067,11 +1298,9 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup(const FCsL
 
 void UCsManager_Data::Payload_GetPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths) const
 {
-	using namespace NCsManagerData::NCached;
-
-	const FString& Context = Str::Payload_GetPaths;
-
-	checkf(PayloadName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+	SET_CONTEXT(Payload_GetPaths);
+	
+	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 	FCsPayload* const* PayloadPtr = PayloadMap.Find(PayloadName);
 
@@ -1248,9 +1477,7 @@ void UCsManager_Data::Payload_GetSafePaths(const FString& Context, const FName& 
 
 int32 UCsManager_Data::Payload_GetPathCount(const FName& PayloadName) const
 {
-	using namespace NCsManagerData::NCached;
-
-	const FString& Context = Str::Payload_GetPathCount;
+	SET_CONTEXT(Payload_GetPathCount);
 
 	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
@@ -1571,9 +1798,7 @@ bool UCsManager_Data::SafeAddDataObject_Loaded(const FString& Context, const FNa
 
 void UCsManager_Data::AddDataCompositionObject_Loaded(const FName& DataName, UObject* Data, const FName& SliceName)
 {
-	using namespace NCsManagerData::NCached;
-
-	const FString& Context = Str::AddDataCompositionObject_Loaded;
+	SET_CONTEXT(AddDataCompositionObject_Loaded);
 
 	CS_IS_NAME_NONE_CHECKED(DataName)
 	CS_IS_PTR_NULL_CHECKED(Data)

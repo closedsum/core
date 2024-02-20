@@ -82,9 +82,26 @@ namespace NCsActor
 
 	#define WorldLibrary NCsWorld::FLibrary
 	#define MathLibrary NCsMath::FLibrary
+	#define NameLibrary NCsName::FLibrary
 
 	// Get
 	#pragma region
+
+	void FLibrary::GetAllChecked(const FString& Context, const UObject* WorldContext, TArray<AActor*>& OutActors)
+	{
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			OutActors.Add(A);
+		}
+		checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find Actors."), *Context);
+	}
 
 	void FLibrary::GetAllOfClassChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, TArray<AActor*>& OutActors)
 	{
@@ -111,11 +128,7 @@ namespace NCsActor
 		if (!World)
 			return false;
 
-		if (!ActorClass.Get())
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%: ActorClass is NULL"), *Context));
-			return false;
-		}
+		CS_IS_SUBCLASS_OF_NULL(ActorClass, AActor)
 
 		for (TActorIterator<AActor> It(World, ActorClass); It; ++It)
 		{
@@ -130,6 +143,205 @@ namespace NCsActor
 		if (OutActors.Num() == CS_EMPTY)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find any Actors of type: %s."), *Context, *(ActorClass.Get()->GetName())));
+			return false;
+		}
+		return true;
+	}
+
+	AActor* FLibrary::GetByClassChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass)
+	{
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_SUBCLASS_OF_NULL_CHECKED(ActorClass, AActor)
+
+	#if UE_BUILD_SHIPPING
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			return A;
+		}
+	#else
+		AActor* Actor = nullptr;
+		
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+
+			if (!Actor)
+			{
+				Actor = A;
+			}
+			else
+			{
+				checkf(0, TEXT("%s: There are more than one Actor of type ActorClass: %s."), *Context, *(ActorClass.Get()->GetName()));
+			}
+		}
+
+		if (Actor)
+			return Actor;
+	#endif // UE_BUILD_SHIPPING
+
+		checkf(0, TEXT("%s: Failed to find Actor with Tag: %s."), *Context, *(ActorClass.Get()->GetName()));
+		return nullptr;
+	}
+
+	AActor* FLibrary::GetByClassAndInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* ActorClass, UClass* InterfaceClass)
+	{
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_PENDING_KILL_CHECKED(ActorClass)
+		CS_IS_PENDING_KILL_CHECKED(InterfaceClass)
+
+	#if UE_BUILD_SHIPPING
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->GetClass() == ActorClass &&
+				A->GetClass()->ImplementsInterface(InterfaceClass))
+			{
+				return A;
+			}
+		}
+	#else
+		AActor* Actor = nullptr;
+		
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->GetClass() == ActorClass &&
+				A->GetClass()->ImplementsInterface(InterfaceClass))
+			{
+				if (!Actor)
+				{
+					Actor = A;
+				}
+				else
+				{
+					checkf(0, TEXT("%s: There are more than one Actors with Class: %s and implements interface: %s."), *Context, *(ActorClass->GetName()), *(InterfaceClass->GetName()));
+				}
+			}
+		}
+
+		if (Actor)
+			return Actor;
+	#endif // UE_BUILD_SHIPPING
+
+		checkf(0, TEXT("%s: Failed to find Actor with Class: %s and implements interface: %s."), *Context, *(ActorClass->GetName()), *(InterfaceClass->GetName()));
+		return nullptr;
+	}
+
+	AActor* FLibrary::GetByInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass)
+	{
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_PENDING_KILL_CHECKED(InterfaceClass)
+
+	#if UE_BUILD_SHIPPING
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->GetClass()->ImplementsInterface(InterfaceClass))
+			{
+				return A;
+			}
+		}
+	#else
+		AActor* Actor = nullptr;
+		
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->GetClass()->ImplementsInterface(InterfaceClass))
+			{
+				if (!Actor)
+				{
+					Actor = A;
+				}
+				else
+				{
+					checkf(0, TEXT("%s: There are more than one Actors that implements interface: %s."), *Context, *(InterfaceClass->GetName()));
+				}
+			}
+		}
+
+		if (Actor)
+			return Actor;
+	#endif // UE_BUILD_SHIPPING
+
+		checkf(0, TEXT("%s: Failed to find Actor that implements interface: %s."), *Context, *(InterfaceClass->GetName()));
+		return nullptr;
+	}
+
+	void FLibrary::GetAllByInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass, TArray<AActor*>& OutActors)
+	{
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_PENDING_KILL_CHECKED(InterfaceClass)
+
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+
+			if (A->GetClass()->ImplementsInterface(InterfaceClass))
+			{
+				OutActors.Add(A);
+			}
+		}
+		checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find Actors that implement interface: %s."), *Context, *(InterfaceClass->GetName()));
+	}
+
+	bool FLibrary::GetSafeAllByInterface(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass, TArray<AActor*>& OutActors, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+
+		if (!World)
+			return false;
+
+		CS_IS_PENDING_KILL(InterfaceClass)
+
+
+		for (TActorIterator<AActor> It(World); It; ++It)
+		{
+			AActor* A = *It;
+
+			if (!IsValid(A))
+				continue;
+
+			if (A->GetClass()->ImplementsInterface(InterfaceClass))
+				OutActors.Add(A);
+		}
+
+		if (OutActors.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find any Actors that implement the interface: %s."), *Context, *(InterfaceClass->GetName())));
 			return false;
 		}
 		return true;
@@ -270,9 +482,6 @@ namespace NCsActor
 			if (HasAllTags)
 				OutActors.Add(A);
 		}
-
-		typedef NCsName::FLibrary NameLibrary;
-
 		checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find Actors with Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
 	}
 
@@ -309,8 +518,6 @@ namespace NCsActor
 				OutActors.Add(A);
 		}
 
-		typedef NCsName::FLibrary NameLibrary;
-
 		if (OutActors.Num() == CS_EMPTY)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actors with Tags: %s."), *Context, *(NameLibrary::ToString(Tags))));
@@ -324,8 +531,6 @@ namespace NCsActor
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
-
-		typedef NCsName::FLibrary NameLibrary;
 
 	#if UE_BUILD_SHIPPING
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
@@ -398,8 +603,6 @@ namespace NCsActor
 
 		CS_IS_TARRAY_EMPTY_RET_NULL(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE_RET_NULL(Tags)
-
-		typedef NCsName::FLibrary NameLibrary;
 
 	#if UE_BUILD_SHIPPING
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
@@ -1415,6 +1618,49 @@ namespace NCsActor
 
 	#pragma endregion Normal
 
+	// Tag
+	#pragma region
+	
+	void FLibrary::ClearTagsChecked(const FString& Context, AActor* A, const bool& bClearComponentTags /*=true*/)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A);
+
+		if (bClearComponentTags)
+		{
+			const TSet<UActorComponent*>& Components = A->GetComponents();
+
+			for (UActorComponent* Component : Components)
+			{
+				Component->ComponentTags.Reset(Component->ComponentTags.Max());
+			}
+		}
+		A->Tags.Reset(A->Tags.Max());
+	}
+
+	#pragma endregion Tag
+
+	// Tick
+	#pragma region
+	
+	void FLibrary::SetTickEnabledChecked(const FString& Context, AActor* A, const bool& bEnabled, const bool& bComponentsEnabled /*=true*/)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		if (bComponentsEnabled)
+		{
+			const TSet<UActorComponent*>& Components = A->GetComponents();
+
+			for (UActorComponent* Component : Components)
+			{
+				Component->SetComponentTickEnabled(bEnabled);
+			}
+		}
+		A->SetActorTickEnabled(bEnabled);
+	}
+
+	#pragma endregion Tick
+
 	#undef WorldLibrary
 	#undef MathLibrary
+	#undef NameLibrary
 }

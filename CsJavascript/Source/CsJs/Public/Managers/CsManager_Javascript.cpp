@@ -824,7 +824,7 @@ void UCsManager_Javascript::ReloadScript(const int32& Index)
 	JavascriptCommonLibrary::RunFile(ScriptObject.Context, FileName);
 }
 
-void UCsManager_Javascript::DeactivateScripts()
+void UCsManager_Javascript::DeactivateScripts(const bool& bForce /*=false*/)
 {
 	OnShutdownScripts_Start_ScriptEvent.Broadcast();
 
@@ -834,6 +834,11 @@ void UCsManager_Javascript::DeactivateScripts()
 
 	for (int32 I = 0; I < Count; ++I)
 	{
+		if (bForce)
+		{
+			ScriptObjects[I].Deactivate(this);
+		}
+		else
 		if (ScriptInfo.HasFileInfo(I))
 		{
 			FCsJavascriptFileObjects& ScriptObject = ScriptObjects[I];

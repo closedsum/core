@@ -52,6 +52,66 @@ public:
 
 #pragma endregion Load
 
+// Unload
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (DisplayName = "Unload (FCsMaterialInterface)", CompactNodeTitle = "Unload"))
+	static void FCsMaterialInterface_Unload(UPARAM(ref) FCsMaterialInterface& Material)
+	{
+		Material.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (DisplayName = "Unload (FCsMaterialInstance)", CompactNodeTitle = "Unload"))
+	static void FCsMaterialInstance_Unload(UPARAM(ref) FCsMaterialInstance& Material)
+	{
+		Material.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (DisplayName = "Unload (FCsMaterialInstanceConstant)", CompactNodeTitle = "Unload"))
+	static void FCsMaterialInstanceConstant_Unload(UPARAM(ref) FCsMaterialInstanceConstant& Material)
+	{
+		Material.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (DisplayName = "Unload (FCsTArrayMaterialInterface)", CompactNodeTitle = "Unload"))
+	static void FCsTArrayMaterialInterface_Unload(UPARAM(ref) FCsTArrayMaterialInterface& Materials)
+	{
+		Materials.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (DisplayName = "Unload (FCsTArrayMaterialInstanceConstant)", CompactNodeTitle = "Unload"))
+	static void FCsTArrayMaterialInstanceConstant_Unload(UPARAM(ref) FCsTArrayMaterialInstanceConstant& Materials)
+	{
+		Materials.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (DisplayName = "Unload (FCsFpsTArrayMaterialInstanceConstant)", CompactNodeTitle = "Unload"))
+	static void FCsFpsTArrayMaterialInstanceConstant_Unload(UPARAM(ref) FCsFpsTArrayMaterialInstanceConstant& Materials)
+	{
+		Materials.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (DisplayName = "Unload (FCsMaterialInterface_WithParameters)", CompactNodeTitle = "Unload"))
+	static void FCsMaterialInterface_WithParameters_Unload(UPARAM(ref) FCsMaterialInterface_WithParameters& Material)
+	{
+		Material.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (DisplayName = "Unload (FCsMaterialInterface_WithRangeParameters)", CompactNodeTitle = "Unload"))
+	static void FCsMaterialInterface_WithRangeParameters_Unload(UPARAM(ref) FCsMaterialInterface_WithRangeParameters& Material)
+	{
+		Material.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (DisplayName = "Unload (FCsMaterialParameterCollection)", CompactNodeTitle = "Unload"))
+	static void FCsMaterialParameterCollection_Unload(UPARAM(ref) FCsMaterialParameterCollection& Collection)
+	{
+		Collection.Unload();
+	}
+
+#pragma endregion Unload
+
 // Get
 #pragma region
 public:

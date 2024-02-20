@@ -25,6 +25,15 @@ namespace NCsName
 			return Str;
 		}
 
+		/**
+		* Does A contains all the elements of B
+		* 
+		* @param A
+		* @param B
+		* return
+		*/
+		static bool Contains(const TArray<FName>& A, const TArray<FName>& B);
+
 		static bool ContainsChecked(const FString& Context, const TArray<FName>& Names, const FName& Name);
 	};
 }

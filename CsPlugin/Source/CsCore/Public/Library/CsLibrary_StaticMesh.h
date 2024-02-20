@@ -6,8 +6,10 @@
 #include "Utility/CsLog.h"
 
 class UObject;
+class UActorComponent;
 class UStaticMesh;
 class UStaticMeshComponent;
+class AStaticMeshActor;
 
 namespace NCsStaticMesh
 {
@@ -61,6 +63,14 @@ namespace NCsStaticMesh
 
 	#pragma endregion Load
 
+	// Is
+	#pragma region
+	public:
+
+		static bool IsStaticMeshComponent(const UActorComponent* Component);
+		
+	#pragma endregion Is
+
 	// Set
 	#pragma region
 	public:
@@ -75,5 +85,31 @@ namespace NCsStaticMesh
 		static void SetChecked(const FString& Context, UStaticMeshComponent* Component, UStaticMesh* Mesh);
 
 	#pragma endregion Set
+
+	// Spawn
+	#pragma region
+	public:
+
+		static AStaticMeshActor* SpawnChecked(const FString& Context, const UObject* WorldContext, const UStaticMeshComponent* Component);
+		static AStaticMeshActor* SpawnByActorComponentChecked(const FString& Context, const UObject* WorldContext, const UActorComponent* Component);
+
+	#pragma endregion Spawn
+
+	// Copy
+	#pragma region
+	public:
+
+		static void CopyChecked(const FString& Context, const UStaticMeshComponent* From, AStaticMeshActor* To);
+
+	#pragma endregion Copy
+
+	// Destroy
+	#pragma region
+	public:
+
+		static void SimulateDestroyChecked(const FString& Context, UStaticMeshComponent* Component);
+		static void SimulateDestroyByActorComponentChecked(const FString& Context, UActorComponent* Component);
+
+	#pragma endregion Destroy
 	};
 }

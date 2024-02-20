@@ -161,6 +161,18 @@ namespace NCsGameEvent
 			static void ProcessGameEventInfoChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info);
 
 			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Group			The route / "group" to direct the GameEvent.
+			* @param Info
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SafeProcessGameEventInfo(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
 			* Broadcast a GameEvent routed to the appropriated Group. Value and Location maybe be optional for
 			* certain GameEvents.
 			*

@@ -55,6 +55,17 @@ UObject* UCsScriptLibrary_Load::LoadSoftClassPtr(const FString& Context, const T
 	return LoadLibrary::LoadSoftClassPtrChecked(Context, SoftClass, LoadFlags, LoadCodes);
 }
 
+bool UCsScriptLibrary_Load::UnloadObject(const FString& Context, UObject* Object)
+{
+	CONDITIONAL_SET_CTXT(LoadObject);
+
+	LogWarning;
+	CS_IS_PTR_NULL2(Object)
+
+	LoadLibrary::UnloadStruct(Object, Object->GetClass());
+	return true;
+}
+
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
 #undef LogWarning

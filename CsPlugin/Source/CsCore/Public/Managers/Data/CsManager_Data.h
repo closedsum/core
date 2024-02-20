@@ -96,6 +96,8 @@ public:
 
 	static void Init(UObject* InRoot);
 	static void Shutdown(const UObject* InRoot = nullptr);
+	static bool HasShutdown(const UObject* InRoot = nullptr);
+	static bool SafeHasShutdown(const FString& Context, const UObject* InRoot = nullptr, void(*Log)(const FString&) = nullptr);
 
 #if WITH_EDITOR
 protected:
@@ -287,6 +289,8 @@ public:
 	*/
 	void AddPayload(const FName& PayloadName, const FCsPayload& Payload);
 
+	bool DoesPayloadContain(const FName& PayloadName, const TSoftObjectPtr<UDataTable>& DataTable);
+
 #pragma endregion Payload
 
 public:
@@ -419,7 +423,8 @@ public:
 #pragma region
 public:
 
-#define OnAsyncLoadPayloadCompleteType NCsData::NManager::FOnAsyncLoadPayloadComplete
+#define OnAsyncLoadPayloadCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete
+#define OnAsyncLoadPayloadCompletePersistentType NCsData::NManager::NPersistent::FOnAsyncLoadPayloadComplete
 
 	/**
 	* Load a Payload by Payload Name.
@@ -428,9 +433,17 @@ public:
 	*/
 	void LoadPayload(const FName& PayloadName);
 
+private:
+
 	/** Event when a Payload loaded asynchronously completes.
 		 This is a synchronous event (fired on the Game Thread). */
-	OnAsyncLoadPayloadCompleteType OnAsyncLoadPayloadCompleted_Event;
+	OnAsyncLoadPayloadCompleteOnceType OnAsyncLoadPayloadCompleted_Once_Event;
+
+	OnAsyncLoadPayloadCompletePersistentType OnAsyncLoadPayloadCompleted_Persistent_Event;
+
+public:
+
+	FORCEINLINE OnAsyncLoadPayloadCompletePersistentType& GetOnAsyncLoadPayloadCompleted_Persistent_Event() { return OnAsyncLoadPayloadCompleted_Persistent_Event; }
 
 	/**
 	* Asynchronous load a Payload by Payload Name.
@@ -439,9 +452,13 @@ public:
 	* @param Delegate		Delegate called synchronously (on the Game Thread) 
 	*						when the async load completes.
 	*/
-	void AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate);
+	void AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate);
 
-	void SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate, void(*Log)(const FString&) = &FCsLog::Warning);
+	void SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	void AsyncLoadStartupPayload(OnAsyncLoadPayloadCompleteOnceType Delegate);
+
+	bool SafeAsyncLoadStartupPaylod(const FString& Context, OnAsyncLoadPayloadCompleteOnceType Delegate, void(*Log)(const FString&) = &FCsLog::Warning);
 
 private:
 
@@ -476,14 +493,19 @@ private:
 
 	FAsyncLoadPayloadByGroup::FInfo AsyncLoadPayloadByGroupInfo;
 
-	void AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate);
+	void AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate);
 	char AsyncLoadPayloadByGroup_Internal(FCsRoutine* R);
 
 	FCsRoutineHandle AsyncLoadPayloadByGroupHandle;
 
 	void OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup(const FCsLoadHandle& Handle, const TArray<TSharedPtr<FStreamableHandle>>& Handles, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime);
 
-#undef OnAsyncLoadPayloadCompleteType
+public:
+
+	void UnloadPayload(const FName& PayloadName);
+
+#undef OnAsyncLoadPayloadCompleteOnceType
+#undef OnAsyncLoadPayloadCompletePersistentType
 
 #pragma endregion Payload
 
@@ -1704,6 +1726,22 @@ public:
 		checkf(Entry, TEXT("%s: Failed find DataTable associated with EntryName: %s."), *Context, *(EntryName.ToString()));
 		return Entry;
 	#endif // #if UE_BUILD_SHIPPING
+	}
+
+	FORCEINLINE FName DataTable_GetEntryNameChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject) const
+	{
+		const FSoftObjectPath& Path = SoftObject.ToSoftObjectPath();
+
+		checkf(Path.IsValid(), TEXT("%s: SoftObject is NOT Valid."), *Context);
+
+	#if WITH_EDITOR
+		if (const FCsDataEntry_DataTable* const* EntryPtr = DataTableEntryByPathMap.Find(Path))
+			return (*EntryPtr)->Name;
+		checkf(0, TEXT("%s: Failed to find Entry Name associated with DataTable at Path: %s."), *Context, *(Path.ToString()));
+		return NAME_None;
+	#else
+		return DataTableEntryByPathMap[Path]->Name;
+	#endif // #if WITH_EDITOR
 	}
 
 #pragma endregion Entry

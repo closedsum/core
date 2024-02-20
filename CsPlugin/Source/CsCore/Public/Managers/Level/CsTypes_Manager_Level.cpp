@@ -9,12 +9,22 @@
 bool FCsManagerLevel_ChangeMapParams::IsValidChecked(const FString& Context) const 
 {
 	CS_IS_STRING_EMPTY_CHECKED(Map)
+
+	if (bTransitionAsDestination)
+	{
+		CS_IS_STRING_EMPTY_CHECKED(TransitionMap)
+	}
 	return true;
 }
 
 bool FCsManagerLevel_ChangeMapParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_STRING_EMPTY(Map)
+
+	if (bTransitionAsDestination)
+	{
+		CS_IS_STRING_EMPTY(TransitionMap)
+	}
 	return true;
 }
 
@@ -27,12 +37,22 @@ namespace NCsLevel
 			bool FParams::IsValidChecked(const FString& Context) const 
 			{
 				CS_IS_STRING_EMPTY_CHECKED(Map)
+
+				if (bTransitionAsDestination)
+				{
+					CS_IS_STRING_EMPTY_CHECKED(TransitionMap)
+				}
 				return true;
 			}
 
 			bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 			{
 				CS_IS_STRING_EMPTY(Map)
+
+				if (bTransitionAsDestination)
+				{
+					CS_IS_STRING_EMPTY(TransitionMap)
+				}
 				return true;
 			}
 		}

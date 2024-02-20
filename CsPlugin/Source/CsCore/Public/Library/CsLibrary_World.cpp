@@ -7,6 +7,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
+#include "Library/CsLibrary_ConsoleVariable.h"
 #include "Library/CsLibrary_Valid.h"
 // World
 #include "Engine/World.h"
@@ -97,9 +98,19 @@ namespace NCsWorld
 		return World && World->WorldType == EWorldType::Editor;
 	}
 
+	bool FLibrary::IsPlayInEditor(const UObject* WorldContext)
+	{
+		return IsPlayInEditor(GetSafe(WorldContext));
+	}
+
 	bool FLibrary::IsPlayInPIE(UWorld* World)
 	{
 		return World && World->WorldType == EWorldType::PIE;
+	}
+
+	bool FLibrary::IsPlayInPIE(const UObject* WorldContext)
+	{
+		return IsPlayInPIE(GetSafe(WorldContext));
 	}
 
 	bool FLibrary::IsPlayInEditorPreview(UWorld* World)
@@ -175,6 +186,11 @@ namespace NCsWorld
 
 	#pragma endregion WorldType
 
+	const FString& FLibrary::GetStreamingLevelsPrefixChecked(const FString& Context, const UObject* WorldContext)
+	{
+		return GetChecked(Context, WorldContext)->StreamingLevelsPrefix;
+	}
+
 	// Spawn
 	#pragma region
 
@@ -189,4 +205,34 @@ namespace NCsWorld
 	}
 
 	#pragma endregion Spawn
+
+	namespace NPIE
+	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					const FString net_AllowPIESeamlessTravel = TEXT("net.AllowPIESeamlessTravel");
+				}
+			}
+		}
+
+		#define USING_NS_CACHED using namespace NCsWorld::NPIE::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsWorld::NPIE::NLibrary::NCached; \
+			const FString& Context = Str::##__FunctionName
+		#define CVarLibrary NCsConsole::NVariable::FLibrary
+
+		void FLibrary::EnableSeamlessTravelChecked(const FString& Context)
+		{
+			USING_NS_CACHED
+
+			CVarLibrary::EnableChecked(Context, Str::net_AllowPIESeamlessTravel);
+		}
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef CVarLibrary
+	}
 }

@@ -2,11 +2,14 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Game/CsGameInstance_Delegates.h"
 // Log
 #include "Utility/CsLog.h"
 
-class UGameInstance;
 class UObject;
+class UGameInstance;
+class UCsGameInstance;
 
 namespace NCsGameInstance
 {
@@ -126,6 +129,41 @@ namespace NCsGameInstance
 
 			return GetSafe<T>(Context, ContextObject, nullptr);
 		}
+
+	// NOTE: MAYBE: FUTURE: Get version should return the UCsGameInstance version.
+
+		/**
+		* Get GameInstance from ContextObject.
+		* 
+		* @param Context		The calling context.
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* return				GameInstance
+		*/
+		static UCsGameInstance* GetCsChecked(const FString& Context, const UObject* ContextObject);
+
+		/**
+		* Safely get GameInstance from WorldContext.
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* @param Log
+		* return				GameInstance
+		*/
+		static UCsGameInstance* GetCsSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely get GameInstance from ContextObject.
+		*
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* return				GameInstance
+		*/
+		static UCsGameInstance* GetCsSafe(const UObject* ContextObject);
 
 		/**
 		* Get GameInstance from ContextObject.
@@ -289,5 +327,42 @@ namespace NCsGameInstance
 		static bool SafeIsMobilePreviewEditor(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Editor
+
+	// Events
+	#pragma region
+	public:
+
+	#define OnQueueExitGameEventType NCsGameInstance::FOnQueueExitGame
+		static OnQueueExitGameEventType& GetOnQueueExitGame_EventChecked(const FString& Context, const UObject* ContextObject);
+	#undef OnQueueExitGameEventType
+
+		// Transition
+	#pragma region
+	public:
+
+	#define OnStartTransitionOutEventType NCsGameInstance::NTransition::FOut_OnStart
+	#define OnFinishTransitionEventType NCsGameInstance::NTransition::FOnFinish
+
+		static OnStartTransitionOutEventType& GetTransitionOut_OnStart_EventChecked(const FString& Context, const UObject* ContextObject);
+		static OnFinishTransitionEventType& GetTransition_OnFinish_EventChecked(const FString& Context, const UObject* ContextObject);
+
+	#undef OnStartTransitionOutEventType
+	#undef OnFinishTransitionEventType
+
+			// AsDestination
+	#pragma region
+	public:
+
+	#define OnStartTransitionAsDestinationEventType NCsGameInstance::NTransitionAsDestination::FOnStart
+
+		static OnStartTransitionAsDestinationEventType& GetTransitionAsDestination_OnStart_Event(const FString& Context, const UObject* ContextObject);
+
+	#undef OnStartTransitionAsDestinationEventType
+
+	#pragma endregion AsDestination
+
+	#pragma endregion Transition
+
+	#pragma endregion Events
 	};
 }

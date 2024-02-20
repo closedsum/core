@@ -18,7 +18,7 @@
 #include "Beam/Params/CsLibrary_Params_BeamWeapon_Beam.h"
 	// Common
 #include "Library/CsLibrary_SkeletalMesh.h"
-#include "Library/CsLibrary_Camera.h"
+#include "Camera/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings

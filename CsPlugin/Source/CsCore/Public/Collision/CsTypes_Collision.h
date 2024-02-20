@@ -665,6 +665,16 @@ struct CSCORE_API FCsCollision_CustomProfileName
 	{
 	}
 
+	FORCEINLINE bool operator==(FCsCollision_CustomProfileName const& Other) const
+	{
+		return Name == Other.Name;
+	}
+
+	FORCEINLINE bool operator!=(FCsCollision_CustomProfileName const& Other) const
+	{
+		return !(*this == Other);
+	}
+
 	FORCEINLINE FName* GetPtr() { return &Name; }
 
 	bool IsValidChecked(const FString& Context) const;

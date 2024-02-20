@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Struct/CsTypes_StructOps.h"
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 
@@ -127,6 +129,17 @@ public:
 		Definition = nullptr;
 	}
 
+	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsGameEventInfo)
+	CS_STRUCT_OPS_IS_VALID(FCsGameEventInfo)
+	CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(FCsGameEventInfo)
+	CS_STRUCT_OPS_IS_TOP_VALID(FCsGameEventInfo)
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		checkf(IsValid(Context, nullptr), TEXT("%s: Info is NOT Valid."), *Context);
+		return true;
+	}
+
 	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = nullptr) const
 	{
 		if (!EMCsGameEvent::Get().IsValidEnum(Event))
@@ -138,10 +151,14 @@ public:
 		return true;
 	}
 
-	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	FORCEINLINE bool IsTopValidChecked(const FString& Context) const
 	{
-		checkf(IsValid(Context, nullptr), TEXT("%s: Info is NOT Valid."), *Context);
-		return true;
+		return IsValidChecked(Context);
+	}
+
+	FORCEINLINE bool IsTopValid(const FString& Context, void(*Log)(const FString&) = nullptr) const
+	{
+		return IsValid(Context, Log);
 	}
 
 	void ApplyInputCompletedValue(const FCsInputCompletedValue* CompletedValue);

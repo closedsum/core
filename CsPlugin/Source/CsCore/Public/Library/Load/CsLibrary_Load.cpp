@@ -28,6 +28,8 @@
 #include "Animation/AnimBlueprintGeneratedClass.h"
 // Class
 #include "UObject/Class.h"
+// Struct
+#include "Struct/CsStructOps_Data.h"
 
 namespace NCsLoad
 {
@@ -2366,6 +2368,93 @@ void UCsLibrary_Load::UnloadStruct(void* StructValue, UStruct* const& Struct, co
 				continue;
 			}
 		}	
+	}
+}
+
+void UCsLibrary_Load::UnloadStruct(void* StructValue, UStruct* const& Struct)
+{
+	typedef NCsStruct::NOps::NData::FTool ToolType;
+
+	for (TFieldIterator<FProperty> It(Struct); It; ++It)
+	{
+		FProperty* Property = CastField<FProperty>(*It);
+
+		// Struct
+		if (FStructProperty* StructProperty = CastField<FStructProperty>(Property))
+		{
+			for (int32 I = 0; I < StructProperty->ArrayDim; ++I)
+			{
+				if (uint8* Value = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue, I))
+				{
+					if (!ToolType::Unload(Value, StructProperty->Struct))
+						UnloadStruct(Value, StructProperty->Struct);
+				}
+			}
+			continue;
+		}
+		// Array
+		if (FArrayProperty* ArrayProperty = CastField<FArrayProperty>(*It))
+		{
+			// Struct
+			if (FStructProperty* InnerStructProperty = CastField<FStructProperty>(ArrayProperty->Inner))
+			{
+				FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (uint8* Value = Helper.GetRawPtr(I))
+					{
+						if (!ToolType::Unload(Value, InnerStructProperty->Struct))
+							UnloadStruct(Value, InnerStructProperty->Struct);
+					}
+				}
+				continue;
+			}
+		}
+		// Set
+		if (FSetProperty* SetProperty = CastField<FSetProperty>(*It))
+		{
+			// Struct
+			if (FStructProperty* ElementStructProperty = CastField<FStructProperty>(SetProperty->ElementProp))
+			{
+				FScriptSetHelper_InContainer Helper(SetProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (uint8* Value = Helper.GetElementPtr(I))
+					{
+						if (!ToolType::Unload(Value, ElementStructProperty->Struct))
+							UnloadStruct(Value, ElementStructProperty->Struct);
+					}
+				}
+				continue;
+			}
+		}
+		// Map
+		if (FMapProperty* MapProperty = CastField<FMapProperty>(*It))
+		{
+			// Struct
+			if (FStructProperty* ValueStructProperty = CastField<FStructProperty>(MapProperty->ValueProp))
+			{
+				FScriptMapHelper_InContainer Helper(MapProperty, StructValue);
+
+				const int32 Count = Helper.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (uint8* Value = Helper.GetValuePtr(I))
+					{
+						if (!ToolType::Unload(Value, ValueStructProperty->Struct))
+							UnloadStruct(Value, ValueStructProperty->Struct);
+					}
+				}
+				continue;
+			}
+		}
 	}
 }
 

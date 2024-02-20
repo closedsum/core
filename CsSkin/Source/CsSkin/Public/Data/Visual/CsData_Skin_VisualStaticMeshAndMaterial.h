@@ -79,6 +79,8 @@ public:
 
 	void Load(const int32& LoadFlags);
 
+	void TopLoad();
+
 	void Unload();
 
 	bool IsLoaded() const;

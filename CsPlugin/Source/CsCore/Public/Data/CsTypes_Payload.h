@@ -321,14 +321,16 @@ public:
 
 	void Reset()
 	{
-		Datas.Reset();
+		Datas.Reset(Datas.Max());
 		DataMap.Reset();
-		ScriptDatas.Reset();
+		ScriptDatas.Reset(ScriptDatas.Max());
 		ScriptDataMap.Reset();
 		DataTables.Reset();
 		DataTableMap.Reset();
 		Paths.Reset();
 	}
+
+	void Unload() {}
 
 #if WITH_EDITOR
 

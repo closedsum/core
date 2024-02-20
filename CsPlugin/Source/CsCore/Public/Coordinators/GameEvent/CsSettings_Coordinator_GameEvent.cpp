@@ -39,7 +39,7 @@ UClass* FCsSettings_Coordinator_GameEvent::LoadClassChecked(const FString& Conte
 
 	UClass* C = Class.LoadSynchronous();
 
-	checkf(C, TEXT("%s: FUIled to load Class at Path: %s."), *Context, *(Class.ToString()));
+	checkf(C, TEXT("%s: Failed to load Class at Path: %s."), *Context, *(Class.ToString()));
 
 	return C;
 }

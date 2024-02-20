@@ -7,8 +7,8 @@
 #include "Types/Enum/CsEnumStructMap.h"
 // Load
 #include "Load/CsSoftObjectPath.h"
-// DataTable
-#include "Engine/DataTable.h"
+// Data
+#include "Data/CsTableRowBase_Data.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -82,7 +82,7 @@ class UDataTable;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsLoad, FGetObjectPaths)
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsDataEntry_Data : public FTableRowBase
+struct CSCORE_API FCsDataEntry_Data : public FCsTableRowBase_Data
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -143,6 +143,22 @@ public:
 		}
 		return *this;
 	}
+
+// FTableRowBase Interface
+#pragma region 
+public:
+
+	virtual void OnDataTableChanged(const UDataTable* InDataTable, const FName InRowName) override;
+
+#pragma endregion FTableRowBase Interface
+
+// FCsTableRowBase_Data Interface
+#pragma region
+public:
+
+	void Unload();
+
+#pragma endregion FCsTableRowBase_Data Interface
 
 	FORCEINLINE void SetIndex(const int32& InIndex)
 	{
@@ -253,8 +269,6 @@ public:
 
 	UClass* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning);
 	UObject* SafeLoadDefaultObject(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning);
-
-	virtual void OnDataTableChanged(const UDataTable* InDataTable, const FName InRowName) override;
 };
 
 #pragma endregion FCsPayload_Data
@@ -266,7 +280,7 @@ class UObject;
 class UClass;
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsDataEntry_ScriptData : public FTableRowBase
+struct CSCORE_API FCsDataEntry_ScriptData : public FCsTableRowBase_Data
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -327,6 +341,16 @@ public:
 		}
 		return *this;
 	}
+
+// FCsTableRowBase_Data Interface
+#pragma region
+public:
+
+	void Unload();
+
+#pragma endregion FCsTableRowBase_Data Interface
+
+public:
 
 	FORCEINLINE void SetIndex(const int32& InIndex)
 	{
@@ -409,7 +433,7 @@ public:
 class UDataTable;
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsDataEntry_DataTable : public FTableRowBase
+struct CSCORE_API FCsDataEntry_DataTable : public FCsTableRowBase_Data
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -479,6 +503,16 @@ public:
 		PathsByRowMap = B.PathsByRowMap;
 		return *this;
 	}
+
+// FCsTableRowBase_Data Interface
+#pragma region
+public:
+	
+	void Unload();
+
+#pragma endregion FCsTableRowBase_Data Interface
+
+public:
 
 	FORCEINLINE bool IsValid() const
 	{

@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "Animation/CsTypes_Anim.h"
 
 #include "CsScriptLibrary_AnimSequence.generated.h"
 
@@ -38,6 +40,33 @@ public:
 	static UAnimSequence* LoadByStringPath(const FString& Context, const FString& Path);
 
 #pragma endregion Load
+
+// Unload
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimSequence", meta = (DisplayName = "Unload (FCsAnimSequence)", CompactNodeTitle = "Unload"))
+	static void FCsAnimSequence_Unload(UPARAM(ref) FCsAnimSequence& Anim)
+	{
+		Anim.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimSequence", meta = (DisplayName = "Unload (FCsAnimSequenceInfo)", CompactNodeTitle = "Unload"))
+	static void FCsAnimSequenceInfo_Unload(UPARAM(ref) FCsAnimSequenceInfo& Anim)
+	{
+		Anim.Unload();
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimSequence", meta = (DisplayName = "Unload (TArray<FCsAnimSequence>)", CompactNodeTitle = "Unload"))
+	static void TArray_FCsAnimSequence_Unload(UPARAM(ref) TArray<FCsAnimSequence>& Anims)
+	{
+		for (FCsAnimSequence& Anim : Anims)
+		{
+			Anim.Unload();
+		}
+	}
+
+#pragma endregion Unload
 
 // Get
 #pragma region

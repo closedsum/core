@@ -12,7 +12,7 @@
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Data/Visual/CsLibrary_Data_Skin_Visual.h"
-#include "Library/CsLibrary_Camera.h"
+#include "Camera/CsLibrary_Camera.h"
 #include "Material/CsLibrary_Material.h"
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/Time/CsLibrary_Manager_Time.h"

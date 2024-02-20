@@ -43,7 +43,12 @@
 #include "DetailCustomizations/CsRegisterDetailCustomization.h"
 // Level
 #include "Level/CsLevelScriptActor.h"
-//UI
+#include "Level/Editor/Tool/CsLevelEditorTool.h"
+// Asset
+#include "Asset/Tool/CsAssetTool.h"
+// Object
+#include "Object/Environment/Tool/CsObjectEnvironmentTool.h"
+// UI
 #include "Framework/Application/SlateApplication.h"
 // Enum
 #include "Types/Enum/Tool/CsEnumStructLayoutTool.h"
@@ -343,12 +348,20 @@ void UCsEdEngine::OnPostInit()
 
 	UserSettings->ApplyEditorUI_ApplicationScale();
 
-	AssetTool.GetOpenedAssetsImpl = &UCsEdEngine::GetOpenedAssets_Internal;
+	AssetTool.GetOpenedAssetsImpl = &NCsAsset::FTool::GetOpenedAssets;
+	AssetTool.IsAssetOpened = &NCsAsset::FTool::IsAssetOpened;
 	
 	EnumStructTool.Init(this);
 	EnumStructTool.ResolveLayoutChangesImpl = &UCsEdEngine::EnumStruct_ResolveLayoutChanges_Internal;
 
 	SourceControlTool.CheckOutFileImpl = &USourceControlHelpers::CheckOutFile;
+
+	LevelEditorTool.GetActorsImpl = &NCsLevel::NEditor::FTool::GetActors;
+	LevelEditorTool.GetActorsByClassImpl = &NCsLevel::NEditor::FTool::GetActorsByClass;
+	LevelEditorTool.GetActorsByInterfaceImpl = &NCsLevel::NEditor::FTool::GetActorsByInterface;
+	LevelEditorTool.GetSelectedActorsImpl = &NCsLevel::NEditor::FTool::GetSelectedActors;
+
+	ObjectEnvironmentTool.GetDetailsImpl = &NCsObject::NEnvironment::FTool::GetDetails;
 
 	typedef NCsSettings::FTool SettingsTool;
 
@@ -376,12 +389,18 @@ void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 	FCsCVarToggleMap::Get().ResetDirty();
 	FCsCVarDrawMap::Get().ResetDirty();
 
+	PIEInfo.SetBeginning();
+
 	NCsPIE::FDelegates::OnBegin_Event.Broadcast(IsSimulating);
 	PIE_OnBegin_ScriptEvent.Broadcast(IsSimulating);
+
+	PIEInfo.SetActive();
 }
 
 void UCsEdEngine::OnEndPIE(bool IsSimulating)
 {
+	PIEInfo.SetEnding();
+
 	UCsDeveloperSettings* ModuleSettings   = GetMutableDefault<UCsDeveloperSettings>();
 	ULevelEditorPlaySettings* PlaySettings = GetMutableDefault<ULevelEditorPlaySettings>();
 
@@ -460,6 +479,8 @@ char UCsEdEngine::OnEndPIE_NextFrame_Internal(FCsRoutine* R)
 	NCsPIE::FDelegates::OnEnd_NextFrame_Event.Broadcast(IsSimulating);
 	PIE_OnEnd_NextFrame_ScriptEvent.Broadcast(IsSimulating);
 
+	PIEInfo.SetNone();
+	
 	CS_COROUTINE_END(R)
 }
 
@@ -587,16 +608,6 @@ void UCsEdEngine::ApplyApplicationScaleImpl(const float& ApplicationScale)
 }
 
 #pragma endregion GetSlateApplicationTool
-
-// GetAssetTool
-#pragma region
-
-/*static*/ const TArray<UObject*>& UCsEdEngine::GetOpenedAssets_Internal()
-{
-	return Cast<UCsEdEngine>(GEngine)->GetOpenedAssets();
-}
-
-#pragma endregion GetAssetTool
 
 // GetEnumStructTool
 #pragma region
@@ -861,15 +872,21 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 
 				TMap<FName, FCsEnumStructLayoutHistory>& EnumStructlayoutHistoryMap = Settings->EnumStructlayoutHistoryMap;
 
+				bool bResolveLayoutChanges = false;
+
 				for (TPair<FName, FCsEnumStructLayoutHistory>& Pair : EnumStructlayoutHistoryMap)
 				{
 					FCsEnumStructLayoutHistory& History = Pair.Value;
 
 					if (History.DataTable == DataTableSoftObject)
 					{
-						EnumStructTool.ResolveLayoutChangesImpl(false);
+						bResolveLayoutChanges = true;
+						break;
 					}
 				}
+
+				if (bResolveLayoutChanges)
+					EnumStructTool.ResolveLayoutChangesImpl(false);
 			}
 		}
 	}

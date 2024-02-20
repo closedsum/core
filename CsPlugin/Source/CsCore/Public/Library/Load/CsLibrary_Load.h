@@ -337,7 +337,6 @@ public:
 
 	static void UnloadArrayStructProperty(FArrayProperty* ArrayProperty, void* StructValue, const int32& UnloadCodes);
 
-
 	/**
 	*
 	*
@@ -346,6 +345,8 @@ public:
 	* @param UnloadCodes
 	*/
 	static void UnloadStruct(void* StructValue, UStruct* const& Struct, const int32& UnloadCodes);
+
+	static void UnloadStruct(void* StructValue, UStruct* const& Struct);
 
 	/**
 	*

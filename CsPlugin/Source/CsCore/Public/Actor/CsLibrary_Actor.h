@@ -66,6 +66,8 @@ namespace NCsActor
 	#pragma region
 	public:
 
+		static void GetAllChecked(const FString& Context, const UObject* WorldContext, TArray<AActor*>& OutActors);
+
 		/**
 		*
 		*
@@ -87,6 +89,16 @@ namespace NCsActor
 		* return
 		*/
 		static bool GetSafeAllOfClass(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, TArray<AActor*>& OutActors, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static AActor* GetByClassChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass);
+
+		static AActor* GetByClassAndInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* ActorClass, UClass* InterfaceClass);
+
+		static AActor* GetByInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass);
+
+		static void GetAllByInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass, TArray<AActor*>& OutActors);
+
+		static bool GetSafeAllByInterface(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass, TArray<AActor*>& OutActors, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Get an Actor with the given Tag (checks AActor->Tags)
@@ -877,5 +889,21 @@ namespace NCsActor
 		static bool GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const FVector3f& B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Normal
+
+	// Tag
+	#pragma region
+	public:
+
+		static void ClearTagsChecked(const FString& Context, AActor* A, const bool& bClearComponentTags = true);
+
+	#pragma endregion Tag
+
+	// Tick
+	#pragma region
+	public:
+
+		static void SetTickEnabledChecked(const FString& Context, AActor* A, const bool& bEnabled, const bool& bComponentsEnabled = true);
+
+	#pragma endregion Tick
 	};
 }

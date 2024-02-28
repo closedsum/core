@@ -588,6 +588,7 @@ namespace NCsData
 		public:
 
 		#define OnAsyncLoadPayloadCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete
+		#define OnAsyncLoadPayloadsCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadsComplete
 		#define OnAsyncLoadPayloadCompletePersistentType NCsData::NManager::NPersistent::FOnAsyncLoadPayloadComplete
 			
 			static OnAsyncLoadPayloadCompletePersistentType& GetOnAsyncLoadPayloadComplete_Persistent_EventChecked(const FString& Context, const UObject* ContextObject);
@@ -643,9 +644,23 @@ namespace NCsData
 			*/
 			static bool SafeAsyncLoadStartupPayload(const FString& Context, const UObject* ContextObject, OnAsyncLoadPayloadCompleteOnceType Delegate, void(*Log)(const FString&) = &FCsLog::Warning);
 
+			/**
+			* Asynchronous load a list of Payloads by Name.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param PayloadNames	Names of the Payload to async load.
+			* @param Delegate		Delegate called synchronously (on the Game Thread) 
+			*						when the async load completes.
+			*/
+			static void AsyncLoadPayloadsChecked(const FString& Context, const UObject* ContextObject, const TArray<FName>& PayloadNames, OnAsyncLoadPayloadsCompleteOnceType Delegate);
+
 			static void UnloadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName);
 
 		#undef OnAsyncLoadPayloadCompleteOnceType
+		#undef OnAsyncLoadPayloadsCompleteOnceType
 		#undef OnAsyncLoadPayloadCompletePersistentType
 
 		#pragma endregion Payload

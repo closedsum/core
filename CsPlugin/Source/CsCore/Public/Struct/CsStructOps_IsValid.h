@@ -22,10 +22,10 @@ namespace NCsStruct
 
 			public:
 
-				TMap<FName, bool(*)(void* /*StructValue*/, const UStruct* /*Struct*/, const FString& /*Context*/)> IsValidCheckedFnByNameMap;
-				TMap<FName, bool(*)(void* /*StructValue*/, const UStruct* /*Struct*/, const FString& /*Context*/, void(*)(const FString&) /*Log*/)> IsValidFnByNameMap;
-				TMap<FName, bool(*)(void* /*StructValue*/, const UStruct* /*Struct*/, const FString& /*Context*/)> IsTopValidCheckedFnByNameMap;
-				TMap<FName, bool(*)(void* /*StructValue*/, const UStruct* /*Struct*/, const FString& /*Context*/, void(*)(const FString&) /*Log*/)> IsTopValidFnByNameMap;
+				TMap<FName, bool(*)(const FString& /*Context*/, void* /*StructValue*/, const UStruct* /*Struct*/, bool& /*OutSuccess*/)> IsValidCheckedFnByNameMap;
+				TMap<FName, bool(*)(const FString& /*Context*/,void* /*StructValue*/, const UStruct* /*Struct*/, bool& /*OutSuccess*/, void(*)(const FString&) /*Log*/)> IsValidFnByNameMap;
+				TMap<FName, bool(*)(const FString& /*Context*/,void* /*StructValue*/, const UStruct* /*Struct*/, bool& /*OutSuccess*/)> IsTopValidCheckedFnByNameMap;
+				TMap<FName, bool(*)(const FString& /*Context*/,void* /*StructValue*/, const UStruct* /*Struct*/, bool& /*OutSuccess*/, void(*)(const FString&) /*Log*/)> IsTopValidFnByNameMap;
 
 				~FTool();
 
@@ -35,28 +35,30 @@ namespace NCsStruct
 					return Instance;
 				}
 
-				static void RegisterIsValidCheckedFn(const FName& Name, bool(*IsValidCheckedFn)(void* /*StructValue*/, const UStruct* /*Struct*/, const FString& /*Context*/))
+				static void RegisterIsValidCheckedFn(const FName& Name, bool(*IsValidCheckedFn)(const FString& /*Context*/, void* /*StructValue*/, const UStruct* /*Struct*/, bool& /*OutSuccess*/))
 				{
 					Get().IsValidCheckedFnByNameMap.Add(Name, IsValidCheckedFn);
 				}
 
-				static void RegisterIsValidFn(const FName& Name, bool(*IsValidFn)(void* /*StructValue*/, const UStruct* /*Struct*/, const FString& /*Context*/, void(*)(const FString&) /*Log*/))
+				static void RegisterIsValidFn(const FName& Name, bool(*IsValidFn)(const FString& /*Context*/, void* /*StructValue*/, const UStruct* /*Struct*/, bool& /*OutSuccess*/, void(*)(const FString&) /*Log*/))
 				{
 					Get().IsValidFnByNameMap.Add(Name, IsValidFn);
 				}
 
-				static void RegisterIsTopValidCheckedFn(const FName& Name, bool(*IsTopValidCheckedFn)(void* /*StructValue*/, const UStruct* /*Struct*/, const FString& /*Context*/))
+				static void RegisterIsTopValidCheckedFn(const FName& Name, bool(*IsTopValidCheckedFn)(const FString& /*Context*/, void* /*StructValue*/, const UStruct* /*Struct*/, bool& /*OutSuccess*/))
 				{
 					Get().IsTopValidCheckedFnByNameMap.Add(Name, IsTopValidCheckedFn);
 				}
 
-				static void RegisterIsTopValidFn(const FName& Name, bool(*IsTopValidFn)(void* /*StructValue*/, const UStruct* /*Struct*/, const FString& /*Context*/, void(*)(const FString&) /*Log*/))
+				static void RegisterIsTopValidFn(const FName& Name, bool(*IsTopValidFn)(const FString& /*Context*/, void* /*StructValue*/, const UStruct* /*Struct*/, bool& /*OutSuccess*/, void(*)(const FString&) /*Log*/))
 				{
 					Get().IsTopValidFnByNameMap.Add(Name, IsTopValidFn);
 				}
 
-				static bool IsValidChecked(void* StructValue, const UStruct* Struct, const FString& Context)
+				static bool IsValidChecked(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess)
 				{
+					OutSuccess = false;
+
 					if (!StructValue)
 						return false;
 
@@ -68,13 +70,15 @@ namespace NCsStruct
 					// TODO: Setup getting pointer and dereferencing
 					if (Get().IsValidCheckedFnByNameMap.Find(Name))
 					{
-						return (Get().IsValidCheckedFnByNameMap[Name])(StructValue, Struct, Context);
+						return (Get().IsValidCheckedFnByNameMap[Name])(Context, StructValue, Struct, OutSuccess);
 					}
 					return false;
 				}
 
-				static bool IsValid(void* StructValue, const UStruct* Struct, const FString& Context, void(*Log)(const FString&))
+				static bool IsValid(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess, void(*Log)(const FString&))
 				{
+					OutSuccess = false;
+
 					if (!StructValue)
 						return false;
 
@@ -86,13 +90,15 @@ namespace NCsStruct
 					// TODO: Setup getting pointer and dereferencing
 					if (Get().IsValidFnByNameMap.Find(Name))
 					{
-						return (Get().IsValidFnByNameMap[Name])(StructValue, Struct, Context, Log);
+						return (Get().IsValidFnByNameMap[Name])(Context, StructValue, Struct, OutSuccess, Log);
 					}
 					return false;
 				}
 
-				static bool IsTopValidChecked(void* StructValue, const UStruct* Struct, const FString& Context)
+				static bool IsTopValidChecked(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess)
 				{
+					OutSuccess = false;
+
 					if (!StructValue)
 						return false;
 
@@ -104,13 +110,15 @@ namespace NCsStruct
 					// TODO: Setup getting pointer and dereferencing
 					if (Get().IsTopValidCheckedFnByNameMap.Find(Name))
 					{
-						return (Get().IsTopValidCheckedFnByNameMap[Name])(StructValue, Struct, Context);
+						return (Get().IsTopValidCheckedFnByNameMap[Name])(Context, StructValue, Struct, OutSuccess);
 					}
 					return false;
 				}
 
-				static bool IsTopValid(void* StructValue, const UStruct* Struct, const FString& Context, void(*Log)(const FString&))
+				static bool IsTopValid(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess, void(*Log)(const FString&))
 				{
+					OutSuccess = false;
+
 					if (!StructValue)
 						return false;
 
@@ -122,7 +130,7 @@ namespace NCsStruct
 					// TODO: Setup getting pointer and dereferencing
 					if (Get().IsTopValidFnByNameMap.Find(Name))
 					{
-						return (Get().IsTopValidFnByNameMap[Name])(StructValue, Struct, Context, Log);
+						return (Get().IsTopValidFnByNameMap[Name])(Context, StructValue, Struct, OutSuccess, Log);
 					}
 					return false;
 				}

@@ -10,7 +10,7 @@ class UObject;
 
 namespace NCsWorld
 {
-	class CSCORE_API FLibrary final
+	struct CSCORE_API FLibrary final
 	{
 	// Get
 	#pragma region
@@ -120,6 +120,21 @@ namespace NCsWorld
 
 	#pragma endregion Spawn
 	};
+
+	namespace NSeamlessTravelHandler
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			static bool IsInTransition(const UWorld* World);
+
+		// bTransitionInProgress
+			static bool* GetbTransitionInProgress(UWorld* World);
+			static void EnableTransitionInProgress(UWorld* World);
+			static void DisableTransitionInProgress(UWorld* World);
+		};
+	}
 
 	namespace NPIE
 	{

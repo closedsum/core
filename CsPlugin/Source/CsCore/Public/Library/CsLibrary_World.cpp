@@ -206,6 +206,80 @@ namespace NCsWorld
 
 	#pragma endregion Spawn
 
+	namespace NSeamlessTravelHandler
+	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWorld::NSeamlessTravelHandler::FLibrary, IsInTransition);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWorld::NSeamlessTravelHandler::FLibrary, GetbTransitionInProgress);
+				}
+			}
+		}
+
+	#define USING_NS_CACHED using namespace NCsWorld::NSeamlessTravelHandler::NLibrary::NCached;
+	#define SET_CONTEXT(__FunctionName) using namespace NCsWorld::NSeamlessTravelHandler::NLibrary::NCached; \
+		const FString& Context = Str::##__FunctionName
+
+		bool FLibrary::IsInTransition(const UWorld* World)
+		{
+			SET_CONTEXT(IsInTransition);
+
+			CS_IS_PENDING_KILL_CHECKED(World)
+
+			FWorldContext* WorldContext			  = GEngine->GetWorldContextFromWorld(World);
+			const FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
+
+			return Handler.IsInTransition();
+		}
+
+	// bTransitionInProgress
+
+		bool* FLibrary::GetbTransitionInProgress(UWorld* World)
+		{
+			SET_CONTEXT(GetbTransitionInProgress);
+
+			CS_IS_PENDING_KILL_CHECKED(World)
+
+			FWorldContext* WorldContext	    = GEngine->GetWorldContextFromWorld(World);
+			FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
+
+			// Get pointer to start of struct
+			FURL* PendingTravelURL = ((FURL*)(&Handler));
+			char* Base = (char*)PendingTravelURL;
+
+			// Offset by PendingTravelURL
+			size_t Offset = sizeof(FURL);
+			// Offset by LoadedPackage
+			Offset += sizeof(UObject*);
+			// Offset by CurrentWorld
+			Offset += sizeof(UWorld*);
+			// Offset by LoadedWorld
+			Offset += sizeof(UWorld*);
+
+			bool& bTransitionInProgress = *((bool*)(Base + Offset));
+			return &bTransitionInProgress;
+		}
+
+		void FLibrary::EnableTransitionInProgress(UWorld* World)
+		{
+			bool* bTransitionInProgress = GetbTransitionInProgress(World);
+			*bTransitionInProgress		= true;
+		}
+
+		void FLibrary::DisableTransitionInProgress(UWorld* World)
+		{
+			bool* bTransitionInProgress = GetbTransitionInProgress(World);
+			*bTransitionInProgress		= false;
+		}
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+	}
+
 	namespace NPIE
 	{
 		namespace NLibrary

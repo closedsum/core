@@ -10,6 +10,7 @@
 #include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Valid.h"
 // Game
+#include "Game/Startup/CsGameState_Startup.h"
 #include "Game/Transition/CsGameState_Transition.h"
 #include "Game/ExitGame/CsGameState_ExitGame.h"
 // World
@@ -32,12 +33,15 @@ namespace NCsGameState
 		}
 	}
 
+	#define USING_NS_CACHED using namespace NCsGameState::NLibrary::NCached;
+	#define SET_CONTEXT(__FunctionName) using namespace NCsGameState::NLibrary::NCached; \
+		const FString& Context = Str::##__FunctionName
+	#define WorldLibrary NCsWorld::FLibrary
+
 	FString FLibrary::PrintGameStateAndClass(AGameStateBase* GameState)
 	{
 		return FString::Printf(TEXT("GameState: %s with Class: %s"), *(GameState->GetName()), *(GameState->GetClass()->GetName()));
 	}
-
-	#define WorldLibrary NCsWorld::FLibrary
 
 	AGameStateBase* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 	{
@@ -67,14 +71,10 @@ namespace NCsGameState
 
 	AGameStateBase* FLibrary::GetSafe(const UObject* WorldContext)
 	{
-		using namespace NCsGameState::NLibrary::NCached;
-
-		const FString& Context = Str::GetSafe;
+		SET_CONTEXT(GetSafe);
 
 		return GetSafe(Context, WorldContext, nullptr);
 	}
-
-	#undef WorldLibrary
 
 	UObject* FLibrary::GetAsObjectChecked(const FString& Context, const UObject* WorldContext)
 	{
@@ -94,6 +94,32 @@ namespace NCsGameState
 
 		return GetSafeAsObject(Context, WorldContext, nullptr);
 	}
+
+	// ICsGameState_Startup
+	#pragma region
+
+	bool FLibrary::IsStartupCompleteChecked(const FString& Context, const UObject* WorldContext)
+	{
+		AGameStateBase* GameState		= GetChecked(Context, WorldContext);
+		ICsGameState_Startup* Interface = CS_INTERFACE_CAST_CHECKED(GameState, AGameStateBase, ICsGameState_Startup);
+
+		return Interface->IsStartupComplete();
+	}
+
+	bool FLibrary::SafeIsStartupComplete(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (AGameStateBase* GameState = GetSafe(Context, WorldContext, Log))
+		{
+			ICsGameState_Startup* Interface = CS_INTERFACE_CAST(GameState, AGameStateBase, ICsGameState_Startup);
+
+			if (Interface)
+				return Interface->IsStartupComplete();
+			return false;
+		}
+		return false;
+	}
+
+	#pragma endregion ICsGameState_Startup
 
 	// ICsGameState_Transition
 	#pragma region
@@ -143,12 +169,14 @@ namespace NCsGameState
 
 	bool FLibrary::SafeHasFinishedExitGame(const UObject* WorldContext)
 	{
-		using namespace NCsGameState::NLibrary::NCached;
-
-		const FString& Context = Str::SafeHasFinishedExitGame;
+		SET_CONTEXT(SafeHasFinishedExitGame);
 
 		return SafeHasFinishedExitGame(Context, WorldContext, nullptr);
 	}
 
 	#pragma endregion ICsGameState_ExitGame
+
+	#undef USING_NS_CACHED
+	#undef SET_CONTEXT
+	#undef WorldLibrary
 }

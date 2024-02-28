@@ -153,9 +153,9 @@ void UCsLibrary_Common::GetLocalPlayerViewPoint(UWorld* InWorld, FVector3f &OutL
 
 float UCsLibrary_Common::GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector3f& Location)
 {
-	typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+	typedef NCsPlayer::NController::NLocal::NFirst::FLibrary PCFirstLocalLibrary;
 
-	APlayerController* LocalController = PlayerControllerLibrary::GetFirstLocal(InWorld);
+	APlayerController* LocalController = PCFirstLocalLibrary::Get(InWorld);
 
 	if (!LocalController)
 		return -1.0f;
@@ -215,10 +215,10 @@ void UCsLibrary_Common::GetHMDOrientationAndPosition(FRotator3f& DeviceRotation,
 
 void UCsLibrary_Common::GetHMDWorldViewPoint(UWorld* InWorld, FVector3f &OutLocation, FRotator3f& OutRotation)
 {
-	typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+	typedef NCsPlayer::NController::NLocal::NFirst::FLibrary PCFirstLocalLibrary;
 	typedef NCsMath::FLibrary MathLibrary;
 
-	APlayerController* PlayerController = PlayerControllerLibrary::GetFirstLocal(InWorld);
+	APlayerController* PlayerController = PCFirstLocalLibrary::Get(InWorld);
 	
 	FVector3d Location;
 	FRotator3d Rotation;

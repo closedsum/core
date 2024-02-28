@@ -33,6 +33,15 @@ namespace NCsData
 			* @param PayloadName
 			*/
 			DECLARE_DELEGATE_TwoParams(FOnAsyncLoadPayloadComplete, bool /*WasSuccessful*/, const FName& /*PayloadName*/);
+
+			/**
+			* Delegate type for the event when a list Payloads loaded asynchronously completes.
+			*  This is a synchronous event (fired on the Game Thread).
+			*
+			* @param WasSuccessful
+			* @param PayloadNames
+			*/
+			DECLARE_DELEGATE_TwoParams(FOnAsyncLoadPayloadsComplete, bool /*WasSuccessful*/, const TArray<FName>& /*PayloadNames*/);
 		}
 
 		namespace NPersistent

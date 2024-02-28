@@ -221,6 +221,7 @@ public:
 	FORCEINLINE const FCsScriptInfo& GetScriptInfo() const { return ScriptInfo; }
 
 	void CreateScriptObjects();
+	void ConditionalCreateScriptObjects();
 	void SetupScriptObjects(UGameInstance* InGameInstance = nullptr);
 
 private:

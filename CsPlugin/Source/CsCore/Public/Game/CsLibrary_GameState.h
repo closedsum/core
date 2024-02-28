@@ -114,6 +114,37 @@ namespace NCsGameState
 		*/
 		static UObject* GetSafeAsObject(const UObject* WorldContext);
 
+	// ICsGameState_Startup
+	#pragma region
+	public:
+
+		/**
+		* Get whether the GameState has finished its Startup. This usually occurs after GameState has broadcasted StartPlay.
+		*  NOTE: Assumes GameState implements the interface: ICsGameState_Transition.
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* return
+		*/
+		static bool IsStartupCompleteChecked(const FString& Context, const UObject* WorldContext);
+
+		/**
+		* Safely get whether the GameState has finished its Startup. This usually occurs after GameState has broadcasted StartPlay.
+		*  NOTE: Assumes GameState implements the interface: ICsGameState_Transition.
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* return
+		*/
+		static bool SafeIsStartupComplete(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+		FORCEINLINE static bool SafeIsStartupComplete(const FString& Context, const UObject* WorldContext, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = SafeIsStartupComplete(Context, WorldContext, Log);
+			return OutSuccess;
+		}
+
+	#pragma endregion ICsGameState_Startup
+
 	// ICsGameState_Transition
 	#pragma region
 	public:

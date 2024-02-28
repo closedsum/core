@@ -104,15 +104,36 @@ public:
 
 // Persistent Level
 #pragma region
-protected:
-
-	bool bFinishedLoadingPersistentlLevel;
-
 public:
 	
+	struct FFinishedLoadingPersistentLevelInfo
+	{
+		bool bActive;
+		bool bCompleted;
+
+		FString MapPackageName;
+
+		FFinishedLoadingPersistentLevelInfo() :
+			bActive(false),
+			bCompleted(false),
+			MapPackageName()
+		{
+		}
+
+		FORCEINLINE bool IsActive() const { return bActive; }
+		FORCEINLINE bool IsCompleted() const { return bCompleted; }
+		FORCEINLINE void MarkCompleted() { bCompleted = true; }
+	};
+
+private:
+
+	FFinishedLoadingPersistentLevelInfo FinishedLoadingPersistentLevelInfo;
+
+public:
+
 	FORCEINLINE bool HasFinishedLoadingPersistentLevel() const
 	{
-		return bFinishedLoadingPersistentlLevel;
+		return FinishedLoadingPersistentLevelInfo.IsCompleted();
 	}
 
 	void Check_FinishedLoadingPersistentLevel();
@@ -130,11 +151,34 @@ protected:
 
 	FString CurrentMap;
 
-	bool bChangeMapCompleted;
+public:
+
+	struct FChangeMapInfo
+	{
+		bool bActive;
+		bool bCompleted;
+
+		FString DestinationMap;
+
+		FChangeMapInfo() :
+			bActive(false),
+			bCompleted(false),
+			DestinationMap()
+		{
+		}
+
+		FORCEINLINE bool IsActive() const { return bActive; }
+		FORCEINLINE bool IsCompleted() const { return bCompleted; }
+		FORCEINLINE void MarkCompleted() { bCompleted = true; }
+	};
+
+private:
+
+	FChangeMapInfo ChangeMapInfo;
 
 public:
 
-	FORCEINLINE bool HasChangeMapCompleted() const { return bChangeMapCompleted; }
+	FORCEINLINE bool HasChangeMapCompleted() const { return ChangeMapInfo.IsCompleted(); }
 
 #define ChangeMapParamsType NCsLevel::NManager::NChangeMap::FParams
 
@@ -259,6 +303,14 @@ public:
 #undef OnLevelHiddenEventType
 
 #pragma endregion Streaming
+
+// Events
+#pragma region
+protected:
+
+	void OnPostWorldInitialization(UWorld* World);
+	
+#pragma endregion Events
 
 #if WITH_EDITOR
 

@@ -534,6 +534,12 @@ void UCsManager_Javascript::CreateScriptObjects()
 	}
 }
 
+void UCsManager_Javascript::ConditionalCreateScriptObjects()
+{
+	if (ScriptObjects.Num() == CS_EMPTY)
+		CreateScriptObjects();
+}
+
 void UCsManager_Javascript::SetupScriptObjects(UGameInstance* InGameInstance /*=nullptr*/)
 {
 	SET_CONTEXT(SetupScriptObjects);

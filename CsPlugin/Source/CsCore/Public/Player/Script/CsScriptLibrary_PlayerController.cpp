@@ -33,15 +33,15 @@ UCsScriptLibrary_PlayerController::UCsScriptLibrary_PlayerController(const FObje
 #define USING_NS_CACHED using namespace NCsScriptLibraryPlayerController::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryPlayerController::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
-#define PlayerControllerLibrary NCsPlayer::NController::FLibrary
+#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
 APlayerController* UCsScriptLibrary_PlayerController::GetFirstLocal(const FString& Context, const UObject* WorldContextObject)
 {
 	CONDITIONAL_SET_CTXT(GetFirstLocal);
 
-	return PlayerControllerLibrary::GetSafeFirstLocal(Ctxt, WorldContextObject);
+	return PCFirstLocalLibrary::GetSafe(Ctxt, WorldContextObject);
 }
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef PlayerControllerLibrary
+#undef PCFirstLocalLibrary

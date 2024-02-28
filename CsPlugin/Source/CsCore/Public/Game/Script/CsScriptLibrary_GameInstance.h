@@ -21,6 +21,6 @@ public:
 	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 	* return				Whether the instance running is a Mobile Preview with Editor .
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Object", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Game Instance", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static bool IsMobilePreviewEditor(const FString& Context, const UObject* WorldContextObject);
 };

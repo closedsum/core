@@ -17,7 +17,7 @@ namespace NCsPlayer
 {
 	namespace NCamera
 	{
-		#define PlayerControllerLibrary NCsPlayer::NController::FLibrary
+		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 		#define ObjectLibrary NCsObject::FLibrary
 		#define MathLibrary NCsMath::FLibrary
 
@@ -48,16 +48,15 @@ namespace NCsPlayer
 
 		APlayerCameraManager* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
-			APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+			APlayerController* PC = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 
 			checkf(PC->PlayerCameraManager, TEXT("%s: Player Controller: %s has NO Player Camera Manager."), *Context, *(PC->GetName()));
-
 			return PC->PlayerCameraManager;
 		}
 
 		APlayerCameraManager* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (APlayerController* PC = PlayerControllerLibrary::GetSafeLocal(Context, WorldContext, ControllerId))
+			if (APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId))
 			{
 				if (!PC->PlayerCameraManager)
 				{
@@ -232,6 +231,20 @@ namespace NCsPlayer
 			}
 			PCM->SetViewTarget(NewViewTarget, TransitionParams);
 			return true;
+		}
+
+		void FLibrary::SetViewTargetChecked(const FString& Context, APawn* Pawn)
+		{
+		#if UE_BUILD_SHIPPING
+			GetChecked(Context, Pawn)->SetViewTarget(Pawn);
+		#else
+			APlayerCameraManager* PCM = GetChecked(Context, Pawn);
+			APlayerController* PC	  = PCM->PCOwner.Get();
+
+			checkf(ObjectLibrary::IsValidObject(PC), TEXT("%s: PlayerCameraManager associated with %s has an Invalid reference to a PlayerController."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn));
+
+			PCM->SetViewTarget(Pawn);
+		#endif // #if UE_BUILD_SHIPPING
 		}
 
 		AActor* FLibrary::GetViewTargetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
@@ -518,8 +531,25 @@ namespace NCsPlayer
 
 		#pragma endregion View
 
-		#undef PlayerControllerLibrary
+		#undef PCLocalLibrary
 		#undef ObjectLibrary
 		#undef MathLibrary
+
+		namespace NLocal
+		{
+			namespace NFirst
+			{
+				#define PlayerControllerLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
+
+				void FLibrary::SetViewTargetChecked(const FString& Context, const UObject* WorldContext, APawn* Pawn)
+				{
+					CS_IS_PENDING_KILL_CHECKED(Pawn)
+
+					PlayerControllerLibrary::GetChecked(Context, WorldContext)->SetViewTarget(Pawn);
+				}
+
+				#undef PlayerControllerLibrary
+			}
+		}
 	}
 }

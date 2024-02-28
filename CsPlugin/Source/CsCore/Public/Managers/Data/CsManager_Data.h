@@ -424,6 +424,7 @@ public:
 public:
 
 #define OnAsyncLoadPayloadCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete
+#define OnAsyncLoadPayloadsCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadsComplete
 #define OnAsyncLoadPayloadCompletePersistentType NCsData::NManager::NPersistent::FOnAsyncLoadPayloadComplete
 
 	/**
@@ -438,6 +439,8 @@ private:
 	/** Event when a Payload loaded asynchronously completes.
 		 This is a synchronous event (fired on the Game Thread). */
 	OnAsyncLoadPayloadCompleteOnceType OnAsyncLoadPayloadCompleted_Once_Event;
+
+	OnAsyncLoadPayloadsCompleteOnceType OnAsyncLoadPayloadsCompleted_Once_Event;
 
 	OnAsyncLoadPayloadCompletePersistentType OnAsyncLoadPayloadCompleted_Persistent_Event;
 
@@ -468,6 +471,43 @@ private:
 
 	// TODO: NOTE: This process can only be kicked off ONCE at a time.
 	//			   Add checks.
+
+	// List
+
+	struct FAsyncLoadPayloads
+	{
+		friend class UCsManager_Data;
+
+	public:
+
+		struct FInfo
+		{
+		public:
+
+			TArray<FName> PayloadNames;
+
+			int32 Index;
+
+			FInfo() :
+				PayloadNames(),
+				Index(INDEX_NONE)
+			{
+			}
+		};
+	};
+
+	FAsyncLoadPayloads::FInfo AsyncLoadPayloadsInfo;
+
+public:
+	void AsyncLoadPayloads(const TArray<FName>& PayloadNames, OnAsyncLoadPayloadsCompleteOnceType Delegate);
+private:
+	char AsyncLoadPayloads_Internal(FCsRoutine* R);
+
+	FCsRoutineHandle AsyncLoadPayloadsHandle;
+
+	void OnFinishLoadObjectPaths_AsyncLoadPayloads(const FCsLoadHandle& Handle, const TArray<TSharedPtr<FStreamableHandle>>& Handles, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime);
+
+	// By Group
 
 	struct FAsyncLoadPayloadByGroup
 	{
@@ -505,6 +545,7 @@ public:
 	void UnloadPayload(const FName& PayloadName);
 
 #undef OnAsyncLoadPayloadCompleteOnceType
+#undef OnAsyncLoadPayloadsCompleteOnceType
 #undef OnAsyncLoadPayloadCompletePersistentType
 
 #pragma endregion Payload

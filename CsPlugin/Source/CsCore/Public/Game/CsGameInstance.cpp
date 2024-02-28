@@ -8,6 +8,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Managers/Time/CsTypes_Update.h"
+#include "World/CsWorld_Delegates_Internal.h"
 // Library
 #include "Coordinators/GameEvent/CsLibrary_Coordinator_GameEvent.h"
 // Managers
@@ -120,6 +121,8 @@ void UCsGameInstance::Init()
 		PlayMode = ECsPlayMode::InMobilePreview;
 	}
 #endif // #if WITH_EDITOR
+
+	NCsWorld::NDelegates::FInternal::Get().Init();
 
 	// Populate Enum Maps
 	

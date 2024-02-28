@@ -349,7 +349,7 @@ void UCsEdEngine::OnPostInit()
 	UserSettings->ApplyEditorUI_ApplicationScale();
 
 	AssetTool.GetOpenedAssetsImpl = &NCsAsset::FTool::GetOpenedAssets;
-	AssetTool.IsAssetOpened = &NCsAsset::FTool::IsAssetOpened;
+	AssetTool.IsAssetOpenedImpl = &NCsAsset::FTool::IsAssetOpened;
 	
 	EnumStructTool.Init(this);
 	EnumStructTool.ResolveLayoutChangesImpl = &UCsEdEngine::EnumStruct_ResolveLayoutChanges_Internal;

@@ -27,14 +27,14 @@ public:
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual")
-	int32 Load_Flags;
+	int32 Data_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual")
 	UObject* Data_Internal;
 
 	FCsData_Skin_VisualPtr() :
 		Data(nullptr),
-		Load_Flags(0),
+		Data_LoadFlags(0),
 		Data_Internal(nullptr)
 	{
 	}

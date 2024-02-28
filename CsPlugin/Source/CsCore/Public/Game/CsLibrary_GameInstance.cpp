@@ -203,6 +203,16 @@ namespace NCsGameInstance
 
 	#pragma endregion Editor
 
+	// Transition
+	#pragma region
+	
+	bool FLibrary::HasFinishedTransitionChecked(const FString& Context, const UObject* ContextObject)
+	{
+		return GetCsChecked(Context, ContextObject)->HasFinishedTransition();
+	}
+
+	#pragma endregion Transition
+
 	// Events
 	#pragma region
 

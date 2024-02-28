@@ -92,6 +92,8 @@ namespace NCsActor
 
 		static AActor* GetByClassChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass);
 
+		static AActor* GetByClassAndTagChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const FName& Tag);
+
 		static AActor* GetByClassAndInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* ActorClass, UClass* InterfaceClass);
 
 		static AActor* GetByInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass);

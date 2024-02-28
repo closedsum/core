@@ -395,6 +395,7 @@ namespace NCsData
 		#pragma region
 
 		#define OnAsyncLoadPayloadCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete
+		#define OnAsyncLoadPayloadsCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadsComplete
 		#define OnAsyncLoadPayloadCompletePersistentType NCsData::NManager::NPersistent::FOnAsyncLoadPayloadComplete
 			
 		OnAsyncLoadPayloadCompletePersistentType& FLibrary::GetOnAsyncLoadPayloadComplete_Persistent_EventChecked(const FString& Context, const UObject* ContextObject)
@@ -427,12 +428,18 @@ namespace NCsData
 			return false;
 		}
 
+		void FLibrary::AsyncLoadPayloadsChecked(const FString& Context, const UObject* ContextObject, const TArray<FName>& PayloadNames, OnAsyncLoadPayloadsCompleteOnceType Delegate)
+		{
+			GetChecked(Context, ContextObject)->AsyncLoadPayloads(PayloadNames, Delegate);
+		}
+
 		void FLibrary::UnloadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName)
 		{
 			GetChecked(Context, ContextObject)->UnloadPayload(PayloadName);
 		}
 
 		#undef OnAsyncLoadPayloadCompleteOnceType
+		#undef OnAsyncLoadPayloadsCompleteOnceType
 		#undef OnAsyncLoadPayloadCompletePersistentType
 
 		#pragma endregion Payload

@@ -19,9 +19,9 @@ namespace NCsConsoleCommand
 		{
 			checkf(World, TEXT("NCsConsoleCommand::FLibrary::Exec: World is NULL"));
 
-			typedef NCsPlayer::NController::FLibrary PlayerLibrary;
+			typedef NCsPlayer::NController::NLocal::NFirst::FLibrary PlayerLibrary;
 
-			if (APlayerController* PC = PlayerLibrary::GetFirstLocal(World))
+			if (APlayerController* PC = PlayerLibrary::Get(World))
 			{
 				FString Output = PC->ConsoleCommand(Cmd);
 				return !Output.IsEmpty();

@@ -149,6 +149,15 @@ namespace NCsPlayer
 				return OutSuccess;
 			}
 
+			/**
+			* Set the View Target on the Player Camera Manager of the Player Controller associated with Pawn to Pawn.
+			*  NOTE: Pawn MUST have a Controller of type: APlayerController.
+			* 
+			* @param Context	The calling context.
+			* @param Pawn
+			*/
+			static void SetViewTargetChecked(const FString& Context, APawn* Pawn);
+
 			static AActor* GetViewTargetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 
 			static AActor* GetSafeViewTarget(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -267,5 +276,24 @@ namespace NCsPlayer
 
 		#pragma endregion View
 		};
+
+		namespace NLocal
+		{
+			namespace NFirst
+			{
+				struct CSCORE_API FLibrary
+				{
+					/**
+					* Set the View Target on the Player Camera Manager of the FIRST LOCAL Player Controller associated with Pawn to Pawn.
+					*  NOTE: Pawn MUST have a Controller of type: APlayerController.
+					* 
+					* @param Context		The calling context.
+					* @param WorldContext
+					* @param Pawn
+					*/
+					static void SetViewTargetChecked(const FString& Context, const UObject* WorldContext, APawn* Pawn);
+				};
+			}
+		}
 	}
 }

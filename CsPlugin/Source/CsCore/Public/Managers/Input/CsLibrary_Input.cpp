@@ -41,18 +41,18 @@ namespace NCsInput
 		// Show / Hide
 		#pragma region
 
-		#define PlayerControllerLibrary NCsPlayer::NController::FLibrary
+		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
 		bool FLibrary::IsShowingCursorChecked(const FString& Context, const UObject* WorldContext)
 		{
-			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
+			APlayerController* PC = PCFirstLocalLibrary::GetChecked(Context, WorldContext);
 
 			return PC->bShowMouseCursor;
 		}
 
 		bool FLibrary::SafeIsShowingCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			APlayerController* PC = PlayerControllerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
+			APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log);
 
 			return PC ? PC->bShowMouseCursor : false;
 		}
@@ -68,14 +68,14 @@ namespace NCsInput
 
 		void FLibrary::ShowCursorChecked(const FString& Context, const UObject* WorldContext)
 		{
-			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
+			APlayerController* PC = PCFirstLocalLibrary::GetChecked(Context, WorldContext);
 
 			PC->bShowMouseCursor = true;
 		}
 
 		bool FLibrary::SafeShowCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (APlayerController* PC = PlayerControllerLibrary::GetSafeFirstLocal(Context, WorldContext, Log))
+			if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
 			{
 				PC->bShowMouseCursor = true;
 				return true;
@@ -94,13 +94,13 @@ namespace NCsInput
 
 		void FLibrary::HideCursorChecked(const FString& Context, const UObject* WorldContext)
 		{
-			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
+			APlayerController* PC = PCFirstLocalLibrary::GetChecked(Context, WorldContext);
 			PC->bShowMouseCursor  = false;
 		}
 
 		bool FLibrary::SafeHideCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (APlayerController* PC = PlayerControllerLibrary::GetSafeFirstLocal(Context, WorldContext, Log))
+			if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
 			{
 				PC->bShowMouseCursor = false;
 				return true;
@@ -117,7 +117,7 @@ namespace NCsInput
 			return SafeHideCursor(Context, WorldContext, nullptr);
 		}
 
-		#undef PlayerControllerLibrary
+		#undef PCFirstLocalLibrary
 
 		#pragma endregion Show / Hide
 
@@ -328,9 +328,9 @@ namespace NCsInput
 		{
 			checkf((int32)FingerIndex < EKeys::NUM_TOUCH_KEYS, TEXT("%s: FingerIndex is NOT Valid."), *Context);
 
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+			typedef NCsPlayer::NController::NLocal::NFirst::FLibrary PCFirstLocalLibrary;
 
-			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
+			APlayerController* PC = PCFirstLocalLibrary::GetChecked(Context, WorldContext);
 
 			UPlayerInput* PlayerInput = PC->PlayerInput;
 

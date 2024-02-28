@@ -18,7 +18,7 @@ namespace NCsAsset
 
 			const TArray<UObject*>&(*GetOpenedAssetsImpl)();
 
-			bool(*IsAssetOpened)(UObject* /*Asset*/);
+			bool(*IsAssetOpenedImpl)(UObject* /*Asset*/);
 		};
 	}
 }

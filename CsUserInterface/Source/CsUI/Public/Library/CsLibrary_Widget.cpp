@@ -719,9 +719,9 @@ namespace NCsWidget
 			bool FLibrary::GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection)
 			{
 				// Get PlayerController associated with ControllerId
-				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+				typedef NCsPlayer::NController::NLocal::FLibrary PCLocalLibrary;
 
-				APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+				APlayerController* PC = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 				
 				// Get Screen Position of the Widget
 				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
@@ -749,9 +749,9 @@ namespace NCsWidget
 			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				// Get PlayerController associated with ControllerId
-				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+				typedef NCsPlayer::NController::NLocal::FLibrary PCLocalLibrary;
 
-				APlayerController* PC = PlayerControllerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, Log);
+				APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 				
 				// Get Screen Position of the Widget
 				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
@@ -802,9 +802,9 @@ namespace NCsWidget
 			bool FLibrary::GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection)
 			{
 				// Get PlayerController associated with ControllerId
-				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+				typedef NCsPlayer::NController::NLocal::FLibrary PCLocalLibrary;
 
-				APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+				APlayerController* PC = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 
 				// Get Pixel Position of the Widget
 				typedef NCsWidget::NPosition::NViewport::FLibrary WidgetScreenPositionLibrary;
@@ -835,9 +835,9 @@ namespace NCsWidget
 			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				// Get PlayerController associated with ControllerId
-				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+				typedef NCsPlayer::NController::NLocal::FLibrary PCLocalLibrary;
 
-				APlayerController* PC = PlayerControllerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, Log);
+				APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 				// Get Screen Position of the Widget
 				// Get Pixel Position of the Widget
 				typedef NCsWidget::NPosition::NViewport::FLibrary WidgetScreenPositionLibrary;

@@ -7,8 +7,10 @@
 #pragma region
 
 // Assume Function Signature bool(void* StructValue, const UStruct* Struct, const FString& Context)
-#define CS_STRUCT_OPS_IS_VALID_CHECKED(__StructType) FORCEINLINE static bool StructOps_IsValidChecked(void* StructValue, const UStruct* Struct, const FString& Context) \
+#define CS_STRUCT_OPS_IS_VALID_CHECKED(__StructType) FORCEINLINE static bool StructOps_IsValidChecked(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess) \
 	{ \
+		OutSuccess = false; \
+		\
 		if (!StructValue) \
 			return false; \
 		\
@@ -17,13 +19,16 @@
 		if (Struct == __StructType::StaticStruct()) \
 		{ \
 			reinterpret_cast<__StructType*>(StructValue)->IsValidChecked(Context); \
+			OutSuccess = true; \
 			return true; \
 		} \
 		return false; \
 	}
 // Assume Function Signature bool(void* StructValue, const UStruct* Struct, const FString& Context, void(*Log)(const FString&))
-#define CS_STRUCT_OPS_IS_VALID(__StructType) FORCEINLINE static bool StructOps_IsValid(void* StructValue, const UStruct* Struct, const FString& Context, void(*Log)(const FString&)) \
+#define CS_STRUCT_OPS_IS_VALID(__StructType) FORCEINLINE static bool StructOps_IsValid(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess, void(*Log)(const FString&)) \
 	{ \
+		OutSuccess = false; \
+		\
 		if (!StructValue) \
 			return false; \
 		\
@@ -32,13 +37,16 @@
 		if (Struct == __StructType::StaticStruct()) \
 		{ \
 			reinterpret_cast<__StructType*>(StructValue)->IsValid(Context, Log); \
+			OutSuccess = true; \
 			return true; \
 		} \
 		return false; \
 	}
 // Assume Function Signature bool(void* StructValue, const UStruct* Struct, const FString& Context)
-#define CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(__StructType) FORCEINLINE static bool StructOps_IsTopValidChecked(void* StructValue, const UStruct* Struct, const FString& Context) \
+#define CS_STRUCT_OPS_IS_TOP_VALID_CHECKED(__StructType) FORCEINLINE static bool StructOps_IsTopValidChecked(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess) \
 	{ \
+		OutSuccess = false; \
+		\
 		if (!StructValue) \
 			return false; \
 		\
@@ -47,13 +55,16 @@
 		if (Struct == __StructType::StaticStruct()) \
 		{ \
 			reinterpret_cast<__StructType*>(StructValue)->IsTopValidChecked(Context); \
+			OutSuccess = true; \
 			return true; \
 		} \
 		return false; \
 	}
 // Assume Function Signature bool(void* StructValue, const UStruct* Struct, const FString& Context, void(*Log)(const FString&))
-#define CS_STRUCT_OPS_IS_TOP_VALID(__StructType) FORCEINLINE static bool StructOps_IsTopValid(void* StructValue, const UStruct* Struct, const FString& Context, void(*Log)(const FString&)) \
+#define CS_STRUCT_OPS_IS_TOP_VALID(__StructType) FORCEINLINE static bool StructOps_IsTopValid(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess, void(*Log)(const FString&)) \
 	{ \
+		OutSuccess = false; \
+		\
 		if (!StructValue) \
 			return false; \
 		\
@@ -62,6 +73,7 @@
 		if (Struct == __StructType::StaticStruct()) \
 		{ \
 			reinterpret_cast<__StructType*>(StructValue)->IsTopValid(Context, Log); \
+			OutSuccess = true; \
 			return true; \
 		} \
 		return false; \

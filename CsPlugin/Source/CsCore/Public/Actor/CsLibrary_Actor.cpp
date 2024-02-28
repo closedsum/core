@@ -193,6 +193,56 @@ namespace NCsActor
 		return nullptr;
 	}
 
+	AActor* FLibrary::GetByClassAndTagChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const FName& Tag)
+	{
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_SUBCLASS_OF_NULL_CHECKED(ActorClass, AActor)
+		CS_IS_NAME_NONE_CHECKED(Tag)
+
+	#if UE_BUILD_SHIPPING
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (!A->Tags.Contains(Tag))
+				continue;
+			return A;
+		}
+	#else
+		AActor* Actor = nullptr;
+		
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (!A->Tags.Contains(Tag))
+				continue;
+
+			if (!Actor)
+			{
+				Actor = A;
+			}
+			else
+			{
+				checkf(0, TEXT("%s: There are more than one Actor of type ActorClass: %s."), *Context, *(ActorClass.Get()->GetName()));
+			}
+		}
+
+		if (Actor)
+			return Actor;
+	#endif // UE_BUILD_SHIPPING
+
+		checkf(0, TEXT("%s: Failed to find Actor with Tag: %s."), *Context, *(ActorClass.Get()->GetName()));
+		return nullptr;
+	}
+
 	AActor* FLibrary::GetByClassAndInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* ActorClass, UClass* InterfaceClass)
 	{
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);

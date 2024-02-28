@@ -273,6 +273,9 @@
 	} \
 	FORCEINLINE __ValueType* Get##__Member() const { return *(__Member##_Proxy); }
 
+#define CS_COPY_TO_PROXY(__Proxy, __Member) __Proxy->Set##__Member(&__Member)
+#define CS_COPY_TO_PROXY_AS_VALUE(__Proxy, __Member) __Proxy->Set##__Member(__Member)
+
 #define CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(__Member) \
 	FORCEINLINE bool IsProxyPtrDefault_##__Member##_Checked(const FString& Context) const \
 	{ \

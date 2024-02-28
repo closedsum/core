@@ -10,6 +10,7 @@
 #include "Coroutine/CsRoutine.h"
 // Types
 #include "Managers/Time/CsTypes_Update.h"
+#include "World/CsWorld_Delegates.h"
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 	// Common
@@ -81,7 +82,7 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
 	// Change Map
 	CurrentMap(),
-	bChangeMapCompleted(false),
+	ChangeMapInfo(),
 	ChangeMap_OnStart_Event(),
 	ChangeMap_OnStart_ScriptEvent(),
 	ChangeMap_OnComplete_Event(),
@@ -234,9 +235,10 @@ void UCsManager_Level::Initialize()
 {
 	SET_CONTEXT(Initialize);
 
-	// Bind to Delegate
+	// Bind to Delegates
 	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
+	NCsWorld::FDelegates::OnPostWorldInitialization_Simple_Event.AddUObject(this, &UCsManager_Level::OnPostWorldInitialization);
 	GameInstanceLibrary::GetTransition_OnFinish_EventChecked(Context, MyRoot).AddUObject(this, &UCsManager_Level::GameInstance_Transition_OnFinish);
 	NCsLevel::NStreaming::NDynamic::FDelegates::OnAdded_Event.AddUObject(this, &UCsManager_Level::Level_Streaming_OnAdded);
 }
@@ -270,6 +272,24 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 {
 	SET_CONTEXT(Check_FinishedLoadingPersistentLevel);
 
+	if (UWorld* World = MyRoot->GetWorld())
+	{
+		const TArray<ULevel*>& Levels = World->GetLevels();
+
+		for (ULevel* Level : Levels)
+		{
+			if (Level->IsPersistentLevel() &&
+				Level->bIsVisible)
+			{
+				FinishedLoadingPersistentLevelInfo.bCompleted = true;
+				break;
+			}
+		}
+	}
+
+	if (FinishedLoadingPersistentLevelInfo.bCompleted)
+		return;
+
 	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
@@ -282,11 +302,11 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 
 	#undef COROUTINE
 
-	bFinishedLoadingPersistentlLevel = false;
-
 	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
 
 	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, false);
+
+	FinishedLoadingPersistentLevelInfo.bActive = true;
 
 	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
@@ -295,27 +315,31 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel(const FString& MapPa
 {
 	SET_CONTEXT(Check_FinishedLoadingPersistentLevel);
 
-	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
+	if (UWorld* World = MyRoot->GetWorld())
+	{
+		const TArray<ULevel*>& Levels = World->GetLevels();
 
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadImplType* Payload		   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
+		for (ULevel* Level : Levels)
+		{
+			if (Level->IsPersistentLevel() &&
+				Level->bIsVisible)
+			{
+				const FString PersistentLevelPackageName = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 
-	typedef UCsManager_Level ClassType;
-	#define COROUTINE Check_FinishedLoadingPersistentLevel_Internal
+				if (PersistentLevelPackageName == MapPackageName)
+				{
+					FinishedLoadingPersistentLevelInfo.bCompleted = true;
+					break;
+				}
+			}
+		}
+	}
 
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, MyRoot, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+	if (FinishedLoadingPersistentLevelInfo.bCompleted)
+		return;
 
-	#undef COROUTINE
-
-	bFinishedLoadingPersistentlLevel = false;
-
-	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
-	CS_COROUTINE_PAYLOAD_PASS_STRING_START
-
-	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, MapPackageName.IsEmpty() ? false : true);
-	CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, MapPackageName);
-
-	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	FinishedLoadingPersistentLevelInfo.MapPackageName = MapPackageName;
+	FinishedLoadingPersistentLevelInfo.bActive		  = true;
 }
 
 char UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine* R)
@@ -341,13 +365,13 @@ char UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine*
 
 					if (PersistentLevelPackageName == MapPackageName)
 					{
-						bFinishedLoadingPersistentlLevel = true;
+						FinishedLoadingPersistentLevelInfo.bCompleted = true;
 						break;
 					}
 				}
 				else
 				{
-					bFinishedLoadingPersistentlLevel = true;
+					FinishedLoadingPersistentLevelInfo.bCompleted = true;
 					break;
 				}
 			}
@@ -357,7 +381,9 @@ char UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine*
 	CS_COROUTINE_BEGIN(R);
 
 	// Wait until Persistent level is loaded
-	CS_COROUTINE_WAIT_UNTIL(R, bFinishedLoadingPersistentlLevel);
+	CS_COROUTINE_WAIT_UNTIL(R, FinishedLoadingPersistentLevelInfo.IsCompleted());
+
+	FinishedLoadingPersistentLevelInfo.bActive = false;
 
 	CS_COROUTINE_END(R);
 }
@@ -402,7 +428,9 @@ void UCsManager_Level::ChangeMap(const ChangeMapParamsType& Params)
 
 		CurrentMap = LevelLibrary::GetSafeName(MyRoot);
 
-		bChangeMapCompleted = false;
+		ChangeMapInfo.bActive = true;
+		ChangeMapInfo.bCompleted = false;
+		ChangeMapInfo.DestinationMap = Params.Map;
 
 		CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 	}
@@ -440,9 +468,9 @@ char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
 	}
 
 	// Wait until the New Map is loaded
-	CS_COROUTINE_WAIT_UNTIL(R, HasFinishedLoadingPersistentLevel());
+	CS_COROUTINE_WAIT_UNTIL(R, ChangeMapInfo.IsCompleted());
 
-	bChangeMapCompleted = true;
+	ChangeMapInfo.bActive = false;
 
 	ChangeMap_OnComplete_Event.Broadcast(CurrentMap, NewMap);
 	ChangeMap_OnComplete_ScriptEvent.Broadcast(CurrentMap, NewMap);
@@ -479,7 +507,9 @@ void UCsManager_Level::ChangeMap_TransitionAsDestination(const ChangeMapParamsTy
 
 	CurrentMap = LevelLibrary::GetSafeName(MyRoot);
 
-	bChangeMapCompleted = false;
+	ChangeMapInfo.bActive = true;
+	ChangeMapInfo.bCompleted = false;
+	ChangeMapInfo.DestinationMap = Params.TransitionMap;
 
 	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
@@ -501,12 +531,11 @@ char UCsManager_Level::ChangeMap_TransitionAsDestination_Internal(FCsRoutine* R)
 	// Transition to "New Map" (TransitionMap)
 	MyRoot->GetWorld()->ServerTravel(NewMap);
 	MyRoot->GetWorld()->SetSeamlessTravelMidpointPause(true);
-	Check_FinishedLoadingPersistentLevel(TransitionMap);
 
 	// Wait until the New Map is loaded
-	CS_COROUTINE_WAIT_UNTIL(R, HasFinishedLoadingPersistentLevel());
+	CS_COROUTINE_WAIT_UNTIL(R, ChangeMapInfo.IsCompleted());
 
-	bChangeMapCompleted = true;
+	ChangeMapInfo.bActive = false;
 
 	ChangeMap_OnComplete_Event.Broadcast(CurrentMap, TransitionMap);
 	ChangeMap_OnComplete_ScriptEvent.Broadcast(CurrentMap, TransitionMap);
@@ -640,6 +669,33 @@ void UCsManager_Level::Broadcast_Level_Streaming_OnHidden(ULevelStreaming* Level
 }
 
 #pragma endregion Streaming
+
+// Events
+#pragma region
+
+void UCsManager_Level::OnPostWorldInitialization(UWorld* World)
+{
+	// Finished Loading Persistent Level
+	if (FinishedLoadingPersistentLevelInfo.IsActive() &&
+		!FinishedLoadingPersistentLevelInfo.IsCompleted())
+	{
+		const FString PersistentLevelPackageName = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
+
+		if (PersistentLevelPackageName == FinishedLoadingPersistentLevelInfo.MapPackageName)
+			FinishedLoadingPersistentLevelInfo.MarkCompleted();
+	}
+	// Change Map
+	if (ChangeMapInfo.IsActive() &&
+		!ChangeMapInfo.IsCompleted())
+	{
+		const FString PersistentLevelPackageName = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
+
+		if (PersistentLevelPackageName == ChangeMapInfo.DestinationMap)
+			ChangeMapInfo.MarkCompleted();
+	}
+}
+	
+#pragma endregion Events
 
 #if WITH_EDITOR
 

@@ -328,6 +328,14 @@ namespace NCsGameInstance
 
 	#pragma endregion Editor
 
+	// Transition
+	#pragma region
+	public:
+
+		static bool HasFinishedTransitionChecked(const FString& Context, const UObject* ContextObject);
+
+	#pragma endregion Transition
+
 	// Events
 	#pragma region
 	public:

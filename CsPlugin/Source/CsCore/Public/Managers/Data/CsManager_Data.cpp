@@ -60,6 +60,10 @@ namespace NCsManagerData
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadPayload);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayload);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadStartupPayload);
+					// List
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloads);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloads_Internal);
+					// By Group
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloadByGroup);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloadByGroup_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, Payload_GetPaths);
@@ -72,6 +76,9 @@ namespace NCsManagerData
 		{
 			// Load
 				// Payload
+					// List
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Data, AsyncLoadPayloads_Internal);
+					// By Group
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Data, AsyncLoadPayloadByGroup_Internal);
 		}
 	}
@@ -134,8 +141,13 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 	// Load
 		// Payload
 	OnAsyncLoadPayloadCompleted_Once_Event(),
+	OnAsyncLoadPayloadsCompleted_Once_Event(),
 	OnAsyncLoadPayloadCompleted_Persistent_Event(),
 	InProgressAsyncLoadPayloads(),
+			// List
+	AsyncLoadPayloadsInfo(),
+	AsyncLoadPayloadsHandle(),
+			// By Group
 	AsyncLoadPayloadByGroupInfo(),
 	AsyncLoadPayloadByGroupHandle(),
 	// Add
@@ -147,6 +159,7 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 #define USING_NS_CACHED using namespace NCsManagerData::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerData::NCached; \
 	const FString& Context = Str::##__FunctionName
+#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
 
 // Singleton
 #pragma region
@@ -597,7 +610,7 @@ void UCsManager_Data::GenerateMaps()
 		}
 		NCsDataEntryData::PopulateEnumMapFromSettings(Context, MyRoot);
 	}
-#if !UE_BUILD_SHIPPING
+//#if !UE_BUILD_SHIPPING
 	// ScriptDatas
 	if (UDataTable* ScriptDatas = DataRootSet.Get()->GetCsDataRootSet().ScriptDatas)
 	{
@@ -624,7 +637,7 @@ void UCsManager_Data::GenerateMaps()
 			ScriptDataEntryByPathMap.Add(Path, RowPtr);
 		}
 	}
-#endif // #if !UE_BUILD_SHIPPING
+//#endif // #if !UE_BUILD_SHIPPING
 	// DataTables
 	if (UDataTable* DataTables = DataRootSet.Get()->GetCsDataRootSet().DataTables)
 	{
@@ -940,7 +953,7 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 
 			ICsData* Data = LoadData(EntryName);
 		}
-	#if !UE_BUILD_SHIPPING
+	//#if !UE_BUILD_SHIPPING
 		// ScriptDatas
 		for (FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
 		{
@@ -949,7 +962,7 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 
 			UObject* Data = LoadScriptData(EntryName);
 		}
-	#endif // #if !UE_BUILD_SHIPPING
+	//#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1154,11 +1167,138 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHand
 	OnAsyncLoadPayloadCompleted_Once_Event.Unbind();
 }
 
+		// List
+#pragma region
+
+#define OnAsyncLoadPayloadsCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadsComplete
+
+void UCsManager_Data::AsyncLoadPayloads(const TArray<FName>& PayloadNames, OnAsyncLoadPayloadsCompleteOnceType Delegate)
+{
+	SET_CONTEXT(AsyncLoadPayloads);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, this, UpdateGroup);
+
+	typedef UCsManager_Data ClassType;
+	#define COROUTINE AsyncLoadPayloads_Internal
+
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+
+	#undef COROUTINE
+
+	for (const FName& PayloadName : PayloadNames)
+	{
+		TArray<FCsStreamableHandle>& Handles = PayloadHandleMap_Loaded.FindOrAdd(PayloadName);
+		Handles.Reset(Handles.Max());
+	}
+
+	AsyncLoadPayloadsInfo.PayloadNames.Reset(FMath::Max(AsyncLoadPayloadsInfo.PayloadNames.Max(), PayloadNames.Num()));
+	AsyncLoadPayloadsInfo.PayloadNames.Append(PayloadNames);
+	AsyncLoadPayloadsInfo.Index	    = CS_FIRST;
+
+	OnAsyncLoadPayloadsCompleted_Once_Event = Delegate;
+
+	CoroutineSchedulerLibrary::StartChecked(Context, this, Payload);
+}
+
+char UCsManager_Data::AsyncLoadPayloads_Internal(FCsRoutine* R)
+{
+	SET_CONTEXT(AsyncLoadPayloads_Internal);
+
+	CS_COROUTINE_READ_INT_START
+
+	CS_COROUTINE_READ_INT_REF(R, PayloadIndex);
+
+	const int32 PayloadCount = AsyncLoadPayloadsInfo.PayloadNames.Num();
+	const FName& PayloadName = AsyncLoadPayloadsInfo.PayloadNames[PayloadIndex];
+
+	CS_COROUTINE_BEGIN(R);
+
+	do 
+	{
+		{
+			{
+				typedef NCsLoad::NManager::NLoadObjectPaths::FPayload PayloadType;
+
+				const int32 PathCount = Payload_GetPathCountChecked(Context, PayloadName);
+	
+				/*if (Count <= CS_EMPTY)
+				{
+					UE_LOG(LogCs, Warning, TEXT("%s: No Paths found for Payload: %s."), *Context, *(PayloadName.ToString()));
+
+					OnAsyncLoadPayloadCompleted_Once_Event.ExecuteIfBound(false, PayloadName);
+					OnAsyncLoadPayloadCompleted_Once_Event.Unbind();
+					return;
+				}*/
+
+				PayloadType Payload;
+
+				// Set ObjectPaths
+				Payload.ObjectPaths.Reset(PathCount);
+
+				Payload_GetPathsChecked(Context, PayloadName, Payload.ObjectPaths);
+
+				if (Payload.ObjectPaths.Num() > CS_EMPTY)
+				{
+					// Set Async Order
+					Payload.AsyncOrder = EMCsLoadAsyncOrder::Get().GetEnumAt(CsCVarManagerDataLoadAsyncOrder->GetInt());
+					// Set callback On Finish
+					Payload.OnFinishLoadObjectPaths.BindUObject(this, &UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloads);
+
+					FCsLoadHandle Handle = UCsManager_Load::Get(MyRoot)->LoadObjectPaths(Payload);
+
+					InProgressAsyncLoadPayloads.Add(Handle, PayloadName);
+				}
+				else
+				{
+					++AsyncLoadPayloadsInfo.Index;
+				}
+			}
+			CS_COROUTINE_WAIT_UNTIL(R, AsyncLoadPayloadsInfo.Index > PayloadIndex);
+
+			++PayloadIndex;
+		}
+	} while (PayloadIndex < PayloadCount);
+
+	{
+		for (const FName& Name : AsyncLoadPayloadsInfo.PayloadNames)
+		{
+			LoadPayload(Name);
+		}
+	}
+	
+	OnAsyncLoadPayloadsCompleted_Once_Event.ExecuteIfBound(true, AsyncLoadPayloadsInfo.PayloadNames);
+	OnAsyncLoadPayloadsCompleted_Once_Event.Unbind();
+
+	CS_COROUTINE_END(R);
+}
+
+void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloads(const FCsLoadHandle& Handle, const TArray<TSharedPtr<FStreamableHandle>>& Handles, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime)
+{
+	const int32& Index		 = AsyncLoadPayloadsInfo.Index;
+	const FName& PayloadName = AsyncLoadPayloadsInfo.PayloadNames[Index];
+
+	for (const TSharedPtr<FStreamableHandle>& H : Handles)
+	{
+		PayloadHandleMap_Loaded[PayloadName].AddDefaulted_GetRef().Init(H);
+	}
+	
+	InProgressAsyncLoadPayloads.Remove(Handle);
+
+	++AsyncLoadPayloadsInfo.Index;
+}
+
+#pragma endregion List
+
+		// Group
+#pragma region
+
 void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate)
 {
 	SET_CONTEXT(AsyncLoadPayloadByGroup);
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
@@ -1262,6 +1402,8 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup(const FCsL
 	++AsyncLoadPayloadByGroupInfo.Index;
 }
 
+#pragma endregion Group
+
 #undef OnAsyncLoadPayloadCompleteOnceType
 
 void UCsManager_Data::UnloadPayload(const FName& PayloadName)
@@ -1318,7 +1460,7 @@ void UCsManager_Data::Payload_GetPaths(const FName& PayloadName, TArray<FSoftObj
 
 			Data_GetPathsChecked(Context, EntryName, OutPaths);
 		}
-	#if !UE_BUILD_SHIPPING
+	//#if !UE_BUILD_SHIPPING
 		// ScriptDatas
 		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
 		{
@@ -1326,7 +1468,7 @@ void UCsManager_Data::Payload_GetPaths(const FName& PayloadName, TArray<FSoftObj
 
 			ScriptData_GetPathsChecked(Context, EntryName, OutPaths);
 		}
-	#endif // #if !UE_BUILD_SHIPPING
+	//#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1377,7 +1519,7 @@ void UCsManager_Data::Payload_GetPathsChecked(const FString& Context, const FNam
 
 			Data_GetPathsChecked(Context, EntryName, OutPaths);
 		}
-	#if !UE_BUILD_SHIPPING
+	//#if !UE_BUILD_SHIPPING
 		// ScriptDatas
 		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
 		{
@@ -1385,7 +1527,7 @@ void UCsManager_Data::Payload_GetPathsChecked(const FString& Context, const FNam
 
 			ScriptData_GetPathsChecked(Context, EntryName, OutPaths);
 		}
-	#endif // #if !UE_BUILD_SHIPPING
+	//#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1436,7 +1578,7 @@ void UCsManager_Data::Payload_GetSafePaths(const FString& Context, const FName& 
 
 			Data_GetPathsChecked(Context, EntryName, OutPaths);
 		}
-	#if !UE_BUILD_SHIPPING
+	//#if !UE_BUILD_SHIPPING
 		// ScriptDatas
 		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
 		{
@@ -1444,7 +1586,7 @@ void UCsManager_Data::Payload_GetSafePaths(const FString& Context, const FName& 
 
 			ScriptData_GetPathsChecked(Context, EntryName, OutPaths);
 		}
-	#endif // #if !UE_BUILD_SHIPPING
+	//#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1499,7 +1641,7 @@ int32 UCsManager_Data::Payload_GetPathCount(const FName& PayloadName) const
 
 			Count += Data_GetPathCountChecked(Context, EntryName);
 		}
-	#if !UE_BUILD_SHIPPING
+	//#if !UE_BUILD_SHIPPING
 		// ScriptDatas
 		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
 		{
@@ -1507,7 +1649,7 @@ int32 UCsManager_Data::Payload_GetPathCount(const FName& PayloadName) const
 
 			Count += ScriptData_GetPathCountChecked(Context, EntryName);
 		}
-	#endif // #if !UE_BUILD_SHIPPING
+	//#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1558,7 +1700,7 @@ int32 UCsManager_Data::Payload_GetPathCountChecked(const FString& Context, const
 
 			Count += Data_GetPathCountChecked(Context, EntryName);
 		}
-	#if !UE_BUILD_SHIPPING
+	//#if !UE_BUILD_SHIPPING
 		// ScriptDatas
 		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
 		{
@@ -1566,7 +1708,7 @@ int32 UCsManager_Data::Payload_GetPathCountChecked(const FString& Context, const
 
 			Count += ScriptData_GetPathCountChecked(Context, EntryName);
 		}
-	#endif // #if !UE_BUILD_SHIPPING
+	//#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1618,7 +1760,7 @@ int32 UCsManager_Data::Payload_GetSafePathCount(const FString& Context, const FN
 
 			Count += Data_GetPathCountChecked(Context, EntryName);
 		}
-	#if !UE_BUILD_SHIPPING
+	//#if !UE_BUILD_SHIPPING
 		// ScriptDatas
 		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
 		{
@@ -1626,7 +1768,7 @@ int32 UCsManager_Data::Payload_GetSafePathCount(const FString& Context, const FN
 
 			Count += ScriptData_GetPathCountChecked(Context, EntryName);
 		}
-	#endif // #if !UE_BUILD_SHIPPING
+	//#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1678,7 +1820,7 @@ void UCsManager_Data::Payload_GetPathsByGroupChecked(const FString& Context, con
 
 			Data_GetPathsByGroupChecked(Context, EntryName, Group, Paths);
 		}
-	#if !UE_BUILD_SHIPPING
+	//#if !UE_BUILD_SHIPPING
 		// ScriptDatas
 		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
 		{
@@ -1686,7 +1828,7 @@ void UCsManager_Data::Payload_GetPathsByGroupChecked(const FString& Context, con
 
 			ScriptData_GetPathsByGroupChecked(Context, EntryName, Group, Paths);
 		}
-	#endif // #if !UE_BUILD_SHIPPING
+	//#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1830,3 +1972,4 @@ bool UCsManager_Data::SafeRemoveDataCompositionObject_Loaded(const FString& Cont
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
+#undef CoroutineSchedulerLibrary

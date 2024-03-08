@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Player/CsLibrary_PlayerCamera.h"
@@ -18,6 +18,7 @@ namespace NCsPlayer
 	namespace NCamera
 	{
 		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
+		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 		#define ObjectLibrary NCsObject::FLibrary
 		#define MathLibrary NCsMath::FLibrary
 
@@ -45,6 +46,26 @@ namespace NCsPlayer
 
 		// Get
 		#pragma region
+
+		APlayerCameraManager* FLibrary::GetChecked(const FString& Context, APlayerController* PlayerController)
+		{
+			CS_IS_PENDING_KILL_CHECKED(PlayerController)
+
+			checkf(PlayerController->PlayerCameraManager, TEXT("%s: Player Controller: %s has NO Player Camera Manager."), *Context, *(PlayerController->GetName()));
+			return PlayerController->PlayerCameraManager;
+		}
+
+		APlayerCameraManager* FLibrary::GetSafe(const FString& Context, APlayerController* PlayerController, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PENDING_KILL_RET_NULL(PlayerController)
+
+			if (!PlayerController->PlayerCameraManager)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Player Controller: %s has NO Player Camera Manager."), *Context, *(PlayerController->GetName())));
+				return nullptr;
+			}
+			return PlayerController->PlayerCameraManager;
+		}
 
 		APlayerCameraManager* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
@@ -193,6 +214,31 @@ namespace NCsPlayer
 			return true;
 		}
 
+		void FLibrary::SetViewTargetChecked(const FString& Context, APlayerController* PlayerController, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams /*=FViewTargetTransitionParams()*/)
+		{
+			CS_IS_PENDING_KILL_CHECKED(PlayerController)
+			CS_IS_PENDING_KILL_CHECKED(NewViewTarget)
+			check(IsValidChecked(Context, TransitionParams));
+
+			GetChecked(Context, PlayerController)->SetViewTarget(NewViewTarget, TransitionParams);
+		}
+
+		bool FLibrary::SetSafeViewTarget(const FString& Context, APlayerController* PlayerController, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PENDING_KILL(NewViewTarget)
+			
+			if (!IsValid(Context, TransitionParams, Log))
+				return false;
+
+			APlayerCameraManager* PCM = GetSafe(Context, PlayerController, Log);
+
+			if (!PCM)
+				return false;
+
+			PCM->SetViewTarget(NewViewTarget, TransitionParams);
+			return true;
+		}
+
 		void FLibrary::SetViewTargetChecked(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams /*=FViewTargetTransitionParams()*/)
 		{
 			CS_IS_PENDING_KILL_CHECKED(NewViewTarget)
@@ -273,6 +319,18 @@ namespace NCsPlayer
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get View Target for PlayerCameraManager associated with ControllerId: %d."), *Context, ControllerId));
 				return nullptr;
 			}
+			return VT;
+		}
+
+		AActor* FLibrary::GetViewTargetChecked(const FString& Context, APlayerController* PlayerController)
+		{
+			APlayerCameraManager* PCM = GetChecked(Context, PlayerController);
+
+			checkf(PCM, TEXT("%s: %s has NO Player Camera Manager."), *Context, *ObjectLibrary::PrintNameAndClass(PlayerController));
+
+			AActor* VT = PCM->GetViewTarget();
+
+			checkf(VT, TEXT("%s: Failed to get View Target for PlayerCameraManager associated with %s."), *Context, *ObjectLibrary::PrintNameAndClass(PlayerController));
 			return VT;
 		}
 
@@ -532,6 +590,7 @@ namespace NCsPlayer
 		#pragma endregion View
 
 		#undef PCLocalLibrary
+		#undef PCFirstLocalLibrary
 		#undef ObjectLibrary
 		#undef MathLibrary
 
@@ -539,16 +598,38 @@ namespace NCsPlayer
 		{
 			namespace NFirst
 			{
-				#define PlayerControllerLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
+				#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
-				void FLibrary::SetViewTargetChecked(const FString& Context, const UObject* WorldContext, APawn* Pawn)
+				APlayerCameraManager* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 				{
-					CS_IS_PENDING_KILL_CHECKED(Pawn)
-
-					PlayerControllerLibrary::GetChecked(Context, WorldContext)->SetViewTarget(Pawn);
+					if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
+					{
+						if (!PC->PlayerCameraManager)
+						{
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Player Controller: %s has NO Player Camera Manager."), *Context, *(PC->GetName())));
+						}
+						return PC->PlayerCameraManager;
+					}
+					return nullptr;
 				}
 
-				#undef PlayerControllerLibrary
+				AActor* FLibrary::GetSafeViewTarget(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+				{
+					if (APlayerCameraManager* PCM = GetSafe(Context, WorldContext, Log))
+					{
+						return PCM->GetViewTarget();
+					}
+					return nullptr;
+				}
+
+				void FLibrary::SetViewTargetChecked(const FString& Context, const UObject* WorldContext, AActor* ViewTarget)
+				{
+					CS_IS_PENDING_KILL_CHECKED(ViewTarget)
+
+					PCFirstLocalLibrary::GetChecked(Context, WorldContext)->SetViewTarget(ViewTarget);
+				}
+
+				#undef PCFirstLocalLibrary
 			}
 		}
 	}

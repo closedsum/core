@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -261,11 +261,11 @@ private:
 	AssetToolType AssetTool;
 #undef AssetToolType
 
-	TArray<UObject*> OpenedAssets;
+	TArray<TWeakObjectPtr<UObject>> OpenedAssets;
 
 public:
 
-	const TArray<UObject*>& GetOpenedAssets() const { return OpenedAssets; }
+	const TArray<TWeakObjectPtr<UObject>>& GetOpenedAssets() const { return OpenedAssets; }
 
 #pragma endregion GetAssetTool
 

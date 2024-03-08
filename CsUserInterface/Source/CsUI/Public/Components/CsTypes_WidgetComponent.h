@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -90,9 +90,28 @@ namespace NCsWidgetComponent
 				CS_CTOR_SET_MEMBER_PROXY(Rotation);
 			}
 
+			FORCEINLINE FInfo(FInfo& B)
+			{
+				SetLerpRate(B.GetLerpRate());
+				SetLockAxes(B.GetLockAxes());
+				SetRotation(B.GetRotation());
+			}
+
+			FORCEINLINE FInfo(const FInfo& B)
+			{
+				Copy(B);
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LerpRate, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LockAxes, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Rotation, FRotator3f)
+
+			FORCEINLINE void Copy(const FInfo& B)
+			{
+				SetLerpRate(B.GetLerpRate());
+				SetLockAxes(B.GetLockAxes());
+				SetRotation(B.GetRotation());
+			}
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
@@ -268,6 +287,26 @@ namespace NCsWidgetComponent
 			CS_CTOR_SET_MEMBER_PROXY(bCameraInfo);
 		}
 
+		FORCEINLINE FInfo(FInfo& B) :
+			CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::KeepRelativeTransform)
+		{
+			SetWidget(B.GetWidget());
+			SetbDrawSize(B.GetbDrawSize());
+			SetDrawSize(B.GetDrawSize());
+			SetAttachmentTransformRules(B.GetAttachmentTransformRules());
+			SetBone(B.GetBone());
+			SetTransformRules(B.GetTransformRules());
+			SetTransformSpaces(B.GetTransformSpaces());
+			SetbCameraInfo(B.GetbCameraInfo());
+			CameraInfo.Copy(B.GetCameraInfo());
+		}
+
+		FORCEINLINE FInfo(const FInfo& B) :
+			CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::KeepRelativeTransform)
+		{
+			Copy(B);
+		}
+
 		CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Widget, UClass)
 		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bDrawSize, bool)
 		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DrawSize, FVector2D)
@@ -296,6 +335,19 @@ namespace NCsWidgetComponent
 		FORCEINLINE CameraInfoType* GetCameraInfoPtr() { return &CameraInfo; }
 
 		FORCEINLINE void SetTransform(USceneComponent* Component) const { NCsTransformRules::SetTransform(Component, GetTransform(), GetTransformRules(), GetTransformSpaces()); }
+
+		FORCEINLINE void Copy(const FInfo& B)
+		{
+			SetWidget(B.GetWidget());
+			SetbDrawSize(B.GetbDrawSize());
+			SetDrawSize(B.GetDrawSize());
+			SetAttachmentTransformRules(B.GetAttachmentTransformRules());
+			SetBone(B.GetBone());
+			SetTransformRules(B.GetTransformRules());
+			SetTransformSpaces(B.GetTransformSpaces());
+			SetbCameraInfo(B.GetbCameraInfo());
+			CameraInfo.Copy(B.GetCameraInfo());
+		}
 
 		void AttachChecked(const FString& Context, USceneComponent* Parent, USceneComponent* Child, const FName& BoneOrSocket = NAME_None) const;
 		void AttachChecked(const FString& Context, AActor* Parent, USceneComponent* Child, const FName& BoneOrSocket = NAME_None) const;

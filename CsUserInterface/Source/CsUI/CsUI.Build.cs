@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -15,12 +15,12 @@ public class CsUI : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
-                    "AssetRegistry",
                     "DeveloperSettings",
                     "CsCore",
                     "UMG",
                     "SlateCore",
-                    "Slate"
+                    "Slate",
+                    "CsUICore"
 ,                }
             );
 

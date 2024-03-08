@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -94,13 +94,19 @@ namespace NCsActor
 
 		static AActor* GetByClassAndTagChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const FName& Tag);
 
-		static AActor* GetByClassAndInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* ActorClass, UClass* InterfaceClass);
+		static AActor* GetSafeByClassAndTag(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning);
 
-		static AActor* GetByInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass);
+		static AActor* GetByClassAndInterfaceChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const UClass* InterfaceClass);
 
-		static void GetAllByInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass, TArray<AActor*>& OutActors);
+		static AActor* GetByClassAndInterfaceAndTagChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const UClass* InterfaceClass, const FName& Tag);
 
-		static bool GetSafeAllByInterface(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass, TArray<AActor*>& OutActors, void(*Log)(const FString&) = &FCsLog::Warning);
+		static AActor* GetSafeByClassAndInterfaceAndTag(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const UClass* InterfaceClass, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static AActor* GetByInterfaceChecked(const FString& Context, const UObject* WorldContext, const UClass* InterfaceClass);
+
+		static void GetAllByInterfaceChecked(const FString& Context, const UObject* WorldContext, const UClass* InterfaceClass, TArray<AActor*>& OutActors);
+
+		static bool GetSafeAllByInterface(const FString& Context, const UObject* WorldContext, const UClass* InterfaceClass, TArray<AActor*>& OutActors, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Get an Actor with the given Tag (checks AActor->Tags)

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Library/Script/CsScriptLibrary_Math.h"
@@ -44,7 +44,7 @@ namespace NCsScriptLibraryMath
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryMath::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryMath::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define SET_LOG_WARNING void(*Log)(const FString&) = &FCsLog::Warning;
 #define LogError &FCsLog::Error
 #define MathLibrary NCsMath::FLibrary

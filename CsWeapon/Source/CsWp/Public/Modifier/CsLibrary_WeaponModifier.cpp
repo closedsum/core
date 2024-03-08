@@ -1,9 +1,9 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Modifier/CsLibrary_WeaponModifier.h"
 #include "CsWp.h"
 
 // Library
-#include "Modifier/CsLibrary_Modifier.h"
+#include "CsLibrary_Modifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Modifier
 #include "Modifier/Types/CsGetWeaponModifierType.h"

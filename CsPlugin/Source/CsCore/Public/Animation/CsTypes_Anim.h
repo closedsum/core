@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -252,6 +252,7 @@ public:
 
 #define InfoType NCsAnim::NSequence::FInfo
 	void CopyToInfo(InfoType* Info);
+	void CopyToInfoAsValue(InfoType* Info);
 #undef InfoType
 
 	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsAnimSequenceInfo)
@@ -295,8 +296,25 @@ namespace NCsAnim
 				CS_CTOR_SET_MEMBER_PROXY(PlayRate);
 			}
 
+			FORCEINLINE FInfo(FInfo& B)
+			{
+				SetAnim(B.GetAnim());
+				SetPlayRate(B.GetPlayRate());
+			}
+
+			FORCEINLINE FInfo(const FInfo& B)
+			{
+				Copy(B);
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Anim, UAnimSequence)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, float)
+
+			FORCEINLINE void Copy(const FInfo& B)
+			{
+				SetAnim(B.GetAnim());
+				SetPlayRate(B.GetPlayRate());
+			}
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -579,6 +597,7 @@ struct CSCORE_API FCsAnimMontageInfo
 
 #define InfoType NCsAnim::NMontage::FInfo
 	void CopyToInfo(InfoType* Info);
+	void CopyToInfoAsValue(InfoType* Info);
 #undef InfoType
 
 	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsAnimMontageInfo)
@@ -622,8 +641,25 @@ namespace NCsAnim
 				CS_CTOR_SET_MEMBER_PROXY(PlayRate);
 			}
 
+			FORCEINLINE FInfo(FInfo& B)
+			{
+				SetAnim(B.GetAnim());
+				SetPlayRate(B.GetPlayRate());
+			}
+
+			FORCEINLINE FInfo(const FInfo& B)
+			{
+				Copy(B);
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Anim, UAnimMontage)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, float)
+
+			FORCEINLINE void Copy(const FInfo& B)
+			{
+				SetAnim(B.GetAnim());
+				SetPlayRate(B.GetPlayRate());
+			}
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

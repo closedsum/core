@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Object/Environment/Tool/CsObjectEnvironmentTool.h"
@@ -67,11 +67,13 @@ namespace NCsObject
 			// Get Opened Assets
 			typedef NCsAsset::NTool::FImpl AssetToolType;
 
-			AssetToolType* AssetTool	   = Cast<ICsGetAssetTool>(GEngine)->GetAssetTool();
-			const TArray<UObject*>& Assets = AssetTool->GetOpenedAssetsImpl();
+			AssetToolType* AssetTool							= Cast<ICsGetAssetTool>(GEngine)->GetAssetTool();
+			const TArray<TWeakObjectPtr<UObject>>& OpenedAssets = AssetTool->GetOpenedAssetsImpl();
 
-			for (UObject* Asset : Assets)
+			for (const TWeakObjectPtr<UObject>& O : OpenedAssets)
 			{
+				UObject* Asset = O.IsValid() ? O.Get() : nullptr;
+
 				if (!IsValid(Asset))
 					continue;
 

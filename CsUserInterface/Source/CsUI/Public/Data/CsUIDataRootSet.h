@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -10,7 +10,6 @@
 #include "CsUIDataRootSet.generated.h"
 
 class UDataTable;
-class UCsUserWidget_Fade;
 class UCsWidget_ConsoleCommand;
 
 USTRUCT(BlueprintType)
@@ -19,11 +18,6 @@ struct CSUI_API FCsUIDataRootSet
 	GENERATED_USTRUCT_BODY()
 
 public:
-
-	// Fade
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UCsUserWidget_Fade> FadeWidget;
 
 	// Console Command
 	
@@ -62,7 +56,6 @@ public:
 	bool bUserWidgetsHasData;
 
 	FCsUIDataRootSet() :
-		FadeWidget(nullptr),
 		ConsoleCommandWidget(nullptr),
 		WidgetActorClasses(nullptr),
 		WidgetActors(nullptr),
@@ -123,6 +116,4 @@ public:
 	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const;
 
 	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const;
-
-	UClass* GetFadeWidgetClassChecked(const FString& Context) const;
 };

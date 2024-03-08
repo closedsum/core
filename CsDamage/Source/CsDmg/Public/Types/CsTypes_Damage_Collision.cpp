@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Types/CsTypes_Damage_Collision.h"
@@ -47,26 +47,24 @@ namespace NCsDamage
 #pragma region
 
 #define InfoType NCsDamage::NCollision::FInfo
+#define MethodType NCsDamage::NCollision::EMethod
 
 void FCsDamage_CollisionInfo::CopyToInfo(InfoType* Info)
 {
-	typedef NCsDamage::NCollision::EMethod MethodType;
-
-	Info->SetMethod((MethodType*)(&Method));
-	Info->SetChannel((ECollisionChannel*)(&Channel));
-	Info->SetCount(&Count);
+	CS_COPY_TYPE_TO_PROXY(Info, Method, MethodType);
+	CS_COPY_TYPE_TO_PROXY(Info, Channel, ECollisionChannel);
+	CS_COPY_TO_PROXY(Info, Count);
 }
 
 void FCsDamage_CollisionInfo::CopyToInfoAsValue(InfoType* Info) const
 {
-	typedef NCsDamage::NCollision::EMethod MethodType;
-
-	Info->SetMethod((MethodType)Method);
-	Info->SetChannel((ECollisionChannel)Channel);
-	Info->SetCount(Count);
+	CS_COPY_TYPE_TO_PROXY_AS_VALUE(Info, Method, MethodType);
+	CS_COPY_TYPE_TO_PROXY_AS_VALUE(Info, Channel, ECollisionChannel);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Count);
 }
 
 #undef InfoType
+#undef MethodType
 
 bool FCsDamage_CollisionInfo::IsValidChecked(const FString& Context) const
 {
@@ -96,10 +94,11 @@ namespace NCsDamage
 {
 	namespace NCollision
 	{
+		#define MethodMapType NCsDamage::NCollision::EMMethod
+		#define MethodType NCsDamage::NCollision::EMethod
+
 		bool FInfo::IsValidChecked(const FString& Context) const
 		{
-			typedef NCsDamage::NCollision::EMMethod MethodMapType;
-
 			CS_IS_ENUM_VALID_CHECKED(MethodMapType, GetMethod());
 
 			checkf(GetChannel() != ECollisionChannel::ECC_OverlapAll_Deprecated && GetChannel() != ECollisionChannel::ECC_MAX, TEXT("%s: GetChannel() == (ECollisionChannel::ECC_OverlapAll_Deprecated | ECollisionChannel::ECC_MAX) is NOT Valid."), *Context);
@@ -110,9 +109,6 @@ namespace NCsDamage
 
 		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
 		{
-			typedef NCsDamage::NCollision::EMMethod MethodMapType;
-			typedef NCsDamage::NCollision::EMethod MethodType;
-
 			CS_IS_ENUM_VALID(MethodMapType, MethodType, GetMethod())
 
 			if (GetChannel() == ECollisionChannel::ECC_OverlapAll_Deprecated ||
@@ -124,6 +120,9 @@ namespace NCsDamage
 			CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCount(), 0)
 			return true;
 		}
+
+		#undef MethodMapType
+		#undef MethodType
 	}
 }
 

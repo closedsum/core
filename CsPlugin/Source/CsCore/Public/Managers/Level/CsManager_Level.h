@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -123,6 +123,13 @@ public:
 		FORCEINLINE bool IsActive() const { return bActive; }
 		FORCEINLINE bool IsCompleted() const { return bCompleted; }
 		FORCEINLINE void MarkCompleted() { bCompleted = true; }
+
+		FORCEINLINE void Reset()
+		{
+			bActive = false;
+			bCompleted = false;
+			MapPackageName.Empty();
+		}
 	};
 
 private:
@@ -138,6 +145,11 @@ public:
 
 	void Check_FinishedLoadingPersistentLevel();
 	void Check_FinishedLoadingPersistentLevel(const FString& MapPackageName);
+
+	FORCEINLINE void ClearCheck_Check_FinishedLoadingPersistentLevel()
+	{
+		FinishedLoadingPersistentLevelInfo.Reset();
+	}
 
 protected:
 

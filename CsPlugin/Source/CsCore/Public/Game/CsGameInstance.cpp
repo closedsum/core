@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Game/CsGameInstance.h"
@@ -81,10 +81,7 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) :
 	// Transition
 	bFinishedTransition(false),
 	Transition_OnFinish_Event(),
-	Transition_OnFinish_ScriptEvent(),
-		// AsDestination
-	TransitionAsDestination_OnStart_Event(),
-	TransitionAsDestination_OnStart_ScriptEvent()
+	Transition_OnFinish_ScriptEvent()
 {
 }
 

@@ -54,7 +54,7 @@ UCsPerformanceUIImpl::UCsPerformanceUIImpl(const FObjectInitializer& ObjectIniti
 
 #define USING_NS_CACHED using namespace NCsPerformanceUIImpl::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsPerformanceUIImpl::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 
 // UUserWidget Interface
 #pragma region
@@ -86,8 +86,9 @@ void UCsPerformanceUIImpl::NativeTick(const FGeometry& MyGeometry, float InDelta
 
 	if (bToggle)
 	{
-		SetVisibility(bShow ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+		//SetVisibility(bShow ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	}
+	SetVisibility(ESlateVisibility::HitTestInvisible);
 
 	// FPS
 	{
@@ -140,13 +141,15 @@ void UCsPerformanceUIImpl::Init(UObject* InRoot)
 
 	for (UTextBlock* Text : FPS_Texts)
 	{
-		Text->SetVisibility(bShowFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+		//Text->SetVisibility(bShowFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+		Text->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 
 	StatUnit.Outer = this;
 	StatUnit.Init();
 
-	SetVisibility(bShow ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	//SetVisibility(bShow ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	SetVisibility(ESlateVisibility::HitTestInvisible);
 }
 
 #pragma endregion ICsPerformanceUI

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Animation/CsTypes_Anim.h"
@@ -50,13 +50,20 @@ namespace NCsFpvAnimMember
 #pragma region
 
 #define InfoType NCsAnim::NSequence::FInfo
+
 void FCsAnimSequenceInfo::CopyToInfo(InfoType* Info)
 {
-#undef InfoType
-
-	Info->SetAnim(Anim.GetPtr());
-	Info->SetPlayRate(&PlayRate);
+	CS_COPY_PTR_TO_PROXY(Info, Anim);
+	CS_COPY_TO_PROXY(Info, PlayRate);
 }
+
+void FCsAnimSequenceInfo::CopyToInfoAsValue(InfoType* Info)
+{
+	CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Anim);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, PlayRate);
+}
+
+#undef InfoType
 
 bool FCsAnimSequenceInfo::IsValidChecked(const FString& Context) const
 {
@@ -124,13 +131,20 @@ namespace NCsAnim
 #pragma region
 
 #define InfoType NCsAnim::NMontage::FInfo
+
 void FCsAnimMontageInfo::CopyToInfo(InfoType* Info)
 {
-#undef InfoType
-
-	Info->SetAnim(Anim.GetPtr());
-	Info->SetPlayRate(&PlayRate);
+	CS_COPY_PTR_TO_PROXY(Info, Anim);
+	CS_COPY_TO_PROXY(Info, PlayRate);
 }
+
+void FCsAnimMontageInfo::CopyToInfoAsValue(InfoType* Info)
+{
+	CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Anim);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, PlayRate);
+}
+
+#undef InfoType
 
 bool FCsAnimMontageInfo::IsValidChecked(const FString& Context) const
 {

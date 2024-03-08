@@ -1,16 +1,16 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "CsPrj.h"
 
 // Library
-#include "Modifier/CsLibrary_Modifier.h"
+#include "CsLibrary_Modifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Interface
 #include "Valid/CsIsValid.h"
 // Modifier
 #include "Modifier/Types/CsGetProjectileModifierType.h"
-#include "Modifier/CsModifier_Int.h"
-#include "Modifier/CsModifier_Float.h"
+#include "CsModifier_Int.h"
+#include "CsModifier_Float.h"
 // Damage
 #include "Modifier/CsDamageModifier.h"
 

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Asset/Tool/CsAssetTool.h"
@@ -8,16 +8,18 @@
 
 namespace NCsAsset
 {
-	const TArray<UObject*>& FTool::GetOpenedAssets()
+	const TArray<TWeakObjectPtr<UObject>>& FTool::GetOpenedAssets()
 	{
 		return Cast<UCsEdEngine>(GEngine)->GetOpenedAssets();
 	}
 
 	bool FTool::IsAssetOpened(UObject* Asset)
 	{
-		for (UObject* O : GetOpenedAssets())
+		for (const TWeakObjectPtr<UObject>& O : GetOpenedAssets())
 		{
-			if (Asset == O)
+			UObject* A = O.IsValid() ? O.Get() : nullptr;
+
+			if (Asset == A)
 				return true;
 		}
 		return false;

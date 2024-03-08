@@ -36,7 +36,7 @@ UCsScriptLibrary_Manager_Performance::UCsScriptLibrary_Manager_Performance(const
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryManagerPerformance::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerPerformance::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define LogError &NCsPerformance::FLog::Error
 #define PerformanceManagerLibrary NCsPerformance::NManager::FLibrary
 

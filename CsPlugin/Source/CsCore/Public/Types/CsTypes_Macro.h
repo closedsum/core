@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -275,6 +275,21 @@
 
 #define CS_COPY_TO_PROXY(__Proxy, __Member) __Proxy->Set##__Member(&__Member)
 #define CS_COPY_TO_PROXY_AS_VALUE(__Proxy, __Member) __Proxy->Set##__Member(__Member)
+#define CS_COPY_PTR_TO_PROXY(__Proxy, __Member) __Proxy->Set##__Member(__Member.GetPtr())
+#define CS_COPY_PTR_TO_PROXY_AS_VALUE(__Proxy, __Member) __Proxy->Set##__Member(__Member.Get())
+#define CS_COPY_CLASS_PTR_TO_PROXY(__Proxy, __Member) __Proxy->Set##__Member(__Member.GetClassPtr())
+#define CS_COPY_CLASS_PTR_TO_PROXY_AS_VALUE(__Proxy, __Member) __Proxy->Set##__Member(__Member.GetClass())
+#define CS_COPY_INFO_TO_PROXY_PTR(__Proxy, __Member) __Member.CopyToInfo(__Proxy->Get##__Member##Ptr())
+#define CS_COPY_INFO_TO_PROXY_PTR_AS_VALUE(__Proxy, __Member) __Member.CopyToInfoAsValue(__Proxy->Get##__Member##Ptr())
+#define CS_COPY_PARAMS_TO_PROXY_PTR(__Proxy, __Member) __Member.CopyToParams(__Proxy->Get##__Member##Ptr())
+#define CS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(__Proxy, __Member) __Member.CopyToParamsAsValue(__Proxy->Get##__Member##Ptr())
+#define CS_COPY_SETTINGS_TO_PROXY_PTR(__Proxy, __Member) __Member.CopyToSettings(__Proxy->Get##__Member##Ptr())
+#define CS_COPY_SETTINGS_TO_PROXY_PTR_AS_VALUE(__Proxy, __Member) __Member.CopyToSettingsAsValue(__Proxy->Get##__Member##Ptr())
+#define CS_COPY_TYPE_TO_PROXY(__Proxy, __Member, __Type) __Proxy->Set##__Member((__Type*)&__Member)
+#define CS_COPY_TYPE_TO_PROXY_AS_VALUE(__Proxy, __Member, __Type) __Proxy->Set##__Member((__Type)__Member)
+
+#define CS_COPY_PROXY_TO_PROXY_AS_VALUE(__Proxy, __Member) Set##__Member(__Proxy.Get##__Member())
+#define CS_COPY_CUSTOM_PROXY_TO_PROXY_PTR_AS_VALUE(__Proxy, __Member) Get##__Member##Ptr()->Copy(__Proxy.Get##__Member())
 
 #define CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(__Member) \
 	FORCEINLINE bool IsProxyPtrDefault_##__Member##_Checked(const FString& Context) const \

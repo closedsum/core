@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Player/Script/CsScriptLibrary_PlayerCamera.h"
@@ -27,6 +27,8 @@ namespace NCsScriptLibraryPlayerCamera
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_PlayerCamera, GetByPawnChecked);
 			// Orientation
 			// View Target
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_PlayerCamera, SetViewTarget);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_PlayerCamera, SetViewTargetChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_PlayerCamera, SetViewTargetByPawn);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_PlayerCamera, SetViewTargetByPawnChecked);
 			// FOV
@@ -63,7 +65,7 @@ UCsScriptLibrary_PlayerCamera::UCsScriptLibrary_PlayerCamera(const FObjectInitia
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryPlayerCamera::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryPlayerCamera::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define LogError &FCsLog::Error
 #define PlayerCameraLibrary NCsPlayer::NCamera::FLibrary
 
@@ -109,6 +111,21 @@ APlayerCameraManager* UCsScriptLibrary_PlayerCamera::GetByPawnChecked(const FStr
 
 // View Target
 #pragma region
+
+bool UCsScriptLibrary_PlayerCamera::SetViewTarget(const FString& Context, APlayerController* PlayerController, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams)
+{
+	CONDITIONAL_SET_CTXT(SetViewTarget);
+
+	return PlayerCameraLibrary::SetSafeViewTarget(Ctxt, PlayerController, NewViewTarget, TransitionParams);
+}
+
+void UCsScriptLibrary_PlayerCamera::SetViewTargetChecked(const FString& Context, APlayerController* PlayerController, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams, bool& OutSuccess)
+{
+	CONDITIONAL_SET_CTXT(SetViewTargetChecked);
+
+	OutSuccess = true;
+	CS_SCRIPT_CHECKED(PlayerCameraLibrary::SetViewTargetChecked(Ctxt, PlayerController, NewViewTarget, TransitionParams), PlayerCameraLibrary::SetSafeViewTarget(Ctxt, PlayerController, NewViewTarget, TransitionParams, OutSuccess))
+}
 
 bool UCsScriptLibrary_PlayerCamera::SetViewTargetByPawn(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams)
 {

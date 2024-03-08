@@ -5,7 +5,6 @@
 #include "CsCore.h"
 
 // Library
-#include "Library/CsLibrary_World.h"
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"
 // Coordinators
@@ -14,8 +13,6 @@
 #include "Coordinators/GameEvent/CsSettings_Coordinator_GameEvent.h"
 // Game
 #include "Engine/GameInstance.h"
-// World
-#include "Engine/World.h"
 
 namespace NCsGameEvent
 {
@@ -33,6 +30,11 @@ namespace NCsGameEvent
 			}
 		}
 
+		#define USING_NS_CACHED using namespace NCsGameEvent::NCoordinator::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsGameEvent::NCoordinator::NLibrary::NCached; \
+			const FString& Context = Str::__FunctionName
+		#define GameInstanceLibrary NCsGameInstance::FLibrary
+
 		// ContextRoot
 		#pragma region
 
@@ -40,23 +42,17 @@ namespace NCsGameEvent
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
 		{
-			using namespace NCsGameEvent::NCoordinator::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeContextRoot;
+			SET_CONTEXT(GetSafeContextRoot);
 
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
@@ -142,6 +138,9 @@ namespace NCsGameEvent
 		}
 
 		#pragma endregion StartPlay
+
+		// Event
+		#pragma region
 
 		void FLibrary::ProcessGameEventInfoChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
 		{
@@ -237,5 +236,20 @@ namespace NCsGameEvent
 
 			return SafeBroadcastGameEvent(Context, ContextObject, Group, Info, Log);
 		}
+
+		#define OnProccessEventGameInfoEventType NCsGameEvent::NCoordinator::FOnProcessGameEventInfo
+		OnProccessEventGameInfoEventType& FLibrary::GetOnProcessGameEventInfo_EventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group)
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameEventCoordinatorGroup, Group)
+
+			return GetChecked(Context, ContextObject)->GetOnProcessGameEventInfo_Event(Group);
+		}
+		#undef OnProccessEventGameInfoEventType
+
+		#pragma endregion Event
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef GameInstanceLibrary
 	}
 }

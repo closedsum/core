@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "GraphEditor/CsGraphPanelPinFactory.h"
@@ -52,8 +52,6 @@
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGestureType.h"
 	// FX
 #include "GraphEditor/EnumStruct/FX/SCsGraphPin_ECsFX.h"
-	// Process
-#include "GraphEditor/EnumStruct/SCsGraphPin_ECsProcess.h"
 	// Item
 //#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemType.h"
 //#include "GraphEditor/EnumStruct/Item/SCsGraphPin_ECsItemOwner.h"
@@ -78,9 +76,6 @@
 #include "GraphEditor/EnumStruct/Team/SCsGraphPin_ECsTeam.h"
 	// Anim
 #include "GraphEditor/EnumStruct/Anim/SCsGraphPin_ECsVertexAnimNotify.h"
-
-// Managers
-#include "Managers/Process/CsProcess.h"
 
 TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin* InPin) const
 {
@@ -137,8 +132,6 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		// FECsFX
 		CS_TEMP_CREATE(ECsFX)
 	}
-	// FECsProcess
-	CS_TEMP_CREATE(ECsProcess)
 	// Item
 	{
 		// FECsItemType

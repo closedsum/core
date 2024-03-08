@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Shutdown/CsLibrary_Shutdown.h"
@@ -31,7 +31,7 @@ namespace NCsShutdown
 
 	#define USING_NS_CACHED using namespace NCsShutdown::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsShutdown::NLibrary::NCached; \
-		const FString& Context = Str::##__FunctionName
+		const FString& Context = Str::__FunctionName
 
 	// Implement
 	#pragma region

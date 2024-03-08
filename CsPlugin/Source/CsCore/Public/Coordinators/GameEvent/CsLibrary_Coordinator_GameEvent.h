@@ -3,9 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
-#include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
-// GameEvent
-#include "Managers/Input/GameEvent/CsGameEvent.h"
+#include "Coordinators/GameEvent/CsCoordinator_GameEvent_Delegates.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -134,6 +132,26 @@ namespace NCsGameEvent
 
 		#pragma endregion Get
 
+		// Active
+		#pragma region
+		public:
+
+			FORCEINLINE static bool IsActiveChecked(const FString& Context, const UObject* ContextObject)
+			{
+				return GetChecked(Context, ContextObject) != nullptr;
+			}
+
+			FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				return GetSafe(Context, ContextObject, Log) != nullptr;
+			}
+			FORCEINLINE static bool SafeIsActive(const UObject* ContextObject)
+			{
+				return GetSafe(ContextObject) != nullptr;
+			}
+
+		#pragma endregion Active
+
 		// Class
 		#pragma region
 		public:
@@ -149,6 +167,10 @@ namespace NCsGameEvent
 			static void StartPlayChecked(const FString& Context, const UObject* ContextObject);
 
 		#pragma endregion StartPlay
+
+		// Event
+		#pragma region
+		public:
 
 			/**
 			* 
@@ -225,6 +247,12 @@ namespace NCsGameEvent
 			* return				Whether the GameEvent, Value, Location was broadcasted or not.
 			*/
 			static bool SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value, const FVector3f& Location, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#define OnProccessEventGameInfoEventType NCsGameEvent::NCoordinator::FOnProcessGameEventInfo
+			static OnProccessEventGameInfoEventType& GetOnProcessGameEventInfo_EventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group);
+		#undef OnProccessEventGameInfoEventType
+
+		#pragma endregion Event
 		};
 	}
 }

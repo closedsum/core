@@ -1,12 +1,12 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Interface.h"
+
 #include "CsGetManagerInput.generated.h"
 
-class UCsManager_Input;
+class ICsManager_Input;
 
 UINTERFACE(Blueprintable)
 class CSCORE_API UCsGetManagerInput : public UInterface
@@ -20,7 +20,7 @@ class CSCORE_API ICsGetManagerInput
 
 public:
 
-	virtual UCsManager_Input* GetManager_Input() const = 0;
+	virtual ICsManager_Input* GetManager_Input() const = 0;
 
-	virtual void SetManager_Input(UCsManager_Input* InManager) = 0;
+	virtual void SetManager_Input(ICsManager_Input* InManager) = 0;
 };

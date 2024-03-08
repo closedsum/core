@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "DetailCustomizations/CsRegisterDetailCustomization.h"
@@ -26,8 +26,6 @@
 #include "DetailCustomizations/EnumStruct/Input/ECsGameEventCustomization.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsGameEventCoordinatorGroupCustomization.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsGestureTypeCustomization.h"
-		// Process
-#include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 		// FX
 #include "DetailCustomizations/EnumStruct/FX/ECsFXCustomization.h"
 		// Sound
@@ -84,8 +82,6 @@ void FCsRegisterDetailCustomization::Register()
 		}
 		// SurfaceType
 		CS_TEMP_REGISTER(ECsSurfaceType);
-		// Process
-		CS_TEMP_REGISTER(ECsProcess);
 		// FX
 		CS_TEMP_REGISTER(ECsFX);
 		// Sound

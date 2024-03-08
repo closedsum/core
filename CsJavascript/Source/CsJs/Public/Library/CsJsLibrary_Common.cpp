@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Library/CsJsLibrary_Common.h"
@@ -44,7 +44,8 @@ namespace NCsJs
 
 			auto Isolate = NewObject<UJavascriptIsolate>();
 			// TODO: bIsEditor. Probably need to set to true if we want to interact with AnimInstance in Editor.
-			Isolate->Init(IsEditor);
+			TMap<FString, FString> Features;
+			Isolate->Init(IsEditor, Features);
 			auto ContextObject = Isolate->CreateContext();
 
 			JavascriptIsolate = Isolate;

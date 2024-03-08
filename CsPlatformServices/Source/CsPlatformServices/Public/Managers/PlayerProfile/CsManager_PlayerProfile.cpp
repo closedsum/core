@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/PlayerProfile/CsManager_PlayerProfile.h"
@@ -8,6 +8,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/PlayerProfile/CsPlayerProfile.h"
+// Settings
+#include "Managers/PlayerProfile/CsSettings_Manager_PlayerProfile.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -24,6 +26,8 @@ namespace NCsManagerPlayerProfile
 	{
 		namespace Str
 		{
+			// Singleton
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_PlayerProfile, Init);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_PlayerProfile, SetCurrentActiveProfile);
 		}
 	}
@@ -40,6 +44,10 @@ UCsManager_PlayerProfile::UCsManager_PlayerProfile(const FObjectInitializer& Obj
 {
 	CurrentActiveProfileType = ECsPlayerProfile::Profile1;
 }
+
+#define USING_NS_CACHED using namespace NCsManagerPlayerProfile::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsManagerPlayerProfile::NCached; \
+	const FString& Context = Str::__FunctionName
 
 // Singleton
 #pragma region
@@ -58,12 +66,11 @@ UCsManager_PlayerProfile::UCsManager_PlayerProfile(const FObjectInitializer& Obj
 	return s_Instance != nullptr;
 }
 
-/*static*/ void UCsManager_PlayerProfile::Init(UObject* InRoot)
+/*static*/ void UCsManager_PlayerProfile::Init(UObject* InRoot, TSubclassOf<UCsManager_PlayerProfile> ManagerPlayerProfileClass, UObject* InOuter /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerPlayerProfile* GetManagerPlayerProfile = Get_GetManagerPlayerProfile(InRoot);
-
-	UCsManager_PlayerProfile* Manager_PlayerProfile = NewObject<UCsManager_PlayerProfile>(InRoot, UCsManager_PlayerProfile::StaticClass(), TEXT("Manager_PlayerProfile_Singleton"), RF_Transient | RF_Public);
+	UCsManager_PlayerProfile* Manager_PlayerProfile		= NewObject<UCsManager_PlayerProfile>(InOuter ? InOuter : InRoot, ManagerPlayerProfileClass, TEXT("Manager_PlayerProfile_Singleton"), RF_Transient | RF_Public);
 
 	GetManagerPlayerProfile->SetManager_PlayerProfile(Manager_PlayerProfile);
 
@@ -81,6 +88,15 @@ UCsManager_PlayerProfile::UCsManager_PlayerProfile(const FObjectInitializer& Obj
 	}
 
 #endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_PlayerProfile::Init(UObject* InRoot, UObject* InOuter /*=nullptr*/)
+{
+	SET_CONTEXT(Init);
+
+	const FCsSettings_Manager_PlayerProfile& Settings = FCsSettings_Manager_PlayerProfile::Get();
+
+	Init(InRoot, Settings.LoadClassChecked(Context), InOuter);
 }
 
 /*static*/ void UCsManager_PlayerProfile::Shutdown(const UObject* InRoot /*=nullptr*/)
@@ -231,12 +247,13 @@ UCsPlayerProfile* UCsManager_PlayerProfile::GetProfile(const ECsPlayerProfile& P
 
 void UCsManager_PlayerProfile::SetCurrentActiveProfile(const ECsPlayerProfile& ProfileType)
 {
-	using namespace NCsManagerPlayerProfile::NCached;
+	SET_CONTEXT(SetCurrentActiveProfile);
 
-	const FString& Context = Str::SetCurrentActiveProfile;
-
-	check(EMCsPlayerProfile::Get().IsValidEnumChecked(Context, ProfileType));
+	CS_IS_ENUM_VALID_CHECKED(EMCsPlayerProfile, ProfileType)
 
 	CurrentActiveProfile	 = ProfileMap[ProfileType];
 	CurrentActiveProfileType = ProfileType;
 }
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT

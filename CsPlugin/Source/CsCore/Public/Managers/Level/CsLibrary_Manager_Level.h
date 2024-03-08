@@ -267,6 +267,8 @@ namespace NCsLevel
 
 			static void Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextObject, const FString& MapPackageName);
 
+			static void ClearCheck_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextObject);
+
 		#pragma endregion Persistent Level
 
 		// Change Map

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Shutdown/Script/CsScriptLibrary_Shutdown.h"
@@ -33,7 +33,7 @@ UCsScriptLibrary_Shutdown::UCsScriptLibrary_Shutdown(const FObjectInitializer& O
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryShutdown::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryShutdown::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define ShutdownLibrary NCsShutdown::FLibrary
 
 // Shutdown

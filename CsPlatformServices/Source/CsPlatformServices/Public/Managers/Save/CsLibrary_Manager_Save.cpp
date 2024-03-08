@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Save/CsLibrary_Manager_Save.h"
@@ -28,30 +28,29 @@ namespace NCsSave
 			}
 		}
 
+		#define USING_NS_CACHED using namespace NCsSave::NManager::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsSave::NManager::NLibrary::NCached; \
+			const FString& Context = Str::__FunctionName
+		#define GameInstanceLibrary NCsGameInstance::FLibrary
+
 		// ContextRoot
 		#pragma region
 
-	#if WITH_EDITOR
+		#if WITH_EDITOR
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
 		{
-			using namespace NCsSave::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeContextRoot;
+			SET_CONTEXT(GetSafeContextRoot);
 
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
@@ -65,14 +64,18 @@ namespace NCsSave
 
 		UCsManager_Save* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
+		#if UE_BUILD_SHIPPING
+			return UCsManager_Save::Get(nullptr);
+		#else
 			UObject* ContextRoot		  = GetContextRootChecked(Context, ContextObject);
 			UCsManager_Save* Manager_Save = UCsManager_Save::Get(ContextRoot);
 
-			CS_IS_PTR_NULL_CHECKED(Manager_Save)
+			CS_IS_PENDING_KILL_CHECKED(Manager_Save)
 			return Manager_Save;
+		#endif // #if UE_BUILD_SHIPPING
 		}
 
-		UCsManager_Save* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		UCsManager_Save* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &NCsPlatformServices::FLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -83,18 +86,17 @@ namespace NCsSave
 
 			UCsManager_Save* Manager_Save = UCsManager_Save::Get(ContextRoot);
 
-			if (!Manager_Save)
+			if (!IsValid(Manager_Save))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Save."), *Context));
+				return nullptr;
 			}
 			return Manager_Save;
 		}
 
 		UCsManager_Save* FLibrary::GetSafe(const UObject* ContextObject)
 		{
-			using namespace NCsSave::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafe;
+			SET_CONTEXT(GetSafe);
 
 			return GetSafe(Context, ContextObject, nullptr);
 		}
@@ -106,21 +108,21 @@ namespace NCsSave
 
 		void FLibrary::SetCurrentSaveChecked(const FString& Context, const UObject* ContextObject, const ECsSave& Save)
 		{
-			UCsManager_Save* Manager_Save = GetChecked(Context, ContextObject);
-			
-			check(EMCsSave::Get().IsValidEnumChecked(Context, Save));
+			CS_IS_ENUM_VALID_CHECKED(EMCsSave, Save)
 
-			Manager_Save->SetCurrentSave(Save);
+			GetChecked(Context, ContextObject)->SetCurrentSave(Save);
 		}
 
-		void FLibrary::SetSafeCurrentSave(const FString& Context, const UObject* ContextObject, const ECsSave& Save, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafeCurrentSave(const FString& Context, const UObject* ContextObject, const ECsSave& Save, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				CS_IS_ENUM_VALID_EXIT(EMCsSave, ECsSave, Save)
+				CS_IS_ENUM_VALID(EMCsSave, ECsSave, Save)
 
 				Manager_Save->SetCurrentSave(Save);
+				return true;
 			}
+			return false;
 		}
 
 		#pragma endregion FileName
@@ -133,12 +135,14 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->Enumerate();
 		}
 
-		void FLibrary::SafeEnumerate(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeEnumerate(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
 				Manager_Save->Enumerate();
+				return true;
 			}
+			return false;
 		}
 
 		#pragma endregion Enumerate
@@ -151,16 +155,17 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->Read(Profile, Save);
 		}
 
-		void FLibrary::SafeRead(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeRead(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				CS_IS_ENUM_VALID_EXIT(EMCsPlayerProfile, ECsPlayerProfile, Profile)
-
-				CS_IS_ENUM_VALID_EXIT(EMCsSave, ECsSave, Save)
+				CS_IS_ENUM_VALID(EMCsPlayerProfile, ECsPlayerProfile, Profile)
+				CS_IS_ENUM_VALID(EMCsSave, ECsSave, Save)
 
 				Manager_Save->Read(Profile, Save);
+				return true;
 			}
+			return false;
 		}
 
 		void FLibrary::ReadAllChecked(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile)
@@ -168,12 +173,14 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->ReadAll(Profile);
 		}
 
-		void FLibrary::SafeReadAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeReadAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
 				Manager_Save->ReadAll(Profile);
+				return true;
 			}
+			return false;
 		}
 
 		#pragma endregion Read
@@ -186,16 +193,17 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->Write(Profile, Save);
 		}
 
-		void FLibrary::SafeWrite(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeWrite(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				CS_IS_ENUM_VALID_EXIT(EMCsPlayerProfile, ECsPlayerProfile, Profile)
-
-				CS_IS_ENUM_VALID_EXIT(EMCsSave, ECsSave, Save)
+				CS_IS_ENUM_VALID(EMCsPlayerProfile, ECsPlayerProfile, Profile)
+				CS_IS_ENUM_VALID(EMCsSave, ECsSave, Save)
 
 				Manager_Save->Write(Profile, Save);
+				return true;
 			}
+			return false;
 		}
 
 		void FLibrary::WriteAllChecked(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile)
@@ -203,14 +211,16 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->WriteAll(Profile);
 		}
 
-		void FLibrary::SafeWriteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeWriteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				CS_IS_ENUM_VALID_EXIT(EMCsPlayerProfile, ECsPlayerProfile, Profile)
+				CS_IS_ENUM_VALID(EMCsPlayerProfile, ECsPlayerProfile, Profile)
 
 				Manager_Save->WriteAll(Profile);
+				return true;
 			}
+			return false;
 		}
 
 		#pragma endregion Write
@@ -223,16 +233,17 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->Delete(Profile, Save);
 		}
 
-		void FLibrary::SafeDelete(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeDelete(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				CS_IS_ENUM_VALID_EXIT(EMCsPlayerProfile, ECsPlayerProfile, Profile)
-
-				CS_IS_ENUM_VALID_EXIT(EMCsSave, ECsSave, Save)
+				CS_IS_ENUM_VALID(EMCsPlayerProfile, ECsPlayerProfile, Profile)
+				CS_IS_ENUM_VALID(EMCsSave, ECsSave, Save)
 
 				Manager_Save->Delete(Profile, Save);
+				return true;
 			}
+			return false;
 		}
 
 		void FLibrary::DeleteAllChecked(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile)
@@ -240,14 +251,16 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->DeleteAll(Profile);
 		}
 
-		void FLibrary::SafeDeleteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeDeleteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
-				CS_IS_ENUM_VALID_EXIT(EMCsPlayerProfile, ECsPlayerProfile, Profile)
+				CS_IS_ENUM_VALID(EMCsPlayerProfile, ECsPlayerProfile, Profile)
 
 				Manager_Save->DeleteAll(Profile);
+				return true;
 			}
+			return false;
 		}
 
 		void FLibrary::DeleteAllContentChecked(const FString& Context, const UObject* ContextObject)
@@ -255,14 +268,20 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->DeleteAllContent();
 		}
 
-		void FLibrary::SafeDeleteAllContent(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeDeleteAllContent(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
 				Manager_Save->DeleteAllContent();
+				return true;
 			}
+			return false;
 		}
 
 		#pragma endregion Delete
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef GameInstanceLibrary
 	}
 }

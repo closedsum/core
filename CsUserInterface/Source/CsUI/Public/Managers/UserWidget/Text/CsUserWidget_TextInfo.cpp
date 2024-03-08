@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/Text/CsUserWidget_TextInfo.h"
@@ -10,36 +10,36 @@
 
 void FCsUserWidget_TextInfo::CopyToInfo(InfoType* Info)
 {
-	Info->SetText(&Text);
-	Info->SetFont(Font.GetPtr());
-	Info->SetbMaterial(&bMaterial);
-	Info->SetMaterial(Material.GetPtr());
-	Info->SetSize(&Size);
-	Info->SetRenderScale(&RenderScale);
-	Info->SetJustification(Justification);
-	Info->SetZOrder(&ZOrder);
-	Info->SetColor(&Color);
-	OutlineSettings.CopyToSettings(Info->GetOutlineSettingsPtr());
-	ShadowSettings.CopyToSettings(Info->GetShadowSettingsPtr());
-	Info->SetbAnimParams(&bAnimParams);
-	AnimParams.CopyToParams(Info->GetAnimParamsPtr());
+	CS_COPY_TO_PROXY(Info, Text);
+	CS_COPY_PTR_TO_PROXY(Info, Font);
+	CS_COPY_TO_PROXY(Info, bMaterial);
+	CS_COPY_PTR_TO_PROXY(Info, Material);
+	CS_COPY_TO_PROXY(Info, Size);
+	CS_COPY_TO_PROXY(Info, RenderScale);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Justification);
+	CS_COPY_TO_PROXY(Info, ZOrder);
+	CS_COPY_TO_PROXY(Info, Color);
+	CS_COPY_SETTINGS_TO_PROXY_PTR(Info, OutlineSettings);
+	CS_COPY_SETTINGS_TO_PROXY_PTR(Info, ShadowSettings);
+	CS_COPY_TO_PROXY(Info, bAnimParams);
+	CS_COPY_PARAMS_TO_PROXY_PTR(Info, AnimParams);
 }
 
 void FCsUserWidget_TextInfo::CopyToInfoAsValue(InfoType* Info) const
 {
-	Info->SetText(Text);
-	Info->SetFont(Font.Get());
-	Info->SetbMaterial(bMaterial);
-	Info->SetMaterial(Material.Get());
-	Info->SetSize(Size);
-	Info->SetRenderScale(RenderScale);
-	Info->SetJustification(Justification);
-	Info->SetZOrder(ZOrder);
-	Info->SetColor(Color);
-	OutlineSettings.CopyToSettingsAsValue(Info->GetOutlineSettingsPtr());
-	ShadowSettings.CopyToSettingsAsValue(Info->GetShadowSettingsPtr());
-	Info->SetbAnimParams(bAnimParams);
-	AnimParams.CopyToParamsAsValue(Info->GetAnimParamsPtr());
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Text);
+	CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Font);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, bMaterial);
+	CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Material);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Size);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, RenderScale);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Justification);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, ZOrder);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Color);
+	CS_COPY_SETTINGS_TO_PROXY_PTR_AS_VALUE(Info, OutlineSettings);
+	CS_COPY_SETTINGS_TO_PROXY_PTR_AS_VALUE(Info, ShadowSettings);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, bAnimParams);
+	CS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Info, AnimParams);
 }
 
 #undef InfoType

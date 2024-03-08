@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/CsUIDataRootSet.h"
@@ -10,8 +10,6 @@
 #include "Data/CsLibrary_DataRootSet.h"
 	// Common
 #include "Library/CsLibrary_Valid.h"
-// UI
-#include "Managers/Fade/CsUserWidget_Fade.h"
 
 // Cached
 #pragma region
@@ -199,11 +197,4 @@ uint8* FCsUIDataRootSet::GetDataTableRowChecked(const FString& Context, const UO
 	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
 
 	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
-}
-
-UClass* FCsUIDataRootSet::GetFadeWidgetClassChecked(const FString& Context) const
-{
-	CS_IS_SUBCLASS_OF_NULL_CHECKED(FadeWidget, UCsUserWidget_Fade)
-
-	return FadeWidget.Get();
 }

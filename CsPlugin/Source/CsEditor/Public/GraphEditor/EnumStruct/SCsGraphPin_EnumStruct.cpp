@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "GraphEditor/EnumStruct/SCsGraphPin_EnumStruct.h"
 #include "CsEditor.h"
 

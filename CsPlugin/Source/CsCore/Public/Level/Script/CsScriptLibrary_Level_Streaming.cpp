@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Level/Script/CsScriptLibrary_Level_Streaming.h"
@@ -39,7 +39,7 @@ UCsScriptLibrary_Level_Streaming::UCsScriptLibrary_Level_Streaming(const FObject
 }
 #define USING_NS_CACHED using namespace NCsScriptLibraryLevelStreaming::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryLevelStreaming::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define LogError &FCsLog::Error
 #define LevelStreamingLibrary NCsLevel::NStreaming::NLocal::FLibrary
 

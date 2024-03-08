@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -127,8 +127,16 @@ namespace NCsWorld
 		{
 		public:
 
+			static void SetHandlerLoadedData(UWorld* World, UObject* InLevelPackage, UWorld* InLoadedWorld);
+
+			static void SeamlessTravelLoadCallback(UWorld* World, const FString& PackageName);
+
 			static bool IsInTransition(const UWorld* World);
 
+		// PendingTravelURL
+			static FURL GetPendingTravelURL(UWorld* World);
+		// LoadedPackage
+			static bool HasLoadedPackage(UWorld* World);
 		// bTransitionInProgress
 			static bool* GetbTransitionInProgress(UWorld* World);
 			static void EnableTransitionInProgress(UWorld* World);

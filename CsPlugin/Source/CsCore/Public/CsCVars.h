@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -86,14 +86,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerInventoryTransacti
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerRunnableTransactions;
 
 #pragma endregion Runnable
-
-// Process
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerProcessTransactions;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogProcessIO;
-
-#pragma endregion Process
 
 // Sense
 #pragma region
@@ -378,9 +370,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogManagerFxTransactions;
 	// Runnable
 	extern CSCORE_API const Type LogManagerRunnableTransactions;
-	// Process
-	extern CSCORE_API const Type LogManagerProcessTransactions;
-	extern CSCORE_API const Type LogProcessIO;
 	// Sense
 	extern CSCORE_API const Type LogManagerSenseSeesActorByDot;
 	// Managers

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Script/CsScriptLibrary_Weapon.h"
 #include "CsWp.h"
 

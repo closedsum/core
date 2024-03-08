@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/CsLibrary_Manager_Input.h"
@@ -17,6 +17,7 @@
 #include "GameFramework/Pawn.h"
 // Input
 #include "Managers/Input/CsGetManagerInput.h"
+#include "Managers/Input/Event/CsManager_Input_Event.h"
 
 namespace NCsInput
 {
@@ -30,48 +31,45 @@ namespace NCsInput
 				{
 					CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, GetFirstChecked);
 					CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, GetSafeFirst);
+					CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, GetSafe);
 				}
 			}
 		}
 
 		#define USING_NS_CACHED using namespace NCsInput::NManager::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NManager::NLibrary::NCached; \
-			const FString& Context = Str::##__FunctionName
+			const FString& Context = Str::__FunctionName
 		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
 		// Get
 		#pragma region
 
-		UCsManager_Input* FLibrary::GetFirstChecked(const FString& Context, UWorld* World)
+		ICsManager_Input* FLibrary::GetFirstChecked(const FString& Context, UWorld* World)
 		{
-			APlayerController* PC = PCFirstLocalLibrary::GetChecked(Context, World);
-
-			return GetChecked(Context, PC);
+			return GetChecked(Context, PCFirstLocalLibrary::GetChecked(Context, World));
 		}
 
-		UCsManager_Input* FLibrary::GetFirstChecked(UWorld* World)
+		ICsManager_Input* FLibrary::GetFirstChecked(UWorld* World)
 		{
 			SET_CONTEXT(GetFirstChecked);
 
 			return GetFirstChecked(Context, World);
 		}
 
-		UCsManager_Input* FLibrary::GetFirstChecked(const FString& Context, const UObject* WorldContext)
+		ICsManager_Input* FLibrary::GetFirstChecked(const FString& Context, const UObject* WorldContext)
 		{
-			APlayerController* PC = PCFirstLocalLibrary::GetChecked(Context, WorldContext);
-
-			return GetChecked(Context, PC);
+			return GetChecked(Context, PCFirstLocalLibrary::GetChecked(Context, WorldContext));
 		}
 
-		UCsManager_Input* FLibrary::GetFirstChecked(const UObject* WorldContext)
+		ICsManager_Input* FLibrary::GetFirstChecked(const UObject* WorldContext)
 		{
 			SET_CONTEXT(GetFirstChecked);
 
 			return GetFirstChecked(Context, WorldContext);
 		}
 
-		UCsManager_Input* FLibrary::GetSafeFirst(const FString& Context, UWorld* World, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		ICsManager_Input* FLibrary::GetSafeFirst(const FString& Context, UWorld* World, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, World, Log))
 			{
@@ -87,14 +85,14 @@ namespace NCsInput
 			return nullptr;
 		}
 
-		UCsManager_Input* FLibrary::GetSafeFirst(UWorld* World)
+		ICsManager_Input* FLibrary::GetSafeFirst(UWorld* World)
 		{
 			SET_CONTEXT(GetFirstChecked);
 
 			return GetSafeFirst(Context, World, nullptr);
 		}
 
-		UCsManager_Input* FLibrary::GetSafeFirst(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		ICsManager_Input* FLibrary::GetSafeFirst(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
 			{
@@ -110,14 +108,14 @@ namespace NCsInput
 			return nullptr;
 		}
 
-		UCsManager_Input* FLibrary::GetSafeFirst(const UObject* WorldContext)
+		ICsManager_Input* FLibrary::GetSafeFirst(const UObject* WorldContext)
 		{
 			SET_CONTEXT(GetFirstChecked);
 
 			return GetSafeFirst(Context, WorldContext, nullptr);
 		}
 
-		UCsManager_Input* FLibrary::GetChecked(const FString& Context, APlayerController* PC)
+		ICsManager_Input* FLibrary::GetChecked(const FString& Context, APlayerController* PC)
 		{
 			CS_IS_PTR_NULL_CHECKED(PC)
 
@@ -125,14 +123,13 @@ namespace NCsInput
 
 			checkf(GetManagerInput, TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
 
-			UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+			ICsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
 
 			checkf(Manager_Input, TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
 			return Manager_Input;
 		}
 
-		UCsManager_Input* FLibrary::GetSafe(const FString& Context, APlayerController* PC, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		ICsManager_Input* FLibrary::GetSafe(const FString& Context, APlayerController* PC, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL_RET_NULL(PC)
 
@@ -144,7 +141,7 @@ namespace NCsInput
 				return nullptr;
 			}
 
-			UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+			ICsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
 
 			if (!Manager_Input)
 			{
@@ -153,7 +150,7 @@ namespace NCsInput
 			return Manager_Input;
 		}
 
-		UCsManager_Input* FLibrary::GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		ICsManager_Input* FLibrary::GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			OutSuccess = false;
 
@@ -167,50 +164,50 @@ namespace NCsInput
 				return nullptr;
 			}
 
-			UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+			ICsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
 
 			if (!Manager_Input)
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName())));
+				return nullptr;
 			}
 
+			if (!IsValid(Manager_Input->_getUObject()))
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s:Manager_Input from PlayerController: %s with Class: %s is NULL or Pending Kill."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName())));
+				return nullptr;
+			}
 			OutSuccess = true;
 			return Manager_Input;
 		}
 
-		UCsManager_Input* FLibrary::GetSafe(APawn* Pawn)
+		ICsManager_Input* FLibrary::GetSafe(APawn* Pawn)
 		{
+			SET_CONTEXT(GetSafe);
+
 			if (!Pawn)
 				return nullptr;
 
 			if (APlayerController* PC = Cast<APlayerController>(Pawn->Controller))
-			{
-				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
-				{
-					return GetManagerInput->GetManager_Input();
-				}
-			}
+				return GetSafe(Context, PC, nullptr);
 			return nullptr;
 		}
 
-		UCsManager_Input* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		ICsManager_Input* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
-			APlayerController* PC =  PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
-
-			return GetChecked(Context, PC);
+			return GetChecked(Context, PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId));
 		}
 
-		UCsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		ICsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
 			if (!PC)
 				return nullptr;
-
 			return GetSafe(Context, PC, Log);
 		}
 
-		UCsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		ICsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, OutSuccess, Log);
 
@@ -220,7 +217,105 @@ namespace NCsInput
 			return GetSafe(Context, PC, OutSuccess, Log);
 		}
 
+		UObject* FLibrary::GetAsObjectChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+		#if UE_BUILD_SHIPPING
+			return GetChecked(Context, WorldContext, ControllerId)->_getUObject();
+		#else
+			UObject* Manager_Input = GetChecked(Context, WorldContext, ControllerId)->_getUObject();
+			check(IsValid(Manager_Input));
+			return Manager_Input;
+		#endif // #if UE_BUILD_SHIPPING
+		}
+
+		UObject* FLibrary::GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (ICsManager_Input* Manager_Input = GetSafe(Context, WorldContext, ControllerId, Log))
+			{
+				UObject* Manager_Input_Object = GetChecked(Context, WorldContext, ControllerId)->_getUObject();
+
+				CS_IS_PENDING_KILL_RET_NULL(Manager_Input_Object)
+				return Manager_Input_Object;
+			}
+			return nullptr;
+		}
+
 		#pragma endregion Get
+
+		// ICsManager_Input_Event
+		#pragma region
+
+		#define OnGameEventInfoEventType NCsInput::NManager::FOnGameEventInfo
+		#define OnGameEventInfosEventType NCsInput::NManager::FOnGameEventInfos
+		#define OnAnyKeyPressedEventType NCsInput::NManager::FOnAnyKey_Pressed
+		#define OnAnyKeyReleasedEventType NCsInput::NManager::FOnAnyKey_Released
+		#define ModeOnChangeEventType NCsInput::NManager::NMode::FOnChange
+
+		ICsManager_Input_Event* FLibrary::GetChecked_ICsManager_Input_Event(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			UObject* Manager_Input = GetAsObjectChecked(Context, WorldContext, ControllerId);
+
+			//check(ImplementsChecked(Context, Player));
+		
+			return CS_INTERFACE_CAST_CHECKED(Manager_Input, UObject, ICsManager_Input_Event);
+		}
+
+		ICsManager_Input_Event* FLibrary::GetSafe_ICsManager_Input_Event(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UObject* Manager_Input = GetSafeAsObject(Context, WorldContext, ControllerId, Log))
+			{
+				return CS_INTERFACE_CAST(Manager_Input, UObject, ICsManager_Input_Event);
+			}
+			return nullptr;
+		}
+
+		OnGameEventInfoEventType& FLibrary::GetOnGameEventInfo_EventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			return GetChecked_ICsManager_Input_Event(Context, WorldContext, ControllerId)->GetOnGameEventInfo_Event();
+		}
+
+		OnGameEventInfosEventType& FLibrary::GetOnGameEventInfos_EventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			return GetChecked_ICsManager_Input_Event(Context, WorldContext, ControllerId)->GetOnGameEventInfos_Event();
+		}
+
+		OnAnyKeyPressedEventType& FLibrary::GetOnAnyKey_Pressed_EventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			return GetChecked_ICsManager_Input_Event(Context, WorldContext, ControllerId)->GetOnAnyKey_Pressed_Event();
+		}
+
+		FCsManagerInput_OnAnyKey_Pressed FLibrary::GetOnAnyKey_Pressed_ScriptEventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			return GetChecked_ICsManager_Input_Event(Context, WorldContext, ControllerId)->GetOnAnyKey_Pressed_ScriptEvent();
+		}
+
+		OnAnyKeyReleasedEventType& FLibrary::GetOnAnyKey_Released_EventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			return GetChecked_ICsManager_Input_Event(Context, WorldContext, ControllerId)->GetOnAnyKey_Released_Event();
+		}
+
+		FCsManagerInput_OnAnyKey_Released FLibrary::GetOnAnyKey_Released_ScriptEventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			return GetChecked_ICsManager_Input_Event(Context, WorldContext, ControllerId)->GetOnAnyKey_Released_ScriptEvent();
+		}
+
+		ModeOnChangeEventType& FLibrary::GetActiveMode_OnChange_EventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			return GetChecked_ICsManager_Input_Event(Context, WorldContext, ControllerId)->GetActiveMode_OnChange_Event();
+		}
+
+		FCsManagerInput_OnActiveMode_Change FLibrary::GetActiveMode_OnChange_ScriptEventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			return GetChecked_ICsManager_Input_Event(Context, WorldContext, ControllerId)->GetActiveMode_OnChange_ScriptEvent();
+		}
+
+		#undef OnGameEventInfoEventType
+		#undef OnGameEventInfosEventType
+		#undef OnAnyKeyPressedEventType
+		#undef OnAnyKeyReleasedEventType
+		#undef ModeOnChangeEventType
+
+		#pragma endregion ICsManager_Input_Event
 
 		bool FLibrary::Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
@@ -244,7 +339,7 @@ namespace NCsInput
 				if (!GetManagerInput)
 					return false;
 
-				UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+				ICsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
 
 				if (!Manager_Input)
 					return false;
@@ -255,7 +350,7 @@ namespace NCsInput
 
 		bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (UCsManager_Input* ManagerInput = GetSafe(Context, WorldContext, ControllerId, Log))
+			if (ICsManager_Input* ManagerInput = GetSafe(Context, WorldContext, ControllerId, Log))
 			{
 				ManagerInput->Init();
 				return true;
@@ -278,7 +373,7 @@ namespace NCsInput
 				if (!GetManagerInput)
 					continue;
 
-				UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+				ICsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
 
 				if (!Manager_Input)
 					continue;
@@ -290,6 +385,7 @@ namespace NCsInput
 			if (Count == 0)
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No PlayerControllers found that implement the interface: ICsGetManagerInput."), *Context));
+				return false;
 			}
 			return Count > CS_EMPTY;
 		}
@@ -317,7 +413,7 @@ namespace NCsInput
 
 			#define USING_NS_CACHED using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached; \
-				const FString& Context = Str::##__FunctionName
+				const FString& Context = Str::__FunctionName
 			#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 
 			// Set
@@ -347,7 +443,7 @@ namespace NCsInput
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-				if (UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, WorldContext, Log))
+				if (ICsManager_Input* Manager_Input = GetSafeFirstManager(Context, WorldContext, Log))
 				{
 					Manager_Input->SetCurrentInputActionMap(Map);
 					return true;
@@ -378,7 +474,7 @@ namespace NCsInput
 			{
 				CS_IS_INT_GREATER_THAN(Map, 0)
 
-				if (UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, World, Log))
+				if (ICsManager_Input* Manager_Input = GetSafeFirstManager(Context, World, Log))
 				{
 					Manager_Input->SetCurrentInputActionMap(Map);
 					return true;
@@ -397,7 +493,7 @@ namespace NCsInput
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-				UCsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
+				ICsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
 
 				if (!Manager_Input)
 					return false;
@@ -468,7 +564,7 @@ namespace NCsInput
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-				if (UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, World, Log))
+				if (ICsManager_Input* Manager_Input = GetSafeFirstManager(Context, World, Log))
 				{
 					Manager_Input->ClearCurrentInputActionMap(Map);
 					return true;
@@ -492,7 +588,7 @@ namespace NCsInput
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-				UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, WorldContext, Log);
+				ICsManager_Input* Manager_Input = GetSafeFirstManager(Context, WorldContext, Log);
 
 				if (!Manager_Input)
 					return false;
@@ -517,7 +613,7 @@ namespace NCsInput
 			{
 				CS_IS_INT_GREATER_THAN(Map, 0)
 
-				if (UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, World, Log))
+				if (ICsManager_Input* Manager_Input = GetSafeFirstManager(Context, World, Log))
 				{
 					Manager_Input->ClearCurrentInputActionMap(Map);
 					return true;
@@ -548,7 +644,7 @@ namespace NCsInput
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-				UCsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
+				ICsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
 
 				if (!Manager_Input)
 					return false;
@@ -619,7 +715,7 @@ namespace NCsInput
 
 			bool FLibrary::SafeResetFirst(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, WorldContext, Log);
+				ICsManager_Input* Manager_Input = GetSafeFirstManager(Context, WorldContext, Log);
 
 				if (!Manager_Input)
 					return false;
@@ -635,7 +731,7 @@ namespace NCsInput
 
 			bool FLibrary::SafeReset(const FString& Context, APlayerController* PC, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				UCsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
+				ICsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
 
 				if (!Manager_Input)
 					return false;
@@ -676,7 +772,7 @@ namespace NCsInput
 				{
 					for (APlayerController* PC : PlayerControllers)
 					{
-						UCsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
+						ICsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
 
 						if (!Manager_Input)
 							return false;
@@ -713,10 +809,10 @@ namespace NCsInput
 		{
 			void FLibrary::ResetToDefaultChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FCsInputActionMappings& Mappings, const ECsInputDevice& Device)
 			{
-				UCsManager_Input* Manager_Input			   = NCsInput::NManager::FLibrary::GetChecked(Context, WorldContext, ControllerId);
+				ICsManager_Input* Manager_Input			   = NCsInput::NManager::FLibrary::GetChecked(Context, WorldContext, ControllerId);
 				const FCsInputProfile& DefaultInputProfile = Manager_Input->GetDefaultInputProfile();
 
-				check(EMCsInputDevice::Get().IsValidEnumChecked(Context, Device));
+				CS_IS_ENUM_VALID_CHECKED(EMCsInputDevice, Device)
 
 				const FCsInputActionMappings& DefaultMappings = DefaultInputProfile.GetMappings(Device);
 
@@ -725,7 +821,7 @@ namespace NCsInput
 
 			void FLibrary::ResetToDefaultChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, TArray<FCsInputActionMappings>& Mappings)
 			{
-				UCsManager_Input* Manager_Input			   = NCsInput::NManager::FLibrary::GetChecked(Context, WorldContext, ControllerId);
+				ICsManager_Input* Manager_Input			   = NCsInput::NManager::FLibrary::GetChecked(Context, WorldContext, ControllerId);
 				const FCsInputProfile& DefaultInputProfile = Manager_Input->GetDefaultInputProfile();
 
 				CS_IS_TARRAY_EMPTY_CHECKED(Mappings, FCsInputActionMappings)

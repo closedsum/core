@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Game/CsLibrary_GameInstance.h"
@@ -32,7 +32,7 @@ namespace NCsGameInstance
 
 	#define USING_NS_CACHED using namespace NCsGameInstance::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsGameInstance::NLibrary::NCached; \
-		const FString& Context = Str::##__FunctionName
+		const FString& Context = Str::__FunctionName
 
 	// Get
 	#pragma region
@@ -241,18 +241,6 @@ namespace NCsGameInstance
 
 	#undef OnStartTransitionOutEventType
 	#undef OnFinishTransitionEventType
-
-			// AsDestination
-	#pragma region
-
-	#define OnStartTransitionAsDestinationEventType NCsGameInstance::NTransitionAsDestination::FOnStart
-	OnStartTransitionAsDestinationEventType& FLibrary::GetTransitionAsDestination_OnStart_Event(const FString& Context, const UObject* ContextObject)
-	{
-		return GetCsChecked(Context, ContextObject)->GetTransitionAsDestination_OnStart_Event();
-	}
-	#undef OnStartTransitionAsDestinationEventType
-
-	#pragma endregion AsDestination
 
 	#pragma endregion Transition
 

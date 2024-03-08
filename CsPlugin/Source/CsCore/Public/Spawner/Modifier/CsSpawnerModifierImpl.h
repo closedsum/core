@@ -1,15 +1,15 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
-#include "Modifier/CsTypes_Modifier.h"
+#include "CsTypes_Modifier.h"
 #include "Spawner/Modifier/Types/CsTypes_SpawnerModifier.h"
 // Interface
-#include "Modifier/CsModifier.h"
-#include "Modifier/CsModifier_Int.h"
-#include "Modifier/CsModifier_Float.h"
-#include "Modifier/CsModifier_Toggle.h"
+#include "CsModifier.h"
+#include "CsModifier_Int.h"
+#include "CsModifier_Float.h"
+#include "CsModifier_Toggle.h"
 #include "Spawner/Modifier/CsSpawnerModifier.h"
 #include "Spawner/Modifier/Types/CsGetSpawnerModifierType.h"
 #include "Valid/CsIsValid.h"

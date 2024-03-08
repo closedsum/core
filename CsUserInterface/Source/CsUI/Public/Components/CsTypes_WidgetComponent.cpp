@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Components/CsTypes_WidgetComponent.h"
@@ -18,16 +18,16 @@
 
 void FCsWidgetComponent_CameraInfo::CopyToInfo(InfoType* Info)
 {
-	Info->SetLerpRate(&LerpRate);
-	Info->SetLockAxes(&LockAxes);
-	Info->SetRotation(&Rotation);
+	CS_COPY_TO_PROXY(Info, LerpRate);
+	CS_COPY_TO_PROXY(Info, LockAxes);
+	CS_COPY_TO_PROXY(Info, Rotation);
 }
 
 void FCsWidgetComponent_CameraInfo::CopyToInfoAsValue(InfoType* Info) const
 {
-	Info->SetLerpRate(LerpRate);
-	Info->SetLockAxes(LockAxes);
-	Info->SetRotation(Rotation);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, LerpRate);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, LockAxes);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Rotation);
 }
 
 #undef InfoType
@@ -80,30 +80,30 @@ namespace NCsWidgetComponent
 
 void FCsWidgetComponentInfo::CopyToInfo(InfoType* Info)
 {
-	Info->SetWidget(Widget.GetClassPtr());
-	Info->SetbDrawSize(&bDrawSize);
-	Info->SetDrawSize(&DrawSize);
+	CS_COPY_CLASS_PTR_TO_PROXY(Info, Widget);
+	CS_COPY_TO_PROXY(Info, bDrawSize);
+	CS_COPY_TO_PROXY(Info, DrawSize);
 	Info->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
-	Info->SetBone(&Bone);
-	Info->SetTransformRules(&TransformRules);
-	Info->SetTransformSpaces(&TransformSpaces);
-	Info->SetTransform(&Transform);
-	Info->SetbCameraInfo(&bCameraInfo);
-	CameraInfo.CopyToInfo(Info->GetCameraInfoPtr());
+	CS_COPY_TO_PROXY(Info, Bone);
+	CS_COPY_TO_PROXY(Info, TransformRules);
+	CS_COPY_TO_PROXY(Info, TransformSpaces);
+	CS_COPY_TO_PROXY(Info, Transform);
+	CS_COPY_TO_PROXY(Info, bCameraInfo);
+	CS_COPY_INFO_TO_PROXY_PTR(Info, CameraInfo);
 }
 
 void FCsWidgetComponentInfo::CopyToInfoAsValue(InfoType* Info) const
 {
-	Info->SetWidget(Widget.GetClass());
-	Info->SetbDrawSize(bDrawSize);
-	Info->SetDrawSize(DrawSize);
+	CS_COPY_CLASS_PTR_TO_PROXY_AS_VALUE(Info, Widget);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, bDrawSize);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, DrawSize);
 	Info->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
-	Info->SetBone(Bone);
-	Info->SetTransformRules(TransformRules);
-	Info->SetTransformSpaces(TransformSpaces);
-	Info->SetTransform(Transform);
-	Info->SetbCameraInfo(bCameraInfo);
-	CameraInfo.CopyToInfoAsValue(Info->GetCameraInfoPtr());
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Bone);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, TransformRules);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, TransformSpaces);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Transform);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, bCameraInfo);
+	CS_COPY_INFO_TO_PROXY_PTR_AS_VALUE(Info, CameraInfo);
 }
 
 #undef InfoType

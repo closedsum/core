@@ -35,6 +35,7 @@ namespace NCsManagerPerformance
 			// Singleton
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Performance, Init);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Performance, CreatePerformanceWidget);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Performance, ConditionalCreatePerformanceWidget);
 		}
 	}
 }
@@ -55,7 +56,7 @@ UCsManager_Performance::UCsManager_Performance(const FObjectInitializer& ObjectI
 
 #define USING_NS_CACHED using namespace NCsManagerPerformance::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerPerformance::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 
 // Singleton
 #pragma region
@@ -257,6 +258,36 @@ void UCsManager_Performance::CreatePerformanceWidget()
 		UE_LOG(LogCsPerformance, Warning, TEXT("%s: Creating PerformanceWidget and adding to viewport."), *Context);
 	}
 #endif // #if !UE_BUILD_SHIPPING
+}
+
+void UCsManager_Performance::ConditionalCreatePerformanceWidget()
+{
+	SET_CONTEXT(ConditionalCreatePerformanceWidget);
+
+	if (!IsValid(PerformanceWidget))
+	{
+#if !UE_BUILD_SHIPPING
+		if (CS_CVAR_LOG_IS_SHOWING(LogManagerPerformance))
+		{
+			UE_LOG(LogCsPerformance, Warning, TEXT("%s: CreatePerformanceWidget."), *Context);
+		}
+#endif // #if !UE_BUILD_SHIPPING
+
+		CreatePerformanceWidget();
+	}
+
+	if (!PerformanceWidget->IsInViewport())
+	{
+#if !UE_BUILD_SHIPPING
+		if (CS_CVAR_LOG_IS_SHOWING(LogManagerPerformance))
+		{
+			UE_LOG(LogCsPerformance, Warning, TEXT("%s: PerformanceWidget is NOT in the viewport. Adding to viewport."), *Context);
+		}
+#endif // #if !UE_BUILD_SHIPPING
+
+		static const int32 ZOrder = 10000;
+		PerformanceWidget->AddToViewport(ZOrder);
+	}
 }
 
 #undef USING_NS_CACHED

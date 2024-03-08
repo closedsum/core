@@ -11,7 +11,7 @@ function main()
     let context = "Entry Point - " + FileShortName;
     console.log(context);
 
-    purge_modules();
+    //purge_modules();
     gc();
 }
 

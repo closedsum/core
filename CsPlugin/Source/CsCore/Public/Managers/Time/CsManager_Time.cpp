@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Time/CsManager_Time.h"
@@ -8,8 +8,6 @@
 #include "Managers/Input/CsLibrary_Manager_Input.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
-// Managers
-#include "Managers/Input/CsManager_Input.h"
 // Console Command
 #include "Managers/Time/CsConsoleCommand_Manager_Time.h"
 
@@ -239,12 +237,10 @@ void UCsManager_Time::SetupInputListener()
 
 	const FString& Context = Str::SetupInputListener;
 
-	typedef NCsInput::NManager::FLibrary InputManagerLibrary;
+	typedef NCsInput::NManager::NFirst::FLibrary InputManagerLibrary;
 
-	UCsManager_Input* Manager_Input = InputManagerLibrary::GetFirstChecked(Context, MyRoot);
-
-	Manager_Input->OnAnyKey_Pressed_Event.AddUObject(this, &UCsManager_Time::OnAnyKey_Pressed);
-	Manager_Input->OnAnyKey_Released_Event.AddUObject(this, &UCsManager_Time::OnAnyKey_Released);
+	InputManagerLibrary::GetOnAnyKey_Pressed_EventChecked(Context, MyRoot).AddUObject(this, &UCsManager_Time::OnAnyKey_Pressed);
+	InputManagerLibrary::GetOnAnyKey_Released_EventChecked(Context, MyRoot).AddUObject(this, &UCsManager_Time::OnAnyKey_Released);
 }
 
 void UCsManager_Time::OnAnyKey_Pressed(const FKey& Key)

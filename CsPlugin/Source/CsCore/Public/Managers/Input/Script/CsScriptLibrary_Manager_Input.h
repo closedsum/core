@@ -1,9 +1,11 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 
 #include "UObject/Object.h"
+// Types
+#include "Managers/Input/CsManager_Input_Delegates.h"
 // Input
 #include "Managers/Input/Action/CsInputActionMap.h"
 
@@ -29,7 +31,7 @@ public:
 	* return				Manager_Input
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,ControllerId"))
-	static UCsManager_Input* Get(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId);
+	static UObject* Get(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId);
 
 	/**
 	* Get the Manager_Input associated with the player controller with ControllerId.
@@ -41,7 +43,7 @@ public:
 	* return				Manager_Input
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Manager|Input", meta = (DisplayName = "Get (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,ControllerId"))
-	static UCsManager_Input* GetChecked(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, bool& OutSuccess);
+	static UObject* GetChecked(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, bool& OutSuccess);
 
 #pragma endregion Get
 
@@ -160,4 +162,13 @@ public:
 #pragma endregion Reset
 
 #pragma endregion InputActionMap
+
+// ICsManager_Input_Event
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (DisplayName = "BindToEvent: On AnyKey Pressed", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static void BindToEvent_OnAnyKey_Pressed(const FString& Context, UObject* WorldContextObject, UPARAM(DisplayName = "Event") FCsManagerInput_ScriptPassable_OnAnyKey_Pressed Delegate);
+
+#pragma endregion ICsManager_Input_Event
 };

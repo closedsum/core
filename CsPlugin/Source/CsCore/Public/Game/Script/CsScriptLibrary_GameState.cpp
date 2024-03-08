@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Game/Script/CsScriptLibrary_GameState.h"
@@ -36,7 +36,7 @@ UCsScriptLibrary_GameState::UCsScriptLibrary_GameState(const FObjectInitializer&
 #define CLASS_TYPE UCsScriptLibrary_GameState
 #define USING_NS_CACHED using namespace NCsScriptLibraryGameState::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryGameState::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define LogError &FCsLog::Error
 #define GameStateLibrary NCsGameState::FLibrary
 

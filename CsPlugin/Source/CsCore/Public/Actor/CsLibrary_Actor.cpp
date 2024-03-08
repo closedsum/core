@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Actor/CsLibrary_Actor.h"
@@ -243,14 +243,32 @@ namespace NCsActor
 		return nullptr;
 	}
 
-	AActor* FLibrary::GetByClassAndInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* ActorClass, UClass* InterfaceClass)
+	AActor* FLibrary::GetSafeByClassAndTag(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
 
-		CS_IS_PENDING_KILL_CHECKED(ActorClass)
-		CS_IS_PENDING_KILL_CHECKED(InterfaceClass)
+		if (!World)
+			return nullptr;
+
+		CS_IS_SUBCLASS_OF_NULL_RET_NULL(ActorClass, AActor)
+		CS_IS_NAME_NONE_RET_NULL(Tag)
 
 	#if UE_BUILD_SHIPPING
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->Tags.Contains(Tag))
+			{
+				return A;
+			}
+		}
+	#else
+		AActor* Actor = nullptr;
+
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
 		{
 			AActor* A = *Itr;
@@ -258,8 +276,43 @@ namespace NCsActor
 			// Check is Valid and NOT getting destroyed
 			if (!IsValid(A))
 				continue;
-			if (A->GetClass() == ActorClass &&
-				A->GetClass()->ImplementsInterface(InterfaceClass))
+			if (A->Tags.Contains(Tag))
+			{
+				if (!Actor)
+				{
+					Actor = A;
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: There are more than one Actors with the Tag: %s."), *Context, *(Tag.ToString())));
+				}
+			}
+		}
+
+		if (Actor)
+			return Actor;
+	#endif // UE_BUILD_SHIPPING
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actor with Tag: %s."), *Context, *(Tag.ToString())));
+		return nullptr;
+	}
+
+	AActor* FLibrary::GetByClassAndInterfaceChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const UClass* InterfaceClass)
+	{
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_SUBCLASS_OF_NULL_CHECKED(ActorClass, AActor)
+		CS_IS_PENDING_KILL_CHECKED(InterfaceClass)
+
+	#if UE_BUILD_SHIPPING
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->GetClass()->ImplementsInterface(InterfaceClass))
 			{
 				return A;
 			}
@@ -267,15 +320,14 @@ namespace NCsActor
 	#else
 		AActor* Actor = nullptr;
 		
-		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
 		{
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
 			if (!IsValid(A))
 				continue;
-			if (A->GetClass() == ActorClass &&
-				A->GetClass()->ImplementsInterface(InterfaceClass))
+			if (A->GetClass()->ImplementsInterface(InterfaceClass))
 			{
 				if (!Actor)
 				{
@@ -296,7 +348,118 @@ namespace NCsActor
 		return nullptr;
 	}
 
-	AActor* FLibrary::GetByInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass)
+	AActor* FLibrary::GetByClassAndInterfaceAndTagChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const UClass* InterfaceClass, const FName& Tag)
+	{
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_SUBCLASS_OF_NULL_CHECKED(ActorClass, AActor)
+		CS_IS_PENDING_KILL_CHECKED(InterfaceClass)
+		CS_IS_NAME_NONE_CHECKED(Tag)
+
+	#if UE_BUILD_SHIPPING
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->GetClass()->ImplementsInterface(InterfaceClass) &&
+				A->Tags.Contains(Tag))
+			{
+				return A;
+			}
+		}
+	#else
+		AActor* Actor = nullptr;
+		
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->GetClass()->ImplementsInterface(InterfaceClass) &&
+				A->Tags.Contains(Tag))
+			{
+				if (!Actor)
+				{
+					Actor = A;
+				}
+				else
+				{
+					checkf(0, TEXT("%s: There are more than one Actors with Class: %s and implements interface: %s and has Tag: %s."), *Context, *(ActorClass->GetName()), *(InterfaceClass->GetName()), *(Tag.ToString()));
+				}
+			}
+		}
+
+		if (Actor)
+			return Actor;
+	#endif // UE_BUILD_SHIPPING
+
+		checkf(0, TEXT("%s: Failed to find Actor with Class: %s and implements interface: %s."), *Context, *(ActorClass->GetName()), *(InterfaceClass->GetName()));
+		return nullptr;
+	}
+
+	AActor* FLibrary::GetSafeByClassAndInterfaceAndTag(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const UClass* InterfaceClass, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+
+		if (!World)
+			return nullptr;
+
+		CS_IS_SUBCLASS_OF_NULL_RET_NULL(ActorClass, AActor)
+		CS_IS_PENDING_KILL_RET_NULL(InterfaceClass)
+		CS_IS_NAME_NONE_RET_NULL(Tag)
+
+	#if UE_BUILD_SHIPPING
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->GetClass()->ImplementsInterface(InterfaceClass) &&
+				A->Tags.Contains(Tag))
+			{
+				return A;
+			}
+		}
+	#else
+		AActor* Actor = nullptr;
+
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->GetClass()->ImplementsInterface(InterfaceClass) &&
+				A->Tags.Contains(Tag))
+			{
+				if (!Actor)
+				{
+					Actor = A;
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: There are more than one Actors with Class: %s and implements the interface: %s and with the Tag: %s."), *Context, *(ActorClass->GetName()), *(InterfaceClass->GetName()), *(Tag.ToString())));
+				}
+			}
+		}
+
+		if (Actor)
+			return Actor;
+	#endif // UE_BUILD_SHIPPING
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actor with Class: %s and implements the interface: %s and with Tag: %s."), *Context, *(ActorClass->GetName()), *(InterfaceClass->GetName()), *(Tag.ToString())));
+		return nullptr;
+	}
+
+	AActor* FLibrary::GetByInterfaceChecked(const FString& Context, const UObject* WorldContext, const UClass* InterfaceClass)
 	{
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
@@ -346,7 +509,7 @@ namespace NCsActor
 		return nullptr;
 	}
 
-	void FLibrary::GetAllByInterfaceChecked(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass, TArray<AActor*>& OutActors)
+	void FLibrary::GetAllByInterfaceChecked(const FString& Context, const UObject* WorldContext, const UClass* InterfaceClass, TArray<AActor*>& OutActors)
 	{
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
@@ -368,7 +531,7 @@ namespace NCsActor
 		checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find Actors that implement interface: %s."), *Context, *(InterfaceClass->GetName()));
 	}
 
-	bool FLibrary::GetSafeAllByInterface(const FString& Context, const UObject* WorldContext, UClass* InterfaceClass, TArray<AActor*>& OutActors, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::GetSafeAllByInterface(const FString& Context, const UObject* WorldContext, const UClass* InterfaceClass, TArray<AActor*>& OutActors, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 

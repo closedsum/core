@@ -94,4 +94,6 @@ public:
 	ICsPerformanceUI* PerformanceWidgetInterface;
 
 	void CreatePerformanceWidget();
+
+	void ConditionalCreatePerformanceWidget();
 };

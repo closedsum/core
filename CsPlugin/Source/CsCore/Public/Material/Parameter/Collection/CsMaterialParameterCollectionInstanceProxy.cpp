@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Material/Parameter/Collection/CsMaterialParameterCollectionInstanceProxy.h"
@@ -13,6 +13,7 @@
 #include "Materials/MaterialParameterCollectionInstance.h"
 #include "UniformBuffer.h"
 #include "ParameterCollection.h"
+#include "RHICommandList.h"
 
 namespace NCsMaterial
 {
@@ -80,7 +81,7 @@ namespace NCsMaterial
 							{
 								check(NewSize == GetUniformBufferLayout().GetReference()->ConstantBufferSize);
 								check(GetUniformBuffer()->GetLayoutPtr() == GetUniformBufferLayout().GetReference());
-								RHIUpdateUniformBuffer(GetUniformBuffer(), Data.GetData());
+								FRHICommandListExecutor::GetImmediateCommandList().UpdateUniformBuffer(GetUniformBuffer(), Data.GetData());
 							}
 							else
 							{

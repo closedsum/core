@@ -1,9 +1,10 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-#include "CoreUObject/Public/UObject/Object.h"
+#include "UObject/Object.h"
 #include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
+
 #include "CsManager_PlayerProfile.generated.h"
 
 class UCsPlayerProfile;
@@ -28,7 +29,8 @@ FORCEINLINE static UCsManager_PlayerProfile* Get(const UObject* InRoot = nullptr
 #endif // #if WITH_EDITOR
 
 	static bool IsValid();
-	static void Init(UObject* InRoot);
+	static void Init(UObject* InRoot, TSubclassOf<UCsManager_PlayerProfile> ManagerPlayerProfileClass, UObject* InOuter = nullptr);
+	static void Init(UObject* InRoot, UObject* InOuter = nullptr);
 	static void Shutdown(const UObject* InRoot = nullptr);
 	static bool HasShutdown();
 

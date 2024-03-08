@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Script/CsScriptLibrary_GameEvent.h"
@@ -33,7 +33,7 @@ UCsScriptLibrary_GameEvent::UCsScriptLibrary_GameEvent(const FObjectInitializer&
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryGameEvent::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsScriptLibraryGameEvent::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 #define CLASS_TYPE UCsScriptLibrary_GameEvent
 #define EnumLibrary NCsEnum::FLibrary
 #define EnumMapType EMCsGameEvent

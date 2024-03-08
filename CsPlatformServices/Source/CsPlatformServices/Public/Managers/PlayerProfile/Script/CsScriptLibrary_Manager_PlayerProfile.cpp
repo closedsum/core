@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/PlayerProfile/Script/CsScriptLibrary_Manager_PlayerProfile.h"
@@ -30,14 +30,18 @@ UCsScriptLibrary_Manager_PlayerProfile::UCsScriptLibrary_Manager_PlayerProfile(c
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryManagerPlayerProfile::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerPlayerProfile::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
+#define PlayerProfileManagerLibrary NCsPlayer::NProfile::NManager::FLibrary
 
-void UCsScriptLibrary_Manager_PlayerProfile::SetCurrentActiveProfile(const FString& Context, UObject* WorldContextObject, const ECsPlayerProfile& ProfileType)
+bool UCsScriptLibrary_Manager_PlayerProfile::SetCurrentActiveProfile(const FString& Context, UObject* WorldContextObject, const ECsPlayerProfile& ProfileType)
 {
-	using namespace NCsScriptLibraryManagerPlayerProfile::NCached;
+	CONDITIONAL_SET_CTXT(SetCurrentActiveProfile);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetCurrentActiveProfile : Context;
-
-	typedef NCsPlayer::NProfile::NManager::FLibrary PlayerProfileManagerLibrary;
-
-	PlayerProfileManagerLibrary::SetSafeCurrentActiveProfile(Ctxt, WorldContextObject, ProfileType);
+	return PlayerProfileManagerLibrary::SetSafeCurrentActiveProfile(Ctxt, WorldContextObject, ProfileType);
 }
+
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
+#undef PlayerProfileManagerLibrary

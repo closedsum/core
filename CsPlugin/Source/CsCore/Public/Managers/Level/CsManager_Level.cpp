@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Level/CsManager_Level.h"
@@ -102,7 +102,7 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 
 #define USING_NS_CACHED using namespace NCsManagerLevel::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerLevel::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 #define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
 #define WorldLibrary NCsWorld::FLibrary
 
@@ -272,6 +272,8 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 {
 	SET_CONTEXT(Check_FinishedLoadingPersistentLevel);
 
+	FinishedLoadingPersistentLevelInfo.bCompleted = false;
+
 	if (UWorld* World = MyRoot->GetWorld())
 	{
 		const TArray<ULevel*>& Levels = World->GetLevels();
@@ -288,7 +290,10 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 	}
 
 	if (FinishedLoadingPersistentLevelInfo.bCompleted)
+	{
+		FinishedLoadingPersistentLevelInfo.bActive = false;
 		return;
+	}
 
 	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
 
@@ -315,6 +320,14 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel(const FString& MapPa
 {
 	SET_CONTEXT(Check_FinishedLoadingPersistentLevel);
 
+	if (MapPackageName.IsEmpty())
+	{
+		Check_FinishedLoadingPersistentLevel();
+		return;
+	}
+
+	FinishedLoadingPersistentLevelInfo.bCompleted = false;
+
 	if (UWorld* World = MyRoot->GetWorld())
 	{
 		const TArray<ULevel*>& Levels = World->GetLevels();
@@ -336,7 +349,10 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel(const FString& MapPa
 	}
 
 	if (FinishedLoadingPersistentLevelInfo.bCompleted)
+	{
+		FinishedLoadingPersistentLevelInfo.bActive = false;
 		return;
+	}
 
 	FinishedLoadingPersistentLevelInfo.MapPackageName = MapPackageName;
 	FinishedLoadingPersistentLevelInfo.bActive		  = true;

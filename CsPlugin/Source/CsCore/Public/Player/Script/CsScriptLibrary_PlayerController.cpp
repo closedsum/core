@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Player/Script/CsScriptLibrary_PlayerController.h"
@@ -32,7 +32,7 @@ UCsScriptLibrary_PlayerController::UCsScriptLibrary_PlayerController(const FObje
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryPlayerController::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryPlayerController::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
 APlayerController* UCsScriptLibrary_PlayerController::GetFirstLocal(const FString& Context, const UObject* WorldContextObject)

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -16,19 +16,22 @@ struct CSCORE_API FCsSettings_Manager_Input
 
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Input", meta = (MustImplement = "/Script/CsCore.CsManager_Input"))
+	TSoftClassPtr<UObject> Class;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Input")
 	int32 InputPoolSize;
 	 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Input")
 	TArray<int32> RemappedGamepadControllerIds;
 
-	FCsSettings_Manager_Input() :
-		InputPoolSize(2048),
-		RemappedGamepadControllerIds()
-	{
-	}
+	FCsSettings_Manager_Input();
 
 	static const FCsSettings_Manager_Input& Get();
+
+	bool IsValidChecked(const FString& Context) const;
+
+	UClass* LoadClassChecked(const FString& Context) const;
 };
 
 #pragma endregion FCsSettings_Manager_Input

@@ -77,7 +77,7 @@ UCsScriptLibrary_AI_Controller::UCsScriptLibrary_AI_Controller(const FObjectInit
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryAIController::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryAIController::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define SET_LOG_WARNING void(*Log)(const FString&) = &NCsAI::FLog::Warning;
 #define LogError &NCsAI::FLog::Error
 #define AIControllerLibrary NCsAI::NController::FLibrary

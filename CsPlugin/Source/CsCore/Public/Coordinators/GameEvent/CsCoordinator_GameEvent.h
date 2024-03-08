@@ -1,21 +1,13 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Managers/Input/GameEvent/CsGameEvent.h"
-#include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 #include "Managers/Time/CsTypes_Time.h"
+#include "Coordinators/GameEvent/CsCoordinator_GameEvent_Delegates.h"
 
 #include "CsCoordinator_GameEvent.generated.h"
-
-// Delegates
-#pragma region
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsCoordinatorGameEvent_OnProcessGameEventInfo, const FECsGameEventCoordinatorGroup&, Group, const FCsGameEventInfo&, Info);
-
-#pragma endregion Delegates
 
 class ICsGetCoordinatorGameEvent;
 
@@ -153,20 +145,20 @@ public:
 
 	void ProcessGameEventInfo(const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info);
 
-	/**
-	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnProcessGameEventInfo, const FECsGameEventCoordinatorGroup& /*Group*/, const FCsGameEventInfo& /*Info*/);
+#define OnProccessEventGameInfoEventType NCsGameEvent::NCoordinator::FOnProcessGameEventInfo
 
 private:
 
-	TArray<FOnProcessGameEventInfo> OnProcessGameEventInfo_Events;
+	TArray<OnProccessEventGameInfoEventType> OnProcessGameEventInfo_Events;
 
 public:
 
-	FORCEINLINE FOnProcessGameEventInfo& GetOnProcessGameEventInfo_Event(const FECsGameEventCoordinatorGroup& Group) 
+	FORCEINLINE OnProccessEventGameInfoEventType& GetOnProcessGameEventInfo_Event(const FECsGameEventCoordinatorGroup& Group) 
 	{
 		return OnProcessGameEventInfo_Events[Group.GetValue()];
 	}
+
+#undef OnProccessEventGameInfoEventType
 
 	UPROPERTY(BlueprintAssignable)
 	FCsCoordinatorGameEvent_OnProcessGameEventInfo OnProcessGameEventInfo_ScriptEvent;

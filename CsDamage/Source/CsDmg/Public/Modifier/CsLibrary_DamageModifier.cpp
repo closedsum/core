@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Modifier/CsLibrary_DamageModifier.h"
@@ -6,7 +6,7 @@
 
 // Library
 #include "Value/CsLibrary_DamageValue.h"
-#include "Modifier/CsLibrary_Modifier.h"
+#include "CsLibrary_Modifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Data
 #include "Managers/Damage/Data/CsData_Damage.h"
@@ -19,10 +19,10 @@
 #include "Modifier/CsDamageModifierRange.h"
 #include "Modifier/CsResource_DamageModifier.h"
 // Modifier
-#include "Modifier/CsModifier_Int.h"
-#include "Modifier/CsModifier_Int_Range.h"
-#include "Modifier/CsModifier_Float.h"
-#include "Modifier/CsModifier_Float_Range.h"
+#include "CsModifier_Int.h"
+#include "CsModifier_Int_Range.h"
+#include "CsModifier_Float.h"
+#include "CsModifier_Float_Range.h"
 
 namespace NCsDamage
 {

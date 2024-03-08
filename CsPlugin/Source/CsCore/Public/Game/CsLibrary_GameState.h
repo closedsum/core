@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -39,7 +39,6 @@ namespace NCsGameState
 			T* Other				  = Cast<T>(GameState);
 
 			checkf(Other, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintGameStateAndClass(GameState), *(T::StaticClass()->GetName()));
-
 			return Other;
 		}
 

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Types/CsTypes_Movement.h"
@@ -867,33 +867,48 @@ namespace NCsSpeed
 // FCsSpeedInterpInfo
 #pragma region
 
-bool FCsSpeedInterpInfo::IsValidChecked() const
+bool FCsSpeedInterpInfo::IsValidChecked(const FString& Context) const
+{
+	return true;
+}
+
+bool FCsSpeedInterpInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	return true;
 }
 
 #define InfoType NCsSpeed::NInterp::FInfo
-void FCsSpeedInterpInfo::SetInfo(InfoType* Info)
+#define MethodType NCsSpeed::NInterp::EMethod
+#define DirectionType NCsSpeed::NInterp::EDirection
+
+void FCsSpeedInterpInfo::CopyToInfo(InfoType* Info)
 {
-#undef InfoType
-
-	typedef NCsSpeed::NInterp::EMethod MethodType;
-
-	Info->SetMethod((MethodType*)(&Method));
-
-	typedef NCsSpeed::NInterp::EDirection DirectionType;
-
-	Info->SetDirection((DirectionType*)(&Direction));
-	Info->SetEasing(&Easing);
-	Info->SetCurve(&Curve);
-	Info->SetTime(&Time);
-	Info->SetAcceleration(&Acceleration);
+	CS_COPY_TYPE_TO_PROXY(Info, Method, MethodType);
+	CS_COPY_TYPE_TO_PROXY(Info, Direction, DirectionType);
+	CS_COPY_TO_PROXY(Info, Easing);
+	CS_COPY_TO_PROXY(Info, Curve);
+	CS_COPY_TO_PROXY(Info, Time);
+	CS_COPY_TO_PROXY(Info, Acceleration);
 }
+
+void FCsSpeedInterpInfo::CopyToInfoAsValue(InfoType* Info) const
+{
+	CS_COPY_TYPE_TO_PROXY_AS_VALUE(Info, Method, MethodType);
+	CS_COPY_TYPE_TO_PROXY_AS_VALUE(Info, Direction, DirectionType);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Easing);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Curve);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Time);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Acceleration);
+}
+
+#undef InfoType
+#undef MethodType
+#undef DirectionType
 
 FString FCsSpeedInterpInfo::PrintSummary(const int32& IndentSpaces /*=0*/)
 {
 	FString Spaces = TEXT("");
-
+	
 	int32 Count = 0;
 
 	while (Count < IndentSpaces)

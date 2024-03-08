@@ -1,11 +1,11 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Spawner/Modifier/CsLibrary_SpawnerModifier.h"
 #include "CsCore.h"
 
 // Library
-#include "Modifier/CsLibrary_Modifier.h"
+#include "CsLibrary_Modifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Interface
 #include "Valid/CsIsValid.h"

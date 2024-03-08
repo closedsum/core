@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/CsTypes_DataEntry.h"
@@ -122,7 +122,7 @@ namespace NCsDataEntryData
 
 #define USING_NS_CACHED using namespace NCsDataEntryData::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsDataEntryData::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 
 // FTableRowBase Interface
 #pragma region
@@ -361,7 +361,7 @@ namespace NCsDataEntryScriptData
 
 #define USING_NS_CACHED using namespace NCsDataEntryScriptData::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsDataEntryScriptData::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 
 // FCsTableRowBase_Data Interface
 #pragma region
@@ -567,7 +567,7 @@ namespace NCsDataEntryDataTable
 
 #define USING_NS_CACHED using namespace NCsDataEntryDataTable::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsDataEntryDataTable::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 
 // FCsTableRowBase_Data Interface
 #pragma region

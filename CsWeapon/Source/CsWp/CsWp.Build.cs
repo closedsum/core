@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -19,6 +19,7 @@ public class CsWp : ModuleRules
                     "DeveloperSettings",
                     "PhysicsCore",
                     "CsCore",
+                    "CsModify",
                     "CsSkin",
                     "CsPrj",
                     "CsBeam"

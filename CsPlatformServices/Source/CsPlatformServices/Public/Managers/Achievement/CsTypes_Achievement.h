@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -1091,6 +1091,9 @@ struct CSPLATFORMSERVICES_API FCsAchievementEntry : public FTableRowBase
 	{
 		return !(*this == B);
 	}
+
+	FORCEINLINE void SetProgressType(const ECsAchievementProgress& Type) { ProgressType = Type; }
+	FORCEINLINE const ECsAchievementProgress& GetProgressType() const { return ProgressType; }
 
 	void Reset()
 	{

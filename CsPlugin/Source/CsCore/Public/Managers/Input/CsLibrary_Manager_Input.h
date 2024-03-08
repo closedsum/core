@@ -1,15 +1,17 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Input
 #include "Managers/Input/Action/CsInputActionMap.h"
 #include "Managers/Input/Profile/CsTypes_InputProfile.h"
+#include "Managers/Input/Event/CsManager_Input_Event.h"
 // Log
 #include "Utility/CsLog.h"
 
 class UWorld;
-class UCsManager_Input;
+class ICsManager_Input;
+class ICsManager_Input_Event;
 class APlayerController;
 class APawn;
 
@@ -23,29 +25,29 @@ namespace NCsInput
 		#pragma region
 		public:
 
-			static UCsManager_Input* GetFirstChecked(const FString& Context, UWorld* World);
+			static ICsManager_Input* GetFirstChecked(const FString& Context, UWorld* World);
 
-			static UCsManager_Input* GetFirstChecked(UWorld* World);
+			static ICsManager_Input* GetFirstChecked(UWorld* World);
 
-			static UCsManager_Input* GetFirstChecked(const FString& Context, const UObject* WorldContext);
+			static ICsManager_Input* GetFirstChecked(const FString& Context, const UObject* WorldContext);
 
-			static UCsManager_Input* GetFirstChecked(const UObject* WorldContext);
+			static ICsManager_Input* GetFirstChecked(const UObject* WorldContext);
 
-			static UCsManager_Input* GetSafeFirst(const FString& Context, UWorld* World, void(*Log)(const FString&) = &FCsLog::Warning);
+			static ICsManager_Input* GetSafeFirst(const FString& Context, UWorld* World, void(*Log)(const FString&) = &FCsLog::Warning);
 
-			static UCsManager_Input* GetSafeFirst(UWorld* World);
+			static ICsManager_Input* GetSafeFirst(UWorld* World);
 
-			static UCsManager_Input* GetSafeFirst(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static ICsManager_Input* GetSafeFirst(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
-			static UCsManager_Input* GetSafeFirst(const UObject* WorldContext);
+			static ICsManager_Input* GetSafeFirst(const UObject* WorldContext);
 
-			static UCsManager_Input* GetChecked(const FString& Context, APlayerController* PC);
+			static ICsManager_Input* GetChecked(const FString& Context, APlayerController* PC);
 
-			static UCsManager_Input* GetSafe(const FString& Context, APlayerController* PC, void(*Log)(const FString&) = &FCsLog::Warning);
+			static ICsManager_Input* GetSafe(const FString& Context, APlayerController* PC, void(*Log)(const FString&) = &FCsLog::Warning);
 
-			static UCsManager_Input* GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+			static ICsManager_Input* GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
-			static UCsManager_Input* GetSafe(APawn* Pawn);
+			static ICsManager_Input* GetSafe(APawn* Pawn);
 
 			/**
 			* Get the Manager_Input associated with the player controller with ControllerId.
@@ -55,7 +57,7 @@ namespace NCsInput
 			* @param ControllerId
 			* return				Manager_Input
 			*/
-			static UCsManager_Input* GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+			static ICsManager_Input* GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 
 			/**
 			* Safely get the Manager_Input associated with the player controller with ControllerId.
@@ -66,7 +68,7 @@ namespace NCsInput
 			* @param Log			(optional)
 			* return				Manager_Input
 			*/
-			static UCsManager_Input* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+			static ICsManager_Input* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely get the Manager_Input associated with the player controller with ControllerId.
@@ -78,9 +80,50 @@ namespace NCsInput
 			* @param Log			(optional)
 			* return				Manager_Input
 			*/
-			static UCsManager_Input* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+			static ICsManager_Input* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static UObject* GetAsObjectChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+
+			static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				UObject* O = GetSafeAsObject(Context, WorldContext, ControllerId, Log);
+				OutSuccess = O != nullptr;
+				return O;
+			}
 
 		#pragma endregion Get
+
+		// ICsManager_Input_Event
+		#pragma region
+		public:
+
+		#define OnGameEventInfoEventType NCsInput::NManager::FOnGameEventInfo
+		#define OnGameEventInfosEventType NCsInput::NManager::FOnGameEventInfos
+		#define OnAnyKeyPressedEventType NCsInput::NManager::FOnAnyKey_Pressed
+		#define OnAnyKeyReleasedEventType NCsInput::NManager::FOnAnyKey_Released
+		#define ModeOnChangeEventType NCsInput::NManager::NMode::FOnChange
+
+			static ICsManager_Input_Event* GetChecked_ICsManager_Input_Event(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+
+			static ICsManager_Input_Event* GetSafe_ICsManager_Input_Event(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static OnGameEventInfoEventType& GetOnGameEventInfo_EventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+			static OnGameEventInfosEventType& GetOnGameEventInfos_EventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+			static OnAnyKeyPressedEventType& GetOnAnyKey_Pressed_EventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+			static FCsManagerInput_OnAnyKey_Pressed GetOnAnyKey_Pressed_ScriptEventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+			static OnAnyKeyReleasedEventType& GetOnAnyKey_Released_EventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+			static FCsManagerInput_OnAnyKey_Released GetOnAnyKey_Released_ScriptEventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+			static ModeOnChangeEventType& GetActiveMode_OnChange_EventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+			static FCsManagerInput_OnActiveMode_Change GetActiveMode_OnChange_ScriptEventChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+
+		#undef OnGameEventInfoEventType
+		#undef OnGameEventInfosEventType
+		#undef OnAnyKeyPressedEventType
+		#undef OnAnyKeyReleasedEventType
+		#undef ModeOnChangeEventType
+
+		#pragma endregion ICsManager_Input_Event
 
 		public:
 
@@ -111,6 +154,121 @@ namespace NCsInput
 			static bool SafeInit(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 
+		namespace NFirst
+		{
+			class CSCORE_API FLibrary
+			{
+			#define InputManagerLibrary NCsInput::NManager::FLibrary
+
+			// Get
+			#pragma region
+			public:
+
+				//static ICsManager_Input* GetFirstChecked(const FString& Context, UWorld* World);
+
+				//static ICsManager_Input* GetFirstChecked(UWorld* World);
+
+				FORCEINLINE static ICsManager_Input* GetChecked(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetChecked(Context, WorldContext, CS_FIRST);
+				}
+
+				//static ICsManager_Input* GetFirstChecked(const UObject* WorldContext);
+
+				FORCEINLINE static ICsManager_Input* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+				{
+					return InputManagerLibrary::GetSafe(Context, WorldContext, CS_FIRST, Log);
+				}
+
+				//static ICsManager_Input* GetSafeFirst(const UObject* WorldContext);
+
+				FORCEINLINE static UObject* GetAsObjectChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+				{
+					return InputManagerLibrary::GetAsObjectChecked(Context, WorldContext, CS_FIRST);
+				}
+
+			#pragma endregion Get
+
+			public:
+
+				FORCEINLINE static bool Exists(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+				{
+					return InputManagerLibrary::Exists(Context, WorldContext, CS_FIRST, Log);
+				}
+
+
+			// ICsManager_Input_Event
+			#pragma region
+			public:
+
+			#define OnGameEventInfoEventType NCsInput::NManager::FOnGameEventInfo
+			#define OnGameEventInfosEventType NCsInput::NManager::FOnGameEventInfos
+			#define OnAnyKeyPressedEventType NCsInput::NManager::FOnAnyKey_Pressed
+			#define OnAnyKeyReleasedEventType NCsInput::NManager::FOnAnyKey_Released
+			#define ModeOnChangeEventType NCsInput::NManager::NMode::FOnChange
+
+				FORCEINLINE static ICsManager_Input_Event* GetChecked_ICsManager_Input_Event(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetChecked_ICsManager_Input_Event(Context, WorldContext, CS_FIRST);
+				}
+
+				FORCEINLINE static ICsManager_Input_Event* GetSafe_ICsManager_Input_Event(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+				{
+					return InputManagerLibrary::GetSafe_ICsManager_Input_Event(Context, WorldContext, CS_FIRST, Log);
+				}
+
+				FORCEINLINE static OnGameEventInfoEventType& GetOnGameEventInfo_EventChecked(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetOnGameEventInfo_EventChecked(Context, WorldContext, CS_FIRST);
+				}
+
+				FORCEINLINE static OnGameEventInfosEventType& GetOnGameEventInfos_EventChecked(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetOnGameEventInfos_EventChecked(Context, WorldContext, CS_FIRST);
+				}
+				
+				FORCEINLINE static OnAnyKeyPressedEventType& GetOnAnyKey_Pressed_EventChecked(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetOnAnyKey_Pressed_EventChecked(Context, WorldContext, CS_FIRST);
+				}
+				
+				FORCEINLINE static FCsManagerInput_OnAnyKey_Pressed GetOnAnyKey_Pressed_ScriptEventChecked(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetOnAnyKey_Pressed_ScriptEventChecked(Context, WorldContext, CS_FIRST);
+				}
+				
+				FORCEINLINE static OnAnyKeyReleasedEventType& GetOnAnyKey_Released_EventChecked(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetOnAnyKey_Released_EventChecked(Context, WorldContext, CS_FIRST);
+				}
+				
+				FORCEINLINE static FCsManagerInput_OnAnyKey_Released GetOnAnyKey_Released_ScriptEventChecked(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetOnAnyKey_Released_ScriptEventChecked(Context, WorldContext, CS_FIRST);
+				}
+				
+				FORCEINLINE static ModeOnChangeEventType& GetActiveMode_OnChange_EventChecked(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetActiveMode_OnChange_EventChecked(Context, WorldContext, CS_FIRST);
+				}
+				
+				FORCEINLINE static FCsManagerInput_OnActiveMode_Change GetActiveMode_OnChange_ScriptEventChecked(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetActiveMode_OnChange_ScriptEventChecked(Context, WorldContext, CS_FIRST);
+				}
+
+			#undef OnGameEventInfoEventType
+			#undef OnGameEventInfosEventType
+			#undef OnAnyKeyPressedEventType
+			#undef OnAnyKeyReleasedEventType
+			#undef ModeOnChangeEventType
+
+			#pragma endregion ICsManager_Input_Event
+
+			#undef InputManagerLibrary
+			};
+		}
+
 		namespace NInputActionMap
 		{
 			struct CSCORE_API FLibrary final
@@ -119,22 +277,22 @@ namespace NCsInput
 
 			#define InputManagerLibrary NCsInput::NManager::FLibrary
 
-				FORCEINLINE static UCsManager_Input* GetFirstManagerChecked(const FString& Context, const UObject* WorldContext)
+				FORCEINLINE static ICsManager_Input* GetFirstManagerChecked(const FString& Context, const UObject* WorldContext)
 				{
 					return InputManagerLibrary::GetFirstChecked(Context, WorldContext);
 				}
 
-				FORCEINLINE static UCsManager_Input* GetSafeFirstManager(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+				FORCEINLINE static ICsManager_Input* GetSafeFirstManager(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					return InputManagerLibrary::GetSafeFirst(Context, WorldContext, Log);
 				}
 
-				FORCEINLINE static UCsManager_Input* GetManagerChecked(const FString& Context, APlayerController* PC)
+				FORCEINLINE static ICsManager_Input* GetManagerChecked(const FString& Context, APlayerController* PC)
 				{
 					return InputManagerLibrary::GetChecked(Context, PC);
 				}
 
-				FORCEINLINE static UCsManager_Input* GetSafeManager(const FString& Context, APlayerController* PC, void(*Log)(const FString&) = &FCsLog::Warning)
+				FORCEINLINE static ICsManager_Input* GetSafeManager(const FString& Context, APlayerController* PC, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					return InputManagerLibrary::GetSafe(Context, PC, Log);
 				}
@@ -144,7 +302,7 @@ namespace NCsInput
 			// Set
 			#pragma region
 
-					// First
+				// First
 			#pragma region
 			public:
 

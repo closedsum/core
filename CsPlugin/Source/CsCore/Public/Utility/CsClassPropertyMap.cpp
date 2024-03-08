@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Utility/CsClassPropertyMap.h"
@@ -6,7 +6,7 @@
 
 #include "Engine/UserDefinedEnum.h"
 
-#include "CoreUObject/Public/UObject/Object.h"
+#include "UObject/Object.h"
 #include "GameFramework/Pawn.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"

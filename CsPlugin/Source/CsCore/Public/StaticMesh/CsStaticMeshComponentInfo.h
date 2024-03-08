@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -157,6 +157,28 @@ namespace NCsStaticMesh
 				CS_CTOR_SET_MEMBER_PROXY(CustomDepthStencilValue);
 			}
 
+			FORCEINLINE FInfo(FInfo& B) :
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::KeepRelativeTransform)
+			{
+				SetMesh(B.GetMesh());
+				SetMaterials(B.GetMaterials());
+				SetAttachmentTransformRules(B.GetAttachmentTransformRules());
+				SetBone(B.GetBone());
+				SetTransformRules(B.GetTransformRules());
+				SetTransform(B.GetTransform());
+				SetbCastShadow(B.GetbCastShadow());
+				SetbReceivesDecals(B.GetbReceivesDecals());
+				SetbUseAsOccluder(B.GetbUseAsOccluder());
+				SetbRenderCustomDepth(B.GetbRenderCustomDepth());
+				SetCustomDepthStencilValue(B.GetCustomDepthStencilValue());
+			}
+
+			FORCEINLINE FInfo(const FInfo& B) :
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::KeepRelativeTransform)
+			{
+				Copy(B);
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Mesh, UStaticMesh)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Materials, TArray<UMaterialInterface*>)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
@@ -168,6 +190,21 @@ namespace NCsStaticMesh
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bUseAsOccluder, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bRenderCustomDepth, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CustomDepthStencilValue, int32)
+
+			FORCEINLINE void Copy(const FInfo& B)
+			{
+				SetMesh(B.GetMesh());
+				SetMaterials(B.GetMaterials());
+				SetAttachmentTransformRules(B.GetAttachmentTransformRules());
+				SetBone(B.GetBone());
+				SetTransformRules(B.GetTransformRules());
+				SetTransform(B.GetTransform());
+				SetbCastShadow(B.GetbCastShadow());
+				SetbReceivesDecals(B.GetbReceivesDecals());
+				SetbUseAsOccluder(B.GetbUseAsOccluder());
+				SetbRenderCustomDepth(B.GetbRenderCustomDepth());
+				SetCustomDepthStencilValue(B.GetCustomDepthStencilValue());
+			}
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Animation/Vertex/CsVertexAnimInfo.h"
@@ -8,19 +8,18 @@
 #include "Library/CsLibrary_Valid.h"
 
 #define InfoType NCsAnim::NVertex::FInfo
+#define NotifyType NCsAnim::NVertex::FNotify
 
 void FCsVertexAnimInfo::CopyToInfo(InfoType* Info)
 {
-	Info->SetNumFrames(&NumFrames);
-	Info->SetAnimStartGenerated(&AnimStartGenerated);
-	Info->SetSpeedGenerated(&SpeedGenerated);
-	Info->SetbLooping(&bLooping);
-	Info->SetLength(&Length);
-	Info->SetPlayRate(&PlayRate);
-	Info->SetBlendInTime(&BlendInTime);
-	Info->SetBlendOutTime(&BlendOutTime);
-
-	typedef NCsAnim::NVertex::FNotify NotifyType;
+	CS_COPY_TO_PROXY(Info, NumFrames);
+	CS_COPY_TO_PROXY(Info, AnimStartGenerated);
+	CS_COPY_TO_PROXY(Info, SpeedGenerated);
+	CS_COPY_TO_PROXY(Info, bLooping);
+	CS_COPY_TO_PROXY(Info, Length);
+	CS_COPY_TO_PROXY(Info, PlayRate);
+	CS_COPY_TO_PROXY(Info, BlendInTime);
+	CS_COPY_TO_PROXY(Info, BlendOutTime);
 
 	const int32 Count = Info->Notifies.Num();
 
@@ -36,16 +35,14 @@ void FCsVertexAnimInfo::CopyToInfo(InfoType* Info)
 
 void FCsVertexAnimInfo::CopyToInfoAsValue(InfoType* Info) const
 {
-	Info->SetNumFrames(NumFrames);
-	Info->SetAnimStartGenerated(AnimStartGenerated);
-	Info->SetSpeedGenerated(SpeedGenerated);
-	Info->SetbLooping(bLooping);
-	Info->SetLength(Length);
-	Info->SetPlayRate(PlayRate);
-	Info->SetBlendInTime(BlendInTime);
-	Info->SetBlendOutTime(BlendOutTime);
-
-	typedef NCsAnim::NVertex::FNotify NotifyType;
+	CS_COPY_TO_PROXY_AS_VALUE(Info, NumFrames);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, AnimStartGenerated);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, SpeedGenerated);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, bLooping);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Length);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, PlayRate);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, BlendInTime);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, BlendOutTime);
 
 	const int32 Count = Info->Notifies.Num();
 
@@ -60,6 +57,7 @@ void FCsVertexAnimInfo::CopyToInfoAsValue(InfoType* Info) const
 }
 
 #undef InfoType
+#undef NotifyType
 
 bool FCsVertexAnimInfo::IsValidChecked(const FString& Context) const
 {

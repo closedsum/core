@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Animation/Script/CsScriptLibrary_AnimInstance.h"
@@ -38,7 +38,7 @@ UCsScriptLibrary_AnimInstance::UCsScriptLibrary_AnimInstance(const FObjectInitia
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryAnimInstance::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryAnimInstance::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define AnimInstanceLibrary NCsAnimInstance::FLibrary
 
 // Load

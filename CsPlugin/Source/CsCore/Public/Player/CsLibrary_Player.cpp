@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Player/CsLibrary_Player.h"
@@ -115,6 +115,49 @@ namespace NCsPlayer
 
 	#undef GameInstanceLibrary
 
+	namespace NLocal
+	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NLocal::FLibrary, GetSafeControllerId);
+				}
+			}
+		}
+
+		#define ObjectLibrary NCsObject::FLibrary
+
+		int32 FLibrary::GetSafeControllerId(const FString& Context, const APawn* Pawn, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PENDING_KILL_RET_VALUE(Pawn, INDEX_NONE)
+
+			if (APlayerController* PC = Cast<APlayerController>(Pawn->GetController()))
+			{
+				if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(PC->Player))
+				{
+					return LocalPlayer->GetControllerId();
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No LocalPlayer for PlayerController: %s."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn)));
+					return INDEX_NONE;
+				}
+			}
+			else
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s with Class: %s"), *Context, *(Pawn->GetName()), *ObjectLibrary::PrintNameAndClass(Pawn->GetController())));
+				return INDEX_NONE;
+			}
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Pawn: %s with Class: %s is NOT of type APawn or APlayerController."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn)));
+			return INDEX_NONE;
+		}
+
+		#undef ObjectLibrary
+	}
+
 	namespace NController
 	{
 		namespace NLocal
@@ -133,7 +176,7 @@ namespace NCsPlayer
 
 			#define USING_NS_CACHED using namespace NCsPlayer::NController::NLocal::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsPlayer::NController::NLocal::NLibrary::NCached; \
-				const FString& Context = Str::##__FunctionName
+				const FString& Context = Str::__FunctionName
 			#define WorldLibrary NCsWorld::FLibrary
 
 			APlayerController* FLibrary::Get(const FString& Context, UWorld* World, const int32& ControllerId)
@@ -315,7 +358,7 @@ namespace NCsPlayer
 
 				#define USING_NS_CACHED using namespace NCsPlayer::NController::NLocal::NFirst::NLibrary::NCached;
 				#define SET_CONTEXT(__FunctionName) using namespace NCsPlayer::NController::NLocal::NFirst::NLibrary::NCached; \
-					const FString& Context = Str::##__FunctionName
+					const FString& Context = Str::__FunctionName
 				#define WorldLibrary NCsWorld::FLibrary
 
 				APlayerController* FLibrary::Get(const FString& Context, UWorld* World)
@@ -432,6 +475,7 @@ namespace NCsPlayer
 			}
 		}
 
+		#define ObjectLibrary NCsObject::FLibrary
 		#define WorldLibrary NCsWorld::FLibrary
 
 		APlayerController* FLibrary::GetOrFirstLocalChecked(const FString& Context, APawn* Pawn)
@@ -454,7 +498,7 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetSafe(const FString& Context, const APawn* Pawn, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_PENDING_KILL(Pawn)
+			CS_IS_PENDING_KILL_RET_NULL(Pawn)
 
 			AController* Controller = Pawn->GetController();
 
@@ -463,9 +507,7 @@ namespace NCsPlayer
 
 		int32 FLibrary::GetSafeId(const FString& Context, const UObject* PlayerContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_PTR_NULL_RET_VALUE(PlayerContext, INDEX_NONE)
-
-			typedef NCsObject::FLibrary ObjectLibrary;
+			CS_IS_PENDING_KILL_RET_VALUE(PlayerContext, INDEX_NONE)
 
 			if (const APawn* Pawn = Cast<APawn>(PlayerContext))
 			{
@@ -520,6 +562,7 @@ namespace NCsPlayer
 			return PC->PlayerCameraManager;
 		}
 
+		#undef ObjectLibrary
 		#undef WorldLibrary
 	}
 

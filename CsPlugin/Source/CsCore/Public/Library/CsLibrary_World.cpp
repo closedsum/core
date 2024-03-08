@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Library/CsLibrary_World.h"
@@ -214,6 +214,13 @@ namespace NCsWorld
 			{
 				namespace Str
 				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWorld::NSeamlessTravelHandler::FLibrary, SetHandlerLoadedData);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWorld::NSeamlessTravelHandler::FLibrary, SeamlessTravelLoadCallback);
+					// PendingTravelURL
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWorld::NSeamlessTravelHandler::FLibrary, GetPendingTravelURL);
+					// LoadedPackage
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWorld::NSeamlessTravelHandler::FLibrary, HasLoadedPackage);
+					// bTransitionInProgress
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWorld::NSeamlessTravelHandler::FLibrary, IsInTransition);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWorld::NSeamlessTravelHandler::FLibrary, GetbTransitionInProgress);
 				}
@@ -222,7 +229,108 @@ namespace NCsWorld
 
 	#define USING_NS_CACHED using namespace NCsWorld::NSeamlessTravelHandler::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsWorld::NSeamlessTravelHandler::NLibrary::NCached; \
-		const FString& Context = Str::##__FunctionName
+		const FString& Context = Str::__FunctionName
+
+		void FLibrary::SetHandlerLoadedData(UWorld* World, UObject* InLevelPackage, UWorld* InLoadedWorld)
+		{
+			SET_CONTEXT(SetHandlerLoadedData);
+
+			FWorldContext* WorldContext	    = GEngine->GetWorldContextFromWorld(World);
+			FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
+
+			// Get pointer to start of struct
+			FURL* PendingTravelURL = ((FURL*)(&Handler));
+			char* Base = (char*)PendingTravelURL;
+
+			// Offset by PendingTravelURL
+			size_t Offset = sizeof(FURL);
+
+			UObject*& LoadedPackage = *((UObject**)(Base + Offset));
+			
+			LoadedPackage = InLevelPackage;
+
+			// Offset by LoadedPackage
+			Offset += sizeof(UObject*);
+			// Offset by CurrentWorld
+			Offset += sizeof(UWorld*);
+
+			UWorld*& LoadedWorld = *((UWorld**)(Base + Offset));
+
+			LoadedWorld = InLoadedWorld;
+
+			if (InLoadedWorld != nullptr)
+			{
+				InLoadedWorld->AddToRoot();
+			}
+		}
+
+		void FLibrary::SeamlessTravelLoadCallback(UWorld* CurrentWorld, const FString& PackageName)
+		{
+			SET_CONTEXT(SeamlessTravelLoadCallback);
+
+			const FURL PendingTravelURL = GetPendingTravelURL(CurrentWorld);
+
+			// make sure we remove the name, even if travel was canceled.
+			const FName URLMapFName = FName(*PendingTravelURL.Map);
+			UWorld::WorldTypePreLoadMap.Remove(URLMapFName);
+
+		#if WITH_EDITOR
+			if (GIsEditor)
+			{
+				FWorldContext* WorldContext = GEngine->GetWorldContextFromWorld(CurrentWorld);
+				if (WorldContext->WorldType == EWorldType::PIE)
+				{
+					FString URLMapPackageName = UWorld::ConvertToPIEPackageName(PendingTravelURL.Map, WorldContext->PIEInstance);
+					UWorld::WorldTypePreLoadMap.Remove(FName(*URLMapPackageName));
+				}
+			}
+		#endif // #if WITH_EDITOR
+
+			// defer until tick when it's safe to perform the transition
+			//if (IsInTransition())
+			{
+				UPackage* LevelPackage = FindPackage(nullptr, *PackageName);
+				UWorld* World		   = UWorld::FindWorldInPackage(LevelPackage);
+
+				// If the world could not be found, follow a redirector if there is one.
+				if (!World)
+				{
+					World = UWorld::FollowWorldRedirectorInPackage(LevelPackage);
+
+					if (World)
+					{
+						LevelPackage = World->GetOutermost();
+					}
+				}
+
+				SetHandlerLoadedData(CurrentWorld, LevelPackage, World);
+
+				// Now that the p map is loaded, start async loading any always loaded levels
+				if (World)
+				{
+					if (World->WorldType == EWorldType::PIE)
+					{
+						if (LevelPackage->GetPIEInstanceID() != -1)
+						{
+							World->StreamingLevelsPrefix = UWorld::BuildPIEPackagePrefix(LevelPackage->GetPIEInstanceID());
+						}
+						else
+						{
+							// If this is a PIE world but the PIEInstanceID is -1, that implies this world is a temporary save
+							// for multi-process PIE which should have been saved with the correct StreamingLevelsPrefix.
+							ensure(!World->StreamingLevelsPrefix.IsEmpty());
+						}
+					}
+
+					if (World->PersistentLevel)
+					{
+						World->PersistentLevel->HandleLegacyMapBuildData();
+					}
+
+					World->AsyncLoadAlwaysLoadedLevelsForSeamlessTravel();
+				}
+			}
+		}
 
 		bool FLibrary::IsInTransition(const UWorld* World)
 		{
@@ -234,6 +342,46 @@ namespace NCsWorld
 			const FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
 
 			return Handler.IsInTransition();
+		}
+
+	// PendingTravelURL
+
+		FURL FLibrary::GetPendingTravelURL(UWorld* World)
+		{
+			SET_CONTEXT(GetPendingTravelURL);
+
+			CS_IS_PENDING_KILL_CHECKED(World)
+
+			FWorldContext* WorldContext	    = GEngine->GetWorldContextFromWorld(World);
+			FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
+
+			// Get pointer to start of struct
+			FURL* PendingTravelURL = ((FURL*)(&Handler));
+			
+			return *PendingTravelURL;
+		}
+
+	// LoadedPackage
+
+		bool FLibrary::HasLoadedPackage(UWorld* World)
+		{
+			SET_CONTEXT(HasLoadedPackage);
+
+			CS_IS_PENDING_KILL_CHECKED(World)
+
+			FWorldContext* WorldContext	    = GEngine->GetWorldContextFromWorld(World);
+			FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
+
+			// Get pointer to start of struct
+			FURL* PendingTravelURL = ((FURL*)(&Handler));
+			char* Base			   = (char*)PendingTravelURL;
+
+			// Offset by PendingTravelURL
+			size_t Offset = sizeof(FURL);
+
+			UObject*& LoadedPackage = *((UObject**)(Base + Offset));
+
+			return LoadedPackage != nullptr;
 		}
 
 	// bTransitionInProgress
@@ -295,7 +443,7 @@ namespace NCsWorld
 
 		#define USING_NS_CACHED using namespace NCsWorld::NPIE::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWorld::NPIE::NLibrary::NCached; \
-			const FString& Context = Str::##__FunctionName
+			const FString& Context = Str::__FunctionName
 		#define CVarLibrary NCsConsole::NVariable::FLibrary
 
 		void FLibrary::EnableSeamlessTravelChecked(const FString& Context)

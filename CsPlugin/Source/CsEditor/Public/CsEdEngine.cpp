@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "CsEdEngine.h"
@@ -125,7 +125,7 @@ namespace NCsEdEngine
 
 #define USING_NS_CACHED using namespace NCsEdEngine::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsEdEngine::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 
 // UEngine Interface
 #pragma region
@@ -176,13 +176,22 @@ void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 		//		 depending on the Editor.
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			UObject* Asset = OpenedAssets[I];
-
-			TArray<IAssetEditorInstance*> Instances = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorsForAsset(Asset);
-
-			if (Instances.Num() == CS_EMPTY)
+			TWeakObjectPtr<UObject>& OpenedAsset = OpenedAssets[I];
+			UObject* Asset						 = OpenedAsset.IsValid() ? OpenedAsset.Get() : nullptr;
+			
+			if (IsValid(Asset))
 			{
-				OnAssetEditorRequestClose(Asset, EAssetEditorCloseReason::CloseAllEditorsForAsset);
+				TArray<IAssetEditorInstance*> Instances = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorsForAsset(Asset);
+
+				if (Instances.Num() == CS_EMPTY)
+				{
+					OnAssetEditorRequestClose(Asset, EAssetEditorCloseReason::CloseAllEditorsForAsset);
+					OpenedAssets.RemoveAt(I, 1, false);
+				}
+			}
+			// TODO: Potentially need a Unique ID to broadcast OnAssetEditorRequestClose
+			else
+			{
 				OpenedAssets.RemoveAt(I, 1, false);
 			}
 		}
@@ -636,10 +645,15 @@ void UCsEdEngine::OnAssetOpenedInEditor(UObject* Asset, IAssetEditorInstance* Ed
 
 	bool AddAsset = true;
 
-	for (UObject* O : OpenedAssets)
+	for (const TWeakObjectPtr<UObject> O : OpenedAssets)
 	{
-		if (O == Asset)
+		UObject* OpenedAsset = O.IsValid() ? O.Get() : nullptr;
+
+		if (IsValid(OpenedAsset) &&
+			OpenedAsset == Asset)
+		{
 			AddAsset = false;
+		}
 	}
 
 	if (AddAsset)

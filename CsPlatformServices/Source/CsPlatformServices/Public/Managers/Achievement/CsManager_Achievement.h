@@ -1,10 +1,10 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Managers/Achievement/CsTypes_Achievement.h"
+#include "Managers/Achievement/CsManager_Achievement_Delegates.h"
 // Managers
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Log
@@ -55,84 +55,6 @@ namespace NCsAchievement
 
 #pragma endregion Structs
 
-// Delegates 
-#pragma region
-
-/**
-* QueryIds
-*
-* @param WasSuccessful
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerAchievement_OnQueryIds, bool, WasSuccessful);
-/**
-* QueryDescriptions
-*
-* @param WasSuccessful
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerAchievement_OnQueryDescriptions, bool, WasSuccessful);
-/**
-* Create
-*
-* @param WasSuccessful
-* @param Achievement
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerAchievement_OnCreate, bool, WasSuccessful, const FECsAchievement&, Achievement);
-/**
-* Modify
-*
-* @param WasSuccessful
-* @param Achievement
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerAchievement_OnModify, bool, WasSuccessful, const FECsAchievement&, Achievement);
-/**
-* Remove
-*
-* @param WasSuccessful
-* @param Achievement
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerAchievement_OnRemove, bool, WasSuccessful, const FString&, Achievement);
-/**
-* RemoveAll
-*
-* @param WasSuccessful
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerAchievement_OnRemoveAll, bool, WasSuccessful);
-/**
-* Complete
-*
-* @param WasSuccessful
-* @param Achievement
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerAchievement_OnComplete, bool, WasSuccessful, const FECsAchievement&, Achievement);
-/**
-* CompleteAll
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerAchievement_OnCompleteAll);
-/**
-* Progress
-*
-* @param WasSuccessful
-* @param Achievement
-* @param Progress
-
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerAchievement_OnProgress, bool, WasSuccessful, const FECsAchievement&, Achievement, const float&, Progress);
-/**
-* Reset
-*
-* @param Achievement
-* @param Progress
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerAchievement_OnReset, bool, WasSuccessful, const FECsAchievement&, Achievement, const float&, Progress);
-/**
-* ResetAll
-*
-* @param WasSuccessful
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerAchievement_OnResetAll, bool, WasSuccessful);
-
-#pragma endregion Delegates
-
 UCLASS(transient)
 class CSPLATFORMSERVICES_API UCsManager_Achievement : public UObject
 {
@@ -164,7 +86,8 @@ public:
 	}
 
 	static bool IsValid();
-	static void Init(UObject* InRoot, UClass* ManagerAchievementClass);
+	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Achievement> ManagerAchievementClass, UObject* InOuter = nullptr);
+	static void Init(UObject* InRoot, UObject* InOuter = nullptr);
 	static void Shutdown(const UObject* InRoot = nullptr);
 	static bool HasShutdown();
 
@@ -399,22 +322,35 @@ protected:
 
 public:
 
-	/** Delegate type when finished Querying Achievement Ids. */
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnQueryIds, bool);
+#define OnQueryIdsEventType NCsAchievement::NManager::FOnQueryIds
 
 	/** Event for when Querying Achievement Ids has completed.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnQueryIds OnQueryIds_Event;
+	OnQueryIdsEventType OnQueryIds_Event;
+	
+	FORCEINLINE OnQueryIdsEventType& GeOnQueryIds_Event() { return OnQueryIds_Event; }
+
 	/** Script Event for when Querying Achievement Ids has completed.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnQueryIds OnQueryIds_ScriptEvent;
 
+	FORCEINLINE FCsManagerAchievement_OnQueryIds& GetOnQueryIds_ScriptEvent() { return OnQueryIds_ScriptEvent; }
+
 	/** Event for when Querying Achievement Ids has completed.
 	Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnQueryIds OnQueryIds_AsyncEvent;
+	OnQueryIdsEventType OnQueryIds_AsyncEvent;
+	
+	FORCEINLINE OnQueryIdsEventType& GeOnQueryIds_AsyncEvent() { return OnQueryIds_AsyncEvent; }
+
 	/** Script Event for when Querying Achievement Ids has completed.
 	Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnQueryIds OnQueryIds_AsyncScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnQueryIds& GetOnQueryIds_AsyncScriptEvent() { return OnQueryIds_AsyncScriptEvent; }
+
+#undef OnQueryIdsEventType
 
 #pragma endregion Ids
 
@@ -435,22 +371,27 @@ protected:
 
 public:
 
-	/** Delegate type when finished Querying Achievement Descriptions. */
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnQueryDescriptions, bool);
+#define OnQueryDescriptionsEventType NCsAchievement::NManager::FOnQueryDescriptions
 
 	/** Event for when Querying Achievement Descriptions has completed.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnQueryDescriptions OnQueryDescriptions_Event;
+	OnQueryDescriptionsEventType OnQueryDescriptions_Event;
+
 	/** Script Event for when Querying Achievement Descriptions has completed.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnQueryDescriptions OnQueryDescriptions_ScriptEvent;
 
 	/** Event for when Querying Achievement Descriptions has completed.
 	Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnQueryDescriptions OnQueryDescriptions_AsyncEvent;
+	OnQueryDescriptionsEventType OnQueryDescriptions_AsyncEvent;
+
 	/** Script Event for when Querying Achievement Descriptions has completed.
 	Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnQueryDescriptions OnQueryDescriptions_AsyncScriptEvent;
+
+#undef OnQueryDescriptionsEventType
 
 #pragma endregion Descriptions
 
@@ -527,20 +468,22 @@ protected:
 
 public:
 
-	/**
-	* Delegate type.
-	*
-	* @param WasSuccessful
-	* @param Achievement
-	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnCreate, bool /*WasSuccessful*/, const ICsAchievement* /*Achievement*/);
+#define OnCreateEventType NCsAchievement::NManager::FOnCreate
 
 	/** Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnCreate OnCreate_Event;
+	OnCreateEventType OnCreate_Event;
+
+	FORCEINLINE OnCreateEventType& GetOnCreate_Event() { return OnCreate_Event; }
+
 	/** Script Event for when .
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnCreate OnCreate_ScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnCreate& GetOnCreate_ScriptEvent() { return OnCreate_ScriptEvent; }
+
+#undef OnCreateEventType
 
 #pragma endregion Create
 
@@ -556,20 +499,22 @@ protected:
 
 public:
 
-	/**
-	* Delegate type.
-	*
-	* @param WasSuccessful
-	* @param Achievement
-	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnModify, bool /*WasSuccessful*/, const ICsAchievement* /*Achievement*/);
+#define OnModifyEventType NCsAchievement::NManager::FOnModify
 
 	/** Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnModify OnModify_Event;
+	OnModifyEventType OnModify_Event;
+
+	FORCEINLINE OnModifyEventType& GetOnModify_Event() { return OnModify_Event; }
+
 	/** Script Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnModify OnModify_ScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnModify& GetOnModify_ScriptEvent() { return OnModify_ScriptEvent; }
+
+#undef OnModifyEventType
 
 #pragma endregion Modify
 
@@ -590,20 +535,22 @@ protected:
 
 public:
 
-	/**
-	* Delegate type.
-	*
-	* @param WasSuccessful
-	* @param Achievement
-	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRemove, bool /*WasSuccessful*/, const FString& /*Achievement*/);
+#define OnRemoveEventType NCsAchievement::NManager::FOnRemove
 
 	/** Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnRemove OnRemove_Event;
+	OnRemoveEventType OnRemove_Event;
+
+	FORCEINLINE OnRemoveEventType& GetOnRemove_Event() { return OnRemove_Event; }
+
 	/** Script Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnRemove OnRemove_ScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnRemove& GetOnRemove_ScriptEvent() { return OnRemove_ScriptEvent; }
+
+#undef OnRemoveEventType
 
 	void RemoveAll();
 
@@ -613,19 +560,22 @@ protected:
 
 public:
 
-	/**
-	* Delegate type.
-	*
-	* @param WasSuccessful
-	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnRemoveAll, bool /*WasSuccessful*/);
+#define OnRemoveAllEventType NCsAchievement::NManager::FOnRemoveAll
 
 	/** Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnRemoveAll OnRemoveAll_Event;
+	OnRemoveAllEventType OnRemoveAll_Event;
+
+	FORCEINLINE OnRemoveAllEventType& GetOnRemoveAll_Event() { return OnRemoveAll_Event; }
+
 	/** Script Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnRemoveAll OnRemoveAll_ScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnRemoveAll& GetOnRemoveAll_ScriptEvent() { return OnRemoveAll_ScriptEvent; }
+
+#undef OnRemoveAllEventType
 
 protected:
 
@@ -702,27 +652,35 @@ protected:
 
 public:
 
-	/** 
-	* Delegate type when completing an Achievement
-	*
-	* @param WasSuccessful
-	* @param Achievement
-	*/
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnComplete, bool /*WasSuccessful*/, const ICsAchievement* /*Achievement*/);
+#define OnCompleteEventType NCsAchievement::NManager::FOnComplete
 
 	/** Event for when an Achievement has completed. 
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnComplete OnComplete_Event;
+	OnCompleteEventType OnComplete_Event;
+
+	FORCEINLINE OnCompleteEventType& GetOnComplete_Event() { return OnComplete_Event; }
+
 	/** Script Event for when an Achievement has completed. 
 	    Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnComplete OnComplete_ScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnComplete& GetOnComplete_ScriptEvent() { return OnComplete_ScriptEvent; }
 
 	/** Event for when an Achievement has completed. 
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnComplete OnComplete_AsyncEvent;
+	OnCompleteEventType OnComplete_AsyncEvent;
+
+	FORCEINLINE OnCompleteEventType& GetOnComplete_AsyncEvent() { return OnComplete_AsyncEvent; }
+
 	/** Script Event for when an Achievement has completed. 
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnComplete OnComplete_AsyncScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnComplete& GetOnComplete_AsyncScriptEvent() { return OnComplete_AsyncScriptEvent; }
+
+#undef OnCompleteEventType
 
 public:
 
@@ -767,15 +725,22 @@ protected:
 
 public:
 
-	/** Delegate type when completing all achievement */
-	DECLARE_MULTICAST_DELEGATE(FOnCompleteAll);
+#define OnCompleteAllEventType NCsAchievement::NManager::FOnCompleteAll
 
 	/** Event for when all achievements have been completed.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnCompleteAll OnCompleteAll_Event;
+	OnCompleteAllEventType OnCompleteAll_Event;
+
+	FORCEINLINE OnCompleteAllEventType& GetOnCompleteAll_Event() { return OnCompleteAll_Event; }
+
 	/** Script Event for when all achievements have been completed.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnCompleteAll OnCompleteAll_ScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnCompleteAll& GetOnCompleteAll_ScriptEvent() { return OnCompleteAll_ScriptEvent; }
+
+#undef OnCompleteAllEventType
 
 #pragma endregion Complete
 
@@ -838,28 +803,35 @@ protected:
 
 public:
 
-	/**
-	* Delegate type when the progress of an Achievement has been reset to a value (default is 0).
-	*
-	* @param WasSuccessful
-	* @param Achievement
-	* @param Progress
-	*/
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnReset, bool /*WasSuccessful*/, const ICsAchievement* /*Achievement*/, const float& /*Progress*/);
+#define OnResetEventType NCsAchievement::NManager::FOnReset
 
 	/** Event for when the progress of an Achievement has reset to a value (default is 0).
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnReset OnReset_Event;
+	OnResetEventType OnReset_Event;
+
+	FORCEINLINE OnResetEventType& GetOnReset_Event() { return OnReset_Event; }
+
 	/** Script Event for when the progress of an Achievement has reset to a value (default is 0).
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnReset OnReset_ScriptEvent;
 
+	FORCEINLINE FCsManagerAchievement_OnReset& GetOnReset_ScriptEvent() { return OnReset_ScriptEvent; }
+
 	/** Event for when the progress of an Achievement has reset to a value (default is 0).
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnReset OnReset_AsyncEvent;
+	OnResetEventType OnReset_AsyncEvent;
+
+	FORCEINLINE OnResetEventType& GetOnReset_AsyncEvent() { return OnReset_AsyncEvent; }
+
 	/** Script Event for when the progress of an Achievement has reset to a value (default is 0).
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnReset OnReset_AsyncScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnReset& GetOnReset_AsyncScriptEvent() { return OnReset_AsyncScriptEvent; }
+
+#undef OnResetEventType
 
 	/**
 	*
@@ -872,19 +844,22 @@ protected:
 
 public:
 
-	/**
-	* Delegate type when resetting all achievement
-	*
-	* @param WasSuccessful
-	*/
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnResetAll, bool /*WasSuccessful*/);
+#define OnResetAllEventType NCsAchievement::NManager::FOnResetAll
 
 	/** Event for when all achievements have been reset.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnResetAll OnResetAll_Event;
+	OnResetAllEventType OnResetAll_Event;
+
+	FORCEINLINE OnResetAllEventType& GetResetAll_Event() { return OnResetAll_Event; }
+
 	/** Script Event for when all achievements have been reset.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnResetAll OnResetAll_ScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnResetAll& GetResetAll_ScriptEvent() { return OnResetAll_ScriptEvent; }
+
+#undef OnResetAllEventType
 
 #pragma endregion Reset
 
@@ -917,27 +892,35 @@ public:
 	*/
 	void SetSafeProgress(const FECsAchievement& Achievement, const float& Percent);
 
-	/** Delegate type when the progress of an Achievement has been updated.
-	*
-	* @param WasSuccessful
-	* @param Achievement
-	* @param Progress
-	*/
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnProgress, bool /*WasSuccessful*/, const ICsAchievement* /*Achievement*/, const float& /*Progress*/);
+#define OnProgressEventType NCsAchievement::NManager::FOnProgress
 
 	/** Event for when the progress of an Achievement has updated. 
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnProgress OnProgress_Event;
+	OnProgressEventType OnProgress_Event;
+
+	FORCEINLINE OnProgressEventType& GetOnProgress_Event() { return OnProgress_Event; }
+
 	/** Script Event for when the progress of an Achievement has updated. 
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnProgress OnProgress_ScriptEvent;
 
+	FORCEINLINE FCsManagerAchievement_OnProgress& GetOnProgress_ScriptEvent() { return OnProgress_ScriptEvent; }
+
 	/** Event for when the progress of an Achievement has updated. 
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnProgress OnProgress_AsyncEvent;
+	OnProgressEventType OnProgress_AsyncEvent;
+
+	FORCEINLINE OnProgressEventType& GetOnProgress_AsyncEvent() { return OnProgress_AsyncEvent; }
+
 	/** Script Event for when the progress of an Achievement has updated. 
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnProgress OnProgress_AsyncScriptEvent;
+
+	FORCEINLINE FCsManagerAchievement_OnProgress& GetOnProgress_AsyncScriptEvent() { return OnProgress_AsyncScriptEvent; }
+
+#undef OnProgressEventType
 
 public:
 
@@ -1153,7 +1136,7 @@ public:
 
 	bool IsValidChecked(const FString& Context, const FECsAchievement& Achievement);
 
-	bool IsValid(const FString& Context, const FECsAchievement& Achievement, void(*Log)(const FString&) = &FCsPlatformServicesLog::Warning);
+	bool IsValid(const FString& Context, const FECsAchievement& Achievement, void(*Log)(const FString&) = &NCsPlatformServices::FLog::Warning);
 
 protected:
 

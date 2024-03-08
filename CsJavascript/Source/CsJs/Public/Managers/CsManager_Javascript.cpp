@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/CsManager_Javascript.h"
@@ -17,7 +17,6 @@
 #include "Coroutine/CsRoutine.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
-#include "Managers/Input/CsManager_Input.h"
 // Coordinators
 #include "Coordinators/GameEvent/CsCoordinator_GameEvent.h"
 // Settings
@@ -122,7 +121,7 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 
 #define USING_NS_CACHED using namespace NCsManagerJavascript::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerJavascript::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 #define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
 #define JavascriptCommonLibrary NCsJs::NCommon::FLibrary
 
@@ -1118,12 +1117,10 @@ void UCsManager_Javascript::SetupCallbacks()
 
 	CS_IS_PENDING_KILL_CHECKED(WorldContext)
 
-	typedef NCsInput::NManager::FLibrary InputManagerLibrary;
+	typedef NCsInput::NManager::NFirst::FLibrary InputManagerLibrary;
 
-	UCsManager_Input* Manager_Input = InputManagerLibrary::GetFirstChecked(Context, WorldContext);
-
-	Manager_Input->OnAnyKey_Pressed_Event.RemoveAll(this);
-	Manager_Input->OnAnyKey_Pressed_Event.AddUObject(this, &UCsManager_Javascript::OnAnyKey_Pressed);
+	InputManagerLibrary::GetOnAnyKey_Pressed_EventChecked(Context, WorldContext).RemoveAll(this);
+	InputManagerLibrary::GetOnAnyKey_Pressed_EventChecked(Context, WorldContext).AddUObject(this, &UCsManager_Javascript::OnAnyKey_Pressed);
 }
 
 void UCsManager_Javascript::OnAnyKey_Pressed(const FKey& Key)

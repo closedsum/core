@@ -1,5 +1,5 @@
 
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsLibrary_DeveloperSettings.h"
@@ -33,7 +33,7 @@ namespace NCsCore
 
 		#define USING_NS_CACHED using namespace NCsCore::NSettings::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsCore::NSettings::NLibrary::NCached; \
-			const FString& Context = Str::##__FunctionName
+			const FString& Context = Str::__FunctionName
 
 		bool FLibrary::TryUpdateDefaultConfigFile() 
 		{ 

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -145,6 +145,23 @@ namespace NCsAnim
 				CS_CTOR_SET_MEMBER_PROXY(BlendOutTime);
 			}
 
+			FORCEINLINE FInfo(FInfo& B)
+			{
+				SetNumFrames(B.GetNumFrames());
+				SetAnimStartGenerated(B.GetAnimStartGenerated());
+				SetSpeedGenerated(B.GetSpeedGenerated());
+				SetbLooping(B.GetbLooping());
+				SetLength(B.GetLength());
+				SetPlayRate(B.GetPlayRate());
+				SetBlendInTime(B.GetBlendInTime());
+				SetBlendOutTime(B.GetBlendOutTime());
+			}
+
+			FORCEINLINE FInfo(const FInfo& B)
+			{
+				Copy(B);
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(NumFrames, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AnimStartGenerated, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(SpeedGenerated, float)
@@ -153,6 +170,18 @@ namespace NCsAnim
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(BlendInTime, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(BlendOutTime, float)
+
+			FORCEINLINE void Copy(const FInfo& B)
+			{
+				SetNumFrames(B.GetNumFrames());
+				SetAnimStartGenerated(B.GetAnimStartGenerated());
+				SetSpeedGenerated(B.GetSpeedGenerated());
+				SetbLooping(B.GetbLooping());
+				SetLength(B.GetLength());
+				SetPlayRate(B.GetPlayRate());
+				SetBlendInTime(B.GetBlendInTime());
+				SetBlendOutTime(B.GetBlendOutTime());
+			}
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -203,25 +203,6 @@ public:
 
 #undef OnStartTransitionOutEventType
 #undef OnFinishedTransitionEventType
-
-	// AsDestination
-#pragma region
-protected:
-
-#define OnStartTransitionAsDestinationEventType NCsGameInstance::NTransitionAsDestination::FOnStart
-
-	OnStartTransitionAsDestinationEventType TransitionAsDestination_OnStart_Event;
-
-public:
-
-	FORCEINLINE OnStartTransitionAsDestinationEventType& GetTransitionAsDestination_OnStart_Event() { return TransitionAsDestination_OnStart_Event; }
-
-	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
-	FCsGameInstance_TransitionAsDestination_OnStart TransitionAsDestination_OnStart_ScriptEvent;
-
-#undef OnStartTransitionAsDestinationEventType
-
-#pragma endregion AsDestination
 
 #pragma endregion Transition
 };

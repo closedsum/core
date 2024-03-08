@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "LevelSequence/Script/CsScriptLibrary_LevelSequence.h"
@@ -49,7 +49,7 @@ UCsScriptLibrary_LevelSequence::UCsScriptLibrary_LevelSequence(const FObjectInit
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryLevelSequence::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryLevelSequence::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define LogError &NCsSequencer::FLog::Error
 #define LevelSequenceActorLibrary NCsLevelSequence::NActor::FLibrary
 

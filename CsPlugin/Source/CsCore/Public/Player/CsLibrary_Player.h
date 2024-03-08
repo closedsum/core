@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -76,6 +76,37 @@ namespace NCsPlayer
 		*/
 		static ULocalPlayer* GetSafeLocal(const UObject* WorldContext, const int32& Index);
 	};
+
+	namespace NLocal
+	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					extern CSCORE_API const FString GetSafeControllerId;
+				}
+			}
+		}
+
+		/**
+		* Library associated with the Local Player
+		*/
+		struct CSCORE_API FLibrary
+		{
+		public:
+
+			static int32 GetSafeControllerId(const FString& Context, const APawn* Pawn, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			FORCEINLINE static int32 GetSafeControllerId(const APawn* Pawn)
+			{
+				const FString& Context = NCsPlayer::NLocal::NLibrary::NCached::Str::GetSafeControllerId;
+
+				return GetSafeControllerId(Context, Pawn, nullptr);
+			}
+		};
+	}
 
 	namespace NController
 	{
@@ -174,7 +205,7 @@ namespace NCsPlayer
 					{
 						using namespace NCsPlayer::NController::NLocal::NFirst::NLibrary::NCached;
 
-						return GetChecked<T>(Str::GetFirstLocalChecked, World);
+						return GetChecked<T>(Str::GetChecked, World);
 					}
 
 					static APlayerController* GetSafe(const FString& Context, UWorld* World, void(*Log)(const FString&) = &FCsLog::Warning);

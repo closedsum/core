@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Library/Script/CsScriptLibrary_Property.h"
@@ -48,10 +48,10 @@ UCsScriptLibrary_Property::UCsScriptLibrary_Property(const FObjectInitializer& O
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryProperty::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryProperty::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Str::__FunctionName
 #define LogWarning void(*Log)(const FString&) = &FCsLog::Warning;
 #define PropertyLibrary NCsProperty::FLibrary
-
+// const FString& Ctxt = Context.IsEmpty() ? NCsScriptLibraryProperty::NCached::Str::__FunctionName : Context
 // Get
 #pragma region
 
@@ -166,7 +166,7 @@ UClass* UCsScriptLibrary_Property::GetClassByPath(const FString& Context, UObjec
 
 	LogWarning
 
-	CS_IS_PENDING_KILL2(Object)
+	CS_IS_PENDING_KILL_RET_NULL2(Object)
 	return PropertyLibrary::GetClassPropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
 }
 

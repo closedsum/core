@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -847,10 +847,12 @@ struct CSCORE_API FCsSpeedInterpInfo
 	{
 	}
 
-	bool IsValidChecked() const;
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 #define InfoType NCsSpeed::NInterp::FInfo
-	void SetInfo(InfoType* Info);
+	void CopyToInfo(InfoType* Info);
+	void CopyToInfoAsValue(InfoType* Info) const;
 #undef InfoType
 
 	FString PrintSummary(const int32& IndentSpaces = 0);
@@ -902,6 +904,21 @@ namespace NCsSpeed
 				CS_CTOR_SET_MEMBER_PROXY(Acceleration);
 			}
 
+			FORCEINLINE FInfo(FInfo& B)
+			{
+				SetMethod(B.GetMethod());
+				SetDirection(B.GetDirection());
+				SetEasing(B.GetEasing());
+				SetCurve(B.GetCurve());
+				SetTime(B.GetTime());
+				SetAcceleration(B.GetAcceleration());
+			}
+
+			FORCEINLINE FInfo(const FInfo& B)
+			{
+				Copy(B);
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Method, MethodType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Direction, DirectionType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Easing, ECsEasingType)
@@ -909,7 +926,18 @@ namespace NCsSpeed
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Time, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Acceleration, FCsAcceleration)
 
+			FORCEINLINE void Copy(const FInfo& B)
+			{
+				SetMethod(B.GetMethod());
+				SetDirection(B.GetDirection());
+				SetEasing(B.GetEasing());
+				SetCurve(B.GetCurve());
+				SetTime(B.GetTime());
+				SetAcceleration(B.GetAcceleration());
+			}
+
 			bool IsValidChecked(const FString& Context) const { return true; }
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const { return true; }
 
 		#undef MethodType
 		#undef DirectionType

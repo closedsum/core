@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -237,6 +237,11 @@ namespace NCsGameInstance
 		*/
 		static bool IsSafe(const UObject* ContextObject);
 
+		FORCEINLINE static bool SafeIsReachable(const UObject* ContextObject)
+		{
+			return GetSafe(ContextObject) != nullptr;
+		}
+
 	#pragma endregion Is
 
 	// Start
@@ -356,18 +361,6 @@ namespace NCsGameInstance
 
 	#undef OnStartTransitionOutEventType
 	#undef OnFinishTransitionEventType
-
-			// AsDestination
-	#pragma region
-	public:
-
-	#define OnStartTransitionAsDestinationEventType NCsGameInstance::NTransitionAsDestination::FOnStart
-
-		static OnStartTransitionAsDestinationEventType& GetTransitionAsDestination_OnStart_Event(const FString& Context, const UObject* ContextObject);
-
-	#undef OnStartTransitionAsDestinationEventType
-
-	#pragma endregion AsDestination
 
 	#pragma endregion Transition
 

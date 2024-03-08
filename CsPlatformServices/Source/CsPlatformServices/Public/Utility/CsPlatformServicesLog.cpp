@@ -1,10 +1,18 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Utility/CsPlatformServicesLog.h"
 #include "CsPlatformServices.h"
 
-void FCsPlatformServicesLog::Warning(const FString& Str)
+namespace NCsPlatformServices
 {
-	UE_LOG(LogCsPlatformServices, Warning, TEXT("%s"), *Str);
+	void FLog::Warning(const FString& Str)
+	{
+		UE_LOG(LogCsPlatformServices, Warning, TEXT("%s"), *Str);
+	}
+
+	void FLog::Error(const FString& Str)
+	{
+		UE_LOG(LogCsPlatformServices, Error, TEXT("%s"), *Str);
+	}
 }

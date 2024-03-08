@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -85,9 +85,28 @@ namespace NCsUserWidget
 				CS_CTOR_SET_MEMBER_PROXY(ZOrder);
 			}
 
+			FORCEINLINE FInfo(FInfo& B)
+			{
+				SetImage(B.GetImage());
+				SetRenderScale(B.GetRenderScale());
+				SetZOrder(B.GetZOrder());
+			}
+
+			FORCEINLINE FInfo(const FInfo& B)
+			{
+				Copy(B);
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Image, UTexture2D)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(RenderScale, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ZOrder, int32)
+
+			FORCEINLINE void Copy(const FInfo& B)
+			{
+				SetImage(B.GetImage());
+				SetRenderScale(B.GetRenderScale());
+				SetZOrder(B.GetZOrder());
+			}
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;

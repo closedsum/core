@@ -1,21 +1,21 @@
-// Copyright 2017-2023 Closed Sum Games, Inc. All rights reserved.
+// Copyright 2017-2024 Closed Sum Games, Inc. All rights reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Components/CsWidgetInteractionComponent.h"
 #include "CsUI.h"
 
 // Library
+#include "Coordinators/GameEvent/CsLibrary_Coordinator_GameEvent.h"
+	// Common
+#include "Game/CsLibrary_GameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Library/CsLibrary_Math.h"
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
-// Coordinators
-#include "Coordinators/GameEvent/CsCoordinator_GameEvent.h"
 // Player
 #include "GameFramework/PlayerController.h"
 #include "Engine/LocalPlayer.h"
 // Game
-#include "Engine/GameInstance.h"
 #include "GameFramework/GameStateBase.h"
 // World
 #include "Engine/World.h"
@@ -33,7 +33,10 @@ namespace NCsWidgetInteractionComponent
 	{
 		namespace Str
 		{
-
+			// UObject Interface
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsWidgetInteractionComponent, BeginDestroy);
+			// UActorComponent Interface
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsWidgetInteractionComponent, BeginPlay);
 		}
 
 		namespace Name
@@ -52,30 +55,39 @@ UCsWidgetInteractionComponent::UCsWidgetInteractionComponent(const FObjectInitia
 {
 }
 
+#define USING_NS_CACHED using namespace NCsWidgetInteractionComponent::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsWidgetInteractionComponent::NCached; \
+	const FString& Context = Str::__FunctionName
+#define GameEventCoordinatorLibrary NCsGameEvent::NCoordinator::FLibrary
+#define GameInstanceLibrary NCsGameInstance::FLibrary
+#define MathLibrary NCsMath::FLibrary
+
 // UObject Interface
 #pragma region
 
 void UCsWidgetInteractionComponent::BeginDestroy()
 {
+	SET_CONTEXT(BeginDestroy);
+
 	Super::BeginDestroy();
 
-	if (GetWorld() &&
-		GetWorld()->GetGameInstance())
+	if (UObject* GameInstance = GameInstanceLibrary::GetSafeAsObject(this))
 	{
-		UCsCoordinator_GameEvent* Coordinator_GameEvent = UCsCoordinator_GameEvent::Get(GetWorld()->GetGameInstance());
-
-		typedef UCsCoordinator_GameEvent::FOnProcessGameEventInfo DelegateType;
-		typedef EMCsGameEventCoordinatorGroup GroupMapType;
-		typedef FECsGameEventCoordinatorGroup GroupType;
-
-		for (const TPair<GroupType, FDelegateHandle>& Pair : OnProcessGameEventInfoHandleMap)
+		if (GameEventCoordinatorLibrary::SafeIsActive(GameInstance))
 		{
-			const GroupType& Group		  = Pair.Key;
-			const FDelegateHandle& Handle = Pair.Value;
+			typedef NCsGameEvent::NCoordinator::FOnProcessGameEventInfo DelegateType;
+			typedef EMCsGameEventCoordinatorGroup GroupMapType;
+			typedef FECsGameEventCoordinatorGroup GroupType;
 
-			DelegateType& Delegate = Coordinator_GameEvent->GetOnProcessGameEventInfo_Event(Group);
+			for (const TPair<GroupType, FDelegateHandle>& Pair : OnProcessGameEventInfoHandleMap)
+			{
+				const GroupType& Group		  = Pair.Key;
+				const FDelegateHandle& Handle = Pair.Value;
 
-			Delegate.Remove(Handle);
+				DelegateType& Delegate = GameEventCoordinatorLibrary::GetOnProcessGameEventInfo_EventChecked(Context, GameInstance, Group);
+
+				Delegate.Remove(Handle);
+			}
 		}
 	}
 }
@@ -87,22 +99,24 @@ void UCsWidgetInteractionComponent::BeginDestroy()
 
 void UCsWidgetInteractionComponent::BeginPlay()
 {
+	SET_CONTEXT(BeginPlay);
+
 	Super::BeginPlay();
 
-	if (GetWorld() &&
-		GetWorld()->GetGameInstance())
+	if (UObject* GameInstance = GameInstanceLibrary::GetSafeAsObject(this))
 	{
-		UCsCoordinator_GameEvent* Coordinator_GameEvent = UCsCoordinator_GameEvent::Get(GetWorld()->GetGameInstance());
-
-		typedef UCsCoordinator_GameEvent::FOnProcessGameEventInfo DelegateType;
-		typedef EMCsGameEventCoordinatorGroup GroupMapType;
-		typedef FECsGameEventCoordinatorGroup GroupType;
-
-		for (const GroupType& Group : GroupMapType::Get())
+		if (GameEventCoordinatorLibrary::SafeIsActive(GameInstance))
 		{
-			DelegateType& Delegate = Coordinator_GameEvent->GetOnProcessGameEventInfo_Event(Group);
+			typedef NCsGameEvent::NCoordinator::FOnProcessGameEventInfo DelegateType;
+			typedef EMCsGameEventCoordinatorGroup GroupMapType;
+			typedef FECsGameEventCoordinatorGroup GroupType;
 
-			OnProcessGameEventInfoHandleMap.Add(Group, Delegate.AddUObject(this, &UCsWidgetInteractionComponent::OnProcessGameEventInfo));
+			for (const GroupType& Group : GroupMapType::Get())
+			{
+				DelegateType& Delegate = GameEventCoordinatorLibrary::GetOnProcessGameEventInfo_EventChecked(Context, GameInstance, Group);
+
+				OnProcessGameEventInfoHandleMap.Add(Group, Delegate.AddUObject(this, &UCsWidgetInteractionComponent::OnProcessGameEventInfo));
+			}
 		}
 	}
 }
@@ -139,8 +153,6 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 		checkf(LocalPlayer, TEXT("UCsWidgetInteractionComponent::OnProcessGameEventInfo: LocalPlayer is NULL for PlayerController: %s."), *(PlayerController->GetName()));
 
 		checkf(LocalPlayer->ViewportClient, TEXT("UCsWidgetInteractionComponent::OnProcessGameEventInfo: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
-
-		typedef NCsMath::FLibrary MathLibrary;
 
 		FVector2d MousePosition;
 
@@ -210,3 +222,9 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 		ReleasePointerKey(EKeys::RightMouseButton);
 	}
 }
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
+#undef GameEventCoordinatorLibrary
+#undef GameInstanceLibrary
+#undef MathLibrary

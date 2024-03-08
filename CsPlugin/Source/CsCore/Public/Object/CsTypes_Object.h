@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -136,7 +136,6 @@ namespace NCsObject
 			FORCEINLINE HandleType Add(UObject* Object, UObject* Owner)
 			{
 				checkf(Object, TEXT("NCsObject::NCreate::FCreated::Add: Object is NULL."));
-
 				checkf(Owner, TEXT("NCsObject::NCreate::FCreated::Add: Owner is NULL."));
 
 				HandleType Handle;

@@ -136,6 +136,8 @@ namespace NCsPerformance
 			*						A reference to the GameInstance.
 			*/
 			static void CreatePerformanceWidgetChecked(const FString& Context, const UObject* ContextObject);
+
+			static void ConditionalCreatePerformanceWidgetChecked(const FString& Context, const UObject* ContextObject);
 		};
 	}
 }

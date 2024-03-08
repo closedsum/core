@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -145,8 +145,6 @@ namespace NCsUI
 			static bool GetSafeDataTablePath(const FString& Context, const UObject* WorldContext, const MemberType& Member, FString& OutPath, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 		#undef MemberType
-
-			static UClass* GetFadeWidgetClassChecked(const FString& Context, const UObject* WorldContext);
 		};
 	}
 }

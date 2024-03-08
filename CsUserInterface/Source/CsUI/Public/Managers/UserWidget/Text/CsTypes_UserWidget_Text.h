@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -85,19 +85,29 @@ namespace NCsUserWidget
 				CS_CTOR_SET_MEMBER_PROXY(Color);
 			}
 
+			FORCEINLINE FOutline(FOutline& B)
+			{
+				Copy(B);
+			}
+
+			FORCEINLINE FOutline(const FOutline& B)
+			{
+				Copy(B);
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Size, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bApplyOutlineToDropShadow, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Color, FLinearColor)
 
+			FORCEINLINE void Copy(const FOutline& B)
+			{
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Size);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, bApplyOutlineToDropShadow);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Color);
+			}
+
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
-
-			void Copy(const FOutline& From)
-			{
-				SetSize(From.GetSize());
-				SetbApplyOutlineToDropShadow(From.GetbApplyOutlineToDropShadow());
-				SetColor(From.GetColor());
-			}
 
 			FORCEINLINE void Reset()
 			{
@@ -177,17 +187,27 @@ namespace NCsUserWidget
 				CS_CTOR_SET_MEMBER_PROXY(Color);
 			}
 
+			FORCEINLINE FShadow(FShadow& B)
+			{
+				Copy(B);
+			}
+
+			FORCEINLINE FShadow(const FShadow& B)
+			{
+				Copy(B);
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector2D)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Color, FLinearColor)
 
+			FORCEINLINE void Copy(const FShadow& B)
+			{
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Offset);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Color);
+			}
+
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
-
-			void Copy(const FShadow& From)
-			{
-				SetOffset(From.GetOffset());
-				SetColor(From.GetColor());
-			}
 
 			FORCEINLINE void Reset()
 			{

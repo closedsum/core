@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/Text/CsTypes_UserWidget_Text.h"
@@ -13,16 +13,16 @@
 
 void FCsUserWidget_Text_OutlineSettings::CopyToSettings(SettingsType* Settings)
 {
-	Settings->SetSize(&Size);
-	Settings->SetbApplyOutlineToDropShadow(&bApplyOutlineToDropShadow);
-	Settings->SetColor(&Color);
+	CS_COPY_TO_PROXY(Settings, Size);
+	CS_COPY_TO_PROXY(Settings, bApplyOutlineToDropShadow);
+	CS_COPY_TO_PROXY(Settings, Color);
 }
 
 void FCsUserWidget_Text_OutlineSettings::CopyToSettingsAsValue(SettingsType* Settings) const
 {
-	Settings->SetSize(Size);
-	Settings->SetbApplyOutlineToDropShadow(bApplyOutlineToDropShadow);
-	Settings->SetColor(Color);
+	CS_COPY_TO_PROXY_AS_VALUE(Settings, Size);
+	CS_COPY_TO_PROXY_AS_VALUE(Settings, bApplyOutlineToDropShadow);
+	CS_COPY_TO_PROXY_AS_VALUE(Settings, Color);
 }
 
 #undef SettingsType
@@ -62,14 +62,14 @@ namespace NCsUserWidget
 
 void FCsUserWidget_Text_ShadowSettings::CopyToSettings(SettingsType* Settings)
 {
-	Settings->SetOffset(&Offset);
-	Settings->SetColor(&Color);
+	CS_COPY_TO_PROXY(Settings, Offset);
+	CS_COPY_TO_PROXY(Settings, Color);
 }
 
 void FCsUserWidget_Text_ShadowSettings::CopyToSettingsAsValue(SettingsType* Settings) const
 {
-	Settings->SetOffset(Offset);
-	Settings->SetColor(Color);
+	CS_COPY_TO_PROXY_AS_VALUE(Settings, Offset);
+	CS_COPY_TO_PROXY_AS_VALUE(Settings, Color);
 }
 
 #undef SettingsType

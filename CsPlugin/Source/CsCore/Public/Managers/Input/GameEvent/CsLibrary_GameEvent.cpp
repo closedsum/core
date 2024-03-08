@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/GameEvent/CsLibrary_GameEvent.h"
@@ -10,6 +10,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Input/CsManager_Input.h"
+// Game Event
+#include "Managers/Input/GameEvent/CsGameEventDefinition.h"
 
 namespace NCsGameEvent
 {
@@ -17,7 +19,7 @@ namespace NCsGameEvent
 	{
 		typedef NCsInput::NManager::FLibrary InputManagerLibrary;
 
-		UCsManager_Input* Manager_Input = InputManagerLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+		ICsManager_Input* Manager_Input = InputManagerLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
 		if (!Manager_Input)
 			return false;

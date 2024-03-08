@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 using UnrealBuildTool;
@@ -28,7 +28,6 @@ public class CsUIEditor : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
-                    "AssetRegistry",
                     "UnrealEd",
                     "AssetTools",
                     "ContentBrowser",
@@ -40,6 +39,7 @@ public class CsUIEditor : ModuleRules
                     "CsCore",
                     "CsEditor",
                     "CsUI",
+                    "CsUICore"
                 }
             );
 

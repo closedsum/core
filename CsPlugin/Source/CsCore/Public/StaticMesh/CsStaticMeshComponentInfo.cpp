@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "StaticMesh/CsStaticMeshComponentInfo.h"
@@ -16,32 +16,32 @@
 
 void FCsStaticMeshComponentInfo::CopyToInfo(InfoType* Info)
 {
-	Info->SetMesh(Mesh.GetPtr());
-	Info->SetMaterials(Materials.GetPtr());
+	CS_COPY_PTR_TO_PROXY(Info, Mesh);
+	CS_COPY_PTR_TO_PROXY(Info, Materials);
 	Info->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
-	Info->SetBone(&Bone);
-	Info->SetTransformRules(&TransformRules);
-	Info->SetTransform(&Transform);
-	Info->SetbCastShadow(&bCastShadow);
-	Info->SetbReceivesDecals(&bReceivesDecals);
-	Info->SetbUseAsOccluder(&bUseAsOccluder);
-	Info->SetbRenderCustomDepth(&bRenderCustomDepth);
-	Info->SetCustomDepthStencilValue(&CustomDepthStencilValue);
+	CS_COPY_TO_PROXY(Info, Bone);
+	CS_COPY_TO_PROXY(Info, TransformRules);
+	CS_COPY_TO_PROXY(Info, Transform);
+	CS_COPY_TO_PROXY(Info, bCastShadow);
+	CS_COPY_TO_PROXY(Info, bReceivesDecals);
+	CS_COPY_TO_PROXY(Info, bUseAsOccluder);
+	CS_COPY_TO_PROXY(Info, bRenderCustomDepth);
+	CS_COPY_TO_PROXY(Info, CustomDepthStencilValue);
 }
 
 void FCsStaticMeshComponentInfo::CopyToInfoAsValue(InfoType* Info) const
 {
-	Info->SetMesh(Mesh.Get());
-	Info->SetMaterials(Materials.Get());
+	CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Mesh);
+	CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Materials);
 	Info->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
-	Info->SetBone(Bone);
-	Info->SetTransformRules(TransformRules);
-	Info->SetTransform(Transform);
-	Info->SetbCastShadow(bCastShadow);
-	Info->SetbReceivesDecals(bReceivesDecals);
-	Info->SetbUseAsOccluder(bUseAsOccluder);
-	Info->SetbRenderCustomDepth(bRenderCustomDepth);
-	Info->SetCustomDepthStencilValue(CustomDepthStencilValue);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Bone);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, TransformRules);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, Transform);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, bCastShadow);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, bReceivesDecals);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, bUseAsOccluder);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, bRenderCustomDepth);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, CustomDepthStencilValue);
 }
 
 #undef InfoType

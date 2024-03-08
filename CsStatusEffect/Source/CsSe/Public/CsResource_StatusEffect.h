@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Resource
 #include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"

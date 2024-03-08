@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/CsLibrary_Data.h"
@@ -35,7 +35,7 @@ namespace NCsData
 
 	#define USING_NS_CACHED using namespace NCsData::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsData::NLibrary::NCached; \
-		const FString& Context = Str::##__FunctionName
+		const FString& Context = Str::__FunctionName
 	#define DataManagerLibrary NCsData::NManager::FLibrary
 
 	FString FLibrary::PrintObjectAndClass(UObject* Object)

@@ -48,9 +48,9 @@
 #include "Modifier/Types/CsGetWeaponModifierType.h"
 //#include "Point/Params/Spread/CsPointWeapon_Spread_Variables.h"
 // Modifier
-#include "Modifier/CsModifier_Int.h"
-#include "Modifier/CsModifier_Float.h"
-#include "Modifier/CsModifier_Toggle.h"
+#include "CsModifier_Int.h"
+#include "CsModifier_Float.h"
+#include "CsModifier_Toggle.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // FX

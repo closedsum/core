@@ -43,7 +43,7 @@ UCsScriptLibrary_AI_Task::UCsScriptLibrary_AI_Task(const FObjectInitializer& Obj
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryAITask::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryAITask::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define SET_LOG_WARNING void(*Log)(const FString&) = &NCsAI::FLog::Warning;
 
 AAIController* UCsScriptLibrary_AI_Task::GetAIController(const FString& Context, const UAITask* Task)

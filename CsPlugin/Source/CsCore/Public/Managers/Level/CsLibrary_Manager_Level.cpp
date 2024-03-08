@@ -177,19 +177,24 @@ namespace NCsLevel
 		// Persistent Level
 		#pragma region
 
-		bool FLibrary::HasFinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot)
+		bool FLibrary::HasFinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextObject)
 		{
-			return GetChecked(Context, ContextRoot)->HasFinishedLoadingPersistentLevel();
+			return GetChecked(Context, ContextObject)->HasFinishedLoadingPersistentLevel();
 		}
 
-		void FLibrary::Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot)
+		void FLibrary::Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextObject)
 		{
-			GetChecked(Context, ContextRoot)->Check_FinishedLoadingPersistentLevel();
+			GetChecked(Context, ContextObject)->Check_FinishedLoadingPersistentLevel();
 		}
 
-		void FLibrary::Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot, const FString& MapPackageName)
+		void FLibrary::Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextObject, const FString& MapPackageName)
 		{
-			GetChecked(Context, ContextRoot)->Check_FinishedLoadingPersistentLevel(MapPackageName);
+			GetChecked(Context, ContextObject)->Check_FinishedLoadingPersistentLevel(MapPackageName);
+		}
+
+		void FLibrary::ClearCheck_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextObject)
+		{
+			GetChecked(Context, ContextObject)->ClearCheck_Check_FinishedLoadingPersistentLevel();
 		}
 
 		#pragma endregion Persistent Level
@@ -197,25 +202,25 @@ namespace NCsLevel
 		// Change Map
 		#pragma region
 
-		bool FLibrary::HasChangeMapCompletedChecked(const FString& Context, const UObject* ContextRoot)
+		bool FLibrary::HasChangeMapCompletedChecked(const FString& Context, const UObject* ContextObject)
 		{
-			return GetChecked(Context, ContextRoot)->HasChangeMapCompleted();
+			return GetChecked(Context, ContextObject)->HasChangeMapCompleted();
 		}
 
-		bool FLibrary::SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextRoot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextRoot, Log))
+			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextObject, Log))
 			{
 				return Manager_Level->HasChangeMapCompleted();
 			}
 			return false;
 		}
 
-		bool FLibrary::SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextRoot, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			OutSuccess = false;
 
-			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextRoot, Log))
+			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextObject, Log))
 			{
 				OutSuccess = true;
 				return Manager_Level->HasChangeMapCompleted();
@@ -225,14 +230,14 @@ namespace NCsLevel
 
 		#define ParamsType NCsLevel::NManager::NChangeMap::FParams
 
-		void FLibrary::ChangeMapChecked(const FString& Context, const UObject* ContextRoot, const ParamsType& Params)
+		void FLibrary::ChangeMapChecked(const FString& Context, const UObject* ContextObject, const ParamsType& Params)
 		{
-			GetChecked(Context, ContextRoot)->ChangeMap(Params);
+			GetChecked(Context, ContextObject)->ChangeMap(Params);
 		}
 
-		bool FLibrary::SafeChangeMap(const FString& Context, const UObject* ContextRoot, const ParamsType& Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextRoot, Log))
+			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextObject, Log))
 			{
 				CS_IS_VALID(Params)
 

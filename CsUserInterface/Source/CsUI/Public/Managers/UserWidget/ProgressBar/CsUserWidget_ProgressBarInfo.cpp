@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/ProgressBar/CsUserWidget_ProgressBarInfo.h"
@@ -10,12 +10,12 @@
 
 void FCsUserWidget_ProgressBarInfo::CopyToInfo(InfoType* Info)
 {
-	Info->SetFillColorAndOpacity(&FillColorAndOpacity);
+	CS_COPY_TO_PROXY(Info, FillColorAndOpacity);
 }
 
 void FCsUserWidget_ProgressBarInfo::CopyToInfoAsValue(InfoType* Info) const
 {
-	Info->SetFillColorAndOpacity(FillColorAndOpacity);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, FillColorAndOpacity);
 }
 
 #undef InfoType

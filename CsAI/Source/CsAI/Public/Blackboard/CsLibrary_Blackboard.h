@@ -187,7 +187,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Get ID associated with the Key with KeyName.
 		*/
-		static uint8 GetKeyIDChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+		static uint16 GetKeyIDChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
 
 		/**
 		* Safely get ID associated with the Key with KeyName.
@@ -198,18 +198,18 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Get ID associated with the Key with KeyName.
 		*/
-		static uint8 GetSafeKeyID(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static uint16 GetSafeKeyID(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
 		static const FString& KeyTypeToString(const TSubclassOf<UBlackboardKeyType>& KeyType);
 
-		static TSubclassOf<UBlackboardKeyType> GetKeyTypeChecked(const FString& Context, const UBlackboardData* Data, const uint8& KeyID);
+		static TSubclassOf<UBlackboardKeyType> GetKeyTypeChecked(const FString& Context, const UBlackboardData* Data, const uint16& KeyID);
 
 		FORCEINLINE static TSubclassOf<UBlackboardKeyType> GetKeyTypeChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 		{
 			return GetKeyTypeChecked(Context, Data, GetKeyIDChecked(Context, Data, KeyName));
 		}
 
-		static TSubclassOf<UBlackboardKeyType> GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const uint8& KeyID, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static TSubclassOf<UBlackboardKeyType> GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const uint16& KeyID, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
 		FORCEINLINE static TSubclassOf<UBlackboardKeyType> GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
 		{

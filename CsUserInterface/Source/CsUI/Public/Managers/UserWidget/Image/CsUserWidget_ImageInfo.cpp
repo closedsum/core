@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/Image/CsUserWidget_ImageInfo.h"
@@ -10,16 +10,16 @@
 
 void FCsUserWidget_ImageInfo::CopyToInfo(InfoType* Info)
 {
-	Info->SetImage(Image.GetPtr());
-	Info->SetRenderScale(&RenderScale);
-	Info->SetZOrder(&ZOrder);
+	CS_COPY_PTR_TO_PROXY(Info, Image);
+	CS_COPY_TO_PROXY(Info, RenderScale);
+	CS_COPY_TO_PROXY(Info, ZOrder);
 }
 
 void FCsUserWidget_ImageInfo::CopyToInfoAsValue(InfoType* Info) const
 {
-	Info->SetImage(Image.Get());
-	Info->SetRenderScale(RenderScale);
-	Info->SetZOrder(ZOrder);
+	CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Image);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, RenderScale);
+	CS_COPY_TO_PROXY_AS_VALUE(Info, ZOrder);
 }
 
 #undef InfoType

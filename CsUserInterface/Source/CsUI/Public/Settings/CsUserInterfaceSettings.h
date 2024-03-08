@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -12,7 +12,6 @@
 	// Menu
 #include "Managers/Menu/CsTypes_Menu.h"
 #include "Managers/Menu/CsSettings_Manager_Menu.h"
-#include "Managers/Fade/CsSettings_Manager_Fade.h"
 
 #include "CsUserInterfaceSettings.generated.h"
 
@@ -172,13 +171,4 @@ public:
 	FCsSettings_Manager_Menu Manager_Menu;
 
 #pragma endregion Menu
-
-// Fade
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	FCsSettings_Manager_Fade Manager_Fade;
-
-#pragma endregion Fade
 };

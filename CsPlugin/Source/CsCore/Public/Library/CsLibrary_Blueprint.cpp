@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Library/CsLibrary_Blueprint.h"
@@ -31,7 +31,7 @@ namespace NCsBlueprint
 
 	#define USING_NS_CACHED using namespace NCsBlueprint::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsBlueprint::NLibrary::NCached; \
-		const FString& Context = Str::##__FunctionName
+		const FString& Context = Str::__FunctionName
 	#define NO_LOG void(*Log)(const FString&) = nullptr;
 	#define ObjectLibrary NCsObject::FLibrary
 	#define WorldLibrary NCsWorld::FLibrary

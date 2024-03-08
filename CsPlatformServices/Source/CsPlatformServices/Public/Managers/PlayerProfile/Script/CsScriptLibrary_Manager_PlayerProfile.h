@@ -1,19 +1,12 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Object.h"
 // Types
 #include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
 
 #include "CsScriptLibrary_Manager_PlayerProfile.generated.h"
-
-// Delegates
-#pragma region
-
-#pragma endregion Delegates
-
 
 UCLASS()
 class CSPLATFORMSERVICES_API UCsScriptLibrary_Manager_PlayerProfile : public UObject
@@ -29,7 +22,8 @@ public:
 	* @param Context				The calling context.
 	* @param WorldContextObject		Object that contains a reference to a World (GetWorld() is Valid).
 	* @param ProfileType			Profile to set as the active profile.
+	* return
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Player Profile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "ProfileType"))
-	static void SetCurrentActiveProfile(const FString& Context, UObject* WorldContextObject, const ECsPlayerProfile& ProfileType);
+	UFUNCTION(BlueprintCallable, Category = "CsPlatformServices|Library|Manager|Player Profile", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "ProfileType"))
+	static bool SetCurrentActiveProfile(const FString& Context, UObject* WorldContextObject, const ECsPlayerProfile& ProfileType);
 };

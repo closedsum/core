@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Types/Enum/Tool/CsGetEnumStructTool.h"
@@ -38,7 +38,7 @@ namespace NCsEnum
 
 			#define USING_NS_CACHED using namespace NCsEnum::NStruct::NTool::NImpl::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsEnum::NStruct::NTool::NImpl::NCached; \
-				const FString& Context = Str::##__FunctionName
+				const FString& Context = Str::__FunctionName
 
 			void FImpl::Init(UObject* InOuter)
 			{
@@ -74,12 +74,17 @@ namespace NCsEnum
 
 					ICsGetAssetTool* GetAssetTool = CS_INTERFACE_CAST_CHECKED(Outer, UObject, ICsGetAssetTool);
 
-					const TArray<UObject*>& OpenedAssets = GetAssetTool->GetAssetTool()->GetOpenedAssetsImpl();
+					const TArray<TWeakObjectPtr<UObject>>& OpenedAssets = GetAssetTool->GetAssetTool()->GetOpenedAssetsImpl();
 
 					bool Found = false;
 
-					for (UObject* Asset : OpenedAssets)
+					for (const TWeakObjectPtr<UObject>& O : OpenedAssets)
 					{
+						UObject* Asset = O.IsValid() ? O.Get() : nullptr;
+
+						if (!IsValid(Asset))
+							continue;
+
 						TSoftObjectPtr<UObject> SoftObjectPtr(Asset);
 
 						const FSoftObjectPath& Path = SoftObjectPtr.ToSoftObjectPath();

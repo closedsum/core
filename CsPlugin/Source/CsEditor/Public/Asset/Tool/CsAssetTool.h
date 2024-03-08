@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -11,7 +11,7 @@ namespace NCsAsset
 	{
 	public:
 
-		static const TArray<UObject*>& GetOpenedAssets();
+		static const TArray<TWeakObjectPtr<UObject>>& GetOpenedAssets();
 
 		static bool IsAssetOpened(UObject* Asset);
 	};

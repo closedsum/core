@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -35,9 +35,9 @@ namespace NCsPlayer
 				*						A reference to the GameInstance.
 				* return				Context for UCsManager_PlayerProfile.
 				*/
-				static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject);
+				static UObject* GetContextRootChecked(const FString& Context, const UObject* ContextObject);
 			#else
-				FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject)
+				FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 				{
 					return nullptr;
 				}
@@ -51,12 +51,12 @@ namespace NCsPlayer
 				* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 				*						or
 				*						A reference to the GameInstance.
-				* @param Log
+				* @param Log			(optional)
 				* return				Context for UCsManager_PlayerProfile.
 				*/
-				static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsPlatformServicesLog::Warning);
+				static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &NCsPlatformServices::FLog::Warning);
 			#else
-				FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsPlatformServicesLog::Warning)
+				FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &NCsPlatformServices::FLog::Warning)
 				{
 					return nullptr;
 				}
@@ -71,9 +71,9 @@ namespace NCsPlayer
 				*						A reference to the GameInstance.
 				* return				Context for UCsManager_PlayerProfile.
 				*/
-				static UObject* GetSafeContextRoot(UObject* ContextObject);
+				static UObject* GetSafeContextRoot(const UObject* ContextObject);
 			#else
-				FORCEINLINE static UObject* GetSafeContextRoot(UObject* ContextObject)
+				FORCEINLINE static UObject* GetSafeContextRoot(const UObject* ContextObject)
 				{
 					return nullptr;
 				}
@@ -94,7 +94,7 @@ namespace NCsPlayer
 				*						A reference to the GameInstance.
 				* return				UCsManager_PlayerProfile.
 				*/
-				static UCsManager_PlayerProfile* GetChecked(const FString& Context, UObject* ContextObject);
+				static UCsManager_PlayerProfile* GetChecked(const FString& Context, const UObject* ContextObject);
 
 				/**
 				* Safely get the reference to UCsManager_PlayerProfile from a ContextObject.
@@ -103,10 +103,10 @@ namespace NCsPlayer
 				* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 				*						or
 				*						A reference to the GameInstance.
-				* @param Log
+				* @param Log			(optional)
 				* return				UCsManager_PlayerProfile.
 				*/
-				static UCsManager_PlayerProfile* GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsPlatformServicesLog::Warning);
+				static UCsManager_PlayerProfile* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &NCsPlatformServices::FLog::Warning);
 
 			#pragma endregion Get
 
@@ -122,7 +122,7 @@ namespace NCsPlayer
 				*						A reference to the GameInstance.
 				* @param ProfileType	Profile to set as the active profile.
 				*/
-				static void SetCurrentActiveProfileChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& ProfileType);
+				static void SetCurrentActiveProfileChecked(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& ProfileType);
 
 				/**
 				* Safely set current active profile.
@@ -133,8 +133,10 @@ namespace NCsPlayer
 				*						or
 				*						A reference to the GameInstance.
 				* @param ProfileType	Profile to set as the active profile.
+				* @param Log			(optional)
+				* return
 				*/
-				static void SetSafeCurrentActiveProfile(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& ProfileType, void(*Log)(const FString&) = &FCsPlatformServicesLog::Warning);
+				static bool SetSafeCurrentActiveProfile(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& ProfileType, void(*Log)(const FString&) = &NCsPlatformServices::FLog::Warning);
 			};
 		}
 	}

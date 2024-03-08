@@ -41,7 +41,7 @@ UCsScriptLibrary_BehaviorTree_Task::UCsScriptLibrary_BehaviorTree_Task(const FOb
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryBehaviorTreeTask::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryBehaviorTreeTask::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define SET_LOG_WARNING void(*Log)(const FString&) = &NCsAI::FLog::Warning;
 
 UAITask_MoveTo* UCsScriptLibrary_BehaviorTree_Task::New_MoveTo(const FString& Context, UBTNode* Task, UBehaviorTreeComponent* OwnerComp)
@@ -76,8 +76,8 @@ bool UCsScriptLibrary_BehaviorTree_Task::FinishLatentTask(const FString& Context
 	CONDITIONAL_SET_CTXT(FinishLatentTask);
 	SET_LOG_WARNING
 
-	CS_IS_PTR_NULL_RET_NULL2(Task)
-	CS_IS_PTR_NULL_RET_NULL2(OwnerComp)
+	CS_IS_PTR_NULL(Task)
+	CS_IS_PTR_NULL(OwnerComp)
 
 	Task->FinishLatentTask(*OwnerComp, TaskResult);
 	return true;

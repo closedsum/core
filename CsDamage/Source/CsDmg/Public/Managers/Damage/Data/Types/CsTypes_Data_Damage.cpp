@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
@@ -97,7 +97,7 @@ namespace NCsDataDamagePtr
 
 #define USING_NS_CACHED using namespace NCsDataDamagePtr::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsDataDamagePtr::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 
 UObject* FCsData_DamagePtr::SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 {

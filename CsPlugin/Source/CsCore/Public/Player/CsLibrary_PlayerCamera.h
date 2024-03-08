@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -9,6 +9,7 @@
 class APlayerCameraManager;
 class AActor;
 class APawn;
+class APlayerController;
 
 namespace NCsPlayer
 {
@@ -52,6 +53,25 @@ namespace NCsPlayer
 				OutSuccess				  = PCM != nullptr;
 				return PCM;
 			}
+
+			/**
+			* Get the PlayerCameraManager associated with Player Controller.
+			* 
+			* @param Context			The calling context.
+			* @param PlayerController	
+			* return					PlayerCameraManager
+			*/
+			static APlayerCameraManager* GetChecked(const FString& Context, APlayerController* PlayerController);
+
+			/**
+			* Safely get the PlayerCameraManager associated with Player Controller.
+			* 
+			* @param Context			The calling context.
+			* @param PlayerController	
+			* @param Log				(optional)
+			* return					PlayerCameraManager
+			*/
+			static APlayerCameraManager* GetSafe(const FString& Context, APlayerController* PlayerController, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Get the PlayerCameraManager associated with Pawn.
@@ -140,6 +160,15 @@ namespace NCsPlayer
 
 			static bool SetSafeViewTarget(const FString& Context, const UObject* WorldContext, const int32& ControllerId, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams = FViewTargetTransitionParams(), void(*Log)(const FString&) = &FCsLog::Warning);
 
+			static void SetViewTargetChecked(const FString& Context, APlayerController* PlayerController, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams = FViewTargetTransitionParams());
+
+			static bool SetSafeViewTarget(const FString& Context, APlayerController* PlayerController, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SetSafeViewTarget(const FString& Context, APlayerController* PlayerController, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SetSafeViewTarget(Context, PlayerController, NewViewTarget, TransitionParams, Log);
+				return OutSuccess;
+			}
+
 			static void SetViewTargetChecked(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams = FViewTargetTransitionParams());
 
 			static bool SetSafeViewTarget(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -161,6 +190,8 @@ namespace NCsPlayer
 			static AActor* GetViewTargetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 
 			static AActor* GetSafeViewTarget(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static AActor* GetViewTargetChecked(const FString& Context, APlayerController* PlayerController);
 
 			static AActor* GetViewTargetChecked(const FString& Context, const APawn* Pawn);
 
@@ -283,15 +314,37 @@ namespace NCsPlayer
 			{
 				struct CSCORE_API FLibrary
 				{
+				public:
+
 					/**
-					* Set the View Target on the Player Camera Manager of the FIRST LOCAL Player Controller associated with Pawn to Pawn.
+					* Safely get the Player Camera Manager of the FIRST LOCAL Player Controller.
+					* 
+					* @param Context		The calling context.
+					* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+					* @param Log			(optional)
+					* return				Player Camera Manager
+					*/
+					static APlayerCameraManager* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+					/**
+					* Safely get the View Target on the Player Camera Manager of the FIRST LOCAL Player Controller.
+					* 
+					* @param Context		The calling context.
+					* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+					* @param Log			(optional)
+					* return				View Target
+					*/
+					static AActor* GetSafeViewTarget(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+					/**
+					* Set the View Target on the Player Camera Manager of the FIRST LOCAL Player Controller to Pawn.
 					*  NOTE: Pawn MUST have a Controller of type: APlayerController.
 					* 
 					* @param Context		The calling context.
-					* @param WorldContext
+					* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 					* @param Pawn
 					*/
-					static void SetViewTargetChecked(const FString& Context, const UObject* WorldContext, APawn* Pawn);
+					static void SetViewTargetChecked(const FString& Context, const UObject* WorldContext, AActor* ViewTarget);
 				};
 			}
 		}

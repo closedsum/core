@@ -66,9 +66,9 @@
 #include "Payload/Target/CsPayload_Projectile_TargetImplSlice.h"
 #include "CsProjectilePooledImpl.h"
 // Modifier
-#include "Modifier/CsModifier_Int.h"
-#include "Modifier/CsModifier_Float.h"
-#include "Modifier/CsModifier_Toggle.h"
+#include "CsModifier_Int.h"
+#include "CsModifier_Float.h"
+#include "CsModifier_Toggle.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // FX

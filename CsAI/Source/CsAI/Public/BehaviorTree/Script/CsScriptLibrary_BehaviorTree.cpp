@@ -46,7 +46,7 @@ UCsScriptLibrary_BehaviorTree::UCsScriptLibrary_BehaviorTree(const FObjectInitia
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryBehaviorTree::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryBehaviorTree::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define SET_LOG_WARNING void(*Log)(const FString&) = &NCsAI::FLog::Warning;
 #define BehaviorTreeLibrary NCsBehaviorTree::FLibrary
 

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -21,8 +21,10 @@
 // Time
 #include "Managers/Time/CsSettings_Manager_Time.h"
 // Input
+#include "Managers/Input/CsTypes_InputSystem.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Input/CsSettings_Input.h"
+#include "Managers/Input/Enhanced/CsSettings_Input_Enhanced.h"
 #include "Managers/Input/CsSettings_Manager_Input.h"
 // Game Event
 #include "Coordinators/GameEvent/CsSettings_Coordinator_GameEvent.h"
@@ -168,12 +170,15 @@ public:
 #pragma region
 public:
 
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input")
+	ECsInputSystem InputSystem;
+
 	// InputActionMap
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsInputActionMap", MultiLine = true))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsInputActionMap", EditCondition = "InputSystem==ECsInputSystem::Default", MultiLine = true))
 	FString ECsInputActionMap;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsInputActionMap: Internal", TitleProperty = "Name"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsInputActionMap: Internal", EditCondition = "InputSystem==ECsInputSystem::Default", TitleProperty = "Name"))
 	TArray<FCsSettings_Enum> ECsInputActionMap_Internal;
 
 	template<>
@@ -183,10 +188,10 @@ public:
 
 	// Game Event
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsGameEvent", MultiLine = true))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsGameEvent", EditCondition = "InputSystem==ECsInputSystem::Default", MultiLine = true))
 	FString ECsGameEvent;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsGameEvent: Internal", TitleProperty = "Name"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "ECsGameEvent: Internal", EditCondition = "InputSystem==ECsInputSystem::Default", TitleProperty = "Name"))
 	TArray<FCsSettings_Enum> ECsGameEvent_Internal;
 
 	template<>
@@ -194,8 +199,11 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsGameEvent>() const { return NCsDeveloperSettings::NCached::Str::GameEvent; }
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input")
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (EditCondition = "InputSystem==ECsInputSystem::Default", EditConditionHides))
 	FCsSettings_Input Input;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (EditCondition = "InputSystem==ECsInputSystem::Enhanced", EditConditionHides))
+	FCsSettings_Input_Enhanced EnhancedInput;
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input", meta = (DisplayName = "Manager Input"))
 	FCsSettings_Manager_Input Manager_Input;

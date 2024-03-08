@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsSettings_EnumStruct.h"
@@ -26,7 +26,7 @@ namespace NCsSettingsEnumStructPopulateByDataTable
 
 #define USING_NS_CACHED using namespace NCsSettingsEnumStructPopulateByDataTable::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsSettingsEnumStructPopulateByDataTable::NCached; \
-	const FString& Context = Str::##__FunctionName
+	const FString& Context = Str::__FunctionName
 
 void FCsSettings_EnumStruct_PopulateByDataTable::OnDataTableChanged(const UDataTable* InDataTable, const FName& InRowName, FString& OutName, FString& OutDisplayName, const FString& AssetName) const
 {

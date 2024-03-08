@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -184,6 +184,16 @@ namespace NCsUserWidget
 				CS_CTOR_SET_MEMBER_PROXY(AnimParams);
 			}
 
+			FORCEINLINE FInfo(FInfo& B)
+			{
+				Copy(B);
+			}
+
+			FORCEINLINE FInfo(const FInfo& B)
+			{
+				Copy(B);
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Text, FString)
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Font, UFont)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bMaterial, bool)
@@ -199,6 +209,23 @@ namespace NCsUserWidget
 			FORCEINLINE ShadowSettingsType* GetShadowSettingsPtr() { return &ShadowSettings; }
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bAnimParams, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AnimParams, AnimParamsType)
+
+			FORCEINLINE void Copy(const FInfo& B)
+			{
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Text);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Font);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, bMaterial);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Material);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Size);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, RenderScale);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Justification);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, ZOrder);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Color);
+				CS_COPY_CUSTOM_PROXY_TO_PROXY_PTR_AS_VALUE(B, OutlineSettings);
+				CS_COPY_CUSTOM_PROXY_TO_PROXY_PTR_AS_VALUE(B, ShadowSettings);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, bAnimParams);
+				CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, AnimParams);
+			}
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, Inc. All rights reserved.
+// Copyright 2017-2024 Closed Sum Games, Inc. All rights reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Playback/CsConsoleCommand_Manager_Playback.h"

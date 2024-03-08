@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "CsProjectilePooledImpl.h"
 #include "CsPrj.h"
 
@@ -70,8 +70,8 @@
 #include "Payload/Damage/CsPayload_Projectile_Damage.h"
 // Modifier
 #include "Modifier/Types/CsGetProjectileModifierType.h"
-#include "Modifier/CsModifier_Int.h"
-#include "Modifier/CsModifier_Float.h"
+#include "CsModifier_Int.h"
+#include "CsModifier_Float.h"
 // FX
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 // Sound

@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Data/Script/CsScriptLibrary_Manager_Data.h"
@@ -47,7 +47,7 @@ UCsScriptLibrary_Manager_Data::UCsScriptLibrary_Manager_Data(const FObjectInitia
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryManagerData::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerData::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define DataManagerLibrary NCsData::NManager::FLibrary
 
 // Get

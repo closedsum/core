@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Achievement/CsManager_Achievement.h"
@@ -32,39 +32,61 @@ namespace NCsManagerAchievement
 	{
 		namespace Str
 		{
+			// Singleton
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Init);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Initialize);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Start);
+			// Query
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, QueryIds);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, QueryIds_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, QueryDescriptions);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, QueryDescriptions_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, CheckAndQueueQuery);
+			// Descriptions
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, UpdateDescriptions);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, UpdateDescriptions_Internal);
+			// Settings
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, UpdateBySettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, UpdateByDataTable);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, UpdateOrAddEntry);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, GetEntry);
+			// Create
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Create);
+			// Modify
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, ModifyAchievement);
+			// Remove
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Remove);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, RemoveAll);
+			// Write
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Write);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Write_Internal);
+			// Complete
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Complete);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Complete_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, SafeComplete);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, IsCompleted);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, IsSafeCompleted);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, CompleteAll);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, CompleteAll_Internal);
+			// Reset
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Reset);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, SafeReset);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Reset_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, ResetAll);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, ResetAll_Internal);
+			// Progress
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, SetProgress);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, SetSafeProgress);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, GetProgress);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, GetSafeProgress);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, GetProgressAsPercent);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, GetSafeProgressAsPercent);
+			// Count
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, Increment);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, SafeIncrement);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, SetCount);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, SetSafeCount);
+			// Bitfield
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, SetBit);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Achievement, SetSafeBit);
 		}
@@ -100,6 +122,13 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 	QueryOrder = QueryOrderType::IdsFirst;
 }
 
+#define USING_NS_CACHED using namespace NCsManagerAchievement::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsManagerAchievement::NCached; \
+	const FString& Context = Str::__FunctionName
+#define QueryOrderType NCsAchievement::NQuery::EOrder
+#define ProgressMapType NCsAchievement::EMProgress
+#define ProgressType NCsAchievement::EProgress
+
 // Singleton
 #pragma region
 
@@ -115,16 +144,15 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 	return s_Instance != nullptr;
 }
 
-/*static*/ void UCsManager_Achievement::Init(UObject* InRoot, UClass* ManagerAchievementClass)
+/*static*/ void UCsManager_Achievement::Init(UObject* InRoot, TSubclassOf<UCsManager_Achievement> ManagerAchievementClass, UObject* InOuter /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerAchievement* GetManagerAchievement = Get_GetManagerAchievement(InRoot);
-
-	UCsManager_Achievement* Manager_Achievement = GetManagerAchievement->GetManager_Achievement();
+	UCsManager_Achievement* Manager_Achievement		= GetManagerAchievement->GetManager_Achievement();
 
 	if (!Manager_Achievement)
 	{
-		Manager_Achievement = NewObject<UCsManager_Achievement>(InRoot, ManagerAchievementClass, TEXT("Manager_Achievement_Singleton"), RF_Transient | RF_Public);
+		Manager_Achievement = NewObject<UCsManager_Achievement>(InOuter ? InOuter : InRoot, ManagerAchievementClass, TEXT("Manager_Achievement_Singleton"), RF_Transient | RF_Public);
 
 		GetManagerAchievement->SetManager_Achievement(Manager_Achievement);
 
@@ -142,6 +170,15 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 		s_Instance->Initialize();
 	}
 #endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Achievement::Init(UObject* InRoot, UObject* InOuter /*=nullptr*/)
+{
+	SET_CONTEXT(Init);
+
+	const FCsSettings_Manager_Achievement& Settings = FCsSettings_Manager_Achievement::Get();
+
+	Init(InRoot, Settings.LoadClassChecked(Context), InOuter);
 }
 
 /*static*/ void UCsManager_Achievement::Shutdown(const UObject* InRoot /*=nullptr*/)
@@ -222,17 +259,13 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 
 void UCsManager_Achievement::Initialize()
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::Initialize;
+	SET_CONTEXT(Initialize);
 
 	NCsAchievement::PopulateEnumMapFromSettings(Context);
 
 	const int32& Count = EMCsAchievement::Get().Num();
 
 	Achievements.Reserve(Count);
-
-	typedef NCsAchievement::EProgress ProgressType;
 
 	for (const FECsAchievement& Enum : EMCsAchievement::Get())
 	{
@@ -295,9 +328,7 @@ void UCsManager_Achievement::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Achievement::Start()
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::Start;
+	SET_CONTEXT(Start);
 
 	if (!IsEnabled(Context))
 		return;
@@ -312,8 +343,6 @@ void UCsManager_Achievement::Start()
 		{
 			A->SetInvalid();
 		}
-
-		typedef NCsAchievement::NQuery::EOrder QueryOrderType;
 
 		// Ids First
 		if (QueryOrder == QueryOrderType::IdsFirst)
@@ -720,11 +749,11 @@ void UCsManager_Achievement::QueueActionAfterHead(const ActionType& Action)
 // Query
 #pragma region
 
+#define ActionType NCsAchievement::EAction
+
 void UCsManager_Achievement::QueryIds()
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::QueryIds;
+	SET_CONTEXT(QueryIds);
 
 	if (!IsEnabled(Context))
 		return;
@@ -735,17 +764,15 @@ void UCsManager_Achievement::QueryIds()
 	{
 		const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::QueryIds: Queueing Query Ids for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Query Ids for Player: %s at %s."), *Context, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		QueryState.Ids.Reset();
 		QueryState.Ids.Queue();
-
-		typedef NCsAchievement::EAction ActionType;
 
 		QueueAction(ActionType::QueryIds);
 	}
@@ -758,18 +785,20 @@ void UCsManager_Achievement::QueryIds()
 
 void UCsManager_Achievement::QueryIds_Internal()
 {
+	SET_CONTEXT(QueryIds_Internal);
+
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
 	if (IAchievements.IsValid())
 	{
 		TSharedPtr<const FUniqueNetId> UserId = GetLocalPlayerId();
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::QueryIds_Internal: Start Querying Achievements Ids for Player: %s at %s."), *(UserId->ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Start Querying Achievements Ids for Player: %s at %s."), *Context, *(UserId->ToString()), *(FDateTime::Now().ToString()));
 		}
-#endif // !UE_BUILD_SHIPPING
+	#endif // !UE_BUILD_SHIPPING
 
 		QueryState.Ids.Reset();
 		QueryState.Ids.StartProcessing();
@@ -790,9 +819,7 @@ void UCsManager_Achievement::QueryAchievementIds(const FUniqueNetId& PlayerId, c
 
 void UCsManager_Achievement::QueryDescriptions()
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::QueryDescriptions;
+	SET_CONTEXT(QueryDescriptions);
 
 	if (!IsEnabled(Context))
 		return;
@@ -803,17 +830,15 @@ void UCsManager_Achievement::QueryDescriptions()
 	{
 		const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::QueryDescriptions: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Query Descriptions for Player: %s at %s."), *Context, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		QueryState.Descriptions.Reset();
 		QueryState.Descriptions.Queue();
-
-		typedef NCsAchievement::EAction ActionType;
 
 		QueueAction(ActionType::QueryDescriptions);
 	}
@@ -826,18 +851,20 @@ void UCsManager_Achievement::QueryDescriptions()
 
 void UCsManager_Achievement::QueryDescriptions_Internal()
 {
+	SET_CONTEXT(QueryDescriptions_Internal);
+
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
 	if (IAchievements.IsValid())
 	{
 		TSharedPtr<const FUniqueNetId> UserId = GetLocalPlayerId();
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::QueryAchievementDescriptions: Start Querying Achievement Descriptions for Player: %s at %s."), *(UserId->ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Start Querying Achievement Descriptions for Player: %s at %s."), *Context, *(UserId->ToString()), *(FDateTime::Now().ToString()));
 		}
-#endif // !UE_BUILD_SHIPPING
+	#endif // !UE_BUILD_SHIPPING
 
 		QueryState.Descriptions.Reset();
 		QueryState.Descriptions.StartProcessing();
@@ -858,14 +885,10 @@ void UCsManager_Achievement::QueryAchievementDescriptions(const FUniqueNetId& Pl
 
 bool UCsManager_Achievement::CheckAndQueueQuery()
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::CheckAndQueueQuery;
+	SET_CONTEXT(CheckAndQueueQuery);
 
 	if (!IsEnabled(Context))
 		return false;
-
-	typedef NCsAchievement::EAction ActionType;
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
@@ -877,7 +900,7 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 		if (QueryState.IsComplete() &&
 			!QueryState.IsSuccessful())
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Query Ids and/or Query Descriptions Failed for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Query Ids and/or Query Descriptions Failed for Player: %s at %s."), *Context, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			return false;
 		}
 
@@ -886,12 +909,12 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 			!QueryState.Ids.IsQueued() &&
 			!QueryState.Ids.IsProcessing())
 		{
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Queueing Query Ids for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Query Ids for Player: %s at %s."), *Context, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 
 			QueryState.Ids.Queue();
 			QueueAction(ActionType::QueryIds);
@@ -904,12 +927,12 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 			!QueryState.Ids.IsQueued() &&
 			!QueryState.Ids.IsProcessing())
 		{
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Queueing Query Descriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Query Descriptions for Player: %s at %s."), *Context, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 
 			QueryState.Descriptions.Queue();
 			QueueAction(ActionType::QueryDescriptions);
@@ -918,12 +941,12 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 		// Update Descriptions if Query Description has been Queued
 		if (DescriptionsQueued)
 		{
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CheckAndQueueQuery: Queueing Update Descriptions for Player: %s - %s."), *GetLocalPlayerNickname(), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Update Descriptions for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 			QueueAction(ActionType::UpdateDescriptions);
 		}
 	}
@@ -935,10 +958,15 @@ bool UCsManager_Achievement::CheckAndQueueQuery()
 	return true;
 }
 
+#undef ActionType
+
 #pragma endregion Query
 
 // Descriptions
 #pragma region
+
+#define ActionType NCsAchievement::EAction
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 
 void UCsManager_Achievement::UpdateInfoAndDescription(ICsAchievement* Achievement, const FOnlineAchievement* Info, const FOnlineAchievementDesc* Description)
 {
@@ -955,9 +983,7 @@ void UCsManager_Achievement::UpdateInfoAndDescription(ICsAchievement* Achievemen
 
 void UCsManager_Achievement::UpdateDescriptions()
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::UpdateDescriptions;
+	SET_CONTEXT(UpdateDescriptions);
 
 	if (!IsEnabled(Context))
 		return;
@@ -970,19 +996,17 @@ void UCsManager_Achievement::UpdateDescriptions()
 
 		if (!CheckAndQueueQuery())
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions: Query Ids and/or Query Descriptions Failed. Aborting UpdateDescriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Query Ids and/or Query Descriptions Failed. Aborting UpdateDescriptions for Player: %s at %s."), *Context, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 			return;
 		}
 
 		// Queue UpdateDescriptions
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions: Queueing UpdateDescriptions for Player: %s at %s."), *(UserId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing UpdateDescriptions for Player: %s at %s."), *Context, *(UserId.ToString()), *(FDateTime::Now().ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
-
-		typedef NCsAchievement::EAction ActionType;
+	#endif // #if !UE_BUILD_SHIPPING
 
 		QueueAction(ActionType::UpdateDescriptions);
 	}
@@ -1007,10 +1031,9 @@ void UCsManager_Achievement::Reset_Local_OnlineAchievementDesc()
 	Local_OnlineAchievementDesc->UnlockTime = FDateTime::Now();
 }
 
-#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::UpdateDescriptions_Internal(ActionInfoType* ActionInfo)
 {
-#undef ActionInfoType
+	SET_CONTEXT(UpdateDescriptions_Internal);
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
 	// Online
@@ -1022,15 +1045,15 @@ void UCsManager_Achievement::UpdateDescriptions_Internal(ActionInfoType* ActionI
 
 		EOnlineCachedResult::Type Result = IAchievements->GetCachedAchievements(PlayerId, Local_OutAchievements);
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (Result == EOnlineCachedResult::NotFound)
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: No Achievements found for Player: %s at %s."), *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: No Achievements found for Player: %s at %s."), *Context, *(PlayerId.ToString()), *(FDateTime::Now().ToString()));
 			
 			ActionInfo->Complete();
 			return;
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		for (FOnlineAchievement& OnlineAchievement : Local_OutAchievements)
 		{
@@ -1044,7 +1067,7 @@ void UCsManager_Achievement::UpdateDescriptions_Internal(ActionInfoType* ActionI
 			
 			if (Result == EOnlineCachedResult::NotFound)
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: Failed to find a description for Achievement: %s at %s."), *Id, *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Failed to find a description for Achievement: %s at %s."), *Context, *Id, *(FDateTime::Now().ToString()));
 				continue;
 			}
 
@@ -1053,11 +1076,11 @@ void UCsManager_Achievement::UpdateDescriptions_Internal(ActionInfoType* ActionI
 
 			if (!AchievementPtr)
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: Failed to find internally Achievement with Id: %s at %s."), *Id, *(FDateTime::Now().ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Failed to find internally Achievement with Id: %s at %s."), *Context, *Id, *(FDateTime::Now().ToString()));
 				
 				FECsAchievement Enum = EMCsAchievement::Get().Create(Id);
 
-				checkf(Enum.GetValue() == Achievements.Num(), TEXT("UCsManager_Achievement::UpdateDescriptions_Internal: Achievement: %s Value: %d does NOT match array position in Achievements."), *(Enum.GetName()), Enum.GetValue());
+				checkf(Enum.GetValue() == Achievements.Num(), TEXT("%s: Achievement: %s Value: %d does NOT match array position in Achievements."), *Context, *(Enum.GetName()), Enum.GetValue());
 
 				Achievements.Add(ConstructAchievement());
 				Achievement = Achievements.Last();
@@ -1074,12 +1097,12 @@ void UCsManager_Achievement::UpdateDescriptions_Internal(ActionInfoType* ActionI
 			UpdateInfoAndDescription(Achievement, &OnlineAchievement, Desc);
 			UpdateOrAddEntry(Achievement);
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
 				PrintDescription(Achievement);
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 
 			ActionInfo->Complete();
 		}
@@ -1106,9 +1129,6 @@ void UCsManager_Achievement::PrintDescription(ICsAchievement* Achievement)
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - IsHIdden: %s."), *(Achievement->IsHidden() ? NCsCached::Str::True : NCsCached::Str::False));
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - Unlock Time: %s."), *(Achievement->GetUnlockTime().ToString()));
 
-	typedef NCsAchievement::EMProgress ProgressMapType;
-	typedef NCsAchievement::EProgress ProgressType;
-
 	const ProgressType& Type = Achievement->GetProgressType();
 
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - ProgressType: %s."), ProgressMapType::Get().ToChar(Type));
@@ -1126,6 +1146,9 @@ void UCsManager_Achievement::PrintDescription(ICsAchievement* Achievement)
 	}
 }
 
+#undef ActionType
+#undef ActionInfoType
+
 #pragma endregion Descriptions
 
 // Settings
@@ -1133,9 +1156,7 @@ void UCsManager_Achievement::PrintDescription(ICsAchievement* Achievement)
 
 void UCsManager_Achievement::UpdateBySettings()
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::UpdateBySettings;
+	SET_CONTEXT(UpdateBySettings);
 
 	if (!IsEnabled(Context))
 		return;
@@ -1162,14 +1183,12 @@ void UCsManager_Achievement::UpdateBySettings()
 
 void UCsManager_Achievement::UpdateByDataTable(UDataTable* DataTable)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::UpdateByDataTable;
+	SET_CONTEXT(UpdateByDataTable);
 
 	if (!IsEnabled(Context))
 		return;
 
-	checkf(DataTable, TEXT("%s: DataTable is NULL."), *Context);
+	CS_IS_PENDING_KILL_CHECKED(DataTable)
 
 	checkf(DataTable->GetRowStruct() == FCsAchievementEntry::StaticStruct(), TEXT("%s: DataTable: %s RowStruct: %s != FCsAchievementEntry."), *Context, *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
 
@@ -1274,9 +1293,7 @@ void UCsManager_Achievement::UpdateByDataTable(UDataTable* DataTable)
 
 void UCsManager_Achievement::UpdateOrAddEntry(ICsAchievement* Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::UpdateOrAddEntry;
+	SET_CONTEXT(UpdateOrAddEntry);
 
 	const FECsAchievement& Type	  = Achievement->GetType();
 	FCsAchievementEntry* EntryPtr = AchievementEntryMap.Find(Type.GetName());
@@ -1295,7 +1312,7 @@ void UCsManager_Achievement::UpdateOrAddEntry(ICsAchievement* Achievement)
 	Entry.Name			= Type.GetName();
 	Entry.DisplayName	= Type.GetDisplayName();
 	Entry.bValid		= Achievement->IsValid();
-	Entry.ProgressType	= (ECsAchievementProgress)Achievement->GetProgressType();
+	Entry.SetProgressType((ECsAchievementProgress)Achievement->GetProgressType());
 	Entry.Count			= Achievement->GetCount();
 	Entry.BitfieldLength = Achievement->GetBitfieldLength();
 
@@ -1321,18 +1338,16 @@ void UCsManager_Achievement::UpdateFromEntry(ICsAchievement* Achievement)
 	else
 		Achievement->SetInvalid();
 
-	typedef NCsAchievement::EProgress ProgressType;
-
-	SetProgressType(Achievement, (ProgressType)Entry.ProgressType);
+	SetProgressType(Achievement, (ProgressType)Entry.GetProgressType());
 	
 	// Count
-	if (Entry.ProgressType == ECsAchievementProgress::Count)
+	if (Entry.GetProgressType() == ECsAchievementProgress::Count)
 	{
 		SetCount(Achievement, Entry.Count);
 	}
 	// Bitfield
 	else
-	if (Entry.ProgressType == ECsAchievementProgress::Bitfield)
+	if (Entry.GetProgressType() == ECsAchievementProgress::Bitfield)
 	{
 		typedef NCsString::FLibrary StringLibrary;
 
@@ -1346,11 +1361,9 @@ void UCsManager_Achievement::UpdateFromEntry(ICsAchievement* Achievement)
 
 const FCsAchievementEntry& UCsManager_Achievement::GetEntry(const FECsAchievement& Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::GetEntry;
-
-	checkf(EMCsAchievement::Get().IsValidEnum(Achievement), TEXT("%s: Achievement: %s is NOT Valid."), *Context, Achievement.ToChar());
+	SET_CONTEXT(GetEntry);
+	
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsAchievement, Achievement)
 
 	checkf(Achievement.GetValue() < AchievementEntries.Num(), TEXT("%s: No Entry has been created for Achievement: %s."), *Context, Achievement.ToChar());
 
@@ -1369,9 +1382,7 @@ bool UCsManager_Achievement::HasEntry(const FString& Name)
 
 void UCsManager_Achievement::Create(const FCsAchievementEntry& Entry)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::Create;
+	SET_CONTEXT(Create);
 
 	if (!IsEnabled(Context))
 		return;
@@ -1401,9 +1412,9 @@ void UCsManager_Achievement::Create(const FCsAchievementEntry& Entry)
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement (DisplayName): %s already exists."), *Context, *(Entry.DisplayName));
 			return;
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Create for Achievement: %s for Player: %s - %s."), *Context, *(Entry.Name), *GetLocalPlayerNickname(), *(UserId.ToString()));
@@ -1411,7 +1422,7 @@ void UCsManager_Achievement::Create(const FCsAchievementEntry& Entry)
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- DisplayName: %s."), *(Entry.DisplayName));
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- bValid: %s."), Entry.bValid ? TEXT("True") : TEXT("False"));
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- WritePolicy: %s."), EMCsAchievementWritePolicy::Get().ToChar(Entry.WritePolicy));
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("- ProgressType: %s."), EMCsAchievementProgress::Get().ToChar(Entry.ProgressType));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("- ProgressType: %s."), EMCsAchievementProgress::Get().ToChar(Entry.GetProgressType()));
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- Count: %d."), Entry.Count);
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- BitfieldLength: %d."), Entry.BitfieldLength);
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- Title: %s."), *(Entry.Title));
@@ -1419,7 +1430,7 @@ void UCsManager_Achievement::Create(const FCsAchievementEntry& Entry)
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- UnlockedDescription: %s."), *(Entry.UnlockedDescription));
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- bHidden: %s."), Entry.bHidden ? TEXT("True") : TEXT("False"));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		typedef NCsAchievement::EAction ActionType;
 
@@ -1435,11 +1446,10 @@ void UCsManager_Achievement::Create(const FCsAchievementEntry& Entry)
 #define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::Create_Internal(ActionInfoType* ActionInfo)
 {
-#undef ActionInfoType
-
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Create_Internal: This must be implemented in the derived class."));
 	ActionInfo->Complete();
 }
+#undef ActionInfoType
 
 #pragma endregion Create
 
@@ -1448,9 +1458,7 @@ void UCsManager_Achievement::Create_Internal(ActionInfoType* ActionInfo)
 
 void UCsManager_Achievement::ModifyAchievement(const FCsAchievementEntry& Entry)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::ModifyAchievement;
+	SET_CONTEXT(ModifyAchievement);
 
 	if (!IsEnabled(Context))
 		return;
@@ -1467,7 +1475,7 @@ void UCsManager_Achievement::ModifyAchievement(const FCsAchievementEntry& Entry)
 			return;
 		}
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (!EMCsAchievement::Get().IsValidEnum(FName(*(Entry.Name))))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement (Name): %s has not been added to the Enum Map: EMCsAchievement."), *Context, *(Entry.Name));
@@ -1480,13 +1488,13 @@ void UCsManager_Achievement::ModifyAchievement(const FCsAchievementEntry& Entry)
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement (DisplayName): %s has not been added to the Enum Map: EMCsAchievement."), *Context, *(Entry.DisplayName));
 			return;
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		const FECsAchievement& Achievement = EMCsAchievement::Get().GetEnum(Entry.Name);
 
 		check(IsValidChecked(Context, Achievement));
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Modify for Achievement: %s for Player: %s - %s."), *Context, *(Entry.Name), *GetLocalPlayerNickname(), *(UserId.ToString()));
@@ -1494,7 +1502,7 @@ void UCsManager_Achievement::ModifyAchievement(const FCsAchievementEntry& Entry)
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- DisplayName: %s."), *(Entry.DisplayName));
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- bValid: %s."), Entry.bValid ? TEXT("True") : TEXT("False"));
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- WritePolicy: %s."), EMCsAchievementWritePolicy::Get().ToChar(Entry.WritePolicy));
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("- ProgressType: %s."), EMCsAchievementProgress::Get().ToChar(Entry.ProgressType));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("- ProgressType: %s."), EMCsAchievementProgress::Get().ToChar(Entry.GetProgressType()));
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- Count: %d."), Entry.Count);
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- BitfieldLength: %d."), Entry.BitfieldLength);
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- Title: %s."), *(Entry.Title));
@@ -1502,7 +1510,7 @@ void UCsManager_Achievement::ModifyAchievement(const FCsAchievementEntry& Entry)
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- UnlockedDescription: %s."), *(Entry.UnlockedDescription));
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("- bHidden: %s."), Entry.bHidden ? TEXT("True") : TEXT("False"));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		typedef NCsAchievement::EAction ActionType;
 
@@ -1518,30 +1526,29 @@ void UCsManager_Achievement::ModifyAchievement(const FCsAchievementEntry& Entry)
 #define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::ModifyAchievement_Internal(ActionInfoType* ActionInfo)
 {
-#undef ActionInfoType
-
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::ModifyAchievement_Internal: This must be implemented in the derived class."));
 	ActionInfo->Complete();
 }
+#undef ActionInfoType
 
 #pragma endregion Modify
 
 // Remove
 #pragma region
 
+#define ActionType NCsAchievement::EAction
+#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
+
 void UCsManager_Achievement::Remove(const FECsAchievement& Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::Remove;
+	SET_CONTEXT(Remove);
 
 	if (!IsEnabled(Context))
 		return;
 
-	checkf(EMCsAchievement::Get().IsValidEnum(Achievement), TEXT("%s: Achievement: %s is NOT Valid."), *Context, Achievement.ToChar());
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsAchievement, Achievement)
 
 	checkf(Achievement.GetValue() < Achievements.Num(), TEXT("%s: Achievement: %s of type: ICsAchievement has not been constructed."), *Context, Achievement.ToChar());
-
 	checkf(Achievements[Achievement.GetValue()], TEXT("%s: Achievement: %s of type: ICsAchievement has not been constructed."), *Context, Achievement.ToChar());
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
@@ -1557,14 +1564,12 @@ void UCsManager_Achievement::Remove(const FECsAchievement& Achievement)
 		}
 
 		// Queue Remove
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Remove for Achievement: %s for Player: %s - %s."), *Context, Achievement.ToChar(), *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
-
-		typedef NCsAchievement::EAction ActionType;
+	#endif // #if !UE_BUILD_SHIPPING
 
 		QueueAction(ActionType::Remove, Achievement);
 	}
@@ -1575,51 +1580,43 @@ void UCsManager_Achievement::Remove(const FECsAchievement& Achievement)
 	}
 }
 
-#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::Remove_Internal(ActionInfoType* ActionInfo)
 {
-#undef ActionInfoType
-
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Remove_Internal: This must be implemented in the derived class."));
 	ActionInfo->Complete();
 }
 
 void UCsManager_Achievement::RemoveAll()
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::RemoveAll;
+	SET_CONTEXT(RemoveAll);
 
 	if (!IsEnabled(Context))
 		return;
 }
 
-#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::RemoveAll_Internal(ActionInfoType* ActionInfo)
 {
-#undef ActionInfoType
 }
 
 bool UCsManager_Achievement::IsCurrentActionRemoveOrRemoveAll()
 {
-	typedef NCsAchievement::NAction::NInfo::FInfo InfoType;
-
-	InfoType* Head = Manager_Resource.GetAllocatedResourceHead();
-
-	typedef NCsAchievement::EAction ActionType;
+	ActionInfoType* Head = Manager_Resource.GetAllocatedResourceHead();
 
 	return Head ? (Head->Action == ActionType::Remove || Head->Action == ActionType::RemoveAll) : false;
 }
+
+#undef ActionType
+#undef ActionInfoType
 
 #pragma endregion Remove
 
 // Write
 #pragma region
 
+#define ValueType NCsAchievement::FValue
+
 void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const float& Percent)
 {
-	typedef NCsAchievement::FValue ValueType;
-
 	ValueType Value;
 	Value.SetPercent(Percent);
 
@@ -1628,8 +1625,6 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const flo
 
 void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const uint64& Count)
 {
-	typedef NCsAchievement::FValue ValueType;
-
 	ValueType Value;
 	Value.SetCount(Count);
 
@@ -1638,22 +1633,20 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const uin
 
 void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const FString& Bitfield)
 {
-	typedef NCsAchievement::FValue ValueType;
-
 	ValueType Value;
 	Value.SetBitfield(Bitfield);
 
 	Write(Achievement, Value);
 }
 
+#undef ValueType
+
 #define ValueType NCsAchievement::FValue
 void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const ValueType& Value)
 {
 #undef ValueType
 
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::Write;
+	SET_CONTEXT(Write);
 
 	if (!IsEnabled(Context))
 		return;
@@ -1674,17 +1667,13 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 
 		ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
-		typedef NCsAchievement::EMProgress ProgressMapType;
-		typedef NCsAchievement::EProgress ProgressType;
-
 		const ProgressType& ProgType = IA->GetProgressType();
 
 		// Queue Write
 		typedef NCsAchievement::EValue ValueType;
+		typedef NCsAchievement::EAction ActionType;
 
 		const ValueType& ValType = Value.ValueType;
-
-		typedef NCsAchievement::EAction ActionType;
 
 		// Normalized | Standard | Binary
 		if (ProgType == ProgressType::Normalized ||
@@ -1696,12 +1685,12 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 			{
 				const float Percent = FMath::Clamp(Value.Percent, 0.0f, 1.0f);
 
-#if !UE_BUILD_SHIPPING
+			#if !UE_BUILD_SHIPPING
 				if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Reset for Achievement: %s to Percent: %f for Player: %s - %s."), *Context, Achievement.ToChar(), Percent, *GetLocalPlayerNickname(), *(UserId.ToString()));
 				}
-#endif // #if !UE_BUILD_SHIPPING
+			#endif // #if !UE_BUILD_SHIPPING
 
 				QueueAction(ActionType::Write, Achievement, Percent);
 			}
@@ -1736,12 +1725,12 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 				Count = CalculateCount(IA, Value.Count);
 			}
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
 				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Reset for Achievement: %s to Count: %d for Player: %s - %s."), Achievement.ToChar(), Count, *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 
 			QueueAction(ActionType::Write, Achievement, Count);
 		}
@@ -1795,12 +1784,12 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 
 			if (IsValidBitfield(IA, NewBitfield))
 			{
-#if !UE_BUILD_SHIPPING
+			#if !UE_BUILD_SHIPPING
 				if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Write for Achievement: %s to Bitfield: %s for Player: %s - %s."), *Context, Achievement.ToChar(), *NewBitfield, *GetLocalPlayerNickname(), *(UserId.ToString()));
 				}
-#endif // #if !UE_BUILD_SHIPPING
+			#endif // #if !UE_BUILD_SHIPPING
 
 				QueueAction(ActionType::Write, Achievement, NewBitfield);
 			}
@@ -1811,12 +1800,12 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 			}
 		}
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Query Descriptions for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		QueryState.Descriptions.Queue();
 		QueueAction(ActionType::QueryDescriptions);
@@ -1833,12 +1822,12 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
 
+	SET_CONTEXT(Write_Internal);
+
 	const FECsAchievement& Achievement = ActionInfo->Achievement;
 	ICsAchievement* IA				   = Achievements[Achievement.GetValue()];
 
 	bool HasValueChanged = false;
-
-	typedef NCsAchievement::EProgress ProgressType;
 
 	const ProgressType& ProgType = IA->GetProgressType();
 
@@ -1905,8 +1894,8 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 		{
 			const uint32& BitfieldLength = IA->GetBitfieldLength();
 
-			checkf(Bitfield.Len() == BitfieldLength, TEXT("UCsManager_Achievement::SetBit: Mismatch between Bitfield.Len() and BitfieldLength (%d != %d)."), Bitfield.Len(), BitfieldLength);
-			checkf(NewBitfield.Len() == BitfieldLength, TEXT("UCsManager_Achievement::SetBit: Mismatch between NewBitfield.Len() and BitfieldLength (%d != %d)."), NewBitfield.Len(), BitfieldLength);
+			checkf(Bitfield.Len() == BitfieldLength, TEXT("%s: Mismatch between Bitfield.Len() and BitfieldLength (%d != %d)."), *Context, Bitfield.Len(), BitfieldLength);
+			checkf(NewBitfield.Len() == BitfieldLength, TEXT("%s: Mismatch between NewBitfield.Len() and BitfieldLength (%d != %d)."), *Context, NewBitfield.Len(), BitfieldLength);
 
 			FString BitMask;
 			FString BitfieldOrBitMask;
@@ -1943,12 +1932,12 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 		// No value change
 		if (!HasValueChanged)
 		{
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write_Internal: Achievement: %s already set %s."), Achievement.ToChar(), *NoChangeSnippet);
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s already set %s."), *Context, Achievement.ToChar(), *NoChangeSnippet);
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 			ActionInfo->Complete();
 		}
 		// Try to perform Write
@@ -1961,7 +1950,7 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 			{
 				if (!IA->IsValid())
 				{
-					UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write_Internal: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), Achievement.ToChar());
+					UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *Context, Achievement.ToChar());
 
 					ActionInfo->Complete();
 				}
@@ -1994,30 +1983,30 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 
 					FOnlineAchievementsWriteRef WriteObjectRef = WriteObject.ToSharedRef();
 
-#if !UE_BUILD_SHIPPING
+				#if !UE_BUILD_SHIPPING
 					if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 					{
-						UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write_Internal: Starting Update Achievement: %s %s."), Achievement.ToChar(), *ChangeSnippet);
+						UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Starting Update Achievement: %s %s."), *Context, Achievement.ToChar(), *ChangeSnippet);
 					}
-#endif // #if !UE_BUILD_SHIPPING
+				#endif // #if !UE_BUILD_SHIPPING
 
 					IAchievements->WriteAchievements(UserId, WriteObjectRef, FOnAchievementsWrittenDelegate::CreateUObject(this, &UCsManager_Achievement::OnAchievementsWritten));
 				}
 			}
 			else
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write_Internal: Query Ids and/or Query Descriptions Failed. Aborting Write for Achievement: %s %s for Player: %s - %s."), Achievement.ToChar(), *ChangeSnippet, *GetLocalPlayerNickname(), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Query Ids and/or Query Descriptions Failed. Aborting Write for Achievement: %s %s for Player: %s - %s."), *Context, Achievement.ToChar(), *ChangeSnippet, *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
 		}
 		// Queue Write
 		else
 		{
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Write_Internal: Queueing Update Achievement: %s %s."), Achievement.ToChar(), *ChangeSnippet);
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Update Achievement: %s %s."), *Context, Achievement.ToChar(), *ChangeSnippet);
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 
 			// Normalized | Standard | Binary
 			if (ProgType == ProgressType::Normalized ||
@@ -2054,12 +2043,12 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 
 			CalculateTotalProgress();
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::WriteAchievement: Updated Achievement: %s Progress from %f to %f."), Achievement.ToChar(), CurrentProgress, NewProgress);
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Updated Achievement: %s Progress from %f to %f."), *Context, Achievement.ToChar(), CurrentProgress, NewProgress);
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 
 			OnProgress_Event.Broadcast(true, IA, NewProgress);
 			OnProgress_ScriptEvent.Broadcast(true, Achievement, NewProgress);
@@ -2072,18 +2061,20 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 			
 			CalculateTotalProgress();
 
-	#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::WriteAchievement: Completed Achievement: %s."), Achievement.ToChar());
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Completed Achievement: %s."), *Context, Achievement.ToChar());
 			}
-	#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 
 			OnComplete_Event.Broadcast(true, IA);
 			OnComplete_ScriptEvent.Broadcast(true, Achievement);
 		}
 	}
 }
+
+#undef ValueType
 
 #pragma endregion Write
 
@@ -2092,9 +2083,7 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 
 void UCsManager_Achievement::Complete(const FECsAchievement& Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::Complete;
+	SET_CONTEXT(Complete);
 
 	if (!IsEnabled(Context))
 		return;
@@ -2114,16 +2103,14 @@ void UCsManager_Achievement::Complete(const FECsAchievement& Achievement)
 		}
 
 		// Queue Complete
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Complete for Achievement: %s for Player: %s - %s."), *Context, Achievement.ToChar(), *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		ICsAchievement* IA = Achievements[Achievement.GetValue()];
-
-		typedef NCsAchievement::EProgress ProgressType;
 
 		const ProgressType& ProgType = IA->GetProgressType();
 
@@ -2150,12 +2137,12 @@ void UCsManager_Achievement::Complete(const FECsAchievement& Achievement)
 		}
 
 		// Queue Query Descriptions
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Query Descriptions for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		QueryState.Descriptions.Queue();
 		QueueAction(ActionType::QueryDescriptions);
@@ -2169,9 +2156,7 @@ void UCsManager_Achievement::Complete(const FECsAchievement& Achievement)
 
 void UCsManager_Achievement::SafeComplete(const FECsAchievement& Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::SafeComplete;
+	SET_CONTEXT(SafeComplete);
 
 	if (IsValid(Context, Achievement) &&
 		!IsCompleted(Achievement))
@@ -2184,13 +2169,12 @@ void UCsManager_Achievement::SafeComplete(const FECsAchievement& Achievement)
 void UCsManager_Achievement::Complete_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
+	SET_CONTEXT(Complete_Internal);
 
 	const FECsAchievement& Achievement = ActionInfo->Achievement;
 	ICsAchievement* IA				   = Achievements[Achievement.GetValue()];
 
 	bool HasValueChanged = false;
-
-	typedef NCsAchievement::EProgress ProgressType;
 
 	const ProgressType& ProgType = IA->GetProgressType();
 
@@ -2250,12 +2234,12 @@ void UCsManager_Achievement::Complete_Internal(ActionInfoType* ActionInfo)
 		{
 			const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Complete_Internal: Achievement: %s already Complete for Player: %s - %s."), Achievement.ToChar(), *GetLocalPlayerNickname(), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s already Complete for Player: %s - %s."), *Context, Achievement.ToChar(), *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 		}
 
 		ActionInfo->Complete();
@@ -2267,7 +2251,7 @@ void UCsManager_Achievement::Complete_Internal(ActionInfoType* ActionInfo)
 		{
 			if (!IA->IsValid())
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Complete_Internal: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), Achievement.ToChar());
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *Context, Achievement.ToChar());
 
 				ActionInfo->Complete();
 			}
@@ -2285,7 +2269,7 @@ void UCsManager_Achievement::Complete_Internal(ActionInfoType* ActionInfo)
 			{
 				const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Complete_Internal: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s."), Achievement.ToChar(), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s."), *Context, Achievement.ToChar(), *(UserId.ToString()));
 			}
 
 			ActionInfo->Complete();
@@ -2295,9 +2279,7 @@ void UCsManager_Achievement::Complete_Internal(ActionInfoType* ActionInfo)
 
 bool UCsManager_Achievement::IsCompleted(const FECsAchievement& Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::IsCompleted;
+	SET_CONTEXT(IsCompleted);
 
 	check(IsValidChecked(Context, Achievement));
 
@@ -2308,9 +2290,7 @@ bool UCsManager_Achievement::IsCompleted(const FECsAchievement& Achievement)
 
 bool UCsManager_Achievement::IsSafeCompleted(const FECsAchievement& Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::IsSafeCompleted;
+	SET_CONTEXT(IsSafeCompleted);
 
 	if (IsValid(Context, Achievement))
 	{
@@ -2326,9 +2306,7 @@ const int32& UCsManager_Achievement::GetNumCompleted()
 
 void UCsManager_Achievement::CompleteAll()
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::CompleteAll;
+	SET_CONTEXT(CompleteAll);
 
 	if (!IsEnabled(Context))
 		return;
@@ -2346,12 +2324,12 @@ void UCsManager_Achievement::CompleteAll()
 		}
 
 		// Queue Complete All
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing CompleteAll for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		typedef NCsAchievement::EAction ActionType;
 
@@ -2367,6 +2345,8 @@ void UCsManager_Achievement::CompleteAll()
 #define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::CompleteAll_Internal(ActionInfoType* ActionInfo)
 {
+	SET_CONTEXT(CompleteAll_Internal);
+
 	typedef NCsAchievement::NAction::NInfo::FResource ActionInfoContainerType;
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
@@ -2377,12 +2357,12 @@ void UCsManager_Achievement::CompleteAll_Internal(ActionInfoType* ActionInfo)
 
 		// Queue Complete for Achievements
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CompleteAll_Internal: Starting CompleteAll for Player: %s - %s."), *GetLocalPlayerNickname(), *(UserId.ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Starting CompleteAll for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		TCsDoubleLinkedList<ActionInfoContainerType*>* Current = Manager_Resource.GetAllocatedHead();
 		ActionInfoContainerType* InfoContainer				   = **Current;
@@ -2404,8 +2384,6 @@ void UCsManager_Achievement::CompleteAll_Internal(ActionInfoType* ActionInfo)
 			typedef NCsAchievement::EAction ActionType;
 
 			CompleteInfo->Action = ActionType::Complete;
-
-			typedef NCsAchievement::EProgress ProgressType;
 
 			const ProgressType& ProgType = IA->GetProgressType();
 
@@ -2439,12 +2417,12 @@ void UCsManager_Achievement::CompleteAll_Internal(ActionInfoType* ActionInfo)
 			// Update InfoContainer so actions get queued in order
 			InfoContainer = CompleteInfoContainer;
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CompleteAll_Internal: Queueing Complete for Achievement: %s for Player: %s - %s."), Achievement.ToChar(), *GetLocalPlayerNickname(), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Complete for Achievement: %s for Player: %s - %s."), *Context, Achievement.ToChar(), *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 		}
 
 		// Queue Complete All event at end
@@ -2468,12 +2446,12 @@ void UCsManager_Achievement::CompleteAll_Internal(ActionInfoType* ActionInfo)
 
 		QueryDescriptionsInfo->Action = ActionType::QueryDescriptions;
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::CompleteAll_Internal: Queueing QueryDescriptions for Player: %s - %s."), *GetLocalPlayerNickname(), *(UserId.ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing QueryDescriptions for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 	}
 	// Local
 	else
@@ -2488,15 +2466,13 @@ void UCsManager_Achievement::CompleteAll_Internal(ActionInfoType* ActionInfo)
 // Reset
 #pragma region
 
+#define ValueType NCsAchievement::FValue
+
 void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const float& Percent)
 {
 	ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
-	typedef NCsAchievement::EProgress ProgressType;
-
 	const ProgressType& ProgType = IA->GetProgressType();
-
-	typedef NCsAchievement::FValue ValueType;
 
 	ValueType Value;
 	Value.SetPercent(Percent);
@@ -2505,8 +2481,6 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const flo
 
 void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const uint64& Count)
 {
-	typedef NCsAchievement::FValue ValueType;
-
 	ValueType Value;
 	Value.SetCount(Count);
 
@@ -2515,22 +2489,19 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const uin
 
 void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const FString& Bitfield)
 {
-	typedef NCsAchievement::FValue ValueType;
-
 	ValueType Value;
 	Value.SetBitfield(Bitfield);
 
 	Reset(Achievement, Value);
 }
 
+#undef ValueType
+
 #define ValueType NCsAchievement::FValue
 void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const ValueType& Value)
 {
 #undef ValueType
-
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::Reset;
+	SET_CONTEXT(Reset);
 
 	if (!IsEnabled(Context))
 		return;
@@ -2553,9 +2524,6 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 
 		ICsAchievement* IA = Achievements[Achievement.GetValue()];
 
-		typedef NCsAchievement::EMProgress ProgressMapType;
-		typedef NCsAchievement::EProgress ProgressType;
-
 		const ProgressType& ProgType = IA->GetProgressType();
 
 		// Queue Reset
@@ -2573,12 +2541,12 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 			{
 				const float Percent = FMath::Clamp(Value.Percent, 0.0f, 1.0f);
 
-#if !UE_BUILD_SHIPPING
+			#if !UE_BUILD_SHIPPING
 				if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Reset for Achievement: %s to Percent: %f for Player: %s - %s."), *Context, Achievement.ToChar(), Percent, *GetLocalPlayerNickname(), *(UserId.ToString()));
 				}
-#endif // #if !UE_BUILD_SHIPPING
+			#endif // #if !UE_BUILD_SHIPPING
 
 				QueueAction(bResetAsResetAll ? ActionType::ResetAll : ActionType::Reset, Achievement, Percent);
 			}
@@ -2613,12 +2581,12 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 				Count = CalculateCount(IA, Value.Count);
 			}
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
 				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Reset for Achievement: %s to Count: %d for Player: %s - %s."), *Context, Achievement.ToChar(), Count, *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 
 			QueueAction(bResetAsResetAll ? ActionType::ResetAll : ActionType::Reset, Achievement, Count);
 		}
@@ -2670,12 +2638,12 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 
 			if (IsValidBitfield(IA, NewBitfield))
 			{
-#if !UE_BUILD_SHIPPING
+			#if !UE_BUILD_SHIPPING
 				if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 				{
 					UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Reset for Achievement: %s to Bitfield: %s for Player: %s - %s."), *Context, Achievement.ToChar(), *NewBitfield, *GetLocalPlayerNickname(), *(UserId.ToString()));
 				}
-#endif // #if !UE_BUILD_SHIPPING
+			#endif // #if !UE_BUILD_SHIPPING
 
 				QueueAction(bResetAsResetAll ? ActionType::ResetAll : ActionType::Reset, Achievement, NewBitfield);
 			}
@@ -2688,12 +2656,12 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 
 		if (!bResetAsResetAll)
 		{
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
 				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Query Descriptions for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 
 			QueryState.Descriptions.Queue();
 			QueueAction(ActionType::QueryDescriptions);
@@ -2710,10 +2678,7 @@ void UCsManager_Achievement::Reset(const FECsAchievement& Achievement, const Val
 void UCsManager_Achievement::SafeReset(const FECsAchievement& Achievement, const ValueType& Value)
 {
 #undef ValueType
-
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::SafeReset;
+	SET_CONTEXT(SafeReset);
 
 	if (IsValid(Context, Achievement))
 	{
@@ -2758,13 +2723,12 @@ void UCsManager_Achievement::SafeReset(const FECsAchievement& Achievement, const
 void UCsManager_Achievement::Reset_Internal(ActionInfoType* ActionInfo)
 {
 #undef ActionInfoType
+	SET_CONTEXT(Reset_Internal);
 
 	const FECsAchievement& Achievement = ActionInfo->Achievement;
 	ICsAchievement* IA				   = Achievements[Achievement.GetValue()];
 
 	bool HasValueChanged = false;
-
-	typedef NCsAchievement::EProgress ProgressType;
 
 	const ProgressType& ProgType = IA->GetProgressType();
 
@@ -2805,8 +2769,8 @@ void UCsManager_Achievement::Reset_Internal(ActionInfoType* ActionInfo)
 
 		const uint32& BitfieldLength = IA->GetBitfieldLength();
 
-		checkf(Bitfield.Len() == BitfieldLength, TEXT("UCsManager_Achievement::SetBit: Mismatch between Bitfield.Len() and BitfieldLength (%d != %d)."), Bitfield.Len(), BitfieldLength);
-		checkf(NewBitfield.Len() == BitfieldLength, TEXT("UCsManager_Achievement::SetBit: Mismatch between NewBitfield.Len() and BitfieldLength (%d != %d)."), NewBitfield.Len(), BitfieldLength);
+		checkf(Bitfield.Len() == BitfieldLength, TEXT("%s: Mismatch between Bitfield.Len() and BitfieldLength (%d != %d)."), *Context, Bitfield.Len(), BitfieldLength);
+		checkf(NewBitfield.Len() == BitfieldLength, TEXT("%s: Mismatch between NewBitfield.Len() and BitfieldLength (%d != %d)."), *Context, NewBitfield.Len(), BitfieldLength);
 
 		FString BitMask;
 		FString BitfieldOrBitMask;
@@ -2841,12 +2805,12 @@ void UCsManager_Achievement::Reset_Internal(ActionInfoType* ActionInfo)
 		{
 			const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Reset_Internal: Achievement: %s already set to %s for Player: %s - %s."), Achievement.ToChar(), *Snippet, *GetLocalPlayerNickname(), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s already set to %s for Player: %s - %s."), *Context, Achievement.ToChar(), *Snippet, *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 		}
 
 		ActionInfo->Complete();
@@ -2858,7 +2822,7 @@ void UCsManager_Achievement::Reset_Internal(ActionInfoType* ActionInfo)
 		{
 			if (!IA->IsValid())
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Reset: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), Achievement.ToChar());
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Achievement: %s is NOT Valid. Make sure both QueryAchievements and QueryAchievementDescriptions have been called."), *Context, Achievement.ToChar());
 
 				ActionInfo->Complete();
 			}
@@ -2876,7 +2840,7 @@ void UCsManager_Achievement::Reset_Internal(ActionInfoType* ActionInfo)
 			{
 				const FUniqueNetId& UserId = GetLocalPlayerIdRef();
 
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::Reset: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s - %s."), Achievement.ToChar(), *GetLocalPlayerNickname(), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Query Ids and/or Query Descriptions Failed. Aborting Reset for Achievement: %s for Player: %s - %s."), *Context, Achievement.ToChar(), *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
 
 			ActionInfo->Complete();
@@ -2886,9 +2850,7 @@ void UCsManager_Achievement::Reset_Internal(ActionInfoType* ActionInfo)
 
 void UCsManager_Achievement::ResetAll()
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::ResetAll;
+	SET_CONTEXT(ResetAll);
 
 	if (!IsEnabled(Context))
 		return;
@@ -2906,12 +2868,12 @@ void UCsManager_Achievement::ResetAll()
 		}
 
 		// Queue Reset All
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing ResetAll for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		typedef NCsAchievement::EAction ActionType;
 
@@ -2927,6 +2889,8 @@ void UCsManager_Achievement::ResetAll()
 #define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
 void UCsManager_Achievement::ResetAll_Internal(ActionInfoType* ActionInfo)
 {
+	SET_CONTEXT(ResetAll_Internal);
+
 	typedef NCsAchievement::NAction::NInfo::FResource ActionInfoContainerType;
 
 	IOnlineAchievementsPtr IAchievements = GetAchievementsInterface();
@@ -2937,12 +2901,12 @@ void UCsManager_Achievement::ResetAll_Internal(ActionInfoType* ActionInfo)
 
 		// Queue Reset All for Achievements
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::ResetAll_Internal: Starting ResetAll for Player: %s - %s."), *GetLocalPlayerNickname(), *(UserId.ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Starting ResetAll for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		TCsDoubleLinkedList<ActionInfoContainerType*>* Current = Manager_Resource.GetAllocatedHead();
 		ActionInfoContainerType* InfoContainer				   = **Current;
@@ -2964,8 +2928,6 @@ void UCsManager_Achievement::ResetAll_Internal(ActionInfoType* ActionInfo)
 			typedef NCsAchievement::EAction ActionType;
 
 			ResetInfo->Action = ActionType::Reset;
-
-			typedef NCsAchievement::EProgress ProgressType;
 
 			const ProgressType& ProgType = IA->GetProgressType();
 
@@ -2992,12 +2954,12 @@ void UCsManager_Achievement::ResetAll_Internal(ActionInfoType* ActionInfo)
 			// Update InfoContainer so actions get queued in order
 			InfoContainer = ResetInfoContainer;
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::ResetAll_Internal: Queueing Reset for Achievement: %s for Player: %s - %s."), Achievement.ToChar(), *GetLocalPlayerNickname(), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Reset for Achievement: %s for Player: %s - %s."), *Context, Achievement.ToChar(), *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 		}
 
 		// Queue Reset All event at end
@@ -3021,12 +2983,12 @@ void UCsManager_Achievement::ResetAll_Internal(ActionInfoType* ActionInfo)
 
 		QueryDescriptionsInfo->Action = ActionType::QueryDescriptions;
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
-			UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::ResetAll_Internal: Queueing QueryDescriptions for Player: %s - %s."), *GetLocalPlayerNickname(), *(UserId.ToString()));
+			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing QueryDescriptions for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		ActionInfo->Complete();
 	}
@@ -3045,9 +3007,7 @@ void UCsManager_Achievement::ResetAll_Internal(ActionInfoType* ActionInfo)
 
 void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, const float& Percent)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::SetProgress;
+	SET_CONTEXT(SetProgress);
 
 	if (!IsEnabled(Context))
 		return;
@@ -3057,8 +3017,6 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 	checkf(Percent >= 0.0f && Percent <= 1.0f, TEXT("%s: Percent: %f must be a value between [0, 1] inclusive."), *Context, Percent);
 
 	ICsAchievement* IA = Achievements[Achievement.GetValue()];
-
-	typedef NCsAchievement::EProgress ProgressType;
 
 	const ProgressType& ProgType = IA->GetProgressType();
 
@@ -3160,7 +3118,7 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 			QueueAction(ActionType::Write, Achievement, NewBitfield);
 		}
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		// Queue Reset
 		if (QueueReset &&
 			CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
@@ -3173,15 +3131,15 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Write for Achievement: %s to %s for Player: %s - %s."), *Context, Achievement.ToChar(), *Snippet, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		// Queue Query Descriptions
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Query Descriptions for Player: %s - %s."), *Context, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		QueryState.Descriptions.Queue();
 		QueueAction(ActionType::QueryDescriptions);
@@ -3195,9 +3153,7 @@ void UCsManager_Achievement::SetProgress(const FECsAchievement& Achievement, con
 
 void UCsManager_Achievement::SetSafeProgress(const FECsAchievement& Achievement, const float& Percent)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::SetSafeProgress;
+	SET_CONTEXT(SetSafeProgress);
 
 	if (Percent < 0.0f || Percent > 1.0f)
 	{
@@ -3218,9 +3174,7 @@ void UCsManager_Achievement::SetSafeProgress(const FECsAchievement& Achievement,
 
 float UCsManager_Achievement::GetProgress(const FECsAchievement& Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::GetProgress;
+	SET_CONTEXT(GetProgress);
 
 	check(IsValidChecked(Context, Achievement));
 
@@ -3229,9 +3183,7 @@ float UCsManager_Achievement::GetProgress(const FECsAchievement& Achievement)
 
 float UCsManager_Achievement::GetSafeProgress(const FECsAchievement& Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::GetSafeProgress;
+	SET_CONTEXT(GetSafeProgress);
 
 	if (IsValid(Context, Achievement))
 	{
@@ -3242,9 +3194,7 @@ float UCsManager_Achievement::GetSafeProgress(const FECsAchievement& Achievement
 
 float UCsManager_Achievement::GetProgressAsPercent(const FECsAchievement& Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::GetProgressAsPercent;
+	SET_CONTEXT(GetProgressAsPercent);
 
 	check(IsValidChecked(Context, Achievement));
 
@@ -3253,9 +3203,7 @@ float UCsManager_Achievement::GetProgressAsPercent(const FECsAchievement& Achiev
 
 float UCsManager_Achievement::GetSafeProgressAsPercent(const FECsAchievement& Achievement)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::GetSafeProgressAsPercent;
+	SET_CONTEXT(GetSafeProgressAsPercent);
 
 	if (IsValid(Context, Achievement))
 	{
@@ -3301,9 +3249,7 @@ const float& UCsManager_Achievement::GetTotalProgress()
 
 void UCsManager_Achievement::Increment(const FECsAchievement& Achievement, const uint64& Count /*=1*/)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::Increment;
+	SET_CONTEXT(Increment);
 
 	if (!IsEnabled(Context))
 		return;
@@ -3312,9 +3258,6 @@ void UCsManager_Achievement::Increment(const FECsAchievement& Achievement, const
 		return;
 
 	ICsAchievement* IA = Achievements[Achievement.GetValue()];
-
-	typedef NCsAchievement::EMProgress ProgressMapType;
-	typedef NCsAchievement::EProgress ProgressType;
 
 	const ProgressType& ProgType = IA->GetProgressType();
 
@@ -3349,7 +3292,7 @@ void UCsManager_Achievement::Increment(const FECsAchievement& Achievement, const
 		const uint64 NewCount	  = CalculateCount(IA, CurrentCount + Count);
 		const uint64 CountToWrite = bCountAsAdd ? NewCount - CurrentCount : NewCount;
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		// Queue Write
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
@@ -3357,7 +3300,7 @@ void UCsManager_Achievement::Increment(const FECsAchievement& Achievement, const
 
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Write for Achievement: %s to %s for Player: %s - %s."), *Context, Achievement.ToChar(), *Snippet, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		typedef NCsAchievement::EAction ActionType;
 
@@ -3367,9 +3310,7 @@ void UCsManager_Achievement::Increment(const FECsAchievement& Achievement, const
 
 void UCsManager_Achievement::SafeIncrement(const FECsAchievement& Achievement, const uint64& Count /*=1*/)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::SafeIncrement;
+	SET_CONTEXT(SafeIncrement);
 
 	if (IsValid(Context, Achievement) &&
 		SupportsSafeCount(Context, Achievement) &&
@@ -3381,17 +3322,12 @@ void UCsManager_Achievement::SafeIncrement(const FECsAchievement& Achievement, c
 
 void UCsManager_Achievement::SetCount(const FECsAchievement& Achievement, const uint64& Count)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::SetCount;
+	SET_CONTEXT(SetCount);
 
 	if (!IsEnabled(Context))
 		return;
 
 	ICsAchievement* IA = Achievements[Achievement.GetValue()];
-
-	typedef NCsAchievement::EMProgress ProgressMapType;
-	typedef NCsAchievement::EProgress ProgressType;
 
 	const ProgressType& ProgType = IA->GetProgressType();
 	
@@ -3441,7 +3377,7 @@ void UCsManager_Achievement::SetCount(const FECsAchievement& Achievement, const 
 		
 		QueueAction(ActionType::Write, Achievement, CountToWrite);
 
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		// Queue Write
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
@@ -3458,15 +3394,13 @@ void UCsManager_Achievement::SetCount(const FECsAchievement& Achievement, const 
 
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Write for Achievement: %s to %s for Player: %s - %s."), *Context, Achievement.ToChar(), *Snippet, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 	}
 }
 
 void UCsManager_Achievement::SetSafeCount(const FECsAchievement& Achievement, const uint64& Count)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::SetSafeCount;
+	SET_CONTEXT(SetSafeCount);
 
 	if (IsValid(Context, Achievement) &&
 		!IsCompleted(Achievement))
@@ -3477,16 +3411,11 @@ void UCsManager_Achievement::SetSafeCount(const FECsAchievement& Achievement, co
 
 bool UCsManager_Achievement::SupportsCount(const FECsAchievement& Achievement)
 {
-	typedef NCsAchievement::EProgress ProgressType;
-
 	return Achievements[Achievement.GetValue()]->GetProgressType() == ProgressType::Count;
 }
 
 bool UCsManager_Achievement::SupportsSafeCount(const FString& Context, const FECsAchievement& Achievement)
 {
-	typedef NCsAchievement::EMProgress ProgressMapType;
-	typedef NCsAchievement::EProgress ProgressType;
-
 	if (Achievements[Achievement.GetValue()]->GetProgressType() != ProgressType::Count)
 	{
 		const ProgressType& Type = Achievements[Achievement.GetValue()]->GetProgressType();
@@ -3505,9 +3434,7 @@ bool UCsManager_Achievement::SupportsSafeCount(const FString& Context, const FEC
 
 void UCsManager_Achievement::SetBit(const FECsAchievement& Achievement, const uint32& Index)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::SetBit;
+	SET_CONTEXT(SetBit);
 
 	if (!IsEnabled(Context))
 		return;
@@ -3516,9 +3443,6 @@ void UCsManager_Achievement::SetBit(const FECsAchievement& Achievement, const ui
 		return;
 
 	ICsAchievement* IA = Achievements[Achievement.GetValue()];
-
-	typedef NCsAchievement::EMProgress ProgressMapType;
-	typedef NCsAchievement::EProgress ProgressType;
 
 	const ProgressType& ProgType = IA->GetProgressType();
 
@@ -3585,7 +3509,7 @@ void UCsManager_Achievement::SetBit(const FECsAchievement& Achievement, const ui
 			}
 		}
 		
-#if !UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		// Queue Write
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 		{
@@ -3593,7 +3517,7 @@ void UCsManager_Achievement::SetBit(const FECsAchievement& Achievement, const ui
 
 			UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Write for Achievement: %s to %s for Player: %s - %s."), *Context, Achievement.ToChar(), *Snippet, *GetLocalPlayerNickname(), *(UserId.ToString()));
 		}
-#endif // #if !UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 
 		typedef NCsAchievement::EAction ActionType;
 
@@ -3603,9 +3527,7 @@ void UCsManager_Achievement::SetBit(const FECsAchievement& Achievement, const ui
 
 void UCsManager_Achievement::SetSafeBit(const FECsAchievement& Achievement, const uint32& Index)
 {
-	using namespace NCsManagerAchievement::NCached;
-
-	const FString& Context = Str::SetSafeBit;
+	SET_CONTEXT(SetSafeBit);
 
 	if (IsValid(Context, Achievement) &&
 		SupportsSafeBitfield(Context, Achievement) &&
@@ -3617,16 +3539,11 @@ void UCsManager_Achievement::SetSafeBit(const FECsAchievement& Achievement, cons
 
 bool UCsManager_Achievement::SupportsBitfield(const FECsAchievement& Achievement)
 {
-	typedef NCsAchievement::EProgress ProgressType;
-
 	return Achievements[Achievement.GetValue()]->GetProgressType() == ProgressType::Bitfield;
 }
 
 bool UCsManager_Achievement::SupportsSafeBitfield(const FString& Context, const FECsAchievement& Achievement)
 {
-	typedef NCsAchievement::EMProgress ProgressMapType;
-	typedef NCsAchievement::EProgress ProgressType;
-
 	if (Achievements[Achievement.GetValue()]->GetProgressType() != ProgressType::Bitfield)
 	{
 		const ProgressType& Type = Achievements[Achievement.GetValue()]->GetProgressType();
@@ -3824,8 +3741,6 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 	// Determine the result
 
 	FVariantData* Data = WriteObject->FindStatByName(Achievement.Name_Internal);
-
-	typedef NCsAchievement::EProgress ProgressType;
 
 	const ProgressType& ProgType = IA->GetProgressType();
 	float Progress				 = 0.0f;
@@ -4042,7 +3957,7 @@ bool UCsManager_Achievement::IsValidChecked(const FString& Context, const FECsAc
 	return Achievements[Achievement.GetValue()]->IsValid();
 }
 
-bool UCsManager_Achievement::IsValid(const FString& Context, const FECsAchievement& Achievement, void(*Log)(const FString&) /*=&FCsPlatformServicesLog::Warning*/)
+bool UCsManager_Achievement::IsValid(const FString& Context, const FECsAchievement& Achievement, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 {
 	if (!EMCsAchievement::Get().IsValidEnum(Achievement))
 	{
@@ -4076,11 +3991,8 @@ void UCsManager_Achievement::SetType(ICsAchievement* Achievement, const FECsAchi
 	A->Type = AchievementType;
 }
 
-#define ProgressType NCsAchievement::EProgress
 void UCsManager_Achievement::SetProgressType(ICsAchievement* Achievement, const ProgressType& Type)
 {
-#undef ProgressType
-
 	FCsAchievement* A = static_cast<FCsAchievement*>(Achievement);
 	A->SetProgressType(Type);
 }
@@ -4088,8 +4000,6 @@ void UCsManager_Achievement::SetProgressType(ICsAchievement* Achievement, const 
 void UCsManager_Achievement::SetProgress(ICsAchievement* Achievement, const float& Percent)
 {
 	FCsAchievement* A = static_cast<FCsAchievement*>(Achievement);
-
-	typedef NCsAchievement::EProgress ProgressType;
 
 	const ProgressType& Type = A->GetProgressType();
 	
@@ -4179,3 +4089,9 @@ void UCsManager_Achievement::SetUnlockedDescription(ICsAchievement* Achievement,
 }
 
 #pragma endregion Internals
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
+#undef QueryOrderType
+#undef ProgressMapType
+#undef ProgressType

@@ -1,12 +1,11 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
 // Types
 #include "Managers/Time/CsTypes_Time.h"
-#include "Managers/Save/CsTypes_Save.h"
-#include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
+#include "Managers/Save/CsManager_Save_Delegates.h"
 // Managers
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Online
@@ -47,60 +46,6 @@ namespace NCsSave
 
 #pragma endregion Structs
 
-// Delegates
-#pragma region
-	
-/**
-* OnStart
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerSave_OnStart);
-/**
-* OnEnumerate
-*
-* @param WasSuccessful
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerSave_OnEnumerate, bool, WasSuccessful);
-/**
-* OnRead
-*
-* @param WasSuccessful
-* @param Profile
-* @param Save
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerSave_OnRead, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
-/**
-* OnReadAll
-*
-* @param Profile
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerSave_OnReadAll, const ECsPlayerProfile&, Profile);
-/**
-* OnWrite
-*
-* @param WasSuccessful
-* @param Profile
-* @param Save
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerSave_OnWrite, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
-/**
-* OnWriteAll
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerSave_OnWriteAll);
-/**
-* OnDelete
-*
-* @param WasSuccessful
-* @param Profile
-* @param Save
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsManagerSave_OnDelete, bool, WasSuccessful, const ECsPlayerProfile&, Profile, const ECsSave&, Save);
-/**
-* OnDeleteAll
-*/
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerSave_OnDeleteAll);
-
-#pragma endregion Delegates
-
 class UClass;
 class ULocalPlayer;
 class ICsGetManagerSave;
@@ -108,7 +53,7 @@ class ICsGetManagerSave;
 /**
 * 
 */
-UCLASS(transient)
+UCLASS(BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSPLATFORMSERVICES_API UCsManager_Save : public UObject
 {
 	GENERATED_UCLASS_BODY()
@@ -137,7 +82,8 @@ public:
 	}
 
 	static bool IsValid();
-	static void Init(UObject* InRoot, UClass* ManagerSaveClass);
+	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Save> ManagerSaveClass, UObject* InOuter = nullptr);
+	static void Init(UObject* InRoot, UObject* InOuter = nullptr);
 	static void Shutdown(const UObject* InRoot = nullptr);
 	static bool HasShutdown();
 
@@ -595,6 +541,8 @@ protected:
 
 public:
 
+#define OnEnumerateEventType NCsSave::NManager::FOnEnumerate
+
 	/** Delegate type when save files have been enumerated / file names recorded.
 	*
 	* @param WasSuccessful
@@ -603,17 +551,29 @@ public:
 
 	/** Event for when save files have been enumerated / file names recorded.
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnEnumerate OnEnumerate_Event;
+	OnEnumerateEventType OnEnumerate_Event;
+
+	FORCEINLINE OnEnumerateEventType& GetOnEnumerate_Event() { return OnEnumerate_Event; }
+
 	/** Script Event for when save files have been enumerated / file names recorded.
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Save")
 	FCsManagerSave_OnEnumerate OnEnumerate_ScriptEvent;
+
+	FORCEINLINE FCsManagerSave_OnEnumerate& GetOnEnumerate_ScriptEvent() { return OnEnumerate_ScriptEvent; }
 
 	/** Event for when save files have been enumerated / file names recorded.
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
-	FOnEnumerate OnEnumerate_AsyncEvent;
+	OnEnumerateEventType OnEnumerate_AsyncEvent;
+
+	FORCEINLINE OnEnumerateEventType& GetOnEnumerate_AsyncEvent() { return OnEnumerate_AsyncEvent; }
+
 	/** Script Event for when save files have been enumerated / file names recorded.
 		Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
+	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Save")
 	FCsManagerSave_OnEnumerate OnEnumerate_AsyncScriptEvent;
+
+	FORCEINLINE FCsManagerSave_OnEnumerate& GetOnEnumerate_AsyncScriptEvent() { return OnEnumerate_AsyncScriptEvent; }
 
 	/**
 	*
@@ -634,6 +594,8 @@ public:
 	{
 		return EnumerateUserFilesState.IsCompleteAndNotProcessing();
 	}
+
+#undef OnEnumerateEventType
 
 #pragma endregion Enumerate
 

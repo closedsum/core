@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Point/Sequence/Params/Shot/Sequence/CsParams_PointSequenceWeapon_Shot_Sequence.h"
 
 // Library

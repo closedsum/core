@@ -146,5 +146,10 @@ namespace NCsPerformance
 		{
 			GetChecked(Context, ContextObject)->CreatePerformanceWidget();
 		}
+
+		void FLibrary::ConditionalCreatePerformanceWidgetChecked(const FString& Context, const UObject* ContextObject)
+		{
+			GetChecked(Context, ContextObject)->ConditionalCreatePerformanceWidget();
+		}
 	}
 }

@@ -186,7 +186,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	uint8 FLibrary::GetKeyIDChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+	uint16 FLibrary::GetKeyIDChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Data)
 		CS_IS_NAME_NONE_CHECKED(KeyName)
@@ -197,7 +197,7 @@ namespace NCsBlackboard
 		return ID;
 	}
 
-	uint8 FLibrary::GetSafeKeyID(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	uint16 FLibrary::GetSafeKeyID(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
 	{
 		CS_IS_PENDING_KILL_RET_VALUE(Data, FBlackboard::InvalidKey)
 		CS_IS_NAME_NONE_RET_VALUE(KeyName, FBlackboard::InvalidKey)
@@ -239,11 +239,11 @@ namespace NCsBlackboard
 		return Str::Object;
 	}
 
-	TSubclassOf<UBlackboardKeyType> FLibrary::GetKeyTypeChecked(const FString& Context, const UBlackboardData* Data, const uint8& KeyID)
+	TSubclassOf<UBlackboardKeyType> FLibrary::GetKeyTypeChecked(const FString& Context, const UBlackboardData* Data, const uint16& KeyID)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Data)
 	
-		checkf(KeyID != FBlackboard::InvalidKey, TEXT("%s: KeyID is NOT Valid."), *Context);
+		checkf(KeyID != (uint16)FBlackboard::InvalidKey, TEXT("%s: KeyID is NOT Valid."), *Context);
 
 		TSubclassOf<UBlackboardKeyType> KeyType = Data->GetKeyType(KeyID);
 		
@@ -251,11 +251,11 @@ namespace NCsBlackboard
 		return KeyType;
 	}
 
-	TSubclassOf<UBlackboardKeyType> FLibrary::GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const uint8& KeyID, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	TSubclassOf<UBlackboardKeyType> FLibrary::GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const uint16& KeyID, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
 	{
 		CS_IS_PENDING_KILL_RET_NULL(Data)
 
-		if (KeyID == FBlackboard::InvalidKey)
+		if (KeyID == (uint16)FBlackboard::InvalidKey)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyID is NOT Valid."), *Context));
 			return TSubclassOf<UBlackboardKeyType>();
@@ -276,7 +276,7 @@ namespace NCsBlackboard
 		if (!KeyType)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType is NULL."), *Context));
-			return false;
+			return TSubclassOf<UBlackboardKeyType>();
 		}
 		return TSubclassOf<UBlackboardKeyType>(KeyType);
 	}

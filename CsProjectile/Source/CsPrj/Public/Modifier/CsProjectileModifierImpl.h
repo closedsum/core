@@ -1,13 +1,13 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Modifier/CsTypes_Modifier.h"
+#include "CsTypes_Modifier.h"
 #include "Modifier/Types/CsTypes_ProjectileModifier.h"
 // Interface
-#include "Modifier/CsModifier.h"
-#include "Modifier/CsModifier_Int.h"
-#include "Modifier/CsModifier_Float.h"
-#include "Modifier/CsModifier_Toggle.h"
+#include "CsModifier.h"
+#include "CsModifier_Int.h"
+#include "CsModifier_Float.h"
+#include "CsModifier_Toggle.h"
 #include "Modifier/CsProjectileModifier.h"
 #include "Modifier/Types/CsGetProjectileModifierType.h"
 #include "Valid/CsIsValid.h"

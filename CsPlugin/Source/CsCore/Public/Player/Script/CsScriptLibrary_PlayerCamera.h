@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -7,6 +7,7 @@
 #include "CsScriptLibrary_PlayerCamera.generated.h"
 
 class APlayerCameraManager;
+class APlayerController;
 class APawn;
 
 UCLASS()
@@ -73,6 +74,12 @@ public:
 // View Target
 #pragma region
 public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Player|Camera", meta = (AutoCreateRefTerm = "Context,TransitionParams"))
+	static bool SetViewTarget(const FString& Context, APlayerController* PlayerController, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams);
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Player|Camera", meta = (DisplayName = "Set View Target (Checked)", AutoCreateRefTerm = "Context,TransitionParams"))
+	static void SetViewTargetChecked(const FString& Context, APlayerController* PlayerController, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams, bool& OutSuccess);
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Player|Camera", meta = (DisplayName = "Set View Target by Pawn", AutoCreateRefTerm = "Context,TransitionParams"))
 	static bool SetViewTargetByPawn(const FString& Context, const APawn* Pawn, AActor* NewViewTarget, const FViewTargetTransitionParams& TransitionParams);

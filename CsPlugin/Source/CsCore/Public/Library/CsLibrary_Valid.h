@@ -1,4 +1,4 @@
-// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
@@ -1713,6 +1713,66 @@ namespace NCsValid
 		};
 	}
 
+	namespace NObjectPtr
+	{
+		struct CSCORE_API FLibrary final
+		{
+			template<typename ObjectType>
+			FORCEINLINE static bool NullChecked(const FString& Context, const TObjectPtr<ObjectType>& Ptr, const FString& PtrName)
+			{
+				checkf(Ptr.IsResolved(), TEXT("%s: %s has NOT been resolved."), *Context, *PtrName);
+				checkf(IsValid(Ptr.Get()), TEXT("%s: %s is NULL or Pending Kill."), *Context, *PtrName);
+				return true;
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static bool NullChecked(const FString& Context, const TObjectPtr<const ObjectType>& Ptr, const FString& PtrName)
+			{
+				checkf(Ptr.IsResolved(), TEXT("%s: %s has NOT been resolved."), *Context, *PtrName);
+				checkf(IsValid(Ptr.Get()), TEXT("%s: %s is NULL or Pending Kill."), *Context, *PtrName);
+				return true;
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static bool Null(const FString& Context, const TObjectPtr<ObjectType>& Ptr, const FString& PtrName, void(*Log)(const FString&))
+			{
+				if (!Ptr.IsResolved())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s has NOT been resolved."), *Context, *PtrName));
+					return false;
+				}
+
+				if (!IsValid(Ptr.Get()))
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL or Pending Kill."), *Context, *PtrName));
+					return false;
+				}
+				return true;
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static bool Null(const FString& Context, const TObjectPtr<const ObjectType>& Ptr, const FString& PtrName, void(*Log)(const FString&))
+			{
+				if (!Ptr.IsResolved())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s has NOT been resolved."), *Context, *PtrName));
+					return false;
+				}
+
+				if (!IsValid(Ptr.Get()))
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL or Pending Kill."), *Context, *PtrName));
+					return false;
+				}
+				return true;
+			}
+		};
+	}
+
 	namespace NSoftObjectPtr
 	{
 		struct CSCORE_API FLibrary final
@@ -2499,6 +2559,18 @@ namespace NCsValid
 
 #pragma endregion WeakObjectPtr
 
+// TObjectPtr
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_OBJECT_PTR_NULL_CHECKED(__Ptr, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		check(NCsValid::NObjectPtr::FLibrary::NullChecked<__ObjectType>(Context, __Ptr, __temp__str__)); \
+	}
+
+#pragma endregion TObjectPtr
+
 // TSoftObjectPtr
 #pragma region 
 
@@ -2761,6 +2833,8 @@ namespace NCsValid
 	}
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
+// TObjectPtr
+#define CS_IS_OBJECT_PTR_NULL_CHECKED(__Ptr, __ObjectType)
 // TSoftObjectPtr
 #define CS_IS_SOFT_OBJECT_PTR_VALID_CHECKED(__A, __ObjectType)
 	// Assume const FString& Context has been defined
@@ -3701,6 +3775,36 @@ namespace NCsValid
 	}
 
 #pragma endregion WeakObjectPtr
+
+// TObjectPtr
+#pragma region
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_OBJECT_PTR_NULL(__Ptr, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NObjectPtr::FLibrary::Null<__ObjectType>(Context, __Ptr, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_OBJECT_PTR_NULL_EXIT(__Ptr, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NObjectPtr::FLibrary::Null<__ObjectType>(Context, __Ptr, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_OBJECT_PTR_NULL_RET_NULL(__Ptr, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NObjectPtr::FLibrary::Null<__ObjectType>(Context, __Ptr, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_OBJECT_PTR_NULL_RET_VALUE(__Ptr, __ObjectType, __Value) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NObjectPtr::FLibrary::Null<__ObjectType>(Context, __Ptr, __temp__str__, Log)) { return __Value; } \
+	}
+
+#pragma endregion TObjectPtr
 
 // TSoftObjectPtr
 #pragma region 

@@ -5,6 +5,7 @@
 // Types
 #include "Managers/Time/CsUpdateGroup.h"
 #include "Managers/Time/CsManager_Time_Delegates.h"
+#include "InputCoreTypes.h"
 
 #include "CsManager_Time.generated.h"
 

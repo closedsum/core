@@ -6,6 +6,7 @@
 // Types
 #include "Types/CsTypes_Movement.h"
 #include "Coroutine/CsRoutineHandle.h"
+#include "Engine/EngineTypes.h"
 
 #include "CsScriptLibrary_Actor.generated.h"
 

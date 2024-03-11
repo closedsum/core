@@ -6,7 +6,17 @@
 // Log
 #include "Utility/CsLog.h"
 
-//#include "CsTypes_Interpolation.generated.h"
+#include "CsTypes_Interpolation.generated.h"
+
+USTRUCT()
+struct CSCORE_API FCsTypes_Interpolation_STUB
+{
+	GENERATED_USTRUCT_BODY()
+
+	FCsTypes_Interpolation_STUB()
+	{
+	}
+};
 
 // BlendDirection
 #pragma region

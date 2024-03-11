@@ -19,7 +19,7 @@ public class CsWp : ModuleRules
                     "DeveloperSettings",
                     "PhysicsCore",
                     "CsCore",
-                    "CsModify",
+                    "CsModifier",
                     "CsSkin",
                     "CsPrj",
                     "CsBeam"

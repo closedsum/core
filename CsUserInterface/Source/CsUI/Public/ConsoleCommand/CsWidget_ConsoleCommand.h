@@ -4,7 +4,7 @@
 #pragma once
 #include "Blueprint/UserWidget.h"
 // Interfaces
-#include "Menu/CsMenu.h"
+//#include "ICsMenu.h"
 // Types
 #include "ConsoleCommand/CsTypes_ConsoleCommand.h"
 

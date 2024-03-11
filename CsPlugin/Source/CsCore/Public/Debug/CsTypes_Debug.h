@@ -2,7 +2,10 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
 #include "Types/Enum/CsEnumMap.h"
+#include "Engine/HitResult.h"
+// CVars
 #include "CsCVars.h"
 
 #include "CsTypes_Debug.generated.h"

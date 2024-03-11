@@ -2,9 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-#include "Engine.h"
 #include "Types/Enum/CsEnum_uint32.h"
 #include "Types/Enum/CsEnumStructMap.h"
+// CVar
+#include "HAL/IConsoleManager.h"
+
 #include "CsCVars.generated.h"
 
 #define CS_CVAR_SHOW_LOG 1

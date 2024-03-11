@@ -70,7 +70,7 @@ protected:
 	virtual void Initialize();
 	virtual void CleanUp();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Singleton", meta = (DisplayName = "Clean Up"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "CsCore|Managers|Level", meta = (DisplayName = "Clean Up"))
 	void ReceiveCleanUp();
 
 private:
@@ -99,7 +99,7 @@ public:
 
 public:
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "CsCore|Managers|Level")
 	UObject* GetWorldContext() const;
 
 // Persistent Level

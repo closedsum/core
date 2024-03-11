@@ -7,7 +7,7 @@
 #include "Modifier/Types/CsTypes_DamageModifier.h"
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Interface
-#include "CsModifier.h"
+#include "ICsModifier.h"
 #include "CsModifier_Int.h"
 #include "CsModifier_Float.h"
 #include "CsModifier_Float_Range.h"

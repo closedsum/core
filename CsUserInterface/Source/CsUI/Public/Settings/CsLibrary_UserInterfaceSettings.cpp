@@ -34,14 +34,5 @@ namespace NCsUI
 		const FString& FLibrary::GetSettingsEnumPath_UserWidgetPooled()								{ return NCsUserInterfaceSettings::NCached::Str::UserWidgetPooled; }
 
 		#pragma endregion UserWidget
-
-		// MenuEvent
-		#pragma region
-
-		const ECsPopulateEnumMapMethod& FLibrary::Get_ECsMenuEvent_PopulateEnumMapMethod() { return Get()->ECsMenuEvent_PopulateEnumMapMethod; }
-		const TArray<FCsSettings_Enum>& FLibrary::GetSettingsEnum_MenuEvent()				{ return Get()->GetSettingsEnum<FECsMenuEvent>(); }
-		const FString& FLibrary::GetSettingsEnumPath_MenuEvent()							{ return NCsUserInterfaceSettings::NCached::Str::MenuEvent; }
-
-		#pragma endregion MenuEvent
 	}
 }

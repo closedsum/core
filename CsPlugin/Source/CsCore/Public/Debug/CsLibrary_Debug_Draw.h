@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Kismet/KismetSystemLibrary.h"
+// Types
+#include "CollisionQueryParams.h"
 
 class UWorld;
 class AActor;

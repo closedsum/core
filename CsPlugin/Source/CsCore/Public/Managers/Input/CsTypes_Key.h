@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "InputCoreTypes.h"
 
 #include "CsTypes_Key.generated.h"
 

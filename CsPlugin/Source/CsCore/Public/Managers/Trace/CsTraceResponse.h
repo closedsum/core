@@ -4,7 +4,8 @@
 #pragma once
 // Types
 #include "Types/CsTypes_Macro.h"
-#include "Engine/EngineTypes.h"
+#include "Engine/HitResult.h"
+#include "Engine/OverlapResult.h"
 
 #include "CsTraceResponse.generated.h"
 

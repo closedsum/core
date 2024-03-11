@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "CoreMinimal.h"
+#include "Templates/SubclassOf.h"
 
-//#include "CsWorld_Delegates.generated.h"
+#include "CsWorld_Delegates.generated.h"
 
-/*
 USTRUCT()
 struct CSCORE_API FCsWorld_Delegates_STUB
 {
@@ -15,7 +16,6 @@ struct CSCORE_API FCsWorld_Delegates_STUB
 	{
 	}
 };
-*/
 
 class UWorld;
 class AGameModeBase;
@@ -82,7 +82,7 @@ namespace NCsWorld
 		uint32 bCreateWorldPartition:1;
 
 		/** The default game mode for this world (if any) */
-		TSubclassOf<class AGameModeBase> DefaultGameMode;
+		TSubclassOf<AGameModeBase> DefaultGameMode;
 	};
 
 	struct CSCORE_API FDelegates

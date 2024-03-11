@@ -27,6 +27,8 @@ namespace NCsLevel
 
 		struct CSCORE_API FLibrary final
 		{
+		#define LogLevel void(*Log)(const FString&) = &FCsLog::Warning
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -57,9 +59,9 @@ namespace NCsLevel
 			* @param Log
 			* return				Context for UCsManager_Level
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -122,7 +124,7 @@ namespace NCsLevel
 			* @param Log			(optional)
 			* return				UCsManager_Level.
 			*/
-			static UCsManager_Level* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_Level* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
 
 			/**
 			* Safely get the reference to UCsManager_Level from a ContextObject.
@@ -135,7 +137,7 @@ namespace NCsLevel
 			* return				UCsManager_Level.
 			*/
 			template<typename T>
-			static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
 			{
 				UCsManager_Level* O = GetSafe(Context, ContextObject, Log);
 
@@ -163,7 +165,7 @@ namespace NCsLevel
 			* @param Log			(optional)
 			* return				UCsManager_Level.
 			*/
-			static UCsManager_Level* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_Level* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel);
 
 			/**
 			* Safely get the reference to UCsManager_Level from a ContextObject.
@@ -177,7 +179,7 @@ namespace NCsLevel
 			* return				UCsManager_Level.
 			*/
 			template<typename T>
-			static T* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
 			{
 				UCsManager_Level* O = GetSafe(Context, ContextObject, OutSuccess, Log);
 
@@ -242,7 +244,7 @@ namespace NCsLevel
 			#endif // #if !UE_BUILD_SHIPPING
 			}
 
-			FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
+			FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, LogLevel)
 			{
 				return GetSafe(Context, ContextObject, Log) != nullptr;
 			}
@@ -277,17 +279,17 @@ namespace NCsLevel
 
 			static bool HasChangeMapCompletedChecked(const FString& Context, const UObject* ContextObject);
 
-			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, LogLevel);
 
-			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel);
 
 		#define ParamsType NCsLevel::NManager::NChangeMap::FParams
 
 			static void ChangeMapChecked(const FString& Context, const UObject* ContextObject, const ParamsType& Params);
 
-			static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, LogLevel);
 
-			FORCEINLINE static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			FORCEINLINE static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, bool& OutSuccess, LogLevel)
 			{
 				OutSuccess = SafeChangeMap(Context, ContextObject, Params, Log);
 				return OutSuccess;
@@ -348,6 +350,8 @@ namespace NCsLevel
 			static void DestroyOtherPIEWorldChecked(const FString& Context, UObject* ContextObject, const FString& URL);
 
 		#endif // #if WITH_EDITOR
+
+		#undef LogLevel
 		};
 	}
 }

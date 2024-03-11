@@ -4,7 +4,7 @@
 #include "CsTypes_Modifier.h"
 #include "Modifier/Types/CsTypes_ProjectileModifier.h"
 // Interface
-#include "CsModifier.h"
+#include "ICsModifier.h"
 #include "CsModifier_Int.h"
 #include "CsModifier_Float.h"
 #include "CsModifier_Toggle.h"

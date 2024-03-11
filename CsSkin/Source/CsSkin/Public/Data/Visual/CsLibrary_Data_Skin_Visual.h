@@ -221,29 +221,6 @@ namespace NCsSkin
 				*/
 				static int32 GetNumAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin);
 
-				/**
-				* Set Static Mesh attachments on Component from the given Skin.
-				* 
-				* @param Context		The calling context.
-				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-				* @param Skin
-				* @param Component		SceneComponent to attach Static Mesh attachments to.
-				* @param OutAttachments (out)
-				*/
-				static void SetupAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin, USceneComponent* Component, TArray<FCsStaticMeshActorPooled*>& OutAttachments);
-				
-				/**
-				* Attach Attachment to Component with given Skin only using the Transform Rules.
-				*  Skin MUST implement the interface: AttachmentSkinType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment).
-				*
-				* @param Context	The calling context.
-				* @param Data		Object that implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
-				* @param Index		Index in the list of Attachments in Skin.
-				* @param Component	SceneComponent to attach Attachment to.
-				* @param Attachment StaticMeshComponent to attach to Component.
-				*/
-				static void AttachOnlyTransformChecked(const FString& Context, const SkinType* Skin, USceneComponent* Component, const int32& Index, const FCsStaticMeshActorPooled* Attachment);
-
 			#pragma endregion Attachment
 
 			#pragma endregion Static Mesh

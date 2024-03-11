@@ -297,6 +297,9 @@ public:
 
 #pragma endregion Macros
 
+class UObject;
+class AActor;
+
 class CSCORE_API FCsManager_TArray
 {
 public:

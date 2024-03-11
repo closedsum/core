@@ -12,6 +12,7 @@ class APawn;
 class UPlayerInput;
 class AHUD;
 class APlayerCameraManager;
+class ULocalPlayer;
 
 namespace NCsPlayer
 {

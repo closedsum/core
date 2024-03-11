@@ -8,6 +8,7 @@
 #include "Utility/CsLog.h"
 
 class UObject;
+class UEngine;
 class UGameInstance;
 class UCsGameInstance;
 
@@ -28,6 +29,14 @@ namespace NCsGameInstance
 
 	class CSCORE_API FLibrary final
 	{
+	#define LogLevel void(*Log)(const FString&) = &FCsLog::Warning
+
+	public:
+
+		static FString PrintObjectAndClass(const UGameInstance* Object);
+
+		static FString PrintNameAndClass(const UGameInstance* Object);
+
 	// Get
 	#pragma region
 	public:
@@ -58,7 +67,7 @@ namespace NCsGameInstance
 			UGameInstance* O = GetChecked(Context, ContextObject);
 			T* Other		 = Cast<T>(O);
 
-			checkf(Other, TEXT("%s: %s: with Class: %s is NOT of type: %s."), *Context, *(O->GetName()), *(O->GetClass()->GetName()), *(T::StaticClass()->GetName()));
+			checkf(Other, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintNameAndClass(O), *(T::StaticClass()->GetName()));
 			return Other;
 		}
 
@@ -72,7 +81,7 @@ namespace NCsGameInstance
 		* @param Log
 		* return				GameInstance
 		*/
-		static UGameInstance* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+		static UGameInstance* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
 
 		/**
 		* Safely get GameInstance from WorldContext.
@@ -85,7 +94,7 @@ namespace NCsGameInstance
 		* return				GameInstance
 		*/
 		template<typename T>
-		static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
+		static T* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
 			UGameInstance* O = GetSafe(Context, ContextObject, Log);
 
@@ -97,7 +106,7 @@ namespace NCsGameInstance
 			if (!Other)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s: with Class: %s is NOT of type: %s."), *Context, *(O->GetName()), *(O->GetClass()->GetName()), *(T::StaticClass()->GetName())));
+					Log(FString::Printf(TEXT("%s: %s is NOT of type: %s."), *Context, *PrintNameAndClass(O), *(T::StaticClass()->GetName())));
 			}
 			return Other;
 		}
@@ -153,7 +162,7 @@ namespace NCsGameInstance
 		* @param Log
 		* return				GameInstance
 		*/
-		static UCsGameInstance* GetCsSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+		static UCsGameInstance* GetCsSafe(const FString& Context, const UObject* ContextObject, LogLevel);
 
 		/**
 		* Safely get GameInstance from ContextObject.
@@ -186,7 +195,7 @@ namespace NCsGameInstance
 		* @param Log
 		* return				GameInstance
 		*/
-		static UObject* GetSafeAsObject(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+		static UObject* GetSafeAsObject(const FString& Context, const UObject* ContextObject, LogLevel);
 
 		/**
 		* Safely get GameInstance from ContextObject.
@@ -225,7 +234,7 @@ namespace NCsGameInstance
 		* @param Log			(optional)
 		* return
 		*/
-		static bool IsSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool IsSafe(const FString& Context, const UObject* ContextObject, LogLevel);
 
 		/**
 		* Safely check if the ContextObject is of type: UGameInstance
@@ -244,13 +253,23 @@ namespace NCsGameInstance
 
 	#pragma endregion Is
 
+	// Engine
+	#pragma endregion
+	public:
+
+		static UEngine* GetEngineChecked(const FString& Context, const UObject* ContextObject);
+
+		static UEngine* GetSafeEngine(const FString& Context, const UObject* ContextObject, LogLevel);
+
+	#pragma endregion Engine
+
 	// Start
 	#pragma region
 	public:
 
 		static bool HasStartedFromEntryChecked(const FString& Context, const UObject* ContextObject);
 
-		static bool SafeHasStartedFromEntry(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeHasStartedFromEntry(const FString& Context, const UObject* ContextObject, LogLevel);
 
 	#pragma endregion Start
 
@@ -329,7 +348,7 @@ namespace NCsGameInstance
 		* @param Log			(optional)
 		* return				Whether the instance running is a Mobile Preview with Editor.
 		*/
-		static bool SafeIsMobilePreviewEditor(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeIsMobilePreviewEditor(const FString& Context, const UObject* ContextObject, LogLevel);
 
 	#pragma endregion Editor
 
@@ -365,5 +384,7 @@ namespace NCsGameInstance
 	#pragma endregion Transition
 
 	#pragma endregion Events
+
+	#undef LogLevel
 	};
 }

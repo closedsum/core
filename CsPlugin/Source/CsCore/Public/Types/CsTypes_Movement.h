@@ -389,19 +389,19 @@ namespace NCsMovement
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Time, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Group, FECsUpdateGroup)
 
-					FORCEINLINE void SetMoveActor(AActor* Value) { MoveActor = Value; }
+					void SetMoveActor(AActor* Value);
 					AActor* GetMoveActor() const;
 
-					FORCEINLINE void SetMoveComponent(USceneComponent* Value) { MoveComponent = Value; }
+					void SetMoveComponent(USceneComponent* Value);
 					USceneComponent* GetMoveComponent() const;
 
-					FORCEINLINE void SetToActor(AActor* Value) { ToActor = Value; }
+					void SetToActor(AActor* Value);
 					AActor* GetToActor() const;
 
-					FORCEINLINE void SetToComponent(USceneComponent* Value) { ToComponent = Value; }
+					void SetToComponent(USceneComponent* Value);
 					USceneComponent* GetToComponent() const;
 
-					FORCEINLINE void SetToMeshComponent(USkeletalMeshComponent* Value) { ToMeshComponent = Value; }
+					void SetToMeshComponent(USkeletalMeshComponent* Value);
 					USkeletalMeshComponent* GetToMeshComponent() const;
 
 					void ConditionalSetMoveObjectChecked(const FString& Context, UObject* WorldContext);

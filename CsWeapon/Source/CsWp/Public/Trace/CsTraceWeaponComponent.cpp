@@ -39,6 +39,8 @@
 #include "Impl/CsTraceWeapon_Impl_Trace.h"
 #include "Impl/CsTraceWeapon_Impl_FX.h"
 #include "Impl/CsTraceWeapon_Impl_Sound.h"
+// Game
+#include "GameFramework/GameStateBase.h" // TODO: Move usage through a library
 
 // Cached 
 #pragma region

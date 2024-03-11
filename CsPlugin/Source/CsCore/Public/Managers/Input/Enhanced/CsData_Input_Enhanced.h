@@ -38,6 +38,6 @@ class CSCORE_API UCsData_Input_Enhanced : public UObject
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Enhanced")
 	FCsData_Input_Enhanced_Inner Inner;
 };

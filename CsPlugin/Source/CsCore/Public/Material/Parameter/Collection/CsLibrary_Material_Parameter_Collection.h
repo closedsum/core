@@ -10,6 +10,9 @@ class UMaterialParameterCollectionInstance;
 class FMaterialParameterCollectionInstanceResource;
 class UMaterial;
 
+class FRHIUniformBuffer;
+struct FRHIUniformBufferLayout;
+
 namespace NCsMaterial
 {
 	namespace NParameter
@@ -39,9 +42,9 @@ namespace NCsMaterial
 
 				static FName* GetOwnerNamePtrChecked(const FString& Context, FMaterialParameterCollectionInstanceResource* Resource);
 
-				static FUniformBufferRHIRef* GetUniformBufferPtrChecked(const FString& Context, FMaterialParameterCollectionInstanceResource* Resource);
+				static /*FUniformBufferRHIRef*/TRefCountPtr<FRHIUniformBuffer>* GetUniformBufferPtrChecked(const FString& Context, FMaterialParameterCollectionInstanceResource* Resource);
 
-				static FUniformBufferLayoutRHIRef* GetUniformBufferLayoutPtrChecked(const FString& Context, FMaterialParameterCollectionInstanceResource* Resource);
+				static /*FUniformBufferLayoutRHIRef*/TRefCountPtr<const FRHIUniformBufferLayout>* GetUniformBufferLayoutPtrChecked(const FString& Context, FMaterialParameterCollectionInstanceResource* Resource);
 
 			#if WITH_EDITOR
 

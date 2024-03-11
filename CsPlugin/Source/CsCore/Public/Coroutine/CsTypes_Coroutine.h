@@ -229,14 +229,7 @@ namespace NCsCoroutine
 
 		FORCEINLINE void* GetOwner() { return Owner; }
 
-		void SetObject(UObject* InObject)
-		{
-			Owner = InObject;
-			Object = InObject;
-			WeakObject = Object;
-			bObject = true;
-			Actor = Cast<AActor>(Object);
-		}
+		void SetObject(UObject* InObject);
 
 		FORCEINLINE UObject* GetObject() { return Object; }
 

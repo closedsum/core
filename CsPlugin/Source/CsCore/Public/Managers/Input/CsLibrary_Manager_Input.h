@@ -277,10 +277,21 @@ namespace NCsInput
 
 			#define InputManagerLibrary NCsInput::NManager::FLibrary
 
+				FORCEINLINE static ICsManager_Input* GetFirstManagerChecked(const FString& Context, UWorld* World)
+				{
+					return InputManagerLibrary::GetFirstChecked(Context, World);
+				}
+
+				FORCEINLINE static ICsManager_Input* GetSafeFirstManager(const FString& Context, UWorld* World, void(*Log)(const FString&) = &FCsLog::Warning)
+				{
+					return InputManagerLibrary::GetSafeFirst(Context, World, Log);
+				}
+
 				FORCEINLINE static ICsManager_Input* GetFirstManagerChecked(const FString& Context, const UObject* WorldContext)
 				{
 					return InputManagerLibrary::GetFirstChecked(Context, WorldContext);
 				}
+
 
 				FORCEINLINE static ICsManager_Input* GetSafeFirstManager(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
 				{

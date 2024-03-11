@@ -6,6 +6,7 @@
 #include "Containers/CsGetInterfaceMap.h"
 // Types
 #include "Managers/Sound/CsTypes_Sound.h"
+#include "Chaos/ChaosEngineInterface.h"
 
 #include "CsData_Trace_SoundImpact.generated.h"
 

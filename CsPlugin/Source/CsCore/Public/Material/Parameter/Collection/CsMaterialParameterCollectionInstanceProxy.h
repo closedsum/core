@@ -5,6 +5,8 @@
 #include "Types/CsTypes_Math.h"
 
 class FMaterialParameterCollectionInstanceResource;
+class FRHIUniformBuffer;
+struct FRHIUniformBufferLayout;
 
 namespace NCsMaterial
 {
@@ -28,9 +30,9 @@ namespace NCsMaterial
 						FName* OwnerName;
 
 						/** Uniform buffer containing the UMaterialParameterCollection default parameter values and UMaterialParameterCollectionInstance instance overrides. */
-						FUniformBufferRHIRef* UniformBuffer;
+						/*FUniformBufferRHIRef*/TRefCountPtr<FRHIUniformBuffer>* UniformBuffer;
 
-						FUniformBufferLayoutRHIRef* UniformBufferLayout;
+						/*FUniformBufferLayoutRHIRef*/TRefCountPtr<const FRHIUniformBufferLayout>* UniformBufferLayout;
 
 						bool bComplete;
 
@@ -50,11 +52,11 @@ namespace NCsMaterial
 
 						FORCEINLINE FName& GetOwnerName() { return *OwnerName; }
 
-						FORCEINLINE FUniformBufferRHIRef& GetUniformBuffer() { return *UniformBuffer; }
+						FORCEINLINE /*FUniformBufferRHIRef*/TRefCountPtr<FRHIUniformBuffer>& GetUniformBuffer() { return *UniformBuffer; }
 
-						FORCEINLINE FUniformBufferLayoutRHIRef& GetUniformBufferLayout() { return *UniformBufferLayout; }
+						FORCEINLINE /*FUniformBufferLayoutRHIRef*/TRefCountPtr<const FRHIUniformBufferLayout>& GetUniformBufferLayout() { return *UniformBufferLayout; }
 
-						FORCEINLINE FUniformBufferLayoutRHIRef* GetUniformBufferLayoutPtr() { return UniformBufferLayout; }
+						FORCEINLINE /*FUniformBufferLayoutRHIRef*/TRefCountPtr<const FRHIUniformBufferLayout>* GetUniformBufferLayoutPtr() { return UniformBufferLayout; }
 
 						void Init(FMaterialParameterCollectionInstanceResource* InResource);
 

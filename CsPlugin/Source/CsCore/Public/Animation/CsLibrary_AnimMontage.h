@@ -7,6 +7,7 @@
 
 class UObject;
 class UAnimMontage;
+class UPrimitiveComponent;
 
 namespace NCsAnimMontage
 {

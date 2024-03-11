@@ -32,7 +32,7 @@ public:
 	TSoftClassPtr<UObject> Data;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	//ECsLoadFlags_Editor Data_LoadFlags;
+	//int32 Data_LoadFlags;
 
 	/** All ObjectPaths and Resource Sizes (Memory Size) for Data. */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
@@ -104,7 +104,7 @@ public:
 	TSoftClassPtr<UObject> Data;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	//ECsLoadFlags_Editor Data_LoadFlags;
+	//int32 Data_LoadFlags;
 
 	/** All ObjectPaths and Resource Sizes (Memory Size) for Data. */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
@@ -175,7 +175,7 @@ public:
 	TSoftObjectPtr<UDataTable> DataTable;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	//ECsLoadFlags_Editor DataTable_LoadFlags;
+	//int32 DataTable_LoadFlags;
 
 	/** Whether to store all rows or use specific row names of 
 	    the DataTable to store ObjectPaths for in Paths. */

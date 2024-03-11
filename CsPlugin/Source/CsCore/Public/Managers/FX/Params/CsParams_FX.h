@@ -550,6 +550,8 @@ namespace NCsFX
 	}
 }
 
+class USkeletalMeshComponent;
+
 namespace NCsFX
 {
 	namespace NParameter
@@ -565,7 +567,6 @@ namespace NCsFX
 				* Describes how the Skeletal Mesh Data Interface is set or passed.
 				*  Usually the parameter information is passed via an FX Payload.
 				*/
-				UENUM(BlueprintType)
 				enum class EMethod : uint8
 				{
 					/** Set the Skeletal Mesh Component directly. */

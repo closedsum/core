@@ -29,6 +29,10 @@
     {
       "Name": "CsPlugin",
       "Enabled": true
+    },
+    {
+      "Name": "CsThread",
+      "Enabled": true
     }
   ]
 }

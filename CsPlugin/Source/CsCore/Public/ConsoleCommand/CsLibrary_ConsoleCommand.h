@@ -4,6 +4,8 @@
 #pragma once
 // Library
 #include "Library/CsLibrary_String.h"
+// Output
+#include "Misc/OutputDeviceRedirector.h"
 
 class UWorld;
 class UObject;

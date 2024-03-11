@@ -5,6 +5,8 @@
 // Types
 #include "Struct/CsTypes_StructOps.h"
 #include "Types/CsTypes_View.h"
+#include "Animation/AnimEnums.h"
+#include "Animation/AnimTypes.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -1205,6 +1207,7 @@ namespace NCsFpvAnimBlueprintMember
 // FCsAnimBlueprint
 #pragma region
 
+class UAnimBlueprint;
 class UAnimBlueprintGeneratedClass;
 
 USTRUCT(BlueprintType)

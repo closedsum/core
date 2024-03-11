@@ -18,7 +18,7 @@ public class CsDmg : ModuleRules
                     "Engine",
                     "DeveloperSettings",
                     "CsCore",
-                    "CsModify"
+                    "CsModifier"
                 }
             );
 

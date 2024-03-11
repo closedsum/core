@@ -4,6 +4,7 @@
 #pragma once
 // Types
 #include "Engine/EngineTypes.h"
+#include "Engine/HitResult.h"
 // Log
 #include "Utility/CsLog.h"
 

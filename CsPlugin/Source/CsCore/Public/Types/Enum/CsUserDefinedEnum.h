@@ -30,8 +30,6 @@ namespace NCsUserDefinedEnum
 	typedef FECsUserDefinedEnum Type;
 	typedef EMCsUserDefinedEnum EnumMapType;
 
-	extern CSCORE_API const Type FECsDataType;
-	extern CSCORE_API const Type FECsDataCollectionType;
 	extern CSCORE_API const Type FECsInputAction;
 	extern CSCORE_API const Type FECsInputActionMap;
 	extern CSCORE_API const Type FECsGameEvent;

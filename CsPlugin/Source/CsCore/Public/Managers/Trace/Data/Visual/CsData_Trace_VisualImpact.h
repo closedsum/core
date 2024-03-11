@@ -6,6 +6,7 @@
 #include "Containers/CsGetInterfaceMap.h"
 // Types
 #include "Managers/FX/CsTypes_FX.h"
+#include "Chaos/ChaosEngineInterface.h"
 
 #include "CsData_Trace_VisualImpact.generated.h"
 

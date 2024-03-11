@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "CoreMinimal.h"
 
 #define CS_EMPTY 0
 #define CS_FIRST 0

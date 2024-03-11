@@ -7,9 +7,9 @@
 #include "Library/CsLibrary_Valid.h"
 // Modifier
 #include "Modifier/Types/CsGetWeaponModifierType.h"
-#include "Modifier/CsModifier_Int.h"
-#include "Modifier/CsModifier_Float.h"
-#include "Modifier/CsModifier_Toggle.h"
+#include "CsModifier_Int.h"
+#include "CsModifier_Float.h"
+#include "CsModifier_Toggle.h"
 
 namespace NCsWeapon
 {

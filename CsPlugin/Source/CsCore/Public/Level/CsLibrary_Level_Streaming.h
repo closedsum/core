@@ -8,6 +8,7 @@
 class UObject;
 class UWorld;
 class ULevelStreaming;
+class ALevelScriptActor;
 
 namespace NCsLevel
 {

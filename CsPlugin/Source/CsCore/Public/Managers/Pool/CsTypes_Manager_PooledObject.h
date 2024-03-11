@@ -6,6 +6,8 @@
 #include "CsCVars.h"
 // Types
 #include "Managers/Pool/CsTypes_Pool.h"
+// World
+#include "Engine/World.h"
 
 class UWorld;
 class UObject;

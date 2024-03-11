@@ -2,6 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "CoreMinimal.h"
+#include "Templates/SubclassOf.h"
+#include "UObject/SoftObjectPtr.h"
 
 class UObject;
 class UClass;
@@ -1969,7 +1972,7 @@ namespace NCsValid
 		{
 		public:
 
-			template<typename ActorType>
+			/*template<typename ActorType>
 			FORCEINLINE static ActorType* SpawnChecked(const FString& Context, UWorld* World, UClass* Class, const FString& ClassName)
 			{
 				checkf(World, TEXT("%s: World is NULL."), *Context);
@@ -1979,7 +1982,7 @@ namespace NCsValid
 
 				checkf(A, TEXT("%s: Failed to Spawn Actor of type: %s from %s of type: %s."), *Context, *(ActorType::StaticClass()->GetName()), *ClassName, *(Class->GetName()));
 				return A;
-			}
+			}*/
 		};
 	}
 
@@ -2645,12 +2648,12 @@ namespace NCsValid
 #pragma region
 
 // Assume const FString& Context has been defined and this->GetWorld() exists
-#define CS_SPAWN_ACTOR_CHECKED(__ActorType, __Class) \
-	[] (const FString& Context, UWorld* __World, UClass* __Class) \
-	{ \
-		static const FString __temp__str__a = #__Class; \
-		return NCsValid::NActor::FLibrary::SpawnChecked<__ActorType>(Context, __World, __Class, __temp__str__a); \
-	}(Context, GetWorld(), __Class)
+//#define CS_SPAWN_ACTOR_CHECKED(__ActorType, __Class) \
+//	[] (const FString& Context, UWorld* __World, UClass* __Class) \
+//	{ \
+//		static const FString __temp__str__a = #__Class; \
+//		return NCsValid::NActor::FLibrary::SpawnChecked<__ActorType>(Context, __World, __Class, __temp__str__a); \
+//	}(Context, GetWorld(), __Class)
 
 #pragma endregion Actor
 
@@ -2865,12 +2868,12 @@ namespace NCsValid
 // SubclassOf
 #define CS_IS_SUBCLASS_OF_NULL_CHECKED(__Class, __ObjectType)
 // Actor
-#define CS_SPAWN_ACTOR_CHECKED(__ActorType, __Class) \
-	[] (const FString& Context, UWorld* __In__##__World, UClass* __In__##__Class) \
-	{ \
-		static const FString __temp__str__a; \
-		return NCsValid::NActor::FLibrary::SpawnChecked<__ActorType>(Context, __In__##__World, __In__##__Class, __temp__str__a); \
-	}(Context, GetWorld(), __Class)
+//#define CS_SPAWN_ACTOR_CHECKED(__ActorType, __Class) \
+//	[] (const FString& Context, UWorld* __In__##__World, UClass* __In__##__Class) \
+//	{ \
+//		static const FString __temp__str__a; \
+//		return NCsValid::NActor::FLibrary::SpawnChecked<__ActorType>(Context, __In__##__World, __In__##__Class, __temp__str__a); \
+//	}(Context, GetWorld(), __Class)
 // Interface
 #define CS_INTERFACE_GET_UOBJECT_CHECKED(__Interface, __InterfaceType) \
 	[](const FString& Context, const __InterfaceType* __In__##__Interface) \

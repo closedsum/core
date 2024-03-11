@@ -1,0 +1,33 @@
+{
+	"FileVersion": 3,
+	"Version": 2,
+	"VersionName": "0.0.1",
+	"FriendlyName": "Closed Sum Games Spawner",
+	"Description": "Closed Sum Games Spawner",
+	"Category": "Programming",
+	"CreatedBy": "Closed Sum Games LLC",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "5.3.0",
+	"CanContainContent": true,
+	"Installed": true,
+  "Modules": [
+    {
+      "Name": "CsSpawner",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+		{
+			"Name": "CsPlugin",
+			"Enabled": true
+		},
+		{
+			"Name": "CsModifier",
+			"Enabled": true
+		}
+  ]
+}

@@ -4,6 +4,7 @@
 #pragma once
 // Types
 #include "ConsoleCommand/CsTypes_ConsoleCommand.h"
+#include "Misc/OutputDeviceRedirector.h"
 
 class UWorld;
 

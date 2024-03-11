@@ -2,7 +2,10 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
 #include "Managers/Sound/CsTypes_Sound.h"
+#include "Chaos/ChaosEngineInterface.h"
+// DataTable
 #include "Engine/DataTable.h"
 
 #include "CsTypes_Sound_Impact.generated.h"

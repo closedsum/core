@@ -2,6 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "UObject/SoftObjectPtr.h"
+#include "UObject/UnrealType.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -18,6 +21,8 @@ class FClassProperty;
 class FObjectProperty;
 class FArrayProperty;
 class FSetProperty;
+
+class UAnimSequence;
 
 namespace NCsProperty
 {
@@ -38,6 +43,14 @@ namespace NCsProperty
 
 	struct CSCORE_API FLibrary
 	{
+	public:
+
+		static FString PrintStructName(const UStruct* Struct);
+
+		static FString PrintPropertyClassName(const FProperty* Property);
+
+		static FString PrintPropertyStructName(const FStructProperty* Property);
+
 	// Find
 	#pragma region
 	public:
@@ -67,7 +80,7 @@ namespace NCsProperty
 			FProperty* Property = FindPropertyByNameChecked(Context, Struct, PropertyName);
 			T* Prop				= CastField<T>(Property);
 
-			checkf(Prop, TEXT("%s: %s.%s is NOT of type: T."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+			checkf(Prop, TEXT("%s: %s.%s is NOT of type: T."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()));
 			return Prop;
 		}
 
@@ -120,7 +133,7 @@ namespace NCsProperty
 			if (!Prop)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: T."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: T."), *Context, *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return Prop;
@@ -232,7 +245,7 @@ namespace NCsProperty
 		{
 			FStructProperty* Property = FindStructPropertyByNameChecked(Context, Struct, PropertyName);
 
-			checkf(Property->Struct == StructType::StaticStruct(), TEXT("%s: %s.%s of type: T is NOT of type: T."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Property->Struct->GetName()), *(StructType::StaticStruct()->GetName()));
+			checkf(Property->Struct == StructType::StaticStruct(), TEXT("%s: %s.%s of type: T is NOT of type: T."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *PrintPropertyStructName(Property), *(StructType::StaticStruct()->GetName()));
 			return Property;
 		}
 
@@ -256,7 +269,7 @@ namespace NCsProperty
 			if (Property->Struct != StructType::StaticStruct())
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s of type: T is NOT of type: T."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Property->Struct->GetName()), *(StructType::StaticStruct()->GetName())));
+					Log(FString::Printf(TEXT("%s: %s.%s of type: T is NOT of type: T."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *PrintPropertyStructName(Property), *(StructType::StaticStruct()->GetName())));
 			}
 			return Property;
 		}
@@ -659,7 +672,7 @@ namespace NCsProperty
 				return Property;
 
 			if (Log)
-				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of %s but a TArray of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(StructType::StaticStruct()->GetName()), *(Property->Inner->GetName())));
+				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of %s but a TArray of %s."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *(StructType::StaticStruct()->GetName()), *(Property->Inner->GetName())));
 			return nullptr;
 		}
 
@@ -697,7 +710,7 @@ namespace NCsProperty
 				return Property;
 
 			if (Log)
-				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of %s but a TArray of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(ObjectType::StaticClass()->GetName()), *(Property->Inner->GetName())));
+				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of %s but a TArray of %s."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *(ObjectType::StaticClass()->GetName()), *(Property->Inner->GetName())));
 			return nullptr;
 		}
 		template<typename ObjectType>
@@ -732,7 +745,7 @@ namespace NCsProperty
 				return Property;
 
 			if (Log)
-				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of %s but a TArray of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(ObjectType::StaticClass()->GetName()), *(Property->Inner->GetName())));
+				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of %s but a TArray of %s."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *(ObjectType::StaticClass()->GetName()), *(Property->Inner->GetName())));
 			return nullptr;
 		}
 
@@ -798,7 +811,7 @@ namespace NCsProperty
 				return Property;
 
 			if (Log)
-				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TSet of %s but a TSet of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(StructType::StaticStruct()->GetName()), *(Property->ElementProp->GetName())));
+				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TSet of %s but a TSet of %s."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *(StructType::StaticStruct()->GetName()), *(Property->ElementProp->GetName())));
 			return nullptr;
 		}
 
@@ -893,7 +906,7 @@ namespace NCsProperty
 		{
 			ValueType* ValuePtr = Property->ContainerPtrToValuePtr<ValueType>(Ptr);
 
-			checkf(ValuePtr, TEXT("%s: Failed get Value Ptr from %s: %s."), *Context, *(Property->GetClass()->GetName()), *(Property->GetName()));
+			checkf(ValuePtr, TEXT("%s: Failed get Value Ptr from %s: %s."), *Context, *PrintPropertyClassName(Property), *(Property->GetName()));
 			return ValuePtr;
 		}
 
@@ -913,7 +926,7 @@ namespace NCsProperty
 			if (!ValuePtr)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: Failed get Value Ptr from %s: %s."), *Context, *(Property->GetClass()->GetName()), *(Property->GetName())));
+					Log(FString::Printf(TEXT("%s: Failed get Value Ptr from %s: %s."), *Context, *PrintPropertyClassName(Property), *(Property->GetName())));
 				return nullptr;
 			}
 			return ValuePtr;
@@ -1068,7 +1081,7 @@ namespace NCsProperty
 			}
 
 			if (Log)
-				Log(FString::Printf(TEXT("%s: Property with name: %s from Struct: %s is NOT of type: float or double."), *Context, *(PropertyName.ToString()), *(Struct->GetName())));
+				Log(FString::Printf(TEXT("%s: Property with name: %s from Struct: %s is NOT of type: float or double."), *Context, *(PropertyName.ToString()), *PrintStructName(Struct)));
 			return 0.0f;
 		}
 
@@ -1112,7 +1125,7 @@ namespace NCsProperty
 			FByteProperty* ByteProperty = FindEnumPropertyByNameChecked(Context, Struct, PropertyName, EnumCppType);
 			EnumType* Value				= ByteProperty->ContainerPtrToValuePtr<EnumType>(StructValue);
 
-			checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+			checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()));
 			return Value;
 		}
 
@@ -1129,7 +1142,7 @@ namespace NCsProperty
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString())));
 			}
 			return Value;
 		}
@@ -1146,7 +1159,7 @@ namespace NCsProperty
 			FStructProperty* StructProperty = FindStructPropertyByNameChecked<StructType>(Context, Struct, PropertyName);
 			StructType* Value				= StructProperty->ContainerPtrToValuePtr<StructType>(StructValue);
 
-			checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+			checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()));
 			return Value;
 		}
 
@@ -1163,7 +1176,7 @@ namespace NCsProperty
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return Value;
@@ -1300,7 +1313,7 @@ namespace NCsProperty
 			if (!SoftObjectProperty->PropertyClass->IsChildOf(T::StaticClass()))
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
 				return nullptr;
 			}
 
@@ -1316,7 +1329,7 @@ namespace NCsProperty
 			if (!ValuePtr)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: Failed to get Value Ptr from %s.%s."), *Context, *(T::StaticClass()->GetName()), *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: Failed to get Value Ptr from %s.%s."), *Context, *(T::StaticClass()->GetName()), *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return ValuePtr;
@@ -1419,7 +1432,7 @@ namespace NCsProperty
 			if (!SoftClassProperty->MetaClass->IsChildOf(T::StaticClass()))
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
 				return nullptr;
 			}
 
@@ -1435,7 +1448,7 @@ namespace NCsProperty
 			if (!ValuePtr)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: Failed to get Value Ptr from %s.%s."), *Context, *(T::StaticClass()->GetName()), *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: Failed to get Value Ptr from %s.%s."), *Context, *(T::StaticClass()->GetName()), *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return ValuePtr;
@@ -1590,11 +1603,11 @@ namespace NCsProperty
 		{
 			FObjectProperty* ObjectProperty = FindObjectPropertyByNameChecked(Context, Struct, PropertyName);
 
-			checkf(ObjectProperty->PropertyClass->IsChildOf(T::StaticClass()), TEXT("%s: %s.%s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(T::StaticClass()->GetName()));
+			checkf(ObjectProperty->PropertyClass->IsChildOf(T::StaticClass()), TEXT("%s: %s.%s is NOT of type: %s."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *(T::StaticClass()->GetName()));
 
 			T** Value = ObjectProperty->ContainerPtrToValuePtr<T*>(StructValue);
 
-			checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+			checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()));
 			return Value;
 		}
 
@@ -1619,7 +1632,7 @@ namespace NCsProperty
 			if (!ObjectProperty->PropertyClass->IsChildOf(T::StaticClass()))
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
 				return nullptr;
 			}
 
@@ -1635,7 +1648,7 @@ namespace NCsProperty
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: Failed to get pointer to member of type: from %s.%s."), *Context, *(T::StaticClass()->GetName()), *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: Failed to get pointer to member of type: from %s.%s."), *Context, *(T::StaticClass()->GetName()), *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return Value;
@@ -1663,7 +1676,7 @@ namespace NCsProperty
 			if (!ObjectProperty->PropertyClass->IsChildOf(T::StaticClass()))
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *PrintStructName(Struct), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
 				OutSuccess = false;
 				return nullptr;
 			}
@@ -1681,7 +1694,7 @@ namespace NCsProperty
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: Failed to get pointer to member of type: from %s.%s."), *Context, *(T::StaticClass()->GetName()), *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: Failed to get pointer to member of type: from %s.%s."), *Context, *(T::StaticClass()->GetName()), *PrintStructName(Struct), *(PropertyName.ToString())));
 				OutSuccess = false;
 				return nullptr;
 			}
@@ -1903,7 +1916,7 @@ namespace NCsProperty
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return Value;
@@ -1930,7 +1943,7 @@ namespace NCsProperty
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return Value;
@@ -1958,7 +1971,7 @@ namespace NCsProperty
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return Value;
@@ -1986,7 +1999,7 @@ namespace NCsProperty
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return Value;
@@ -2197,7 +2210,7 @@ namespace NCsProperty
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return Value;
@@ -2225,7 +2238,7 @@ namespace NCsProperty
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *PrintStructName(Struct), *(PropertyName.ToString())));
 				return nullptr;
 			}
 			return Value;

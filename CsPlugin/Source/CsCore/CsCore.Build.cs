@@ -25,6 +25,7 @@ public class CsCore : ModuleRules
                     "JsonUtilities",
                     "DeveloperSettings",
                     "EnhancedInput", // TODO: Eventually move associated to plugin
+                    "PhysicsCore",
                     "Niagara",
                     "NiagaraCore" // TODO: Move associated code to plugin
                 }
@@ -53,8 +54,7 @@ public class CsCore : ModuleRules
                 new string[] {
                     "DeveloperToolSettings",
                     "RHI", // May need to breakout into plugin
-                    "RenderCore", // TODO: Move associated code to plugin
-                    "PhysicsCore",
+                    "RenderCore", // TODO: Move associated code to plugin      
                     "ApplicationCore"
                 }
             );

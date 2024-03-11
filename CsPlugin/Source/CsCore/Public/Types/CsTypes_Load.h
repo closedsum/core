@@ -112,60 +112,6 @@ namespace NCsLoadFlags
 
 #pragma endregion LoadFlags
 
-// LoadFlags_Editor
-#pragma region
-
-UENUM(BlueprintType)
-enum class ECsLoadFlags_Editor : uint8
-{
-	Game					UMETA(DisplayName = "Game"),
-	Game1P					UMETA(DisplayName = "Game First Person"),
-	Game3P					UMETA(DisplayName = "Game Third Person"),
-	Game3PLow				UMETA(DisplayName = "Game Third Person Low"),
-	GameVR					UMETA(DisplayName = "Game VR"),
-	UI						UMETA(DisplayName = "UI"),
-	All						UMETA(DisplayName = "All"),
-	ECsLoadFlags_Editor_MAX	UMETA(Hidden),
-};
-
-struct CSCORE_API EMCsLoadFlags_Editor : public TCsEnumMap<ECsLoadFlags_Editor>
-{
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsLoadFlags_Editor, ECsLoadFlags_Editor)
-};
-
-namespace NCsLoadFlags_Editor
-{
-	typedef ECsLoadFlags_Editor Type;
-
-	namespace Ref
-	{
-		extern CSCORE_API const Type Game;
-		extern CSCORE_API const Type Game1P;
-		extern CSCORE_API const Type Game3P;
-		extern CSCORE_API const Type Game3PLow;
-		extern CSCORE_API const Type GameVR;
-		extern CSCORE_API const Type UI;
-		extern CSCORE_API const Type All;
-		extern CSCORE_API const Type ECsLoadFlags_Editor_MAX;
-	}
-
-	extern CSCORE_API const uint8 MAX;
-	
-	FORCEINLINE const ECsLoadFlags& ToBaseType(const Type &EType)
-	{
-		if (EType == Type::Game) { return NCsLoadFlags::Ref::Game; }
-		if (EType == Type::Game1P) { return NCsLoadFlags::Ref::Game1P; }
-		if (EType == Type::Game3P) { return NCsLoadFlags::Ref::Game3P; }
-		if (EType == Type::Game3PLow) { return NCsLoadFlags::Ref::Game3PLow; }
-		if (EType == Type::GameVR) { return NCsLoadFlags::Ref::GameVR; }
-		if (EType == Type::UI) { return NCsLoadFlags::Ref::UI; }
-		//if (EType == Type::All) { return NCsLoadFlags::Ref::All; }
-		return NCsLoadFlags::Ref::Game;
-	}
-}
-
-#pragma endregion LoadFlags_Editor
-
 // UnloadCode
 #pragma region
 
@@ -194,51 +140,6 @@ namespace NCsUnloadCodes
 }
 
 #pragma endregion UnloadCode
-
-// DataType
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FECsDataType : public FECsEnum_uint8
-{
-	GENERATED_USTRUCT_BODY()
-
-	CS_ENUM_UINT8_BODY(FECsDataType)
-};
-
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsDataType)
-
-struct CSCORE_API EMCsDataType : public TCsEnumStructMap<FECsDataType, uint8>
-{
-	CS_ENUM_STRUCT_MAP_BODY_WITH_EXPLICIT_MAX(EMCsDataType, FECsDataType, uint8)
-};
-
-namespace NCsDataType
-{
-	typedef FECsDataType Type;
-}
-
-#pragma endregion DataType
-
-// DataCollectionType
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FECsDataCollectionType : public FECsEnum_uint8
-{
-	GENERATED_USTRUCT_BODY()
-
-	CS_ENUM_UINT8_BODY(FECsDataCollectionType)
-};
-
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsDataCollectionType)
-
-struct CSCORE_API EMCsDataCollectionType : public TCsEnumStructMap<FECsDataCollectionType, uint8>
-{
-	CS_ENUM_STRUCT_MAP_BODY(EMCsDataCollectionType, FECsDataCollectionType, uint8)
-};
-
-#pragma endregion DataCollectionType
 
 // LoadAsyncOrder
 #pragma region
@@ -276,65 +177,3 @@ namespace NCsLoadAsyncOrder
 }
 
 #pragma endregion LoadAsyncOrder
-
-// AssetType
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FECsAssetType : public FECsEnum_uint8
-{
-	GENERATED_USTRUCT_BODY()
-
-	CS_ENUM_UINT8_BODY(FECsAssetType)
-};
-
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsAssetType)
-
-struct CSCORE_API EMCsAssetType : public TCsEnumStructMap<FECsAssetType, uint8>
-{
-	CS_ENUM_STRUCT_MAP_BODY_WITH_EXPLICIT_MAX(EMCsAssetType, FECsAssetType, uint8)
-};
-
-namespace NCsAssetType
-{
-	typedef FECsAssetType Type;
-}
-
-#pragma endregion DataType
-
-// LoadAssetsType
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FECsLoadAssetsType : public FECsEnum_uint8
-{
-	GENERATED_USTRUCT_BODY()
-
-	CS_ENUM_UINT8_BODY(FECsLoadAssetsType)
-};
-
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsLoadAssetsType)
-
-struct CSCORE_API EMCsLoadAssetsType : public TCsEnumStructMap<FECsLoadAssetsType, uint8>
-{
-	CS_ENUM_STRUCT_MAP_BODY(EMCsLoadAssetsType, FECsLoadAssetsType, uint8)
-};
-
-#pragma endregion LoadAssetsType
-
-// FCsCategoryMemberAssociation
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsCategoryMemberAssociation
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
-	FString Category;
-
-	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
-	TArray<FString> Members;
-};
-
-#pragma endregion FCsCategoryMemberAssociation

@@ -19,7 +19,7 @@ public class CsPrj : ModuleRules
                     "PhysicsCore",
                     "CsCore",
                     "CsDmg",
-                    "CsModify"
+                    "CsModifier"
                 }
             );
 

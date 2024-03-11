@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "CoreMinimal.h"
+#include "UObject/SoftObjectPtr.h"
 
 // NOTE: Should only be included in .h files
 

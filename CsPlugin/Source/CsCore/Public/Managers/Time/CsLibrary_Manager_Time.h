@@ -16,6 +16,8 @@ namespace NCsTime
 	{
 		struct CSCORE_API FLibrary final
 		{
+		#define LogLevel void(*Log)(const FString&) = &FCsLog::Warning
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -46,9 +48,9 @@ namespace NCsTime
 			* @param Log
 			* return				Context for UCsManager_Time
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -92,7 +94,7 @@ namespace NCsTime
 			* @param Log
 			* return				UCsManager_Time.
 			*/
-			static UCsManager_Time* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_Time* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
 
 			/**
 			* Safely get the reference to UCsManager_Time from a ContextObject.
@@ -132,8 +134,8 @@ namespace NCsTime
 			* @param Log			(optional)
 			* return				Whether the pause was successfully executed or not.
 			*/
-			static bool SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
-			FORCEINLINE static bool SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			static bool SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, LogLevel);
+			FORCEINLINE static bool SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, bool& OutSuccess, LogLevel)
 			{
 				OutSuccess = SafePause(Context, ContextObject, Group, Log);
 				return OutSuccess;
@@ -161,8 +163,8 @@ namespace NCsTime
 			* @param Log			(optional)
 			* return				Whether the unpause was successfully executed or not.
 			*/
-			static bool SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
-			FORCEINLINE static bool SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			static bool SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, LogLevel);
+			FORCEINLINE static bool SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, bool& OutSuccess, LogLevel)
 			{
 				OutSuccess = SafeUnpause(Context, ContextObject, Group, Log);
 				return OutSuccess;
@@ -185,7 +187,7 @@ namespace NCsTime
 			* @param DeltaTime
 			* @param ClearOnUpdate	Whether to Clear the Custom flag after calling Update.
 			*/
-			static void SetSafeCustomUpdate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime, const bool& ClearOnUpdate, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SetSafeCustomUpdate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime, const bool& ClearOnUpdate, LogLevel);
 
 		#pragma endregion Update
 
@@ -227,7 +229,7 @@ namespace NCsTime
 			* @param Log			(optional)
 			* return
 			*/
-			static const FCsTime& GetSafeTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsTime& GetSafeTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, LogLevel);
 
 			/**
 			*
@@ -252,7 +254,7 @@ namespace NCsTime
 			* @param Log			(optional)
 			* return
 			*/
-			static const FCsDeltaTime& GetSafeTimeSinceStart(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsDeltaTime& GetSafeTimeSinceStart(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, LogLevel);
 
 			/**
 			* 
@@ -290,7 +292,7 @@ namespace NCsTime
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SetSafeScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafeScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale, LogLevel);
 
 			/**
 			*
@@ -326,7 +328,7 @@ namespace NCsTime
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, LogLevel);
 
 			/**
 			* Resets the Scale (to 1.0f) applied to the delta time for the specified Group.
@@ -360,6 +362,8 @@ namespace NCsTime
 		#undef OnResetScaledDeltaTimeEventType
 
 		#pragma endregion Events
+
+		#undef LogLevel
 		};
 	}
 }

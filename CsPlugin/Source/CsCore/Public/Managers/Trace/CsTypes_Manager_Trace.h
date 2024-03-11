@@ -2,8 +2,10 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
 #include "Managers/Trace/CsTypes_Trace.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
+#include "WorldCollision.h"
 
 // NCsTrace::NRequest::FRequest
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)

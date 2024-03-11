@@ -8,18 +8,4 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCs, Log, All);
 
-class CSCORE_API FCsCore : public IModuleInterface
-{
-public:
-
-	virtual void StartupModule() override;
-
-	virtual void ShutdownModule() override;
-
-	virtual bool IsGameModule() const
-	{
-		return true;
-	}
-};
-
 #endif

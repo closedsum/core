@@ -4,6 +4,7 @@
 #pragma once
 // Types
 #include "Types/CsTypes_Macro.h"
+#include "UObject/SoftObjectPath.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -22,9 +23,9 @@ namespace NCsObject
 
 		static FString PrintNameAndClass(const UObject* Object);
 
-		FORCEINLINE static bool IsValidObject(const UObject* Object) { return IsValid(Object); }
+		static bool IsValidObject(const UObject* Object);
 
-		FORCEINLINE static bool IsPendingKill(const UObject* Object) { return !IsValid(Object); }
+		static bool IsPendingKill(const UObject* Object);
 
 	#if WITH_EDITOR
 		static bool IsValidChecked(const FString& Context, const UObject* Object);
@@ -80,8 +81,7 @@ namespace NCsObject
 
 			T* Other = Cast<T>(Object);
 
-			checkf(Other, TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: %s."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()), *(Path.ToString()), *(T::StaticClass()->GetName()));
-
+			checkf(Other, TEXT("%s: %s @ %s is NOT of type: %s."), *Context, *PrintObjectAndClass(Object), *(Path.ToString()), *(T::StaticClass()->GetName()));
 			return Other;
 		}
 
@@ -115,7 +115,7 @@ namespace NCsObject
 
 			if (!Other)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: %s."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()), *(Path.ToString()), *(T::StaticClass()->GetName())));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s @ %s is NOT of type: %s."), *Context, *PrintObjectAndClass(Object), *(Path.ToString()), *(T::StaticClass()->GetName())));
 				return nullptr;
 			}
 			return Other;
@@ -144,8 +144,7 @@ namespace NCsObject
 
 			T* Other = Cast<T>(Object);
 
-			checkf(Other, TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: %s."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()), *Path, *(T::StaticClass()->GetName()));
-
+			checkf(Other, TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: %s."), *Context, *PrintObjectAndClass(Object), *Path, *(T::StaticClass()->GetName()));
 			return Other;
 		}
 

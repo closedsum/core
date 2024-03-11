@@ -1,0 +1,70 @@
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
+#include "CsCVars.h"
+
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorTransactions;
+// Scoped Timers
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorScopedTimer;
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorScopedTimerCreatePool;
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorScopedTimerUpdate;
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorScopedTimerUpdateObject;
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorScopedTimerAllocate;
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorScopedTimerAllocateObject;
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorScopedTimerDeallocate;
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorScopedTimerDeallocateObject;
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorScopedTimerSpawn;
+extern CSSKELETALMESH_API TAutoConsoleVariable<int32> CsCVarLogManagerSkeletalMeshActorScopedTimerDestroy;
+
+// CVarLog
+#pragma region
+
+namespace NCsCVarLog
+{
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorTransactions;
+	// Scoped Timer
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorScopedTimer;
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorScopedTimerCreatePool;
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorScopedTimerUpdate;
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorScopedTimerUpdateObject;
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorScopedTimerAllocate;
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorScopedTimerAllocateObject;
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorScopedTimerDeallocate;
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorScopedTimerDeallocateObject;
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorScopedTimerSpawn;
+	extern CSSKELETALMESH_API const Type LogManagerSkeletalMeshActorScopedTimerDestroy;
+
+	namespace Map
+	{
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorTransactions);
+		// Scoped Timer
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorScopedTimer);
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorScopedTimerCreatePool);
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorScopedTimerUpdate);
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorScopedTimerUpdateObject);
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorScopedTimerAllocate);
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorScopedTimerAllocateObject);
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorScopedTimerDeallocate);
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorScopedTimerDeallocateObject);
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorScopedTimerSpawn);
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerSkeletalMeshActorScopedTimerDestroy);
+	}
+}
+
+#pragma endregion CVarLog
+
+// ScopedGroup
+#pragma region
+
+namespace NCsScopedGroup
+{
+	extern CSSKELETALMESH_API const Type ManagerSkeletalMeshActor;
+
+	namespace Map
+	{
+		extern CSSKELETALMESH_API CS_DECLARE_ADD_TO_CVAR_MAP(ManagerSkeletalMeshActor);
+	}
+}
+
+#pragma endregion ScopedGroup

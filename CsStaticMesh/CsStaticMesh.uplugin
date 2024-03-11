@@ -1,0 +1,34 @@
+{
+  "FileVersion": 3,
+  "Version": 2,
+  "VersionName": "0.0.1",
+  "FriendlyName": "Closed Sum Games Static Mesh",
+  "Description": "Closed Sum Games Static Mesh",
+  "Category": "Programming",
+  "CreatedBy": "Closed Sum Games LLC",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "EngineVersion": "5.3.0",
+  "CanContainContent": true,
+  "Installed": true,
+  "Modules": [
+    {
+      "Name": "CsStaticMesh",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "CsStaticMeshEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "CsPlugin",
+      "Enabled": true
+    }
+  ]
+}

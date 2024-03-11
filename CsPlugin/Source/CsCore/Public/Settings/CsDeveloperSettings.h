@@ -16,8 +16,6 @@
 #include "Data/CsSettings_Data.h"
 // Load
 #include "Managers/Load/CsSettings_Manager_Load.h"
-// Runnable
-#include "Managers/Runnable/CsSettings_Manager_Runnable.h"
 // Time
 #include "Managers/Time/CsSettings_Manager_Time.h"
 // Input
@@ -36,11 +34,6 @@
 #include "Managers/Sound/CsSettings_Manager_Sound.h"
 // Trace
 #include "Managers/Trace/CsSettings_Manager_Trace.h"
-// StaticMesh
-#include "Managers/StaticMesh/CsSettings_Manager_StaticMeshActor.h"
-#include "Managers/StaticMesh/Instanced/CsSettings_Manager_InstancedStaticMeshComponent.h"
-// SkeletalMesh
-#include "Managers/SkeletalMesh/CsSettings_Manager_SkeletalMeshActor.h"
 // Level
 #include "Managers/Level/CsSettings_Manager_Level.h"
 // Anim
@@ -147,15 +140,6 @@ public:
 	FCsSettings_Manager_Load Manager_Load;
 
 #pragma endregion Load
-
-// Runnable
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Runnable", meta = (DisplayName = "Manager Runnable"))
-	FCsSettings_Manager_Runnable Manager_Runnable;
-
-#pragma endregion Runnable
 
 // Time
 #pragma region
@@ -288,71 +272,6 @@ public:
 	FCsSettings_Manager_Trace Manager_Trace;
 
 #pragma endregion Trace
-
-// StaticMesh
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Actor", meta = (DisplayName = "ECsStaticMeshActor - Populate Enum Map Method"))
-	ECsPopulateEnumMapMethod ECsStaticMeshActor_PopulateEnumMapMethod;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Actor", meta = (DisplayName = "ECsStaticMeshActor", TitleProperty = "Name"))
-	TArray<FCsSettings_Enum> ECsStaticMeshActor;
-
-	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsStaticMeshActor>() const { return ECsStaticMeshActor; }
-	template<>
-	const FString& GetSettingsEnumPath<FECsStaticMeshActor>() const { return NCsDeveloperSettings::NCached::Str::StaticMeshActor; }
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Actor", meta = (DisplayName = "Default Value: ECsStaticMeshActor"))
-	FECsStaticMeshActor Default_ECsStaticMeshActor;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Actor", meta = (DisplayName = "Manager StaticMeshActor"))
-	FCsSettings_Manager_StaticMeshActor Manager_StaticMeshActor;
-
-	// Unit Test
-#pragma region
-
-#pragma endregion Unit Test
-
-	// Instanced
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Instanced|Component", meta = (DisplayName = "Manager InstancedStaticMeshComponent"))
-	FCsSettings_Manager_InstancedStaticMeshComponent Manager_InstancedStaticMeshComponent;
-
-#pragma endregion Instanced
-
-#pragma endregion StaticMesh
-
-// SkeletalMesh
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|SkeletalMeshActor", meta = (DisplayName = "ECsSkeletalMeshActor - Populate Enum Map Method"))
-	ECsPopulateEnumMapMethod ECsSkeletalMeshActor_PopulateEnumMapMethod;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|SkeletalMeshActor", meta = (DisplayName = "ECsSkeletalMeshActor", TitleProperty = "Name"))
-	TArray<FCsSettings_Enum> ECsSkeletalMeshActor;
-
-	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsSkeletalMeshActor>() const { return ECsSkeletalMeshActor; }
-	template<>
-	const FString& GetSettingsEnumPath<FECsSkeletalMeshActor>() const { return NCsDeveloperSettings::NCached::Str::SkeletalMeshActor; }
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|SkeletalMeshActor", meta = (DisplayName = "Default Value: ECsSkeletalMeshActor"))
-	FECsSkeletalMeshActor Default_ECsSkeletalMeshActor;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|SkeletalMeshActor", meta = (DisplayName = "Manager SkeletalMeshActor"))
-	FCsSettings_Manager_SkeletalMeshActor Manager_SkeletalMeshActor;
-
-	// Unit Test
-#pragma region
-
-#pragma endregion Unit Test
-
-#pragma endregion SkeletalMesh
 
 // Level
 #pragma region

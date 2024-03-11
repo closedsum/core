@@ -6,6 +6,7 @@
 #include "Struct/CsTypes_StructOps.h"
 #include "Types/Enum/CsEnumMap.h"
 #include "Curves/RealCurve.h"
+#include "Curves/RichCurve.h"
 // Log
 #include "Utility/CsLog.h"
 

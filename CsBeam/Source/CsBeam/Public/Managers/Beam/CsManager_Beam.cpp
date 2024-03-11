@@ -33,6 +33,8 @@
 #include "Payload/CsPayload_BeamInterfaceMap.h"
 #include "Payload/CsPayload_BeamImplSlice.h"
 #include "Payload/Damage/CsPayload_BeamModifierDamageImplSlice.h"
+// Level
+#include "Engine/LevelScriptActor.h"
 
 #if WITH_EDITOR
 // Library

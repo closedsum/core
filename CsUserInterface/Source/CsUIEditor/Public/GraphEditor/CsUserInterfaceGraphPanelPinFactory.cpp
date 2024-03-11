@@ -5,15 +5,11 @@
 #include "CsUIEditor.h"
 
 // Types
-#include "Managers/Menu/CsTypes_Menu.h"
 #include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #include "Managers/UserWidget/Payload/CsTypes_Payload_UserWidget.h"
 
 // EnumStructs
-	// Menu
-#include "GraphEditor/EnumStruct/Menu/SCsGraphPin_ECsMenu.h"
-#include "GraphEditor/EnumStruct/Menu/SCsGraphPin_ECsMenuEvent.h"
 	// WidgetActor
 #include "GraphEditor/EnumStruct/WidgetActor/SCsGraphPin_ECsWidgetActor.h"
 #include "GraphEditor/EnumStruct/WidgetActor/SCsGraphPin_ECsWidgetActorClass.h"
@@ -33,13 +29,6 @@ TSharedPtr<SGraphPin> FCsUserInterfacePanelGraphPinFactory::CreatePin(UEdGraphPi
 
 #define CS_TEMP_CREATE(EnumName) if (DoesPinUseScriptStruct<F##EnumName>(InPin, K2Schema)) { return SNew(SCsGraphPin_##EnumName, InPin); }
 
-	// Menu
-	{
-		// FECsMenu
-		CS_TEMP_CREATE(ECsMenu)
-		// FECsMenuEvent
-		CS_TEMP_CREATE(ECsMenuEvent)
-	}
 	// WidgetActor
 	{
 		// FECsWidgetActor

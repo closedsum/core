@@ -9,9 +9,6 @@
 class UCsDeveloperSettings;
 class UObject;
 
-struct FECsStaticMeshActor;
-struct FECsSkeletalMeshActor;
-
 namespace NCsCore
 {
 	namespace NSettings
@@ -58,26 +55,6 @@ namespace NCsCore
 			static const FString& GetSettingsEnumPath_GameEvent();
 
 		#pragma endregion Input
-
-		// StaticMesh
-		#pragma region
-		public:
-
-			static const TArray<FCsSettings_Enum>& GetSettingsEnum_StaticMeshActor();
-			static const FString& GetSettingsEnumPath_StaticMeshActor();
-			static FECsStaticMeshActor* GetDefault_ECsStaticMeshActor();
-
-		#pragma endregion StaticMesh
-
-		// SkeletalMesh
-		#pragma region
-		public:
-
-			static const TArray<FCsSettings_Enum>& GetSettingsEnum_SkeletalMeshActor();
-			static const FString& GetSettingsEnumPath_SkeletalMeshActor();
-			static FECsSkeletalMeshActor* GetDefault_ECsSkeletalMeshActor();
-
-		#pragma endregion SkeletaMesh
 
 		// Anim
 		#pragma region

@@ -4,12 +4,294 @@
 #pragma once
 // Types
 #include "Managers/Sound/CsTypes_Sound.h"
-#include "Spawner/Params/CsTypes_SpawnerParams.h"
 #include "Managers/Time/CsTypes_Update.h"
 // Managers
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 
 #include "CsTypes_Library_Sound.generated.h"
+
+// SoundSpawnFrequency
+#pragma region
+
+/**
+* The frequency at which a Sound spawns.
+*/
+UENUM(BlueprintType)
+enum class ECsSoundSpawnFrequency : uint8
+{
+	/** The Sound only spawned ONE time. */
+	Once						UMETA(DisplayName = "Once"),
+	/** The Sound spawn a 'COUNT' number of times at a specified
+		Interval. */
+	Count						UMETA(DisplayName = "Count"),
+	/** The Sound spawns a 'COUNT' number of times over Time.
+		The Interval of each Spawn is Time / COUNT. */
+	TimeCount					UMETA(DisplayName = "Time Count"),
+	/** The Sound spawns a number of times equal to Time / Interval. */
+	TimeInterval				UMETA(DisplayName = "Time Interval"),
+	/** The Sound spawns every Interval. */
+	Infinite					UMETA(DisplayName = "Infinite"),
+	ECsSoundSpawnFrequency_MAX		UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsSoundSpawnFrequency : public TCsEnumMap<ECsSoundSpawnFrequency>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSoundSpawnFrequency, ECsSoundSpawnFrequency)
+};
+
+namespace NCsSoundSpawnFrequency
+{
+	typedef ECsSoundSpawnFrequency Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Once;
+		extern CSCORE_API const Type Count;
+		extern CSCORE_API const Type TimeCount;
+		extern CSCORE_API const Type TimeInterval;
+		extern CSCORE_API const Type Infinite;
+		extern CSCORE_API const Type ECsSoundSpawnFrequency_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+namespace NCsSound
+{
+	namespace NSpawn
+	{
+		/**
+		* The frequency at which a Sound spawns.
+		*/
+		enum class EFrequency : uint8
+		{
+			/** The spawner only calls Spawn ONE time. */
+			Once,
+			/** The spawner calls Spawn 'COUNT' number of times at a specified
+				Interval. */
+			Count,
+			/** The spawner calls Spawn 'COUNT' number of times over Time.
+				The Interval of each Spawn is Time / COUNT. */
+			TimeCount,
+			/** The spawner call Spawn a number of times equal to Time / Interval. */
+			TimeInterval,
+			/** The spawner keeps calling Spawn every Interval. */
+			Infinite,
+			EFrequency_MAX
+		};
+
+		struct CSCORE_API EMFrequency : public TCsEnumMap<EFrequency>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMFrequency, EFrequency)
+		};
+
+		namespace NFrequency
+		{
+			namespace Ref
+			{
+				typedef EFrequency Type;
+
+				extern CSCORE_API const Type Once;
+				extern CSCORE_API const Type Count;
+				extern CSCORE_API const Type TimeCount;
+				extern CSCORE_API const Type TimeInterval;
+				extern CSCORE_API const Type Infinite;
+				extern CSCORE_API const Type EFrequency_MAX;
+			}
+
+			extern CSCORE_API const uint8 MAX;
+		}
+	}
+}
+
+#pragma endregion SoundSpawnFrequency
+
+// FCsSound_Spawn_FrequencyParams
+#pragma region
+
+// NCsSound::NSpawn::NParams::FFrequency
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSound, NSpawn, NParams, FFrequency)
+
+/**
+* Parameters describing the frequency at which Spawn is called after calling Start.
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSound_Spawn_FrequencyParams
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Trigger Frequency
+		If Type == ECsSoundSpawnFrequency::Once,
+	     Ignore Count and Interval.
+		If Type == ECsSoundSpawnFrequency::Count,
+	     Count should be > 0, if NOT, it will be treated
+	     as ECsSoundSpawnFrequency::Once.
+		if Type == ECsSoundSpawnFrequency::TimeCount,
+		if Type == ECsSoundSpawnFrequency::TimeInterval,
+		If Type == ECsSoundSpawnFrequency::Infinite,
+	     Ignore Count and Interval should be > 0.0f. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params")
+	ECsSoundSpawnFrequency Type;
+
+	/** The delay before calling Start.
+		If Delay == 0.0f, Spawn will be called at a given interval.
+		If Delay == 0.0f and Interval == 0.0f, Spawn will be called immediately. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Delay;
+
+	/** The number of times to call Spawn after Start is called.
+		Only valid if 
+		 Type == ECsSoundSpawnFrequency::Count
+		 Type == ECsSoundSpawnFrequency::TimeCount
+		Should be > 0. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0", UIMin = "0"))
+	int32 Count;
+
+	/** The time between each Spawn call after Start is called.
+		Only valid if,
+		Type == ECsSoundSpawnFrequency::Count
+		Type == ECsSoundSpawnFrequency::TimeInterval
+		Type == ECsSoundSpawnFrequency::Infinite */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Interval;
+
+	/** The total time for Spawning. 
+		Only valid if,
+		Type == ECsSoundSpawnFrequency::Count
+		Type == ECsSoundSpawnFrequency::TimeCount
+		Type == ECsSoundSpawnFrequency::TimeInterval */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Time;
+
+	FCsSound_Spawn_FrequencyParams() :
+		Type(ECsSoundSpawnFrequency::Once),
+		Delay(0.0f),
+		Count(0),
+		Interval(0.0f),
+		Time(0.0f)
+	{
+	}
+
+#define ParamsType NCsSound::NSpawn::NParams::FFrequency
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
+#undef ParamsType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	float CalculateTotalTime() const;
+
+	void Reset();
+
+	void Update();
+	void OnPostEditChange();
+};
+ 
+namespace NCsSound
+{
+	namespace NSpawn
+	{
+		namespace NParams
+		{
+			struct CSCORE_API FFrequency
+			{
+			#define FrequencyType NCsSound::NSpawn::EFrequency
+
+			private:
+
+				/** Trigger Frequency
+					If Type == FrequencyType::Once,
+					 Ignore Count and Interval.
+					If Type == FrequencyType::Count,
+					 Count should be > 0, if NOT, it will be treated
+					 as ECsSpawnerFrequency::Once.
+					if Type == FrequencyType::TimeCount,
+					if Type == FrequencyType::TimeInterval,
+					If Type == FrequencyType::Infinite,
+					 Ignore Count and Interval should be > 0.0f. */
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, FrequencyType)
+
+				/** The delay before calling Start.
+					If Delay == 0.0f, Spawn will be called at a given interval.
+					If Delay == 0.0f and Interval == 0.0f, Spawn will be called immediately. */
+				CS_DECLARE_MEMBER_WITH_PROXY(Delay, float)
+
+				/** The number of times to call Spawn after Start is called.
+					Only valid if 
+					 Type == FrequencyType::Count
+					 Type == FrequencyType::TimeCount
+					Should be > 0. */
+				CS_DECLARE_MEMBER_WITH_PROXY(Count, int32)
+
+				/** The time between each Spawn call after Start is called.
+					Only valid if,
+					Type == FrequencyType::Count
+					Type == FrequencyType::TimeInterval
+					Type == FrequencyType::Infinite */
+				CS_DECLARE_MEMBER_WITH_PROXY(Interval, float)
+
+				CS_DECLARE_MEMBER_WITH_PROXY(Time, float)
+
+			public:
+
+				FFrequency() :
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Type, FrequencyType::Once),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Delay, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Count, 0),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Interval, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Time, 0.0f)
+				{
+					CS_CTOR_SET_MEMBER_PROXY(Type);
+					CS_CTOR_SET_MEMBER_PROXY(Delay);
+					CS_CTOR_SET_MEMBER_PROXY(Count);
+					CS_CTOR_SET_MEMBER_PROXY(Interval);
+					CS_CTOR_SET_MEMBER_PROXY(Time);
+				}
+
+				FORCEINLINE FFrequency(FFrequency& B)
+				{
+					Copy(B);
+				}
+
+				FORCEINLINE FFrequency(const FFrequency& B)
+				{
+					Copy(B);
+				}
+
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FrequencyType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Delay, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Count, int32)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Interval, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Time, float)
+
+				FORCEINLINE void Copy(const FFrequency& B)
+				{
+					CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Type);
+					CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Delay);
+					CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Count);
+					CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Interval);
+					CS_COPY_PROXY_TO_PROXY_AS_VALUE(B, Time);
+				}
+
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+				float CalculateTotalTime() const;
+
+				void Reset();
+
+				void Update();
+
+			#undef FrequencyType
+			};
+		}
+	}
+}
+
+#pragma endregion FCsSound_Spawn_FrequencyParams
 
 class UObject;
 
@@ -24,7 +306,7 @@ namespace NCsSound
 			{
 			public:
 		
-			#define FrequencyParamsType NCsSpawner::NParams::FFrequency
+			#define FrequencyParamsType NCsSound::NSpawn::NParams::FFrequency
 
 				/** Sound information */
 				FCsSound Sound;
@@ -104,7 +386,7 @@ public:
 	UObject* Object;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound")
-	FCsSpawner_FrequencyParams FrequencyParams;
+	FCsSound_Spawn_FrequencyParams FrequencyParams;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound")
 	FECsUpdateGroup Group;

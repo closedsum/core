@@ -42,16 +42,6 @@ namespace NCsUI
 			static const FString& GetSettingsEnumPath_UserWidgetPooled();
 
 		#pragma endregion UserWidget
-
-		// MenuEvent
-		#pragma region
-		public:
-
-			static const ECsPopulateEnumMapMethod& Get_ECsMenuEvent_PopulateEnumMapMethod();
-			static const TArray<FCsSettings_Enum>& GetSettingsEnum_MenuEvent();
-			static const FString& GetSettingsEnumPath_MenuEvent();
-
-		#pragma endregion MenuEvent
 		};
 	}
 }

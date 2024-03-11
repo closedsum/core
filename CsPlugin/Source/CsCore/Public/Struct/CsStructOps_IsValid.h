@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "CoreMinimal.h"
 
 class UStruct;
 
@@ -55,85 +56,13 @@ namespace NCsStruct
 					Get().IsTopValidFnByNameMap.Add(Name, IsTopValidFn);
 				}
 
-				static bool IsValidChecked(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess)
-				{
-					OutSuccess = false;
+				static bool IsValidChecked(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess);
 
-					if (!StructValue)
-						return false;
+				static bool IsValid(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess, void(*Log)(const FString&));
 
-					// TODO: Add better Assert Messages
-					check(Struct);
+				static bool IsTopValidChecked(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess);
 
-					const FName Name = Struct->GetFName();
-
-					// TODO: Setup getting pointer and dereferencing
-					if (Get().IsValidCheckedFnByNameMap.Find(Name))
-					{
-						return (Get().IsValidCheckedFnByNameMap[Name])(Context, StructValue, Struct, OutSuccess);
-					}
-					return false;
-				}
-
-				static bool IsValid(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess, void(*Log)(const FString&))
-				{
-					OutSuccess = false;
-
-					if (!StructValue)
-						return false;
-
-					// TODO: Add better Assert Messages
-					check(Struct);
-
-					const FName Name = Struct->GetFName();
-
-					// TODO: Setup getting pointer and dereferencing
-					if (Get().IsValidFnByNameMap.Find(Name))
-					{
-						return (Get().IsValidFnByNameMap[Name])(Context, StructValue, Struct, OutSuccess, Log);
-					}
-					return false;
-				}
-
-				static bool IsTopValidChecked(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess)
-				{
-					OutSuccess = false;
-
-					if (!StructValue)
-						return false;
-
-					// TODO: Add better Assert Messages
-					check(Struct);
-
-					const FName Name = Struct->GetFName();
-
-					// TODO: Setup getting pointer and dereferencing
-					if (Get().IsTopValidCheckedFnByNameMap.Find(Name))
-					{
-						return (Get().IsTopValidCheckedFnByNameMap[Name])(Context, StructValue, Struct, OutSuccess);
-					}
-					return false;
-				}
-
-				static bool IsTopValid(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess, void(*Log)(const FString&))
-				{
-					OutSuccess = false;
-
-					if (!StructValue)
-						return false;
-
-					// TODO: Add better Assert Messages
-					check(Struct);
-
-					const FName Name = Struct->GetFName();
-
-					// TODO: Setup getting pointer and dereferencing
-					if (Get().IsTopValidFnByNameMap.Find(Name))
-					{
-						return (Get().IsTopValidFnByNameMap[Name])(Context, StructValue, Struct, OutSuccess, Log);
-					}
-					return false;
-				}
+				static bool IsTopValid(const FString& Context, void* StructValue, const UStruct* Struct, bool& OutSuccess, void(*Log)(const FString&));
 			};
 		}
 	}

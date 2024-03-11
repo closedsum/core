@@ -13,9 +13,6 @@
 #include "DetailCustomizations/Asset/CsUserWidgetCustomization.h"
 #include "DetailCustomizations/Asset/CsUserWidgetPtrCustomization.h"
 	// EnumStruct
-		// Menu
-#include "DetailCustomizations/EnumStruct/Menu/ECsMenuCustomization.h"
-#include "DetailCustomizations/EnumStruct/Menu/ECsMenuEventCustomization.h"
 		// WidgetActpr
 #include "DetailCustomizations/EnumStruct/WidgetActor/ECsWidgetActorCustomization.h"
 #include "DetailCustomizations/EnumStruct/WidgetActor/ECsWidgetActorClassCustomization.h"
@@ -41,13 +38,6 @@ void FCsUserInterfaceRegisterDetailCustomization::Register()
 	}
 	// EnumStruct
 	{
-		// Menu
-		{
-			// ECsMenu
-			CS_TEMP_REGISTER(ECsMenu);
-			// ECsMenuEvent
-			CS_TEMP_REGISTER(ECsMenuEvent);
-		}
 		// WidgetActor
 		{
 			// ECsWidgetActor

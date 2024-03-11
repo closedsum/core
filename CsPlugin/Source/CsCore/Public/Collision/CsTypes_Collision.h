@@ -6,6 +6,8 @@
 #include "Types/CsTypes_Physics.h"
 #include "CollisionShape.h"
 #include "Engine/EngineTypes.h"
+#include "Engine/HitResult.h"
+#include "CollisionQueryParams.h"
 // Log
 #include "Utility/CsLog.h"
 

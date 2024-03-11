@@ -6,6 +6,7 @@
 // Types
 #include "Managers/Time/CsTypes_Time.h"
 #include "Coordinators/GameEvent/CsCoordinator_GameEvent_Delegates.h"
+#include "Templates/SubclassOf.h"
 
 #include "CsCoordinator_GameEvent.generated.h"
 
@@ -42,7 +43,7 @@ public:
 
 	static bool IsValid(UObject* InRoot = nullptr);
 
-	static void Init(UObject* InRoot = nullptr, TSubclassOf<UCsCoordinator_GameEvent> CoordinatorClass = TSubclassOf<UCsCoordinator_GameEvent>(UCsCoordinator_GameEvent::StaticClass()));
+	static void Init(UObject* InRoot, TSubclassOf<UCsCoordinator_GameEvent> CoordinatorClass);
 	
 	static void Shutdown(UObject* InRoot = nullptr);
 	static bool HasShutdown(UObject* InRoot = nullptr);
@@ -115,7 +116,7 @@ public:
 
 protected:
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Start Play", meta = (DisplayName = "Start Play"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "CsCore|Coordinators|Game Event|Start Play", meta = (DisplayName = "Start Play"))
 	void ReceiveStartPlay();
 
 #pragma endregion StartPlay
@@ -128,14 +129,14 @@ public:
 
 protected:
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Update", meta = (DisplayName = "Update"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "CsCore|Coordinators|Game Event|Update", meta = (DisplayName = "Update"))
 	void ReceiveUpdate(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion Update
 
 public:
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "CsCore|Coordinators|Game Event")
 	UObject* GetWorldContext() const;
 
 public:
@@ -160,10 +161,10 @@ public:
 
 #undef OnProccessEventGameInfoEventType
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Coordinators|Game Event")
 	FCsCoordinatorGameEvent_OnProcessGameEventInfo OnProcessGameEventInfo_ScriptEvent;
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Coordinators|Game Event")
 	FCsCoordinatorGameEvent_OnProcessGameEventInfo OnProcessGameEventInfo_ManagerInput0_ScriptEvent;
 
 private:

@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Engine/EngineBaseTypes.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -12,6 +14,10 @@ namespace NCsWorld
 {
 	struct CSCORE_API FLibrary final
 	{
+	public:
+
+		static FString PrintActorAndClass(const AActor* Object);
+
 	// Get
 	#pragma region
 	public:
@@ -58,9 +64,17 @@ namespace NCsWorld
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		* @param Log			(optional)
-		* return				World
+		* return				World as UObject
 		*/
 		static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely get World as UObject from WorldContext.
+		*
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* return				World as UObject
+		*/
+		static UObject* GetSafeAsObject(const UObject* WorldContext);
 
 	#pragma endregion Get
 
@@ -114,7 +128,7 @@ namespace NCsWorld
 			AActor* A = SpawnChecked(Context, WorldContext, T::StaticClass());
 			T* Other  = Cast<T>(A);
 
-			checkf(Other, TEXT("%s: Actor with Class: %s is NOT a Child of: %s."), *Context, *(A->GetClass()->GetName()), *(T::StaticClass()->GetName()));
+			checkf(Other, TEXT("%s: %s is NOT a Child of: %s."), *Context, *PrintActorAndClass(A), *(T::StaticClass()->GetName()));
 			return Other;
 		}
 

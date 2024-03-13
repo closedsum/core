@@ -20,6 +20,9 @@ public class CsBeam : ModuleRules
                     "DeveloperSettings",
                     "CsCore",
                     "CsDmg",
+                    "CsSound",
+                    "CsFX",
+                    "CsPhysics"
                 }
             );
 

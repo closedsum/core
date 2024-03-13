@@ -30,7 +30,7 @@ public:
 
 // ImpactVisualDataType (NCsBeam::NData::NVisual::NImpact::IImpact)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Visual|Impact")
 	FCsDataTable ImpactFXs;
 
 	FCsData_Beam_VisualImpactImplSlice() :

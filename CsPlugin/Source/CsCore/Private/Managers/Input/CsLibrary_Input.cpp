@@ -279,47 +279,6 @@ namespace NCsInput
 		}
 
 		#undef ViewportLibrary
-
-		// Trace
-		#pragma region
-
-		#define ResponseType NCsTrace::NResponse::FResponse
-		#define RequestType NCsTrace::NRequest::FRequest
-
-		ResponseType* FLibrary::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/)
-		{
-			FIntPoint Position;
-			GetPositionChecked(Context, WorldContext, Position);
-
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
-			return ViewportLibrary::TraceChecked(Context, WorldContext, FVector2f(Position.X, Position.Y), Request, Distance);
-		}
-
-		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
-		{
-			FIntPoint Position;
-			if (!GetSafePosition(Context, WorldContext, Position, Log))
-				return nullptr;
-
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
-			return ViewportLibrary::SafeTrace(Context, WorldContext, FVector2f(Position.X, Position.Y), Request, Distance, Log);
-		}
-
-		ResponseType* FLibrary::SafeTrace(const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/)
-		{
-			using namespace NCsInput::NMouse::NLibrary::NCached;
-
-			const FString& Context = Str::SafeTrace;
-
-			return SafeTrace(Context, WorldContext, Request, Distance, nullptr);
-		}
-
-		#undef ResponseType
-		#undef RequestType
-
-		#pragma endregion Trace
 	}
 
 	namespace NTouch

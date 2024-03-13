@@ -4,7 +4,6 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Engine/EngineTypes.h"
 #include "Types/CsTypes_Damage.h"
 
 namespace NCsDamage

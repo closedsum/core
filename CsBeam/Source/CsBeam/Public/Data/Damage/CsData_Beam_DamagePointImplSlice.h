@@ -26,7 +26,7 @@ struct CSBEAM_API FCsData_Beam_DamagePointImplSlice
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data|Damage|Point")
 	FCsData_DamagePoint Damage;
 
 public:

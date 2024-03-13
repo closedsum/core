@@ -1,7 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_SoundPooled.h"
 #include "Point/Data/Sound/Fire/CsTypes_PointWeapon_SoundFire.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"

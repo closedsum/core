@@ -19,7 +19,10 @@ public class CsPrj : ModuleRules
                     "PhysicsCore",
                     "CsCore",
                     "CsDmg",
-                    "CsModifier"
+                    "CsModifier",
+                    "CsSound",
+                    "CsFX",
+                    "CsPhysics"
                 }
             );
 

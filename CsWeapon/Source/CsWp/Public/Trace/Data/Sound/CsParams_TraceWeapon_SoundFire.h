@@ -2,7 +2,7 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 
-#include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_SoundPooled.h"
 
 struct FCsInterfaceMap;
 class UObject;

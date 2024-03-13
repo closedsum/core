@@ -22,7 +22,7 @@ struct CSBEAM_API FCsData_GetBeamTypeImplSlice
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data|Type")
 	FECsBeam Type;
 
 public:

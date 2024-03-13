@@ -33,6 +33,10 @@
     {
       "Name": "CsDamage",
       "Enabled": true
+    },
+    {
+      "Name": "CsFX",
+      "Enabled": true
     }
   ]
 }

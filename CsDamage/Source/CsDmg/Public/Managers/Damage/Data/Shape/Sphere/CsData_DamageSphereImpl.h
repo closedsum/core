@@ -366,7 +366,7 @@ public:
 
 #pragma endregion ICsData
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Data|Sphere")
 	FCsData_DamageSphereImpl_Inner Inner;
 
 private:

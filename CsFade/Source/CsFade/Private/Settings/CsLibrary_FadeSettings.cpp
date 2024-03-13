@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsLibrary_FadeSettings.h"
-#include "CsFade.h"
 
 // Settings
 #include "Settings/CsFadeSettings.h"

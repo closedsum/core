@@ -32,15 +32,15 @@ public:
 // CollisionDataType (NCsBeam::NData::NCollision::IData)
 
 	/** Collision information (i.e. response, overlap, hit events, ... etc) */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Collision")
 	FCsCollisionPreset Preset;
 
 	/** Describes the shape of the collision (i.e. Line, Box, Capsule, ... etc) */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Collision")
 	FCsBeamCollisionShape Shape;
 
 	/** Describes the rate at which collision 'passes' (sweep or trace) should be performed. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Collision")
 	FCsBeamCollisionFrequencyParams FrequencyParams;
 
 	/** Number of collisions before the beam is Off (and / or deallocated if pooled).
@@ -48,16 +48,16 @@ public:
 		- If a StaticMesh is used for collision,
 			Collision detection is captured via MeshComponent->OnComponentHit.
 			GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Collision", meta = (UIMin = "0", ClampMin = "0"))
 	int32 CollisionCount;
 
 	/** Whether to ignore an object (AActor or UPrimitiveComponent) the beam has collided with after
 		the first collision. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Collision")
 	bool bIgnoreCollidingObjectAfterCollision;
 
 	/** List of classes to ignore for colliding objects. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Collision")
 	TArray<TSubclassOf<UObject>> IgnoreCollidingObjectClasses;
 
 	FCsData_Beam_CollisionImplSlice() :

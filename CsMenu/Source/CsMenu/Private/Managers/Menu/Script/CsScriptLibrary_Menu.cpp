@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Menu/Script/CsScriptLibrary_Menu.h"
-#include "CsMenu.h"
 
 // Library
 #include "Library/CsLibrary_Enum.h"

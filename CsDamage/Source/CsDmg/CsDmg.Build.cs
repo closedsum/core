@@ -18,20 +18,15 @@ public class CsDmg : ModuleRules
                     "Engine",
                     "DeveloperSettings",
                     "CsCore",
-                    "CsModifier"
+                    "CsModifier",
+                    "CsPhysics"
                 }
             );
 
-        /*
         PrivateDependencyModuleNames.AddRange(
             new string[] {
-                "InputCore",
-                "Slate",
-                "SlateCore",
-                "Json",
             }
         );
-        */
 
         if (Target.Type == TargetType.Editor)
         {
@@ -40,12 +35,10 @@ public class CsDmg : ModuleRules
                 }
             );
 
-            /*
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
                 }
             );
-            */
         }
         else
         {

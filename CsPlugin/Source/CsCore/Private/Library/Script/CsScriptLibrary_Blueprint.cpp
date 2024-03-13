@@ -122,11 +122,6 @@ USoundCue* UCsScriptLibrary_Blueprint::Conv_CsSoundCueToInternal(const FCsSoundC
 	return Container.Get();
 }
 
-UParticleSystem* UCsScriptLibrary_Blueprint::Conv_CsParticleSystemToInternal(const FCsParticleSystem& Container)
-{
-	return Container.Get();
-}
-
 UDataTable* UCsScriptLibrary_Blueprint::Conv_CsDataTableToInternal(const FCsDataTable& Container)
 {
 	return Container.Get();

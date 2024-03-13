@@ -22,7 +22,10 @@ public class CsWp : ModuleRules
                     "CsModifier",
                     "CsSkin",
                     "CsPrj",
-                    "CsBeam"
+                    "CsBeam",
+                    "CsSound",
+                    "CsFX",
+                    "CsPhysics"
                 }
             );
 

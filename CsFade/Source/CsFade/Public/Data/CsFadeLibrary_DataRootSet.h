@@ -6,6 +6,7 @@
 
 class UObject;
 class UClass;
+class UGameInstance;
 
 namespace NCsFade
 {

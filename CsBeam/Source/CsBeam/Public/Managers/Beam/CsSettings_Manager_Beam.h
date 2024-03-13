@@ -19,7 +19,7 @@ struct CSBEAM_API FCsSettings_Manager_Beam_TypeArray
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam")
 	TArray<FECsBeam> Types;
 
 	FCsSettings_Manager_Beam_TypeArray() :
@@ -45,13 +45,13 @@ struct CSBEAM_API FCsSettings_Manager_Beam_PoolParams
 public:
 
 	/** The class of the pooled Beam. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam")
 	FECsBeamClass Class;
 	/** The maximum size of the pool. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
 	/** The maximum payload size. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PayloadSize;
 
 	FCsSettings_Manager_Beam_PoolParams() :
@@ -80,20 +80,20 @@ public:
 	/** Mapping for sharing a pool of beams between many Beam types. This is useful
 		when multiple Beam types share the same Beam Class. In this case, it is not
 		necessary to create separate pool for each Beam type. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam")
 	TMap<FECsBeam, FECsBeam> TypeMap;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam")
 	TSet<FECsBeamPayload> PayloadTypes;
 
 	/** Mapping between Update Groups, the "tick" / update group, and Sound types. This
 		is important to indicate when a particular Sound type WILL or will NOT get "ticked" or updated. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam")
 	TMap<FECsUpdateGroup, FCsSettings_Manager_Beam_TypeArray> TypesByUpdateGroupMap;
 
 	/** Describes any pool parameters (i.e. class, pool size, payload size, ... etc) for each Beam type. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam")
 	TMap<FECsBeam, FCsSettings_Manager_Beam_PoolParams> PoolParams;
 
 	FCsSettings_Manager_Beam() :
@@ -121,17 +121,17 @@ struct CSBEAM_API FCsSettings_Manager_Beam_UnitTest
 public:
 
 	/** Map used for testing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "/Script/Engine.World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam", meta = (AllowedClasses = "/Script/Engine.World"))
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsBeam. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsBeam.CsBeam"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam", meta = (MustImplement = "/Script.CsBeam.CsBeam"))
 	TSoftClassPtr<AActor> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsBeam.CsBeam"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam", meta = (MustImplement = "/Script.CsBeam.CsBeam"))
 	TSoftClassPtr<AActor> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsBeam.CsBeam"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Settings|Manager|Beam", meta = (MustImplement = "/Script.CsBeam.CsBeam"))
 	TSoftClassPtr<AActor> ClassC;
 
 	FCsSettings_Manager_Beam_UnitTest() :

@@ -4,7 +4,7 @@
 #ifndef __CSSKELETALMESH_H__
 #define __CSSKELETALMESH_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsSkeletalMesh, Log, All);
 

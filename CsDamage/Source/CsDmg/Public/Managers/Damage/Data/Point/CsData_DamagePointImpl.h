@@ -23,10 +23,10 @@ struct CSDMG_API FCsData_DamagePoint
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Data|Point")
 	float Value;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Data|Point")
 	FECsDamageType Type;
 
 	FCsData_DamagePoint() :
@@ -202,10 +202,10 @@ public:
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Data|Point", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Value;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Data|Point")
 	FECsDamageType Type;
 
 #define DamagePointProxyType NCsDamage::NData::NPoint::FProxy

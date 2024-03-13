@@ -15,7 +15,7 @@
 // Data
 #include "Trace/Data/Sound/CsData_TraceWeapon_SoundFire.h"
 #include "Managers/Trace/Data/CsData_Trace.h"
-#include "Managers/Trace/Data/Sound/CsData_Trace_SoundImpact.h"
+#include "Trace/Data/Sound/CsData_Trace_SoundImpact.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Weapon

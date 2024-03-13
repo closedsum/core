@@ -22,6 +22,8 @@
 // UI
 #include "Managers/Fade/CsUserWidget_Fade.h"
 #include "Components/Image.h"
+// Game
+#include "Engine/GameInstance.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"

@@ -83,16 +83,16 @@ struct CSDMG_API FCsData_DamagePtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script/CsDmg.CsData_Damage"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg", meta = (MustImplement = "/Script/CsDmg.CsData_Damage"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg")
 	int32 Load_Flags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsDmg")
 	UObject* Data_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsDmg")
 	UClass* Data_Class;
 
 	FCsData_DamagePtr() :
@@ -128,15 +128,15 @@ struct CSDMG_API FCsDamageDataEntry : public FCsTableRowBase_Data
 	GENERATED_USTRUCT_BODY()
 
 	/** The enum (FECsDamageData) name for the damage data. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString Name;
 
 	/** The enum (FECsDamageData) display name for the damage data. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString DisplayName;
 
 	/** Soft Reference to a data of type: ICsData_Damage. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FCsData_DamagePtr Data;
 
 	FCsDamageDataEntry() :

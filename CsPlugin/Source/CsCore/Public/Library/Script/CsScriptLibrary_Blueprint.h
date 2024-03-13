@@ -6,8 +6,7 @@
 // Types
 #include "Actor/CsActor.h"
 #include "Types/CsTypes_Texture.h"
-#include "Managers/FX/CsTypes_FX.h"
-#include "Managers/Sound/CsTypes_Sound.h"
+#include "Types/CsTypes_Sound.h"
 #include "Types/CsTypes_SkeletalMesh.h"
 // Actor
 #include "Actor/CsActor.h"
@@ -19,7 +18,6 @@
 class UBlueprint;
 class UBlueprintGeneratedClass;
 class USoundCue;
-class UParticleSystem;
 class UDataTable;
 class USkeletalMesh;
 class UTexture;
@@ -117,9 +115,6 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Blueprint", meta = (DisplayName = "Get (SoundCue)", CompactNodeTitle = "->", BlueprintThreadSafe))
 	static USoundCue* Conv_CsSoundCueToInternal(const FCsSoundCue& Container);
-
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Blueprint", meta = (DisplayName = "Get (ParticleSystem)", CompactNodeTitle = "->", BlueprintThreadSafe))
-	static UParticleSystem* Conv_CsParticleSystemToInternal(const FCsParticleSystem& Container);
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Blueprint", meta = (DisplayName = "Get (DataTable)", CompactNodeTitle = "->", BlueprintThreadSafe))
 	static UDataTable* Conv_CsDataTableToInternal(const FCsDataTable& Container);

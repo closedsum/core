@@ -33,6 +33,10 @@
     {
       "Name": "CsModifier",
       "Enabled": true
+    },
+    {
+      "Name": "CsPhysics",
+      "Enabled": true
     }
   ]
 }

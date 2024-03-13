@@ -1,6 +1,6 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_SoundPooled.h"
 #include "Engine/DataTable.h"
 // Types
 #include "Utility/CsPrjLog.h"

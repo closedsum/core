@@ -10,7 +10,6 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Managers/Input/CsLibrary_Input.h"
-#include "Managers/Trace/CsLibrary_Manager_Trace.h"
 
 namespace NCsScriptLibraryMouse
 {
@@ -32,8 +31,6 @@ namespace NCsScriptLibraryMouse
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, RefreshPosition);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, RefreshPositionChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, GetWorldIntersection);
-			// Trace
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, Trace);
 		}
 	}
 }
@@ -169,47 +166,6 @@ bool UCsScriptLibrary_Mouse::GetWorldIntersection(const FString& Context, const 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetWorldIntersection : Context;
 
 	return MouseLibrary::GetSafeWorldIntersection(Ctxt, WorldContextObject, Plane, OutIntersection);
-}
-
-bool UCsScriptLibrary_Mouse::Trace(const FString& Context, const UObject* WorldContextObject, const FCsTraceRequest& Request, const float& Distance, FCsTraceResponse& OutResponse)
-{
-	using namespace NCsScriptLibraryMouse::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::Trace : Context;
-
-	FCsTraceRequest* Req = const_cast<FCsTraceRequest*>(&Request);
-
-	if (Req->Shape.IsLine() &&
-		Req->Start == Req->End)
-	{
-		Req->End += FVector3f(0.0f, 0.0f, 1.0f);
-	}
-
-	if (!Request.IsValid(Ctxt))
-		return false;
-
-	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-	typedef NCsTrace::NRequest::FRequest RequestType;
-
-	RequestType* RequestPtr = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject);
-
-	if (!RequestPtr)
-		return false;
-
-	Request.CopyToRequestAsValue(RequestPtr);
-
-	typedef NCsTrace::NResponse::FResponse ResponseType;
-
-	ResponseType* ResponsePtr = MouseLibrary::SafeTrace(Ctxt, WorldContextObject, RequestPtr, Distance);
-
-	if (ResponsePtr)
-	{
-		OutResponse.CopyFromResponse(ResponsePtr);
-		return ResponsePtr->bResult;
-	}
-
-	TraceManagerLibrary::SafeDeallocateRequest(Ctxt, WorldContextObject, RequestPtr);
-	return false;
 }
 
 #pragma endregion Trace

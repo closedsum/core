@@ -152,27 +152,27 @@ struct CSBEAM_API FCsBeamCollisionShape
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Collision")
 	ECsBeamCollisionShapeType Type;
 
 	/** Describes how the dimesions of the collision shape will be scaled. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Collision")
 	ECsBeamCollisionShapeScale ScaleType;
 
 	/** Only valid if Type == ECsBeamCollisionShapeLength::Line */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Collision", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Length;
 
 	/** Only valid if Type == ECsBeamCollisionShapeLength::Box */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Collision")
 	FVector3f HalfExtents;
 
 	/** Only valid if Type == ECsBeamCollisionShapeLength::Capsule */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Collision", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Radius;
 
 	/** Only valid if Type == ECsBeamCollisionShapeLength::Capsule */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Collision", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float HalfHeight;
 
 	FCsBeamCollisionShape() :

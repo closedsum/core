@@ -12,8 +12,8 @@
 #include "Managers/Singleton/CsManager_Singleton_Actor.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
-#include "Managers/FX/Actor/CsManager_FX.h"
-#include "Managers/Sound/CsManager_Sound.h"
+//#include "Managers/FX/Actor/CsManager_FX.h"
+//#include "Managers/Sound/CsManager_Sound.h"
 // Pawn
 #include "GameFramework/Pawn.h"
 // Components
@@ -78,8 +78,8 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 
 			UCsCoroutineScheduler::Get(GEngine)->Update(Group, DeltaTime);
 
-			UCsManager_FX::Get(Manager_Singleton_Actor)->Update(DeltaTime);
-			UCsManager_Sound::Get(Manager_Singleton_Actor)->Update(DeltaTime);
+			//UCsManager_FX::Get(Manager_Singleton_Actor)->Update(DeltaTime);
+			//UCsManager_Sound::Get(Manager_Singleton_Actor)->Update(DeltaTime);
 		}
 	}
 #endif // #if WITH_EDITOR

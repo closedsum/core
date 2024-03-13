@@ -19,8 +19,8 @@
 #include "Data/CsData_Weapon.h"
 #include "Trace/Data/Visual/CsData_TraceWeapon_VisualFire.h"
 #include "Managers/Trace/Data/CsData_Trace.h"
-#include "Managers/Trace/Data/Visual/CsData_Trace_VisualTracer.h"
-#include "Managers/Trace/Data/Visual/CsData_Trace_VisualImpact.h"
+#include "Trace/Data/Visual/CsData_Trace_VisualTracer.h"
+#include "Trace/Data/Visual/CsData_Trace_VisualImpact.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Weapon

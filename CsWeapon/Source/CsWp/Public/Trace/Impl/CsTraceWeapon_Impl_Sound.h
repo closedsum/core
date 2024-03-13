@@ -1,7 +1,6 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
-
-#include "Managers/Sound/CsTypes_Sound.h"
 #pragma once
+#include "Managers/Sound/CsTypes_SoundPooled.h"
 
 class ICsTraceWeapon;
 class UObject;

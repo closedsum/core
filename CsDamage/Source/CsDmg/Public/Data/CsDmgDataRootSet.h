@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "CoreMinimal.h"
 // Log
 #include "Utility/CsDmgLog.h"
 // Engine
@@ -21,7 +22,7 @@ struct CSDMG_API FCsDmgDataRootSet
 public:
 
 	/** Damage Datas */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Data")
 	TSoftObjectPtr<UDataTable> Damages;
 
 	FCsDmgDataRootSet() :

@@ -26,25 +26,14 @@ public class CsCore : ModuleRules
                     "DeveloperSettings",
                     "EnhancedInput", // TODO: Eventually move associated to plugin
                     "PhysicsCore",
-                    "Niagara",
-                    "NiagaraCore" // TODO: Move associated code to plugin
+                    "Niagara" // TODO: Eventually move associated to plugin
                 }
             );
 
         PrivateDependencyModuleNames.AddRange(
             new string[] {
                 "Engine",
-                "InputCore",
-                "Niagara",
-            }
-        );
-
-        string engine_path = Path.GetFullPath(Target.RelativeEnginePath);
-        string niagara_source_path = engine_path + "Plugins/FX/Niagara/Source/";
-
-        PrivateIncludePaths.AddRange(
-            new string[] {
-                niagara_source_path + "Niagara/Private",
+                "InputCore"
             }
         );
 

@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "CsStaticMesh.h"
 
+#include "Modules/ModuleManager.h"
+
 IMPLEMENT_GAME_MODULE(FDefaultGameModuleImpl, CsStaticMesh);
 
 DEFINE_LOG_CATEGORY(LogCsStaticMesh);

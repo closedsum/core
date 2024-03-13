@@ -18,6 +18,7 @@ public class CsSe : ModuleRules
                     "AssetRegistry",
                     "CsCore",
                     "CsDmg",
+                    "CsFX"
                 }
             );
 

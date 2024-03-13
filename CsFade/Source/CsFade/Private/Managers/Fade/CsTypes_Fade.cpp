@@ -5,6 +5,8 @@
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+// Curve
+#include "Curves/CurveBase.h"
 
 // FCsFade_ClearToBlackParams
 #pragma region

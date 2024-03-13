@@ -129,6 +129,17 @@ namespace NCsPlayer
 
 		#define ObjectLibrary NCsObject::FLibrary
 
+		const ULocalPlayer* FLibrary::GetChecked(const FString& Context, const APawn* Pawn)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+			const APlayerController* PC	    = PlayerControllerLibrary::GetChecked(Context, Pawn);
+			const ULocalPlayer* LocalPlayer = PC->GetLocalPlayer();
+
+			CS_IS_PENDING_KILL_CHECKED(LocalPlayer)
+			return LocalPlayer;
+		}
+
 		int32 FLibrary::GetSafeControllerId(const FString& Context, const APawn* Pawn, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PENDING_KILL_RET_VALUE(Pawn, INDEX_NONE)
@@ -271,6 +282,16 @@ namespace NCsPlayer
 				SET_CONTEXT(GetSafe);
 
 				return GetSafe(Context, WorldContext, ControllerId, nullptr);
+			}
+
+			const APlayerController* FLibrary::GetChecked(const FString& Context, const APawn* Pawn)
+			{
+				CS_IS_PENDING_KILL_CHECKED(Pawn)
+
+				const AController* Controller = Pawn->GetController();
+
+				CS_IS_PENDING_KILL_CHECKED(Controller)
+				return CS_CONST_CAST_CHECKED(Controller, AController, APlayerController);
 			}
 
 			void FLibrary::GetAll(UWorld* World, TArray<APlayerController*>& OutControllers)

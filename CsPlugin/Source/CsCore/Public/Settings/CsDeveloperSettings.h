@@ -26,14 +26,6 @@
 #include "Managers/Input/CsSettings_Manager_Input.h"
 // Game Event
 #include "Coordinators/GameEvent/CsSettings_Coordinator_GameEvent.h"
-// FX
-#include "Managers/FX/CsTypes_FX.h"
-#include "Managers/FX/Actor/CsSettings_Manager_FX.h"
-// Sound
-#include "Managers/Sound/CsTypes_Sound.h"
-#include "Managers/Sound/CsSettings_Manager_Sound.h"
-// Trace
-#include "Managers/Trace/CsSettings_Manager_Trace.h"
 // Level
 #include "Managers/Level/CsSettings_Manager_Level.h"
 // Anim
@@ -54,7 +46,6 @@ namespace NCsDeveloperSettings
 		{
 			extern CSCORE_API const FString InputActionMap;
 			extern CSCORE_API const FString GameEvent;
-			extern CSCORE_API const FString FX;
 			extern CSCORE_API const FString Sound;
 			extern CSCORE_API const FString StaticMeshActor;
 			extern CSCORE_API const FString SkeletalMeshActor;
@@ -207,71 +198,6 @@ public:
 	FCsSettings_Coordinator_GameEvent Coordinator_GameEvent;
 
 #pragma endregion Game Event
-
-// FX
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX", meta = (DisplayName = "ECsFX - Populate Enum Map Method"))
-	ECsPopulateEnumMapMethod ECsFX_PopulateEnumMapMethod;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX", meta = (DisplayName = "ECsFX", TitleProperty = "Name"))
-	TArray<FCsSettings_Enum> ECsFX;
-
-	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsFX>() const { return ECsFX; }
-	template<>
-	const FString& GetSettingsEnumPath<FECsFX>() const { return NCsDeveloperSettings::NCached::Str::FX; }
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX")
-	TArray<TSoftObjectPtr<UDataTable>> FXs;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX", meta = (DisplayName = "Manager FX"))
-	FCsSettings_Manager_FX Manager_FX;
-
-	// Unit Test
-#pragma region
-
-#pragma endregion Unit Test
-
-#pragma endregion FX
-
-// Sound
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "ECsSound - Populate Enum Map Method"))
-	ECsPopulateEnumMapMethod ECsSound_PopulateEnumMapMethod;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "ECsSound", TitleProperty = "Name"))
-	TArray<FCsSettings_Enum> ECsSound;
-
-	template<>
-	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsSound>() const { return ECsSound; }
-	template<>
-	const FString& GetSettingsEnumPath<FECsSound>() const { return NCsDeveloperSettings::NCached::Str::Sound; }
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound")
-	TArray<TSoftObjectPtr<UDataTable>> Sounds;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "Manager Sound"))
-	FCsSettings_Manager_Sound Manager_Sound;
-
-	// Unit Test
-#pragma region
-
-#pragma endregion Unit Test
-
-#pragma endregion Sound
-
-// Trace
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Trace", meta = (DisplayName = "Manager Trace"))
-	FCsSettings_Manager_Trace Manager_Trace;
-
-#pragma endregion Trace
 
 // Level
 #pragma region

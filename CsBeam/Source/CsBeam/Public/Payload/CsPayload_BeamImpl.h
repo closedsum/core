@@ -32,39 +32,39 @@ public:
 		pooled object (implements the interface: ICsPooledObject) is controlled
 		by its manager.
 		Usually the default value is UpdateType::Manager (NCsPooledObject::EUpdate). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Payload")
 	ECsPooledObjectUpdate UpdateType;
 
 	/** The object "instigating" or starting the spawn. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Payload")
 	UObject* Instigator;
 
 	/** The owner of the Beam. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Payload")
 	UObject* Owner;
 
 	/** The parent of the Beam. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Payload")
 	UObject* Parent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Payload")
 	int32 PreserveChangesFromDefaultMask;
 
 // BeamPayloadType (NCsBeam::Payload::IPayload)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Payload")
 	FECsBeam Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Payload")
 	FCsAttachmentTransformRules AttachRules;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Payload")
 	FVector3f Location;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Payload")
 	FVector3f Direction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Payload")
 	FVector3f Scale;
 
 	FCsPayload_Beam() :

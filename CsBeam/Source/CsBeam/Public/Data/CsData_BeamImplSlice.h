@@ -28,7 +28,7 @@ public:
 
 // BeamDataType (NCsBeam::NData::IData)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime;
 
 	FCsData_BeamImplSlice() :

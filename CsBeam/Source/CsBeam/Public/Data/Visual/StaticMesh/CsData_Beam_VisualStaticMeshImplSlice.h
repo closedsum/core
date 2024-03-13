@@ -29,7 +29,7 @@ public:
 
 // StaticMeshVisualDataType (NCsBeam::NData::NVisual::NStaticMesh::IStaticMesh)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Visual|Static Mesh")
 	FCsStaticMesh Mesh;
 
 	FCsData_Beam_VisualStaticMeshImplSlice() :

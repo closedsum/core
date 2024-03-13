@@ -45,6 +45,18 @@
     {
       "Name": "CsBeam",
       "Enabled": true
+    },
+    {
+      "Name": "CsSound",
+      "Enabled": true
+    },
+    {
+      "Name": "CsFX",
+      "Enabled": true
+    },
+    {
+      "Name": "CsPhysics",
+      "Enabled": true
     }
   ]
 }

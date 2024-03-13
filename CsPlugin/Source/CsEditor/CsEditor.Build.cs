@@ -16,7 +16,6 @@ public class CsEditor : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
-                    "Niagara",
                     "CsCore",
                 }
             );
@@ -42,10 +41,11 @@ public class CsEditor : ModuleRules
                     "GraphEditor",
                     "EditorStyle",
                     "LevelEditor",
-                    "NiagaraEditor",
                     "DeveloperToolSettings",
                     "Settings",
-                    "SourceControl"
+                    "SourceControl",
+                    "Niagara", // TODO: move associated to plugin
+                    "NiagaraEditor" // TODO: Move associated code to plugin
                 }
             );
         }

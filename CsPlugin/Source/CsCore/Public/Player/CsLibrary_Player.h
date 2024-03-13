@@ -98,6 +98,15 @@ namespace NCsPlayer
 		{
 		public:
 
+			/**
+			* Get the local player associated with Pawn.
+			*
+			* @param Context	The calling context.
+			* @param Pawn		
+			* return			Local Player
+			*/
+			static const ULocalPlayer* GetChecked(const FString& Context, const APawn* Pawn);
+
 			static int32 GetSafeControllerId(const FString& Context, const APawn* Pawn, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			FORCEINLINE static int32 GetSafeControllerId(const APawn* Pawn)
@@ -132,6 +141,8 @@ namespace NCsPlayer
 
 				static APlayerController* GetSafe(const UObject* WorldContext, const int32& ControllerId);
 		
+				static const APlayerController* GetChecked(const FString& Context, const APawn* Pawn);
+
 				static void GetAll(UWorld* World, TArray<APlayerController*>& OutControllers);
 
 				static void GetAll(const UObject* WorldContext, TArray<APlayerController*>& OutControllers);

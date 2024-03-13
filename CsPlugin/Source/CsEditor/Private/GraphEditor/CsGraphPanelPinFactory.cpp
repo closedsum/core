@@ -9,9 +9,6 @@
 // Types
 #include "Managers/Time/CsTypes_Update.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
-#include "Managers/FX/CsTypes_FX.h"
-#include "Managers/Sound/CsTypes_Sound.h"
-#include "Team/CsTypes_Team.h"
 #include "Data/CsTypes_DataEntry.h"
 // Input
 #include "Managers/Input/Action/CsInputActionMap.h"
@@ -35,12 +32,6 @@
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsInputActionMap.h"
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGameEvent.h"
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGameEventCoordinatorGroup.h"
-	// FX
-#include "GraphEditor/EnumStruct/FX/SCsGraphPin_ECsFX.h"
-	// Sound
-#include "GraphEditor/EnumStruct/Sound/SCsGraphPin_ECsSound.h"
-	// Team
-#include "GraphEditor/EnumStruct/Team/SCsGraphPin_ECsTeam.h"
 	// Anim
 #include "GraphEditor/EnumStruct/Anim/SCsGraphPin_ECsVertexAnimNotify.h"
 
@@ -82,21 +73,6 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		CS_TEMP_CREATE(ECsGameEvent)
 		// FECsGameEventCoordinatorGroup
 		CS_TEMP_CREATE(ECsGameEventCoordinatorGroup)
-	}
-	// FX
-	{
-		// FECsFX
-		CS_TEMP_CREATE(ECsFX)
-	}
-	// Sound
-	{
-		// FECsSound
-		CS_TEMP_CREATE(ECsSound)
-	}
-	// Team
-	{
-		// FECsTeam
-		CS_TEMP_CREATE(ECsTeam)
 	}
 	// Anim
 	{

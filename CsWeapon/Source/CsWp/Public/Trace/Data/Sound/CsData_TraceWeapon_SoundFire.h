@@ -4,7 +4,7 @@
 #include "UObject/Interface.h"
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_SoundPooled.h"
 
 #include "CsData_TraceWeapon_SoundFire.generated.h"
 

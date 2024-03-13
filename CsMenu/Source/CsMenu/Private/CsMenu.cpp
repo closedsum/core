@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "CsMenu.h"
 
+#include "Modules/ModuleManager.h"
+
 IMPLEMENT_GAME_MODULE(FDefaultGameModuleImpl, CsMenu);
 
 DEFINE_LOG_CATEGORY(LogCsMenu);

@@ -19,10 +19,10 @@ struct CSBEAM_API FCsBeamData_DamagePoint
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data|Damage|Point")
 	float Damage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data|Damage|Point")
 	FECsDamageType Type;
 
 public:
@@ -57,34 +57,34 @@ struct CSBEAM_API FCsBeamData_DamageSphere
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data|Damage|Sphere")
 	FECsDamageType Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data|Damage|Sphere", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MinDamage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data|Damage|Sphere", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MaxDamage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Damage|Sphere", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MinRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,  meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Damage|Sphere",  meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MaxRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Damage|Sphere")
 	ECsInterpolatingMethod InterpolationMethod;
 
 	/** Valid if InterpolationMethod == ECsInterpolationMethod::Easing. 
 	    Easing method for interpolating values between Min and Max. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Damage|Sphere")
 	ECsEasingType EasingType;
 
 	/** Curve [0,1] for interpolating values between Min and Max */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Damage|Sphere")
 	FCsCurveFloat Curve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsBeam|Data|Damage|Sphere")
 	bool bIgnoreHitResultObject;
 
 public:

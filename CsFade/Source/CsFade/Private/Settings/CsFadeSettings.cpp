@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsFadeSettings.h"
-#include "CsFade.h"
 
 UCsFadeSettings::UCsFadeSettings(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),

@@ -28,10 +28,10 @@ public:
 
 // DamageDataType (NCsDamage::NData::IData)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Data|Point")
 	float Value;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Data|Point")
 	FECsDamageType Type;
 
 	FCsData_DamagePointImplSlice() :

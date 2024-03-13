@@ -20,7 +20,8 @@ public class CsUI : ModuleRules
                     "UMG",
                     "SlateCore",
                     "Slate",
-                    "CsUICore"
+                    "CsUICore",
+                    "CsPhysics" // TODO: Eventually remove dependency
 ,                }
             );
 

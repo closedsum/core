@@ -98,16 +98,16 @@ struct CSBEAM_API FCsBeamPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsBeam.CsBeam"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam", meta = (MustImplement = "/Script.CsBeam.CsBeam"))
 	TSoftClassPtr<UObject> Beam;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam")
 	int32 Load_Flags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsBeam")
 	UObject* Beam_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsBeam")
 	UClass* Beam_Class;
 
 	FCsBeamPtr() :
@@ -143,16 +143,16 @@ struct CSBEAM_API FCsData_BeamPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsBeam.CsData_Beam"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data", meta = (MustImplement = "/Script.CsBeam.CsData_Beam"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data")
 	int32 Load_Flags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsBeam|Data")
 	UObject* Data_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsBeam|Data")
 	UClass* Data_Class;
 
 	FCsData_BeamPtr() :
@@ -184,15 +184,15 @@ struct CSBEAM_API FCsBeamClassEntry : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	/** The enum (FECsBeam) name for the projectile class. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString Name;
 
 	/** The enum (FECsBeam) display name for the projectile class. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString DisplayName;
 
 	/** Soft Reference to a projectile of type: ICsBeam. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FCsBeamPtr Class;
 
 	FCsBeamClassEntry() :
@@ -216,20 +216,20 @@ struct CSBEAM_API FCsBeamEntry : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	/** The enum (FECsBeam) name for the projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString Name;
 
 	/** The enum (FECsBeam) display name for the projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString DisplayName;
 
 	/** Class Type. This is used to get the actual class from a data table
 	    of projectile classes (FCsBeamDataRootSet.BeamClasses). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FECsBeamClass Class;
 
 	/** Soft Reference to a data of type: ICsData_Beam. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FCsData_BeamPtr Data;
 
 	FCsBeamEntry() :

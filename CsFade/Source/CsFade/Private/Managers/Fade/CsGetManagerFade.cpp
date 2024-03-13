@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Fade/CsGetManagerFade.h"
-#include "CsFade.h"
 
 UCsGetManagerFade::UCsGetManagerFade(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

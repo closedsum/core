@@ -14,10 +14,10 @@ struct CSBEAM_API FCsBeamDataRootSet
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data")
 	TSoftObjectPtr<UDataTable> BeamClasses;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Data")
 	TSoftObjectPtr<UDataTable> Beams;
 
 	FCsBeamDataRootSet() :

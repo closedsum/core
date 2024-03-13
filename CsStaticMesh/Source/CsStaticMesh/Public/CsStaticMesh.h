@@ -4,7 +4,7 @@
 #ifndef __CSSTATCIMESH_H__
 #define __CSSTATCIMESH_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsStaticMesh, Log, All);
 

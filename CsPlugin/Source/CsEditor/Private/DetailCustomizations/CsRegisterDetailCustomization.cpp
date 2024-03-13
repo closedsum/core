@@ -22,12 +22,6 @@
 #include "DetailCustomizations/EnumStruct/Input/ECsInputActionMapCustomization.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsGameEventCustomization.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsGameEventCoordinatorGroupCustomization.h"
-		// FX
-#include "DetailCustomizations/EnumStruct/FX/ECsFXCustomization.h"
-		// Sound
-#include "DetailCustomizations/EnumStruct/Sound/ECsSoundCustomization.h"
-		// Team
-#include "DetailCustomizations/EnumStruct/Team/ECsTeamCustomization.h"
 		// Anim
 #include "DetailCustomizations/EnumStruct/Anim/ECsVertexAnimNotifyCustomization.h"
 	// Data
@@ -65,12 +59,6 @@ void FCsRegisterDetailCustomization::Register()
 			CS_TEMP_REGISTER(ECsGameEvent);
 			CS_TEMP_REGISTER(ECsGameEventCoordinatorGroup);
 		}
-		// FX
-		CS_TEMP_REGISTER(ECsFX);
-		// Sound
-		CS_TEMP_REGISTER(ECsSound);
-		// Team
-		CS_TEMP_REGISTER(ECsTeam);
 		// Anim
 		CS_TEMP_REGISTER(ECsVertexAnimNotify);
 	}

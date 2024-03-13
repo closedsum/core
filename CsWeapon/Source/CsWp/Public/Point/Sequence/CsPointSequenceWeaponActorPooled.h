@@ -11,7 +11,7 @@
 // Types
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Projectile.h"
-#include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_SoundPooled.h"
 #include "Managers/FX/CsTypes_FX.h"
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 

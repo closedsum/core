@@ -6,6 +6,7 @@
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/CsTypes_Interpolation.h"
 #include "Types/CsTypes_Curve.h"
+#include "Engine/HitResult.h"
 
 #include "CsTypes_Damage.generated.h"
 
@@ -146,6 +147,9 @@ namespace NCsHitDirection
 
 #pragma endregion HitType
 
+// FCsDamageFalloff
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSDMG_API FCsDamageFalloff
 {
@@ -194,36 +198,13 @@ struct CSDMG_API FCsDamageFalloff
 
 	~FCsDamageFalloff() {}
 
-	float GetFalloff(const float &Distance)
-	{
-		if (MaxDistance > 0.0f && Distance > MaxDistance)
-			return Minimum;
-
-		// Easing
-		if (bEasingType)
-		{
-			const float Percent = Distance / MaxDistance;
-
-			return FMath::Max(Minimum, (*EasingFunction)(Percent, 0.0f, 1.0f, 1.0f));
-		}
-		// Curve
-		else
-		if (bCurve)
-		{
-			const float Percent = Distance / MaxDistance;
-
-			return FMath::Max(Minimum, Curve.Get()->GetFloatValue(Percent));
-		}
-		// Default
-		else
-		{
-			if (Rate == 0.0f || Frequency == 0.0f)
-				return 1.0f;
-
-			return FMath::Max(Minimum, 1.0f - (Rate * FMath::FloorToFloat(Distance / Frequency)));
-		}
-	}
+	float GetFalloff(const float &Distance);
 };
+
+#pragma endregion FCsDamageFalloff
+
+// FCsDamageRadial
+#pragma region
 
 USTRUCT(BlueprintType)
 struct CSDMG_API FCsDamageRadial
@@ -299,26 +280,7 @@ struct CSDMG_API FCsDamageRadial
 	void OnPostLoad() { Init(); }
 	void OnLoad() { Init(); }
 
-	float GetDamage(const FVector3f& Origin, const FVector3f& Location)
-	{
-		if (DeltaRadius == 0.0f)
-			return 0.0f;
-
-		const float Distance = (Location - Origin).Size();
-
-		if (Distance < MinRadius)
-			return 0.0f;
-		if (Distance > MaxRadius)
-			return 0.0f;
-		if (Delta == 0.0f)
-			return Min;
-
-		const float Percent = (Distance - MinRadius) / DeltaRadius;
-
-		if (bCurve)
-			return Curve.Get()->GetFloatValue(Percent) * Delta + Min;
-		return (*EasingFunction)(Percent, 0.0f, 1.0f, 1.0f) * Delta + Min;
-	}
+	float GetDamage(const FVector3f& Origin, const FVector3f& Location);
 
 	float GetOwnerDamage(const FVector3f& Origin, const FVector3f& Location)
 	{
@@ -330,6 +292,8 @@ struct CSDMG_API FCsDamageRadial
 		return OwnerPercent * GetDamage(Origin, Location);
 	}
 };
+
+#pragma endregion FCsDamageRadial
 
 USTRUCT(BlueprintType)
 struct CSDMG_API FCsDamageEvent

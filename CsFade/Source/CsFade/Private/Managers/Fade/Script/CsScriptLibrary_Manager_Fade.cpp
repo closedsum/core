@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Fade/Script/CsScriptLibrary_Manager_Fade.h"
-#include "CsFade.h"
 
 // CVar
 #include "Script/CsCVars_Script.h"

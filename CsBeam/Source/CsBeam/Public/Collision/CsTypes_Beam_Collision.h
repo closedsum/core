@@ -139,7 +139,7 @@ public:
 		if Type == ECsBeamCollisionFrequency::TimeInterval,
 		If Type == ECsBeamCollisionFrequency::Infinite,
 	     Ignore Count and Interval should be >= 0.0f. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Collision|Frequency")
 	ECsBeamCollisionFrequency Type;
 
 	/** The number of times to perform a collision 'pass' (sweep or trace).
@@ -147,7 +147,7 @@ public:
 		 Type == ECsBeamCollisionFrequency::Count
 		 Type == ECsBeamCollisionFrequency::TimeCount
 		Should be > 0. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Collision|Frequency", meta = (ClampMin = "0", UIMin = "0"))
 	int32 Count;
 
 	/** The time between each collision 'pass' (sweep or trace).
@@ -156,7 +156,7 @@ public:
 		Type == ECsSpawnerFrequency::Count
 		Type == ECsSpawnerFrequency::TimeInterval
 		Type == ECsSpawnerFrequency::Infinite */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsBeam|Collision|Frequency", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
 	FCsBeamCollisionFrequencyParams() :

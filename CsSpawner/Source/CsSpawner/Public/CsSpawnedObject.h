@@ -59,12 +59,6 @@ public:
 	}
 
 #pragma endregion TCsInterfaceObject
-
-// ICsSpline
-#pragma region
-public:
-
-#pragma endregion ICsSpline
 };
 
 #pragma endregion FCsSpawnedObject

@@ -4,7 +4,7 @@
 #ifndef __CSMENU_H__
 #define __CSMENU_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsMenu, Log, All);
 

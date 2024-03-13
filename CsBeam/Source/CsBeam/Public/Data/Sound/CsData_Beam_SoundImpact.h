@@ -5,7 +5,8 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Managers/Sound/CsTypes_Sound.h"
+#include "Managers/Sound/CsTypes_SoundPooled.h"
+#include "Chaos/ChaosEngineInterface.h"
 
 #include "CsData_Beam_SoundImpact.generated.h"
 

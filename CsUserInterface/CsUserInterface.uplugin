@@ -33,6 +33,10 @@
     {
       "Name": "CsUICore",
       "Enabled": true
+    },
+    {
+      "Name": "CsPhysics",
+      "Enabled": true
     }
   ]
 }

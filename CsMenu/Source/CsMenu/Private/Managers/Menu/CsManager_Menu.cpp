@@ -8,6 +8,8 @@
 #include "Managers/Time/CsManager_Time.h"
 // Settings
 #include "Managers/Menu/CsSettings_Manager_Menu.h"
+// Package
+#include "UObject/Package.h"
 
 #if WITH_EDITOR
 // Library

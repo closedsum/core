@@ -1,7 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Projectile.h"
-#include "CsPrj.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 	// Settings
 #include "Settings/CsLibrary_ProjectileSettings.h"

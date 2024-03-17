@@ -2,9 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 // Types
 #include "Types/CsTypes_Macro.h"
+#include "Types/Enum/CsTypes_Enum.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -21,14 +21,14 @@ namespace NCsEnum
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name is EMPTY."), *Context, *Name));
 
-				return EnumStruct(0, NCsCached::Str::INVALID);
+				return EnumStruct(0, NCsEnum::Str::INVALID);
 			}
 
 			if (DisplayName.IsEmpty())
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DisplayName is EMPTY."), *Context, *DisplayName));
 
-				return EnumStruct(0, NCsCached::Str::INVALID);
+				return EnumStruct(0, NCsEnum::Str::INVALID);
 			}
 
 			if (EnumStructMap::Get().IsValidEnum(Name))
@@ -44,7 +44,7 @@ namespace NCsEnum
 
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Enum of type %s and Name: %s does NOT exist."), *Context, *EnumStructName, *Name));
 
-			return EnumStruct(0, NCsCached::Str::INVALID);
+			return EnumStruct(0, NCsEnum::Str::INVALID);
 		}
 
 		template<typename EnumStructMap, typename EnumStruct>
@@ -57,7 +57,7 @@ namespace NCsEnum
 
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Enum of type %s and Index: %d (%d >= %d) does NOT exist."), *Context, *EnumStructName, Index, Index, Count));
 
-			return EnumStruct(0, NCsCached::Str::INVALID);
+			return EnumStruct(0, NCsEnum::Str::INVALID);
 		}
 
 		template<typename EnumStructMap, typename EnumStruct>

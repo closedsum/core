@@ -4,6 +4,7 @@
 #pragma once
 // Types
 #include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 // Data
 #include "Data/Visual/Scale/CsData_Skin_VisualScale_UniformRange.h"
 // Log

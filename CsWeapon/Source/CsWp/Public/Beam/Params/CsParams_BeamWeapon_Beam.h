@@ -3,6 +3,8 @@
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Types
+#include "Macro/CsMacro_Namespace.h"
+#include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_AttachDetach.h"
 #include "CollisionShape.h"
 // Log

@@ -1,7 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Beam/Data/CsLibrary_Data_BeamWeapon.h"
-#include "CsWp.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Data

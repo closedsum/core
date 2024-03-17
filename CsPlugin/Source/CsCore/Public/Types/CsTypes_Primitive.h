@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "Types/CsCached.h"
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 
@@ -636,61 +637,6 @@ public:
 };
 
 #pragma endregion Vector Types
-
-// FCsData_ShortCode
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsData_ShortCode
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Primitive")
-	uint8 Type;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Primitive")
-	FName ShortCode;
-
-public:
-	FCsData_ShortCode()
-	{
-		Type = UINT8_MAX;
-		ShortCode = CS_INVALID_SHORT_CODE;
-	}
-	virtual ~FCsData_ShortCode() {}
-
-	FORCEINLINE FCsData_ShortCode& operator=(const FCsData_ShortCode& B)
-	{
-		Type = B.Type;
-		ShortCode = B.ShortCode;
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsData_ShortCode& B) const
-	{
-		if (Type != B.Type)
-			return false;
-		if (ShortCode != B.ShortCode)
-			return false;
-		return true;
-	}
-
-	FORCEINLINE bool operator!=(const FCsData_ShortCode& B) const
-	{
-		return !(*this == B);
-	}
-
-	FORCEINLINE bool IsValid()
-	{
-		if (Type == UINT8_MAX)
-			return false;
-		if (ShortCode == CS_INVALID_SHORT_CODE)
-			return false;
-		return true;
-	}
-};
-
-#pragma endregion FCsData_ShortCode
 
 // FCsBool_Array
 #pragma region

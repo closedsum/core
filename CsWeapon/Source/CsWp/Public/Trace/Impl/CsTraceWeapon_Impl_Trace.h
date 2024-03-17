@@ -1,8 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
-
-// Types
-#include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 #pragma once
+// Types
+#include "Macro/CsMacro_Namespace.h"
+#include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
 class ICsTraceWeapon;
 class UObject;

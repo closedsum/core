@@ -4,6 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 #include "Types/Enum/CsUserDefinedEnum.h"
+
 #include "CsEnumStructUserDefinedEnumMap.generated.h"
 
 class UUserDefinedEnum;

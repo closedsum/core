@@ -5,7 +5,7 @@
 #include "Data/Visual/CsData_Skin_Visual.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 // Log
 #include "Utility/CsLog.h"
 

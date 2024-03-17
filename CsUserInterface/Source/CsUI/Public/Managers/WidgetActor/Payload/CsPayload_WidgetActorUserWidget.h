@@ -4,6 +4,7 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 // Types
+#include "Macro/CsMacro_Namespace.h"
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 
 // NCsUserWidget::NPayload::IPayload

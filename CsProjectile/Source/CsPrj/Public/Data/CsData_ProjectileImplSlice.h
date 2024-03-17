@@ -1,5 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
+#include "Macro/CsMacro_Namespace.h"
 #include "Types/CsTypes_Macro.h"
 // Log
 #include "Utility/CsPrjLog.h"
@@ -7,7 +9,6 @@
 #include "Data/CsData_Projectile.h"
 
 #include "CsData_ProjectileImplSlice.generated.h"
-#pragma once
 
 // NCsProjectile::NData::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, FImplSlice)

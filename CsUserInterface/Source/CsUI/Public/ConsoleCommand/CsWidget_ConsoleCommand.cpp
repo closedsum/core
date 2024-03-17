@@ -4,6 +4,8 @@
 #include "ConsoleCommand/CsWidget_ConsoleCommand.h"
 #include "CsUI.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Coordinators/ConsoleCommand/CsLibrary_Coordinator_ConsoleCommand.h"
 #include "ConsoleCommand/CsLibrary_ConsoleCommand.h"

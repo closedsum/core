@@ -5,6 +5,7 @@
 
 #include "UObject/Object.h"
 // Types
+#include "Types/CsCached.h"
 #include "Types/CsTypes_Load.h"
 #include "Library/Load/CsTypes_Library_Load.h"
 

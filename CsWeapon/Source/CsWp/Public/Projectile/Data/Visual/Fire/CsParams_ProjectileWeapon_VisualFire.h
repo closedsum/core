@@ -1,11 +1,12 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
+#include "Types/CsTypes_Macro.h"
 #include "Managers/FX/CsTypes_FX.h"
 // Log
 #include "Utility/CsWpLog.h"
 
 #include "CsParams_ProjectileWeapon_VisualFire.generated.h"
-#pragma once
 
 // ProjectileWeaponFireVisualAttach
 #pragma region

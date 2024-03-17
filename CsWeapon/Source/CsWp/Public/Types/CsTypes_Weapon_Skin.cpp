@@ -2,6 +2,8 @@
 #include "Types/CsTypes_Weapon_Skin.h"
 #include "CsWp.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Data/CsLibrary_Data.h"
 #include "Library/CsLibrary_Valid.h"

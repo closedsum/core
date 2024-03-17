@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
+#include "Types/CsCached.h"
 
 #include "CsTypes_Save.generated.h"
 

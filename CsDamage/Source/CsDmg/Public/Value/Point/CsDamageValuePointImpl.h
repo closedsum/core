@@ -8,6 +8,8 @@
 #include "Value/Types/CsGetDamageValueType.h"
 #include "Value/Copy/CsDamageValue_Copy.h"
 #include "Reset/CsReset.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 

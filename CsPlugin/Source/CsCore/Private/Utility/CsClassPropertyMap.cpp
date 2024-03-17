@@ -4,6 +4,9 @@
 #include "Utility/CsClassPropertyMap.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "Engine/UserDefinedEnum.h"
 
 #include "UObject/Object.h"

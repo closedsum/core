@@ -6,6 +6,8 @@
 
 // CVars
 #include "Managers/Achievement/CsCVars_Manager_Achievement.h"
+// Types
+#include "Types/CsCached.h"
 // Library
 #include "Library/CsLibrary_String.h"
 #include "Library/CsLibrary_Math.h"

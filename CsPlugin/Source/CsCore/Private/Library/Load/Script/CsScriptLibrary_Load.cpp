@@ -4,6 +4,8 @@
 #include "Library/Load/Script/CsScriptLibrary_Load.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 #include "Library/CsLibrary_Valid.h"

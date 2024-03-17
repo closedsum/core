@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Types/Enum/CsTypes_Enum.h"
+#include "Macro/CsMacro_Math.h"
 
 template<typename EnumStruct, typename EnumType>
 struct TCsEnumStructMaskMap
@@ -322,7 +323,7 @@ public:
 	FORCEINLINE FString MaskToString(const uint64& Mask)
 	{
 		//  TEXT("")
-		FString String = NCsCached::Str::Empty;
+		FString String = NCsEnum::Str::Empty;
 		bool IsFirst = true;
 
 		for (const EnumStruct& Enum : Enums)
@@ -339,8 +340,8 @@ public:
 		}
 
 		// (String == TEXT(""))
-		if (String == NCsCached::Str::Empty)
-			return NCsCached::Str::None;
+		if (String == NCsEnum::Str::Empty)
+			return NCsEnum::Str::None;
 		// TEXT("None")
 		return String;
 	}

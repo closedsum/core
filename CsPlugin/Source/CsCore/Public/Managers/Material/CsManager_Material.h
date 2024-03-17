@@ -4,7 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 
 #include "CsManager_Material.generated.h"
 

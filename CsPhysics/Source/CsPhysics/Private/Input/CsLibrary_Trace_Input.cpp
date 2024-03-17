@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Input/CsLibrary_Trace_Input.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Trace_Viewport.h"
 #include "Managers/Input/CsLibrary_Input.h"

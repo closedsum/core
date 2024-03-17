@@ -1,7 +1,9 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Managers/FX/CsTypes_FX.h"
 // Types
+#include "Types/CsTypes_Macro.h"
+#include "Managers/FX/CsTypes_FX.h"
+// Log
 #include "Utility/CsPrjLog.h"
 
 #include "CsTypes_Projectile_Visual_Trail.generated.h"

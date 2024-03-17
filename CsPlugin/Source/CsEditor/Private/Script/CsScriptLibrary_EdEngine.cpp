@@ -2,6 +2,8 @@
 #include "Script/CsScriptLibrary_EdEngine.h"
 #include "CsEditor.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Engine
 #include "CsEdEngine.h"
 

@@ -2,9 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsProjectileSettings.h"
-#include "CsPrj.h"
 
-#include "CsProjectile.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 
 // Cached
 #pragma region

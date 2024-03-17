@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 // Containers

@@ -6,6 +6,8 @@
 
 // CVars
 #include "Managers/Playback/CsCVars_Manager_Playback.h"
+// Types
+#include "Types/CsCached.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Console Command

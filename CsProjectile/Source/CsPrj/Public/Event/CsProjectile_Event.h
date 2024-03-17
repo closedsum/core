@@ -3,7 +3,7 @@
 // Interfaces
 #include "UObject/Interface.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 
 #include "CsProjectile_Event.generated.h"
 

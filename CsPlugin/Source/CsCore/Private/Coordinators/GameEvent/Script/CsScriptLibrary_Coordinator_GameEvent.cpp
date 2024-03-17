@@ -6,6 +6,8 @@
 
 // CVar
 #include "Script/CsCVars_Script.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Coordinators/GameEvent/CsLibrary_Coordinator_GameEvent.h"
 

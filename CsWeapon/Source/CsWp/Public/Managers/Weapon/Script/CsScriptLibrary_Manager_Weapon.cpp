@@ -1,7 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Weapon/Script/CsScriptLibrary_Manager_Weapon.h"
-#include "CsWp.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
 // Weapon

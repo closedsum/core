@@ -7,7 +7,7 @@
 // Interface
 #include "ICsModifier.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 
 // NCsModifier::NInt::IInt
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsModifier, NInt, IInt)

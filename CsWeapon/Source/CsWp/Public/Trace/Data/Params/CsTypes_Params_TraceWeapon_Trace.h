@@ -1,8 +1,10 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Types
+#include "Macro/CsMacro_Namespace.h"
 #include "Managers/Trace/CsTypes_Trace.h"
 
 #include "CsTypes_Params_TraceWeapon_Trace.generated.h"
-#pragma once
 
 // TraceWeaponLaunchLocation
 #pragma region

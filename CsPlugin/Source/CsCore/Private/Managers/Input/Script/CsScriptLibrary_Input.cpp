@@ -4,6 +4,8 @@
 #include "Managers/Input/Script/CsScriptLibrary_Input.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Managers/Input/CsLibrary_Input.h"
 #include "Player/CsLibrary_Player.h"

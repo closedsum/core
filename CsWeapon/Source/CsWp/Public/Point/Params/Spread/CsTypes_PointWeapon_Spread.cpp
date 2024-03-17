@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Point/Params/Spread/CsTypes_PointWeapon_Spread.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Array.h"
 #include "Library/CsLibrary_Valid.h"

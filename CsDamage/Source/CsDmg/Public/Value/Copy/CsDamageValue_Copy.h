@@ -4,7 +4,7 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)

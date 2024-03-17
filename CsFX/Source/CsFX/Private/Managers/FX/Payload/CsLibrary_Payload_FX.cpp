@@ -7,6 +7,7 @@
 #include "Managers/FX/Params/CsLibrary_Params_FX.h"
 #include "Library/CsLibrary_Valid.h"
 // Types
+#include "Types/CsTypes_Macro.h"
 #include "Managers/FX/CsTypes_FX.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"

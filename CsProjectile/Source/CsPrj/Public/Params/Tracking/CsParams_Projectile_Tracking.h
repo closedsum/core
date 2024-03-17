@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
+#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 #include "Types/CsTypes_Projectile_Tracking.h"
 // Log
 #include "Utility/CsPrjLog.h"

@@ -1,13 +1,13 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 // Data
 #include "Data/CsData_Weapon.h"
 // Log
 #include "Utility/CsWpLog.h"
 
 #include "CsData_WeaponImplSlice.generated.h"
-#pragma once
 
 // NCsWeapon::NData::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FImplSlice)

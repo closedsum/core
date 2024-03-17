@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 
+// Types
+#include "Types/CsCached.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Pool

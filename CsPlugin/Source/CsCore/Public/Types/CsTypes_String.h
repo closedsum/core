@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "Types/CsCached.h"
 #include "Types/Enum/CsEnumMap.h"
 
 #include "CsTypes_String.generated.h"

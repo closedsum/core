@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Enum/CsEnumFlagMap.h"
 #include "Types/Enum/CsEnumMaskMap.h"

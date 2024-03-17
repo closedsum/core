@@ -3,7 +3,7 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 
 #include "CsData_BeamWeapon.generated.h"
 

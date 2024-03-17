@@ -26,7 +26,8 @@ public class CsCore : ModuleRules
                     "DeveloperSettings",
                     "EnhancedInput", // TODO: Eventually move associated to plugin
                     "PhysicsCore",
-                    "Niagara" // TODO: Eventually move associated to plugin
+                    "Niagara", // TODO: Eventually move associated to plugin
+                    "CsPropertyTypes"
                 }
             );
 

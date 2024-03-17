@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Library

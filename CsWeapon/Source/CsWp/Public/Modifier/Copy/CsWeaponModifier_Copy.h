@@ -2,7 +2,7 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 
 // NCsWeapon::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)

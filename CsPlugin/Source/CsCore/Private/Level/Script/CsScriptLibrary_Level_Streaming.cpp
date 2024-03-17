@@ -5,6 +5,8 @@
 
 // CVars
 #include "Script/CsCVars_Script.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Level/CsLibrary_Level_Streaming.h"
 

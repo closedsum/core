@@ -4,6 +4,8 @@
 #include "Managers/Playback/CsConsoleCommand_Manager_Playback.h"
 #include "CsPlayback.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_String.h"
 #include "ConsoleCommand/CsLibrary_ConsoleCommand.h"

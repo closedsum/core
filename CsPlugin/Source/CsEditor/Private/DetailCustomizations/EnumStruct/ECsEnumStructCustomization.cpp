@@ -2,6 +2,10 @@
 #include "DetailCustomizations/EnumStruct/ECsEnumStructCustomization.h"
 #include "CsEditor.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
+#include "Types/CsCached.h"
+
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
 #include "IDetailGroup.h"

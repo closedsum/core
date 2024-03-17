@@ -4,6 +4,8 @@
 #include "Managers/Pool/Cache/Script/CsScriptLibrary_Cache_PooledObject.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 

@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Types/Enum/CsEnumMap.h"
-#include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
+#include "Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
 #include "Coroutine/pt.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/Time/CsTypes_Update.h"

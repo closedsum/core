@@ -4,6 +4,8 @@
 #include "Coordinators/GameEvent/CsConsoleCommand_Coordinator_GameEvent.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_String.h"
 #include "ConsoleCommand/CsLibrary_ConsoleCommand.h"

@@ -39,6 +39,10 @@
   ],
   "Plugins": [
     {
+      "Name": "CsPropertyTypes",
+      "Enabled": true
+    },
+    {
       "Name": "EnhancedInput",
       "Enabled": true
     },

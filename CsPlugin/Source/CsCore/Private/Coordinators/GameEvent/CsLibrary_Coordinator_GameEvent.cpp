@@ -4,6 +4,8 @@
 #include "Coordinators/GameEvent/CsLibrary_Coordinator_GameEvent.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"

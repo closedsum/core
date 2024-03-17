@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Input
+#include "Types/CsTypes_Macro.h"
 #include "Managers/Input/CsInput.h"
 
 #include "CsTypes_InputDefinition.generated.h"

@@ -4,6 +4,8 @@
 #include "Managers/PlayerProfile/CsManager_PlayerProfile.h"
 #include "CsPlatformServices.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Managers

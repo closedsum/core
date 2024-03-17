@@ -3,7 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsBeamSettings.h"
 
-#include "Managers/Beam/ICsBeam.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 
 // Cached
 #pragma region

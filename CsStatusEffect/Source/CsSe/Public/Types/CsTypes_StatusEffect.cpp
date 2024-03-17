@@ -2,6 +2,8 @@
 #include "Types/CsTypes_StatusEffect.h"
 #include "CsSe.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Data/CsLibrary_Data.h"
 #include "Library/CsLibrary_Valid.h"

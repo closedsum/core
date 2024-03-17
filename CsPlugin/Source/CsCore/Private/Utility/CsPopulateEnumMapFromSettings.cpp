@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Managers/Data/CsLibrary_Manager_Data.h"
 	// Settings

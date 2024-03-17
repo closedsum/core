@@ -5,7 +5,7 @@
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 
 #include "CsReceiveDamage.generated.h"
 

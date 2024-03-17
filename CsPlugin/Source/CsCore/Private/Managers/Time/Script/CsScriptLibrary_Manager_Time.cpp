@@ -4,6 +4,8 @@
 #include "Managers/Time/Script/CsScriptLibrary_Manager_Time.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Managers/Time/CsLibrary_Manager_Time.h"
 

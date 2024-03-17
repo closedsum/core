@@ -5,6 +5,7 @@
 #include "CsEditor.h"
 
 // Types
+#include "Types/CsTypes_Macro.h"
 #include "Load/CsObjectPathDependencyGroup.h"
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 // Library

@@ -7,7 +7,7 @@
 // Container
 #include "Containers/CsInterfaceObject.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 
 #include "ICsSpawner.generated.h"
 

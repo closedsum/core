@@ -2,6 +2,8 @@
 #include "Trace/Data/CsLibrary_Data_TraceWeapon.h"
 #include "CsWp.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Data

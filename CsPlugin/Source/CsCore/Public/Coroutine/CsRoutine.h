@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "Types/CsTypes_Macro.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Coroutine/pt.h"
 #include "Managers/Time/CsTypes_Update.h"

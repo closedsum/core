@@ -4,6 +4,8 @@
 #include "Managers/Spawner/Script/CsScriptLibrary_Manager_Spawner.h"
 #include "CsSpawner.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 #include "Managers/Spawner/CsLibrary_Manager_Spawner.h"
 

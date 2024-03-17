@@ -4,6 +4,8 @@
 #include "Managers/Menu/CsManager_Menu.h"
 #include "CsMenu.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Settings

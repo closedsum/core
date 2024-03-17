@@ -4,6 +4,7 @@
 #pragma once
 // Types
 #include "Containers/CsInterfaceMap.h"
+#include "Types/CsCached.h"
 // PooledObject
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/Pool/Cache/CsCache_PooledObject.h"

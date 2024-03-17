@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Type
+#include "Macro/CsMacro_Namespace.h"
+#include "Types/CsTypes_Macro.h"
 #include "Data/Types/CsData_GetBeamType.h"
 // Log
 #include "Utility/CsBeamLog.h"

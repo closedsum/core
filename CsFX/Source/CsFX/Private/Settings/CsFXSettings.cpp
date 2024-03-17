@@ -3,6 +3,9 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsFXSettings.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
+
 // Cached
 #pragma region
 

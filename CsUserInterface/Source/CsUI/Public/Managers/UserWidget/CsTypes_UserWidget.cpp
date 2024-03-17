@@ -4,6 +4,8 @@
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #include "CsUI.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 	// Settings
 #include "Settings/CsLibrary_UserInterfaceSettings.h"

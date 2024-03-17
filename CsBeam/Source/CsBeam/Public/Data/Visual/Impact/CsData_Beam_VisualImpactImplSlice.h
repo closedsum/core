@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Type
+#include "Macro/CsMacro_Namespace.h"
+#include "Types/CsTypes_Macro.h"
 #include "Managers/FX/CsTypes_FX.h"
 // Data
 #include "Data/CsDataTable.h"

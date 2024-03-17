@@ -1,5 +1,6 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+#include "Types/CsTypes_Macro.h"
 #include "Managers/FX/CsTypes_FX.h"
 #include "Engine/DataTable.h"
 // Types

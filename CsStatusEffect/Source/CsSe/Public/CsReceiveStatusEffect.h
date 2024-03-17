@@ -1,10 +1,9 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 
 #include "CsReceiveStatusEffect.generated.h"
 

@@ -6,6 +6,8 @@
 
 // CVar
 #include "CsCVars_Performance.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 	// Common
 #include "Library/CsLibrary_Valid.h"

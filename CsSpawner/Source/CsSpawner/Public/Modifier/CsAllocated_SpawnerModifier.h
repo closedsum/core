@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Macro/CsMacro_Namespace.h"
 #include "Modifier/Types/CsTypes_SpawnerModifier.h"
 
 class UObject;

@@ -5,6 +5,7 @@
 #include "CsEditor.h"
 
 // Types
+#include "Types/CsTypes_Macro.h"
 #include "Data/CsTypes_DataEntry.h"
 // Library
 	// Settings

@@ -5,6 +5,7 @@
 // Interface
 #include "Containers/CsGetInterfaceMap.h"
 // Types
+#include "Macro/CsMacro_Namespace.h"
 #include "Engine/EngineTypes.h"
 #include "Types/CsTypes_Damage.h"
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"

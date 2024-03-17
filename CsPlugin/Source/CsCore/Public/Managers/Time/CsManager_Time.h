@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "Macro/CsMacro_Namespace.h"
 #include "Managers/Time/CsUpdateGroup.h"
 #include "Managers/Time/CsManager_Time_Delegates.h"
 #include "InputCoreTypes.h"

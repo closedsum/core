@@ -2,6 +2,7 @@
 #pragma once
 // Types
 #include "Types/CsTypes_Macro.h"
+#include "Macro/CsMacro_Namespace.h"
 // Log
 #include "Utility/CsPrjLog.h"
 

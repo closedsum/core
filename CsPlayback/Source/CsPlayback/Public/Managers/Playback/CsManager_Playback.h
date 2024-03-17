@@ -4,6 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "Macro/CsMacro_Namespace.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/Playback/CsTypes_Playback.h"
 // Utility

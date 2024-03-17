@@ -5,6 +5,8 @@
 // Coroutine
 #include "Coroutine/CsRoutineHandle.h"
 // Types
+#include "Macro/CsMacro_Namespace.h"
+#include "Types/CsTypes_Macro.h"
 #include "Managers/Time/CsTypes_Update.h"
 #include "Managers/Time/CsTypes_Time.h"
 // Log

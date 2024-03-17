@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "Macro/CsMacro_Namespace.h"
 #include "Types/CsTypes_Macro.h"
 // Data
 #include "Data/Visual/Scale/CsData_Skin_VisualScale_Uniform.h"

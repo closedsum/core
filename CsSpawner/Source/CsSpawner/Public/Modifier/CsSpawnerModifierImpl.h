@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "Types/CsTypes_Macro.h"
 #include "CsTypes_Modifier.h"
 #include "Modifier/Types/CsTypes_SpawnerModifier.h"
 // Interface

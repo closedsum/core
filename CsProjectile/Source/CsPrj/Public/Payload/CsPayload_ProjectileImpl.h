@@ -1,5 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
+#include "Macro/CsMacro_Namespace.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // Projectile

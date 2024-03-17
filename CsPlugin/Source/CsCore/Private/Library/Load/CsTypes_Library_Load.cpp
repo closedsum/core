@@ -5,6 +5,7 @@
 #include "CsCore.h"
 
 // Types
+#include "Types/CsTypes_Macro.h"
 #include "Load/CsObjectPathDependencyGroup.h"
 // Movie
 #include "MovieSceneSequencePlayer.h"

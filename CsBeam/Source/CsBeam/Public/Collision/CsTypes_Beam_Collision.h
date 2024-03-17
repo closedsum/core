@@ -2,12 +2,14 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Macro/CsMacro_Namespace.h"
+#include "Types/CsTypes_Macro.h"
 #include "Types/Enum/CsEnumMap.h"
 // Log
 #include "Utility/CsBeamLog.h"
 
 #include "CsTypes_Beam_Collision.generated.h"
-
 // BeamCollisionFrequency
 #pragma region
 

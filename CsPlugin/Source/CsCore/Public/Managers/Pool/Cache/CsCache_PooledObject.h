@@ -5,6 +5,7 @@
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Types
+#include "Macro/CsMacro_Namespace.h"
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "Managers/Time/CsTypes_Time.h"
 

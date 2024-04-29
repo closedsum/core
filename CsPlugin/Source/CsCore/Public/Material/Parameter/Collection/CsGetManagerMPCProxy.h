@@ -4,7 +4,7 @@
 #pragma once
 #include "UObject/Interface.h"
 // Types
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
 
 #include "CsGetManagerMPCProxy.generated.h"
 

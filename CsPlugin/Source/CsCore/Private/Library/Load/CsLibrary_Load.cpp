@@ -5,7 +5,8 @@
 #include "CsCore.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
+#include "CsMacro_Math.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Sound
@@ -31,7 +32,7 @@
 // Class
 #include "UObject/Class.h"
 // Struct
-#include "Struct/CsStructOps_Data.h"
+#include "CsStructOps_Data.h"
 // Level
 #include "Engine/Level.h"
 

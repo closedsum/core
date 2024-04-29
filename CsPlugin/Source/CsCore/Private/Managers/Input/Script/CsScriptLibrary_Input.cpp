@@ -5,7 +5,8 @@
 #include "CsCore.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
+#include "CsMacro_Math.h"
 // Library
 #include "Managers/Input/CsLibrary_Input.h"
 #include "Player/CsLibrary_Player.h"

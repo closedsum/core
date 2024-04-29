@@ -23,10 +23,12 @@ namespace NCsJs
 	{
 		struct CSJS_API FResource : public TCsResourceContainer<FCsJavascriptFileObjects>
 		{
+			~FResource(){}
 		};
 
 		struct CSJS_API FManager : public NCsResource::NManager::NPointer::TFixed<FCsJavascriptFileObjects, FResource, 0>
 		{
+			~FManager(){}
 		};
 	}
 }

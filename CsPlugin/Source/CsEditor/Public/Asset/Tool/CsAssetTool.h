@@ -14,5 +14,7 @@ namespace NCsAsset
 		static const TArray<TWeakObjectPtr<UObject>>& GetOpenedAssets();
 
 		static bool IsAssetOpened(UObject* Asset);
+
+		static bool IsAssetWithClassDefaultOpened(UObject* DefaultObject);
 	};
 }

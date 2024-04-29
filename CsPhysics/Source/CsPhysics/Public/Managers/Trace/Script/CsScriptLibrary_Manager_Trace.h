@@ -12,6 +12,7 @@
 
 class AActor;
 class UCapsuleComponent;
+class USkeletalMeshComponent;
 
 UCLASS()
 class CSPHYSICS_API UCsScriptLibrary_Manager_Trace : public UObject
@@ -47,10 +48,52 @@ public:
 	* @param OutHit				Properties of the trace hit.
 	* @return					True if there was a hit, false otherwise.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Trace", meta = (bIgnoreSelf = "true", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Start,End,Channel,ActorsToIgnore", DisplayName = "LineTraceSingleByChannel"))
-	static bool LineTraceSingleByChannel(const FString& Context, UObject* WorldContextObject, const FVector3f& Start, const FVector3f& End, const TEnumAsByte<ECollisionChannel>& Channel, bool bTraceComplex, bool bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Trace", meta = (bIgnoreSelf = "true", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Start,End,Channel,ActorsToIgnore"))
+	static bool LineTraceSingleByChannel(const FString& Context, UObject* WorldContextObject, const FVector& Start, const FVector& End, const TEnumAsByte<ECollisionChannel>& Channel, bool bTraceComplex, bool bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit);
 
 #pragma endregion Line
+
+// Sphere
+#pragma region
+public:
+
+	/**
+	* Sweeps a sphere along the given line and returns the first blocking hit encountered.
+	* This trace finds the objects that RESPONDS to the given Collision Channel
+	* 
+	* @param Context			The calling context
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Start				Start of line segment.
+	* @param End				End of line segment.
+	* @param Radius				Radius of the sphere to sweep
+	* @param Channel
+	* @param bTraceComplex		True to test against complex collision, false to test against simplified collision.
+	* @param bIgnoreSelf
+	* @param OutHit				Properties of the trace hit.
+	* @return					True if there was a hit, false otherwise.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Trace", meta= (bIgnoreSelf="true", WorldContext = "WorldContextObject", AutoCreateRefTerm="Context,Start,End,Radius,Channel,sbTraceComplex,bIgnoreSelf,ActorsToIgnore"))
+	static bool SphereTraceSingleByChannel(const FString& Context, UObject* WorldContextObject, const FVector& Start, const FVector& End, const float& Radius, const TEnumAsByte<ECollisionChannel>& Channel, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit);
+
+	/**
+	* Sweeps a sphere along the given line and returns the first blocking hit encountered.
+	* This trace finds the objects that RESPONDS to the given Collision Channel
+	* 
+	* @param Context			The calling context
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Start				Start of line segment.
+	* @param End				End of line segment.
+	* @param Radius				Radius of the sphere to sweep
+	* @param ObjectTypes
+	* @param bTraceComplex		True to test against complex collision, false to test against simplified collision.
+	* @param bIgnoreSelf
+	* @param OutHit				Properties of the trace hit.
+	* @return					True if there was a hit, false otherwise.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Trace", meta= (bIgnoreSelf="true", WorldContext = "WorldContextObject", AutoCreateRefTerm="Context,Start,End,Radius,ObjectTypes, bTraceComplex,bIgnoreSelf,ActorsToIgnore"))
+	static bool SphereTraceSingleByObjectType(const FString& Context, UObject* WorldContextObject, const FVector& Start, const FVector& End, const float& Radius, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit);
+
+#pragma endregion Sphere
 
 // Capsule
 #pragma region

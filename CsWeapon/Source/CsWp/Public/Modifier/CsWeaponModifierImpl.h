@@ -1,7 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Proxy.h"
 #include "CsTypes_Modifier.h"
 #include "Modifier/Types/CsTypes_WeaponModifier.h"
 // Interface

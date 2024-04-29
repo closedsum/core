@@ -4,6 +4,8 @@
 #include "Collision/CsLibrary_Collision.h"
 #include "CsCore.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"

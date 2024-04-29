@@ -15,10 +15,12 @@
 
 struct CSCORE_API FCsResource_ScopedTimer : public TCsResourceContainer<FCsScopedTimer>
 {
+	~FCsResource_ScopedTimer(){}
 };
 
 struct CSCORE_API FCsManager_ScopedTimer_Internal : public NCsResource::NManager::NValue::TFixed<FCsScopedTimer, FCsResource_ScopedTimer, CS_SCOPED_TIMER_SIZE>
 {
+	~FCsManager_ScopedTimer_Internal(){}
 };
 
 #pragma endregion Structs

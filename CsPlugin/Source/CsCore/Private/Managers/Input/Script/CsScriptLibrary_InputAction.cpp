@@ -2,8 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Script/CsScriptLibrary_InputAction.h"
-#include "CsCore.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Enum.h"
 #include "Managers/Input/CsLibrary_Input.h"

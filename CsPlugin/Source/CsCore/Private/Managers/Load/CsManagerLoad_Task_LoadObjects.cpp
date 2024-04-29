@@ -6,6 +6,8 @@
 
 // CVar
 #include "Managers/Load/CsCVars_Manager_Load.h"
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Time.h"
 #include "Library/CsLibrary_Math.h"

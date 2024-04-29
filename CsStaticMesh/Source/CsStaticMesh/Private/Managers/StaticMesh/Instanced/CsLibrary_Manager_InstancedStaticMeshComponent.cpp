@@ -4,7 +4,7 @@
 #include "Managers/StaticMesh/Instanced/CsLibrary_Manager_InstancedStaticMeshComponent.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 	// Common
 #include "Library/CsLibrary_World.h"

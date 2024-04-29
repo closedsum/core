@@ -2,10 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Types/Enum/Tool/CsGetEnumStructTool.h"
-#include "CsCore.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 	// Settings
 #include "Settings/CsLibrary_DeveloperSettings.h"
@@ -55,7 +54,6 @@ namespace NCsEnum
 			#define BlueprintLibrary NCsBlueprint::FLibrary
 			#define PropertyLibrary NCsProperty::FLibrary
 			
-
 			void FImpl::AddPropertyChange(const FName& Name, UStruct* Struct)
 			{
 				SET_CONTEXT(AddPropertyChange);

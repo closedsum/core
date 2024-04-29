@@ -6,6 +6,8 @@
 
 // CVar
 #include "Script/CsCVars_Script.h"
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Widget.h"
 

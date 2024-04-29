@@ -18,10 +18,12 @@ namespace NCsRoutine
 {
 	struct CSCORE_API FResource : public TCsResourceContainer<FCsRoutine>
 	{
+		~FResource(){}
 	};
 
 	struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FCsRoutine, FResource, CS_ROUTINE_POOL_SIZE>
 	{
+		~FManager(){}
 	};
 }
 
@@ -33,10 +35,12 @@ namespace NCsCoroutine
 	{
 		struct CSCORE_API FResource : public TCsResourceContainer<FImpl>
 		{
+			~FResource(){}
 		};
 
 		struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FImpl, FResource, CS_COROUTINE_PAYLOAD_SIZE>
 		{
+			~FManager(){}
 		};
 	}
 }

@@ -4,8 +4,10 @@
 #include "Data/CsTypes_DataEntry.h"
 #include "CsCore.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // CVar
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 // Library
 #include "Data/CsLibrary_Data.h"
 	// Common

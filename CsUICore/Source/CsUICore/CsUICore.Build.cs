@@ -17,10 +17,16 @@ public class CsUICore : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "DeveloperSettings",
-                    "CsCore",
                     "UMG",
                     "SlateCore",
-                    "Slate"
+                    "Slate",
+                    "CsMacro",
+                    "CsContainer",
+                    "CsEnum",
+                    "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
+                    "CsCore"
 ,                }
             );
 

@@ -4,7 +4,7 @@
 #include "Data/Visual/CsData_Skin_VisualImplSlice.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"

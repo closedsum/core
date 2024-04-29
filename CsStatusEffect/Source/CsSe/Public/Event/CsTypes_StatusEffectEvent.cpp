@@ -2,6 +2,7 @@
 #include "Event/CsTypes_StatusEffectEvent.h"
 
 // Types
+#include "CsMacro_Misc.h"
 #include "Types/CsTypes_StatusEffect.h"
 // Library
 #include "Data/CsLibrary_Data_StatusEffect.h"

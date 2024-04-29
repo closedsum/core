@@ -4,7 +4,7 @@
 #include "Trigger/CsLibrary_Trigger.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 #include "Types/CsCached.h"
 // Library
 #include "Library/CsLibrary_World.h"

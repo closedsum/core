@@ -4,7 +4,7 @@
 #include "Managers/Beam/CsLibrary_Manager_Beam.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Managers
 #include "Managers/Beam/CsManager_Beam.h"
 // Library

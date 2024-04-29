@@ -16,16 +16,16 @@ struct CSWP_API FCsTraceWeaponPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsWp.CsTraceWeapon"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace", meta = (MustImplement = "/Script.CsWp.CsTraceWeapon"))
 	TSoftClassPtr<UObject> Weapon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	int32 Load_Flags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsWp|Trace")
 	UObject* Weapon_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsWp|Trace")
 	UClass* Weapon_Class;
 
 	FCsTraceWeaponPtr() :
@@ -52,44 +52,44 @@ struct CSWP_API FCsTraceWeaponEntry : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	/** The enum (FECsWeapon) name for the weapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FString Name;
 
 	/** The enum (FECsWeapon) display name for the weapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FString DisplayName;
 
 	/** Soft Reference to a weapon of type: ICsTraceWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponPtr Weapon;
 
 	/** Whether to perform a Fire action on input pressed or released. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	bool bDoFireOnRelease;
 
 	/** Whether the Fire action continues to execute when the Fire action is
 	    active. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	bool bFullAuto;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	int32 MaxAmmo;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	int32 TracesPerShot;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	float TimeBetweenShots;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	float TimeBetweenAutoShots;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	float TimeBetweenTracesPerShot;
 
 	FCsTraceWeaponEntry() :

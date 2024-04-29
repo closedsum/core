@@ -5,7 +5,7 @@
 #include "CsCore.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 
 #include "Engine/UserDefinedEnum.h"
 

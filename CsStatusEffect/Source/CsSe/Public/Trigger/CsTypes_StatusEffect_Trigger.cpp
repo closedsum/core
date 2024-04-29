@@ -2,6 +2,8 @@
 #include "Trigger/CsTypes_StatusEffect_Trigger.h"
 #include "CsSe.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 

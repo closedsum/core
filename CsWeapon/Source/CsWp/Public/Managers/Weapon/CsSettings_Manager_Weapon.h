@@ -14,13 +14,13 @@ struct CSWP_API FCsSettings_Manager_Weapon_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings")
 	FECsWeaponClass Class; 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings", meta = (ClampMin = "0", UIMin = "0"))
 	int32 PoolSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings", meta = (ClampMin = "0", UIMin = "0"))
 	int32 PayloadSize;
 
 	FCsSettings_Manager_Weapon_PoolParams() :
@@ -50,7 +50,7 @@ struct CSWP_API FCsSettings_Manager_Weapon_Modifiers
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "64", UIMin = "64"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings", meta = (ClampMin = "64", UIMin = "64"))
 	int32 PoolSize;
 
 	FCsSettings_Manager_Weapon_Modifiers() :
@@ -79,7 +79,7 @@ struct CSWP_API FCsSettings_Manager_Weapon_Spread
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "64", UIMin = "64"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings", meta = (ClampMin = "64", UIMin = "64"))
 	int32 PoolSize;
 
 	FCsSettings_Manager_Weapon_Spread() :
@@ -120,18 +120,18 @@ public:
 		not have underlying code differences and just be differences in the data
 		each respective character type uses. This provides the ability to save on both
 		the number of pools created and the number of objects created for a pool. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings")
 	TMap<FECsWeapon, FECsWeapon> TypeMap;
 
 	/** Describes any pool parameters (i.e. class, pool size, payload size, ... etc) for each Weapon type. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings")
 	TMap<FECsWeapon, FCsSettings_Manager_Weapon_PoolParams> PoolParams;
 
 	/** Describes any settings related to Projectile Modifiers */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings")
 	FCsSettings_Manager_Weapon_Modifiers Modifiers;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings")
 	FCsSettings_Manager_Weapon_Spread Spread;
 
 	FCsSettings_Manager_Weapon() :
@@ -165,17 +165,17 @@ struct CSWP_API FCsSettings_Manager_Weapon_UnitTest
 public:
 
 	/** Map used for testing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "/Script/Engine.World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings", meta = (AllowedClasses = "/Script/Engine.World"))
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsWp.CsWeapon"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings", meta = (MustImplement = "/Script.CsWp.CsWeapon"))
 	TSoftClassPtr<UObject> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsWp.CsWeapon"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings", meta = (MustImplement = "/Script.CsWp.CsWeapon"))
 	TSoftClassPtr<UObject> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsWp.CsWeapon"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings", meta = (MustImplement = "/Script.CsWp.CsWeapon"))
 	TSoftClassPtr<UObject> ClassC;
 
 	FCsSettings_Manager_Weapon_UnitTest() :

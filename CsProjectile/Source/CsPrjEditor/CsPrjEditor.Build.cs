@@ -1,14 +1,24 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 
 using UnrealBuildTool;
+using System.Xml;
 
 public class CsPrjEditor : ModuleRules
 {
     public CsPrjEditor(ReadOnlyTargetRules Target) : base(Target)
     {
+        // Get any Custom Settings
+        string SettingsDirectory = "C:\\Trees\\core\\";
+        string SettingsFile = "PluginBuildSettings.xml";
+        string SettingsPath = SettingsDirectory + SettingsFile;
+
+        XmlDocument SettingsXml = new XmlDocument();
+        SettingsXml.Load(SettingsPath);
+        XmlNode bUseUnityNode = SettingsXml.SelectSingleNode("/Settings/bUseUnity");
+
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
-        bUseUnity = false;// System.Environment.ProcessorCount < 64;
+        bUseUnity = bUseUnityNode != null ? bool.Parse(bUseUnityNode.InnerText) : true;
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {
@@ -36,8 +46,8 @@ public class CsPrjEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
-                    "CsCore",
-                    "CsEditor",
+                    "CsEnum",
+                    "CsEnumEditor",
                     "CsPrj",
                 }
             );

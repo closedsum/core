@@ -2,8 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-#include "Macro/CsMacro_Namespace.h"
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Namespace.h"
+#include "CsMacro_Proxy.h"
 #include "Types/Enum/CsEnumMap.h"
 // Log
 #include "Utility/CsLog.h"

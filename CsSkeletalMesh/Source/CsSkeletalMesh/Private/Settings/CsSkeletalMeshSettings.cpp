@@ -3,6 +3,9 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsSkeletalMeshSettings.h"
 
+// Types
+#include "CsMacro_Misc.h"
+
 // Cached
 #pragma region
 

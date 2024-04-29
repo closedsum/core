@@ -1,7 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // Types
 #include "Data/CsTypes_Data_Projectile.h"
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Log
 #include "Utility/CsPrjLog.h"
 // Data
@@ -27,7 +27,7 @@ public:
 
 // StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data")
 	FCsPrjStaticMesh Mesh;
 
 	FCsData_Projectile_VisualStaticMeshImplSlice() :

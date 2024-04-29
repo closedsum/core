@@ -4,7 +4,7 @@
 #include "Managers/CsLibrary_Manager_Javascript.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Managers
 #include "Managers/CsManager_Javascript.h"
 // Library

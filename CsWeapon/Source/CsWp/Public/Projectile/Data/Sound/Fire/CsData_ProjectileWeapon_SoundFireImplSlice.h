@@ -24,7 +24,7 @@ struct CSWP_API FCsData_ProjectileWeapon_SoundFireImplSlice
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile")
 	FCsProjectileWeapon_Fire_SoundParams Params;
 
 public:

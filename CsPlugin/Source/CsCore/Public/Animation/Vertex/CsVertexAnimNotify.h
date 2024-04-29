@@ -3,8 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
-#include "Types/CsTypes_Macro.h"
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
+#include "CsMacro_Proxy.h"
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 // Log

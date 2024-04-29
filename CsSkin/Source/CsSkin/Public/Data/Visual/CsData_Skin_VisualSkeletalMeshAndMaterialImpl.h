@@ -10,6 +10,8 @@
 // Types
 #include "Types/CsTypes_SkeletalMesh.h"
 #include "Material/CsTypes_Material.h"
+// Log
+#include "Utility/CsSkinLog.h"
 
 #include "CsData_Skin_VisualSkeletalMeshAndMaterialImpl.generated.h"
 
@@ -56,10 +58,10 @@ public:
 #undef ImplType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 
 	void SetChecked(const FString& Context, USkeletalMeshComponent* Component) const;
-	bool SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 };
 
 
@@ -174,10 +176,10 @@ namespace NCsSkin
 				public:
 
 					bool IsValidChecked(const FString& Context) const;
-					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 
 					void SetChecked(const FString& Context, USkeletalMeshComponent* Component) const;
-					bool SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+					bool SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 				};
 
 			#undef DataType

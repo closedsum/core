@@ -6,7 +6,7 @@
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
 // Types
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
 
 #include "ICsBeam.generated.h"
 

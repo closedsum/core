@@ -5,7 +5,7 @@
 #include "Data/Visual/CsData_Skin_Visual.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -14,6 +14,8 @@ class USceneComponent;
 class UPrimitiveComponent;
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
+class UStaticMesh;
+class USkeletalMesh;
 
 // NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NStaticMesh, IStaticMesh)

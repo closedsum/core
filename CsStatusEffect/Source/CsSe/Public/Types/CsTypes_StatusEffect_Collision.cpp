@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_StatusEffect_Collision.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 

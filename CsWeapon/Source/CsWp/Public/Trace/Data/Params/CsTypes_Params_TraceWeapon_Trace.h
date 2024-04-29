@@ -1,7 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
+#include "Engine/EngineTypes.h"
 #include "Managers/Trace/CsTypes_Trace.h"
 
 #include "CsTypes_Params_TraceWeapon_Trace.generated.h"
@@ -176,14 +177,14 @@ public:
 
 	/** Describes the different methods to get the Location from which a trace
 		will be performed from a weapon of type: ICsTraceWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	ECsTraceWeaponTraceLocation Type;
 
 	/** Get the Bone from which Location information is used.
 		Only valid if:
 		 Type == ECsTraceWeaponTraceLocation::Bone ||
 		 Type == ECsTraceWeaponTraceLocation::Socket */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FName BoneOrSocket;
 
 	FCsTraceWeaponTraceParamsLocationInfo() :
@@ -211,20 +212,20 @@ public:
 
 	/** Describes the different methods to get the Location from which a trace
 		will be performed from a weapon of type: ICsTraceWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	ECsTraceWeaponTraceDirection Type;
 
 	/** Get the Bone from which Direction information is used.
 		Only valid if:
 		 Type == ECsTraceWeaponTraceDirection::Bone ||
 		 Type == ECsTraceWeaponTraceDirection::Socket */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FName BoneOrSocket;
 
 	/** The Rules, components (Pitch, Yaw, Roll), to use from a given rotation
 		when calculating the Direction.
 		See ECsRotationRules */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsRotationRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsRotationRules"))
 	int32 Rules;
 
 	FCsTraceWeaponTraceParamsDirectionInfo() :
@@ -252,20 +253,20 @@ public:
 
 	/** The Location related information for performing a trace for a
 		weapon of type: ICsTraceWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponTraceParamsLocationInfo LocationInfo;
 
 	/** Get the Direction related information for performing a trace from a
 		weapon of type: ICsTraceWeapon */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponTraceParamsDirectionInfo DirectionInfo;
 
 	/** The ObjectTypes to perform the trace again. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	TArray<TEnumAsByte<ECollisionChannel>> ObjectTypes;
 
 	/** The length of the trace. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Distance;
 
 	FCsTraceWeaponLineTraceParams() :
@@ -304,23 +305,23 @@ public:
 
 	/** The Location related information for performing a trace for a
 		weapon of type: ICsTraceWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponTraceParamsLocationInfo LocationInfo;
 
 	/** Get the Direction related information for performing a trace from a
 		weapon of type: ICsTraceWeapon */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponTraceParamsDirectionInfo DirectionInfo;
 
 	/** The ObjectTypes to perform the trace again. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	TArray<TEnumAsByte<ECollisionChannel>> ObjectTypes;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceCollisionBox Shape;
 
 	/** The length of the trace. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Distance;
 
 	FCsTraceWeaponBoxTraceParams() :
@@ -360,23 +361,23 @@ public:
 
 	/** The Location related information for performing a trace for a
 		weapon of type: ICsTraceWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponTraceParamsLocationInfo LocationInfo;
 
 	/** Get the Direction related information for performing a trace from a
 		weapon of type: ICsTraceWeapon */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponTraceParamsDirectionInfo DirectionInfo;
 
 	/** The ObjectTypes to perform the trace again. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	TArray<TEnumAsByte<ECollisionChannel>> ObjectTypes;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceCollisionSphere Shape;
 
 	/** The length of the trace. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Distance;
 
 	FCsTraceWeaponSphereTraceParams() :
@@ -416,23 +417,23 @@ public:
 
 	/** The Location related information for performing a trace for a
 		weapon of type: ICsTraceWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponTraceParamsLocationInfo LocationInfo;
 
 	/** Get the Direction related information for performing a trace from a
 		weapon of type: ICsTraceWeapon */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponTraceParamsDirectionInfo DirectionInfo;
 
 	/** The ObjectTypes to perform the trace again. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	TArray<TEnumAsByte<ECollisionChannel>> ObjectTypes;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceCollisionSphere Shape;
 
 	/** The length of the trace. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Distance;
 
 	FCsTraceWeaponCapsuleTraceParams() :
@@ -474,32 +475,32 @@ public:
 
 	/** The Location related information for performing a trace for a
 		weapon of type: ICsTraceWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponTraceParamsLocationInfo LocationInfo;
 
 	/** Get the Direction related information for performing a trace from a
 		weapon of type: ICsTraceWeapon */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceWeaponTraceParamsDirectionInfo DirectionInfo;
 
 	/** The ObjectTypes to perform the trace again. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	TArray<TEnumAsByte<ECollisionChannel>> ObjectTypes;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	ECsTraceWeaponTraceShape Shape;
 
 	/** The length of the trace. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Distance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceCollisionBox BoxShape;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceCollisionSphere SphereShape;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsTraceCollisionCapsule CapsuleShape;
 
 	FCsTraceWeaponTraceParams() :

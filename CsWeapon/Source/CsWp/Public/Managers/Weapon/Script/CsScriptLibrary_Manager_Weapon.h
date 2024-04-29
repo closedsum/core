@@ -2,6 +2,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "Templates/SubclassOf.h"
 #include "Types/CsTypes_Weapon.h"
 
 #include "CsScriptLibrary_Manager_Weapon.generated.h"

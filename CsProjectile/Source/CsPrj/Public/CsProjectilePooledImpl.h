@@ -291,7 +291,7 @@ protected:
 
 public:
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "CsPrj|Projectile")
 	UObject* GetDataAsObject();
 
 #pragma endregion Projectile
@@ -732,7 +732,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "CsPrj|Projectile|FX")
 	FCsProjectilePooledImpl_OnOverride_TrailFX OnOverride_TrailFX_ScriptEvent;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "CsPrj|Projectile|FX")
 	void SetTrailFXPooled(const FString& Context, const FECsFX& FX, const int32& Index);
 
 protected:

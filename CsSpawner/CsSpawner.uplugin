@@ -20,7 +20,23 @@
       "LoadingPhase": "Default"
     }
   ],
-  "Plugins": [
+	"Plugins": [
+		{
+			"Name": "CsMacro",
+			"Enabled": true
+		},
+		{
+			"Name": "CsContainer",
+			"Enabled": true
+		},
+		{
+			"Name": "CsEnum",
+			"Enabled": true
+		},
+		{
+			"Name": "CsValid",
+			"Enabled": true
+		},
 		{
 			"Name": "CsPlugin",
 			"Enabled": true
@@ -29,5 +45,5 @@
 			"Name": "CsModifier",
 			"Enabled": true
 		}
-  ]
+	]
 }

@@ -4,7 +4,7 @@
 #include "Character/CsLibrary_ScriptableCharacter.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Name.h"

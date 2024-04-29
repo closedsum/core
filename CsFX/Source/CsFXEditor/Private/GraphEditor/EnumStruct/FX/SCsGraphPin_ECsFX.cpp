@@ -1,6 +1,5 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "GraphEditor/EnumStruct/FX/SCsGraphPin_ECsFX.h"
-#include "CsEditor.h"
 
 #include "Managers/FX/CsTypes_FX.h"
 

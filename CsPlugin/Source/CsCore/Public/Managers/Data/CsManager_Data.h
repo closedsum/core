@@ -6,6 +6,7 @@
 // Managers
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Types
+#include "CsMacro_Misc.h"
 #include "Data/CsTypes_DataEntry.h"
 #include "Data/CsTypes_Payload.h"
 #include "Load/CsStreamableHandle.h"
@@ -30,40 +31,48 @@
 
 struct CSCORE_API FCsResource_Payload : public TCsResourceContainer<FCsPayload>
 {
+	~FCsResource_Payload(){}
 };
 
 struct CSCORE_API FCsManager_Payload: public NCsResource::NManager::NValue::TFixed<FCsPayload, FCsResource_Payload, 0>
 {
+	~FCsManager_Payload(){}
 };
 
 	// FCsDataEntry_Data
 
 struct CSCORE_API FCsResource_DataEntry_Data : public TCsResourceContainer<FCsDataEntry_Data>
 {
+	~FCsResource_DataEntry_Data(){}
 };
 
 struct CSCORE_API FCsManager_DataEntry_Data : public NCsResource::NManager::NValue::TFixed<FCsDataEntry_Data, FCsResource_DataEntry_Data, 0>
 {
+	~FCsManager_DataEntry_Data(){}
 };
 
 	// FCsDataEntry_ScriptData
 
 struct CSCORE_API FCsResource_DataEntry_ScriptData : public TCsResourceContainer<FCsDataEntry_ScriptData>
 {
+	~FCsResource_DataEntry_ScriptData(){}
 };
 
 struct CSCORE_API FCsManager_DataEntry_ScriptData : public NCsResource::NManager::NValue::TFixed<FCsDataEntry_ScriptData, FCsResource_DataEntry_ScriptData, 0>
 {
+	~FCsManager_DataEntry_ScriptData(){}
 };
 
 	// FCsDataEntry_DataTable
 
 struct CSCORE_API FCsResource_DataEntry_DataTable : public TCsResourceContainer<FCsDataEntry_DataTable>
 {
+	~FCsResource_DataEntry_DataTable(){}
 };
 
 struct CSCORE_API FCsManager_DataEntry_DataTable : public NCsResource::NManager::NValue::TFixed<FCsDataEntry_DataTable, FCsResource_DataEntry_DataTable, 0>
 {
+	~FCsManager_DataEntry_DataTable(){}
 };
 
 #pragma endregion Structs

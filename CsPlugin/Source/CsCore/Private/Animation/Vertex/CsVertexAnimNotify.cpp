@@ -29,7 +29,7 @@ namespace NCsVertexAnimNotify
 			const TArray<FCsSettings_Enum>& Enums = SettingsLibrary::GetSettingsEnum_VertexAnimNotify();
 			const FString& EnumSettingsPath		  = SettingsLibrary::GetSettingsEnumPath_VertexAnimNotify();
 
-			if (Enums.Num() > CS_EMPTY)
+			if (!Enums.IsEmpty())
 			{
 				for (const FCsSettings_Enum& Enum : Enums)
 				{

@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 // Types
 #include "Material/CsTypes_Material.h"
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Log
 #include "Utility/CsLog.h"
 // Data

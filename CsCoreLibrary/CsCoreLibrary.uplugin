@@ -1,0 +1,53 @@
+{
+	"FileVersion": 3,
+	"Version": 2,
+	"VersionName": "0.0.1",
+	"FriendlyName": "Closed Sum Games Core Library",
+	"Description": "Closed Sum Games Core Library",
+	"Category": "Programming",
+	"CreatedBy": "Closed Sum Games LLC",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "5.3.0",
+	"CanContainContent": true,
+	"Installed": true,
+  "Modules": [
+    {
+      "Name": "CsCoreLibrary",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+	"Plugins": [
+		{
+			"Name": "CsMacro",
+			"Enabled": true
+		},
+		{
+			"Name": "CsPropertyTypes",
+			"Enabled": true
+		},
+		{
+			"Name": "CsEnum",
+			"Enabled": true
+		},
+		{
+			"Name": "CsContainer",
+			"Enabled": true
+		},
+		{
+			"Name": "CsValid",
+			"Enabled": true
+		},
+		{
+			"Name": "CsStructOps",
+			"Enabled": true
+		},
+		{
+			"Name": "CsTypes",
+			"Enabled": true
+		}
+	]
+}

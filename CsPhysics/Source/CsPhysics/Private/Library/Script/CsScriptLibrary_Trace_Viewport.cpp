@@ -4,7 +4,7 @@
 #include "Library/Script/CsScriptLibrary_Trace_Viewport.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 	// Common

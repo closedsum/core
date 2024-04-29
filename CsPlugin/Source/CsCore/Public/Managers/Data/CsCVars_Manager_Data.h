@@ -2,7 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 //#include "CsCVars.generated.h"
 
 // Managers

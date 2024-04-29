@@ -15,11 +15,15 @@ public class CsUI : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
-                    "DeveloperSettings",
-                    "CsCore",
+                    "DeveloperSettings",         
                     "UMG",
                     "SlateCore",
                     "Slate",
+                    "CsMacro",
+                    "CsContainer",
+                    "CsEnum",
+                    "CsValid",
+                    "CsCore",
                     "CsUICore",
                     "CsPhysics" // TODO: Eventually remove dependency
 ,                }

@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/CVar/SCsGraphPin_ECsCVarToggle.h"
 #include "CsEditor.h"
 
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 
 #define EnumMapType EMCsCVarToggle
 #define EnumType FECsCVarToggle

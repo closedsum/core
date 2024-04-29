@@ -3,7 +3,7 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 
 #include "CsData_StatusEffect_Damage.generated.h"

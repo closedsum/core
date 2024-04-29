@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Animation/2D/CsTypes_Anim2D.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Texture
@@ -441,7 +443,7 @@ bool FCsAnim2DFlipbookTexture::IsValidChecked(const FString& Context) const
 	}
 
 	// Check Frames
-	checkf(Frames.Num() > CS_EMPTY, TEXT("%s: No Frames set."));
+	checkf(!Frames.IsEmpty(), TEXT("%s: No Frames set."));
 
 	typedef FCsAnim2DFlipbookTextureFrame FrameType;
 

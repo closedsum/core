@@ -5,7 +5,7 @@
 #include "CsCore.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"

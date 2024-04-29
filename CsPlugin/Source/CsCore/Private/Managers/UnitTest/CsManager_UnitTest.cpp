@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UnitTest/CsManager_UnitTest.h"
 #include "CsCore.h"
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"

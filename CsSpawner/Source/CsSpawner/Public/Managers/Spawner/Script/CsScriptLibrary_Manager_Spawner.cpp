@@ -5,7 +5,7 @@
 #include "CsSpawner.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Spawner/CsLibrary_Manager_Spawner.h"
 

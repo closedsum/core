@@ -5,6 +5,8 @@
 // Types
 #include "Types/CsTypes_StaticMesh.h"
 #include "Material/CsTypes_Material.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsStaticMeshAndMaterials.generated.h"
 

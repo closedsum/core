@@ -4,7 +4,7 @@
 #include "LevelSequence/CsLibrary_LevelSequence.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Settings/CsLibrary_LevelSequenceProjectSettings.h"
 	// Common

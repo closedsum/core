@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Collision/CsTypes_Collision.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Collision/CsLibrary_Collision.h"
 #include "Library/CsLibrary_Valid.h"
@@ -562,6 +564,36 @@ bool FCsCollisionQueryParams::IsValid(const FString& Context, void(*Log)(const F
 
 // FCsCollisionObjectQueryParams
 #pragma region
+
+namespace NCsCollisionObjectQueryParams
+{
+	void Populate(FCollisionObjectQueryParams& Params, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypesToQuery)
+	{
+		Params = FCollisionObjectQueryParams();
+
+		TArray<TEnumAsByte<ECollisionChannel>> CollisionObjectTraces;
+		CollisionObjectTraces.AddUninitialized(ObjectTypesToQuery.Num());
+
+		for (auto Iter = ObjectTypesToQuery.CreateConstIterator(); Iter; ++Iter)
+		{
+			CollisionObjectTraces[Iter.GetIndex()] = UEngineTypes::ConvertToCollisionChannel(*Iter);
+		}
+
+		FCollisionObjectQueryParams ObjectParams;
+		for (auto Iter = CollisionObjectTraces.CreateConstIterator(); Iter; ++Iter)
+		{
+			const ECollisionChannel & Channel = (*Iter);
+			if (FCollisionObjectQueryParams::IsValidObjectQuery(Channel))
+			{
+				Params.AddObjectTypesToQuery(Channel);
+			}
+			else
+			{
+				//UE_LOG(LogBlueprintUserMessages, Warning, TEXT("%d isn't valid object type"), (int32)Channel);
+			}
+		}
+	}
+}
 
 bool FCsCollisionObjectQueryParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {

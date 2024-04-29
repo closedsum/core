@@ -262,5 +262,8 @@ namespace NCsSkeletalMeshActor
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
+		#undef LogLevel
+		#undef WorldLibrary
+		#undef GameStateLibrary
 	}
 }

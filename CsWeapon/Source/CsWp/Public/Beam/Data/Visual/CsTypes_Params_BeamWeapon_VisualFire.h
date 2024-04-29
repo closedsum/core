@@ -56,10 +56,10 @@ struct CSWP_API FCsBeamWeaponVisualFireParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	FCsFX FX;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	ECsBeamWeaponVisualFireAttach Attach;
 
 	FCsBeamWeaponVisualFireParams() :

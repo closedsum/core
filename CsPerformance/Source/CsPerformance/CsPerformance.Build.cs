@@ -18,6 +18,11 @@ public class CsPerformance : ModuleRules
                     "Engine",
                     "AssetRegistry",
                     "DeveloperSettings",
+                    "CsMacro",
+                    "CsContainer",
+                    "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "CsCore",
                     "UMG"
 ,                }

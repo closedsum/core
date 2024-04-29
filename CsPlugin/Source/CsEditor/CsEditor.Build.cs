@@ -1,42 +1,39 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 
 using UnrealBuildTool;
+using System.Xml;
 
 public class CsEditor : ModuleRules
 {
     public CsEditor(ReadOnlyTargetRules Target) : base(Target)
     {
+        // Get any Custom Settings
+        string SettingsDirectory = "C:\\Trees\\core\\";
+        string SettingsFile = "PluginBuildSettings.xml";
+        string SettingsPath = SettingsDirectory + SettingsFile;
+
+        XmlDocument SettingsXml = new XmlDocument();
+        SettingsXml.Load(SettingsPath);
+        XmlNode bUseUnityNode = SettingsXml.SelectSingleNode("/Settings/bUseUnity");
+
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
-        bUseUnity = false;// System.Environment.ProcessorCount < 64;
-
-        PublicDependencyModuleNames.AddRange(
-                new string[] {
-                    "Core",
-                    "CoreUObject",
-                    "Engine",
-                    "AssetRegistry",
-                    "CsCore",
-                }
-            );
-
-       PrivateDependencyModuleNames.AddRange(
-            new string[] {
-                "InputCore",
-                "Slate",
-                "SlateCore",
-            }
-        );
+        bUseUnity = bUseUnityNode != null ? bool.Parse(bUseUnityNode.InnerText) : true;
 
         if (Target.Type == TargetType.Editor)
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
+                    "Core",
+                    "CoreUObject",
+                    "Engine",
+                    "AssetRegistry",
                     "UnrealEd",
                     "AssetTools",
                     "ContentBrowser",
                     "BlueprintGraph",
                     "Slate",
+                    "SlateCore",
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
@@ -45,7 +42,13 @@ public class CsEditor : ModuleRules
                     "Settings",
                     "SourceControl",
                     "Niagara", // TODO: move associated to plugin
-                    "NiagaraEditor" // TODO: Move associated code to plugin
+                    "NiagaraEditor", // TODO: Move associated code to plugin
+                    "CsEnum",
+                    "CsEnumEditor",
+                    "CsContainer",
+                    "CsTypes",
+                    "CsCoreLibrary",
+                    "CsCore"
                 }
             );
         }
@@ -53,6 +56,9 @@ public class CsEditor : ModuleRules
         {
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
+                    "InputCore",
+                    "Slate",
+                    "SlateCore"
                 }
             );
         }

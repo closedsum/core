@@ -1,0 +1,33 @@
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#include "Types/CsTypes_Primitive.h"
+
+// MemberType
+#pragma region
+
+namespace NCsMemberType
+{
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Bool);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Uint8);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Int32);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Enum);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(EnumClass);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(EnumNamespaced);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Float);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(String);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Name);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Vector);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Rotator);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Color);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Object);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Actor);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(Pawn);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(ActorComponent);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(SceneComponent);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(PrimitiveComponent);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(StaticMeshComponent);
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(SkeletalMeshComponent);
+}
+
+#pragma endregion MemberType

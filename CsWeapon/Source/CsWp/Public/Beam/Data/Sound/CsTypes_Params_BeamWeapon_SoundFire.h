@@ -55,10 +55,10 @@ struct CSWP_API FCsBeamWeaponSoundFireParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	FCsSound Sound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	ECsBeamWeaponSoundFireAttach Attach;
 
 	FCsBeamWeaponSoundFireParams() :

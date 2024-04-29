@@ -19,6 +19,8 @@ namespace NCsAsset
 			const TArray<TWeakObjectPtr<UObject>>&(*GetOpenedAssetsImpl)();
 
 			bool(*IsAssetOpenedImpl)(UObject* /*Asset*/);
+
+			bool(*IsAssetWithClassDefaultOpenedImpl)(UObject* /*DefaultObject*/);
 		};
 	}
 }

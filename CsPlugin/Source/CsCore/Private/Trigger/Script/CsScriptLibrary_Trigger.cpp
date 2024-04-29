@@ -7,7 +7,7 @@
 // CVar
 #include "Script/CsCVars_Script.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Trigger/CsLibrary_Trigger.h"
 // Cached

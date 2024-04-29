@@ -36,7 +36,7 @@ bool FCsData_Skin_VisualStaticMeshAndMaterialImpl::IsValidChecked(const FString&
 	return true;
 }
 
-bool FCsData_Skin_VisualStaticMeshAndMaterialImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualStaticMeshAndMaterialImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	// Check Mesh is Valid
 	if (!Mesh.IsValid(Context, Log))
@@ -60,7 +60,7 @@ void FCsData_Skin_VisualStaticMeshAndMaterialImpl::SetChecked(const FString& Con
 	MaterialLibrary::SetChecked(Context, Component, Materials.Get());
 }
 
-bool FCsData_Skin_VisualStaticMeshAndMaterialImpl::SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualStaticMeshAndMaterialImpl::SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
@@ -123,7 +123,7 @@ namespace NCsSkin
 					return true;
 				}
 
-				bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 				{
 					CS_IS_PTR_NULL(GetStaticMesh())
 					return true;
@@ -142,7 +142,7 @@ namespace NCsSkin
 					MaterialLibrary::SetChecked(Context, Component, GetMaterials());
 				}
 
-				bool FImpl::SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FImpl::SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 				{
 					if (!IsValid(Context, Log))
 						return false;

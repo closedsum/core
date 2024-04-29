@@ -1,6 +1,5 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "GraphEditor/EnumStruct/SkeletalMesh/SCsGraphPin_ECsSkeletalMeshActor.h"
-#include "CsEditor.h"
 
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 

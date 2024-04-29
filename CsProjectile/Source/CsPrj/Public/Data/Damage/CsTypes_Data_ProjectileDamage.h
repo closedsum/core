@@ -1,7 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Interpolation.h"
 #include "Types/CsTypes_Curve.h"
@@ -19,10 +19,10 @@ struct CSPRJ_API FCsPrjData_DamagePoint
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Projectile|Data")
 	float Damage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Projectile|Data")
 	FECsDamageType Type;
 
 public:
@@ -57,34 +57,34 @@ struct CSPRJ_API FCsPrjData_DamageSphere
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Projectile|Data")
 	FECsDamageType Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Projectile|Data", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MinDamage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Projectile|Data", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MaxDamage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MinRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,  meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data",  meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MaxRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data")
 	ECsInterpolatingMethod InterpolationMethod;
 
 	/** Valid if InterpolationMethod == ECsInterpolationMethod::Easing. 
 	    Easing method for interpolating values between Min and Max. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data")
 	ECsEasingType EasingType;
 
 	/** Curve [0,1] for interpolating values between Min and Max */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data")
 	FCsCurveFloat Curve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data")
 	bool bIgnoreHitResultObject;
 
 public:

@@ -6,7 +6,7 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // World

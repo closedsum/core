@@ -4,6 +4,8 @@
 #include "Components/CsTypes_WidgetComponent.h"
 #include "CsUI.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Component

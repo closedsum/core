@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/Cache/CsCache_UserWidgetImpl.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool

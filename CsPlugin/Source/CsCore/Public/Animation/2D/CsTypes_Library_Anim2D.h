@@ -132,12 +132,14 @@ namespace NCsAnim
 
 					struct CSCORE_API FResource : public TCsResourceContainer<FParams>
 					{
+						~FResource(){}
 					};
 
 					#define CS_PARAMS_PAYLOAD_SIZE 256
 
 					struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
 					{
+						~FManager(){}
 					};
 
 					#undef CS_PARAMS_PAYLOAD_SIZE
@@ -270,12 +272,14 @@ namespace NCsAnim
 
 					struct CSCORE_API FResource : public TCsResourceContainer<FParams>
 					{
+						~FResource(){}
 					};
 
 					#define CS_PARAMS_PAYLOAD_SIZE 256
 
 					struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
 					{
+						~FManager(){}
 					};
 
 					#undef CS_PARAMS_PAYLOAD_SIZE

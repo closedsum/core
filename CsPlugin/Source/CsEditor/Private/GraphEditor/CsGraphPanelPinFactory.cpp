@@ -5,7 +5,7 @@
 #include "CsEditor.h"
 
 // CVar
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 // Types
 #include "Managers/Time/CsTypes_Update.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"

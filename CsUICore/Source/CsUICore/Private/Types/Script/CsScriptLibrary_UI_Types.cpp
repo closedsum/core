@@ -7,7 +7,7 @@
 // CVar
 #include "Script/CsCVars_Script.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 
 // Cached
 #pragma region

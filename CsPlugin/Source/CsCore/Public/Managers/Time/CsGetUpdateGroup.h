@@ -4,7 +4,7 @@
 #pragma once
 #include "UObject/Interface.h"
 // Types
-#include "CsTypes_Update.h"
+#include "Managers/Time/CsTypes_Update.h"
 
 #include "CsGetUpdateGroup.generated.h"
 

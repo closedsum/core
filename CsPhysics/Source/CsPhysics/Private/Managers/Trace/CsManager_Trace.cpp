@@ -4,6 +4,8 @@
 #include "Managers/Trace/CsManager_Trace.h"
 #include "CsPhysics.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // CVars
 #include "Managers/Trace/CsCVars_Manager_Trace.h"
 // Library
@@ -117,6 +119,15 @@ bool UCsManager_Trace::s_bShutdown = false;
 UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
+
+#define USING_NS_CACHED using namespace NCsManagerTrace::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsManagerTrace::NCached; \
+	const FString& Context = Str::__FunctionName
+#define MathLibrary NCsMath::FLibrary
+#define RequestContainerType NCsTrace::NRequest::FResource
+#define RequestType NCsTrace::NRequest::FRequest
+#define ResponseContainerType NCsTrace::NResponse::FResource
+#define ResponseType NCsTrace::NResponse::FResponse
 
 // Singleton
 #pragma region
@@ -281,9 +292,6 @@ void UCsManager_Trace::Initialize()
 
 	// Request
 	{
-		typedef NCsTrace::NRequest::FResource RequestContainerType;
-		typedef NCsTrace::NRequest::FRequest RequestType;
-
 		Manager_Request.CreatePool(PoolSize);
 
 		const TArray<RequestContainerType*>& Pool = Manager_Request.GetPool();
@@ -298,9 +306,6 @@ void UCsManager_Trace::Initialize()
 	// Response
 	{
 		Manager_Response.CreatePool(PoolSize);
-
-		typedef NCsTrace::NResponse::FResource ResponseContainerType;
-		typedef NCsTrace::NResponse::FResponse ResponseType;
 
 		const TArray<ResponseContainerType*>& Pool = Manager_Response.GetPool();
 
@@ -355,9 +360,7 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 {
 	CS_SCOPED_TIMER_NAMESPACE_2(NCsManagerTrace, NScopedTimer, Update);
 
-	using namespace NCsManagerTrace::NCached;
-
-	const FString& Context = Str::Update;
+	SET_CONTEXT(Update);
 
 	// Reset TraceCountThisFrame
 	ThisFrameCountInfo.Reset();
@@ -368,9 +371,6 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 		const int32 Count			= FMath::Min(Manager_Request.GetAllocatedSize(), ProcessCountMax);
 
 		int32 I = 0;
-
-		typedef NCsTrace::NRequest::FResource RequestContainerType;
-		typedef NCsTrace::NRequest::FRequest RequestType;
 
 		TCsDoubleLinkedList<RequestContainerType*>* Current = Manager_Request.GetAllocatedHead();
 		TCsDoubleLinkedList<RequestContainerType*>* Next	= Current;
@@ -392,8 +392,6 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 			if (Request->bCompleted)
 			{
 				CS_NON_SHIPPING_EXPR(LogTransaction(Context, ECsTraceTransaction::Complete, Request, Request->Response));
-
-				typedef NCsTrace::NResponse::FResponse ResponseType;
 
 				if (ResponseType* Response = Request->Response)
 				{
@@ -429,9 +427,6 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 	}
 	// Process Responses
 	{
-		typedef NCsTrace::NResponse::FResource ResponseContainerType;
-		typedef NCsTrace::NResponse::FResponse ResponseType;
-
 		TCsDoubleLinkedList<ResponseContainerType*>* Current = Manager_Response.GetAllocatedHead();
 		TCsDoubleLinkedList<ResponseContainerType*>* Next	= Current;
 
@@ -452,11 +447,8 @@ void UCsManager_Trace::Update(const FCsDeltaTime& DeltaTime)
 	}
 }
 
-#define RequestType NCsTrace::NRequest::FRequest
 void UCsManager_Trace::IncrementTraceCount(RequestType* Request)
 {
-#undef RequestType
-
 	// Lifetime
 	LifetimeCountInfo.Increment(Request);
 	// Frame
@@ -466,12 +458,8 @@ void UCsManager_Trace::IncrementTraceCount(RequestType* Request)
 // Request
 #pragma region
 
-#define RequestType NCsTrace::NRequest::FRequest
-
 void UCsManager_Trace::DeallocateRequest(RequestType* Request)
 {
-	typedef NCsTrace::NResponse::FResponse ResponseType;
-
 	if (ResponseType* Response = Request->Response)
 		DeallocateResponse(Response);
 
@@ -509,9 +497,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 {
 	CS_SCOPED_TIMER_NAMESPACE_2(NCsManagerTrace, NScopedTimer, ProcessAsyncRequest);
 
-	using namespace NCsManagerTrace::NCached;
-
-	const FString& Context = Str::ProcessAsyncRequest;
+	SET_CONTEXT(ProcessAsyncRequest);
 
 	CS_IS_PTR_NULL_CHECKED(Request)
 
@@ -541,8 +527,6 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 	{
 		AsyncTraceType = EAsyncTraceType::Multi;
 	}
-
-	typedef NCsMath::FLibrary MathLibrary;
 
 	// Request Members
 	const ECsTraceType& Type	 = Request->Type;
@@ -665,42 +649,27 @@ void UCsManager_Trace::DrawRequest(const RequestType* Request) const
 	}
 }
 
-#undef RequestType
-
 #pragma endregion Request
 
 // Response
 #pragma region
 
-#define ResponseType NCsTrace::NResponse::FResponse
 ResponseType* UCsManager_Trace::AllocateResponse()
 {
-#undef ResponseType
-
-	typedef NCsTrace::NResponse::FResource ResponseContainerType;
-
 	ResponseContainerType* Container = Manager_Response.Allocate();
 
 	return Container->Get();
 }
 
-#define ResponseType NCsTrace::NResponse::FResponse
 void UCsManager_Trace::DeallocateResponse(ResponseType* Response)
 {
-#undef ResponseType
-
 	Response->Reset();
 	Manager_Response.DeallocateAt(Response->GetIndex());
 }
 
 void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& Datum)
 {
-	using namespace NCsManagerTrace::NCached;
-
-	const FString& Context = Str::OnTraceResponse;
-
-	typedef NCsTrace::NRequest::FRequest RequestType;
-	typedef NCsTrace::NResponse::FResponse ResponseType;
+	SET_CONTEXT(OnTraceResponse);
 
 	// Get Request
 	RequestType* Request = PendingRequests.Get(Handle);
@@ -745,9 +714,6 @@ void UCsManager_Trace::OnTraceResponse(const FTraceHandle& Handle, FTraceDatum& 
 
 void UCsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDatum& Datum)
 {
-	typedef NCsTrace::NRequest::FRequest RequestType;
-	typedef NCsTrace::NResponse::FResponse ResponseType;
-
 	// Get Request
 	RequestType* Request = PendingRequests.Get(Handle);
 	// Setup Response
@@ -783,13 +749,8 @@ void UCsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDat
 #endif // #if !UE_BUILD_SHIPPING
 }
 
-#define RequestType NCsTrace::NRequest::FRequest
-#define ResponseType NCsTrace::NResponse::FResponse
 void UCsManager_Trace::DrawResponse(const RequestType* Request, const ResponseType* Response) const
 {
-#undef RequestType
-#undef ResponseType
-
 	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
 	{
 		UCsPhysicsSettings* Settings = GetMutableDefault<UCsPhysicsSettings>();
@@ -806,17 +767,13 @@ void UCsManager_Trace::DrawResponse(const RequestType* Request, const ResponseTy
 
 #pragma endregion Response
 
-#define ResponseType NCsTrace::NResponse::FResponse
-#define RequestType NCsTrace::NRequest::FRequest
 ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 {
 	CS_SCOPED_TIMER_NAMESPACE_2(NCsManagerTrace, NScopedTimer, Trace);
 
-	using namespace NCsManagerTrace::NCached;
-
-	const FString& Context = Str::Trace;
-
-	checkf(Request, TEXT("%s: Request is NULL."), *Context);
+	SET_CONTEXT(Trace);
+	
+	CS_IS_PTR_NULL_CHECKED(Request)
 
 	check(Request->IsValidChecked(Context));
 
@@ -863,8 +820,6 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 		Response->QueueDeallocate();
 
 		Response->ElapsedTime = CurrentWorld->GetTimeSeconds() - Request->StartTime;
-
-		typedef NCsMath::FLibrary MathLibrary;
 
 		// Request Members
 		const ECsTraceType& Type	 = Request->Type;
@@ -1086,16 +1041,9 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 	DeallocateRequest(Request);
 	return nullptr;
 }
-#undef ResponseType
-#undef RequestType
 
-#define RequestType NCsTrace::NRequest::FRequest
-#define ResponseType NCsTrace::NResponse::FResponse
 void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, RequestType* Request, ResponseType* Response)
 {
-#undef RequestType
-#undef ResponseType
-
 	if (CS_CVAR_LOG_IS_SHOWING(LogManagerTraceTransactions))
 	{
 		const FString& TransactionAsString = NCsTraceTransaction::ToActionString(Transaction);
@@ -1277,3 +1225,11 @@ void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTran
 		}
 	}
 }
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
+#undef MathLibrary
+#undef RequestContainerType
+#undef RequestType
+#undef ResponseContainerType
+#undef ResponseType

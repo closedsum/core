@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Proxy.h"
 #include "Managers/FX/CsTypes_FX.h"
 #include "Managers/Time/CsTypes_Update.h"
 // Managers

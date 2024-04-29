@@ -4,7 +4,7 @@
 #include "Managers/Runnable/CsLibrary_Manager_Runnable.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"

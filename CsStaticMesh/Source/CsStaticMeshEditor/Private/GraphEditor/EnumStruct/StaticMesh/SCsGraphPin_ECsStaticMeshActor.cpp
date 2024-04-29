@@ -1,6 +1,5 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "GraphEditor/EnumStruct/StaticMesh/SCsGraphPin_ECsStaticMeshActor.h"
-#include "CsEditor.h"
 
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
 

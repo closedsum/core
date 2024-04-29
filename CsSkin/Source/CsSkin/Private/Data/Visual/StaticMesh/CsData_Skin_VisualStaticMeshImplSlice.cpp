@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/StaticMesh/CsData_Skin_VisualStaticMeshImplSlice.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"

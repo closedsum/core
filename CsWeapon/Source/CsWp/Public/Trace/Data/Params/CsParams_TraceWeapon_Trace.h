@@ -3,7 +3,7 @@
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Proxy.h"
 #include "Engine/EngineTypes.h"
 #include "CollisionShape.h"
 

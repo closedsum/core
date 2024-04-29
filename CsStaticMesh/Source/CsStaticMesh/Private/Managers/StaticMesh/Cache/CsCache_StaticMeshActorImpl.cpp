@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/StaticMesh/Cache/CsCache_StaticMeshActorImpl.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool

@@ -2,13 +2,14 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Enhanced/CsLibrary_Input_Enhanced.h"
-#include "CsCore.h"
 
 // Library
+#include "Player/CsLibrary_Player.h"
 #include "Library/CsLibrary_Valid.h"
 // Input
 #include "InputMappingContext.h"
 #include "InputAction.h"
+#include "EnhancedInputSubsystems.h"
 
 namespace NCsInput
 {
@@ -27,6 +28,22 @@ namespace NCsInput
 				CS_IS_OBJECT_PTR_NULL_CHECKED(Mapping.Action, UInputAction)
 			}
 			return true;
+		}
+
+		namespace NFirst
+		{
+			#define FirstLocalPlayerLibrary NCsPlayer::NLocal::NFirst::FLibrary
+
+			UEnhancedInputLocalPlayerSubsystem* FLibrary::GetSubsystemChecked(const FString& Context, const UObject* WorldContext)
+			{
+				const ULocalPlayer* LocalPlayer				  = FirstLocalPlayerLibrary::GetChecked(Context, WorldContext);
+				UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+
+				CS_IS_PENDING_KILL_CHECKED(Subsystem)
+				return Subsystem;
+			}
+
+			#undef FirstLocalPlayerLibrary
 		}
 	}
 }

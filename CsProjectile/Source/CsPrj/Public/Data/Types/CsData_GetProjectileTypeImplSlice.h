@@ -1,8 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Type
-#include "Macro/CsMacro_Namespace.h"
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Namespace.h"
+#include "CsMacro_Proxy.h"
 #include "Data/Types/CsData_GetProjectileType.h"
 // Log
 #include "Utility/CsPrjLog.h"
@@ -22,7 +22,7 @@ struct CSPRJ_API FCsData_GetProjectileTypeImplSlice
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Projectile|Data")
 	FECsProjectile Type;
 
 public:

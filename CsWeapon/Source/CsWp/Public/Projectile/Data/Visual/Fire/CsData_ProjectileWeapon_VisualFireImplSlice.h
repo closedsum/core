@@ -20,7 +20,7 @@ struct CSWP_API FCsData_ProjectileWeapon_VisualFireImplSlice
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile")
 	FCsProjectileWeapon_Fire_VisualParams Params;
 
 public:

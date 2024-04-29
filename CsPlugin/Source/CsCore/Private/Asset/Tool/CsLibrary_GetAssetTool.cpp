@@ -54,5 +54,10 @@ namespace NCsAsset
 		{
 			return GetChecked(Context)->GetAssetTool()->IsAssetOpenedImpl(Asset);
 		}
+
+		bool FLibrary::IsAssetWithClassDefaultOpened(const FString& Context, UObject* DefaultObject)
+		{
+			return GetChecked(Context)->GetAssetTool()->IsAssetWithClassDefaultOpenedImpl(DefaultObject);
+		}
 	}
 }

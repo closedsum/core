@@ -36,8 +36,6 @@ public:
 		Speed_Generated(1.0f)
 	{
 	}
-
-	void CopyToInfo(FCsVertexAnimInfo* Info, const float& ScaleLength = 1.0f) const;
 };
 
 UENUM(BlueprintType)

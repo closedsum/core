@@ -3,8 +3,8 @@
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Macro/CsMacro_Namespace.h"
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Namespace.h"
+#include "CsMacro_Proxy.h"
 #include "Types/CsTypes_AttachDetach.h"
 #include "CollisionShape.h"
 // Log
@@ -246,14 +246,14 @@ public:
 
 	/** Describes the different methods to get the Location from which a trace
 		will be performed from a weapon of type: ICsBeamWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	ECsBeamWeaponBeamLocation Type;
 
 	/** Get the Bone from which Location information is used.
 		Only valid if:
 		 Type == ECsBeamWeaponBeamLocation::Bone ||
 		 Type == ECsBeamWeaponBeamLocation::Socket */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	FName BoneOrSocket;
 
 	FCsBeamWeaponBeamParamsLocationInfo() :
@@ -470,20 +470,20 @@ public:
 
 	/** Describes the different methods to get the Location from which a trace
 		will be performed from a weapon of type: ICsBeamWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	ECsBeamWeaponBeamDirection Type;
 
 	/** Get the Bone from which Direction information is used.
 		Only valid if:
 		 Type == ECsBeamWeaponBeamDirection::Bone ||
 		 Type == ECsBeamWeaponBeamDirection::Socket */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	FName BoneOrSocket;
 
 	/** The Rules, components (Pitch, Yaw, Roll), to use from a given rotation
 		when calculating the Direction.
 		See ECsRotationRules */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsRotationRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsRotationRules"))
 	int32 Rules;
 
 	FCsBeamWeaponBeamParamsDirectionInfo() :
@@ -656,25 +656,25 @@ struct CSWP_API FCsBeamWeaponBeamParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	bool bAttached;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	FCsAttachmentTransformRules AttachRules;
 
 	/** Describes the different lifecycle of a Beam (implements the interface: ICsBeam)
 		emitted from a Beam Weapon (weapon of type: ICsBeamWeapon). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	ECsBeamWeaponBeamLifeCycle LifeCycle;
 
 	/** The Location related information for performing a trace for a
 		Beam Weapon (weapon of type: ICsBeamWeapon). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	FCsBeamWeaponBeamParamsLocationInfo LocationInfo;
 
 	/** Get the Direction related information for performing a trace from a
 		Beam Weapon (weapon of type: ICsBeamWeapon). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Beam")
 	FCsBeamWeaponBeamParamsDirectionInfo DirectionInfo;
 
 	FCsBeamWeaponBeamParams() :

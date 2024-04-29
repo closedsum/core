@@ -7,7 +7,7 @@
 // Log
 #include "Utility/CsBeamLog.h"
 
-#include "CsBeam_CollisionShape.generated.h"
+#include "CsTypes_Beam_Shape.generated.h"
 
 // BeamCollisionShapeScale
 #pragma region

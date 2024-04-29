@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Damage/Script/CsScriptLibrary_Manager_Damage.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 

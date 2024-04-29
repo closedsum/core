@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Struct/CsFadeRegisterStructOpsIsValid.h"
 
-#include "Struct/CsStructOps_IsValid.h"
+#include "CsStructOps_IsValid.h"
 // Structs
 #include "Managers/Fade/CsTypes_Fade.h"
 

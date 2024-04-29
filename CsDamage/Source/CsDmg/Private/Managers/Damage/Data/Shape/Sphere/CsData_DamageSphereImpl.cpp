@@ -4,6 +4,7 @@
 #include "Managers/Damage/Data/Shape/Sphere/CsData_DamageSphereImpl.h"
 
 // Types
+#include "CsMacro_Misc.h"
 #include "Collision/CsTypes_Collision.h"
 // Library
 #include "Value/CsLibrary_DamageValue.h"

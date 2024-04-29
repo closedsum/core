@@ -21,13 +21,19 @@ namespace NCsMaterial
 				* Container for holding a reference to the object ProxyType (NCsMaterial::NParameter::NCollection::FProxy).
 				* This serves as an easy way for a Manager Resource to keep track of the resource.
 				*/
-				struct FResource : public TCsResourceContainer<ProxyType> {};
+				struct FResource : public TCsResourceContainer<ProxyType> 
+				{
+					~FResource(){}
+				};
 
 				/**
 				* A manager handling allocating and deallocating the object ProxyType (NCsMaterial::NParameter::NCollection::FProxy) and
 				* are wrapped in the container: NCsMaterial::NParameter::NCollection::NProxy::FResource.
 				*/
-				struct FManager : public NCsResource::NManager::NValue::TFixed<ProxyType, FResource, 0> {};
+				struct FManager : public NCsResource::NManager::NValue::TFixed<ProxyType, FResource, 0> 
+				{
+					~FManager(){}
+				};
 
 			#undef ProxyType
 			}

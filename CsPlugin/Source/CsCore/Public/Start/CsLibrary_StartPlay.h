@@ -11,18 +11,22 @@ namespace NCsStartPlay
 {
 	struct CSCORE_API FLibrary
 	{
+	#define LogLevel void(*Log)(const FString&) = &FCsLog::Warning
+
 	public:
 
 		static bool ImplementsChecked(const FString& Context, const UObject* Object);
 		static bool ImplementsChecked(const FString& Context, const UObject* Object, bool& OutIsScript);
 
-		static bool SafeImplements(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
-		static bool SafeImplements(const FString& Context, const UObject* Object, bool& OutIsScript, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeImplements(const FString& Context, const UObject* Object, LogLevel);
+		static bool SafeImplements(const FString& Context, const UObject* Object, bool& OutIsScript, LogLevel);
 
 		static bool HasStartedPlayChecked(const FString& Context, const UObject* Object);
-		static bool SafeHasStartedPlay(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeHasStartedPlay(const FString& Context, const UObject* Object, LogLevel);
 
 		static void StartPlayChecked(const FString& Context, UObject* Object);
-		static void SafeStartPlay(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+		static void SafeStartPlay(const FString& Context, UObject* Object, LogLevel);
+
+	#undef LogLevel
 	};
 }

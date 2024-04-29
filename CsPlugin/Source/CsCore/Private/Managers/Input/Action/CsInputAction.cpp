@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Action/CsInputAction.h"
-#include "CsCore.h"
 
 // Settings
 #include "GameFramework/InputSettings.h"

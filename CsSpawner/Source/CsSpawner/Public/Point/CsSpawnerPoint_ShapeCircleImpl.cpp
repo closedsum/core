@@ -4,6 +4,8 @@
 #include "Point/CsSpawnerPoint_ShapeCircleImpl.h"
 #include "CsSpawner.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Params/CsLibrary_SpawnerParams.h"
 	// Common

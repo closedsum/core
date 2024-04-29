@@ -1,6 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
+#include "CsMacro_Proxy.h"
 #include "Projectile/Data/Sound/Fire/CsTypes_ProjectileWeapon_SoundFire.h"
 // Log
 #include "Utility/CsWpLog.h"

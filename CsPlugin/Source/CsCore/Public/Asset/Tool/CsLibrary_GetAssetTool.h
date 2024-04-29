@@ -51,6 +51,8 @@ namespace NCsAsset
 		public:
 
 			static bool IsAssetOpened(const FString& Context, UObject* Asset);
+
+			static bool IsAssetWithClassDefaultOpened(const FString& Context, UObject* DefaultObject);
 		};
 	}
 }

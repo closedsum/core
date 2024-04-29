@@ -4,7 +4,7 @@
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Data/CsLibrary_Manager_Data.h"
 	// Settings
@@ -35,11 +35,12 @@ UObject* FCsPopulateEnumMapFromSettings::GetDataRootSetImpl(const FString& Conte
 	}
 	else
 	{
+		// TODO: NOTE: Should this be checked?
 		typedef NCsCore::NSettings::FLibrary SettingsLibrary;
 
-		TSoftClassPtr<UObject> SoftObject = SettingsLibrary::GetDataRootSetChecked(Context);
+		TSoftClassPtr<UObject> SoftObject = SettingsLibrary::GetDataRootSet();
 		UClass* Class					  = SoftObject.LoadSynchronous();
-		return Class->GetDefaultObject();
+		return Class ? Class->GetDefaultObject() : nullptr;
 	}
 	return nullptr;
 }

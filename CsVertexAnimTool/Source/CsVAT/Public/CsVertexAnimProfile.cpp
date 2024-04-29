@@ -5,7 +5,6 @@
 // Animation
 #include "Animation/AnimSequenceBase.h"
 #include "Animation/AnimationAsset.h"
-#include "Animation/Vertex/CsVertexAnimInfo.h"
 
 #if WITH_EDITOR
 // Animation
@@ -16,23 +15,6 @@
 
 // FCsVertexAnim_SequenceData
 #pragma region
-
-void FCsVertexAnim_SequenceData::CopyToInfo(FCsVertexAnimInfo* Info, const float& ScaleLength /*=1.0f*/) const
-{
-	Info->NumFrames = NumFrames;
-	Info->AnimStartGenerated = AnimStart_Generated;
-	Info->SpeedGenerated = Speed_Generated;
-
-	if (UAnimSequenceBase* Asset = Cast<UAnimSequenceBase>(SequenceRef.LoadSynchronous()))
-	{
-		Info->Length = ScaleLength * Asset->GetPlayLength();
-	}
-
-	if (Info->PlayRate == 0.0f)
-	{
-		Info->PlayRate = 1.0f;
-	}
-}
 
 int32 FCsVertexAnim_SequenceData_Short::GetNumFrames() const
 {

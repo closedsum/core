@@ -7,7 +7,7 @@
 #include "Range/Copy/CsDamageRange_Copy.h"
 #include "Reset/CsReset.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Proxy.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 

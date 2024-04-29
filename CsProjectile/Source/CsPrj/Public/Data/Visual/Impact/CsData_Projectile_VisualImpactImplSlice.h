@@ -30,7 +30,7 @@ public:
 
 // ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data")
 	FCsDataTable ImpactVisuals;
 
 	FCsData_Projectile_VisualImpactImplSlice() :

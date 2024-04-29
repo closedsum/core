@@ -3,14 +3,24 @@
 // Free for use and distribution: https://github.com/closedsum/core
 using UnrealBuildTool;
 using System.IO;
+using System.Xml;
 
 public class CsCore : ModuleRules
 {
     public CsCore(ReadOnlyTargetRules Target) : base(Target)
     {
+        // Get any Custom Settings
+        string SettingsDirectory = "C:\\Trees\\core\\";
+        string SettingsFile = "PluginBuildSettings.xml";
+        string SettingsPath = SettingsDirectory + SettingsFile;
+
+        XmlDocument SettingsXml = new XmlDocument();
+        SettingsXml.Load(SettingsPath);
+        XmlNode bUseUnityNode = SettingsXml.SelectSingleNode("/Settings/bUseUnity");
+
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
-        bUseUnity = false; // System.Environment.ProcessorCount < 64;
+        bUseUnity = bUseUnityNode != null ? bool.Parse(bUseUnityNode.InnerText) : true;
 
         PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
         //PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
@@ -27,7 +37,14 @@ public class CsCore : ModuleRules
                     "EnhancedInput", // TODO: Eventually move associated to plugin
                     "PhysicsCore",
                     "Niagara", // TODO: Eventually move associated to plugin
-                    "CsPropertyTypes"
+                    "CsMacro",
+                    "CsContainer",
+                    "CsPropertyTypes",
+                    "CsEnum",
+                    "CsValid",
+                    "CsStructOps",
+                    "CsTypes",
+                    "CsCoreLibrary"
                 }
             );
 

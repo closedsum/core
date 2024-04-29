@@ -17,7 +17,7 @@ struct CSMENU_API FCsSettings_Manager_Menu
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Managers|Menu")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, NoClear, Category = "CsUI|Managers|Menu")
 	TSoftClassPtr<UCsManager_Menu> Class;
 
 	FCsSettings_Manager_Menu();

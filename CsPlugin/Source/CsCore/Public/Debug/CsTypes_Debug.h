@@ -6,7 +6,7 @@
 #include "Types/Enum/CsEnumMap.h"
 #include "Engine/HitResult.h"
 // CVars
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 
 #include "CsTypes_Debug.generated.h"
 

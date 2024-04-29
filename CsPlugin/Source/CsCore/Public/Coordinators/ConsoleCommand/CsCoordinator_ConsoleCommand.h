@@ -4,7 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
 #include "ConsoleCommand/CsTypes_ConsoleCommand.h"
 
 #include "CsCoordinator_ConsoleCommand.generated.h"

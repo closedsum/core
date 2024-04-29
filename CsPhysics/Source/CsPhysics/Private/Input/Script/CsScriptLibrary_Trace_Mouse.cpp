@@ -7,7 +7,7 @@
 // CVar
 #include "Script/CsCVars_Script.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Input/CsLibrary_Trace_Input.h"
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"

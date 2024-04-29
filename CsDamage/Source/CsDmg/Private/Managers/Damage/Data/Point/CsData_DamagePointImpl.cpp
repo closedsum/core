@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Damage/Data/Point/CsData_DamagePointImpl.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Value/CsLibrary_DamageValue.h"
 #include "Library/Load/CsLibrary_Load.h"

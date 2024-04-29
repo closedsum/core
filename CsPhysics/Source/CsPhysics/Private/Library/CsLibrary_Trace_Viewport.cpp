@@ -91,6 +91,7 @@ namespace NCsViewport
 
 			#pragma endregion Trace
 
+			#undef TraceManagerLibrary
 			#undef ViewportLibrary
 			}
 		}

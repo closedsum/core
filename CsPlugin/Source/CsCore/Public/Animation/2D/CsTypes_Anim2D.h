@@ -6,6 +6,8 @@
 #include "Types/CsTypes_Texture.h"
 #include "Material/CsTypes_Material.h"
 #include "Animation/CsAnimPlayScale.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsTypes_Anim2D.generated.h"
 

@@ -3,8 +3,6 @@
 
 #if WITH_EDITOR
 
-// Library
-#include "Library/CsLibrary_Math.h"
 // Material
 #include "Materials/MaterialInstanceDynamic.h"
 // Module
@@ -184,8 +182,6 @@ namespace NCsAnimation
 			// Helper function for ConvertMeshesToStaticMesh
 			static void SkinnedMeshToRawMeshes(USkinnedMeshComponent* InSkinnedMeshComponent, int32 InOverallMaxLODs, const FMatrix44d& InComponentToWorld, const FString& InPackageName, TArray<FRawMeshTracker>& OutRawMeshTrackers, TArray<FRawMesh>& OutRawMeshes, TArray<UMaterialInterface*>& OutMaterials)
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				const int32 BaseMaterialIndex = OutMaterials.Num();
 
 				// Export all LODs to raw meshes
@@ -211,14 +207,14 @@ namespace NCsAnimation
 					// Copy skinned vertex positions
 					for (int32 VertIndex = 0; VertIndex < FinalVertices.Num(); ++VertIndex)
 					{
-						RawMesh.VertexPositions.Add(MathLibrary::Convert(InComponentToWorld.TransformPosition(MathLibrary::Convert(FinalVertices[VertIndex].Position))));
+						FVector P	= FVector(FinalVertices[VertIndex].Position.X, FinalVertices[VertIndex].Position.Y, FinalVertices[VertIndex].Position.Z);
+						FVector4 TP = InComponentToWorld.TransformPosition(P);
+						RawMesh.VertexPositions.Add(FVector3f(TP.X, TP.Y, TP.Z));
 					}
 
 					const uint32 NumTexCoords = FMath::Min(LODData.StaticVertexBuffers.StaticMeshVertexBuffer.GetNumTexCoords(), (uint32)MAX_MESH_TEXTURE_COORDS);
 					const int32 NumSections = LODData.RenderSections.Num();
 					FRawStaticIndexBuffer16or32Interface& IndexBuffer = *LODData.MultiSizeIndexContainer.GetIndexBuffer();
-
-					typedef NCsMath::FLibrary MathLibrary;
 
 					for (int32 SectionIndex = 0; SectionIndex < NumSections; SectionIndex++)
 					{
@@ -239,9 +235,9 @@ namespace NCsAnimation
 								const FVector4d UnpackedTangentZ = SkinnedVertex.TangentZ.ToFVector4();
 								const FVector3d TangentY		= (TangentZ ^ TangentX).GetSafeNormal() * UnpackedTangentZ.W;
 
-								RawMesh.WedgeTangentX.Add(MathLibrary::Convert(TangentX));
-								RawMesh.WedgeTangentY.Add(MathLibrary::Convert(TangentY));
-								RawMesh.WedgeTangentZ.Add(MathLibrary::Convert(TangentZ));
+								RawMesh.WedgeTangentX.Add(FVector3f(TangentX.X, TangentX.Y, TangentX.Z));
+								RawMesh.WedgeTangentY.Add(FVector3f(TangentY.X, TangentY.Y, TangentY.Z));
+								RawMesh.WedgeTangentZ.Add(FVector3f(TangentZ.X, TangentZ.Y, TangentZ.Z));
 
 								for (uint32 TexCoordIndex = 0; TexCoordIndex < MAX_MESH_TEXTURE_COORDS; TexCoordIndex++)
 								{
@@ -514,8 +510,6 @@ namespace NCsAnimation
 
 			void FUtility::VATUVsToStaticMeshLODs(UStaticMesh* StaticMesh, const int32 UVChannel, const TArray<TArray<FVector2f>>& UVs)
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				for (int32 LOD = 0; LOD < StaticMesh->GetNumLODs(); LOD++)
 				{
 					const uint32 PaintingMeshLODIndex = LOD;
@@ -533,7 +527,7 @@ namespace NCsAnimation
 							for (int32 WedgeIndex = 0; WedgeIndex < Mesh.WedgeIndices.Num(); ++WedgeIndex)
 							{
 								int32 VertID	   = Mesh.WedgeIndices[WedgeIndex];
-								FVector3d Position = MathLibrary::Convert(Mesh.VertexPositions[VertID]);
+								FVector3d Position = FVector3d(Mesh.VertexPositions[VertID].X, Mesh.VertexPositions[VertID].Y, Mesh.VertexPositions[VertID].Z);
 
 								for (uint32 TexCoordIndex = 0; TexCoordIndex < MAX_MESH_TEXTURE_COORDS; TexCoordIndex++)
 								{

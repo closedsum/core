@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/CsLibrary_Data_Skin_Visual.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
@@ -22,6 +24,8 @@
 #include "Components/SkeletalMeshComponent.h"
 // Engine
 #include "GameFramework/Actor.h"
+#include "Engine/StaticMesh.h"
+#include "Engine/SkeletalMesh.h"
 
 namespace NCsSkin
 {

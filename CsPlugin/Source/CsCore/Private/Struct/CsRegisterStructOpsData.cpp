@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Struct/CsRegisterStructOpsData.h"
 
-#include "Struct/CsStructOps_Data.h"
+#include "CsStructOps_Data.h"
 // Structs
 #include "Material/CsTypes_Material.h"
 #include "Types/CsTypes_StaticMesh.h"

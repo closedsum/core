@@ -2,7 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 
 extern CSPHYSICS_API TAutoConsoleVariable<int32> CsCVarLogManagerTraceTransactions;
 // Scoped Timers

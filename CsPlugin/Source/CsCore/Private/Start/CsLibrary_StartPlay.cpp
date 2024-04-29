@@ -2,8 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Start/CsLibrary_StartPlay.h"
-#include "CsCore.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
@@ -12,6 +13,9 @@
 
 namespace NCsStartPlay
 {
+	#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
+	#define ObjectLibrary NCsObject::FLibrary
+
 	bool FLibrary::ImplementsChecked(const FString& Context, const UObject* Object)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Object)
@@ -19,8 +23,6 @@ namespace NCsStartPlay
 		if (Cast<ICsStartPlay>(Object) ||
 			Object->GetClass()->ImplementsInterface(UCsScriptStartPlay::StaticClass()))
 			return true;
-
-		typedef NCsObject::FLibrary ObjectLibrary;
 
 		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
 		return true;
@@ -41,14 +43,11 @@ namespace NCsStartPlay
 			OutIsScript = true;
 			return true;
 		}
-
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
 		return true;
 	}
 
-	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, LogLevel)
 	{
 		CS_IS_PENDING_KILL(Object)
 
@@ -56,13 +55,11 @@ namespace NCsStartPlay
 			Object->GetClass()->ImplementsInterface(UCsScriptStartPlay::StaticClass()))
 			return true;
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
 		return true;
 	}
 
-	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, bool& OutIsScript, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, bool& OutIsScript, LogLevel)
 	{
 		CS_IS_PENDING_KILL(Object)
 
@@ -77,8 +74,6 @@ namespace NCsStartPlay
 			OutIsScript = true;
 			return true;
 		}
-
-		typedef NCsObject::FLibrary ObjectLibrary;
 
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
 		return true;
@@ -98,13 +93,11 @@ namespace NCsStartPlay
 			return ICsScriptStartPlay::Execute_Script_HasStartedPlay(Object);
 		}
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
 		return false;
 	}
 
-	bool FLibrary::SafeHasStartedPlay(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SafeHasStartedPlay(const FString& Context, const UObject* Object, LogLevel)
 	{
 		CS_IS_PENDING_KILL(Object)
 
@@ -117,8 +110,6 @@ namespace NCsStartPlay
 		{
 			return ICsScriptStartPlay::Execute_Script_HasStartedPlay(Object);
 		}
-
-		typedef NCsObject::FLibrary ObjectLibrary;
 
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
 		return false;
@@ -138,13 +129,10 @@ namespace NCsStartPlay
 		{
 			ICsScriptStartPlay::Execute_Script_StartPlay(Object);
 		}
-
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
 	}
 
-	void FLibrary::SafeStartPlay(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	void FLibrary::SafeStartPlay(const FString& Context, UObject* Object, LogLevel)
 	{
 		CS_IS_PENDING_KILL_EXIT(Object)
 
@@ -158,9 +146,9 @@ namespace NCsStartPlay
 		{
 			ICsScriptStartPlay::Execute_Script_StartPlay(Object);
 		}
-
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
 	}
+
+	#undef LogLevel
+	#undef ObjectLibrary
 }

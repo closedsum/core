@@ -10,6 +10,7 @@
 // Resource
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Types
+#include "CsMacro_Math.h"
 #include "InputCoreTypes.h"
 #include "Managers/Input/Profile/CsTypes_InputProfile.h"
 // Input
@@ -29,10 +30,12 @@
 
 struct CSCORE_API FCsResource_Input : public TCsResourceContainer<FCsInput>
 {
+	~FCsResource_Input(){}
 };
 
 struct CSCORE_API FCsManager_Input : public NCsResource::NManager::NValue::TFixed<FCsInput, FCsResource_Input, 0>
 {
+	~FCsManager_Input(){}
 };
 
 #pragma endregion Structs

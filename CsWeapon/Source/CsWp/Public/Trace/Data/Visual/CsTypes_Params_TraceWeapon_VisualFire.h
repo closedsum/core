@@ -56,10 +56,10 @@ struct CSWP_API FCsTraceWeaponVisualFireParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	FCsFX FX;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Trace")
 	ECsTraceWeaponVisualFireAttach Attach;
 
 	FCsTraceWeaponVisualFireParams() :

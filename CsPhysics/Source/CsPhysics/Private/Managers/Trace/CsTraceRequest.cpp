@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Trace/CsTraceRequest.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Settings
@@ -12,24 +14,9 @@
 // Components
 #include "Components/CapsuleComponent.h"
 
-namespace NCsTraceRequest
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_STRING(Type, "Type");
-			CS_DEFINE_CACHED_STRING(Method, "Method");
-			CS_DEFINE_CACHED_STRING(Query, "Query");
-		}
-	}
-}
-
 #define RequestType NCsTrace::NRequest::FRequest
 void FCsTraceRequest::CopyToRequestAsValue(RequestType* Request) const
 {
-#undef RequestType
-
 	Request->StaleTime = StaleTime;
 	Request->SetCaller(Caller);
 	Request->bAsync = bAsync;
@@ -49,21 +36,16 @@ void FCsTraceRequest::CopyToRequestAsValue(RequestType* Request) const
 	Request->OnResponse_ScriptEvent = OnResponse_Event;
 	Request->OnResponse_AsyncScriptEvent = OnResponse_AsyncEvent;
 }
+#undef RequestType
 
 bool FCsTraceRequest::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/) const
 {
-	using namespace NCsTraceRequest::NCached;
-
-	// Check Type is Valid
 	CS_IS_ENUM_VALID(EMCsTraceType, ECsTraceType, Type)
-	// Check Method is Valid
 	CS_IS_ENUM_VALID(EMCsTraceMethod, ECsTraceMethod, Method)
-	// Check Query is Valid
 	CS_IS_ENUM_VALID(EMCsTraceQuery, ECsTraceQuery, Query)
 
 	// Check Shape
-	if (!Shape.IsValid(Context, Log))
-		return false;
+	CS_IS_VALID(Shape)
 
 	if (Shape.IsLine() &&
 		Start == End)
@@ -83,12 +65,10 @@ bool FCsTraceRequest::IsValid(const FString& Context, void(*Log)(const FString&)
 	// Check ObjectParams
 	if (Query == ECsTraceQuery::ObjectType)
 	{
-		if (!ObjectParams.IsValid(Context, Log))
-			return false;
+		CS_IS_VALID(ObjectParams)
 	}
 
-	if (!Params.IsValid(Context, Log))
-		return false;
+	CS_IS_VALID(Params)
 	return true;
 }
 
@@ -96,26 +76,11 @@ namespace NCsTrace
 {
 	namespace NRequest
 	{
-		namespace NCached
-		{
-			namespace Str
-			{
-				CS_DEFINE_CACHED_STRING(Type, "Type");
-				CS_DEFINE_CACHED_STRING(Method, "Method");
-				CS_DEFINE_CACHED_STRING(Query, "Query");
-			}
-		}
-
 		bool FRequest::IsValidChecked(const FString& Context) const
 		{
-			using namespace NCsTrace::NRequest::NCached;
-
-			// Check Type is Valid
-			check(EMCsTraceType::Get().IsValidEnumChecked(Context, Str::Type, Type));
-			// Check Method is Valid
-			check(EMCsTraceMethod::Get().IsValidEnumChecked(Context, Str::Method, Method));
-			// Check Query is Valid
-			check(EMCsTraceQuery::Get().IsValidEnumChecked(Context, Str::Query, Query));
+			CS_IS_ENUM_VALID_CHECKED(EMCsTraceType, Type)
+			CS_IS_ENUM_VALID_CHECKED(EMCsTraceMethod, Method)
+			CS_IS_ENUM_VALID_CHECKED(EMCsTraceQuery, Query)
 
 			if (Shape.IsLine())
 			{

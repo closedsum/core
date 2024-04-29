@@ -17,9 +17,14 @@ public class CsJs : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
-                    "DeveloperSettings",
-                    "CsCore",
-                    "V8"
+                    "DeveloperSettings",        
+                    "V8",
+                    "CsMacro",
+                    "CsContainer",
+                    "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
+                    "CsCore"
                 }
             );
 

@@ -2,8 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Animation/2D/Script/CsScriptLibrary_Anim2D.h"
-#include "CsCore.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Animation/2D/CsLibrary_Anim2D.h"
 

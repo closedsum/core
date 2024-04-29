@@ -7,7 +7,7 @@
 // CVar
 #include "Coordinators/GameEvent/CsCVars_Coordinator_GameEvent.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Console Command
 #include "Coordinators/GameEvent/CsConsoleCommand_Coordinator_GameEvent.h"
 // Library

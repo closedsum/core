@@ -29,27 +29,27 @@ public:
 // CollisionDataType (NCsProjectile::NData::NCollision::IData)
 
 	/** Collision information (i.e. response, overlap, hit events, ... etc) */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data")
 	FCsCollisionPreset Preset;
 
 	/** Radius of the collision sphere */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
 
 	/** Number of hits before the projectile is stopped (and / or deallocated if pooled).
 		NOTE:
 			- Collision detection is captured via CollisionComponent->OnComponentHit.
 			- GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data", meta = (UIMin = "0", ClampMin = "0"))
 	int32 HitCount;
 
 	/** Whether to ignore an object (AActor or UPrimitiveComponent) the projectile has collided with after
 		the first collision. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data")
 	bool bIgnoreHitObjectAfterHit;
 
 	/** List of classes to ignore for colliding objects. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data")
 	TArray<TSubclassOf<UObject>> IgnoreHitObjectClasses;
 
 	FCsData_Projectile_CollisionImplSlice() :

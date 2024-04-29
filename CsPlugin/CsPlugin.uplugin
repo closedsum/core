@@ -39,7 +39,35 @@
   ],
   "Plugins": [
     {
+      "Name": "CsMacro",
+      "Enabled": true
+    },
+    {
+      "Name": "CsContainer",
+      "Enabled": true
+    },
+    {
       "Name": "CsPropertyTypes",
+      "Enabled": true
+    },
+    {
+      "Name": "CsEnum",
+      "Enabled": true
+    },
+    {
+      "Name": "CsValid",
+      "Enabled": true
+    },
+    {
+      "Name": "CsStructOps",
+      "Enabled": true
+    },
+    {
+      "Name": "CsTypes",
+      "Enabled": true
+    },
+    {
+      "Name": "CsCoreLibrary",
       "Enabled": true
     },
     {

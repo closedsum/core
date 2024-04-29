@@ -3,7 +3,6 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Multi/CsProperty_Multi_FString.h"
-#include "Types/CsCached.h"
 
 struct TCsProperty_Multi_FString_Enum_TwoParams : public TCsProperty_Multi_FString<CS_FSTRING_ENUM_TWO_PARAMS>
 {
@@ -14,7 +13,7 @@ public:
 
 	TCsProperty_Multi_FString_Enum_TwoParams() : Super()
 	{
-		DefaultValue = NCsCached::Str::Empty;
+		DefaultValue = TEXT("");
 	}
 	~TCsProperty_Multi_FString_Enum_TwoParams(){}
 

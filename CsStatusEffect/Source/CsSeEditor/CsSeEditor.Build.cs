@@ -36,8 +36,8 @@ public class CsSeEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
-                    "CsCore",
-                    "CsEditor",
+                    "CsEnum",
+                    "CsEnumEditor",
                     "CsSe",
                 }
             );

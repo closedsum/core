@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Trace/CsTypes_Manager_Trace.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Trace
 #include "Managers/Trace/CsTraceRequest.h"
 // UniqueObject

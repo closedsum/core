@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Object.h"
 // Types
 #include "Types/CsCached.h"
 #include "Types/CsTypes_Load.h"
 #include "Library/Load/CsTypes_Library_Load.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsLibrary_Load.generated.h"
 

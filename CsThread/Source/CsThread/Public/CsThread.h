@@ -4,7 +4,7 @@
 #ifndef __CSTHREAD_H__
 #define __CSTHREAD_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsThread, Log, All);
 

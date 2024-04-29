@@ -1,8 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Macro/CsMacro_Namespace.h"
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Namespace.h"
+#include "CsMacro_Proxy.h"
 // Log
 #include "Utility/CsPrjLog.h"
 // Data
@@ -27,16 +27,16 @@ public:
 
 // ProjectileDataType (NCsProjectile::NData::IData)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float InitialSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float MaxSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Projectile|Data", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float GravityScale;
 
 	FCsData_ProjectileImplSlice() :

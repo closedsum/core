@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Range/CsDamageRangeImpl.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Range/CsLibrary_DamageRange.h"
 

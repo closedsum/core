@@ -5,7 +5,7 @@
 #include "CsJs.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Javascript
@@ -44,7 +44,16 @@ namespace NCsJs
 
 			auto Isolate = NewObject<UJavascriptIsolate>();
 			// TODO: bIsEditor. Probably need to set to true if we want to interact with AnimInstance in Editor.
+			
 			TMap<FString, FString> Features;
+			Features = UJavascriptIsolate::DefaultIsolateFeatures();
+
+			// Add default context feature exposures
+			Features.Add(TEXT("Root"), TEXT("default"));
+			Features.Add(TEXT("World"), TEXT("default"));
+			Features.Add(TEXT("Engine"), TEXT("default"));
+			Features.Add(TEXT("Context"), TEXT("default"));
+
 			Isolate->Init(IsEditor, Features);
 			auto ContextObject = Isolate->CreateContext();
 

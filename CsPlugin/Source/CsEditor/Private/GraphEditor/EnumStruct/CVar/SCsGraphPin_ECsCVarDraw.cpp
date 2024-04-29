@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/CVar/SCsGraphPin_ECsCVarDraw.h"
 #include "CsEditor.h"
 
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 
 #define EnumMapType EMCsCVarDraw
 #define EnumType FECsCVarDraw

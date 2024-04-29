@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMeshImplSlice.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
@@ -25,7 +27,7 @@ void FCsData_Skin_VisualSkeletalMeshImplSlice::CopyToSliceAsValue(SliceType* Sli
 	Slice->SetSkeletalMesh(Mesh.Get());
 }
 
-SliceType* FCsData_Skin_VisualSkeletalMeshImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+SliceType* FCsData_Skin_VisualSkeletalMeshImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
@@ -62,7 +64,7 @@ bool FCsData_Skin_VisualSkeletalMeshImplSlice::IsValidChecked(const FString& Con
 	return true;
 }
 
-bool FCsData_Skin_VisualSkeletalMeshImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualSkeletalMeshImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	if (!Mesh.IsValid(Context, Log))
 		return false;
@@ -78,7 +80,7 @@ void FCsData_Skin_VisualSkeletalMeshImplSlice::SetChecked(const FString& Context
 	Component->SetSkeletalMesh(Mesh.Get());
 }
 
-bool FCsData_Skin_VisualSkeletalMeshImplSlice::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualSkeletalMeshImplSlice::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
@@ -112,7 +114,7 @@ namespace NCsSkin
 					}
 				}
 
-				/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+				/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/)
 				{
 					using namespace NCsSkin::NData::NVisual::NSkeletalMesh::NImplSlice::NCached;
 
@@ -197,7 +199,7 @@ namespace NCsSkin
 					return true;
 				}
 
-				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 				{
 					CS_IS_PTR_NULL(GetSkeletalMesh())
 					return true;
@@ -212,7 +214,7 @@ namespace NCsSkin
 					Component->SetSkeletalMesh(GetSkeletalMesh());
 				}
 
-				bool FImplSlice::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FImplSlice::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 				{
 					if (!IsValid(Context, Log))
 						return false;

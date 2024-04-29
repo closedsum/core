@@ -8,6 +8,7 @@
 #include "Object/CsGetCreatedObjects.h"
 #include "Play/Mode/CsGetPlayMode.h"
 #include "PIE/CsGetPIEInfo.h"
+#include "PIE/CsRequestEndPlayMap.h"
 #include "Data/Tool/CsGetDataEntryTool.h"
 #include "UI/Tool/CsGetSlateApplicationTool.h"
 #include "Asset/Tool/CsGetAssetTool.h"
@@ -46,6 +47,7 @@ class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine,
 								 public ICsGetCreatedObjects,
 								 public ICsGetPlayMode,
 								 public ICsGetPIEInfo,
+								 public ICsRequestEndPlayMap,
 								 public ICsGetDataEntryTool,
 								 public ICsGetSlateApplicationTool,
 								 public ICsGetAssetTool,
@@ -196,6 +198,14 @@ private:
 #undef PIEInfoType
 
 #pragma endregion GetPIEInfo
+
+// ICsRequestEndPlayMap
+#pragma region
+public:
+
+	FORCEINLINE void RequestEndPlayMapImpl() { return RequestEndPlayMap();}
+
+#pragma endregion ICsRequestEndPlayMap
 
 // ICsGetDataEntryTool
 #pragma region

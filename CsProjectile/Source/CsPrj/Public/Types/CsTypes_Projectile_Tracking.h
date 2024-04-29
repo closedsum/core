@@ -1,7 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Macro/CsMacro_Math.h"
+#include "CsMacro_Math.h"
 #include "Types/Enum/CsEnumMap.h"
 
 #include "CsTypes_Projectile_Tracking.generated.h"

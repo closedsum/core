@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Struct/CsRegisterStructOpsIsValid.h"
 
-#include "Struct/CsStructOps_IsValid.h"
+#include "CsStructOps_IsValid.h"
 // Structs
 #include "Material/CsTypes_Material.h"
 #include "Types/CsTypes_StaticMesh.h"

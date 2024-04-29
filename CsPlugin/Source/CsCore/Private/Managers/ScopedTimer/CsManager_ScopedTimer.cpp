@@ -5,7 +5,7 @@
 #include "CsCore.h"
 
 // CVars
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 
 FCsManager_ScopedTimer::FCsManager_ScopedTimer() :
 	Internal(),

@@ -4,6 +4,8 @@
 #include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
 #include "CsUI.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 	// Settings
 #include "Settings/CsLibrary_UserInterfaceSettings.h"

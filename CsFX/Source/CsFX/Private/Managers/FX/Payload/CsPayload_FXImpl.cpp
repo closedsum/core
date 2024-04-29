@@ -4,7 +4,7 @@
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 // Containers

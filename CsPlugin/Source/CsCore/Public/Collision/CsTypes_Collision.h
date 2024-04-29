@@ -582,6 +582,11 @@ struct CSCORE_API FCsCollisionQueryParams
 // FCsCollisionObjectQueryParams
 #pragma region
 
+namespace NCsCollisionObjectQueryParams
+{
+	CSCORE_API void Populate(FCollisionObjectQueryParams& Params, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypesToQuery);
+}
+
 /** 
 * Structure that contains list of object types the query is interested in.
 */

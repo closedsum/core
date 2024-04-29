@@ -4,8 +4,6 @@
 
 #if WITH_EDITOR
 
-// Library
-#include "Library/CsLibrary_Math.h"
 // Animation
 #include "CsVertexAnimProfile.h"
 #include "CsVertexAnimUtils.h"
@@ -440,8 +438,6 @@ namespace NCsAnimation
 					const auto& ActiveBoneIndices = LODData.ActiveBoneIndices;
 					TArray <FMatrix44f> RefToLocal;
 
-					typedef NCsMath::FLibrary MathLibrary;
-
 					// 3º Store Values
 					// Vert Anim
 					if (Profile->Anims_Vert.Num())
@@ -481,8 +477,9 @@ namespace NCsAnimation
 										const int32 IndexInZeroed = k;
 										const int32 VertID = UniqueSourceIDs[k];
 										const FVector4f Delta = FinalVerts[VertID].Position - RefPoseFinalVerts[VertID].Position;
-										MaxValueOffset = FMath::Max(MathLibrary::GetAbsMax(Delta), MaxValueOffset);
-										ZeroedPos[IndexInZeroed] = MathLibrary::Convert(Delta);
+										const float DeltaMax = FMath::Max(FMath::Max(FMath::Max(FMath::Abs(Delta.X), FMath::Abs(Delta.Y)), FMath::Abs(Delta.Z)), FMath::Abs(Delta.W));
+										MaxValueOffset = DeltaMax, MaxValueOffset;
+										ZeroedPos[IndexInZeroed] = FVector4d(Delta.X, Delta.Y, Delta.Z, Delta.W);
 
 										const FVector DeltaNormal = FinalVerts[VertID].TangentZ.ToFVector() - RefPoseFinalVerts[VertID].TangentZ.ToFVector();
 										ZeroedNorm[IndexInZeroed] = DeltaNormal;
@@ -551,7 +548,7 @@ namespace NCsAnimation
 										const int32 GlobalID = GlobalRefSkeleton.FindBoneIndex(RefSkeleton.GetBoneName(k));
 
 										FVector3f Pos = RefToLocal[k].GetOrigin();
-										ZeroedBonePos[GlobalID] = MathLibrary::Convert(Pos);
+										ZeroedBonePos[GlobalID] = FVector3d(Pos.X, Pos.Y, Pos.Z);
 
 										MaxValuePosBone = FMath::Max(MaxValuePosBone, Pos.GetAbsMax());
 

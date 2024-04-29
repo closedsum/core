@@ -1,7 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/Time/CsTypes_Time.h"
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
 
 // NCsStatusEffect::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)

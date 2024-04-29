@@ -2,9 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/CsLibrary_Data.h"
-#include "CsCore.h"
 
 // Types
+#include "CsMacro_Misc.h"
 #include "Types/CsTypes_Load.h"
 // Library
 #include "Managers/Data/CsLibrary_Manager_Data.h"

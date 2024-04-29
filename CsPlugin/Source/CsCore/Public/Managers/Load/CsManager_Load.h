@@ -26,10 +26,12 @@ namespace NCsLoad
 
 				struct CSCORE_API FResource : public TCsResourceContainer<TaskType>
 				{
+					~FResource(){}
 				};
 
 				struct CSCORE_API FManager : public NCsResource::NManager::NPointer::TFixed<TaskType, FResource, 0>
 				{
+					~FManager(){}
 				};
 
 			#undef TaskType

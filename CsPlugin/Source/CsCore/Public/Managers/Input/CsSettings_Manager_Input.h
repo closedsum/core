@@ -16,7 +16,7 @@ struct CSCORE_API FCsSettings_Manager_Input
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Input", meta = (MustImplement = "/Script/CsCore.CsManager_Input"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Input", NoClear, meta = (MustImplement = "/Script/CsCore.CsManager_Input"))
 	TSoftClassPtr<UObject> Class;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Input")

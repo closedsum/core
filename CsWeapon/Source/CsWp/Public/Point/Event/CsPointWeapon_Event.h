@@ -3,7 +3,8 @@
 // Interfaces
 #include "UObject/Interface.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
+#include "Engine/HitResult.h"
 
 #include "CsPointWeapon_Event.generated.h"
 

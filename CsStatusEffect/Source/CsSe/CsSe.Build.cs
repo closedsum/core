@@ -16,6 +16,10 @@ public class CsSe : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "AssetRegistry",
+                    "CsMacro",
+                    "CsContainer",
+                    "CsEnum",
+                    "CsValid",
                     "CsCore",
                     "CsDmg",
                     "CsFX"

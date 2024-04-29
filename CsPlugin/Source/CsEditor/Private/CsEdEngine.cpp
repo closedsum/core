@@ -4,7 +4,7 @@
 #include "CsEdEngine.h"
 #include "CsEditor.h"
 
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Type
@@ -359,6 +359,7 @@ void UCsEdEngine::OnPostInit()
 
 	AssetTool.GetOpenedAssetsImpl = &NCsAsset::FTool::GetOpenedAssets;
 	AssetTool.IsAssetOpenedImpl = &NCsAsset::FTool::IsAssetOpened;
+	AssetTool.IsAssetWithClassDefaultOpenedImpl = &NCsAsset::FTool::IsAssetWithClassDefaultOpened;
 	
 	EnumStructTool.Init(this);
 	EnumStructTool.ResolveLayoutChangesImpl = &UCsEdEngine::EnumStruct_ResolveLayoutChanges_Internal;

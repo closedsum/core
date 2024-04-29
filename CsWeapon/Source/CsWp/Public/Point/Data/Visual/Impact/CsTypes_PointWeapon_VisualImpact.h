@@ -1,6 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Proxy.h"
+#include "Chaos/ChaosEngineInterface.h"
 #include "Managers/FX/CsTypes_FX.h"
 // DataTable
 #include "Engine/DataTable.h"

@@ -20,10 +20,22 @@
       "LoadingPhase": "Default"
     }
   ],
-  "Plugins": [
-    {
-      "Name": "CsPlugin",
-      "Enabled": true
-    }
-  ]
+	"Plugins": [
+		{
+			"Name": "CsMacro",
+			"Enabled": true
+		},
+		{
+			"Name": "CsContainer",
+			"Enabled": true
+		},
+		{
+			"Name": "CsEnum",
+			"Enabled": true
+		},
+		{
+			"Name": "CsValid",
+			"Enabled": true
+		}
+	]
 }

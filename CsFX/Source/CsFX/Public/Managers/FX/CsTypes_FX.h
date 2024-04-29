@@ -3,7 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
+#include "CsMacro_Math.h"
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumFlagMap.h"
@@ -23,7 +24,7 @@ USTRUCT(BlueprintType)
 struct CSFX_API FECsFX : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
-
+	
 	CS_ENUM_UINT8_BODY(FECsFX)
 };
 

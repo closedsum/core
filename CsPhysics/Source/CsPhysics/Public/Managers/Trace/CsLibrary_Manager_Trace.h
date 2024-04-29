@@ -23,6 +23,8 @@ namespace NCsTrace
 	{
 		struct CSPHYSICS_API FLibrary final
 		{
+		#define LogWarning void(*Log)(const FString&) = &NCsPhysics::FLog::Warning
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -52,9 +54,9 @@ namespace NCsTrace
 			* @param Log
 			* return				Context for UCsManager_Trace.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogWarning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning)
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogWarning)
 			{
 				return nullptr;
 			}
@@ -98,7 +100,7 @@ namespace NCsTrace
 			* @param Log
 			* return				UCsManager_Trace.
 			*/
-			static UCsManager_Trace* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning);
+			static UCsManager_Trace* GetSafe(const FString& Context, const UObject* WorldContext, LogWarning);
 
 			/**
 			* Safely get the reference to UCsManager_Trace from a WorldContext.
@@ -133,7 +135,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* return
 			*/
-			static RequestType* SafeAllocateRequest(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning);
+			static RequestType* SafeAllocateRequest(const FString& Context, const UObject* WorldContext, LogWarning);
 
 			/**
 			*
@@ -154,7 +156,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* return				Whether the Request was successful deallocated.
 			*/
-			static bool SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning);
+			static bool SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, LogWarning);
 
 		#undef RequestType
 
@@ -187,7 +189,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* return				Response
 			*/
-			static ResponseType* SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning);
+			static ResponseType* SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, LogWarning);
 
 			/**
 			* Safely perform a trace with the given Request.
@@ -208,7 +210,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* @param 
 			*/
-			static ResponseType* SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning);
+			static ResponseType* SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, LogWarning);
 
 			/**
 			* Safely perform a sweep using the collision information from the CapsuleComponent.
@@ -222,7 +224,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* @param
 			*/
-			static ResponseType* SafeSweepAgainstObject(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning);
+			static ResponseType* SafeSweepAgainstObject(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogWarning);
 
 			/**
 			* Safely perform a sweep using the collision information from the CapsuleComponent.
@@ -236,7 +238,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* @param
 			*/
-			static ResponseType* SafeSweepAgainstObjectOnly(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning);
+			static ResponseType* SafeSweepAgainstObjectOnly(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogWarning);
 
 			/**
 			* 
@@ -254,6 +256,8 @@ namespace NCsTrace
 		#undef RequestType
 
 		#pragma endregion Response
+
+		#undef LogWarning
 		};
 	}
 }

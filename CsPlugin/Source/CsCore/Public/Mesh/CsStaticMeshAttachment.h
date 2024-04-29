@@ -6,6 +6,8 @@
 #include "Types/CsTypes_StaticMesh.h"
 #include "Material/CsTypes_Material.h"
 #include "Types/CsTypes_AttachDetach.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsStaticMeshAttachment.generated.h"
 

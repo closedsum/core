@@ -4,8 +4,10 @@
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 #include "CsCore.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // CVar
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 // Managers
 #include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 

@@ -3,7 +3,7 @@
 // Container
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Namespace.h"
 // Projectile
 #include "Cache/CsCache_Projectile.h"
 

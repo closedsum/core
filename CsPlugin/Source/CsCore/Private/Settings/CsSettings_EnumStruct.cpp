@@ -4,7 +4,7 @@
 #include "Settings/CsSettings_EnumStruct.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 #include "Types/CsCached.h"
 // Library
 #include "Library/CsLibrary_Valid.h"

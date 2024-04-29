@@ -46,6 +46,12 @@ namespace NCsTrace
 			}
 		}
 
+		#define USING_NS_CACHED using namespace NCsTrace::NManager::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsTrace::NManager::NLibrary::NCached; \
+			const FString& Context = Str::__FunctionName
+		#define LogWarning void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/
+		#define MathLibrary NCsMath::FLibrary
+
 		// ContextRoot
 		#pragma region
 
@@ -67,7 +73,7 @@ namespace NCsTrace
 			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogWarning)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -85,9 +91,7 @@ namespace NCsTrace
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
-			using namespace NCsTrace::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeContextRoot;
+			SET_CONTEXT(GetSafeContextRoot);
 
 			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
@@ -108,7 +112,7 @@ namespace NCsTrace
 			return Manager_Trace;
 		}
 
-		UCsManager_Trace* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*= &NCsPhysics::FLog::Warning*/)
+		UCsManager_Trace* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogWarning)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -128,9 +132,7 @@ namespace NCsTrace
 
 		UCsManager_Trace* FLibrary::GetSafe(UObject* ContextObject)
 		{
-			using namespace NCsTrace::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafe;
+			SET_CONTEXT(GetSafe);
 
 			return GetSafe(Context, ContextObject, nullptr);
 		}
@@ -147,7 +149,7 @@ namespace NCsTrace
 			return GetChecked(Context, WorldContext)->AllocateRequest();
 		}
 
-		RequestType* FLibrary::SafeAllocateRequest(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/)
+		RequestType* FLibrary::SafeAllocateRequest(const FString& Context, const UObject* WorldContext, LogWarning)
 		{
 			UCsManager_Trace* Manager_Trace = GetSafe(Context, WorldContext, Log);
 
@@ -159,14 +161,12 @@ namespace NCsTrace
 
 		RequestType* FLibrary::SafeAllocateRequest(const UObject* WorldContext)
 		{
-			using namespace NCsTrace::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::SafeAllocateRequest;
+			SET_CONTEXT(SafeAllocateRequest);
 
 			return SafeAllocateRequest(Context, WorldContext, nullptr);
 		}
 
-		bool FLibrary::SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/)
+		bool FLibrary::SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, LogWarning)
 		{
 			UCsManager_Trace* Manager_Trace = GetSafe(Context, WorldContext, Log);
 
@@ -192,7 +192,7 @@ namespace NCsTrace
 			return GetChecked(Context, WorldContext)->Trace(Request);
 		}
 
-		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/)
+		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, LogWarning)
 		{
 			CS_IS_PTR_NULL_RET_NULL(Request)
 
@@ -209,19 +209,15 @@ namespace NCsTrace
 
 		ResponseType* FLibrary::SafeTrace(const UObject* WorldContext, RequestType* Request)
 		{
-			using namespace NCsTrace::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::SafeTrace;
+			SET_CONTEXT(SafeTrace);
 
 			return SafeTrace(Context, WorldContext, Request, nullptr);
 		}
 
-		ResponseType* FLibrary::SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/)
+		ResponseType* FLibrary::SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, LogWarning)
 		{
-			CS_IS_PTR_NULL_RET_NULL(Component)
-
+			CS_IS_PENDING_KILL_RET_NULL(Component)
 			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleRadius(), 0.0f)
-
 			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleHalfHeight(), 0.0f)
 
 			const ECollisionChannel Channel = Component->GetCollisionObjectType();
@@ -245,8 +241,6 @@ namespace NCsTrace
 
 			RequestType* Request = Manager_Trace->AllocateRequest();
 
-			typedef NCsMath::FLibrary MathLibrary;
-
 			Request->Type	  = ECsTraceType::Sweep;
 			Request->Method   = ECsTraceMethod::Multi;
 			Request->Query	  = ECsTraceQuery::Channel;
@@ -261,12 +255,10 @@ namespace NCsTrace
 			return Manager_Trace->Trace(Request);
 		}
 
-		ResponseType* FLibrary::SafeSweepAgainstObject(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/)
+		ResponseType* FLibrary::SafeSweepAgainstObject(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogWarning)
 		{
-			CS_IS_PTR_NULL_RET_NULL(Component)
-
+			CS_IS_PENDING_KILL_RET_NULL(Component)
 			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleRadius(), 0.0f)
-
 			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleHalfHeight(), 0.0f)
 
 			const ECollisionChannel Channel = Component->GetCollisionObjectType();
@@ -289,8 +281,6 @@ namespace NCsTrace
 
 			if (!Manager_Trace)
 				return nullptr;
-
-			typedef NCsMath::FLibrary MathLibrary;
 
 			RequestType* Request = Manager_Trace->AllocateRequest();
 
@@ -329,12 +319,10 @@ namespace NCsTrace
 			return Response;
 		}
 
-		ResponseType* FLibrary::SafeSweepAgainstObjectOnly(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/)
+		ResponseType* FLibrary::SafeSweepAgainstObjectOnly(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogWarning)
 		{
-			CS_IS_PTR_NULL_RET_NULL(Component)
-
+			CS_IS_PENDING_KILL_RET_NULL(Component)
 			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleRadius(), 0.0f)
-
 			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleHalfHeight(), 0.0f)
 
 			const ECollisionChannel Channel = Component->GetCollisionObjectType();
@@ -357,8 +345,6 @@ namespace NCsTrace
 
 			if (!Manager_Trace)
 				return nullptr;
-
-			typedef NCsMath::FLibrary MathLibrary;
 
 			RequestType* Request = Manager_Trace->AllocateRequest();
 
@@ -397,7 +383,7 @@ namespace NCsTrace
 
 		ResponseType* FLibrary::TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const float& Distance, const ECollisionChannel& Channel)
 		{
-			using namespace NCsTrace::NManager::NLibrary::NCached;
+			USING_NS_CACHED
 
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Distance, 0.0f)
 
@@ -428,5 +414,10 @@ namespace NCsTrace
 
 		#undef ResponseType
 		#undef RequestType
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef LogWarning
+		#undef MathLibrary
 	}
 }

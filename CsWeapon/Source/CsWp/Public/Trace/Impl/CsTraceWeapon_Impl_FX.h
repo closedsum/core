@@ -1,7 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
-
-#include "Managers/FX/CsTypes_FX.h"
 #pragma once
+// Types
+#include "Engine/HitResult.h"
+#include "Managers/FX/CsTypes_FX.h"
 
 class ICsTraceWeapon;
 class UObject;

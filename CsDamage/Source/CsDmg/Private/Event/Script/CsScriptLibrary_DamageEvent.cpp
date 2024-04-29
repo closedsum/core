@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Event/Script/CsScriptLibrary_DamageEvent.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Event/CsLibrary_DamageEvent.h"
 

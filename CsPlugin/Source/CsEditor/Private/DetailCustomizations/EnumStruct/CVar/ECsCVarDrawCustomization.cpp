@@ -1,7 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/CVar/ECsCVarDrawCustomization.h"
 
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 
 #define LOCTEXT_NAMESPACE "ECsCVarDrawCustomization"
 

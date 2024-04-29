@@ -4,6 +4,8 @@
 #include "Params/CsTypes_SpawnerParams.h"
 #include "CsSpawner.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Array.h"
 #include "Library/CsLibrary_Valid.h"

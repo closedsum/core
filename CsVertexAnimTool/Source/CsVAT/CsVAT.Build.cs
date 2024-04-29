@@ -14,9 +14,7 @@ public class CsVAT : ModuleRules
                 new string[] {
                     "Core",
                     "CoreUObject",
-                    "Engine",
-                    "AssetRegistry",
-                    "CsCore"
+                    "Engine"
                 }
             );
 

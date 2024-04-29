@@ -2,7 +2,7 @@
 #include "Event/CsStatusEffectEventImpl.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Library

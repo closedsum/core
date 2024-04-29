@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Modifier/CsSpawnerModifierImpl.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Modifier/CsLibrary_SpawnerModifier.h"
 #include "Library/CsLibrary_Valid.h"

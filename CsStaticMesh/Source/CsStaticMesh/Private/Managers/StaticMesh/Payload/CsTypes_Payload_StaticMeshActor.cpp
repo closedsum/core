@@ -34,7 +34,7 @@ void FCsPayload_StaticMesh::CopyToPayloadAsValueChecked(const FString& Context, 
 
 	Payload->Mesh = Mesh.Mesh.GetChecked(Context);
 
-	if (Mesh.Materials.Materials.Num() > CS_EMPTY)
+	if (!Mesh.Materials.Materials.IsEmpty())
 	{
 		typedef NCsArray::FLibrary ArrayLibrary;
 

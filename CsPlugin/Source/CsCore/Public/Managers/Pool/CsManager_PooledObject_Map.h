@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Managers/Pool/CsManager_PooledObject_Abstract.h"
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 
 class UWorld;
 class UObject;

@@ -18,10 +18,11 @@ public class CsSeq : ModuleRules
                     "AssetRegistry",
                     "Json",
                     "JsonUtilities",
-                    "CsCore",
                     "MovieScene",
                     "MovieSceneTracks",
-                    "LevelSequence"
+                    "LevelSequence",
+                    "CsMacro",
+                    "CsCore"
                 }
             );
 

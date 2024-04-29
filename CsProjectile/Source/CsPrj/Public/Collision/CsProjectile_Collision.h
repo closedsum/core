@@ -2,6 +2,8 @@
 #pragma once
 // Interfaces
 #include "UObject/Interface.h"
+// Types
+#include "Engine/HitResult.h"
 
 #include "CsProjectile_Collision.generated.h"
 

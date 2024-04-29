@@ -4,7 +4,7 @@
 #include "Material/Parameter/Collection/CsMaterialParameterCollectionInstanceProxy.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Material/Parameter/Collection/CsLibrary_Material_Parameter_Collection.h"
 #include "Library/CsLibrary_Valid.h"

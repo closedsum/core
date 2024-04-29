@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Modifier/CsDamageModifierImpl.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Modifier/CsLibrary_DamageModifier.h"
 #include "Library/CsLibrary_Valid.h"

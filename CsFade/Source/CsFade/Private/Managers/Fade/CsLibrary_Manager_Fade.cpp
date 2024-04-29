@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Fade/CsLibrary_Manager_Fade.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Managers
 #include "Managers/Fade/CsManager_Fade.h"
 // Library

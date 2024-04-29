@@ -5,9 +5,9 @@
 #include "CsCore.h"
 
 // CVar
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 

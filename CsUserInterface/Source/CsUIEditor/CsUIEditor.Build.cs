@@ -36,8 +36,8 @@ public class CsUIEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
-                    "CsCore",
-                    "CsEditor",
+                    "CsEnum",
+                    "CsEnumEditor",
                     "CsUI",
                     "CsUICore"
                 }

@@ -17,7 +17,7 @@ struct CSCORE_API FCsSettings_Manager_Level
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Level")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, NoClear, Category = "CsCore|Managers|Level")
 	TSoftClassPtr<UCsManager_Level> Class;
 
 	FCsSettings_Manager_Level();

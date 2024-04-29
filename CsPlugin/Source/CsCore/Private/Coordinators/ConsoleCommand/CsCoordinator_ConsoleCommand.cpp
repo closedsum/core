@@ -5,7 +5,7 @@
 #include "CsCore.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Managers
 #include "Managers/ConsoleCommand/CsManager_ConsoleCommand.h"
 // Package

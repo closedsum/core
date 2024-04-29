@@ -12,7 +12,7 @@
 
 #if WITH_EDITOR
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Game/CsLibrary_GameInstance.h"
 #endif // #if WITH_EDITOR
@@ -34,6 +34,9 @@ namespace NCsData
 			}
 		}
 
+		#define USING_NS_CACHED using namespace NCsData::NManager::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsData::NManager::NLibrary::NCached; \
+			const FString& Context = Str::__FunctionName
 		#define ObjectLibrary NCsObject::FLibrary
 		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
@@ -54,9 +57,7 @@ namespace NCsData
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
 		{
-			using namespace NCsData::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeContextRoot;
+			SET_CONTEXT(GetSafeContextRoot);
 
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
@@ -114,9 +115,7 @@ namespace NCsData
 
 		UCsManager_Data* FLibrary::GetSafe(const UObject* ContextObject)
 		{
-			using namespace NCsData::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafe;
+			SET_CONTEXT(GetSafe);
 
 			return GetSafe(Context, ContextObject, nullptr);
 		}
@@ -249,9 +248,7 @@ namespace NCsData
 
 		UDataTable* FLibrary::GetSafeDataTable(const UObject* ContextObject, const FSoftObjectPath& Path)
 		{
-			using namespace NCsData::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeDataTable;
+			SET_CONTEXT(GetSafeDataTable);
 
 			return GetSafeDataTable(Context, ContextObject, Path, nullptr);
 		}
@@ -275,9 +272,7 @@ namespace NCsData
 
 		UDataTable* FLibrary::GetSafeDataTable(const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject)
 		{
-			using namespace NCsData::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeDataTable;
+			SET_CONTEXT(GetSafeDataTable);
 
 			return GetSafeDataTable(Context, ContextObject, SoftObject, nullptr);
 		}

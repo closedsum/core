@@ -23,10 +23,12 @@ namespace NCsTrace
 
 		struct CSPHYSICS_API FResource : public TCsResourceContainer<RequestType>
 		{
+			~FResource(){}
 		};
 
 		struct CSPHYSICS_API FManager : public NCsResource::NManager::NValue::TFixed<RequestType, FResource, 0>
 		{
+			~FManager(){}
 		};
 
 	#undef RequestType
@@ -42,10 +44,12 @@ namespace NCsTrace
 
 		struct CSPHYSICS_API FResource : public TCsResourceContainer<ResponseType>
 		{
+			~FResource(){}
 		};
 
 		struct CSPHYSICS_API FManager : public NCsResource::NManager::NValue::TFixed<ResponseType, FResource, 0>
 		{
+			~FManager(){}
 		};
 
 	#undef ResponseType

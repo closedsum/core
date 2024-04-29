@@ -2,6 +2,7 @@
 #pragma once
 // Interfaces
 #include "UObject/Interface.h"
+#include "Engine/HitResult.h"
 
 #include "CsPointSequenceWeapon_Event.generated.h"
 

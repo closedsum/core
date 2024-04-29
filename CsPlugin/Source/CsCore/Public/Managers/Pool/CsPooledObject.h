@@ -7,8 +7,8 @@
 // Containers
 #include "Containers/CsInterfaceObject.h"
 // Types
-#include "Types/CsTypes_Macro.h"
-#include "Macro/CsMacro_Namespace.h"
+#include "CsMacro_Misc.h"
+#include "CsMacro_Namespace.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/Pool/CsTypes_Manager_PooledObject.h"
 

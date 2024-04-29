@@ -4,7 +4,7 @@
 #include "LevelSequence/Script/CsScriptLibrary_LevelSequencePlayer.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "LevelSequence/CsLibrary_LevelSequence.h"
 

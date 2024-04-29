@@ -3,9 +3,10 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Types/CsTypes_UserWidget_Anim.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
-
 
 // UserWidgetAnimPlayMode
 #pragma region

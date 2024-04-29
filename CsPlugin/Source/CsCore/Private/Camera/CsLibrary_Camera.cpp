@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Camera/CsLibrary_Camera.h"
-#include "CsCore.h"
 
 // Types
+#include "CsMacro_Misc.h"
 #include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Math_Library.h"
 // Library
 	// Common
 #include "Library/CsLibrary_World.h"

@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // CVar
-#include "CsCVars.h"
+#include "CsCVars_Core.h"
 // Types
 #include "Managers/Pool/CsTypes_Pool.h"
 // World

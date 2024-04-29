@@ -3,11 +3,15 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Asset/Tool/CsAssetTool.h"
 
+// Library
+#include "Library/CsLibrary_Blueprint.h"
 // Engine
 #include "CsEdEngine.h"
 
 namespace NCsAsset
 {
+	#define BlueprintLibrary NCsBlueprint::FLibrary
+
 	const TArray<TWeakObjectPtr<UObject>>& FTool::GetOpenedAssets()
 	{
 		return Cast<UCsEdEngine>(GEngine)->GetOpenedAssets();
@@ -15,6 +19,9 @@ namespace NCsAsset
 
 	bool FTool::IsAssetOpened(UObject* Asset)
 	{
+		if (!IsValid(Asset))
+			return false;
+
 		for (const TWeakObjectPtr<UObject>& O : GetOpenedAssets())
 		{
 			UObject* A = O.IsValid() ? O.Get() : nullptr;
@@ -24,4 +31,21 @@ namespace NCsAsset
 		}
 		return false;
 	}
+
+	bool FTool::IsAssetWithClassDefaultOpened(UObject* DefaultObject)
+	{
+		if (!IsValid(DefaultObject))
+			return false;
+
+		for (const TWeakObjectPtr<UObject>& O : GetOpenedAssets())
+		{
+			UObject* A = O.IsValid() ? O.Get() : nullptr;
+
+			if (DefaultObject == BlueprintLibrary::GetSafeClassDefaultObject(A))
+				return true;
+		}
+		return false;
+	}
+
+	#undef BlueprintLibrary
 }

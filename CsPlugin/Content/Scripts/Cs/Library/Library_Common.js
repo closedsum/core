@@ -62,6 +62,7 @@ module.exports = class NJsCommon
             if (!condition)
             {   
                 // NOTE: Future add different "level" of errors. Maybe even a native / c++ checkf.
+                console.error(message);
                 throw Error(message);
             }
         }
@@ -76,6 +77,7 @@ module.exports = class NJsCommon
             if (!condition)
             {
                 // NOTE: Future add different "level" of errors. Maybe even a native / c++ checkf.
+                console.error("error");
                 throw Error();  
             }
         }

@@ -16,6 +16,10 @@ public class CsSpawner : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
+                    "CsMacro",
+                    "CsContainer",
+                    "CsEnum",
+                    "CsValid",
                     "CsCore",
                     "CsModifier"
                 }

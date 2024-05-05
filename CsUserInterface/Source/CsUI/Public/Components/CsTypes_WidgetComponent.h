@@ -4,7 +4,7 @@
 #pragma once
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #include "Types/CsTypes_AttachDetach.h"
-#include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Math_Library.h"
 // Log
 #include "Utility/CsUILog.h"
 

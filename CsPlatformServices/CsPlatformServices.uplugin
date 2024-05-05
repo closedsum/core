@@ -1,0 +1,61 @@
+{
+	"FileVersion": 3,
+	"Version": 2,
+	"VersionName": "0.0.1",
+	"FriendlyName": "Platform Services",
+	"Description": "Closed Sum Games Platform Services",
+	"Category": "Programming",
+	"CreatedBy": "Closed Sum Games LLC",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "5.3.0",
+	"CanContainContent": true,
+	"Installed": true,
+  "Modules": [
+    {
+      "Name": "CsPlatformServices",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "CsMacro",
+      "Enabled": true
+    },
+    {
+      "Name": "CsContainer",
+      "Enabled": true
+    },
+    {
+      "Name": "CsEnum",
+      "Enabled": true
+    },
+    {
+      "Name": "CsValid",
+      "Enabled": true
+    },
+    {
+      "Name": "CsTypes",
+      "Enabled": true
+    },
+    {
+      "Name": "CsCoreLibrary",
+      "Enabled": true
+    },
+    {
+      "Name": "CsPlugin",
+      "Enabled": true
+    },
+    {
+      "Name": "OnlineSubsystem",
+      "Enabled": true
+    },
+    {
+      "Name": "OnlineSubsystemUtils",
+      "Enabled": true
+    }
+  ]
+}

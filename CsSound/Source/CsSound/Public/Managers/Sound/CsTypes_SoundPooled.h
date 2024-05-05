@@ -2,12 +2,15 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
 #include "CsMacro_Namespace.h"
 #include "CsMacro_Math.h"
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumFlagMap.h"
 #include "Types/CsTypes_Sound.h"
+// Log
+#include "Utility/CsSoundLog.h"
 
 #include "CsTypes_SoundPooled.generated.h"
 
@@ -184,9 +187,7 @@ public:
 	FORCEINLINE USoundBase* GetChecked(const FString& Context) const
 	{
 		checkf(Sound.ToSoftObjectPath().IsValid(), TEXT("%s: Sound is NULL or the Path is NOT Valid."), *Context);
-
 		checkf(Sound_Internal, TEXT("%s: Failed to load Sound @ %s."), *Context, *(Sound.ToSoftObjectPath().ToString()));
-
 		return Sound_Internal;
 	}
 
@@ -198,9 +199,7 @@ public:
 	FORCEINLINE USoundBase* GetChecked() const
 	{
 		checkf(Sound.ToSoftObjectPath().IsValid(), TEXT("FCsSound::GetChecked: Sound is NULL or the Path is NOT Valid."));
-
 		checkf(Sound_Internal, TEXT("FCsSound::GetChecked: Failed to load Sound @ %s."), *(Sound.ToSoftObjectPath().ToString()));
-
 		return Sound_Internal;
 	}
 
@@ -217,7 +216,7 @@ public:
 	}
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSound::FLog::Warning) const;
 
 	void Reset();
 };

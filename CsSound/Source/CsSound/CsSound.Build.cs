@@ -31,6 +31,8 @@ public class CsSound : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "CsCore"
 ,                }
             );

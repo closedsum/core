@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 	// Damage
@@ -45,6 +47,14 @@ namespace NCsDamage
 			}
 		}
 
+		#define USING_NS_CACHED using namespace NCsDamage::NManager::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsDamage::NManager::NLibrary::NCached; \
+			const FString& Context = Str::__FunctionName
+	#if WITH_EDITOR
+		#define WorldLibrary NCsWorld::FLibrary
+		#define GameStateLibrary NCsGameState::FLibrary
+	#endif // #if WITH_EDITOR
+
 		// ContextRoot
 		#pragma region
 
@@ -52,24 +62,17 @@ namespace NCsDamage
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
 				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(WorldContext, UObject, ICsGetManagerSingleton);
 
 				return GetManagerSingleton->_getUObject();
 			}
-
-			typedef NCsGameState::FLibrary GameStateLibrary;
-
 			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
 				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(WorldContext, UObject, ICsGetManagerSingleton))
@@ -78,17 +81,12 @@ namespace NCsDamage
 				}
 				return nullptr;
 			}
-
-			typedef NCsGameState::FLibrary GameStateLibrary;
-
 			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
-			using namespace NCsDamage::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeContextRoot;
+			SET_CONTEXT(GetSafeContextRoot);
 
 			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
@@ -129,9 +127,7 @@ namespace NCsDamage
 
 		UCsManager_Damage* FLibrary::GetSafe(const UObject* WorldContext)
 		{
-			using namespace NCsDamage::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafe;
+			SET_CONTEXT(GetSafe);
 
 			return GetSafe(Context, WorldContext, nullptr);
 		}
@@ -562,6 +558,13 @@ namespace NCsDamage
 		#undef DataType
 
 		#pragma endregion Data
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+	#if WITH_EDITOR
+		#undef WorldLibrary
+		#undef GameStateLibrary
+	#endif // #if WITH_EDITOR
 
 		namespace NModifier
 		{

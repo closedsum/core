@@ -1,7 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Modifier/CsAllocated_ProjectileModifier.h"
-#include "CsPrj.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Library/CsLibrary_Valid.h"
@@ -25,6 +26,12 @@ namespace NCsProjectile
 			}
 		}
 
+		#define USING_NS_CACHED using namespace NCsProjectile::NModifier::NAllocated::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsProjectile::NModifier::NAllocated::NCached; \
+			const FString& Context = Str::__FunctionName
+		#define PrjManagerLibrary NCsProjectile::NManager::FLibrary
+		#define PrjModifierLibrary NCsProjectile::NManager::NModifier::FLibrary
+
 		FAllocated::~FAllocated()
 		{
 			Reset();
@@ -34,14 +41,9 @@ namespace NCsProjectile
 
 		void FAllocated::Copy(const UObject* WorldContext, const IModifier* From)
 		{
-			using namespace NCsProjectile::NModifier::NAllocated::NCached;
-
-			const FString& Context = Str::Copy;
+			SET_CONTEXT(Copy);
 
 			CS_IS_PTR_NULL_CHECKED(From)
-
-			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-			typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
 			Root	  = PrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
 			Container = PrjModifierLibrary::CreateCopyOfChecked(Context, WorldContext, From);
@@ -51,9 +53,7 @@ namespace NCsProjectile
 
 		void FAllocated::Copy(const FAllocated& From)
 		{
-			using namespace NCsProjectile::NModifier::NAllocated::NCached;
-
-			const FString& Context = Str::Copy;
+			SET_CONTEXT(Copy);
 
 			CS_IS_PTR_NULL_CHECKED(From.GetRoot())
 
@@ -61,8 +61,6 @@ namespace NCsProjectile
 
 			if (From.Container)
 			{
-				typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
-
 				Root	  = From.GetRoot();
 				Container = PrjModifierLibrary::CreateCopyOfChecked(Context, GetRoot(), From.Container);
 				Modifier  = Container->Get();
@@ -76,9 +74,7 @@ namespace NCsProjectile
 
 		void FAllocated::Transfer(FAllocated& To)
 		{
-			using namespace NCsProjectile::NModifier::NAllocated::NCached;
-
-			const FString& Context = Str::Transfer;
+			SET_CONTEXT(Transfer);
 
 			checkf(!To.Container, TEXT("%s: Container is already SET."), *Context);
 
@@ -100,19 +96,20 @@ namespace NCsProjectile
 
 		void FAllocated::Reset()
 		{
-			using namespace NCsProjectile::NModifier::NAllocated::NCached;
-
-			const FString& Context = Str::Reset;
+			SET_CONTEXT(Reset);
 
 			if (Container)
 			{
 				CS_IS_PTR_NULL_CHECKED(GetRoot())
 
-				typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
-
 				PrjModifierLibrary::DeallocateChecked(Context, GetRoot(), Type, Container);
 			}
 			Clear();
 		}
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef PrjManagerLibrary
+		#undef PrjModifierLibrary
 	}
 }

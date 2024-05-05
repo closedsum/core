@@ -4,6 +4,7 @@
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 
 // Library
+#include "Library/CsLibrary_SkeletalMesh.h"
 #include "Kismet/GameplayStatics.h"
 #include "Library/CsLibrary_Viewport.h"
 #include "Game/CsLibrary_GameState.h"
@@ -49,8 +50,9 @@ namespace NCsTrace
 		#define USING_NS_CACHED using namespace NCsTrace::NManager::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsTrace::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogWarning void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/
+		#define LogLevel void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/
 		#define MathLibrary NCsMath::FLibrary
+		#define SkeletalMeshLibrary NCsSkeletalMesh::FLibrary
 
 		// ContextRoot
 		#pragma region
@@ -73,7 +75,7 @@ namespace NCsTrace
 			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogWarning)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -112,7 +114,7 @@ namespace NCsTrace
 			return Manager_Trace;
 		}
 
-		UCsManager_Trace* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogWarning)
+		UCsManager_Trace* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -149,13 +151,12 @@ namespace NCsTrace
 			return GetChecked(Context, WorldContext)->AllocateRequest();
 		}
 
-		RequestType* FLibrary::SafeAllocateRequest(const FString& Context, const UObject* WorldContext, LogWarning)
+		RequestType* FLibrary::SafeAllocateRequest(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
 			UCsManager_Trace* Manager_Trace = GetSafe(Context, WorldContext, Log);
 
 			if (!Manager_Trace)
 				return nullptr;
-
 			return Manager_Trace->AllocateRequest();
 		}
 
@@ -166,7 +167,7 @@ namespace NCsTrace
 			return SafeAllocateRequest(Context, WorldContext, nullptr);
 		}
 
-		bool FLibrary::SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, LogWarning)
+		bool FLibrary::SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, LogLevel)
 		{
 			UCsManager_Trace* Manager_Trace = GetSafe(Context, WorldContext, Log);
 
@@ -192,7 +193,7 @@ namespace NCsTrace
 			return GetChecked(Context, WorldContext)->Trace(Request);
 		}
 
-		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, LogWarning)
+		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, LogLevel)
 		{
 			CS_IS_PTR_NULL_RET_NULL(Request)
 
@@ -214,7 +215,57 @@ namespace NCsTrace
 			return SafeTrace(Context, WorldContext, Request, nullptr);
 		}
 
-		ResponseType* FLibrary::SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, LogWarning)
+			// Sphere
+		#pragma region
+
+		bool FLibrary::SafeSphereTrace(const FString& Context, UObject* WorldContext, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, const float& Radius, const TEnumAsByte<ECollisionChannel>& Channel, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit, LogLevel)
+		{
+			if (RequestType* Request = SafeAllocateRequest(Context, WorldContext))
+			{
+				// Fill out Request
+				bool OutSuccess     = false;
+				const FVector Start = SkeletalMeshLibrary::GetSafeBoneOrSocketLocation(Context, Component, BoneOrSocket, OutSuccess, Log);
+
+				if (!OutSuccess)
+				{
+					SafeDeallocateRequest(Context, WorldContext, Request, Log);
+					return false;
+				}
+
+				Request->Start				  = MathLibrary::Convert(Start);
+				Request->End				  = MathLibrary::Convert(Start);
+				Request->Channel			  = Channel;
+				Request->Params.bTraceComplex = bTraceComplex;
+				Request->Shape.SetSphere(Radius);
+
+				if (bIgnoreSelf)
+				{
+					if (AActor* Actor = Cast<AActor>(WorldContext))
+						Request->Params.AddIgnoredActor(Actor);
+				}
+
+				Request->Params.AddIgnoredActors(ActorsToIgnore);
+
+				// Check Response
+				if (ResponseType* Response = SafeTrace(Context, WorldContext, Request))
+				{
+					if (Response->bResult)
+					{
+						OutHit = Response->OutHits[CS_FIRST];
+					}
+					return Response->bResult;
+				}
+				return false;
+			}
+			return false;
+		}
+
+		#pragma endregion Sphere
+
+			// Sweep
+		#pragma region
+
+		ResponseType* FLibrary::SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, LogLevel)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Component)
 			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleRadius(), 0.0f)
@@ -255,7 +306,7 @@ namespace NCsTrace
 			return Manager_Trace->Trace(Request);
 		}
 
-		ResponseType* FLibrary::SafeSweepAgainstObject(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogWarning)
+		ResponseType* FLibrary::SafeSweepAgainstObject(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogLevel)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Component)
 			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleRadius(), 0.0f)
@@ -319,7 +370,7 @@ namespace NCsTrace
 			return Response;
 		}
 
-		ResponseType* FLibrary::SafeSweepAgainstObjectOnly(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogWarning)
+		ResponseType* FLibrary::SafeSweepAgainstObjectOnly(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogLevel)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Component)
 			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleRadius(), 0.0f)
@@ -381,6 +432,11 @@ namespace NCsTrace
 			return Response;
 		}
 
+		#pragma endregion Sweep
+
+			// Screen
+		#pragma region
+
 		ResponseType* FLibrary::TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const float& Distance, const ECollisionChannel& Channel)
 		{
 			USING_NS_CACHED
@@ -412,12 +468,15 @@ namespace NCsTrace
 			return nullptr;
 		}
 
+		#pragma endregion Screen
+
 		#undef ResponseType
 		#undef RequestType
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogWarning
+		#undef LogLevel
 		#undef MathLibrary
+		#undef SkeletalMeshLibrary
 	}
 }

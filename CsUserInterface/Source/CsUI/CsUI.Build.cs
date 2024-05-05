@@ -23,6 +23,8 @@ public class CsUI : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "CsCore",
                     "CsUICore",
                     "CsPhysics" // TODO: Eventually remove dependency

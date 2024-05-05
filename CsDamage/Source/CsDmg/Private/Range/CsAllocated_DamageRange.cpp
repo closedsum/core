@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Range/CsAllocated_DamageRange.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
@@ -16,14 +18,22 @@ namespace NCsDamage
 {
 	namespace NRange
 	{
-		namespace NAllocatedCached
+		namespace NAllocated
 		{
-			namespace Str
+			namespace NCached
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NRange::FAllocated, CopyFrom);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NRange::FAllocated, Reset);
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NRange::FAllocated, CopyFrom);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NRange::FAllocated, Reset);
+				}
 			}
 		}
+
+		#define USING_NS_CACHED using namespace NCsDamage::NRange::NAllocated::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsDamage::NRange::NAllocated::NCached; \
+			const FString& Context = Str::__FunctionName
+		#define DamageManagerLibrary NCsDamage::NManager::FLibrary
 
 		FAllocated::~FAllocated()
 		{
@@ -35,10 +45,7 @@ namespace NCsDamage
 		void FAllocated::CopyFrom(const FString& Context, UObject* InRoot, const IRange* From)
 		{
 			CS_IS_PTR_NULL_CHECKED(InRoot)
-
 			CS_IS_PTR_NULL_CHECKED(From)
-
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
 			Root	  = InRoot;
 			Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From);
@@ -51,7 +58,6 @@ namespace NCsDamage
 		#undef DataType
 
 			CS_IS_PTR_NULL_CHECKED(InRoot)
-
 			CS_IS_PTR_NULL_EXIT(Data)
 
 			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
@@ -65,8 +71,6 @@ namespace NCsDamage
 				return;
 			}
 
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
 			Root	  = InRoot;
 			Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From->GetRange());
 			Range	  = Container->Get();
@@ -74,9 +78,7 @@ namespace NCsDamage
 
 		void FAllocated::CopyFrom(const FAllocated* From)
 		{
-			using namespace NAllocatedCached;
-
-			const FString& Context = Str::CopyFrom;
+			SET_CONTEXT(CopyFrom);
 
 			CS_IS_PTR_NULL_CHECKED(From->GetRoot())
 
@@ -84,8 +86,6 @@ namespace NCsDamage
 
 			if (From->GetContainer())
 			{
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
 				Root	  = From->GetRoot();
 				Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From->GetContainer());
 				Range	  = Container->Get();
@@ -94,15 +94,11 @@ namespace NCsDamage
 
 		void FAllocated::Reset()
 		{
-			using namespace NAllocatedCached;
-
-			const FString& Context = Str::Reset;
+			SET_CONTEXT(Reset);
 
 			if (Container)
 			{
 				CS_IS_PTR_NULL_CHECKED(GetRoot())
-
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
 				DamageManagerLibrary::DeallocateRangeChecked(Context, GetRoot(), Container);
 			}
@@ -111,5 +107,9 @@ namespace NCsDamage
 			Container = nullptr;
 			Range	  = nullptr;
 		}
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef DamageManagerLibrary
 	}
 }

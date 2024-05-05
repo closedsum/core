@@ -2,11 +2,13 @@
 #include "Types/CsTypes_Weapon.h"
 #include "CsWp.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 	// Settings
 #include "Settings/CsLibrary_WeaponSettings.h"
 	// Common
-#include "Level/CsLibrary_Level.h"
+#include "Level/CsLibrary_LevelImpl.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsWpPopulateEnumMapFromSettings.h"
@@ -94,9 +96,9 @@ namespace NCsWeapon
 
 	void GetSafeFromLevel(const FString& Context, const UObject* WorldContext, TSet<FECsWeapon>& OutWeaponTypes, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 	{
-		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
+		typedef NCsLevel::NPersistent::NImpl::FLibrary LevelImplLibrary;
 
-		ICsGetWeaponTypes* GetWeaponTypes = LevelLibrary::GetSafeSetupData<ICsGetWeaponTypes>(Context, WorldContext, Log);
+		ICsGetWeaponTypes* GetWeaponTypes = LevelImplLibrary::GetSafeSetupData<ICsGetWeaponTypes>(Context, WorldContext, Log);
 
 		if (!GetWeaponTypes)
 			return;

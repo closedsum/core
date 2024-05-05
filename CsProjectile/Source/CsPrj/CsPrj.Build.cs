@@ -31,6 +31,8 @@ public class CsPrj : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "CsCore",
                     "CsDmg",
                     "CsModifier",

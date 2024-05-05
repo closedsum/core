@@ -54,7 +54,7 @@ bool FCsPayload_SkeletalMesh_AnimSequence_OneShot::IsValidChecked(const FString&
 	return true;
 }
 
-bool FCsPayload_SkeletalMesh_AnimSequence_OneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsPayload_SkeletalMesh_AnimSequence_OneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkeletalMesh::FLog::Warning*/) const
 {
 	if (!Shot.IsValid(Context, Log))
 		return false;
@@ -106,7 +106,7 @@ bool FCsPayload_SkeletalMesh_AnimMontage_OneShot::IsValidChecked(const FString& 
 	return true;
 }
 
-bool FCsPayload_SkeletalMesh_AnimMontage_OneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsPayload_SkeletalMesh_AnimMontage_OneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkeletalMesh::FLog::Warning*/) const
 {
 	if (!Shot.IsValid(Context, Log))
 		return false;

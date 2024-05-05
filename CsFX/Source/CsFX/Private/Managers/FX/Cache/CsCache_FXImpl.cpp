@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/FX/Cache/CsCache_FXImpl.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/FX/CsLibrary_FX.h"
@@ -45,6 +47,9 @@ namespace NCsFX
 			}
 		}
 
+		#define USING_NS_CACHED using namespace NCsFX::NCache::NImpl::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsFX::NCache::NImpl::NCached; \
+			const FString& Context = Str::__FunctionName
 		#define DeallocateMethodType NCsFX::EDeallocateMethod
 
 		FImpl::FImpl() :
@@ -81,8 +86,6 @@ namespace NCsFX
 			InterfaceMap->Add<FXCacheType>(static_cast<FXCacheType*>(this));
 		}
 
-		#undef DeallocateMethodType
-
 		FImpl::~FImpl()
 		{
 			delete InterfaceMap;
@@ -96,9 +99,7 @@ namespace NCsFX
 		{
 		#undef PooledPayloadType
 
-			using namespace NCsFX::NCache::NImpl::NCached;
-
-			const FString& Context = Str::Allocate;
+			SET_CONTEXT(Allocate);
 
 			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			bAllocated = true;
@@ -180,8 +181,6 @@ namespace NCsFX
 			// FXCacheType (NCsFX::NCache::ICache)
 			FXComponent = nullptr;
 
-			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
-
 			DeallocateMethod = DeallocateMethodType::Complete;
 			DeallocateState = EDeallocateState::None;
 			bHideOnQueueDeallocate = false;
@@ -192,13 +191,10 @@ namespace NCsFX
 
 		void FImpl::Update(const FCsDeltaTime& DeltaTime)
 		{
-			using namespace NCsFX::NCache::NImpl::NCached;
-
-			const FString& Context = Str::Update;
+			SET_CONTEXT(Update);
 
 			typedef NCsFX::FLibrary FXLibrary;
-			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
-	
+
 			// Complete
 			if (DeallocateMethod == DeallocateMethodType::Complete)
 			{
@@ -319,5 +315,9 @@ namespace NCsFX
 				}	
 			}
 		}
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef DeallocateMethodType
 	}
 }

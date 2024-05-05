@@ -3,6 +3,9 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Mesh/CsSkeletalMeshAttachment.h"
 
+// Types
+#include "CsMacro_Misc.h"
+#include "Types/CsTypes_Math_Library.h"
 // Library
 #include "Managers/SkeletalMesh/CsLibrary_Manager_SkeletalMeshActor.h"
 #include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"

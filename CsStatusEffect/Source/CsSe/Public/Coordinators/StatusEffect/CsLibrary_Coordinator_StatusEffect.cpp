@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coordinators/StatusEffect/CsLibrary_Coordinator_StatusEffect.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Coordinators
 #include "Coordinators/StatusEffect/CsCoordinator_StatusEffect.h"
 // Library

@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Payload/Modifier/Damage/CsPayload_Projectile_ModifierDamageImplSlice.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 #include "Library/CsLibrary_Array.h"
@@ -26,12 +28,20 @@ namespace NCsProjectile
 					{
 						namespace Str
 						{
+							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::NDamage::FImplSlice, SetInterfaceMap);
 							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::NDamage::FImplSlice, CopyFromModifiers);
 							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::NDamage::FImplSlice, CopyAndEmptyFromModifiers);
 							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::NDamage::FImplSlice, TransferFromModifiers);
 						}
 					}
 				}
+
+				#define USING_NS_CACHED using namespace NCsProjectile::NPayload::NModifier::NDamage::NImplSlice::NCached;
+				#define SET_CONTEXT(__FunctionName) using namespace NCsProjectile::NPayload::NModifier::NDamage::NImplSlice::NCached; \
+					const FString& Context = Str::__FunctionName
+				#define ArrayLibrary NCsArray::FLibrary
+				#define DmgManagerLibrary NCsDamage::NManager::FLibrary
+				#define DmgModifierLibrary NCsDamage::NManager::NModifier::FLibrary
 
 				FImplSlice::FImplSlice() :
 					// ICsGetInterfaceMap
@@ -44,7 +54,9 @@ namespace NCsProjectile
 
 				void FImplSlice::SetInterfaceMap(FCsInterfaceMap* InInterfaceMap)
 				{
-					checkf(InInterfaceMap, TEXT("NCsProjectile::NPayload::NModifier::NDamage::FImplSlice::SetInterfaceMap: InInterfaceMap is NULL."));
+					SET_CONTEXT(SetInterfaceMap);
+
+					CS_IS_PTR_NULL_CHECKED(InInterfaceMap)
 
 					checkf(InInterfaceMap->HasUniqueBasedSlices(), TEXT("NCsProjectile::NPayload::NModifier::NDamage::FImplSlice::SetInterfaceMap: This only takes an InterfaceMap with bUniqueBasedSlices = true."));
 
@@ -69,16 +81,11 @@ namespace NCsProjectile
 
 				void FImplSlice::CopyFromModifiers(const UObject* WorldContext, const TArray<DmgModifierType*>& FromModifiers)
 				{
-					using namespace NCsProjectile::NPayload::NModifier::NDamage::NImplSlice::NCached;
-
-					const FString& Context = Str::CopyFromModifiers;
+					SET_CONTEXT(CopyFromModifiers);
 
 					CS_IS_TARRAY_ANY_NULL_CHECKED(FromModifiers, DmgModifierType)
 
 					checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
-
-					typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
-					typedef NCsDamage::NManager::NModifier::FLibrary DmgModifierLibrary;
 
 					Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
 					Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
@@ -99,16 +106,11 @@ namespace NCsProjectile
 
 				void FImplSlice::CopyAndEmptyFromModifiers(const UObject* WorldContext, TArray<DmgModifierType*>& FromModifiers)
 				{
-					using namespace NCsProjectile::NPayload::NModifier::NDamage::NImplSlice::NCached;
-
-					const FString& Context = Str::CopyAndEmptyFromModifiers;
+					SET_CONTEXT(CopyAndEmptyFromModifiers);
 
 					CS_IS_TARRAY_ANY_NULL_CHECKED(FromModifiers, DmgModifierType)
 
 					checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
-
-					typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
-					typedef NCsDamage::NManager::NModifier::FLibrary DmgModifierLibrary;
 
 					const int32 Count = FromModifiers.Num();
 
@@ -134,13 +136,9 @@ namespace NCsProjectile
 
 				void FImplSlice::CopyFromModifiers(const UObject* WorldContext, const TArray<AllocatedDmgModifierType>& FromModifiers)
 				{
-					using namespace NCsProjectile::NPayload::NModifier::NDamage::NImplSlice::NCached;
-
-					const FString& Context = Str::CopyFromModifiers;
+					SET_CONTEXT(CopyFromModifiers);
 
 					checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
-
-					typedef NCsArray::FLibrary ArrayLibrary;
 
 					Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
 					Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
@@ -169,13 +167,9 @@ namespace NCsProjectile
 
 				void FImplSlice::TransferFromModifiers(TArray<AllocatedDmgModifierType>& FromModifiers)
 				{
-					using namespace NCsProjectile::NPayload::NModifier::NDamage::NImplSlice::NCached;
-
-					const FString& Context = Str::TransferFromModifiers;
+					SET_CONTEXT(TransferFromModifiers);
 
 					checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
-
-					typedef NCsArray::FLibrary ArrayLibrary;
 
 					Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
 					Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
@@ -196,6 +190,12 @@ namespace NCsProjectile
 
 				#undef DmgModifierType
 				#undef AllocatedDmgModifierType
+
+				#undef USING_NS_CACHED
+				#undef SET_CONTEXT
+				#undef ArrayLibrary
+				#undef DmgManagerLibrary
+				#undef DmgModifierLibrary
 			}
 		}
 	}

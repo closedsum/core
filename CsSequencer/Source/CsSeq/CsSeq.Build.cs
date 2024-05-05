@@ -22,6 +22,10 @@ public class CsSeq : ModuleRules
                     "MovieSceneTracks",
                     "LevelSequence",
                     "CsMacro",
+                    "CsStructOps",
+                    "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "CsCore"
                 }
             );

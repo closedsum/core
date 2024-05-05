@@ -15,7 +15,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
 // NCsTrace::NResponse::FResponse
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
 
+class AActor;
 class UCapsuleComponent;
+class USkeletalMeshComponent;
 
 namespace NCsTrace
 {
@@ -23,7 +25,7 @@ namespace NCsTrace
 	{
 		struct CSPHYSICS_API FLibrary final
 		{
-		#define LogWarning void(*Log)(const FString&) = &NCsPhysics::FLog::Warning
+		#define LogLevel void(*Log)(const FString&) = &NCsPhysics::FLog::Warning
 
 		// ContextRoot
 		#pragma region
@@ -54,9 +56,9 @@ namespace NCsTrace
 			* @param Log
 			* return				Context for UCsManager_Trace.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogWarning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogWarning)
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel)
 			{
 				return nullptr;
 			}
@@ -100,7 +102,7 @@ namespace NCsTrace
 			* @param Log
 			* return				UCsManager_Trace.
 			*/
-			static UCsManager_Trace* GetSafe(const FString& Context, const UObject* WorldContext, LogWarning);
+			static UCsManager_Trace* GetSafe(const FString& Context, const UObject* WorldContext, LogLevel);
 
 			/**
 			* Safely get the reference to UCsManager_Trace from a WorldContext.
@@ -135,7 +137,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* return
 			*/
-			static RequestType* SafeAllocateRequest(const FString& Context, const UObject* WorldContext, LogWarning);
+			static RequestType* SafeAllocateRequest(const FString& Context, const UObject* WorldContext, LogLevel);
 
 			/**
 			*
@@ -156,7 +158,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* return				Whether the Request was successful deallocated.
 			*/
-			static bool SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, LogWarning);
+			static bool SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, LogLevel);
 
 		#undef RequestType
 
@@ -189,7 +191,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* return				Response
 			*/
-			static ResponseType* SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, LogWarning);
+			static ResponseType* SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, LogLevel);
 
 			/**
 			* Safely perform a trace with the given Request.
@@ -199,6 +201,33 @@ namespace NCsTrace
 			* return				Response
 			*/
 			static ResponseType* SafeTrace(const UObject* WorldContext, RequestType* Request);
+
+			// Sphere
+		#pragma region
+		public:
+
+			/**
+			* Safely sweeps a sphere at the given Bone location for Component and returns the first blocking hit encountered.
+			* This trace finds the objects that RESPONDS to the given Collision Channel
+			* 
+			* @param Context			The calling context
+			* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Component
+			* @param BoneOrSocket		Bone or Socket on SkeletalMesh for Component (Component->GetSkeletalMeshAsset())
+			* @param Radius				Radius of the sphere to sweep
+			* @param Channel
+			* @param bTraceComplex		True to test against complex collision, false to test against simplified collision.
+			* @param bIgnoreSelf
+			* @param OutHit				Properties of the trace hit.
+			* @return					True if there was a hit, false otherwise.
+			*/
+			static bool SafeSphereTrace(const FString& Context, UObject* WorldContext, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, const float& Radius, const TEnumAsByte<ECollisionChannel>& Channel, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit, LogLevel);
+
+		#pragma endregion Sphere
+
+			// Sweep
+		#pragma region
+		public:
 
 			/**
 			* Safely perform a sweep using the collision information from the CapsuleComponent.
@@ -210,7 +239,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* @param 
 			*/
-			static ResponseType* SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, LogWarning);
+			static ResponseType* SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, LogLevel);
 
 			/**
 			* Safely perform a sweep using the collision information from the CapsuleComponent.
@@ -224,7 +253,7 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* @param
 			*/
-			static ResponseType* SafeSweepAgainstObject(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogWarning);
+			static ResponseType* SafeSweepAgainstObject(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogLevel);
 
 			/**
 			* Safely perform a sweep using the collision information from the CapsuleComponent.
@@ -238,7 +267,13 @@ namespace NCsTrace
 			* @param Log			(optional)
 			* @param
 			*/
-			static ResponseType* SafeSweepAgainstObjectOnly(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogWarning);
+			static ResponseType* SafeSweepAgainstObjectOnly(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, LogLevel);
+
+		#pragma endregion Sweep
+
+			// Screen
+		#pragma region
+		public:
 
 			/**
 			* 
@@ -252,12 +287,14 @@ namespace NCsTrace
 			*/
 			static ResponseType* TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const float& Distance, const ECollisionChannel& Channel);
 
+		#pragma endregion Screen
+
 		#undef ResponseType
 		#undef RequestType
 
 		#pragma endregion Response
 
-		#undef LogWarning
+		#undef LogLevel
 		};
 	}
 }

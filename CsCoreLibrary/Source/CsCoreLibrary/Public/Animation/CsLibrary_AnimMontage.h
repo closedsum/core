@@ -101,6 +101,8 @@ namespace NCsAnimMontage
 
 	#define ParamsType NCsAnimMontage::NPlay::FParams
 
+		static float PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim, const float& PlayRate = 1.0f, const float& TimeToStartMontageAt = 0.0f);
+
 		/**
 		* Play Anim on the AnimInstance associated with Component.
 		* NOTE: 

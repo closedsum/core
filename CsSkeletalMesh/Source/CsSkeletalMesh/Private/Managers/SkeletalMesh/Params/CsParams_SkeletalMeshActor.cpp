@@ -54,7 +54,7 @@ namespace NCsSkeletalMeshActor
 					return true;
 				}
 
-				bool FOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkeletalMesh::FLog::Warning*/) const
 				{
 					// Check Anim is Valid
 					CS_IS_PTR_NULL(GetAnim())
@@ -105,7 +105,7 @@ namespace NCsSkeletalMeshActor
 					return true;
 				}
 
-				bool FOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkeletalMesh::FLog::Warning*/) const
 				{
 					// Check Class is Valid
 					CS_IS_PTR_NULL(GetClass())
@@ -257,7 +257,7 @@ bool FCsSkeletalMeshAnimSequenceOneShot::IsValidChecked(const FString& Context) 
 	return true;
 }
 
-bool FCsSkeletalMeshAnimSequenceOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsSkeletalMeshAnimSequenceOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkeletalMesh::FLog::Warning*/) const
 {
 	// Check Mesh is Valid
 	if (!Mesh.IsValid(Context, Log))
@@ -416,7 +416,7 @@ bool FCsSkeletalMeshAnimMontageOneShot::IsValidChecked(const FString& Context) c
 	return true;
 }
 
-bool FCsSkeletalMeshAnimMontageOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsSkeletalMeshAnimMontageOneShot::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkeletalMesh::FLog::Warning*/) const
 {
 	// Check Mesh is Valid
 	if (!Mesh.IsValid(Context, Log))

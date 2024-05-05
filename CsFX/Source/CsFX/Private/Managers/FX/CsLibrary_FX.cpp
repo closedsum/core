@@ -12,7 +12,7 @@
 	// Common
 #include "NiagaraFunctionLibrary.h"
 #include "Library/CsLibrary_World.h"
-#include "Game/CsLibrary_GameInstance.h"
+#include "Game/CsLibrary_GameInstanceImpl.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
@@ -1562,9 +1562,9 @@ namespace NCsFX
 		// NOTE: FUTURE: HACK: check to deal with Mobile PIE crashes
 		else
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+			typedef NCsGameInstance::NImpl::FLibrary GameInstanceImplLibrary;
 
-			if (GameInstanceLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
+			if (GameInstanceImplLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
 			{
 				if (!SystemInstance)
 					return true;
@@ -1596,9 +1596,9 @@ namespace NCsFX
 		// NOTE: FUTURE: HACK: check to deal with Mobile PIE crashes
 		else
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+			typedef NCsGameInstance::NImpl::FLibrary GameInstanceImplLibrary;
 
-			if (GameInstanceLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
+			if (GameInstanceImplLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
 			{
 				if (!SystemInstance)
 					return true;

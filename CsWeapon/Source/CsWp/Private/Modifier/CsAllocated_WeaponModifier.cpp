@@ -1,7 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Modifier/CsAllocated_WeaponModifier.h"
-#include "CsWp.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
 #include "Library/CsLibrary_Valid.h"
@@ -39,7 +40,6 @@ namespace NCsWeapon
 			const FString& Context = Str::Copy;
 
 			CS_IS_PTR_NULL_CHECKED(InRoot)
-
 			CS_IS_PTR_NULL_CHECKED(From)
 
 			typedef NCsWeapon::NManager::NModifier::FLibrary ModifierLibrary;

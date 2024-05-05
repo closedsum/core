@@ -5,7 +5,7 @@
 // CVar
 #include "Beam/CsCVars_BeamWeapon.h"
 // Types
-#include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Math_Library.h"
 #include "Collision/CsTypes_Collision.h"
 // Library
 #include "Managers/Time/CsLibrary_Manager_Time.h"

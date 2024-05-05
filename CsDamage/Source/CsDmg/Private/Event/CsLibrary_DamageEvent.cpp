@@ -5,6 +5,7 @@
 #include "CsDmg.h"
 
 // Types
+#include "CsMacro_Misc.h"
 #include "Collision/CsTypes_Collision.h"
 // Library
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
@@ -437,7 +438,7 @@ namespace NCsDamage
 				}
 			}
 
-			if (MaxRangeHits.Num() == CS_EMPTY)
+			if (MaxRangeHits.IsEmpty())
 				return;
 
 			// Min Range

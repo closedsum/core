@@ -76,6 +76,18 @@ namespace NCsTrace
 {
 	namespace NRequest
 	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTrace::NRequest::FRequest, SetShape);
+			}
+		}
+
+		#define USING_NS_CACHED using namespace NCsTrace::NRequest::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsTrace::NRequest::NCached; \
+			const FString& Context = Str::__FunctionName
+
 		bool FRequest::IsValidChecked(const FString& Context) const
 		{
 			CS_IS_ENUM_VALID_CHECKED(EMCsTraceType, Type)
@@ -106,11 +118,8 @@ namespace NCsTrace
 
 		bool FRequest::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/) const
 		{
-			// Check Type is Valid
 			CS_IS_ENUM_VALID(EMCsTraceType, ECsTraceType, Type)
-			// Check Method is Valid
 			CS_IS_ENUM_VALID(EMCsTraceMethod, ECsTraceMethod, Method)
-			// Check Query is Valid
 			CS_IS_ENUM_VALID(EMCsTraceQuery, ECsTraceQuery, Query)
 
 			if (Shape.IsLine() &&
@@ -174,8 +183,12 @@ namespace NCsTrace
 			return Caller.IsValid() ? Caller.Get() : nullptr;
 		}
 
-		void FRequest::SetShape(UCapsuleComponent* Component)
+		void FRequest::SetShape(const UCapsuleComponent* Component)
 		{
+			SET_CONTEXT(SetShape);
+
+			CS_IS_PENDING_KILL_CHECKED(Component)
+
 			Shape.SetCapsule(Component->GetScaledCapsuleRadius(), Component->GetScaledCapsuleHalfHeight());
 		}
 
@@ -183,5 +196,8 @@ namespace NCsTrace
 		{
 			ElapsedTime += DeltaTime;
 		}
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
 	}
 }

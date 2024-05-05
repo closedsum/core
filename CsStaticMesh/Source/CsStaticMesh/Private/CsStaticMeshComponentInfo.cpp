@@ -4,7 +4,8 @@
 #include "CsStaticMeshComponentInfo.h"
 
 // Types
-#include "Types/CsTypes_Math.h"
+#include "CsMacro_Misc.h"
+#include "Types/CsTypes_Math_Library.h"
 // Library
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
@@ -47,12 +48,10 @@ void FCsStaticMeshComponentInfo::CopyToInfoAsValue(InfoType* Info) const
 
 bool FCsStaticMeshComponentInfo::IsValidChecked(const FString& Context) const
 {
-	// Check Mesh is Valid.
 	CS_IS_VALID_CHECKED(Mesh);
-	// Check Materials is Valid
 	CS_IS_VALID_CHECKED(Materials);
 
-	if (Materials.Materials.Num() > CS_EMPTY)
+	if (!Materials.Materials.IsEmpty())
 	{
 		typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -70,12 +69,10 @@ bool FCsStaticMeshComponentInfo::IsValidChecked(const FString& Context) const
 
 bool FCsStaticMeshComponentInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
-	// Check Mesh is Valid.
 	CS_IS_VALID(Mesh)
-	// Check Materials is Valid
 	CS_IS_VALID(Materials)
 
-	if (Materials.Materials.Num() > CS_EMPTY)
+	if (!Materials.Materials.IsEmpty())
 	{
 		typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -100,18 +97,17 @@ namespace NCsStaticMesh
 {
 	namespace NComponent
 	{
+		#define MaterialLibrary NCsMaterial::FLibrary
+		#define MIDLibrary NCsMaterial::NMID::FLibrary
+
 		bool FInfo::IsValidChecked(const FString& Context) const
 		{
-			// Check Mesh is Valid.
 			CS_IS_PTR_NULL_CHECKED(GetMesh())
-			// Check Materials is Valid
 			CS_IS_TARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
 
-			if (GetMaterials().Num() > CS_EMPTY)
+			if (!GetMaterials().IsEmpty())
 			{
-				typedef NCsMaterial::FLibrary MaterialLibrary;
-
 				check(MaterialLibrary::IsValidChecked(Context, GetMesh(), GetMaterials()));
 			}
 
@@ -132,10 +128,8 @@ namespace NCsStaticMesh
 			CS_IS_TARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL(GetMaterials(), UMaterialInterface)
 
-			if (GetMaterials().Num() > CS_EMPTY)
+			if (!GetMaterials().IsEmpty())
 			{
-				typedef NCsMaterial::FLibrary MaterialLibrary;
-
 				if (!MaterialLibrary::IsValid(Context, GetMesh(), GetMaterials(), Log))
 					return false;
 			}
@@ -158,10 +152,11 @@ namespace NCsStaticMesh
 			CS_IS_PTR_NULL_CHECKED(Component)
 			Component->SetStaticMesh(GetMesh()); 
 
-			typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
 			MIDLibrary::SetChecked(Context, Component, GetMaterials(), OutMIDs);
 			NCsTransformRules::SetRelativeTransform(Component, GetTransform(), GetTransformRules());
 		}
+
+		#undef MaterialLibrary
+		#undef MIDLibrary
 	}
 }

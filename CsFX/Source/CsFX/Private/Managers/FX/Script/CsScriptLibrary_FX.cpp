@@ -2,8 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/FX/Script/CsScriptLibrary_FX.h"
-#include "CsFX.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Enum.h"
 #include "Managers/FX/CsLibrary_FX.h"
@@ -39,30 +40,30 @@ UCsScriptLibrary_FX::UCsScriptLibrary_FX(const FObjectInitializer& ObjectInitial
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryFX::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryFX::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
+#define SET_CONTEXT(__FunctionName) using namespace NCsScriptLibraryFX::NCached; \
+			const FString& Context = Str::__FunctionName
+#define FXLibrary NCsFX::FLibrary
+
 // Enum
 #pragma region
 
 #define EnumMapType EMCsFX
 #define EnumType FECsFX
+#define EnumLibrary NCsEnum::FLibrary
 
 EnumType UCsScriptLibrary_FX::Get(const FString& Name)
 {
-	using namespace NCsScriptLibraryFX::NCached;
-
-	const FString& Context = Str::Get;
-
-	typedef NCsEnum::FLibrary EnumLibrary;
+	SET_CONTEXT(Get);
 
 	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
 EnumType UCsScriptLibrary_FX::GetByIndex(const int32& Index)
 {
-	using namespace NCsScriptLibraryFX::NCached;
-
-	const FString& Context = Str::GetByIndex;
-
-	typedef NCsEnum::FLibrary EnumLibrary;
+	SET_CONTEXT(GetByIndex);
 
 	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
@@ -79,8 +80,6 @@ uint8 UCsScriptLibrary_FX::GetCount()
 
 void UCsScriptLibrary_FX::GetAll(TArray<EnumType>& OutTypes)
 {
-	typedef NCsEnum::FLibrary EnumLibrary;
-
 	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
@@ -96,34 +95,28 @@ bool UCsScriptLibrary_FX::EqualEqual(const EnumType& A, const EnumType& B)
 
 #undef EnumMapType
 #undef EnumType
+#undef EnumLibrary
 
 #pragma endregion Enum
 
 UNiagaraSystem* UCsScriptLibrary_FX::LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path)
 {
-	typedef NCsFX::FLibrary FXLibrary;
-
 	return FXLibrary::SafeLoad(Context, Path);
 }
 
 UNiagaraSystem* UCsScriptLibrary_FX::LoadByStringPath(const FString& Context, const FString& Path)
 {
-	typedef NCsFX::FLibrary FXLibrary;
-
 	return FXLibrary::SafeLoad(Context, Path);
 }
 
 FCsRoutineHandle UCsScriptLibrary_FX::Spawn(const FString& Context, UObject* WorldContextObject, const FCsFX_Spawn_Params& Params)
 {
-	using namespace NCsScriptLibraryFX::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::Spawn : Context;
+	CONDITIONAL_SET_CTXT(Spawn);
 
 	if (!Params.IsValid(Ctxt))
 		return FCsRoutineHandle::Invalid;
 
 	// Copy the script params to the native params.
-	typedef NCsFX::FLibrary FXLibrary;
 	typedef NCsFX::NSpawn::NParams::FResource ParamsResourceType;
 	typedef NCsFX::NSpawn::NParams::FParams ParamsType;
 
@@ -137,22 +130,16 @@ FCsRoutineHandle UCsScriptLibrary_FX::Spawn(const FString& Context, UObject* Wor
 
 FCsRoutineHandle UCsScriptLibrary_FX::Spawn_GameState_OnceWithDelay(const FString& Context, UObject* WorldContextObject, const FCsFX& FX, const float& Delay)
 {
-	using namespace NCsScriptLibraryFX::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::Spawn_GameState_OnceWithDelay : Context;
-
-	typedef NCsFX::FLibrary FXLibrary;
+	CONDITIONAL_SET_CTXT(Spawn_GameState_OnceWithDelay);
 
 	return FXLibrary::SafeSpawn_GameState_OnceWithDelay(Ctxt, WorldContextObject, FX, Delay);
 }
 
 bool UCsScriptLibrary_FX::DataInterface_SkeletalMesh_SetComponent(const FString& Context, TArray<FCsFX_Parameters_DataInterface_SkeletalMesh>& Params, const int32& Index, USkeletalMeshComponent* Component)
 {
-	using namespace NCsScriptLibraryFX::NCached;
+	CONDITIONAL_SET_CTXT(DataInterface_SkeletalMesh_SetComponent);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::DataInterface_SkeletalMesh_SetComponent : Context;
-
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	void(*Log)(const FString&) = &NCsFX::FLog::Warning;
 
 	if (Index < 0)
 	{
@@ -178,11 +165,9 @@ bool UCsScriptLibrary_FX::DataInterface_SkeletalMesh_SetComponent(const FString&
 
 bool UCsScriptLibrary_FX::DataInterface_SkeletalMesh_ClearComponent(const FString& Context, TArray<FCsFX_Parameters_DataInterface_SkeletalMesh>& Params, const int32& Index)
 {
-	using namespace NCsScriptLibraryFX::NCached;
+	CONDITIONAL_SET_CTXT(DataInterface_SkeletalMesh_ClearComponent);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::DataInterface_SkeletalMesh_ClearComponent : Context;
-
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	void(*Log)(const FString&) = &NCsFX::FLog::Warning;
 
 	if (Index < 0)
 	{
@@ -199,3 +184,8 @@ bool UCsScriptLibrary_FX::DataInterface_SkeletalMesh_ClearComponent(const FStrin
 	Params[Index].Component = nullptr;
 	return true;
 }
+
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
+#undef SET_CONTEXT
+#undef FXLibrary

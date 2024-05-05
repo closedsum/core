@@ -5,6 +5,8 @@
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_StaticMesh.h"
 #include "Material/CsTypes_Material.h"
+// Log
+#include "Utility/CsStaticMeshLog.h"
 
 #include "CsStaticMeshComponentInfo.generated.h"
 
@@ -88,7 +90,7 @@ public:
 #undef InfoType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning) const;
 };
 
 class UStaticMesh;
@@ -207,7 +209,7 @@ namespace NCsStaticMesh
 			}
 
 			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning) const;
 
 			void SetChecked(const FString& Context, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs) const;
 		};

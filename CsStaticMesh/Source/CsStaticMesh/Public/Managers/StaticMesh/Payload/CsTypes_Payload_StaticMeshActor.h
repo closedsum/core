@@ -73,7 +73,7 @@ public:
 #undef PayloadType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning) const;
 };
 
 #pragma endregion FCsPayload_StaticMesh

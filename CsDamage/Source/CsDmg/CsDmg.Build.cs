@@ -31,6 +31,8 @@ public class CsDmg : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "CsCore",
                     "CsModifier",
                     "CsPhysics"

@@ -34,6 +34,8 @@ public class CsFX : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "CsCore"
 ,                }
             );

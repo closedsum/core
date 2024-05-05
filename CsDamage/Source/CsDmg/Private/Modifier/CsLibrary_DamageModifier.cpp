@@ -48,7 +48,6 @@ namespace NCsDamage
 		bool FLibrary::CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To)
 		{
 			CS_IS_PTR_NULL_CHECKED(From)
-
 			CS_IS_PTR_NULL_CHECKED(To)
 			return false;
 		}
@@ -178,7 +177,7 @@ namespace NCsDamage
 
 			bool CanModify = true;
 
-			if (WhitelistByDataTypeMap.Num() > CS_EMPTY)
+			if (!WhitelistByDataTypeMap.IsEmpty())
 			{
 				CanModify = WhitelistByDataTypeMap.Contains(Type);
 			}
@@ -328,7 +327,7 @@ namespace NCsDamage
 				{
 					const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
 
-					if (WhitelistByDataTypeMap.Num() > CS_EMPTY &&
+					if (!WhitelistByDataTypeMap.IsEmpty() &&
 						!WhitelistByDataTypeMap.Contains(Type))
 					{
 						continue;
@@ -398,7 +397,7 @@ namespace NCsDamage
 					*ValuePoint_Value  = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
 					*ValuePoint_Value *= CriticalStrike;
 
-					if (ValuePoint_FloatModifiers.Num() > CS_EMPTY)
+					if (!ValuePoint_FloatModifiers.IsEmpty())
 					{
 						OutMask |= (1 << NCsDamageModifier::ValuePoint.GetValue());
 					}
@@ -430,7 +429,7 @@ namespace NCsDamage
 					*ValueRange_ValueMin *= CriticalStrike;
 					*ValueRange_ValueMax *= CriticalStrike;
 
-					if (ValuePoint_FloatModifiers.Num() > CS_EMPTY)
+					if (!ValuePoint_FloatModifiers.IsEmpty())
 					{
 						OutMask |= (1 << NCsDamageModifier::ValuePoint.GetValue());
 					}
@@ -486,7 +485,7 @@ namespace NCsDamage
 
 				const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
 
-				if (WhitelistByDataTypeMap.Num() > CS_EMPTY &&
+				if (!WhitelistByDataTypeMap.IsEmpty() &&
 					!WhitelistByDataTypeMap.Contains(Type))
 				{
 					continue;
@@ -628,7 +627,7 @@ namespace NCsDamage
 			{
 				const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
 
-				if (WhitelistByDataTypeMap.Num() > CS_EMPTY &&
+				if (!WhitelistByDataTypeMap.IsEmpty() &&
 					!WhitelistByDataTypeMap.Contains(Type))
 				{
 					continue;
@@ -714,7 +713,7 @@ namespace NCsDamage
 				*ValuePoint_Value  = ModifierLibrary::ModifyFloatChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
 				*ValuePoint_Value *= CriticalStrike;
 
-				if (ValuePoint_FloatModifiers.Num() > CS_EMPTY)
+				if (!ValuePoint_FloatModifiers.IsEmpty())
 				{
 					OutMask |= (1 << NCsDamageModifier::ValuePoint.GetValue());
 				}
@@ -746,12 +745,12 @@ namespace NCsDamage
 				*ValueRange_ValueMin *= CriticalStrike;
 				*ValueRange_ValueMax *= CriticalStrike;
 
-				if (ValueRange_FloatModifiers.Num() > CS_EMPTY)
+				if (!ValueRange_FloatModifiers.IsEmpty())
 				{
 					OutMask |= (1 << NCsDamageModifier::ValueRange_Uniform.GetValue());
 				}
 
-				if (ValueRange_FloatRangeModifiers.Num() > CS_EMPTY)
+				if (!ValueRange_FloatRangeModifiers.IsEmpty())
 				{
 					OutMask |= (1 << NCsDamageModifier::ValueRange_Range.GetValue());
 				}

@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Library/CsLibrary_Valid.h"
@@ -23,12 +25,19 @@ namespace NCsProjectile
 				{
 					namespace Str
 					{
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::FImplSlice, SetInterfaceMap);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::FImplSlice, CopyFromModifiers);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::FImplSlice, CopyAndEmptyFromModifiers);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::FImplSlice, TransferFromModifiers);
 					}
 				}
 			}
+
+			#define USING_NS_CACHED using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached;
+			#define SET_CONTEXT(__FunctionName) using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached; \
+				const FString& Context = Str::__FunctionName
+			#define PrjManagerLibrary NCsProjectile::NManager::FLibrary
+			#define PrjModifierLibrary NCsProjectile::NManager::NModifier::FLibrary
 
 			FImplSlice::FImplSlice() :
 				// ICsGetInterfaceMap
@@ -41,7 +50,9 @@ namespace NCsProjectile
 
 			void FImplSlice::SetInterfaceMap(FCsInterfaceMap* InInterfaceMap)
 			{
-				checkf(InInterfaceMap, TEXT("NCsProjectile::NPayload::NModifier::FImplSlice::SetInterfaceMap: InInterfaceMap is NULL."));
+				SET_CONTEXT(SetInterfaceMap);
+
+				CS_IS_PTR_NULL_CHECKED(InInterfaceMap)
 
 				checkf(InInterfaceMap->HasUniqueBasedSlices(), TEXT("NCsProjectile::NPayload::NModifier::FImplSlice::SetInterfaceMap: This only takes an InterfaceMap with bUniqueBasedSlices = true."));
 
@@ -66,16 +77,11 @@ namespace NCsProjectile
 
 			void FImplSlice::CopyFromModifiers(const UObject* WorldContext, const TArray<ModifierType*>& FromModifiers)
 			{
-				using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached;
-
-				const FString& Context = Str::CopyFromModifiers;
+				SET_CONTEXT(CopyFromModifiers);
 
 				CS_IS_TARRAY_ANY_NULL_CHECKED(FromModifiers, ModifierType)
 
 				checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
-
-				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-				typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
 				Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
 				Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
@@ -96,16 +102,11 @@ namespace NCsProjectile
 
 			void FImplSlice::CopyAndEmptyFromModifiers(const UObject* WorldContext, TArray<ModifierType*>& FromModifiers)
 			{
-				using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached;
-
-				const FString& Context = Str::CopyAndEmptyFromModifiers;
+				SET_CONTEXT(CopyAndEmptyFromModifiers);
 
 				CS_IS_TARRAY_ANY_NULL_CHECKED(FromModifiers, ModifierType)
 
 				checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
-
-				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-				typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
 				const int32 Count = FromModifiers.Num();
 
@@ -131,9 +132,7 @@ namespace NCsProjectile
 
 			void FImplSlice::CopyFromModifiers(const UObject* WorldContext, const TArray<AllocatedModifierType>& FromModifiers)
 			{
-				using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached;
-
-				const FString& Context = Str::CopyFromModifiers;
+				SET_CONTEXT(CopyFromModifiers);
 
 				checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
 
@@ -151,9 +150,7 @@ namespace NCsProjectile
 
 			void FImplSlice::TransferFromModifiers(TArray<AllocatedModifierType>& FromModifiers)
 			{
-				using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached;
-
-				const FString& Context = Str::TransferFromModifiers;
+				SET_CONTEXT(TransferFromModifiers);
 
 				checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
 
@@ -177,5 +174,10 @@ namespace NCsProjectile
 			#undef ModifierType
 			#undef AllocatedModifierType
 		}
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef PrjManagerLibrary
+		#undef PrjModifierLibrary
 	}
 }

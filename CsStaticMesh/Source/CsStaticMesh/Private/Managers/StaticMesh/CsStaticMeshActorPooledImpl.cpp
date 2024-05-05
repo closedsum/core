@@ -8,7 +8,7 @@
 #include "Managers/StaticMesh/CsCVars_StaticMeshActor.h"
 // Types
 #include "Types/CsTypes_AttachDetach.h"
-#include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Math_Library.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/StaticMesh/Payload/CsLibrary_Payload_StaticMeshActor.h"

@@ -78,6 +78,11 @@ namespace NCsAnimMontage
 
 	#define ParamsType NCsAnimMontage::NPlay::FParams
 
+	float FLibrary::PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim, const float& PlayRate /*=1.0f*/, const float& TimeToStartMontageAt /*=0.0f*/)
+	{
+		return AnimInstanceLibrary::GetChecked(Context, Component)->Montage_Play(Anim, PlayRate, EMontagePlayReturnType::Duration, TimeToStartMontageAt);
+	}
+
 	float FLibrary::PlayChecked(const FString& Context, UPrimitiveComponent* Component, const ParamsType& Params)
 	{
 		CS_IS_VALID_CHECKED(Params);

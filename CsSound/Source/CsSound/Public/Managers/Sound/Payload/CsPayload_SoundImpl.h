@@ -4,6 +4,8 @@
 #pragma once
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Managers/Sound/Payload/CsPayload_Sound.h"
+// Log
+#include "Utility/CsSoundLog.h"
 
 #include "CsPayload_SoundImpl.generated.h"
 
@@ -66,7 +68,7 @@ public:
 #undef PayloadType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSound::FLog::Warning) const;
 };
 
 class UObject;

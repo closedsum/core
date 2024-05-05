@@ -4,6 +4,8 @@
 #include "Managers/FX/CsTypes_FX.h"
 #include "CsFX.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/FX/CsLibrary_FX.h"
 #include "Library/CsLibrary_Valid.h"
@@ -31,7 +33,7 @@ namespace NCsFX
 				const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<FECsFX>();
 				const FString& EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsFX>();
 
-				if (Enums.Num() > CS_EMPTY)
+				if (!Enums.IsEmpty())
 				{
 					for (const FCsSettings_Enum& Enum : Enums)
 					{

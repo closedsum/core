@@ -20,6 +20,8 @@ public class CsSe : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "CsCore",
                     "CsDmg",
                     "CsFX"

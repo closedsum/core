@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Event/CsAllocated_DamageEvent.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 	// Common
@@ -20,17 +22,24 @@ namespace NCsDamage
 			{
 				namespace Str
 				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FAllocated, Set);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FAllocated, Copy);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FAllocated, Reset);
 				}
 			}
 		}
 
+		#define USING_NS_CACHED using namespace NCsDamage::NEvent::NAllocated::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsDamage::NEvent::NAllocated::NCached; \
+			const FString& Context = Str::__FunctionName
+		#define DamageManagerLibrary NCsDamage::NManager::FLibrary
+
 		void FAllocated::Set(UObject* InRoot, FResource* InContainer)
 		{
-			checkf(InRoot, TEXT("NCsDamage::NEvent::FAllocated::Set: InRoot is NULL."));
+			SET_CONTEXT(Set);
 
-			checkf(InContainer, TEXT("NCsDamage::NEvent::FAllocated::Set: From is NULL."));
+			CS_IS_PENDING_KILL_CHECKED(InRoot)
+			CS_IS_PTR_NULL_CHECKED(InContainer)
 
 			checkf(!Container, TEXT("NCsDamage::NEvent::FAllocated::Set: Container is already SET."));
 
@@ -41,15 +50,10 @@ namespace NCsDamage
 
 		void FAllocated::Copy(UObject* InRoot, const IEvent* From)
 		{
-			using namespace NAllocated::NCached;
-
-			const FString& Context = Str::Copy;
+			SET_CONTEXT(Copy);
 
 			CS_IS_PTR_NULL_CHECKED(InRoot)
-
 			CS_IS_PTR_NULL_CHECKED(From)
-
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
 			Root	  = InRoot;
 			Container = DamageManagerLibrary::CreateCopyOfEventChecked(Context, Root, From);
@@ -58,9 +62,7 @@ namespace NCsDamage
 
 		void FAllocated::Copy(const FAllocated& From)
 		{
-			using namespace NAllocated::NCached;
-
-			const FString& Context = Str::Copy;
+			SET_CONTEXT(Copy);
 
 			CS_IS_PTR_NULL_CHECKED(From.Root)
 
@@ -68,8 +70,6 @@ namespace NCsDamage
 
 			if (From.Container)
 			{
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
 				Root	  = From.Root;
 				Container = DamageManagerLibrary::CreateCopyOfEventChecked(Context, Root, From.Container->Get());
 				Event	  = Container->Get();
@@ -78,15 +78,11 @@ namespace NCsDamage
 
 		void FAllocated::Reset()
 		{
-			using namespace NAllocated::NCached;
-
-			const FString& Context = Str::Reset;
+			SET_CONTEXT(Reset);
 
 			if (Container)
 			{
 				CS_IS_PTR_NULL_CHECKED(Root)
-
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
 				DamageManagerLibrary::DeallocateEventChecked(Context, Root, Container);
 			}
@@ -95,5 +91,9 @@ namespace NCsDamage
 			Container = nullptr;
 			Event	  = nullptr;
 		}
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef DamageManagerLibrary
 	}
 }

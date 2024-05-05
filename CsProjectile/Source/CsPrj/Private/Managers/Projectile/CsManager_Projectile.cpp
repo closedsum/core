@@ -17,7 +17,7 @@
 	// Common
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Property.h"
-#include "Level/CsLibrary_Level.h"
+#include "Level/CsLibrary_LevelImpl.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsPrjLog.h"
@@ -564,9 +564,9 @@ void UCsManager_Projectile::SetupInternal()
 	// If any settings have been set for Manager_Projectile, apply them
 	{
 
-		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
+		typedef NCsLevel::NPersistent::NImpl::FLibrary LevelImplLibrary;
 
-		ICsGetSettingsManagerProjectile* GetPoolParams = LevelLibrary::GetSetupDataChecked<ICsGetSettingsManagerProjectile>(Context, MyRoot);
+		ICsGetSettingsManagerProjectile* GetPoolParams = LevelImplLibrary::GetSetupDataChecked<ICsGetSettingsManagerProjectile>(Context, MyRoot);
 
 		Settings = GetPoolParams->GetSettingsManagerProjectile();
 

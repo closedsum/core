@@ -8,7 +8,7 @@
 #include "Managers/SkeletalMesh/CsCVars_SkeletalMeshActor.h"
 // Types
 #include "Types/CsTypes_AttachDetach.h"
-#include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Math_Library.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"

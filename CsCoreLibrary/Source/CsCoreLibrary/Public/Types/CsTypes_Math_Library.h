@@ -82,6 +82,26 @@ namespace NCsRotationRules
 	*
 	* return			Rotation filtered by the bit mask, Rules.
 	*/
+	FORCEINLINE FRotator GetRotationChecked(const FString& Context, FRotator Rotation, const int32& Rules)
+	{
+		checkf(Rules != None, TEXT("%s: Rules == 0. No bit flags set."), *Context);
+
+		Rotation.Pitch = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Pitch) ? Rotation.Pitch : 0.0f;
+		Rotation.Yaw   = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Rotation.Yaw : 0.0f;
+		Rotation.Roll  = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Roll) ? Rotation.Roll : 0.0f;
+
+		return Rotation;
+	}
+
+	/**
+	* Get the Rotation filtered by the bit mask, Rules.
+	* Check Rules has at least 1 bit flag set.
+	* 
+	* @param Rotation
+	* @param Rules		 Bit mask for which components of the Rotation to return.
+	*
+	* return			Rotation filtered by the bit mask, Rules.
+	*/
 	FORCEINLINE FRotator3f GetRotationChecked(const FString& Context, FRotator3f Rotation, const int32& Rules)
 	{
 		checkf(Rules != None, TEXT("%s: Rules == 0. No bit flags set."), *Context);

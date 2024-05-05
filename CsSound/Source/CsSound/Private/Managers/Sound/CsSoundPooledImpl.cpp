@@ -9,7 +9,7 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
-#include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Math_Library.h"
 // Library
 #include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"

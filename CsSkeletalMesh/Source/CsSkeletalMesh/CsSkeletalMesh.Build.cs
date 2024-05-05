@@ -31,6 +31,8 @@ public class CsSkeletalMesh : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "CsCore"
                 }
             );

@@ -2,8 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Components/CsWidgetInteractionComponent.h"
-#include "CsUI.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Coordinators/GameEvent/CsLibrary_Coordinator_GameEvent.h"
 	// Common

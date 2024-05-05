@@ -4,6 +4,8 @@
 #include "Modifier/CsAllocated_SpawnerModifier.h"
 #include "CsSpawner.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Managers/Spawner/CsLibrary_Manager_Spawner.h"
 #include "Library/CsLibrary_Valid.h"

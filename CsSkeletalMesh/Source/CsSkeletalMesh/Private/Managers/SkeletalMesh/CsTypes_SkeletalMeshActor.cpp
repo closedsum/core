@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 	// Settings
 #include "Settings/CsLibrary_SkeletalMeshSettings.h"
@@ -11,7 +13,6 @@
 #include "Material/CsLibrary_Material.h"
 // Utility
 #include "Utility/CsPopulateEnumMapFromSettings.h"
-#include "Utility/CsLog.h"
 
 // SkeletalMeshActor
 #pragma region
@@ -42,7 +43,7 @@ namespace NCsSkeletalMeshActor
 		Payload.CreateCustom			 = &CreateCustom;
 		Payload.IsValidEnum				 = &IsValidEnum;
 		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
-		Payload.Log						 = &FCsLog::Warning;
+		Payload.Log						 = &NCsSkeletalMesh::FLog::Warning;
 
 		EnumSettingsLibrary::Populate(Context, Payload);
 	}
@@ -61,7 +62,7 @@ namespace NCsSkeletalMeshActor
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsSkeletalMeshActor>(Context, ContextRoot, DataRootSet->WidgetActorClasses, Str::SkeletalMeshActor, &FCsLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsSkeletalMeshActor>(Context, ContextRoot, DataRootSet->WidgetActorClasses, Str::SkeletalMeshActor, &NCsSkeletalMesh::FLog::Warning);
 	}
 	*/
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -106,7 +107,7 @@ namespace NCsSkeletalMeshActorClass
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsSkeletalMeshActorClass>(Context, ContextRoot, DataRootSet->WidgetActorClasses, Str::SkeletalMeshActorClass, &FCsLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsSkeletalMeshActorClass>(Context, ContextRoot, DataRootSet->WidgetActorClasses, Str::SkeletalMeshActorClass, &NCsSkeletalMesh::FLog::Warning);
 	}
 	*/
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -146,7 +147,7 @@ bool FCsSkeletalMeshActorPooledInfo::IsValidChecked(const FString& Context) cons
 	// Check Mesh is Valid.
 	check(Mesh.IsValidChecked(Context));
 	// Check Materials is Valid
-	if (Materials.Materials.Num() > CS_EMPTY)
+	if (!Materials.Materials.IsEmpty())
 	{
 		check(Materials.IsValidChecked(Context));
 
@@ -164,13 +165,13 @@ bool FCsSkeletalMeshActorPooledInfo::IsValidChecked(const FString& Context) cons
 	return true;
 }
 
-bool FCsSkeletalMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsSkeletalMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkeletalMesh::FLog::Warning*/) const
 {
 	// Check Mesh is Valid.
 	if (!Mesh.IsValid(Context, Log))
 		return false;
 	// Check Materials is Valid
-	if (Materials.Materials.Num() > CS_EMPTY)
+	if (!Materials.Materials.IsEmpty())
 	{
 		if (!Materials.IsValid(Context, Log))
 			return false;

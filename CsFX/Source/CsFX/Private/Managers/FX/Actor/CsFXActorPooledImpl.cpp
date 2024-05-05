@@ -8,7 +8,7 @@
 #include "Managers/FX/CsCVars_FX.h"
 // Types
 #include "Types/CsTypes_AttachDetach.h"
-#include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Math_Library.h"
 // Library
 #include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
@@ -31,7 +31,7 @@
 
 #if WITH_EDITOR
 // Library
-#include "Game/CsLibrary_GameInstance.h"
+#include "Game/CsLibrary_GameInstanceImpl.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -79,6 +79,10 @@ UCsFXActorPooledImpl::UCsFXActorPooledImpl(const FObjectInitializer& ObjectIniti
 {
 }
 
+#define USING_NS_CACHED using namespace NCsFXActorPooledImpl::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsFXActorPooledImpl::NCached; \
+	const FString& Context = Str::__FunctionName
+
 // UObject Interface
 #pragma region
 
@@ -99,9 +103,7 @@ void UCsFXActorPooledImpl::OnConstructObject(const ConstructParamsType& Params)
 {
 #undef ConstructParamsType
 
-	using namespace NCsFXActorPooledImpl::NCached;
-
-	const FString& Context = Str::OnConstructObject;
+	SET_CONTEXT(OnConstructObject);
 
 	ConstructCache();
 	
@@ -189,9 +191,7 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 {
 #undef PooledPayloadType
 
-	using namespace NCsFXActorPooledImpl::NCached;
-
-	const FString& Context = Str::Allocate;
+	SET_CONTEXT(Allocate);
 
 	typedef NCsFX::NCache::FImpl CacheImplType;
 	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
@@ -272,8 +272,8 @@ void UCsFXActorPooledImpl::Deallocate()
 	using namespace NCsFXActorPooledImpl::NCached;
 
 	// Check if beginning Shutdown
-	UCsManager_FX* Manager_FX = Cast<UCsManager_FX>(GetOuter());
-	const bool IsBeginningShutdown		  = Manager_FX->IsBeginningShutdown();
+	UCsManager_FX* Manager_FX		= Cast<UCsManager_FX>(GetOuter());
+	const bool IsBeginningShutdown	= Manager_FX->IsBeginningShutdown();
 
 	if (IsBeginningShutdown)
 	{
@@ -404,9 +404,7 @@ void UCsFXActorPooledImpl::Handle_SetFXSystem(FXPayloadType* Payload)
 
 void UCsFXActorPooledImpl::Log_SetFXSystem(FXPayloadType* Payload)
 {
-	using namespace NCsFXActorPooledImpl::NCached;
-
-	const FString& Context = Str::Handle_SetFXSystem;
+	SET_CONTEXT(Handle_SetFXSystem);
 
 	if (CS_CVAR_LOG_IS_SHOWING(LogFXPooledChange) ||
 		CS_CVAR_LOG_IS_SHOWING(LogFXPooledChangeSet))
@@ -572,9 +570,7 @@ void UCsFXActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload,
 
 void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 {
-	using namespace NCsFXActorPooledImpl::NCached;
-
-	const FString& Context = Str::Handle_ClearFXSystem;
+	SET_CONTEXT(Handle_ClearFXSystem);
 
 	typedef NCsFX::FLibrary FXLibrary;
 	typedef NCsFX::NPayload::EChange ChangeType;
@@ -598,13 +594,13 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 		// NOTE: 4.26.2. When exiting the game, need to wait for any async threads (render/gpu) to complete.
 		//				 During the game, this shouldn't be an issue since the FX should deallocate gracefully.
 		typedef NCsWorld::FLibrary WorldLibrary;
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+		typedef NCsGameInstance::NImpl::FLibrary GameImplInstanceLibrary;
 
 		UCsManager_FX* Manager_FX = Cast<UCsManager_FX>(GetOuter());
 		UObject* OuterRoot					  = Manager_FX->GetMyRoot();
 
 		if (WorldLibrary::IsPlayInGameOrPIE(OuterRoot) &&
-			GameInstanceLibrary::IsStandaloneFromEditorChecked(Context, OuterRoot))
+			GameImplInstanceLibrary::IsStandaloneFromEditorChecked(Context, OuterRoot))
 		{
 			FX->GetNiagaraComponent()->DeactivateImmediate();
 			*AssetPropertyPtr = nullptr;
@@ -634,13 +630,11 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 
 void UCsFXActorPooledImpl::WaitForSystemComplete()
 {
-	using namespace NCsFXActorPooledImpl::NCached;
-
-	const FString& Context = Str::WaitForSystemComplete;
+	SET_CONTEXT(WaitForSystemComplete);
 
 	// Check to Wait for System to "complete"
-	UCsManager_FX* Manager_FX = Cast<UCsManager_FX>(GetOuter());
-	const bool IsBeginningShutdown		  = Manager_FX->IsBeginningShutdown();
+	UCsManager_FX* Manager_FX		= Cast<UCsManager_FX>(GetOuter());
+	const bool IsBeginningShutdown	= Manager_FX->IsBeginningShutdown();
 
 	typedef NCsFX::FLibrary FXLibrary;
 
@@ -771,3 +765,6 @@ void UCsFXActorPooledImpl::LogChangeCounter()
 		UE_LOG(LogCsFX, Warning, TEXT("UCsFXActorPooledImpl::LogChangeCounter: %s."), *(ChangeCounter::Get().ToString()));
 	}
 }
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT

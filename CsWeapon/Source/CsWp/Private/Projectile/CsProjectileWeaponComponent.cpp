@@ -7,6 +7,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Types/CsCached.h"
+#include "Types/CsTypes_Math_Library.h"
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/Time/CsLibrary_Manager_Time.h"

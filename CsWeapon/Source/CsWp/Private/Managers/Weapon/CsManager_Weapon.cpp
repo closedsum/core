@@ -11,7 +11,7 @@
 #include "Data/CsLibrary_Data_Weapon.h"
 	// Common
 #include "Game/CsLibrary_GameInstance.h"
-#include "Level/CsLibrary_Level.h"
+#include "Level/CsLibrary_LevelImpl.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsWpLog.h"
@@ -518,9 +518,9 @@ void UCsManager_Weapon::SetupInternal()
 #endif // #if WITH_EDITOR
 	// If any settings have been set for Manager_Weapon, apply them
 	{
-		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
+		typedef NCsLevel::NPersistent::NImpl::FLibrary LevelImplLibrary;
 
-		ICsGetSettingsManagerWeapon* GetSettingsManagerWeapon = LevelLibrary::GetSetupDataChecked<ICsGetSettingsManagerWeapon>(Context, MyRoot);
+		ICsGetSettingsManagerWeapon* GetSettingsManagerWeapon = LevelImplLibrary::GetSetupDataChecked<ICsGetSettingsManagerWeapon>(Context, MyRoot);
 
 		Settings = GetSettingsManagerWeapon->GetSettingsManagerWeapon();
 

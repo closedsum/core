@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
-#include "CsCore.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
-// Settings
+	// Settings
 #include "Settings/CsLibrary_StaticMeshSettings.h"
 	// Common
 #include "Material/CsLibrary_Material.h"
@@ -193,7 +194,7 @@ bool FCsStaticMeshActorPooledInfo::IsValidChecked(const FString& Context) const
 	// Check Mesh is Valid.
 	check(Mesh.GetChecked(Context));
 	// Check Materials is Valid
-	if (Materials.Materials.Num() > CS_EMPTY)
+	if (!Materials.Materials.IsEmpty())
 	{
 		check(Materials.IsValidChecked(Context));
 
@@ -219,7 +220,7 @@ bool FCsStaticMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(co
 	if (!Mesh.IsValid(Context, Log))
 		return false;
 	// Check Materials is Valid
-	if (Materials.Materials.Num() > CS_EMPTY)
+	if (!Materials.Materials.IsEmpty())
 	{
 		if (!Materials.IsValid(Context, Log))
 			return false;

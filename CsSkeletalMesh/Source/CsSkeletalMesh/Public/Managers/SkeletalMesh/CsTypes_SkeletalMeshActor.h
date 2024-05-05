@@ -10,6 +10,8 @@
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_SkeletalMesh.h"
 #include "Material/CsTypes_Material.h"
+// Log
+#include "Utility/CsSkeletalMeshLog.h"
 
 #include "CsTypes_SkeletalMeshActor.generated.h"
 
@@ -271,7 +273,7 @@ public:
 #undef DeallocateMethodType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkeletalMesh::FLog::Warning) const;
 };
 
 #pragma endregion FCsSkeletalMeshActorPooledInfo

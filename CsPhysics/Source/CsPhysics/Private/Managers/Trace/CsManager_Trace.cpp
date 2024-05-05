@@ -637,15 +637,15 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 
 void UCsManager_Trace::DrawRequest(const RequestType* Request) const
 {
-	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
+	if (CS_CVAR_DRAW_IS_DRAWING(DrawManagerTraceRequests))
 	{
-		UCsPhysicsSettings* Settings = GetMutableDefault<UCsPhysicsSettings>();
+		const FCsSettings_Manager_Trace_Debug& Settings = FCsSettings_Manager_Trace_Debug::Get();
 
 		const FCollisionShape& Shape = Request->Shape;
 		const FVector3f& Start		 = Request->Start;
 		const FVector3f& End		 = Request->End;
 
-		Settings->Manager_Trace.Debug.DrawRequest.Draw(GetWorld(), Start, End, &Shape);
+		Settings.DrawRequest.Draw(GetWorld(), Start, End, &Shape);
 	}
 }
 
@@ -751,17 +751,17 @@ void UCsManager_Trace::OnOverlapResponse(const FTraceHandle& Handle, FOverlapDat
 
 void UCsManager_Trace::DrawResponse(const RequestType* Request, const ResponseType* Response) const
 {
-	if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawManagerTraceRequests))
+	if (CS_CVAR_DRAW_IS_DRAWING(DrawManagerTraceResponses))
 	{
-		UCsPhysicsSettings* Settings = GetMutableDefault<UCsPhysicsSettings>();
+		const FCsSettings_Manager_Trace_Debug& Settings = FCsSettings_Manager_Trace_Debug::Get();
 
 		const FCollisionShape& Shape = Request->Shape;
 		const FVector3f& Start		 = Request->Start;
-		const FVector3f& End			 = Request->End;
+		const FVector3f& End		 = Request->End;
 
 		const FHitResult& Hit = Response->bResult ? Response->OutHits[CS_FIRST] : NCsCollision::NHit::Default;
 
-		Settings->Manager_Trace.Debug.DrawResponse.Draw(GetWorld(), Start, End, &Shape, Hit);
+		Settings.DrawResponse.Draw(GetWorld(), Start, End, &Shape, Hit);
 	}
 }
 

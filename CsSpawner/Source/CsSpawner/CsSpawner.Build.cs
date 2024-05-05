@@ -20,6 +20,8 @@ public class CsSpawner : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "CsCore",
                     "CsModifier"
                 }

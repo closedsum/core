@@ -6,6 +6,8 @@
 
 // CVar
 #include "CsCVars.h"
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 #include "Managers/Runnable/CsLibrary_Manager_Runnable.h"

@@ -15,7 +15,7 @@ namespace NCsStatusEffect
 
 			const TArray<FECsStatusEffect>& StatusEffectsToRemove = Data->GetStatusEffectsToRemove();
 
-			if (StatusEffectsToRemove.Num() == CS_EMPTY)
+			if (StatusEffectsToRemove.IsEmpty())
 				return false;
 
 			bool AnyRemoved = false;

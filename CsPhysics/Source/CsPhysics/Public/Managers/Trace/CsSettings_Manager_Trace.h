@@ -27,6 +27,8 @@ struct CSPHYSICS_API FCsSettings_Manager_Trace_Debug
 		DrawResponse()
 	{
 	}
+
+	static const FCsSettings_Manager_Trace_Debug& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Trace_Debug
@@ -56,6 +58,8 @@ public:
 		Debug()
 	{
 	}
+
+	static const FCsSettings_Manager_Trace& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Trace

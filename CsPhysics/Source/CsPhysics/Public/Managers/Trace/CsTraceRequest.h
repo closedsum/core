@@ -309,7 +309,7 @@ namespace NCsTrace
 
 			UObject* GetCaller() const;
 
-			void SetShape(UCapsuleComponent* Component);
+			void SetShape(const UCapsuleComponent* Component);
 
 			FORCEINLINE bool HasExpired() const
 			{

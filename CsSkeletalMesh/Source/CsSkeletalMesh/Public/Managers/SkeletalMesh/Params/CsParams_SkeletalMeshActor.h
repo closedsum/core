@@ -71,7 +71,7 @@ namespace NCsSkeletalMeshActor
 					}
 
 					bool IsValidChecked(const FString& Context) const;
-					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkeletalMesh::FLog::Warning) const;
 				};
 			}
 
@@ -118,7 +118,7 @@ namespace NCsSkeletalMeshActor
 					}
 
 					bool IsValidChecked(const FString& Context) const;
-					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkeletalMesh::FLog::Warning) const;
 				};
 			}
 		}
@@ -226,7 +226,7 @@ namespace NCsSkeletalMeshActor
 				}
 
 				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkeletalMesh::FLog::Warning) const;
 
 			#undef DeallocateMethodType
 			#undef ParamsType
@@ -270,7 +270,7 @@ public:
 #undef ShotType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkeletalMesh::FLog::Warning) const;
 };
 
 #pragma endregion FCsSkeletalMeshAnimSequenceOneShot
@@ -376,7 +376,7 @@ namespace NCsSkeletalMeshActor
 				}
 
 				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkeletalMesh::FLog::Warning) const;
 
 			#undef DeallocateMethodType
 			#undef ParamsType
@@ -430,7 +430,7 @@ public:
 #undef ShotType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkeletalMesh::FLog::Warning) const;
 };
 
 #pragma endregion FCsSkeletalMeshAnimMontageOneShot

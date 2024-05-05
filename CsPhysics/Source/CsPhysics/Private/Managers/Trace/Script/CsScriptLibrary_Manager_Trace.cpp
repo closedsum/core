@@ -26,6 +26,7 @@ namespace NCsScriptLibraryManagerTrace
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Trace, LineTraceSingleByChannel);
 			// Sphere
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Trace, SphereTraceSingleByChannel);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Trace, SphereTraceSingleByChannelAtBone);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Trace, SphereTraceSingleByObjectType);
 			// Capsule
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Trace, SweepByCapsuleComponent);
@@ -145,6 +146,13 @@ bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByChannel(const FString& C
 		return false;
 	}
 	return false;
+}
+
+bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByChannelAtBone(const FString& Context, UObject* WorldContextObject, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, const float& Radius, const TEnumAsByte<ECollisionChannel>& Channel, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit)
+{
+	CONDITIONAL_SET_CTXT(SphereTraceSingleByChannelAtBone);
+
+	return TraceManagerLibrary::SafeSphereTrace(Ctxt, WorldContextObject, Component, BoneOrSocket, Radius, Channel, bTraceComplex, bIgnoreSelf, ActorsToIgnore, OutHit);
 }
 
 bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByObjectType(const FString& Context, UObject* WorldContextObject, const FVector& Start, const FVector& End, const float& Radius, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit)

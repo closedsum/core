@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Struct/CsUIRegisterStructOpsData.h"
 
-#include "Struct/CsStructOps_Data.h"
+#include "CsStructOps_Data.h"
 
 namespace NCsUI
 {

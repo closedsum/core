@@ -10,6 +10,8 @@
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_StaticMesh.h"
 #include "Material/CsTypes_Material.h"
+// Log
+#include "Utility/CsStaticMeshLog.h"
 
 #include "CsTypes_StaticMeshActor.generated.h"
 
@@ -275,11 +277,11 @@ public:
 
 #define PayloadType NCsStaticMeshActor::NPayload::FImpl
 	void SetPayloadChecked(const FString& Context, PayloadType* Payload) const;
-	bool SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning) const;
 #undef PayloadType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning) const;
 };
 
 #pragma endregion FCsStaticMeshActorPooledInfo

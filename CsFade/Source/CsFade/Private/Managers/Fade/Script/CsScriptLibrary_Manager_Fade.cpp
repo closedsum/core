@@ -10,6 +10,8 @@
 // Library
 #include "Managers/Fade/CsLibrary_Manager_Fade.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Fade)
+
 // Cached
 #pragma region
 

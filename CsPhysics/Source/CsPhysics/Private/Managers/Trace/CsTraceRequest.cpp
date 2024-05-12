@@ -14,6 +14,8 @@
 // Components
 #include "Components/CapsuleComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTraceRequest)
+
 #define RequestType NCsTrace::NRequest::FRequest
 void FCsTraceRequest::CopyToRequestAsValue(RequestType* Request) const
 {

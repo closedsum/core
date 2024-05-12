@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Tool/CsGetDataEntryTool.h"
-#include "CsCore.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetDataEntryTool)
 
 UCsGetDataEntryTool::UCsGetDataEntryTool(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

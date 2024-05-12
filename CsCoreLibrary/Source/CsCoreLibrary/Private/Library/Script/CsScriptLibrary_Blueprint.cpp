@@ -6,6 +6,8 @@
 // Library
 #include "Library/CsLibrary_Blueprint.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Blueprint)
+
 // Cached
 #pragma region
 

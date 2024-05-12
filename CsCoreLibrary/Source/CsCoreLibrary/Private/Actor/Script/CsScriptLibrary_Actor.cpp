@@ -15,6 +15,8 @@
 // Actor
 #include "GameFramework/Actor.h" // TODO: Move to Library
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Actor)
+
 // Cached
 #pragma region
 

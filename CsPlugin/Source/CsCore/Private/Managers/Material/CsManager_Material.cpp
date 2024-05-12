@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Material/CsManager_Material.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -22,6 +21,8 @@
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Material/CsGetManagerMaterial.h"
 #endif // #if WITH_EDITOR
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Material)
 
 namespace NCsMaterial
 {

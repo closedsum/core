@@ -12,6 +12,8 @@
 #include "UI/CsPerformanceUI.h"
 #include "Blueprint/UserWidget.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Performance_UI)
+
 // FCsSettings_Performance_UI
 #pragma region
 

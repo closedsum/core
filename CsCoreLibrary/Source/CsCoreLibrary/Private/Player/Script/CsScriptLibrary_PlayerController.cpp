@@ -8,6 +8,8 @@
 // Library
 #include "Player/CsLibrary_Player.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_PlayerController)
+
 // Cached
 #pragma region
 

@@ -12,6 +12,8 @@
 // Log
 #include "Utility/CsCoreLibraryLog.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_PlayerCamera)
+
 // Cached
 #pragma region
 

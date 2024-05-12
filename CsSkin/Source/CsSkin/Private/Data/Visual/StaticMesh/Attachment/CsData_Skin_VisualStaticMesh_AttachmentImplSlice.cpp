@@ -11,6 +11,8 @@
 #include "Containers/CsInterfaceMap.h"
 #include "Containers/CsDeconstructInterfaceSliceMap.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualStaticMesh_AttachmentImplSlice)
+
 #define SliceType NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice
 
 void FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::CopyToSlice(SliceType* Slice)

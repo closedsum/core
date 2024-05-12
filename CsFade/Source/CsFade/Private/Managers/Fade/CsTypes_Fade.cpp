@@ -8,6 +8,8 @@
 // Curve
 #include "Curves/CurveBase.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Fade)
+
 // FCsFade_ClearToBlackParams
 #pragma region
 

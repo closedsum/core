@@ -9,6 +9,8 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Container)
+
 // FCsSettings_Container_UniformGrid_Debug
 #pragma region
 

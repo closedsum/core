@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Material/Parameter/Collection/Script/CsScriptLibrary_MPC.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "Material/Parameter/Collection/CsLibrary_Material_Parameter_Collection.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_MPC)
 
 // Cached
 #pragma region

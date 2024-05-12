@@ -15,6 +15,8 @@
 // Log
 #include "Utility/CsLog.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Data_Skin_Visual)
+
 // Cached
 #pragma region
 

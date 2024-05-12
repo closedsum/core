@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Singleton/CsManager_Singleton_Actor.h"
-#include "CsCore.h"
 
 // Library
 #include "Library/CsLibrary_World.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Singleton_Actor)
 
 ACsManager_Singleton_Actor::ACsManager_Singleton_Actor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

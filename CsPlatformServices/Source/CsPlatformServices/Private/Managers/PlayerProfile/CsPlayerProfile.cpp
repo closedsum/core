@@ -11,6 +11,8 @@
 
 #include "Engine/LocalPlayer.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPlayerProfile)
+
 UCsPlayerProfile::UCsPlayerProfile(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

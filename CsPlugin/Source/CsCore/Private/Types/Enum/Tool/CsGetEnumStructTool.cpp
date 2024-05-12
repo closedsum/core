@@ -16,6 +16,8 @@
 #include "Asset/Tool/CsGetAssetTool.h"
 #include "Level/Editor/Event/CsLevelEditor_Event.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetEnumStructTool)
+
 namespace NCsEnum
 {
 	namespace NStruct

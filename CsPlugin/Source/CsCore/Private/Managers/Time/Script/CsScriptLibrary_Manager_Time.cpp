@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Time/Script/CsScriptLibrary_Manager_Time.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "Managers/Time/CsLibrary_Manager_Time.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Time)
 
 namespace NCsScriptLibraryManagerTime
 {

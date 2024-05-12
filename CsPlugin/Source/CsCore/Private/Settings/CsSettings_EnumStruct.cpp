@@ -15,6 +15,8 @@
 #include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_EnumStruct)
+
 namespace NCsSettingsEnumStructPopulateByDataTable
 {
 	namespace NCached

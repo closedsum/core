@@ -8,6 +8,8 @@
 // Settings
 #include "Managers/CsSettings_Manager_Javascript.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Javascript)
+
 // FCsJavascriptFileObjects
 #pragma region
 

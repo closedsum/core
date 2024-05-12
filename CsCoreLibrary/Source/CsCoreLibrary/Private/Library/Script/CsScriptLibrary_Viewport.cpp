@@ -9,6 +9,8 @@
 #include "Library/CsLibrary_Viewport.h"
 #include "Library/CsLibrary_Math.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Viewport)
+
 // Cached
 #pragma region
 

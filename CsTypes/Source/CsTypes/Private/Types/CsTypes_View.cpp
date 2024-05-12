@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Types/CsTypes_View.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_View)
+
 // View
 #pragma region
 

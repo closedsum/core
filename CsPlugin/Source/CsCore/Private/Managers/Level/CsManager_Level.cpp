@@ -36,6 +36,8 @@
 #include "Managers/Level/CsGetManagerLevel.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Level)
+
 // Cached
 #pragma region
 

@@ -39,6 +39,8 @@
 #include "Managers/Trace/CsGetManagerTrace.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Trace)
+
 // Cache
 #pragma region
 

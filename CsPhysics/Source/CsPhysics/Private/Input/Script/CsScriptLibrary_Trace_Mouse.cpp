@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Input/Script/CsScriptLibrary_Trace_Mouse.h"
-#include "CsPhysics.h"
 
 // CVar
 #include "Script/CsCVars_Script.h"
@@ -11,6 +10,8 @@
 // Library
 #include "Input/CsLibrary_Trace_Input.h"
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Trace_Mouse)
 
 namespace NCsScriptLibraryTraceMouse
 {

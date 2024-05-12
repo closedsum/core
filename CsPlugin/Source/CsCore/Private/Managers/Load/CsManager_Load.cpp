@@ -18,6 +18,8 @@
 #include "Managers/Load/CsGetManagerLoad.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Load)
+
 // static initializations
 UCsManager_Load* UCsManager_Load::s_Instance;
 bool UCsManager_Load::s_bShutdown = false;

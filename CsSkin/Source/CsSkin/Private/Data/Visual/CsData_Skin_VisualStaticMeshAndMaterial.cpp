@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/CsData_Skin_VisualStaticMeshAndMaterial.h"
-#include "CsSkin.h"
 
 // Container
 #include "Containers/CsInterfaceMap.h"
@@ -12,6 +11,8 @@
 #include "Engine/DataTable.h"
 // Proxy
 #include "Data/Visual/CsData_Skin_VisualStaticMeshAndMaterialImpl.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualStaticMeshAndMaterial)
 
 const FName UCsData_Skin_VisualStaticMeshAndMaterial::Name = FName("UCsData_Skin_VisualStaticMeshAndMaterial");
 

@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Shutdown/Script/CsScriptLibrary_Shutdown.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "Shutdown/CsLibrary_Shutdown.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Shutdown)
 
 // Cached
 #pragma region

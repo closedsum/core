@@ -15,6 +15,8 @@
 // Component
 #include "Components/SkeletalMeshComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Movement_Interp)
+
 // FCsMoveByInterp_Params
 #pragma region
 

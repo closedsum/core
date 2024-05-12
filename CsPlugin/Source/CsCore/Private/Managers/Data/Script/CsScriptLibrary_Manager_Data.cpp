@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Data/Script/CsScriptLibrary_Manager_Data.h"
-#include "CsCore.h"
 
 // CVar
 #include "Script/CsCVars_Script.h"
@@ -10,6 +9,8 @@
 #include "CsMacro_Misc.h"
 // Library
 #include "Managers/Data/CsLibrary_Manager_Data.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Data)
 
 // Cached
 #pragma region

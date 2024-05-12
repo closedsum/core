@@ -12,6 +12,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Component)
+
 // Cached
 #pragma region
 

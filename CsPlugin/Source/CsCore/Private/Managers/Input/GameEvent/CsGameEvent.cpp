@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/GameEvent/CsGameEvent.h"
-#include "CsCore.h"
 
 // Library
 	// Settings
@@ -12,6 +11,8 @@
 #include "Utility/CsLog.h"
 // Input
 #include "Managers/Input/Definition/CsTypes_InputDefinition.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGameEvent)
 
 // GameEvent
 #pragma region

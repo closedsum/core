@@ -7,6 +7,8 @@
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsVertexAnimInfo)
+
 #define InfoType NCsAnim::NVertex::FInfo
 #define NotifyType NCsAnim::NVertex::FNotify
 

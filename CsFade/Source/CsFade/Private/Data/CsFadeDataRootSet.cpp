@@ -9,6 +9,8 @@
 // Fade
 #include "Managers/Fade/CsUserWidget_Fade.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsFadeDataRootSet)
+
 UClass* FCsFadeDataRootSet::GetFadeWidgetClassChecked(const FString& Context) const
 {
 	CS_IS_SUBCLASS_OF_NULL_CHECKED(FadeWidget, UCsUserWidget_Fade)

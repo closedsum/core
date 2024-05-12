@@ -10,6 +10,8 @@
 #include "Actor/CsLibrary_Actor_Movement.h"
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Actor_Movement)
+
 // Cached
 #pragma region
 

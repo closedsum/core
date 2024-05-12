@@ -22,6 +22,8 @@
 #include "Library/CsLibrary_Valid.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Time)
+
 // static initializations
 UCsManager_Time* UCsManager_Time::s_Instance;
 bool UCsManager_Time::s_bShutdown = false;

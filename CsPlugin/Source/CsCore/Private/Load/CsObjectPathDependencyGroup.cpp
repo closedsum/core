@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Load/CsObjectPathDependencyGroup.h"
 
-#include "CsCore.h"
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsObjectPathDependencyGroup)
 
 // ObjectPathDependencyGroup
 #pragma region

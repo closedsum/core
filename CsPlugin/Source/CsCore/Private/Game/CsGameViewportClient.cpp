@@ -2,13 +2,14 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Game/CsGameViewportClient.h"
-#include "CsCore.h"
 
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Input
 #include "GenericPlatform/GenericPlatformInputDeviceMapper.h"
 #include "InputKeyEventArgs.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGameViewportClient)
 
 UCsGameViewportClient::UCsGameViewportClient(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

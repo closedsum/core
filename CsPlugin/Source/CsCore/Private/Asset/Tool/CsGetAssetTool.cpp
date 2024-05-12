@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Asset/Tool/CsGetAssetTool.h"
-#include "CsCore.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetAssetTool)
 
 UCsGetAssetTool::UCsGetAssetTool(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

@@ -7,6 +7,8 @@
 // Types
 #include "CsMacro_Misc.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Settings_Enum)
+
 // FCsSettings_Enum
 #pragma region
 

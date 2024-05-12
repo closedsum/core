@@ -11,6 +11,8 @@
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Payload)
+
 // FCsPayload_Data
 #pragma region
 

@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Start/Script/CsScriptLibrary_StartPlay.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "Start/CsLibrary_StartPlay.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_StartPlay)
 
 // Cached
 #pragma region

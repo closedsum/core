@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Play/Mode/CsPlayMode.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPlayMode)
+
 namespace NCsPlayMode
 {
 	namespace Ref

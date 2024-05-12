@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Animation/Mannequin/Silhouette/CsAnimInstance_Mannequin_Silhouette.h"
-#include "CsCore.h"
 
 // Mannequin
 #include "Animation/Mannequin/Silhouette/CsMannequin_Silhouette.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsAnimInstance_Mannequin_Silhouette)
 
 UCsAnimInstance_Mannequin_Silhouette::UCsAnimInstance_Mannequin_Silhouette(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

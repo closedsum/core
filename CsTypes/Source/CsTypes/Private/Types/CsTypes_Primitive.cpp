@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Types/CsTypes_Primitive.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Primitive)
+
 // MemberType
 #pragma region
 

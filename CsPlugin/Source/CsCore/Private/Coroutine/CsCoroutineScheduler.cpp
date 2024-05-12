@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Coroutine/CsCoroutineScheduler.h"
-#include "CsCore.h"
 
 // Package
 #include "UObject/Package.h"

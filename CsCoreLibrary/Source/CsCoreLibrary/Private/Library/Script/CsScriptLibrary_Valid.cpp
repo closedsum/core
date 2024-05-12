@@ -7,6 +7,8 @@
 // CVar
 #include "Script/CsCVars_Script.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Valid)
+
 // Cached
 #pragma region
 

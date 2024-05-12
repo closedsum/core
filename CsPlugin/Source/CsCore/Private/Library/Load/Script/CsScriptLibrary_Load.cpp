@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Library/Load/Script/CsScriptLibrary_Load.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -11,6 +10,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Log
 #include "Utility/CsLog.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Load)
 
 namespace NCsScriptLibraryLoad
 {

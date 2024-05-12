@@ -15,6 +15,8 @@
 // Components
 #include "Components/StaticMeshComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualStaticMeshImplSlice)
+
 #define SliceType NCsSkin::NData::NVisual::NStaticMesh::FImplSlice
 
 void FCsData_Skin_VisualStaticMeshImplSlice::CopyToSlice(SliceType* Slice)

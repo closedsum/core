@@ -8,6 +8,8 @@
 // Library
 #include "Library/CsLibrary_Texture.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Texture)
+
 // Cached
 #pragma region
 

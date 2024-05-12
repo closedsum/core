@@ -6,6 +6,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Manager_Level)
+
 bool FCsManagerLevel_ChangeMapParams::IsValidChecked(const FString& Context) const 
 {
 	CS_IS_STRING_EMPTY_CHECKED(Map)

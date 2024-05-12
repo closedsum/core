@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Script/CsScriptLibrary_Data.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "Data/CsLibrary_Data.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Data)
 
 // Cached
 #pragma region

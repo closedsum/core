@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Default/CsInputListener.h"
-#include "CsCore.h"
 
 // Managers
 #include "Managers/Input/Default/CsManager_Input_Default.h"
@@ -11,6 +10,7 @@
 // Player
 #include "GameFramework/PlayerController.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsInputListener)
 
 UCsInputListener::UCsInputListener(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),

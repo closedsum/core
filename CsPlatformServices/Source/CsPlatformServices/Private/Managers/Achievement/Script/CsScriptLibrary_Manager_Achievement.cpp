@@ -14,6 +14,8 @@
 
 #include "Managers/PlayerProfile/CsPlayerProfile.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Achievement)
+
 namespace NCsScriptLibraryManagerAchievement
 {
 	namespace NCached

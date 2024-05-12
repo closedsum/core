@@ -12,6 +12,8 @@
 #include "Library/CsLibrary_Time.h"
 #include "Library/CsLibrary_Math.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManagerLoad_Task_LoadObjects)
+
 // Cached
 #pragma region
 

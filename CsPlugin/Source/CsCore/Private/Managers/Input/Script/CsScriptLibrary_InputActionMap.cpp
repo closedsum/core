@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Script/CsScriptLibrary_InputActionMap.h"
-#include "CsCore.h"
 
 // Library
 #include "Library/CsLibrary_Enum.h"
@@ -11,6 +10,8 @@
 #include "Settings/CsDeveloperSettings.h"
 // Log
 #include "Utility/CsLog.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_InputActionMap)
 
 // Cached
 #pragma region

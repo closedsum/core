@@ -6,6 +6,8 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Settings)
+
 UCsScriptLibrary_Settings::UCsScriptLibrary_Settings(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

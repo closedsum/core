@@ -11,6 +11,8 @@
 // Components
 #include "Components/StaticMeshComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualStaticMeshAndMaterialImpl)
+
 #define ImplType NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl
 
 void FCsData_Skin_VisualStaticMeshAndMaterialImpl::CopyToImpl(ImplType* Impl)

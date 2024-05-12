@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/Scale/CsData_Skin_VisualScale_Uniform.h"
-#include "CsSkin.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualScale_Uniform)
 
 const FName NCsSkin::NData::NVisual::NScale::NUniform::IUniform::Name = FName("NCsSkin::NData::NVisual::NScale::NUniform::IUniform");
 

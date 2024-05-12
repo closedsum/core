@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Definition/CsTypes_InputDefinition.h"
-#include "CsCore.h"
 
 // Input
 #include "Managers/Input/CsInputFrame.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_InputDefinition)
 
 // InputValueRule
 #pragma region

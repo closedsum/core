@@ -11,6 +11,8 @@
 // Settings
 #include "Settings/CsFadeSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Fade)
+
 // FCsSettings_Manager_Fade
 #pragma region
 

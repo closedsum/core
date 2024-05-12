@@ -11,6 +11,8 @@
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Object)
+
 // Cached
 #pragma region
 
@@ -26,6 +28,7 @@ namespace NCsScriptLibraryObject
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, GetDefaultObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, Object_GetUniqueID);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, IsValidChecked);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, SafeIsValid);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, Object_MarkPendingKill);
 		}
 	}
@@ -95,6 +98,13 @@ bool UCsScriptLibrary_Object::IsValidChecked(const FString& Context, UObject* Ob
 	CONDITIONAL_SET_CTXT(IsValidChecked);
 
 	return CS_SCRIPT_GET_CHECKED(ObjectLibrary::IsValidChecked(Ctxt, Object), ObjectLibrary::SafeIsValid(Ctxt, Object));
+}
+
+bool UCsScriptLibrary_Object::SafeIsValid(const FString& Context, UObject* Object)
+{
+	CONDITIONAL_SET_CTXT(SafeIsValid);
+
+	return ObjectLibrary::SafeIsValid(Ctxt, Object);
 }
 
 bool UCsScriptLibrary_Object::Object_MarkPendingKill(const FString& Context, UObject* Object)

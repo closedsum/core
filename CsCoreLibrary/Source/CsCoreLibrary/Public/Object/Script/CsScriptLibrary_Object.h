@@ -81,6 +81,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCoreLibrary|Library|Object", meta = (DisplayName = "! NULL (Checked)", CompactNodeTitle = "!NULL", Keywords = "! not null", AutoCreateRefTerm = "Context"))
 	static bool IsValidChecked(const FString& Context, UObject* Object);
 
+	UFUNCTION(BlueprintPure, Category = "CsCoreLibrary|Library|Object", meta = (DisplayName = "! NULL", CompactNodeTitle = "!NULL", Keywords = "! not null", AutoCreateRefTerm = "Context"))
+	static bool SafeIsValid(const FString& Context, UObject* Object);
+
 	/**
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCoreLibrary|Library|Object", meta = (AutoCreateRefTerm = "Context"))

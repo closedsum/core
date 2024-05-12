@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Menu/CsGetManagerMenu.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetManagerMenu)
+
 UCsGetManagerMenu::UCsGetManagerMenu(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

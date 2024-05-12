@@ -24,6 +24,8 @@
 #include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsCoordinator_ConsoleCommand)
+
 // Cached
 #pragma region
 

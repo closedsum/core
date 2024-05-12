@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Time/CsTypes_Update.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Update)
+
 // UpdateGroup
 #pragma region
 

@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Trigger/Script/CsScriptLibrary_Trigger.h"
-#include "CsCore.h"
 
 // CVar
 #include "Script/CsCVars_Script.h"
@@ -10,6 +9,9 @@
 #include "CsMacro_Misc.h"
 // Library
 #include "Trigger/CsLibrary_Trigger.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Trigger)
+
 // Cached
 #pragma region
 

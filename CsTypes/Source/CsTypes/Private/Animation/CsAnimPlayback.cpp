@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Animation/CsAnimPlayback.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsAnimPlayback)
+
 // AnimPlayback
 #pragma region
 

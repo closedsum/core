@@ -8,6 +8,8 @@
 // Library
 #include "Library/CsLibrary_StaticMesh.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_StaticMesh)
+
 // Cached
 #pragma region
 

@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Camera/CsTypes_Camera.h"
-#include "CsCore.h"
 
 // ViewTargetBlendFunction
 #pragma region

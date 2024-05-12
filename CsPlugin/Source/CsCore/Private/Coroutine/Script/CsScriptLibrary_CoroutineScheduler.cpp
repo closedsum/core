@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Coroutine/Script/CsScriptLibrary_CoroutineScheduler.h"
-#include "CsCore.h"
 
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_CoroutineScheduler)
 
 namespace NCsScriptLibraryCoroutineScheduler
 {

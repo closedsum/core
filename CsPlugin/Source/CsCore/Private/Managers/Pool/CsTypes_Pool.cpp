@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Pool/CsTypes_Pool.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Pool)
+
 // PoolTransaction
 #pragma region
 

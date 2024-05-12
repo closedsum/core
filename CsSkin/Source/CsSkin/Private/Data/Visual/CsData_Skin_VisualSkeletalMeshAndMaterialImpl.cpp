@@ -11,6 +11,8 @@
 // Components
 #include "Components/SkeletalMeshComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualSkeletalMeshAndMaterialImpl)
+
 #define ImplType NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl
 
 void FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::CopyToImpl(ImplType* Impl)

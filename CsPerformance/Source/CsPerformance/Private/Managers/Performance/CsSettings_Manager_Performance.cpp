@@ -11,6 +11,8 @@
 // Settings
 #include "Settings/CsPerformanceSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Performance)
+
 // FCsSettings_Manager_Performance
 #pragma region
 

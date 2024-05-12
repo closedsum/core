@@ -8,6 +8,8 @@
 // Library
 #include "Library/CsLibrary_SkeletalMesh.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_SkeletalMesh)
+
 // Cached
 #pragma region
 

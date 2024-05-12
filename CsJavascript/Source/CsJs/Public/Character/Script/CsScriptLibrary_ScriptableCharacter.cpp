@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Character/Script/CsScriptLibrary_ScriptableCharacter.h"
-#include "CsJs.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "Character/CsLibrary_ScriptableCharacter.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_ScriptableCharacter)
 
 // Cached
 #pragma region

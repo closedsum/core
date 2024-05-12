@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/PlayerProfile/CsGetManagerPlayerProfile.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetManagerPlayerProfile)
+
 UCsGetManagerPlayerProfile::UCsGetManagerPlayerProfile(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

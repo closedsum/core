@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Pool/Cache/Script/CsScriptLibrary_Cache_PooledObject.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Cache_PooledObject)
 
 // Cached
 #pragma region

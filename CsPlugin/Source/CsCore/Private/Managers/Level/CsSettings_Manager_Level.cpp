@@ -11,6 +11,8 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Level)
+
 // FCsSettings_Manager_Level
 #pragma region
 

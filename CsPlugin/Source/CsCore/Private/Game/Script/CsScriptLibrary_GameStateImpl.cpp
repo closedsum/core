@@ -10,6 +10,8 @@
 // Library
 #include "Game/CsLibrary_GameStateImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_GameStateImpl)
+
 // Cached
 #pragma region
 

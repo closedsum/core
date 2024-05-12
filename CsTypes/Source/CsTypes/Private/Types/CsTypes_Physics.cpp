@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Types/CsTypes_Physics.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Physics)
+
 // PhysicsImpulseType
 #pragma region
 

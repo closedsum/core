@@ -15,6 +15,8 @@
 // Components
 #include "Components/SkeletalMeshComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualSkeletalMeshImplSlice)
+
 #define SliceType NCsSkin::NData::NVisual::NSkeletalMesh::FImplSlice
 
 void FCsData_Skin_VisualSkeletalMeshImplSlice::CopyToSlice(SliceType* Slice)

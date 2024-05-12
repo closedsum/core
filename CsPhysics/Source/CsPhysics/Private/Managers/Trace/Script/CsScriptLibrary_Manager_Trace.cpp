@@ -12,6 +12,8 @@
 // Actor
 #include "GameFramework/Actor.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Trace)
+
 // Cached
 #pragma region
 

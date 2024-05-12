@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/CsDataRootSetImpl.h"
-#include "CsCore.h"
 
 // Types
 #include "Data/CsTypes_DataEntry.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsDataRootSetImpl)
 
 UCsDataRootSetImpl::UCsDataRootSetImpl(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

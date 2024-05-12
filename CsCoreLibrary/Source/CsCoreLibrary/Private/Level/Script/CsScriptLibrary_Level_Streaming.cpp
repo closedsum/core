@@ -10,6 +10,8 @@
 // Library
 #include "Level/CsLibrary_Level_Streaming.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Level_Streaming)
+
 // Cached
 #pragma region
 

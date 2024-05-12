@@ -9,6 +9,8 @@
 #include "Library/CsLibrary_Enum.h"
 #include "Managers/Input/CsLibrary_Input.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_InputAction)
+
 // Cached
 #pragma region
 

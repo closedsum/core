@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Animation/Mannequin/Silhouette/CsMannequin_Silhouette.h"
-#include "CsCore.h"
 
 // Components
 #include "Components/SkeletalMeshComponent.h"
@@ -18,6 +17,7 @@
 #include "Containers/List.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsMannequin_Silhouette)
 
 ACsMannequin_Silhouette::ACsMannequin_Silhouette(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer),

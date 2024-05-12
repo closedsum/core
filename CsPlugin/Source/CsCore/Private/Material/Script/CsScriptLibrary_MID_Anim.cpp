@@ -8,6 +8,8 @@
 // Library
 #include "Material/CsLibrary_Material_Anim.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_MID_Anim)
+
 // Cached
 #pragma region
 

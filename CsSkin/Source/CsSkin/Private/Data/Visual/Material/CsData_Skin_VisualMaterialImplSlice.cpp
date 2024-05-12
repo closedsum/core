@@ -12,6 +12,8 @@
 #include "Containers/CsInterfaceMap.h"
 #include "Containers/CsDeconstructInterfaceSliceMap.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualMaterialImplSlice)
+
 #define SliceType NCsSkin::NData::NVisual::NMaterial::FImplSlice
 
 void FCsData_Skin_VisualMaterialImplSlice::CopyToSlice(SliceType* Slice)

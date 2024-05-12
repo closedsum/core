@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Object/Orientation/CsLibrary_Object_Orientation.h"
-#include "CsCore.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"

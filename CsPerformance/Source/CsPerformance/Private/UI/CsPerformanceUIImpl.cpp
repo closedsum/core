@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "UI/CsPerformanceUIImpl.h"
-#include "CsPerformance.h"
 
 // CVar
 #include "CsCVars_Performance.h"
@@ -17,6 +16,8 @@
 #include "Components/TextBlock.h"
 // Render
 #include "RenderCore.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPerformanceUIImpl)
 
 // Cached
 #pragma region

@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "PIE/Event/Script/CsScriptLibrary_PIE_Event.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "PIE/Event/CsLibrary_PIE_Event.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_PIE_Event)
 
 // Cached
 #pragma region

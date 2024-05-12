@@ -11,6 +11,8 @@
 // Settings
 #include "Settings/CsMenuSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Menu)
+
 // FCsSettings_Manager_Menu
 #pragma region
 

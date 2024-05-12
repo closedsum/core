@@ -8,6 +8,8 @@
 // Library
 #include "Animation/CsLibrary_AnimInstance.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_AnimInstance)
+
 // Cached
 #pragma region
 

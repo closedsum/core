@@ -35,6 +35,8 @@
 #include "Serialization/JsonWriter.h"
 #include "Serialization/JsonReader.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Input_Default)
+
 // Cached
 #pragma region
 

@@ -7,6 +7,8 @@
 // Library
 #include "Library/CsLibrary_Array.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Array)
+
 UCsScriptLibrary_Array::UCsScriptLibrary_Array(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

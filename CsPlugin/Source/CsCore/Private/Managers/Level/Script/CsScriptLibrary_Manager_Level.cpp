@@ -10,6 +10,8 @@
 // Library
 #include "Managers/Level/CsLibrary_Manager_Level.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Level)
+
 // Cached
 #pragma region
 

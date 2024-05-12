@@ -10,6 +10,8 @@
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_MID)
+
 // Cached
 #pragma region
 

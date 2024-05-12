@@ -8,6 +8,8 @@
 // Library
 #include "Game/CsLibrary_GameInstanceImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_GameInstanceImpl)
+
 // Cached
 #pragma region
 

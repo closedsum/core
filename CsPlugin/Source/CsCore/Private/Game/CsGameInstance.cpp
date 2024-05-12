@@ -32,6 +32,8 @@
 #include "Play/Mode/CsGetPlayMode.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGameInstance)
+
 // Cached
 #pragma region
 

@@ -8,6 +8,8 @@
 // Library
 #include "Animation/2D/CsLibrary_Anim2D.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Anim2D)
+
 // Cached
 #pragma region
 

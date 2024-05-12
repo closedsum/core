@@ -10,6 +10,8 @@
 	// Common
 #include "Library/CsLibrary_Trace_Viewport.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Trace_Viewport)
+
 // Cached
 #pragma region
 

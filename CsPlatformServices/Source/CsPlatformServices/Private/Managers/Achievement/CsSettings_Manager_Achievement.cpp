@@ -11,6 +11,8 @@
 // Settings
 #include "Settings/CsPlatformServicesSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Achievement)
+
 // FCsSettings_Manager_Achievement
 #pragma region
 

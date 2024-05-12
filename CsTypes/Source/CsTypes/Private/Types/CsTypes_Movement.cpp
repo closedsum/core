@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Types/CsTypes_Movement.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Movement)
+
 // Mover
 #pragma region
 

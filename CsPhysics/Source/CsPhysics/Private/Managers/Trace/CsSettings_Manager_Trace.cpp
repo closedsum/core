@@ -6,6 +6,8 @@
 // Settings
 #include "Settings/CsPhysicsSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Trace)
+
 // FCsSettings_Manager_Trace_Debug
 #pragma region
 

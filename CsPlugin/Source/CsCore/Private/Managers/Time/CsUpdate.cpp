@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Time/CsUpdate.h"
-#include "CsCore.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUpdate)
 
 UCsUpdate::UCsUpdate(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

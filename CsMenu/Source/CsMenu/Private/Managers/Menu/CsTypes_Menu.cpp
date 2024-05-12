@@ -9,6 +9,8 @@
 // Utility
 #include "Utility/CsMenuLog.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Menu)
+
 // MenuEvent
 #pragma region
 

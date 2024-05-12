@@ -10,6 +10,8 @@
 #include "Data/CsData.h"
 #include "Data/Visual/CsData_Skin_Visual.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Data_Skin_Visual)
+
 // FCsData_Skin_Visual
 #pragma region
 

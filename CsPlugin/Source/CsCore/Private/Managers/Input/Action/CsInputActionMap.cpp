@@ -10,6 +10,8 @@
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsLog.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsInputActionMap)
+
 namespace NCsInputActionMap
 {
 	namespace NCached

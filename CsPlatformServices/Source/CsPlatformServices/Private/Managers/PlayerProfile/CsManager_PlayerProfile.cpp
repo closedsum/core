@@ -21,6 +21,8 @@
 #include "Managers/PlayerProfile/CsGetManagerPlayerProfile.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_PlayerProfile)
+
 // Cached
 #pragma region
 

@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Script/CsScriptLibrary_GameEventDefinition.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -12,6 +11,8 @@
 #include "Managers/Input/CsSettings_Input.h"
 // Log
 #include "Utility/CsLog.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_GameEventDefinition)
 
 namespace NCsScriptLibraryGameEvent
 {

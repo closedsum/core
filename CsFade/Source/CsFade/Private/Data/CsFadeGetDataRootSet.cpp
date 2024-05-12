@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/CsFadeGetDataRootSet.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsFadeGetDataRootSet)
+
 UCsFadeGetDataRootSet::UCsFadeGetDataRootSet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

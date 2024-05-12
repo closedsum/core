@@ -6,6 +6,8 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Data)
+
 // FCsSettings_Manager_Data
 #pragma region
 

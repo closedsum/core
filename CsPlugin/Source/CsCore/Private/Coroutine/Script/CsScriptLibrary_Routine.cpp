@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Coroutine/Script/CsScriptLibrary_Routine.h"
-#include "CsCore.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Routine)
 
 UCsScriptLibrary_Routine::UCsScriptLibrary_Routine(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

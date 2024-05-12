@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Script/CsScriptLibrary_GameEvent.h"
-#include "CsCore.h"
 
 // Library
 #include "Library/CsLibrary_Enum.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_GameEvent)
 
 // Cached
 #pragma region

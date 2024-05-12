@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Enhanced/CsTypes_Input_Enhanced.h"
-#include "CsCore.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Input
 #include "InputMappingContext.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Input_Enhanced)
 
 // FCsInputMappingContextInfo
 #pragma region

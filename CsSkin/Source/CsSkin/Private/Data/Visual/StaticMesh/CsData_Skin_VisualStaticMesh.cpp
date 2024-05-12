@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/StaticMesh/CsData_Skin_VisualStaticMesh.h"
-#include "CsSkin.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualStaticMesh)
 
 const FName NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh::Name = FName("NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh");
 

@@ -11,6 +11,8 @@
 // Animation
 #include "Animation/AnimSequence.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_AnimSequence)
+
 // Cached
 #pragma region
 

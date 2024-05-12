@@ -2,13 +2,14 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Profile/CsTypes_InputProfile.h"
-#include "CsCore.h"
 
 // Library
 #include "Managers/Input/CsLibrary_Input.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsLog.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_InputProfile)
 
 // FCsInputActionMapping
 #pragma region

@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Level/Editor/Event/CsLevelEditor_Event.h"
-#include "CsCore.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsLevelEditor_Event)
 
 UCsLevelEditor_Event::UCsLevelEditor_Event(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

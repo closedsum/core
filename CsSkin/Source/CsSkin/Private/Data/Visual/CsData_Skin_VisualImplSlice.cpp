@@ -13,6 +13,8 @@
 #include "Containers/CsInterfaceMap.h"
 #include "Containers/CsDeconstructInterfaceSliceMap.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualImplSlice)
+
 #define SliceType NCsSkin::NData::NVisual::FImplSlice
 
 void FCsData_Skin_VisualImplSlice::CopyToSlice(SliceType* Slice)

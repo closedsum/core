@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsFadeSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsFadeSettings)
+
 UCsFadeSettings::UCsFadeSettings(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
 	Manager_Fade()

@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Level/Event/CsLevel_Streaming_EventHandler.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -10,6 +9,8 @@
 #include "Managers/Level/CsLibrary_Manager_Level.h"
 // Level
 #include "Engine/LevelStreaming.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsLevel_Streaming_EventHandler)
 
 // Cached
 #pragma region

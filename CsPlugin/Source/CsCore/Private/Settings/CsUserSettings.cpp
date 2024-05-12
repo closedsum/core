@@ -2,13 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsUserSettings.h"
-#include "CsCore.h"
 
 #if WITH_EDITOR
 // UI
 #include "UI/Tool/CsGetSlateApplicationTool.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserSettings)
 
 UCsUserSettings::UCsUserSettings(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),

@@ -2,13 +2,14 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Pool/CsPooledObject.h"
-#include "CsCore.h"
 
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsOnConstructObject.h"
 #include "Managers/Time/CsPause.h"
 #include "Shutdown/CsShutdown.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPooledObject)
 
 UCsPooledObject::UCsPooledObject(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

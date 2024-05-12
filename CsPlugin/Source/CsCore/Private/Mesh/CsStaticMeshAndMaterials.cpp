@@ -6,6 +6,8 @@
 // Library
 #include "Material/CsLibrary_Material.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsStaticMeshAndMaterials)
+
 bool FCsStaticMeshAndMaterials::IsValidChecked(const FString& Context) const
 {
 	// Check Mesh is Valid

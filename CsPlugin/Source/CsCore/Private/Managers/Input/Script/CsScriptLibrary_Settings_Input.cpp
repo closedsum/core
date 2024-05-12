@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Script/CsScriptLibrary_Settings_Input.h"
-#include "CsCore.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"
@@ -10,6 +9,8 @@
 #include "Managers/Input/CsSettings_Input.h"
 // Log
 #include "Utility/CsLog.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Settings_Input)
 
 // Cached
 #pragma region

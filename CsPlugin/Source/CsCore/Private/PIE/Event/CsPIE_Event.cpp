@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "PIE/Event/CsPIE_Event.h"
-#include "CsCore.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPIE_Event)
 
 UCsPIE_Event::UCsPIE_Event(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

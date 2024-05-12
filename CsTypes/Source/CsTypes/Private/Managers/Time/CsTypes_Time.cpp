@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Time/CsTypes_Time.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Time)
+
 const FCsTime FCsTime::Zero;
 
 const FCsDeltaTime FCsDeltaTime::Zero;

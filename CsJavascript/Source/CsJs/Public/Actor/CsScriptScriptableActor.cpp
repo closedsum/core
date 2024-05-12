@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Actor/CsScriptScriptableActor.h"
-#include "CsJs.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptScriptableActor)
 
 UCsScriptScriptableActor::UCsScriptScriptableActor(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

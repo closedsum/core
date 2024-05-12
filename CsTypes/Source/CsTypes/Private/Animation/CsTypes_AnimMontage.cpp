@@ -8,6 +8,8 @@
 // Anim
 #include "Animation/AnimMontage.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_AnimMontage)
+
 // FCsAnimMontage_PlayParams
 #pragma region
 

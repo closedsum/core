@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Input/Script/CsScriptLibrary_Manager_Input.h"
-#include "CsCore.h"
 
 // CVar
 #include "Script/CsCVars_Script.h"
@@ -10,6 +9,8 @@
 #include "Managers/Input/CsLibrary_Manager_Input.h"
 // Input
 #include "Managers/Input/Event/CsManager_Input_Event.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Input)
 
 namespace NCsScriptLibraryManagerInput
 {

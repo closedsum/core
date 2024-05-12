@@ -8,6 +8,8 @@
 // Components
 #include "Components/StaticMeshComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Mannequin_Silhouette)
+
 namespace NCsAnimation
 {
 	namespace NMannequin

@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/Material/Parameter/CsData_Skin_VisualMaterial_WithParameters.h"
-#include "CsSkin.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualMaterial_WithParameters)
 
 const FName NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters::Name = FName("NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters");
 

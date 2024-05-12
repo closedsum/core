@@ -22,6 +22,8 @@
 // Utility
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_DataEntry)
+
 // DataEntryData
 #pragma region
 

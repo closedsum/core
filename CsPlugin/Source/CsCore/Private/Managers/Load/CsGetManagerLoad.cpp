@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Load/CsGetManagerLoad.h"
-#include "CsCore.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetManagerLoad)
 
 UCsGetManagerLoad::UCsGetManagerLoad(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

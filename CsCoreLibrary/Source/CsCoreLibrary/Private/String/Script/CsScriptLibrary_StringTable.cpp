@@ -10,6 +10,8 @@
 // Library
 #include "String/CsLibrary_StringTable.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_StringTable)
+
 // Cached
 #pragma region
 

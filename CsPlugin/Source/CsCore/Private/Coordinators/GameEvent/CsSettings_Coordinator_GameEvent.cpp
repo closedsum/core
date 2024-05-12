@@ -11,6 +11,8 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Coordinator_GameEvent)
+
 // FCsSettings_Coordinator_GameEvent
 #pragma region
 

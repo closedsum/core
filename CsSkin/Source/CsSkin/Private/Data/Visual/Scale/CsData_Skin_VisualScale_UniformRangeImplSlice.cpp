@@ -15,6 +15,8 @@
 // Components
 #include "Components/SceneComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualScale_UniformRangeImplSlice)
+
 #define SliceType NCsSkin::NData::NVisual::NScale::NUniform::NRange::FImplSlice
 
 void FCsData_Skin_VisualScale_UniformRangeImplSlice::CopyToSlice(SliceType* Slice)

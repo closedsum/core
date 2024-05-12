@@ -18,6 +18,8 @@
 #include "Engine/World.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsLevelScriptActor)
+
 // Cached
 #pragma region
 

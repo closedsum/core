@@ -6,3 +6,5 @@
 #include "Modules/ModuleManager.h"
 
 IMPLEMENT_GAME_MODULE(FDefaultGameModuleImpl, CsGameplayAbilities);
+
+DEFINE_LOG_CATEGORY(LogCsGameplayAbilities);

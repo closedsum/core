@@ -25,7 +25,15 @@ public class CsGameplayAbilities : ModuleRules
                 new string[] {
                     "Core",
                     "CoreUObject",
-                    "GameplayAbilities"
+                    "GameplayTags",
+                    "GameplayAbilities",
+                    "CsMacro",
+                    "CsStructOps",
+                    "CsContainer",
+                    "CsValid",
+                    "CsEnum",
+                    "CsCoreLibrary",
+                    "CsGameplayTags"
                 }
             );
 

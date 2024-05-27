@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "CsCVars.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsCVars)
+
 // FCsCVarLogMap
 #pragma region
 

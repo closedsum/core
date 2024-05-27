@@ -16,7 +16,7 @@ namespace NCsObject
 	*/
 	class CSCORELIBRARY_API FLibrary final
 	{
-	#define LogWarning void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
+	#define LogLevel void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
 
 	public:
 
@@ -34,7 +34,7 @@ namespace NCsObject
 		FORCEINLINE static bool IsValidChecked(const FString& Context, const UObject* Object) { return true; }
 	#endif // #if WITH_EDITOR
 
-		static bool SafeIsValid(const FString& Context, const UObject* Object, LogWarning);
+		static bool SafeIsValid(const FString& Context, const UObject* Object, LogLevel);
 
 		/**
 		*
@@ -45,15 +45,17 @@ namespace NCsObject
 		static FString GetFlagsAsString(const UObject* Object);
 
 		static UObject* ConstructChecked(const FString& Context, UObject* Outer, UClass* Class);
-		static UObject* SafeConstruct(const FString& Context, UObject* Outer, UClass* Class, LogWarning);
+		static UObject* SafeConstruct(const FString& Context, UObject* Outer, UClass* Class, LogLevel);
 
 		static UObject* GetDefaultObjectChecked(const FString& Context, const UObject* Object);
-		static UObject* GetSafeDefaultObject(const FString& Context, const UObject* Object, LogWarning);
+		static UObject* GetSafeDefaultObject(const FString& Context, const UObject* Object, LogLevel);
 
+		static bool IsDefaultObjectChecked(const FString& Context, const UObject* Object);
+		static bool SafeIsDefaultObject(const FString& Context, const UObject* Object, LogLevel);
 		static bool IsDefaultObject(const UObject* Object);
 
 		static int32 GetUniqueIDChecked(const FString& Context, const UObject* Object);
-		static int32 GetSafeUniqueID(const FString& Context, const UObject* Object, LogWarning);
+		static int32 GetSafeUniqueID(const FString& Context, const UObject* Object, LogLevel);
 
 	// Load
 	#pragma region
@@ -94,7 +96,7 @@ namespace NCsObject
 		* @param Log
 		* return			Object.
 		*/
-		static UObject* SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogWarning);
+		static UObject* SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel);
 
 		/**
 		* Safely load a Object of type: T at the given Path.
@@ -105,7 +107,7 @@ namespace NCsObject
 		* return			Object of type: T.
 		*/
 		template<typename T>
-		static T* SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogWarning)
+		static T* SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
 		{
 			UObject* Object = SafeLoad(Context, Path, Log);
 
@@ -146,7 +148,7 @@ namespace NCsObject
 
 			T* Other = Cast<T>(Object);
 
-			checkf(Other, TEXT("%s: Object: %s with Class: %s @ %s is NOT of type: %s."), *Context, *PrintObjectAndClass(Object), *Path, *(T::StaticClass()->GetName()));
+			checkf(Other, TEXT("%s: %s @ %s is NOT of type: %s."), *Context, *PrintObjectAndClass(Object), *Path, *(T::StaticClass()->GetName()));
 			return Other;
 		}
 
@@ -158,7 +160,7 @@ namespace NCsObject
 		* @param Log
 		* return			Object.
 		*/
-		static UObject* SafeLoad(const FString& Context, const FString& Path, LogWarning);
+		static UObject* SafeLoad(const FString& Context, const FString& Path, LogLevel);
 
 		/**
 		* Safely load a Object of type: T at the given Path.
@@ -169,7 +171,7 @@ namespace NCsObject
 		* return			Object of type: T.
 		*/
 		template<typename T>
-		static T* SafeLoad(const FString& Context, const FString& Path, LogWarning)
+		static T* SafeLoad(const FString& Context, const FString& Path, LogLevel)
 		{
 			if (Path.IsEmpty())
 			{
@@ -185,10 +187,10 @@ namespace NCsObject
 
 	#pragma endregion Load
 
-		static bool SafeMarkAsGarbage(const FString& Context, UObject* Object, LogWarning);
+		static bool SafeMarkAsGarbage(const FString& Context, UObject* Object, LogLevel);
 
 		static bool SafeMarkAsGarbage(UObject* Object);
 
-	#undef LogWarning
+	#undef LogLevel
 	};
 }

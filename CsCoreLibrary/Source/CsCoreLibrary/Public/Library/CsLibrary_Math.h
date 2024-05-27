@@ -1054,6 +1054,14 @@ namespace NCsMath
 			return Target;
 		}
 
+		FORCEINLINE static FVector3d Add(const FVector3d& V, const FRotator3d& Rotation, const FVector& Scale)
+		{
+			FVector3d Forward, Right, Up;
+			GetForwardRightAndUp(Rotation, Forward, Right, Up);
+
+			return V + Scale.X * Forward + Scale.Y * Right + Scale.Z * Up;
+		}
+
 	#pragma endregion Vector
 
 	// Rotator
@@ -1118,8 +1126,16 @@ namespace NCsMath
 		{
 			FRotationMatrix44f M(R);
 			OutForward = M.GetScaledAxis(EAxis::X);
-			OutRight = M.GetScaledAxis(EAxis::Y);
-			OutUp = M.GetScaledAxis(EAxis::Z);
+			OutRight   = M.GetScaledAxis(EAxis::Y);
+			OutUp	   = M.GetScaledAxis(EAxis::Z);
+		}
+
+		FORCEINLINE static void GetForwardRightAndUp(const FRotator3d& R, FVector3d& OutForward, FVector3d& OutRight, FVector3d& OutUp)
+		{
+			FRotationMatrix44d M(R);
+			OutForward = M.GetScaledAxis(EAxis::X);
+			OutRight   = M.GetScaledAxis(EAxis::Y);
+			OutUp	   = M.GetScaledAxis(EAxis::Z);
 		}
 
 		FORCEINLINE static void GetRightAndUp(const FRotator3f& R, FVector3f& OutRight, FVector3f& OutUp)

@@ -253,7 +253,7 @@ namespace NCsMaterial
 					ENQUEUE_RENDER_COMMAND(SetBatchParameterValues)(
 						[R](FRHICommandListImmediate& RHICmdList)
 					{
-						R->CacheUniformExpressions(false);
+						R->CacheUniformExpressions(RHICmdList, false);
 					});
 				}
 			}
@@ -275,7 +275,7 @@ namespace NCsMaterial
 						const int32& Index = Dirties[J];
 
 						Resource->RenderThread_UpdateParameter(Values[Index]->ParameterInfo, Values[Index]->ParameterValue);
-						Resource->CacheUniformExpressions(false);
+						Resource->CacheUniformExpressions(FRHICommandListImmediate::Get(), false);
 
 						Dirties.RemoveAt(J, 1, false);
 					}
@@ -293,7 +293,7 @@ namespace NCsMaterial
 						const int32& Index = Dirties[J];
 
 						Resource->RenderThread_UpdateParameter(Values[Index]->ParameterInfo, Values[Index]->ParameterValue);
-						Resource->CacheUniformExpressions(false);
+						Resource->CacheUniformExpressions(FRHICommandListImmediate::Get(), false);
 
 						Dirties.RemoveAt(J, 1, false);
 					}
@@ -359,7 +359,7 @@ namespace NCsMaterial
 							const int32& Index = Dirties[J];
 
 							Resource->RenderThread_UpdateParameter(Values[Index]->ParameterInfo, Values[Index]->ParameterValue);
-							Resource->CacheUniformExpressions(false);
+							Resource->CacheUniformExpressions(FRHICommandListImmediate::Get(), false);
 
 							Dirties.RemoveAt(J, 1, false);
 						}
@@ -377,7 +377,7 @@ namespace NCsMaterial
 							const int32& Index = Dirties[J];
 
 							Resource->RenderThread_UpdateParameter(Values[Index]->ParameterInfo, Values[Index]->ParameterValue);
-							Resource->CacheUniformExpressions(false);
+							Resource->CacheUniformExpressions(FRHICommandListImmediate::Get(), false);
 
 							Dirties.RemoveAt(J, 1, false);
 						}

@@ -277,6 +277,40 @@ namespace NCsSkeletalMesh
 		return true;
 	}
 
+	FRotator FLibrary::GetBoneOrSocketRotationChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket)
+	{
+		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));
+		return Component->GetBoneQuaternion(BoneOrSocket).Rotator();
+	}
+
+	FRotator FLibrary::GetSafeBoneOrSocketRotation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsBoneOrSocketValid(Context, Component, BoneOrSocket, Log))
+			return FRotator::ZeroRotator;
+
+		OutSuccess = true;
+		return Component->GetBoneQuaternion(BoneOrSocket).Rotator();
+	}
+
+	FRotator3f FLibrary::GetBoneOrSocketRotation3fChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket)
+	{
+		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));
+		return MathLibrary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Rotator());
+	}
+
+	FRotator3f FLibrary::GetSafeBoneOrSocketRotation3f(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsBoneOrSocketValid(Context, Component, BoneOrSocket, Log))
+			return FRotator3f::ZeroRotator;
+
+		OutSuccess = true;
+		return MathLibrary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Rotator());
+	}
+
 	FVector FLibrary::GetBoneOrSocketDirectionChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket)
 	{
 		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));

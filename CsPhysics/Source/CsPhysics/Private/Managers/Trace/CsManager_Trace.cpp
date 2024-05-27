@@ -1040,8 +1040,6 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 		DeallocateRequest(Request);
 		return Response;
 	}
-	DeallocateRequest(Request);
-	return nullptr;
 }
 
 void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, RequestType* Request, ResponseType* Response)

@@ -1161,7 +1161,6 @@ namespace NCsValid
 				return true;
 			}
 
-
 			FORCEINLINE static bool IsAnyNoneChecked(const FString& Context, const TArray<FName>& Array, const FString& ArrayName)
 			{
 				const int32 Count = Array.Num();
@@ -1549,25 +1548,31 @@ namespace NCsValid
 			template<typename ClassType, typename OtherClassType>
 			FORCEINLINE static OtherClassType* CastToChecked(const FString& Context, ClassType* A, const FString& AName)
 			{
+			#if !UE_BUILD_SHIPPING
 				check(IsPendingKillChecked(Context, A, AName));
 
 				OtherClassType* Other = Cast<OtherClassType>(A);
 
 				checkf(Other, TEXT("%s: %s: %s with Class: %s does is NOT of type: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *(OtherClassType::StaticClass()->GetName()));
-
 				return Other;
+			#else
+				return Cast<OtherClassType>(A);
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			template<typename ClassType, typename OtherClassType>
 			FORCEINLINE static const OtherClassType* CastToChecked(const FString& Context, const ClassType* A, const FString& AName)
 			{
+			#if !UE_BUILD_SHIPPING
 				check(IsPendingKillChecked(Context, A, AName));
 
 				const OtherClassType* Other = Cast<OtherClassType>(A);
 
 				checkf(Other, TEXT("%s: %s: %s with Class: %s does is NOT of type: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *(OtherClassType::StaticClass()->GetName()));
-
 				return Other;
+			#else
+				return Cast<OtherClassType>(A);
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			template<typename ClassType, typename InterfaceType>
@@ -1607,28 +1612,37 @@ namespace NCsValid
 			template<typename ClassType, typename InterfaceType>
 			FORCEINLINE static InterfaceType* InterfaceCastChecked(const FString& Context, ClassType* A, const FString& AName, const FString& InterfaceName)
 			{
+			#if !UE_BUILD_SHIPPING
 				check(IsPendingKillChecked(Context, A, AName));
 
 				InterfaceType* Other = Cast<InterfaceType>(A);
 
 				checkf(Other, TEXT("%s: %s: %s with Class: %s does NOT implement the interface: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *InterfaceName);
 				return Other;
+			#else
+				return Cast<InterfaceType>(A);
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			template<typename ClassType, typename InterfaceType>
 			FORCEINLINE static const InterfaceType* InterfaceCastChecked(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName)
 			{
+			#if !UE_BUILD_SHIPPING
 				check(IsPendingKillChecked(Context, A, AName));
 
 				const InterfaceType* Other = Cast<InterfaceType>(A);
 
 				checkf(Other, TEXT("%s: %s: %s with Class: %s does NOT implement the interface: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *InterfaceName);
 				return Other;
+			#else
+				return Cast<InterfaceType>(A);
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			template<typename ObjectType>
 			FORCEINLINE static ObjectType* NewChecked(const FString& Context, UObject* Outer, const FString& OuterName, UClass* Class, const FString& ClassName)
 			{
+			#if !UE_BUILD_SHIPPING
 				check(IsPendingKillChecked(Context, Outer, OuterName));
 				checkf(Class, TEXT("%s: %s is NULL."), *Context, *ClassName);
 
@@ -1636,11 +1650,15 @@ namespace NCsValid
 
 				checkf(O, TEXT("%s: Failed to create Object from Class: %s."), *Context, *(Class->GetName()));			
 				return O;
+			#else
+				return NewObject<ObjectType>(Outer, Class);
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			template<typename ObjectType>
 			FORCEINLINE static ObjectType* NewChecked(const FString& Context, UObject* Outer, const FString& OuterName, TSubclassOf<ObjectType>& Class, const FString& ClassName)
 			{
+			#if !UE_BUILD_SHIPPING
 				check(IsPendingKillChecked(Context, Outer, OuterName));
 				checkf(Class.Get(), TEXT("%s: %s is NULL."), *Context, *ClassName);
 
@@ -1648,6 +1666,9 @@ namespace NCsValid
 
 				checkf(O, TEXT("%s: Failed to create Object from Class: %s."), *Context, *(Class->GetName()));
 				return O;
+			#else
+				return NewObject<ObjectType>(Outer, Class);
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			template<typename ClassType, typename UInterfaceType>
@@ -1856,12 +1877,16 @@ namespace NCsValid
 			template<typename ClassType>
 			FORCEINLINE static UClass* GetChecked(const FString& Context, const TSoftClassPtr<ClassType>& A, const FString& AName)
 			{
+			#if !UE_BUILD_SHIPPING
 				check(IsValidChecked<ClassType>(Context, A, AName));
 
 				UClass* O = A.Get();
 
 				checkf(O, TEXT("%s: %s is NULL. Path @ %s has NOT been Loaded."), *Context, *AName, *(A.ToSoftObjectPath().ToString()));
 				return O;
+			#else
+				return A.Get();
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			template<typename ClassType>
@@ -1884,12 +1909,16 @@ namespace NCsValid
 			template<typename ClassType>
 			FORCEINLINE static UClass* LoadChecked(const FString& Context, const TSoftClassPtr<ClassType>& A, const FString& AName)
 			{
+			#if !UE_BUILD_SHIPPING
 				check(IsValidChecked<ClassType>(Context, A, AName));
 
 				UClass* O = A.LoadSynchronous();
 
 				checkf(O, TEXT("%s: Failed to Load %s @ %s.."), *Context, *AName, *(A.ToSoftObjectPath().ToString()));
 				return O;
+			#else
+				return A.LoadSynchronous();
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			template<typename ClassType>
@@ -1955,10 +1984,48 @@ namespace NCsValid
 				if (!A.Get())
 				{
 					if (Log)
-						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+						Log(FString::Printf(TEXT("%s: %s is NOT Valid."), *Context, *AName));
 					return false;
 				}
 				return true;
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static ObjectType* GetChecked(const FString& Context, const TSubclassOf<ObjectType>& A, const FString& AName)
+			{
+				checkf(A.Get(), TEXT("%s: %s is NULL."), *Context, *AName);
+				return A.Get();
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static ObjectType* Get(const FString& Context, const TSubclassOf<ObjectType>& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A.Get())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NOT Valid."), *Context, *AName));
+					return false;
+				}
+				return A.Get();
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static ObjectType* GetDefaultObjectChecked(const FString& Context, const TSubclassOf<ObjectType>& A, const FString& AName)
+			{
+			#if !UE_BUILD_SHIPPING
+				checkf(A.Get(), TEXT("%s: %s is NULL."), *Context, *AName);
+
+				UObject* O = A.GetDefaultObject();
+
+				checkf(O, TEXT("%s: Failed to Get DefaultObject from: %s with Class: %s."), *Context, *AName, *(A.Get()->GetName()));
+
+				ObjectType* DOb = Cast<ObjectType>(O);
+
+				checkf(DOb, TEXT("%s: DefaultObject: %s is NOT of type: %s."), *Context, *(ObjectType::StaticClass()->GetName()));
+				return DOb;
+			#else
+				return Cast<ObjectType>(A.GetDefaultObject());
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 		};
 	}
@@ -1992,12 +2059,16 @@ namespace NCsValid
 			template<typename InterfaceType>
 			FORCEINLINE static UObject* _getUObjectChecked(const FString& Context, const InterfaceType* A, const FString& AName)
 			{
+			#if !UE_BUILD_SHIPPING
 				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
 
 				UObject* O = A->_getUObject();
 
 				checkf(IsValid(O), TEXT("%s: %s is NULL, Pending Kill or NOT a UObject."), *Context, *AName);
 				return O;
+			#else
+				return A->_getUObject();
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			template<typename InterfaceType>
@@ -2027,12 +2098,15 @@ namespace NCsValid
 			template<typename InterfaceTypeA, typename InterfaceTypeB>
 			FORCEINLINE static InterfaceTypeB* InterfaceCastChecked(const FString& Context, InterfaceTypeA* A, const FString& AName, const FString& InterfaceNameA, const FString& InterfaceNameB)
 			{
+			#if !UE_BUILD_SHIPPING
 				UObject* O			  = _getUObjectChecked(Context, A, AName);
 				InterfaceTypeB* Other = Cast<InterfaceTypeB>(O);
 
 				checkf(Other, TEXT("%s: %s: %s with Class: %s implementing interface: %s does NOT implement the interface: %s."), *Context, *AName, *(O->GetName()), *(O->GetClass()->GetName()), *InterfaceNameA, *InterfaceNameB);
-
 				return Other;
+			#else
+				return Cast<InterfaceTypeB>(A->_getUObject());
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			/**
@@ -2041,12 +2115,15 @@ namespace NCsValid
 			template<typename InterfaceTypeA, typename InterfaceTypeB>
 			FORCEINLINE static const InterfaceTypeB* InterfaceCastChecked(const FString& Context, const InterfaceTypeA* A, const FString& AName, const FString& InterfaceNameA, const FString& InterfaceNameB)
 			{
+			#if !UE_BUILD_SHIPPING
 				UObject* O			  = _getUObjectChecked(Context, A, AName);
 				InterfaceTypeB* Other = Cast<InterfaceTypeB>(O);
-
+			
 				checkf(Other, TEXT("%s: %s: %s with Class: %s implementing interface: %s does NOT implement the interface: %s."), *Context, *AName, *(O->GetName()), *(O->GetClass()->GetName()), *InterfaceNameA, *InterfaceNameB);
-
 				return Other;
+			#else
+				return Cast<InterfaceTypeB>(A->_getUObject());
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			/**
@@ -2089,12 +2166,15 @@ namespace NCsValid
 			template<typename InterfaceType, typename ClassType>
 			FORCEINLINE static ClassType* CastChecked(const FString& Context, InterfaceType* A, const FString& AName, const FString& InterfaceName)
 			{
+			#if !UE_BUILD_SHIPPING
 				UObject* O		 = _getUObjectChecked(Context, A, AName);
 				ClassType* Other = Cast<ClassType>(O);
 
 				checkf(Other, TEXT("%s: %s: %s with Class: %s implementing interface: %s is NOT of type: %s."), *Context, *AName, *(O->GetName()), *(O->GetClass()->GetName()), *InterfaceName, *(ClassType::StaticClass()->GetName()));
-
 				return Other;
+			#else
+				return Cast<ClassType>(A->_getUObject());
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 
 			/**
@@ -2103,12 +2183,15 @@ namespace NCsValid
 			template<typename InterfaceType, typename ClassType>
 			FORCEINLINE static const ClassType* CastChecked(const FString& Context, const InterfaceType* A, const FString& AName, const FString& InterfaceName)
 			{
+			#if !UE_BUILD_SHIPPING
 				UObject* O		 = _getUObjectChecked(Context, A, AName);
 				ClassType* Other = Cast<ClassType>(O);
 
 				checkf(Other, TEXT("%s: %s: %s with Class: %s implementing interface: %s is NOT of type: %s."), *Context, *AName, *(O->GetName()), *(O->GetClass()->GetName()), *InterfaceName, *(ClassType::StaticClass()->GetName()));
-
 				return Other;
+			#else
+				return Cast<ClassType>(A->_getUObject());
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 		};
 	}
@@ -2638,8 +2721,22 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Class; \
 		check(NCsValid::NSubclassOf::FLibrary::NullChecked<__ObjectType>(Context, __Class, __temp__str__)); \
 	}
+// Assume const FString& Context has been defined
+#define CS_SUBCLASS_OF_GET_CHECKED(__Class, __ObjectType) \
+	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class) \
+	{ \
+		static const FString __temp__str__ = #__Class; \
+		return NCsValid::NSubclassOf::FLibrary::GetChecked<__ObjectType>(Context, __In__##__Class, __temp__str__); \
+	}(Context, __Class)
+// Assume const FString& Context has been defined
+#define CS_SUBCLASS_OF_GET_DEFAULT_OBJ_CHECKED(__Class, __ObjectType) \
+	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class) \
+	{ \
+		static const FString __temp__str__ = #__Class; \
+		return NCsValid::NSubclassOf::FLibrary::GetDefaultObjectChecked<__ObjectType>(Context, __In__##__Class, __temp__str__); \
+	}(Context, __Class)
 
-#pragma endregion WeakObjectPtr
+#pragma endregion SubclassOf
 
 // Actor
 #pragma region
@@ -2864,6 +2961,20 @@ namespace NCsValid
 #define CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(__A)
 // SubclassOf
 #define CS_IS_SUBCLASS_OF_NULL_CHECKED(__Class, __ObjectType)
+	// Assume const FString& Context has been defined
+#define CS_SUBCLASS_OF_GET_CHECKED(__Class, __ObjectType) \
+	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class) \
+	{ \
+		static const FString __temp__str__; \
+		return NCsValid::NSubclassOf::FLibrary::GetChecked<__ObjectType>(Context, __Class, __temp__str__); \
+	}(Context, __Class)
+	// Assume const FString& Context has been defined
+#define CS_SUBCLASS_OF_GET_DEFAULT_OBJ_CHECKED(__Class, __ObjectType) \
+	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class) \
+	{ \
+		static const FString __temp__str__; \
+		return NCsValid::NSubclassOf::FLibrary::GetDefaultObjectChecked<__ObjectType>(Context, __In__##__Class, __temp__str__); \
+	}(Context, __Class)
 // Actor
 //#define CS_SPAWN_ACTOR_CHECKED(__ActorType, __Class) \
 //	[] (const FString& Context, UWorld* __In__##__World, UClass* __In__##__Class) \
@@ -3920,6 +4031,8 @@ namespace NCsValid
 // SubclassOf
 #pragma region
 
+#if !UE_BUILD_SHIPPING
+
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_SUBCLASS_OF_NULL(__Class, __ObjectType) \
 	{ \
@@ -3944,6 +4057,65 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Class; \
 		if (!NCsValid::NSubclassOf::FLibrary::Null<__ObjectType>(Context, __Class, __temp__str__, Log)) { return __Value; } \
 	}
+
+// Assume const FString& Context has been defined
+#define CS_SUBCLASS_OF_GET(__Class, __ObjectType) \
+	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__ = #__Class; \
+		return NCsValid::NSubclassOf::FLibrary::Get<__ObjectType>(Context, __In__##__Class, __temp__str__, Log)); \
+	}(Context, __Class, Log)
+// Assume const FString& Context has been defined
+#define CS_SUBCLASS_OF_GET_DEFAULT_OBJ(__Class, __ObjectType) \
+	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__ = #__Class; \
+		return NCsValid::NSubclassOf::FLibrary::GetDefaultObject<__ObjectType>(Context, __In__##__Class, __temp__str__, Log)); \
+	}(Context, __Class, Log)
+
+#else
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SUBCLASS_OF_NULL(__Class, __ObjectType) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NSubclassOf::FLibrary::Null<__ObjectType>(Context, __Class, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SUBCLASS_OF_NULL_EXIT(__Class, __ObjectType) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NSubclassOf::FLibrary::Null<__ObjectType>(Context, __Class, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SUBCLASS_OF_NULL_RET_NULL(__Class, __ObjectType) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NSubclassOf::FLibrary::Null<__ObjectType>(Context, __Class, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SUBCLASS_OF_NULL_RET_VALUE(__Class, __ObjectType, __Value) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NSubclassOf::FLibrary::Null<__ObjectType>(Context, __Class, __temp__str__, Log)) { return __Value; } \
+	}
+
+// Assume const FString& Context has been defined
+#define CS_SUBCLASS_OF_GET(__Class, __ObjectType) \
+	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__; \
+		return NCsValid::NSubclassOf::FLibrary::Get<__ObjectType>(Context, __In__##__Class, __temp__str__, Log)); \
+	}(Context, __Class, Log)
+// Assume const FString& Context has been defined
+#define CS_SUBCLASS_OF_GET_DEFAULT_OBJ(__Class, __ObjectType) \
+	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__; \
+		return NCsValid::NSubclassOf::FLibrary::GetDefaultObject<__ObjectType>(Context, __In__##__Class, __temp__str__, Log)); \
+	}(Context, __Class, Log)
+
+#endif // #if !UE_BUILD_SHIPPING
 
 #pragma endregion SubclassOf
 

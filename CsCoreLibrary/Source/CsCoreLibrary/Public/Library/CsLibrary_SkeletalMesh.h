@@ -351,6 +351,54 @@ namespace NCsSkeletalMesh
 		static bool ConditionalSafeIsBoneOrSocketValid(const FString& Context, const USceneComponent* Component, const FName& BoneOrSocket, LogLevel);
 
 		/**
+		* Get the Bone or Socket Rotation for the given Component.
+		*
+		* @param Context		The calling Context.
+		* @param Component		SkeletalMeshComponent.
+		* @param BoneOrSocket	Bone or Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		*
+		* return				BoneOrSocket Rotation.
+		*/
+		static FRotator GetBoneOrSocketRotationChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket);
+
+		/**
+		* Safely get the Bone or Socket Rotation for the given Component.
+		*
+		* @param Context		The calling Context.
+		* @param Component		SkeletalMeshComponent.
+		* @param BoneOrSocket	Bone or Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* 
+		* return				BoneOrSocket Rotation.
+		*/
+		static FRotator GetSafeBoneOrSocketRotation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel);
+
+		/**
+		* Get the Bone or Socket Rotation for the given Component.
+		*
+		* @param Context		The calling Context.
+		* @param Component		SkeletalMeshComponent.
+		* @param BoneOrSocket	Bone or Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		*
+		* return				BoneOrSocket Rotation.
+		*/
+		static FRotator3f GetBoneOrSocketRotation3fChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket);
+
+		/**
+		* Safely get the Bone or Socket Rotation for the given Component.
+		*
+		* @param Context		The calling Context.
+		* @param Component		SkeletalMeshComponent.
+		* @param BoneOrSocket	Bone or Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		*
+		* return				BoneOrSocket Rotation.
+		*/
+		static FRotator3f GetSafeBoneOrSocketRotation3f(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel);
+
+		/**
 		* Get the Bone or Socket direction (rotation as vector) for the given Component.
 		*
 		* @param Context		The calling Context.

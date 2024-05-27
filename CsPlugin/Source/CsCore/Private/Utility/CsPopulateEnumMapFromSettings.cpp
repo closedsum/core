@@ -65,7 +65,6 @@ UDataTable* FCsPopulateEnumMapFromSettings::GetDataTable(const FString& Context,
 	{
 		return DT_SoftObject.LoadSynchronous();
 	}
-	return nullptr;
 }
 
 UDataTable* FCsPopulateEnumMapFromSettings::GetDataTable(const FString& Context, const FName& DataTableName)

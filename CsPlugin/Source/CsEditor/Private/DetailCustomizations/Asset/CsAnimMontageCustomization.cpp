@@ -1,36 +1,31 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "DetailCustomizations/Asset/CsAnimMontageCustomization.h"
-#include "CsEditor.h"
 
 // Types
 #include "Animation/CsTypes_Anim.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
-#include "IDetailGroup.h"
-#include "DetailLayoutBuilder.h"
-// AssetRegistry
-#include "AssetRegistry/AssetRegistryModule.h"
-#include "Developer/AssetTools/Public/AssetToolsModule.h"
-#include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
-// Helper
-#include "FileHelpers.h"
-//#include "PropertyEditor/Private/PropertyEditorHelpers.h"
 
 #define LOCTEXT_NAMESPACE "CsAnimMontageCustomization"
 
-TSharedRef<IPropertyTypeCustomization> FCsAnimMontageCustomization::MakeInstance()
+#define CLASS_TYPE FCsAnimMontageCustomization
+#define TEMP_GET_MEMBER_NAME_CHECKED GET_MEMBER_NAME_CHECKED(FCsAnimMontage, Anim)
+
+TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
 {
-	return MakeShareable(new FCsAnimMontageCustomization);
+	return MakeShareable(new CLASS_TYPE);
 }
 
-void FCsAnimMontageCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void CLASS_TYPE::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	StructPropertyHandle->MarkResetToDefaultCustomized();
 
-	AnimHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsAnimMontage, Anim));
+	PropertyHandle = StructPropertyHandle->GetChildHandle(TEMP_GET_MEMBER_NAME_CHECKED);
 	
-	TSharedRef<SWidget> AnimWidget = AnimHandle->CreatePropertyValueWidget();
+	TSharedRef<SWidget> PropertyWidget = PropertyHandle->CreatePropertyValueWidget();
 	
 	HeaderRow.NameContent()
 		[
@@ -42,18 +37,21 @@ void FCsAnimMontageCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> St
 			+ SHorizontalBox::Slot()
 			.AutoWidth()
 			[
-				AnimHandle->CreateDefaultPropertyButtonWidgets()
+				PropertyHandle->CreateDefaultPropertyButtonWidgets()
 			]
 			+ SHorizontalBox::Slot()
 			.AutoWidth()
 			[
-				AnimWidget
+				PropertyWidget
 			]
 		];
 }
 
-void FCsAnimMontageCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void CLASS_TYPE::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 }
+
+#undef CLASS_TYPE
+#undef TEMP_GET_MEMBER_NAME_CHECKED
 
 #undef LOCTEXT_NAMESPACE

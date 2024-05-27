@@ -710,12 +710,11 @@ namespace NCsPooledObject
 			*/
 			const InterfaceContainerType* AddToAllocatedObjects(const KeyType& Type, InterfaceType* InterfaceObject, UObject* Object)
 			{
-				checkf(Object, TEXT("%s::AddToAllocatedObjects: Object is NULL."), *Name);
+				checkf(IsValid(Object), TEXT("%s::AddToAllocatedObjects: Object is NULL or not longer Valid."), *Name);
 
 				const InterfaceContainerType* O = GetManagerPooledObjects(Type)->AddToAllocatedObjects(InterfaceObject, Object);
 
 				OnAddToAllocatedObjects_Event.Broadcast(Type, O);
-
 				return O;
 			}
 

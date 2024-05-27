@@ -1,36 +1,31 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "DetailCustomizations/Asset/CsAnimBlueprintCustomization.h"
-#include "CsEditor.h"
 
 // Types
 #include "Animation/CsTypes_Anim.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
-#include "IDetailGroup.h"
-#include "DetailLayoutBuilder.h"
-// AssetRegistry
-#include "AssetRegistry/AssetRegistryModule.h"
-#include "Developer/AssetTools/Public/AssetToolsModule.h"
-#include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
-// Helper
-#include "FileHelpers.h"
-//#include "PropertyEditor/Private/PropertyEditorHelpers.h"
 
 #define LOCTEXT_NAMESPACE "CsAnimBlueprintCustomization"
 
-TSharedRef<IPropertyTypeCustomization> FCsAnimBlueprintCustomization::MakeInstance()
+#define CLASS_TYPE FCsAnimBlueprintCustomization
+#define TEMP_GET_MEMBER_NAME_CHECKED GET_MEMBER_NAME_CHECKED(FCsAnimBlueprint, Blueprint)
+
+TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
 {
-	return MakeShareable(new FCsAnimBlueprintCustomization);
+	return MakeShareable(new CLASS_TYPE);
 }
 
-void FCsAnimBlueprintCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void CLASS_TYPE::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	StructPropertyHandle->MarkResetToDefaultCustomized();
 
-	BlueprintHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsAnimBlueprint, Blueprint));
+	PropertyHandle = StructPropertyHandle->GetChildHandle(TEMP_GET_MEMBER_NAME_CHECKED);
 	
-	TSharedRef<SWidget> BlueprintWidget = BlueprintHandle->CreatePropertyValueWidget();
+	TSharedRef<SWidget> PropertyWidget = PropertyHandle->CreatePropertyValueWidget();
 	
 	HeaderRow.NameContent()
 		[
@@ -42,18 +37,21 @@ void FCsAnimBlueprintCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> 
 			+ SHorizontalBox::Slot()
 			.AutoWidth()
 			[
-				BlueprintHandle->CreateDefaultPropertyButtonWidgets()
+				PropertyHandle->CreateDefaultPropertyButtonWidgets()
 			]
 			+ SHorizontalBox::Slot()
 			.AutoWidth()
 			[
-				BlueprintWidget
+				PropertyWidget
 			]
 		];
 }
 
-void FCsAnimBlueprintCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void CLASS_TYPE::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 }
+
+#undef CLASS_TYPE
+#undef TEMP_GET_MEMBER_NAME_CHECKED
 
 #undef LOCTEXT_NAMESPACE

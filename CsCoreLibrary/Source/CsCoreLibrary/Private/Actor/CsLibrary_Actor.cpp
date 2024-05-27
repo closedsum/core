@@ -88,7 +88,7 @@ namespace NCsActor
 	{
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
-		checkf(ActorClass.Get(), TEXT("%: ActorClass is NULL"), *Context);
+		checkf(ActorClass.Get(), TEXT("%s: ActorClass is NULL"), *Context);
 
 		for (TActorIterator<AActor> It(World, ActorClass); It; ++It)
 		{

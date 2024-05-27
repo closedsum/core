@@ -616,7 +616,7 @@ bool FCsMaterialAnim::IsValidChecked(const FString& Context) const
 
 		checkf(FMath::Abs(DeltaTime - DT) <= KINDA_SMALL_NUMBER, TEXT("%s: DeltaTime: %f is NOT correct (%f != %f) for PlayRate: %s."), *Context, DeltaTime, DeltaTime, DT, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate));
 
-		checkf(DeltaTime > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate));
+		checkf(DeltaTime > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalTime, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate));
 
 		if (!IsLoopingForever())
 		{

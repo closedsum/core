@@ -51,7 +51,7 @@ namespace NCsViewport
 
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
-				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
 				return true;
 			}
@@ -92,7 +92,7 @@ namespace NCsViewport
 
 				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
 
-				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
 				FViewport* Viewport = GVC->Viewport;
 
@@ -132,7 +132,7 @@ namespace NCsViewport
 
 				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
 
-				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
 				FViewport* Viewport = GVC->Viewport;
 
@@ -179,7 +179,7 @@ namespace NCsViewport
 
 				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
 
-				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
 				FViewport* Viewport = GVC->Viewport;
 
@@ -221,7 +221,7 @@ namespace NCsViewport
 
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
-				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
 				return true;
 			}
@@ -262,7 +262,7 @@ namespace NCsViewport
 
 				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
 
-				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
 				FViewport* Viewport = GVC->Viewport;
 
@@ -309,7 +309,7 @@ namespace NCsViewport
 
 				if (!GVC)
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName())));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName())));
 					return false;
 				}
 
@@ -358,7 +358,7 @@ namespace NCsViewport
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
-				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
 				FSceneViewport* SV = GVC->GetGameViewport();
 
@@ -380,7 +380,7 @@ namespace NCsViewport
 
 				if (!GVC)
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName())));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName())));
 					return nullptr;
 				}
 

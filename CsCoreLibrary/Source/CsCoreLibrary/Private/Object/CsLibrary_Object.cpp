@@ -23,7 +23,7 @@ namespace NCsObject
 		}
 	}
 
-	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
+	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 
 	FString FLibrary::PrintObjectAndClass(const UObject* Object)
 	{
@@ -53,7 +53,7 @@ namespace NCsObject
 
 	#endif // #if WITH_EDITOR
 	
-	bool FLibrary::SafeIsValid(const FString& Context, const UObject* Object, LogWarning)
+	bool FLibrary::SafeIsValid(const FString& Context, const UObject* Object, LogLevel)
 	{
 		CS_IS_PENDING_KILL(Object)
 		return true;
@@ -158,7 +158,7 @@ namespace NCsObject
 		return O;
 	}
 
-	UObject* FLibrary::SafeConstruct(const FString& Context, UObject* Outer, UClass* Class, LogWarning)
+	UObject* FLibrary::SafeConstruct(const FString& Context, UObject* Outer, UClass* Class, LogLevel)
 	{
 		CS_IS_PENDING_KILL_RET_NULL(Outer)
 		CS_IS_PENDING_KILL_RET_NULL(Class)
@@ -187,7 +187,7 @@ namespace NCsObject
 		return DOb;
 	}
 
-	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, const UObject* Object, LogWarning)
+	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, const UObject* Object, LogLevel)
 	{
 		CS_IS_PENDING_KILL_RET_NULL(Object)
 
@@ -209,6 +209,31 @@ namespace NCsObject
 		return DOb;
 	}
 
+	bool FLibrary::IsDefaultObjectChecked(const FString& Context, const UObject* Object)
+	{
+		check(IsValidChecked(Context, Object));
+
+		const FString& Prefix = NCsObject::NLibrary::NCached::Str::Default__;
+
+		checkf(Object->GetName().StartsWith(Prefix), TEXT("%s: %s does NOT begin with %s."), *Context, *PrintObjectAndClass(Object), *Prefix);
+		return true;
+	}
+
+	bool FLibrary::SafeIsDefaultObject(const FString& Context, const UObject* Object, LogLevel)
+	{
+		if (!SafeIsValid(Context, Object, Log))
+			return false;
+
+		const FString& Prefix = NCsObject::NLibrary::NCached::Str::Default__;
+
+		if (!Object->GetName().StartsWith(Prefix))
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT begin with %s."), *Context, *PrintObjectAndClass(Object), *Prefix))
+			return false;
+		}
+		return true;
+	}
+
 	bool FLibrary::IsDefaultObject(const UObject* Object)
 	{
 		return Object ? Object->GetName().StartsWith(NCsObject::NLibrary::NCached::Str::Default__) : false;
@@ -220,7 +245,7 @@ namespace NCsObject
 		return Object->GetUniqueID();
 	}
 
-	int32 FLibrary::GetSafeUniqueID(const FString& Context, const UObject* Object, LogWarning)
+	int32 FLibrary::GetSafeUniqueID(const FString& Context, const UObject* Object, LogLevel)
 	{
 		CS_IS_PENDING_KILL_RET_VALUE(Object, INDEX_NONE)
 		return Object->GetUniqueID();
@@ -240,7 +265,7 @@ namespace NCsObject
 		return Object;
 	}
 
-	UObject* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogWarning)
+	UObject* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
 	{
 		// Check Path is Valid
 		CS_IS_SOFT_OBJECT_PATH_VALID_RET_NULL(Path)
@@ -265,7 +290,7 @@ namespace NCsObject
 		return LoadChecked(Context, SoftPath);
 	}
 
-	UObject* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogWarning)
+	UObject* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogLevel)
 	{
 		// Check Path is Valid
 		CS_IS_STRING_EMPTY_RET_NULL(Path)
@@ -277,7 +302,7 @@ namespace NCsObject
 
 	#pragma endregion Load
 
-	bool FLibrary::SafeMarkAsGarbage(const FString& Context, UObject* Object, LogWarning)
+	bool FLibrary::SafeMarkAsGarbage(const FString& Context, UObject* Object, LogLevel)
 	{
 		CS_IS_PTR_NULL(Object)
 
@@ -299,5 +324,5 @@ namespace NCsObject
 		return SafeMarkAsGarbage(Context, Object, nullptr);
 	}
 
-	#undef LogWarning
+	#undef LogLevel
 }

@@ -96,3 +96,38 @@ namespace NCsTraceTransaction
 }
 
 #pragma endregion TraceTransaction
+
+// TraceBoneSpace
+#pragma region
+
+namespace NCsTraceBoneSpace
+{
+	namespace Ref
+	{
+		typedef EMCsTraceBoneSpace EnumMapType;
+
+		CSPHYSICS_API CS_ADD_TO_ENUM_MAP(Component);
+		CSPHYSICS_API CS_ADD_TO_ENUM_MAP(Bone);
+		CSPHYSICS_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsTraceBoneSpace_MAX, "MAX");
+	}
+}
+
+namespace NCsTrace
+{
+	namespace NBone
+	{
+		namespace NSpace
+		{
+			namespace Ref
+			{
+				typedef EMSpace EnumMapType;
+
+				CSPHYSICS_API CS_ADD_TO_ENUM_MAP(Component);
+				CSPHYSICS_API CS_ADD_TO_ENUM_MAP(Bone);
+				CSPHYSICS_API CS_ADD_TO_ENUM_MAP_CUSTOM(ESpace_MAX, "MAX");
+			}
+		}
+	}
+}
+
+#pragma endregion TraceBoneSpace

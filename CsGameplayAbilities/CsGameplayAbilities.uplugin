@@ -10,7 +10,7 @@
 	"DocsURL": "",
 	"MarketplaceURL": "",
 	"SupportURL": "",
-	"EngineVersion": "5.3.0",
+	"EngineVersion": "5.4.0",
 	"CanContainContent": true,
 	"Installed": true,
 	"Modules": [
@@ -18,11 +18,44 @@
 			"Name": "CsGameplayAbilities",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		}
+		},
+    		{
+      			"Name": "CsGameplayAbilitiesEditor",
+      			"Type": "Editor",
+      			"LoadingPhase": "Default"
+    		}
 	],
 	"Plugins": [
 		{
 			"Name": "GameplayAbilities",
+			"Enabled": true
+		},
+		{
+			"Name": "CsMacro",
+			"Enabled": true
+		},
+		{
+			"Name": "CsStructOps",
+			"Enabled": true
+		},
+		{
+			"Name": "CsContainer",
+			"Enabled": true
+		},
+		{
+			"Name": "CsValid",
+			"Enabled": true
+		},
+		{
+			"Name": "CsEnum",
+			"Enabled": true
+		},
+		{
+			"Name": "CsCoreLibrary",
+			"Enabled": true
+		},
+		{
+			"Name": "CsGameplayTags",
 			"Enabled": true
 		}
 	]

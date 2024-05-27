@@ -225,7 +225,7 @@ namespace NCsWorld
 
 		AActor* A = GetChecked(Context, WorldContext)->SpawnActor(Class);
 
-		checkf(A, TEXT("%s: Context: Failed to Spawn Actor from Class: %s."), *(Class->GetName()));
+		checkf(A, TEXT("%s: Context: Failed to Spawn Actor from Class: %s."), *Context, *(Class->GetName()));
 		return A;
 	}
 

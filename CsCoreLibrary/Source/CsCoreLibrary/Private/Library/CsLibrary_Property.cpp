@@ -787,7 +787,7 @@ namespace NCsProperty
 
 						for (FScriptMapHelper::FIterator MapIt = MapHelper.CreateIterator(); MapIt; ++MapIt)
 						{
-							const uint8* KeyPtr    = MapHelper.GetKeyPtr(*MapIt);
+							const uint8* KeyPtr    = MapHelper.GetKeyPtr(MapIt.GetInternalIndex());
 							FProperty* KeyProperty = MapHelper.KeyProp;
 
 							FString OutValue;
@@ -799,7 +799,7 @@ namespace NCsProperty
 								if (FStructProperty* StructProperty = CastField<FStructProperty>(MapHelper.ValueProp))
 								{
 									OutResult.Property	  = StructProperty;
-									OutResult.StructValue = MapHelper.GetValuePtr(*MapIt);
+									OutResult.StructValue = MapHelper.GetValuePtr(MapIt.GetInternalIndex());
 									OutResult.Struct	  = StructProperty->Struct;
 
 									Found = true;

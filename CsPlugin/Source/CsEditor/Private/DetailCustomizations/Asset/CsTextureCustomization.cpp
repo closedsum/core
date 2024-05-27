@@ -1,36 +1,31 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "DetailCustomizations/Asset/CsTextureCustomization.h"
-#include "CsEditor.h"
 
 // Types
 #include "Types/CsTypes_Texture.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
-#include "IDetailGroup.h"
-#include "DetailLayoutBuilder.h"
-// AssetRegistry
-#include "AssetRegistry/AssetRegistryModule.h"
-#include "Developer/AssetTools/Public/AssetToolsModule.h"
-#include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
-// Helper
-#include "FileHelpers.h"
-//#include "PropertyEditor/Private/PropertyEditorHelpers.h"
 
 #define LOCTEXT_NAMESPACE "CsTextureCustomization"
 
-TSharedRef<IPropertyTypeCustomization> FCsTextureCustomization::MakeInstance()
+#define CLASS_TYPE FCsTextureCustomization
+#define TEMP_GET_MEMBER_NAME_CHECKED GET_MEMBER_NAME_CHECKED(FCsTexture, Texture)
+
+TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
 {
-	return MakeShareable(new FCsTextureCustomization);
+	return MakeShareable(new CLASS_TYPE);
 }
 
-void FCsTextureCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void CLASS_TYPE::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	StructPropertyHandle->MarkResetToDefaultCustomized();
 
-	TextureHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsTexture, Texture));
+	PropertyHandle = StructPropertyHandle->GetChildHandle(TEMP_GET_MEMBER_NAME_CHECKED);
 	
-	TSharedRef<SWidget> TextureWidget = TextureHandle->CreatePropertyValueWidget();
+	TSharedRef<SWidget> PropertyWidget = PropertyHandle->CreatePropertyValueWidget();
 	
 	HeaderRow.NameContent()
 		[
@@ -42,18 +37,21 @@ void FCsTextureCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> Struct
 			+ SHorizontalBox::Slot()
 			.AutoWidth()
 			[
-				TextureHandle->CreateDefaultPropertyButtonWidgets()
+				PropertyHandle->CreateDefaultPropertyButtonWidgets()
 			]
 			+ SHorizontalBox::Slot()
 			.AutoWidth()
 			[
-				TextureWidget
+				PropertyWidget
 			]
 		];
 }
 
-void FCsTextureCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void CLASS_TYPE::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 }
+
+#undef CLASS_TYPE
+#undef TEMP_GET_MEMBER_NAME_CHECKED
 
 #undef LOCTEXT_NAMESPACE

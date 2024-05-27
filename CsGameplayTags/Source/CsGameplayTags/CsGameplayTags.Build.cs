@@ -24,8 +24,8 @@ public class CsGameplayTags : ModuleRules
         PublicDependencyModuleNames.AddRange(
                 new string[] {
                     "Core",
-                    "CoreUObject"
-
+                    "CoreUObject",
+                    "GameplayTags"
                 }
             );
 

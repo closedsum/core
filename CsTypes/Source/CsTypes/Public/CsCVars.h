@@ -35,7 +35,7 @@ struct TCsAutoConsoleVariable : public ICsAutoConsoleVariable
 protected:
 	TAutoConsoleVariable<ValueType>* CVar;
 	ValueType(IConsoleVariable::*GetValue)() const;
-	void(IConsoleVariable::*SetValue)(ValueType, EConsoleVariableFlags);
+	void(IConsoleVariable::*SetValue)(ValueType, EConsoleVariableFlags, FName);
 public:
 	ValueType Value;
 	ValueType Last_Value;
@@ -70,7 +70,7 @@ public:
 	void Set(const ValueType& InValue, const EConsoleVariableFlags& SetBy = ECVF_SetByCode)
 	{
 		IConsoleVariable* Var = (*CVar).AsVariable();
-		((*Var).*(SetValue))(InValue, SetBy);
+		((*Var).*(SetValue))(InValue, SetBy, NAME_None);
 
 		Value = InValue;
 
@@ -114,7 +114,7 @@ public:
 	TCsAutoConsoleVariable_int32() : Super()
 	{
 		GetValue = &IConsoleVariable::GetInt;
-		SetValue = &IConsoleVariable::Set;
+		SetValue = static_cast<void(IConsoleVariable::*)(int32, EConsoleVariableFlags, FName)>(&IConsoleVariable::Set);
 
 		Value = 0;
 		Last_Value = 0;
@@ -132,7 +132,7 @@ public:
 	TCsAutoConsoleVariable_bool() : Super()
 	{
 		GetValue = &IConsoleVariable::GetBool;
-		SetValue = &IConsoleVariable::Set;
+		SetValue = static_cast<void(IConsoleVariable::*)(bool, EConsoleVariableFlags, FName)>(&IConsoleVariable::Set);
 
 		Value = false;
 		Last_Value = false;

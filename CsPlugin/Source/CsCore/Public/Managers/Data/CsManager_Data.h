@@ -1771,7 +1771,11 @@ public:
 	#if UE_BUILD_SHIPPING
 		return DataTableEntryMap[EntryName];
 	#else
-		const FCsDataEntry_DataTable* Entry = DataTableEntryMap[EntryName];
+		const FCsDataEntry_DataTable* const* EntryPtr = DataTableEntryMap.Find(EntryName);
+
+		checkf(EntryPtr, TEXT("%s: Failed find DataTable associated with EntryName: %s."), *Context, *(EntryName.ToString()));
+
+		const FCsDataEntry_DataTable* Entry = *EntryPtr;
 
 		checkf(Entry, TEXT("%s: Failed find DataTable associated with EntryName: %s."), *Context, *(EntryName.ToString()));
 		return Entry;

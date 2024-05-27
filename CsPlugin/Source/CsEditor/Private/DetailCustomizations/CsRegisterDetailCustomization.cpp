@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "DetailCustomizations/CsRegisterDetailCustomization.h"
-#include "CsEditor.h"
 
 #include "Modules/ModuleManager.h"
 #include "PropertyEditorModule.h"

@@ -204,7 +204,6 @@ namespace NCsTrace
 
 			if (!Manager_Trace)
 				return nullptr;
-
 			return Manager_Trace->Trace(Request);
 		}
 
@@ -218,36 +217,59 @@ namespace NCsTrace
 			// Sphere
 		#pragma region
 
-		bool FLibrary::SafeSphereTrace(const FString& Context, UObject* WorldContext, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, const float& Radius, const TEnumAsByte<ECollisionChannel>& Channel, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit, LogLevel)
+		#define ParamsType NCsTrace::NManager::FLibrary::FSphereTrace::FParams
+		#define BoneSpaceType NCsTrace::NBone::ESpace
+
+		bool FLibrary::SafeSphereTrace(const FString& Context, const ParamsType& Params, FHitResult& OutHit, LogLevel)
 		{
-			if (RequestType* Request = SafeAllocateRequest(Context, WorldContext))
+			if (RequestType* Request = SafeAllocateRequest(Context, Params.GetWorldContext(), Log))
 			{
 				// Fill out Request
-				bool OutSuccess     = false;
-				const FVector Start = SkeletalMeshLibrary::GetSafeBoneOrSocketLocation(Context, Component, BoneOrSocket, OutSuccess, Log);
+				bool OutSuccess = false;
+				FVector Start	= SkeletalMeshLibrary::GetSafeBoneOrSocketLocation(Context, Params.Component, Params.BoneOrSocket, OutSuccess, Log);
 
 				if (!OutSuccess)
 				{
-					SafeDeallocateRequest(Context, WorldContext, Request, Log);
+					SafeDeallocateRequest(Context, Params.GetWorldContext(), Request, Log);
+					return false;
+				}
+
+				// Bone
+				if (Params.Space == BoneSpaceType::Bone)
+				{
+					const FRotator Rotation = NCsSkeletalMesh::FLibrary::GetSafeBoneOrSocketRotation(Context, Params.Component, Params.BoneOrSocket, OutSuccess, Log);
+					Start					= MathLibrary::Add(Start, Rotation, Params.Location);
+				}
+				// Component
+				else
+				if (Params.Space == BoneSpaceType::Component)
+				{
+					const FRotator Rotation = Params.Component->GetComponentRotation();
+					Start					= MathLibrary::Add(Start, Rotation, Params.Location);
+				}
+
+				if (!OutSuccess)
+				{
+					SafeDeallocateRequest(Context, Params.GetWorldContext(), Request, Log);
 					return false;
 				}
 
 				Request->Start				  = MathLibrary::Convert(Start);
 				Request->End				  = MathLibrary::Convert(Start);
-				Request->Channel			  = Channel;
-				Request->Params.bTraceComplex = bTraceComplex;
-				Request->Shape.SetSphere(Radius);
+				Request->Channel			  = Params.Channel;
+				Request->Params.bTraceComplex = Params.bTraceComplex;
+				Request->Shape.SetSphere(Params.Radius);
 
-				if (bIgnoreSelf)
+				if (Params.bIgnoreSelf)
 				{
-					if (AActor* Actor = Cast<AActor>(WorldContext))
+					if (AActor* Actor = Cast<AActor>(Params.GetWorldContext()))
 						Request->Params.AddIgnoredActor(Actor);
 				}
 
-				Request->Params.AddIgnoredActors(ActorsToIgnore);
+				Request->Params.AddIgnoredActors(Params.ActorsToIgnore);
 
 				// Check Response
-				if (ResponseType* Response = SafeTrace(Context, WorldContext, Request))
+				if (ResponseType* Response = SafeTrace(Context, Params.GetWorldContext(), Request, Log))
 				{
 					if (Response->bResult)
 					{
@@ -259,6 +281,72 @@ namespace NCsTrace
 			}
 			return false;
 		}
+
+		bool FLibrary::SafeSphereTrace(const FString& Context, UObject* WorldContext, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, const float& Radius, const TEnumAsByte<ECollisionChannel>& Channel, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit, LogLevel)
+		{
+			static ParamsType Params;
+			Params.WorldContext = WorldContext;
+			Params.Component	= const_cast<USkeletalMeshComponent*>(Component);
+			Params.BoneOrSocket = BoneOrSocket;
+			Params.Space		= BoneSpaceType::Bone;
+			Params.Location		= FVector::ZeroVector;
+			Params.Radius		= Radius;
+			Params.Channel		= Channel;
+			Params.bTraceComplex = bTraceComplex;
+			Params.bIgnoreSelf	= bIgnoreSelf;
+			Params.SetActorsToIngore(ActorsToIgnore);
+			
+			return SafeSphereTrace(Context, Params, OutHit, Log);
+		}
+
+		bool FLibrary::SphereTraceChecked(const FString& Context, const ParamsType& Params, FHitResult& OutHit)
+		{
+			RequestType* Request = AllocateRequestChecked(Context, Params.GetWorldContext());
+			// Fill out Request
+			FVector Start	= SkeletalMeshLibrary::GetBoneOrSocketLocationChecked(Context, Params.Component, Params.BoneOrSocket);
+
+			// Bone
+			if (Params.Space == BoneSpaceType::Bone)
+			{
+				const FRotator Rotation = NCsSkeletalMesh::FLibrary::GetBoneOrSocketRotationChecked(Context, Params.Component, Params.BoneOrSocket);
+				Start					= MathLibrary::Add(Start, Rotation, Params.Location);
+			}
+			// Component
+			else
+			if (Params.Space == BoneSpaceType::Component)
+			{
+				const FRotator Rotation = Params.Component->GetComponentRotation();
+				Start					= MathLibrary::Add(Start, Rotation, Params.Location);
+			}
+
+			Request->Start				  = MathLibrary::Convert(Start);
+			Request->End				  = MathLibrary::Convert(Start);
+			Request->Channel			  = Params.Channel;
+			Request->Params.bTraceComplex = Params.bTraceComplex;
+			Request->Shape.SetSphere(Params.Radius);
+
+			if (Params.bIgnoreSelf)
+			{
+				if (AActor* Actor = Cast<AActor>(Params.GetWorldContext()))
+					Request->Params.AddIgnoredActor(Actor);
+			}
+
+			Request->Params.AddIgnoredActors(Params.ActorsToIgnore);
+
+			// Check Response
+			if (ResponseType* Response = TraceChecked(Context, Params.GetWorldContext(), Request))
+			{
+				if (Response->bResult)
+				{
+					OutHit = Response->OutHits[CS_FIRST];
+				}
+				return Response->bResult;
+			}
+			return false;
+		}
+
+		#undef ParamsType
+		#undef BoneSpaceType
 
 		#pragma endregion Sphere
 

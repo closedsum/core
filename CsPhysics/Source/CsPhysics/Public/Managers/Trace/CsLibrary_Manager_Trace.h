@@ -4,6 +4,7 @@
 #pragma once
 // Types
 #include "Collision/CsTypes_Collision.h"
+#include "Managers/Trace/CsTypes_Trace.h"
 // Log
 #include "Utility/CsPhysicsLog.h"
 
@@ -206,6 +207,69 @@ namespace NCsTrace
 		#pragma region
 		public:
 
+			struct FSphereTrace
+			{
+				struct FParams
+				{
+				public:
+
+					UObject* WorldContext;
+
+					USkeletalMeshComponent* Component;
+
+					FName BoneOrSocket;
+
+					NCsTrace::NBone::ESpace Space;
+
+					FVector Location;
+
+					float Radius;
+
+					ECollisionChannel Channel;
+
+					bool bTraceComplex;
+
+					bool bIgnoreSelf;
+
+					TArray<AActor*> ActorsToIgnore;
+
+					FParams() :
+						WorldContext(nullptr),
+						Component(nullptr),
+						BoneOrSocket(NAME_None),
+						Space(NCsTrace::NBone::ESpace::Bone),
+						Location(0.0f),
+						Channel(ECollisionChannel::ECC_MAX),
+						bTraceComplex(false),
+						bIgnoreSelf(false),
+						ActorsToIgnore()
+					{
+					}
+
+					FORCEINLINE UObject* GetWorldContext() const { return WorldContext; }
+
+					void SetActorsToIngore(const TArray<AActor*>& Actors)
+					{
+						ActorsToIgnore.Reset(FMath::Max(ActorsToIgnore.Max(), Actors.Num()));
+						ActorsToIgnore.Append(Actors);
+					}
+				};
+			};
+
+			#define ParamsType NCsTrace::NManager::FLibrary::FSphereTrace::FParams
+
+			/**
+			* Safely sweeps a sphere at the given Bone location for Component and returns the first blocking hit encountered.
+			* This trace finds the objects that RESPONDS to the given Collision Channel
+			* 
+			* @param Context			The calling context
+			* @param Params
+			* @param OutHit				Properties of the trace hit.
+			* @param Log				(optional)
+			* @return					True if there was a hit, false otherwise.
+			*/
+			static bool SafeSphereTrace(const FString& Context, const ParamsType& Params, FHitResult& OutHit, LogLevel);
+
 			/**
 			* Safely sweeps a sphere at the given Bone location for Component and returns the first blocking hit encountered.
 			* This trace finds the objects that RESPONDS to the given Collision Channel
@@ -222,6 +286,19 @@ namespace NCsTrace
 			* @return					True if there was a hit, false otherwise.
 			*/
 			static bool SafeSphereTrace(const FString& Context, UObject* WorldContext, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, const float& Radius, const TEnumAsByte<ECollisionChannel>& Channel, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit, LogLevel);
+
+			/**
+			* Sweeps a sphere at the given Bone location for Component and returns the first blocking hit encountered.
+			* This trace finds the objects that RESPONDS to the given Collision Channel
+			* 
+			* @param Context			The calling context
+			* @param Params
+			* @param OutHit				Properties of the trace hit.
+			* @return					True if there was a hit, false otherwise.
+			*/
+			static bool SphereTraceChecked(const FString& Context, const ParamsType& Params, FHitResult& OutHit);
+
+			#undef ParamsType
 
 		#pragma endregion Sphere
 

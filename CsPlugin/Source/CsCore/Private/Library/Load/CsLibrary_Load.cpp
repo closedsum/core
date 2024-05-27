@@ -1920,7 +1920,7 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct, cons
 
 				for (FScriptMapHelper::FIterator MapIt = MapHelper.CreateIterator(); MapIt; ++MapIt)
 				{
-					void* ValuePtr = MapHelper.GetValuePtr(*MapIt);
+					void* ValuePtr = MapHelper.GetValuePtr(MapIt.GetInternalIndex());
 
 					LoadStruct(ValuePtr, StructValueProperty->Struct, LoadFlags, LoadCodes);
 					continue;
@@ -1939,7 +1939,7 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct, cons
 
 				for (FScriptSetHelper::FIterator SetIt = SetHelper.CreateIterator(); SetIt; ++SetIt)
 				{
-					void* ValuePtr = SetHelper.GetElementPtr(*SetIt);
+					void* ValuePtr = SetHelper.GetElementPtr(SetIt.GetInternalIndex());
 
 					LoadStruct(ValuePtr, StructElementProperty->Struct, LoadFlags, LoadCodes);
 					continue;

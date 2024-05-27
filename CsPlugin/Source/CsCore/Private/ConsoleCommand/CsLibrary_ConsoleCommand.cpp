@@ -53,7 +53,6 @@ namespace NCsConsoleCommand
 			{
 				return GameInstanceLibrary::GetChecked(Context, World)->Exec(World, Cmd, Out);
 			}
-			return false;
 		}
 
 		bool FLibrary::Exec(UObject* WorldContext, const FString& Cmd)

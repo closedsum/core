@@ -258,3 +258,66 @@ struct CSPHYSICS_API FCsTraceCollisionCapsule
 };
 
 #pragma endregion FCsTraceCollisionCapsule
+
+// TraceBoneSpace
+#pragma region
+
+/**
+* Describes what "Space" to use for tracing from a Bone (Location)
+*/
+UENUM(BlueprintType)
+enum class ECsTraceBoneSpace : uint8
+{
+	Bone					UMETA(DisplayName = "Bone"),
+	Component				UMETA(DisplayName = "Component"),
+	ECsTraceBoneSpace_MAX	UMETA(Hidden),
+};
+
+struct CSPHYSICS_API EMCsTraceBoneSpace : public TCsEnumMap<ECsTraceBoneSpace>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsTraceBoneSpace, ECsTraceBoneSpace)
+};
+
+namespace NCsTraceBoneSpace
+{
+	typedef ECsTraceBoneSpace Type;
+
+	namespace Ref
+	{
+		extern CSPHYSICS_API const Type Bone;
+		extern CSPHYSICS_API const Type Component;
+		extern CSPHYSICS_API const Type ECsTraceBoneSpace_MAX;
+	}
+}
+
+namespace NCsTrace
+{
+	namespace NBone
+	{
+		enum class ESpace : uint8
+		{
+			Bone,
+			Component,
+			ESpace_MAX
+		};
+
+		struct CSPHYSICS_API EMSpace : public TCsEnumMap<ESpace>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMSpace, ESpace)
+		};
+
+		namespace NSpace
+		{
+			typedef ESpace Type;
+
+			namespace Ref
+			{
+				extern CSPHYSICS_API const Type Bone;
+				extern CSPHYSICS_API const Type Component;
+				extern CSPHYSICS_API const Type ESpace_MAX;
+			}
+		}
+	}
+}
+
+#pragma endregion TraceBoneSpace

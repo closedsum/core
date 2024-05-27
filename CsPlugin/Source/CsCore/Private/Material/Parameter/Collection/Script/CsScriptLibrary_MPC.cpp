@@ -53,8 +53,8 @@ bool UCsScriptLibrary_MPC::SetScalarParameterValue(const FString& Context, UMate
 	return MPCLibrary::Editor_SetSafeScalarParameter(Ctxt, Collection, ParamName, Value);
 #else
 	checkf(0, TEXT("%s: should ONLY be called in Editor"));
-#endif // #if WITH_EDITOR
 	return true;
+#endif // #if WITH_EDITOR
 }
 
 bool UCsScriptLibrary_MPC::SetScalarParameterValue_UpdateMaterials(const FString& Context, UMaterialParameterCollection* Collection, const FName& ParamName, const float& Value)
@@ -69,8 +69,8 @@ bool UCsScriptLibrary_MPC::SetScalarParameterValue_UpdateMaterials(const FString
 	return MPCLibrary::Editor_SetSafeScalarParameter_UpdateMaterials(Ctxt, Collection, ParamName, Value);
 #else
 	checkf(0, TEXT("%s: should ONLY be called in Editor"));
-#endif // #if WITH_EDITOR
 	return true;
+#endif // #if WITH_EDITOR
 }
 
 #pragma endregion Scalar
@@ -90,8 +90,8 @@ bool UCsScriptLibrary_MPC::SetVectorParameterValue(const FString& Context, UMate
 	return MPCLibrary::Editor_SetSafeVectorParameter(Ctxt, Collection, ParamName, Value);
 #else
 	checkf(0, TEXT("%s: should ONLY be called in Editor"));
-#endif // #if WITH_EDITOR
 	return true;
+#endif // #if WITH_EDITOR
 }
 
 bool UCsScriptLibrary_MPC::SetVectorParameterValue_UpdateMaterials(const FString& Context, UMaterialParameterCollection* Collection, const FName& ParamName, const FLinearColor& Value)
@@ -106,8 +106,8 @@ bool UCsScriptLibrary_MPC::SetVectorParameterValue_UpdateMaterials(const FString
 	return MPCLibrary::Editor_SetSafeVectorParameter_UpdateMaterials(Ctxt, Collection, ParamName, Value);
 #else
 	checkf(0, TEXT("%s: should ONLY be called in Editor"));
-#endif // #if WITH_EDITOR
 	return true;
+#endif // #if WITH_EDITOR
 }
 
 #pragma endregion Vector
@@ -124,8 +124,8 @@ bool UCsScriptLibrary_MPC::UpdateMaterial(const FString& Context, UMaterialParam
 	return MPCLibrary::Editor_SafeUpdateMaterial(Ctxt, Collection, Material);
 #else
 	checkf(0, TEXT("%s: should ONLY be called in Editor"));
-#endif // #if WITH_EDITOR
 	return true;
+#endif // #if WITH_EDITOR
 }
 
 bool UCsScriptLibrary_MPC::UpdateMaterials(const FString& Context, UMaterialParameterCollection* Collection, TArray<UMaterial*>& Materials)
@@ -140,6 +140,6 @@ bool UCsScriptLibrary_MPC::UpdateMaterials(const FString& Context, UMaterialPara
 	return MPCLibrary::Editor_SafeUpdateMaterials(Ctxt, Collection, Materials);
 #else
 	checkf(0, TEXT("%s: should ONLY be called in Editor"));
-#endif // #if WITH_EDITOR
 	return true;
+#endif // #if WITH_EDITOR
 }

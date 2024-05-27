@@ -221,7 +221,7 @@ namespace NCsMaterial
 		CS_IS_PTR_NULL_CHECKED(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
-		checkf(Index < Mesh->GetMaterials().Num(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, *(Mesh->GetName()), Mesh->GetMaterials().Num());
+		checkf(Index < Mesh->GetMaterials().Num(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, Mesh->GetMaterials().Num(), *(Mesh->GetName()));
 
 		return true;
 	}
@@ -231,7 +231,7 @@ namespace NCsMaterial
 		CS_IS_PTR_NULL_CHECKED(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
-		checkf(Index < Mesh->GetStaticMaterials().Num(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, *(Mesh->GetName()), Mesh->GetStaticMaterials().Num());
+		checkf(Index < Mesh->GetStaticMaterials().Num(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, Mesh->GetStaticMaterials().Num(), *(Mesh->GetName()));
 		return true;
 	}
 
@@ -240,7 +240,7 @@ namespace NCsMaterial
 		CS_IS_PENDING_KILL_CHECKED(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
-		checkf(Index < Mesh->GetNumMaterials(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, *(Mesh->GetName()), Mesh->GetNumMaterials());
+		checkf(Index < Mesh->GetNumMaterials(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, Mesh->GetNumMaterials(), *(Mesh->GetName()));
 		return true;
 	}
 
@@ -251,7 +251,7 @@ namespace NCsMaterial
 
 		if (Index >= Mesh->GetNumMaterials())
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, *(Mesh->GetName()), Mesh->GetNumMaterials()));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, Mesh->GetNumMaterials(), *(Mesh->GetName())));
 			return false;
 		}
 		return true;
@@ -273,7 +273,7 @@ namespace NCsMaterial
 		return true;
 	}
 
-	#pragma endregion Valid
+	#pragma endregion __Valid
 
 	// Set
 	#pragma region
@@ -1016,7 +1016,8 @@ namespace NCsMaterial
 				}
 			}
 		}
-		checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
+		//checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
+		checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
 		return false;
 	}
 
@@ -1221,7 +1222,8 @@ namespace NCsMaterial
 				}
 			}
 		}
-		checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
+		//checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
+		checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
 		return false;
 	}
 

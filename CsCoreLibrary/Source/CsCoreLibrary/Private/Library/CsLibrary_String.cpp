@@ -334,7 +334,6 @@ namespace NCsString
 
 			return Zeros;
 		}
-		return 0;
 	}
 
 	int32 FLibrary::UnsetBitfield(FString& Bitfield, const int32& Index /*=INDEX_NONE*/)
@@ -369,7 +368,6 @@ namespace NCsString
 
 			return Ones;
 		}
-		return 0;
 	}
 
 	void FLibrary::CopyBitfieldValues(const FString& From, FString& To)

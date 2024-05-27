@@ -55,7 +55,6 @@ namespace NCsDataRootSet
 		{
 			return SettingsLibrary::SafeLoadDataRootSet(Context);
 		}
-		return nullptr;
 	#else
 		return DataManagerLibrary::GetSafeDataRootSetImpl(Context, WorldContext);
 	#endif // #if WITH_EDITOR

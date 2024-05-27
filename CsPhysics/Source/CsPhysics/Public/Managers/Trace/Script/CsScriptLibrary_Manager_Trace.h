@@ -90,7 +90,7 @@ public:
 	* @param OutHit				Properties of the trace hit.
 	* @return					True if there was a hit, false otherwise.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsPhyics|Library|Manager|Trace", meta= (bIgnoreSelf="true", WorldContext = "WorldContextObject", AutoCreateRefTerm="Context,BoneRoSocket,Radius,Channel,sbTraceComplex,bIgnoreSelf,ActorsToIgnore"))
+	UFUNCTION(BlueprintCallable, Category = "CsPhyics|Library|Manager|Trace", meta= (bIgnoreSelf="true", WorldContext = "WorldContextObject", AutoCreateRefTerm="Context,BoneRoSocket,Radius,Channel,bTraceComplex,bIgnoreSelf,ActorsToIgnore"))
 	static bool SphereTraceSingleByChannelAtBone(const FString& Context, UObject* WorldContextObject, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, const float& Radius, const TEnumAsByte<ECollisionChannel>& Channel, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit);
 
 	/**
@@ -108,7 +108,7 @@ public:
 	* @param OutHit				Properties of the trace hit.
 	* @return					True if there was a hit, false otherwise.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsPhyics|Library|Manager|Trace", meta= (bIgnoreSelf="true", WorldContext = "WorldContextObject", AutoCreateRefTerm="Context,Start,End,Radius,ObjectTypes, bTraceComplex,bIgnoreSelf,ActorsToIgnore"))
+	UFUNCTION(BlueprintCallable, Category = "CsPhyics|Library|Manager|Trace", meta= (bIgnoreSelf="true", WorldContext = "WorldContextObject", AutoCreateRefTerm="Context,Start,End,Radius,ObjectTypes,bTraceComplex,bIgnoreSelf,ActorsToIgnore"))
 	static bool SphereTraceSingleByObjectType(const FString& Context, UObject* WorldContextObject, const FVector& Start, const FVector& End, const float& Radius, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit);
 
 #pragma endregion Sphere

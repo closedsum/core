@@ -4,6 +4,8 @@
 #include "Utility/Script/CsScriptLibrary_JsLog.h"
 #include "CsJs.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_JsLog)
+
 UCsScriptLibrary_JsLog::UCsScriptLibrary_JsLog(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

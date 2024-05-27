@@ -163,8 +163,6 @@ namespace NCsPlayer
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s with Class: %s"), *Context, *(Pawn->GetName()), *ObjectLibrary::PrintNameAndClass(Pawn->GetController())));
 				return INDEX_NONE;
 			}
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Pawn: %s with Class: %s is NOT of type APawn or APlayerController."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn)));
-			return INDEX_NONE;
 		}
 
 		#undef LogLevel

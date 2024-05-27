@@ -458,14 +458,14 @@ namespace NCsPooledObject
 				{
 					AActor* Actor = GetCurrentWorld()->template SpawnActor<AActor>(Class, Params.ConstructionInfo);
 
+					checkf(IsValid(Actor), TEXT("%s::ConstructObject: Actor is NULL. Class: %s. Actor did NOT spawn."), *Name, *(Class->GetName()));
+
 					if (!Params.bReplicates)
 					{
 						Actor->SetReplicates(false);
 						Actor->SetRole(ROLE_None);
 						GetCurrentWorld()->RemoveNetworkActor(Actor);
 					}
-
-					checkf(Actor, TEXT("%s::ConstructObject: Actor is NULL. Class: %s. Actor did NOT spawn."), *Name, *(Class->GetName()));
 
 					Object = Actor;
 				}

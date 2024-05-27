@@ -1,0 +1,54 @@
+{
+  "FileVersion": 3,
+  "Version": 2,
+  "VersionName": "0.0.1",
+  "FriendlyName": "Closed Sum Games Skin",
+  "Description": "Closed Sum Games Skin",
+  "Category": "Programming",
+  "CreatedBy": "Closed Sum Games LLC",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "EngineVersion": "5.4.0",
+  "CanContainContent": true,
+  "Installed": true,
+  "Modules": [
+    {
+      "Name": "CsSkin",
+      "Type": "Runtime",
+      "LoadingPhase": "PostEngineInit"
+    },
+    {
+      "Name": "CsSkinEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "CsMacro",
+      "Enabled": true
+    },
+    {
+      "Name": "CsContainer",
+      "Enabled": true
+    },
+    {
+      "Name": "CsValid",
+      "Enabled": true
+    },
+    {
+      "Name": "CsTypes",
+      "Enabled": true
+    },
+    {
+      "Name": "CsCoreLibrary",
+      "Enabled": true
+    },
+    {
+      "Name": "CsPlugin",
+      "Enabled": true
+    }
+  ]
+}

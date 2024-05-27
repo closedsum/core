@@ -16,6 +16,7 @@ namespace NCsPooledObject
 			ConstructionInfo(),
 			bReplicates(false)
 		{
+			ConstructionInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		}
 
 		FPoolParams::FPoolParams() :

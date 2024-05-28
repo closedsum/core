@@ -55,10 +55,10 @@ namespace NCsAbility
 			// Get
 			#pragma region
 			
-			UAbilitySystemComponent* FLibrary::GetChecked(const FString& Context, UObject* Object)
+			UAbilitySystemComponent* FLibrary::GetChecked(const FString& Context, const UObject* Object)
 			{
 			#if !UE_BUILD_SHIPPING
-				UAbilitySystemComponent* ASC = CS_INTERFACE_CAST_CHECKED(Object, UObject, IAbilitySystemInterface)->GetAbilitySystemComponent();
+				UAbilitySystemComponent* ASC = CS_CONST_INTERFACE_CAST_CHECKED(Object, UObject, IAbilitySystemInterface)->GetAbilitySystemComponent();
 
 				CS_IS_PENDING_KILL_CHECKED(ASC)
 				return ASC;
@@ -67,9 +67,9 @@ namespace NCsAbility
 			#endif // #if !UE_BUILD_SHIPPING
 			}
 
-			UAbilitySystemComponent* FLibrary::GetSafe(const FString& Context, UObject* Object, LogLevel)
+			UAbilitySystemComponent* FLibrary::GetSafe(const FString& Context, const UObject* Object, LogLevel)
 			{
-				if (IAbilitySystemInterface* Interface = CS_INTERFACE_CAST(Object, UObject, IAbilitySystemInterface))
+				if (const IAbilitySystemInterface* Interface = CS_CONST_INTERFACE_CAST(Object, UObject, IAbilitySystemInterface))
 				{
 					UAbilitySystemComponent* ASC = Interface->GetAbilitySystemComponent();
 
@@ -255,6 +255,27 @@ namespace NCsAbility
 							OutSpecs.Add(const_cast<FGameplayAbilitySpec*>(&Spec));
 					}
 				}
+			}
+
+			bool FLibrary::GetSafeActivatableAbilities_PrimaryInstance(const FString& Context, const UAbilitySystemComponent* Component, TArray<UGameplayAbility*>& OutAbilities, LogLevel)
+			{
+				CS_IS_PENDING_KILL(Component)
+
+				const TArray<FGameplayAbilitySpec>& ActivatableAbilities = Component->GetActivatableAbilities();
+
+				CS_IS_TARRAY_EMPTY(ActivatableAbilities, FGameplayAbilitySpec)
+
+				OutAbilities.Reset(FMath::Max(OutAbilities.Max(), ActivatableAbilities.Num()));
+
+				for (const FGameplayAbilitySpec& Spec : ActivatableAbilities)
+				{
+					if (!GameplayAbilityLibrary::IsValidSpec(Context, &Spec, Log))
+						return false;
+
+					// TODO: Make a Checked and Safe call for GetPrimaryInstance
+					OutAbilities.Add(Spec.GetPrimaryInstance());
+				}
+				return true;
 			}
 
 			bool FLibrary::TryActivateByExecutionTagsChecked(const FString& Context, UAbilitySystemComponent* Component, const FGameplayTagContainer& Tags)

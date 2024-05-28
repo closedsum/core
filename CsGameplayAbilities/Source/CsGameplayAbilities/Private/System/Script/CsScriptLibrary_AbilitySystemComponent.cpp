@@ -17,7 +17,10 @@ namespace NCScriptLibraryAbilitySystemComponent
 	{
 		namespace Str
 		{
+			// Get
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AbilitySystemComponent, Get);
 			// Ability
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AbilitySystemComponent, GetActivatableAbilities_PrimaryInstance);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AbilitySystemComponent, TryActivateByExecutionTag);
 		}
 	}
@@ -35,8 +38,27 @@ UCsScriptLibrary_AbilitySystemComponent::UCsScriptLibrary_AbilitySystemComponent
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define ASCLibrary NCsAbility::NSystem::NComponent::FLibrary
 
+// Get
+#pragma region
+
+UAbilitySystemComponent* UCsScriptLibrary_AbilitySystemComponent::Get(const FString& Context, const UObject* Object)
+{
+	CONDITIONAL_SET_CTXT(Get);
+
+	return ASCLibrary::GetSafe(Ctxt, Object);
+}
+
+#pragma endregion Get
+
 // Ability
 #pragma region
+
+bool UCsScriptLibrary_AbilitySystemComponent::GetActivatableAbilities_PrimaryInstance(const FString& Context, const UAbilitySystemComponent* Component, TArray<UGameplayAbility*>& OutAbilities)
+{
+	CONDITIONAL_SET_CTXT(GetActivatableAbilities_PrimaryInstance);
+
+	return ASCLibrary::GetSafeActivatableAbilities_PrimaryInstance(Ctxt, Component, OutAbilities);
+}
 
 bool UCsScriptLibrary_AbilitySystemComponent::TryActivateByExecutionTag(const FString& Context, UAbilitySystemComponent* Component, const FGameplayTag& Tag)
 {
@@ -46,6 +68,13 @@ bool UCsScriptLibrary_AbilitySystemComponent::TryActivateByExecutionTag(const FS
 }
 
 #pragma endregion Ability
+
+// TEMP
+
+AActor* UCsScriptLibrary_AbilitySystemComponent::GetActor(const FHitResult& Hit)
+{
+	return Hit.HasValidHitObjectHandle() ? Hit.GetActor() : nullptr;
+}
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT

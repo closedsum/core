@@ -11,6 +11,7 @@
 class UAbilitySystemComponent;
 class ICsAbilitySystem_Execution;
 struct FGameplayAbilitySpec;
+class UGameplayAbility;
 class UGameplayEffect;
 
 namespace NCsAbility
@@ -48,9 +49,9 @@ namespace NCsAbility
 			#pragma region
 			public:
 
-				static UAbilitySystemComponent* GetChecked(const FString& Context, UObject* Object);
+				static UAbilitySystemComponent* GetChecked(const FString& Context, const UObject* Object);
 
-				static UAbilitySystemComponent* GetSafe(const FString& Context, UObject* Object, LogLevel);
+				static UAbilitySystemComponent* GetSafe(const FString& Context, const UObject* Object, LogLevel);
 
 			#pragma endregion Get
 
@@ -82,6 +83,8 @@ namespace NCsAbility
 				static void GetMatchingTags(const FString& Context, const UAbilitySystemComponent* Component, const FGameplayTagContainer& Tags, TArray<FGameplayAbilitySpec*>& OutSpecs);
 
 				static void GetMatchingExecutionTags(const FString& Context, const UAbilitySystemComponent* Component, const FGameplayTagContainer& Tags, TArray<FGameplayAbilitySpec*>& OutSpecs);
+
+				static bool GetSafeActivatableAbilities_PrimaryInstance(const FString& Context, const UAbilitySystemComponent* Component, TArray<UGameplayAbility*>& OutAbilities, LogLevel);
 
 				// Activate
 			#pragma region

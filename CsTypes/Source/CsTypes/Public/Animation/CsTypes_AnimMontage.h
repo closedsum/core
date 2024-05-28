@@ -137,3 +137,45 @@ namespace NCsAnimMontage
 }
 
 #pragma endregion FCsAnimMontage_PlayParams
+
+// FCsAnimMontage_PlayByPathParams
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSTYPES_API FCsAnimMontage_PlayByPathParams
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Path to the AnimMontage to Play. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Anim")
+	FString Path;
+
+	/** Whether it is okay to Play over an existing (i.e. SAME) animatiom that is playing. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Anim")
+	bool bPlayOverExisting;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Anim")
+	float PlayRate;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Anim", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float TimeToStartAt;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Anim")
+	bool bStopAll;
+
+public:
+
+	FCsAnimMontage_PlayByPathParams() :
+		Path(),
+		bPlayOverExisting(true),
+		PlayRate(1.0f),
+		TimeToStartAt(0.0f),
+		bStopAll(true)
+	{
+	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsTypes::FLog::Warning) const;
+};
+
+#pragma endregion FCsAnimMontage_PlayByPathParams

@@ -116,6 +116,30 @@ namespace NCsAnimMontage
 		return AnimInstance->Montage_Play(Params.GetAnim(), Params.GetPlayRate(), EMontagePlayReturnType::Duration, Params.GetTimeToStartAt(), Params.GetbStopAll());
 	}
 
+	float FLibrary::SafePlay(const FString& Context, UPrimitiveComponent* Component, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogLevel)
+	{
+		OutSuccess = false;
+
+		CS_IS_VALID_RET_VALUE(Params, -1.0f)
+
+		UAnimMontage* Anim = SafeLoad(Context, Params.Path, Log);
+
+		if (!Anim)
+			return -1.0f;
+
+		if (!Params.bPlayOverExisting)
+		{
+			if (!SafeIsPlaying(Context, Component, Anim, OutSuccess, Log))
+				return -1.0f;
+		}
+
+		UAnimInstance* AnimInstance = AnimInstanceLibrary::GetSafe(Context, Component, OutSuccess, Log);
+
+		if (!AnimInstance)
+			return -1.0f;
+		return AnimInstance->Montage_Play(Anim, Params.PlayRate, EMontagePlayReturnType::Duration, Params.TimeToStartAt, Params.bStopAll);
+	}
+
 	#undef ParamsType
 
 	#pragma endregion Play

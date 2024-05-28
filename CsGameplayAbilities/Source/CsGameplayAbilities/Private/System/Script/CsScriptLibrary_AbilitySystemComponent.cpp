@@ -1,4 +1,6 @@
-// Copyright Studio Sai, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "System/Script/CsScriptLibrary_AbilitySystemComponent.h"
 
 // Types
@@ -68,13 +70,6 @@ bool UCsScriptLibrary_AbilitySystemComponent::TryActivateByExecutionTag(const FS
 }
 
 #pragma endregion Ability
-
-// TEMP
-
-AActor* UCsScriptLibrary_AbilitySystemComponent::GetActor(const FHitResult& Hit)
-{
-	return Hit.HasValidHitObjectHandle() ? Hit.GetActor() : nullptr;
-}
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT

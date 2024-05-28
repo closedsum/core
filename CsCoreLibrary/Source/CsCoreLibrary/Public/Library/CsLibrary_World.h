@@ -14,7 +14,7 @@ namespace NCsWorld
 {
 	struct CSCORELIBRARY_API FLibrary final
 	{
-	#define LogWarning void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
+	#define LogLevel void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
 
 	public:
 
@@ -41,7 +41,7 @@ namespace NCsWorld
 		* @param Log			(optional)
 		* return				World
 		*/
-		static UWorld* GetSafe(const FString& Context, const UObject* WorldContext, LogWarning);
+		static UWorld* GetSafe(const FString& Context, const UObject* WorldContext, LogLevel);
 
 		/**
 		* Safely get World from WorldContext.
@@ -68,7 +68,7 @@ namespace NCsWorld
 		* @param Log			(optional)
 		* return				World as UObject
 		*/
-		static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, LogWarning);
+		static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, LogLevel);
 
 		/**
 		* Safely get World as UObject from WorldContext.
@@ -136,7 +136,7 @@ namespace NCsWorld
 
 	#pragma endregion Spawn
 
-	#undef LogWarning
+	#undef LogLevel
 	};
 
 	namespace NSeamlessTravelHandler

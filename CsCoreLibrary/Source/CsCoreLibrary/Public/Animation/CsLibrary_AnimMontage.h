@@ -147,6 +147,8 @@ namespace NCsAnimMontage
 			return SafePlay(Context, Component, ParamsType::Make(Params), Log);
 		}
 
+		static float SafePlay(const FString& Context, UPrimitiveComponent* Component, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogLevel);
+
 	#undef ParamsType
 
 	#pragma endregion Play

@@ -298,6 +298,13 @@ namespace NCsCharacter
 			return SafePlay(Context, Character, ParamsType::Make(Params), Log);
 		}
 
+		static float SafePlay(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogWarning);
+		FORCEINLINE static float SafePlay(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, LogWarning)
+		{
+			bool Success = false;
+			return SafePlay(Context, Character, Params, Success, Log);
+		}
+
 	#undef ParamsType
 
 	#pragma endregion Anim

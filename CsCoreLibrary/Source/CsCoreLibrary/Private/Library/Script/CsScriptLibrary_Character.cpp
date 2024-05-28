@@ -38,6 +38,7 @@ namespace NCsScriptLibraryCharacter
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, GetByLabel);
 			// Anim
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, Montage_Play);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, Montage_PlayByPath);
 		}
 	}
 }
@@ -145,6 +146,13 @@ ACharacter* UCsScriptLibrary_Character::GetByLabel(const FString& Context, const
 float UCsScriptLibrary_Character::Montage_Play(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayParams& Params)
 {
 	CONDITIONAL_SET_CTXT(Montage_Play);
+
+	return CharacterLibrary::SafePlay(Context, Character, Params);
+}
+
+float UCsScriptLibrary_Character::Montage_PlayByPath(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params)
+{
+	CONDITIONAL_SET_CTXT(Montage_PlayByPath);
 
 	return CharacterLibrary::SafePlay(Context, Character, Params);
 }

@@ -70,3 +70,22 @@ namespace NCsAnimMontage
 }
 
 #pragma endregion FCsAnimMontage_PlayParams
+
+// FCsAnimMontage_PlayByPathParams
+#pragma region
+
+bool FCsAnimMontage_PlayByPathParams::IsValidChecked(const FString& Context) const
+{
+	CS_IS_STRING_EMPTY_CHECKED(Path)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(TimeToStartAt, 0.0f)
+	return true;
+}
+
+bool FCsAnimMontage_PlayByPathParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsTypes::FLog::Warning*/) const
+{
+	CS_IS_STRING_EMPTY(Path)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(TimeToStartAt, 0.0f)
+	return true;
+}
+
+#pragma endregion FCsAnimMontage_PlayByPathParams

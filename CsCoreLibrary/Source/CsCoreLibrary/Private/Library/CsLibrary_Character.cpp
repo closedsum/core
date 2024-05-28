@@ -445,6 +445,19 @@ namespace NCsCharacter
 		return AnimMontageLibrary::SafePlay(Context, Mesh, Params, OutSuccess, Log);
 	}
 
+	float FLibrary::SafePlay(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogWarning)
+	{
+		OutSuccess = false;
+
+		CS_IS_PENDING_KILL_RET_VALUE(Character, -1.0f)
+
+		USkeletalMeshComponent* Mesh = Character->GetMesh();
+
+		CS_IS_PENDING_KILL_RET_VALUE(Mesh, -1.0f)
+
+		return AnimMontageLibrary::SafePlay(Context, Mesh, Params, OutSuccess, Log);
+	}
+
 	#undef ParamsType
 
 	#pragma endregion Anim

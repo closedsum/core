@@ -1,4 +1,6 @@
-// Copyright Studio Sai, LLC. All Rights Reserved.
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
 // Types
@@ -35,9 +37,4 @@ public:
 	static bool TryActivateByExecutionTag(const FString& Context, UAbilitySystemComponent* Component, const FGameplayTag& Tag);
 
 #pragma endregion Ability
-
-// TEMP
-
-	UFUNCTION(BlueprintPure, Category = "CsGameplayAbilities|Library")
-	static AActor* GetActor(const FHitResult& Hit);
 };

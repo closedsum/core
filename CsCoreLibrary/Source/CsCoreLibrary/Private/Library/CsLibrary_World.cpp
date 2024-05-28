@@ -38,7 +38,7 @@ namespace NCsWorld
 		}
 	}
 
-	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
+	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 
 	FString FLibrary::PrintActorAndClass(const AActor* Object)
 	{
@@ -60,7 +60,7 @@ namespace NCsWorld
 		return World;
 	}
 
-	UWorld* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogWarning)
+	UWorld* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogLevel)
 	{
 		CS_IS_PTR_NULL_RET_NULL(WorldContext)
 
@@ -88,7 +88,7 @@ namespace NCsWorld
 		return GetChecked(Context, WorldContext);
 	}
 
-	UObject* FLibrary::GetSafeAsObject(const FString& Context, const UObject* WorldContext, LogWarning)
+	UObject* FLibrary::GetSafeAsObject(const FString& Context, const UObject* WorldContext, LogLevel)
 	{
 		return GetSafe(Context, WorldContext, Log);
 	}
@@ -231,7 +231,7 @@ namespace NCsWorld
 
 	#pragma endregion Spawn
 
-	#undef LogWarning
+	#undef LogLevel
 
 	namespace NSeamlessTravelHandler
 	{

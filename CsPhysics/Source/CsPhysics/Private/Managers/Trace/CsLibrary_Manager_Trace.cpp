@@ -254,6 +254,9 @@ namespace NCsTrace
 					return false;
 				}
 
+				Request->Type				  = ECsTraceType::Sweep;
+				Request->Method				  = ECsTraceMethod::Single;
+				Request->Query				  = ECsTraceQuery::Channel;
 				Request->Start				  = MathLibrary::Convert(Start);
 				Request->End				  = MathLibrary::Convert(Start);
 				Request->Channel			  = Params.Channel;
@@ -319,6 +322,9 @@ namespace NCsTrace
 				Start					= MathLibrary::Add(Start, Rotation, Params.Location);
 			}
 
+			Request->Type				  = ECsTraceType::Sweep;
+			Request->Method				  = ECsTraceMethod::Single;
+			Request->Query				  = ECsTraceQuery::Channel;
 			Request->Start				  = MathLibrary::Convert(Start);
 			Request->End				  = MathLibrary::Convert(Start);
 			Request->Channel			  = Params.Channel;

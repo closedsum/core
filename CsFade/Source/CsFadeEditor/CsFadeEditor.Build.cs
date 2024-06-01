@@ -48,9 +48,7 @@ public class CsFadeEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
-                    "CsCore",
-                    "CsEditor",
-                    "CsFade",
+                    "CsFade"
                 }
             );
 

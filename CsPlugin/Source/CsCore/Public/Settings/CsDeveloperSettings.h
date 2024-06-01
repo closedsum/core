@@ -16,8 +16,6 @@
 #include "Data/CsSettings_Data.h"
 // Load
 #include "Managers/Load/CsSettings_Manager_Load.h"
-// Time
-#include "Managers/Time/CsSettings_Manager_Time.h"
 // Input
 #include "Managers/Input/CsTypes_InputSystem.h"
 #include "Managers/Input/CsTypes_Input.h"
@@ -131,15 +129,6 @@ public:
 	FCsSettings_Manager_Load Manager_Load;
 
 #pragma endregion Load
-
-// Time
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Time", meta = (DisplayName = "Manager Time"))
-	FCsSettings_Manager_Time Manager_Time;
-
-#pragma endregion Time
 
 // Input
 #pragma region

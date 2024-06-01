@@ -309,7 +309,6 @@ namespace NCsInterfaceMap
 			const FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked(Context, Interface);
 
 			check(InterfaceMap->ImplementsChecked<OtherInterfaceType>(Context));
-
 			return true;
 		}
 

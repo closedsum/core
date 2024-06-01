@@ -136,10 +136,10 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "CsCoreLibrary|Library|Character", meta = (AutoCreateRefTerm = "Context,Params"))
-	static float Montage_Play(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayParams& Params);
+	static float Montage_Play(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayParams& Params);
 
 	UFUNCTION(BlueprintCallable, Category = "CsCoreLibrary|Library|Character", meta = (DisplayName = "Montage Play by Path", AutoCreateRefTerm = "Context,Params"))
-	static float Montage_PlayByPath(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params);
+	static float Montage_PlayByPath(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params);
 
 #pragma endregion Anim
 };

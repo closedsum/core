@@ -43,7 +43,15 @@
       "Enabled": true
     },
     {
+      "Name": "CsManager",
+      "Enabled": true
+    },
+    {
       "Name": "CsTypes",
+      "Enabled": true
+    },
+    {
+      "Name": "CsScopedTimer",
       "Enabled": true
     },
     {

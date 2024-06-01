@@ -277,29 +277,29 @@ namespace NCsCharacter
 
 	#define ParamsType NCsAnimMontage::NPlay::FParams
 
-		static float PlayChecked(const FString& Context, ACharacter* Character, const ParamsType& Params);
-		FORCEINLINE static float PlayChecked(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayParams& Params)
+		static float PlayChecked(const FString& Context, const ACharacter* Character, const ParamsType& Params);
+		FORCEINLINE static float PlayChecked(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayParams& Params)
 		{
 			return PlayChecked(Context, Character, ParamsType::Make(Params));
 		}
 
-		static float SafePlay(const FString& Context, ACharacter* Character, const ParamsType& Params, bool& OutSuccess, LogWarning);
-		FORCEINLINE static float SafePlay(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayParams& Params, bool& OutSuccess, LogWarning)
+		static float SafePlay(const FString& Context, const ACharacter* Character, const ParamsType& Params, bool& OutSuccess, LogWarning);
+		FORCEINLINE static float SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayParams& Params, bool& OutSuccess, LogWarning)
 		{
 			return SafePlay(Context, Character, ParamsType::Make(Params), OutSuccess, Log);
 		}
-		FORCEINLINE static float SafePlay(const FString& Context, ACharacter* Character, const ParamsType& Params, LogWarning)
+		FORCEINLINE static float SafePlay(const FString& Context, const ACharacter* Character, const ParamsType& Params, LogWarning)
 		{
 			bool Success = false;
 			return SafePlay(Context, Character, Params, Success, Log);
 		}
-		FORCEINLINE static float SafePlay(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayParams& Params, LogWarning)
+		FORCEINLINE static float SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayParams& Params, LogWarning)
 		{
 			return SafePlay(Context, Character, ParamsType::Make(Params), Log);
 		}
 
-		static float SafePlay(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogWarning);
-		FORCEINLINE static float SafePlay(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, LogWarning)
+		static float SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogWarning);
+		FORCEINLINE static float SafePlay(const FString& Context,  const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, LogWarning)
 		{
 			bool Success = false;
 			return SafePlay(Context, Character, Params, Success, Log);

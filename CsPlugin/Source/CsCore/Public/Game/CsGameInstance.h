@@ -7,7 +7,7 @@
 #include "Managers/Time/CsTypes_Time.h"
 #include "Game/CsGameInstance_Delegates.h"
 // Singleton
-#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
 // Containers
 #include "Containers/Ticker.h"
 // Play

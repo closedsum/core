@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Material/Script/CsScriptLibrary_Material.h"
+#include "CsCoreLibrary.h"
 
 // Types
 #include "CsMacro_Misc.h"

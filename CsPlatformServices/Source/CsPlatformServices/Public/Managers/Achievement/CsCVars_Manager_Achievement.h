@@ -2,7 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-#include "CsCVars_Core.h"
+#include "CsCVars.h"
 
 extern CSPLATFORMSERVICES_API TAutoConsoleVariable<int32> CsCVarLogManagerAchievementTransactions;
 

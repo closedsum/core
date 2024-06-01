@@ -421,7 +421,7 @@ namespace NCsCharacter
 
 	#define ParamsType NCsAnimMontage::NPlay::FParams
 
-	float FLibrary::PlayChecked(const FString& Context, ACharacter* Character, const ParamsType& Params)
+	float FLibrary::PlayChecked(const FString& Context, const ACharacter* Character, const ParamsType& Params)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Character)
 
@@ -432,7 +432,7 @@ namespace NCsCharacter
 		return AnimMontageLibrary::PlayChecked(Context, Mesh, Params);
 	}
 
-	float FLibrary::SafePlay(const FString& Context, ACharacter* Character, const ParamsType& Params, bool& OutSuccess, LogWarning)
+	float FLibrary::SafePlay(const FString& Context, const ACharacter* Character, const ParamsType& Params, bool& OutSuccess, LogWarning)
 	{
 		OutSuccess = false;
 
@@ -445,7 +445,7 @@ namespace NCsCharacter
 		return AnimMontageLibrary::SafePlay(Context, Mesh, Params, OutSuccess, Log);
 	}
 
-	float FLibrary::SafePlay(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogWarning)
+	float FLibrary::SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogWarning)
 	{
 		OutSuccess = false;
 

@@ -26,8 +26,8 @@
 #include "Engine/GameInstance.h"
 
 #if WITH_EDITOR
-#include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/Fade/CsGetManagerFade.h"
 #endif // #if WITH_EDITOR
 
@@ -424,7 +424,7 @@ void UCsManager_Fade::SafeFade(const ParamsType& Params)
 #undef ParamsType
 	SET_CONTEXT(SafeFade);
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	void(*Log)(const FString&) = &NCsFade::FLog::Warning;
 
 	CS_IS_VALID_EXIT(Params)
 

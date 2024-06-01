@@ -241,36 +241,7 @@ public:
 	static void GetSoftObjectPaths(const void* StructValue, UStruct* const& Struct, TMap<FName, FSoftObjectPath>& OutObjectPathMap);
 	static void GetSoftObjectPaths(ULevel* Level, TMap<FName, FSoftObjectPath>& OutObjectPathMap);
 
-	static bool GetSoftObjectPaths_SoftObjectPath(FProperty* Property, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetSoftObjectPaths& Result);
-	static bool GetSoftObjectPaths_Array_SoftObjectPath(FArrayProperty* ArrayProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetSoftObjectPaths& Result);
-
-	static void GetSoftObjectPaths(const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetSoftObjectPaths& Result);
-
 #pragma endregion Soft
-
-private:
-
-	static void GetObjectPaths_Class_Internal(UClass* Class, NCsLoad::FGetObjectPaths& OutPaths);
-
-	static void GetObjectPaths_ClassProperty(FClassProperty* ClassProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths);
-	static void GetObjectPaths_ClassProperty_Internal(UClass* MetaClass, const UObject* Object, NCsLoad::FGetObjectPaths& OutPaths);
-
-	static void GetObjectPaths_ObjectProperty(FObjectProperty* ObjectProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths);
-	static void GetObjectPaths_ObjectProperty_Internal(UClass* PropertyClass, const UObject* Object, NCsLoad::FGetObjectPaths& OutPaths);
-
-	static void GetObjectPaths_SoftClassProperty(FSoftClassProperty* SoftClassProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths);
-	static void GetObjectPaths_SoftObjectProperty(FSoftObjectProperty* SoftObjectProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths);
-
-	static void GetObjectPaths_Struct(UStruct* Struct, NCsLoad::FGetObjectPaths& OutPaths);
-
-	static void GetObjectPaths_Function(UFunction* Function, NCsLoad::FGetObjectPaths& OutPaths);
-
-	static void GetObjectPaths_Internal(const void* StructValue, UStruct* const& Struct, NCsLoad::FGetObjectPaths& OutPaths);
-
-public:
-
-	static void GetObjectPaths(const void* StructValue, UStruct* const& Struct, NCsLoad::FGetObjectPaths& OutPaths);
-	static void GetObjectPaths(UObject* StructValue, UStruct* const& Struct, NCsLoad::FGetObjectPaths& OutPaths);
 
 #pragma endregion ObjectPath
 
@@ -359,22 +330,6 @@ public:
 	static void UnloadDataTable(UDataTable* DataTable, const int32& UnloadCodes);
 
 #pragma endregion Unload
-
-// TODO : Deprecate
-
-// References
-#pragma region
-public:
-
-	static void GetReferencesReport_ClassProperty(FClassProperty* ClassProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth);
-	static void GetReferencesReport_ObjectProperty(FObjectProperty* ObjectProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth);
-	static void GetReferencesReport_SoftClassProperty(FSoftClassProperty* SoftClassProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth);
-	static void GetReferencesReport_SoftObjectProperty(FSoftObjectProperty* SoftObjectProperty, const void* StructValue, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth);
-	static void GetReferencesReport_Function(UStruct* const& ParentStruct, UFunction* Function, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth);
-
-	static void GetReferencesReport(const void* StructValue, UStruct* const& Struct, const FString& OuterName, FCsLibraryLoad_GetReferencesReport& OutReport, int32 Depth);
-
-#pragma endregion References
 
 // Default Object
 #pragma region

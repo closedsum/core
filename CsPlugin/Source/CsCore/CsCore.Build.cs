@@ -43,8 +43,13 @@ public class CsCore : ModuleRules
                     "CsEnum",
                     "CsValid",
                     "CsStructOps",
+                    "CsManager",
                     "CsTypes",
-                    "CsCoreLibrary"
+                    "CsScopedTimer",
+                    "CsCoreLibrary",
+                    "CsConsoleCommand",
+                    "CsTime",
+                    "CsCoroutine"
                 }
             );
 

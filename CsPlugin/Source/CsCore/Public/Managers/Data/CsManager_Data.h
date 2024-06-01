@@ -1437,7 +1437,7 @@ public:
 		if (UDataTable** TablePtr = DataTableByPathMap_Loaded.Find(Path))
 			return *TablePtr;
 
-		checkf(0, TEXT("%s: Failed to find DataTable @ %s."), *(Path.ToString()));
+		checkf(0, TEXT("%s: Failed to find DataTable @ %s."), *Context, *(Path.ToString()));
 		return nullptr;
 	#endif // #if UE_BUILD_SHIPPING
 	}
@@ -1657,7 +1657,7 @@ public:
 	#if !UE_BUILD_SHIPPING
 		UDataTable* DT = GetDataTableChecked(Context, Path);
 
-		checkf(DT->GetRowStruct() == RowStruct, TEXT("%s: DataTable: %s Row Struct: %s != %s."), *Context, *(DT->GetRowStruct()->GetName()), *(RowStruct->GetName()));
+		checkf(DT->GetRowStruct() == RowStruct, TEXT("%s: DataTable: %s Row Struct: %s != %s."), *Context, *(DT->GetRowStruct()->GetName()), *(DT->GetRowStruct()->GetName()), *(RowStruct->GetName()));
 	#endif // #if !UE_BUILD_SHIPPING
 
 		return GetDataTableRowChecked(Context, Path, RowName);

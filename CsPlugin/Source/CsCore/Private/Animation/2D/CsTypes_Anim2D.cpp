@@ -445,7 +445,7 @@ bool FCsAnim2DFlipbookTexture::IsValidChecked(const FString& Context) const
 	}
 
 	// Check Frames
-	checkf(!Frames.IsEmpty(), TEXT("%s: No Frames set."));
+	checkf(!Frames.IsEmpty(), TEXT("%s: No Frames set."), *Context);
 
 	typedef FCsAnim2DFlipbookTextureFrame FrameType;
 
@@ -699,7 +699,7 @@ namespace NCsAnim
 						// TotalTime
 						else
 						{
-							checkf(IsLooping(), TEXT("%s: For PlayScale: %s, Playback: %s is NOT a looping type."), PlayScaleMapType::Get().ToChar(PlayScale), PlaybackMapType::Get().ToChar(Playback));
+							checkf(IsLooping(), TEXT("%s: For PlayScale: %s, Playback: %s is NOT a looping type."), *Context, PlayScaleMapType::Get().ToChar(PlayScale), PlaybackMapType::Get().ToChar(Playback));
 
 							TotalTime *= Scale;
 						}
@@ -833,7 +833,7 @@ namespace NCsAnim
 					}
 
 					// Check Frames
-					checkf(Frames.Num() > CS_EMPTY, TEXT("%s: No Frames set."));
+					checkf(Frames.Num() > CS_EMPTY, TEXT("%s: No Frames set."), *Context);
 
 					typedef NCsAnim::N2D::NTexture::NFlipbook::FFrame FrameType;
 
@@ -1260,7 +1260,7 @@ bool FCsAnim2DMaterialFlipbook::IsValidChecked(const FString& Context) const
 	}
 
 	// Check Frames
-	checkf(Frames.Num() > CS_EMPTY, TEXT("%s: No Frames set."));
+	checkf(Frames.Num() > CS_EMPTY, TEXT("%s: No Frames set."), *Context);
 
 	typedef FCsAnim2DMaterialFlipbookFrame FrameType;
 
@@ -1484,7 +1484,7 @@ namespace NCsAnim
 						// TotalTime
 						else
 						{
-							checkf(IsLooping(), TEXT("%s: For PlayScale: %s, Playback: %s is NOT a looping type."), PlayScaleMapType::Get().ToChar(PlayScale), PlaybackMapType::Get().ToChar(Playback));
+							checkf(IsLooping(), TEXT("%s: For PlayScale: %s, Playback: %s is NOT a looping type."), *Context, PlayScaleMapType::Get().ToChar(PlayScale), PlaybackMapType::Get().ToChar(Playback));
 
 							TotalTime *= Scale;
 						}
@@ -1572,7 +1572,7 @@ namespace NCsAnim
 					}
 
 					// Check Frames
-					checkf(Frames.Num() > CS_EMPTY, TEXT("%s: No Frames set."));
+					checkf(Frames.Num() > CS_EMPTY, TEXT("%s: No Frames set."), *Context);
 
 					typedef NCsAnim::N2D::NMaterial::NFlipbook::FFrame FrameType;
 

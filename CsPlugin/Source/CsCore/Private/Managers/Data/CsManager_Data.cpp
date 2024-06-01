@@ -27,8 +27,8 @@
 #include "Managers/Load/CsManager_Load.h"
 
 #if WITH_EDITOR
-#include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/Data/CsGetManagerData.h"
 #endif // #if WITH_EDITOR
 
@@ -1950,7 +1950,7 @@ void UCsManager_Data::AddDataCompositionObject_Loaded(const FName& DataName, UOb
 
 	FCsMap_ObjectByName& Map = DataCompositionObjectsAdded_Loaded.FindOrAdd(DataName);
 
-	checkf(Map.Map.Find(SliceName) == nullptr, TEXT("%s: Data: %s with Slice: %s has ALREADY been added."), *(DataName.ToString()), *(SliceName.ToString()));
+	checkf(Map.Map.Find(SliceName) == nullptr, TEXT("%s: Data: %s with Slice: %s has ALREADY been added."), *Context, *(DataName.ToString()), *(SliceName.ToString()));
 
 	Map.Map.Add(SliceName, Data);
 }

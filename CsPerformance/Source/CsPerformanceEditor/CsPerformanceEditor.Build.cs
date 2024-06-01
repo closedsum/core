@@ -37,9 +37,7 @@ public class CsPerformanceEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
-                    "CsCore",
-                    "CsEditor",
-                    "CsPerformance",
+                    "CsPerformance"
                 }
             );
 

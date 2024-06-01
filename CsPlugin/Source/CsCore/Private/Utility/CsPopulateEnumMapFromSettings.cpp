@@ -42,7 +42,6 @@ UObject* FCsPopulateEnumMapFromSettings::GetDataRootSetImpl(const FString& Conte
 		UClass* Class					  = SoftObject.LoadSynchronous();
 		return Class ? Class->GetDefaultObject() : nullptr;
 	}
-	return nullptr;
 }
 
 const FCsDataRootSet* FCsPopulateEnumMapFromSettings::GetDataRootSet(const FString& Context, UObject* ContextRoot)

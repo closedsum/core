@@ -258,12 +258,6 @@ public:
 
 #if WITH_EDITOR
 
-	/**
-	* Get all ObjectPaths and Resource Sizes (Memory Size) from Data and
-	*  store that in Paths.
-	*/
-	void Populate();
-
 	void Populate(const TSet<FSoftObjectPath>& PathSet, const TArray<TSet<FSoftObjectPath>>& PathSetsByGroup);
 
 #endif // #if WITH_EDITOR
@@ -414,12 +408,6 @@ public:
 	}
 
 #if WITH_EDITOR
-
-	/**
-	* Get all ObjectPaths and Resource Sizes (Memory Size) from Data and
-	*  store that in Paths.
-	*/
-	void Populate();
 
 	void Populate(const TSet<FSoftObjectPath>& PathSet, const TArray<TSet<FSoftObjectPath>>& PathSetsByGroup);
 
@@ -598,12 +586,6 @@ public:
 			PathsByGroupByRowMap.FindOrAdd(RowName);
 		}
 	}
-
-	/**
-	* Get all ObjectPaths and Resource Sizes (Memory Size) from DataTable and
-	*  store that in Paths.
-	*/
-	void Populate();
 
 	void PopulateRow(const FName& RowName, const TSet<FSoftObjectPath>& PathSet, const TArray<TSet<FSoftObjectPath>>& PathSetsByGroup);
 

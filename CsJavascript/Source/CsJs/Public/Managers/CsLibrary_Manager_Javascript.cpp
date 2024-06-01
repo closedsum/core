@@ -33,6 +33,11 @@ namespace NCsJs
 			}
 		}
 
+		#define LogLevel void(*Log)(const FString& Context) /*=&NCsJs::FLog::Warning*/
+	#if WITH_EDITOR
+		#define GameInstanceLibrary NCsGameInstance::FLibrary
+	#endif // #if WITH_EDITOR
+
 		// ContextRoot
 		#pragma region
 
@@ -43,20 +48,14 @@ namespace NCsJs
 			// TODO: FUTURE: Some sort of flag to properly indicate getting GEngine as ContextRoot
 			if (ContextObject == GEngine)
 				return GEngine;
-
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
 			// TODO: FUTURE: Some sort of flag to properly indicate getting GEngine as ContextRoot
 			if (ContextObject == GEngine)
 				return GEngine;
-
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
@@ -117,5 +116,10 @@ namespace NCsJs
 		}
 
 		#pragma endregion Get
+
+		#undef LogLevel
+	#if WITH_EDITOR
+		#undef GameInstanceLibrary
+	#endif // #if WITH_EDITOR
 	}
 }

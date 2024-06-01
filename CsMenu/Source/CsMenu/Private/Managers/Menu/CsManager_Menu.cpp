@@ -17,8 +17,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Singleton
-#include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/Menu/CsGetManagerMenu.h"
 #endif // #if WITH_EDITOR
 

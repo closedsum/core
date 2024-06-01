@@ -97,7 +97,7 @@ namespace NCsJs
 
 			FString Output =  Cast<UJavascriptContext>(JavascriptContext)->RunFile(*FileName);
 
-			checkf(Output != Str::RunError_empty, TEXT("%s: Failed to Run File: %s. Error: %s."), *FileName, *Str::RunError_empty);
+			checkf(Output != Str::RunError_empty, TEXT("%s: Failed to Run File: %s. Error: %s."), *Context, *FileName, *Str::RunError_empty);
 			//checkf(Output != Str::RunError_undefined, TEXT("%s: Failed to Run File: %s. Error: %s."), *FileName, *Str::RunError_undefined);
 		}
 

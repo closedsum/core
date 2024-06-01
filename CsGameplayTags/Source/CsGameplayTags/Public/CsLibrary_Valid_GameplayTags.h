@@ -150,6 +150,7 @@ namespace NCsGameplayTags
 
 // FGameplayTag
 #define CS_IS_GAMEPLAY_TAG_VALID_CHECKED(__Tag)
+#define CS_IS_GAMEPLAY_TAGS_VALID_CHECKED(__Tag)
 // FGameplayTagContainer
 #define CS_IS_GAMEPLAY_TAG_CONTAINER_VALID_CHECKED(__Tags)
 

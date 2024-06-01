@@ -359,7 +359,7 @@ void ACsLevelScriptActor::PopulatePayloadCombined()
 		{
 			ICsGetDataRootSet* GetDataRootSet = Cast<ICsGetDataRootSet>(Object);
 
-			checkf(GetDataRootSet, TEXT("ACsLevelScriptActor::PopulatePayloadCombined: Object: %s @ %s does NOT implement interface: ICsGetDataRootSet."));
+			checkf(GetDataRootSet, TEXT("ACsLevelScriptActor::PopulatePayloadCombined: Object: %s @ %s does NOT implement interface: ICsGetDataRootSet."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 
 			const FCsDataRootSet& DataRootSet = GetDataRootSet->GetCsDataRootSet();
 

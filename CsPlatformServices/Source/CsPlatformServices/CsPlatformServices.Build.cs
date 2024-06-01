@@ -34,9 +34,9 @@ public class CsPlatformServices : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsManager",
                     "CsTypes",
-                    "CsCoreLibrary",
-                    "CsCore"
+                    "CsCoreLibrary"
                 }
             );
 

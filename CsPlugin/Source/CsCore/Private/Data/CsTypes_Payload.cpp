@@ -128,170 +128,170 @@ void FCsPayload_ScriptData::Populate()
 
 void FCsPayload_DataTable::Populate()
 {
-	Paths.Reset();
-	PathsByRowMap.Reset();
+	//Paths.Reset();
+	//PathsByRowMap.Reset();
 
-	if (!DataTable.IsValid())
-		return;
+	//if (!DataTable.IsValid())
+	//	return;
 
-	UDataTable* DT = DataTable.LoadSynchronous();
+	//UDataTable* DT = DataTable.LoadSynchronous();
 
-	if (!DT)
-	{
-		UE_LOG(LogCs, Warning, TEXT("FCsPayload_DataTable::Populate: Failed to load DataTable at Path: %s"), *(DataTable.ToString()));
-		return;
-	}
+	//if (!DT)
+	//{
+	//	UE_LOG(LogCs, Warning, TEXT("FCsPayload_DataTable::Populate: Failed to load DataTable at Path: %s"), *(DataTable.ToString()));
+	//	return;
+	//}
 
-	const UScriptStruct* ScriptStruct = DT->GetRowStruct();
-	UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
-	UStruct* const Struct			  = Temp;
-	
-	const FString StructName    = Struct->GetName();
-	const FString DataTableName = DT->GetName();
+	//const UScriptStruct* ScriptStruct = DT->GetRowStruct();
+	//UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+	//UStruct* const Struct			  = Temp;
+	//
+	//const FString StructName    = Struct->GetName();
+	//const FString DataTableName = DT->GetName();
 
-	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
-	{
-		UE_LOG(LogCs, Warning, TEXT("FCsPayload_DataTable::Populate: %s."), *DataTableName);
-	}
+	//if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
+	//{
+	//	UE_LOG(LogCs, Warning, TEXT("FCsPayload_DataTable::Populate: %s."), *DataTableName);
+	//}
 
-	// Add DataTable Path
-	{
-		FSoftObjectPath Path = DataTable.ToSoftObjectPath();
+	//// Add DataTable Path
+	//{
+	//	FSoftObjectPath Path = DataTable.ToSoftObjectPath();
 
-		FCsSoftObjectPath TempPath;
-		TempPath.Path = Path;
+	//	FCsSoftObjectPath TempPath;
+	//	TempPath.Path = Path;
 
-		FSetElementId Id		    = Paths.Set.Add(TempPath);
-		FCsSoftObjectPath& PathAtId = Paths.Set[Id];
-	
-		PathAtId.Path  = Path;
-		int32 Size = DT->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
-		PathAtId.Size.SetBytes(Size);
+	//	FSetElementId Id		    = Paths.Set.Add(TempPath);
+	//	FCsSoftObjectPath& PathAtId = Paths.Set[Id];
+	//
+	//	PathAtId.Path  = Path;
+	//	int32 Size = DT->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
+	//	PathAtId.Size.SetBytes(Size);
 
-		if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
-		{
-			UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(Path.ToString()), *(PathAtId.Size.ToString()));
-		}
-	}
+	//	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
+	//	{
+	//		UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(Path.ToString()), *(PathAtId.Size.ToString()));
+	//	}
+	//}
 
-	TArray<FName> RowNames;
+	//TArray<FName> RowNames;
 
-	// All Rows
-	if (bAllRows)
-	{
-		RowNames = DT->GetRowNames();
-	}
-	// Specified Rows
-	else
-	{
-		RowNames = Rows.Array();
-	}
+	//// All Rows
+	//if (bAllRows)
+	//{
+	//	RowNames = DT->GetRowNames();
+	//}
+	//// Specified Rows
+	//else
+	//{
+	//	RowNames = Rows.Array();
+	//}
 
-	// Get Paths for appropriate rows
-	NCsLoad::FGetObjectPaths Result;
-	FCsResourceSize Size;
+	//// Get Paths for appropriate rows
+	//NCsLoad::FGetObjectPaths Result;
+	//FCsResourceSize Size;
 
-	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
-	{
-		if (RowNames.Num() > CS_EMPTY)
-		{
-			UE_LOG(LogCs, Warning, TEXT("- Processing %d Rows."), RowNames.Num());
-		}
-	}
+	//if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
+	//{
+	//	if (RowNames.Num() > CS_EMPTY)
+	//	{
+	//		UE_LOG(LogCs, Warning, TEXT("- Processing %d Rows."), RowNames.Num());
+	//	}
+	//}
 
-	for (const FName& RowName : RowNames)
-	{
-		uint8* RowPtr = DT->FindRowUnchecked(RowName);
+	//for (const FName& RowName : RowNames)
+	//{
+	//	uint8* RowPtr = DT->FindRowUnchecked(RowName);
 
-		const FString RowNameAsString = RowName.ToString();
-		const FString OuterName		  = FString::Printf(TEXT("%s.%s"), *DataTableName, *RowNameAsString);
+	//	const FString RowNameAsString = RowName.ToString();
+	//	const FString OuterName		  = FString::Printf(TEXT("%s.%s"), *DataTableName, *RowNameAsString);
 
-		Result.Reset();
-		UCsLibrary_Load::GetObjectPaths(RowPtr, Struct, Result);
+	//	Result.Reset();
+	//	UCsLibrary_Load::GetObjectPaths(RowPtr, Struct, Result);
 
-		const int32 Count = Result.Paths.Num();
+	//	const int32 Count = Result.Paths.Num();
 
-		if (Count != CS_EMPTY)
-		{
-			// Log Paths (number and name)
-			if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
-			{
-				UE_LOG(LogCs, Warning, TEXT("-- Row: %s: Found %d Paths."), *RowNameAsString, Count);
-			}
+	//	if (Count != CS_EMPTY)
+	//	{
+	//		// Log Paths (number and name)
+	//		if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
+	//		{
+	//			UE_LOG(LogCs, Warning, TEXT("-- Row: %s: Found %d Paths."), *RowNameAsString, Count);
+	//		}
 
-			Size.Reset();
+	//		Size.Reset();
 
-			int32 I = 0;
+	//		int32 I = 0;
 
-			for (const FSoftObjectPath& Path : Result.Paths)
-			{
-				// Load Object and get the Resource Size
-				UObject* Object	= Path.TryLoad();
+	//		for (const FSoftObjectPath& Path : Result.Paths)
+	//		{
+	//			// Load Object and get the Resource Size
+	//			UObject* Object	= Path.TryLoad();
 
-				int32 Bytes = 0;
+	//			int32 Bytes = 0;
 
-				if (Object)
-				{
-					Bytes = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
-				}
-				else
-				{
-					if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
-					{
-						UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
-					}
-					continue;
-				}
+	//			if (Object)
+	//			{
+	//				Bytes = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
+	//			}
+	//			else
+	//			{
+	//				if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
+	//				{
+	//					UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
+	//				}
+	//				continue;
+	//			}
 
-				// Update the Paths
-				FCsSoftObjectPath TempPath;
-				TempPath.Path = Path;
+	//			// Update the Paths
+	//			FCsSoftObjectPath TempPath;
+	//			TempPath.Path = Path;
 
-				// Cumulative
-				FSetElementId Id			= Paths.Set.Add(TempPath);
-				FCsSoftObjectPath& PathAtId = Paths.Set[Id];
+	//			// Cumulative
+	//			FSetElementId Id			= Paths.Set.Add(TempPath);
+	//			FCsSoftObjectPath& PathAtId = Paths.Set[Id];
 
-				PathAtId.Path = Path;
+	//			PathAtId.Path = Path;
 
-				PathAtId.Size.SetBytes(Bytes);
+	//			PathAtId.Size.SetBytes(Bytes);
 
-				// Row
-				FCsTArraySoftObjectPath& PathArray = PathsByRowMap.FindOrAdd(RowName);
-				FSetElementId IdAtRow			   = PathArray.Set.Add(TempPath);
-				FCsSoftObjectPath& PathByRowAtId   = PathArray.Set[IdAtRow];
+	//			// Row
+	//			FCsTArraySoftObjectPath& PathArray = PathsByRowMap.FindOrAdd(RowName);
+	//			FSetElementId IdAtRow			   = PathArray.Set.Add(TempPath);
+	//			FCsSoftObjectPath& PathByRowAtId   = PathArray.Set[IdAtRow];
 
-				PathByRowAtId.Path = Path;
+	//			PathByRowAtId.Path = Path;
 
-				PathByRowAtId.Size.SetBytes(Bytes);
+	//			PathByRowAtId.Size.SetBytes(Bytes);
 
-				if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
-				{
-					UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] %s @ %s."), I, *(PathAtId.Size.ToString()), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
-				}
+	//			if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
+	//			{
+	//				UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] %s @ %s."), I, *(PathAtId.Size.ToString()), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
+	//			}
 
-				Size += PathAtId.Size;
-				++I;
-			}
+	//			Size += PathAtId.Size;
+	//			++I;
+	//		}
 
-			if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
-			{
-				UE_LOG(LogCs, Warning, TEXT("--- Total: %s."), *(Size.ToString()));
-			}
-		}
-	}
+	//		if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
+	//		{
+	//			UE_LOG(LogCs, Warning, TEXT("--- Total: %s."), *(Size.ToString()));
+	//		}
+	//	}
+	//}
 
-	// Update internal structures for fast search / look up
-	Paths.BuildFromSet();
+	//// Update internal structures for fast search / look up
+	//Paths.BuildFromSet();
 
-	for (TPair<FName, FCsTArraySoftObjectPath>& Pair : PathsByRowMap)
-	{
-		Pair.Value.BuildFromSet();
-	}
+	//for (TPair<FName, FCsTArraySoftObjectPath>& Pair : PathsByRowMap)
+	//{
+	//	Pair.Value.BuildFromSet();
+	//}
 
-	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
-	{
-		UE_LOG(LogCs, Warning, TEXT("- Summary: Populated %d Paths [%s]."), Paths.Internal.Num(), *(Paths.Size.ToString()));
-	}
+	//if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
+	//{
+	//	UE_LOG(LogCs, Warning, TEXT("- Summary: Populated %d Paths [%s]."), Paths.Internal.Num(), *(Paths.Size.ToString()));
+	//}
 }
 
 #endif // #if WITH_EDITOR

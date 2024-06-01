@@ -113,7 +113,7 @@ namespace NCsTrace
 			}
 			if (Params.bReturnFaceIndex)
 			{
-				checkf(!UPhysicsSettings::Get()->bSuppressFaceRemapTable, TEXT("%s: Returning Face Index is DISABLED globally."));
+				checkf(!UPhysicsSettings::Get()->bSuppressFaceRemapTable, TEXT("%s: Returning Face Index is DISABLED globally."), *Context);
 			}
 			return true;
 		}

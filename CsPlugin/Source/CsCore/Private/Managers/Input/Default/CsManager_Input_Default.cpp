@@ -680,7 +680,7 @@ void UCsManager_Input_Default::OnPostProcessInput_LogCaptureMouseInput()
 
 			if (LogAction)
 			{
-				UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s. Location: (%3.3f, %3.3f)"), Action.ToChar(), MousePosition.X, MousePosition.Y);
+				UE_LOG(LogCs, Warning, TEXT(" Action: %s. Event: %s. Location: (%3.3f, %3.3f)"), Action.ToChar(), EMCsInputEvent::Get().ToChar(Event), MousePosition.X, MousePosition.Y);
 			}
 
 			// FirstReleased | Released -> FirstPressed
@@ -746,8 +746,7 @@ void UCsManager_Input_Default::OnPostProcessInput_CaptureTouchInput(const float&
 	// TODO: See if there is a check if Touch is even a viable input
 #if !PLATFORM_ANDROID && !PLATFORM_IOS
 	return;
-#endif // #if !PLATFORM_ANDROID && !PLATFORM_IOS
-
+#else
 	CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogCaptureTouchInput());
 
 	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
@@ -824,6 +823,7 @@ void UCsManager_Input_Default::OnPostProcessInput_CaptureTouchInput(const float&
 
 		Info.MarkDirty();
 	}
+#endif // #if !PLATFORM_ANDROID && !PLATFORM_IOS
 }
 
 void UCsManager_Input_Default::OnPostProcessInput_LogCaptureTouchInput()
@@ -1306,7 +1306,7 @@ void UCsManager_Input_Default::OnPostProcessInput_LogCurrentInputFrame()
 
 		if (Count > CS_EMPTY)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s (%d): %d Inputs. Time: %f."), *Context, ControllerId, Count);
+			UE_LOG(LogCs, Warning, TEXT("%s (%d): %d Inputs. Time: %f."), *Context, ControllerId, Count, CurrentInputFrame->Time.Time);
 
 			for (int32 I = 0; I < Count; ++I)
 			{
@@ -2189,7 +2189,7 @@ void UCsManager_Input_Default::FCurrentMode::SetValue(const FString& Context, co
 
 void UCsManager_Input_Default::FCurrentMode::SetValue(const FString& Context, const int32& Mode)
 {
-	checkf(Mode >= 0, TEXT("%s: Mode: %s is NOT Valid."), *Context, Mode);
+	checkf(Mode >= 0, TEXT("%s: Mode: %d is NOT Valid."), *Context, Mode);
 
 	Last_Value = Value;
 
@@ -2211,7 +2211,7 @@ void UCsManager_Input_Default::FCurrentMode::ClearValue(const FString& Context, 
 
 void UCsManager_Input_Default::FCurrentMode::ClearValue(const FString& Context, const int32& Mode)
 {
-	checkf(Mode >= 0, TEXT("%s: Mode: %s is NOT Valid."), *Context, Mode);
+	checkf(Mode >= 0, TEXT("%s: Mode: %d is NOT Valid."), *Context, Mode);
 
 	Last_Value = Value;
 

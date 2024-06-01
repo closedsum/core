@@ -31,9 +31,10 @@ public class CsMenu : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore"
+                    "CsTime"
                 }
             );
 

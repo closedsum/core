@@ -45,6 +45,21 @@ namespace NCsAnimMontage
 
 	#pragma endregion Get
 
+	// Length
+	#pragma region
+	
+	float FLibrary::GetPositionByPercentChecked(const FString& Context, UAnimMontage* Anim, const float& Percent)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Anim)
+		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Percent, 0.0f)
+		CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(Percent, 1.0f)
+
+		const float Length = Anim->CalculateSequenceLength();
+		return Percent * Length;
+	}
+
+	#pragma endregion Length
+
 	// Play
 	#pragma region
 
@@ -94,6 +109,8 @@ namespace NCsAnimMontage
 
 		UAnimInstance* AnimInstance = AnimInstanceLibrary::GetChecked(Context, Component);
 
+		if (Params.GetbBlendIn())
+			return AnimInstance->Montage_PlayWithBlendIn(Params.GetAnim(), Params.GetBlendIn(), Params.GetPlayRate(), EMontagePlayReturnType::Duration, Params.GetTimeToStartAt(), Params.GetbStopAll());
 		return AnimInstance->Montage_Play(Params.GetAnim(), Params.GetPlayRate(), EMontagePlayReturnType::Duration, Params.GetTimeToStartAt(), Params.GetbStopAll());
 	}
 
@@ -140,9 +157,90 @@ namespace NCsAnimMontage
 		return AnimInstance->Montage_Play(Anim, Params.PlayRate, EMontagePlayReturnType::Duration, Params.TimeToStartAt, Params.bStopAll);
 	}
 
+	float FLibrary::ConditionalPlayChecked(const FString& Context, UPrimitiveComponent* Component, const ParamsType& Params)
+	{
+		if (IsPlayingChecked(Context, Component, Params.GetAnim()))
+			return Params.GetAnim()->CalculateSequenceLength();
+		return PlayChecked(Context, Component, Params.GetAnim());
+	}
+
 	#undef ParamsType
 
 	#pragma endregion Play
+
+	// Pause
+	#pragma region
+	
+	void FLibrary::PauseChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim)
+	{
+		check(IsPlayingChecked(Context, Component, Anim));
+		AnimInstanceLibrary::GetChecked(Context, Component)->Montage_Pause(Anim);
+	}
+
+	#pragma endregion Pause
+
+	// SetPosition
+	#pragma region
+
+	#define ParamsType NCsAnimMontage::NSetPosition::FParams
+
+	float FLibrary::SetPositionChecked(const FString& Context, UPrimitiveComponent* Component, const ParamsType& Params)
+	{
+		CS_IS_VALID_CHECKED(Params);
+
+		if (Params.GetbPlay())
+			PlayChecked(Context, Component, ParamsType::MakePlayParams(Params));
+		if (Params.GetbPause())
+			PauseChecked(Context, Component, Params.GetAnim());
+
+		// Time
+		if (Params.GetPositionType() == NCsAnimMontage::ESetPosition::Time)
+		{
+			AnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), Params.GetNewPosition());
+			return Params.GetNewPosition();
+		}
+		// Percent
+		if (Params.GetPositionType() == NCsAnimMontage::ESetPosition::Percent)
+		{
+			const float NewPosition = GetPositionByPercentChecked(Context, Params.GetAnim(), Params.GetNewPositionAsPercent());
+
+			AnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), NewPosition);
+			return NewPosition;
+		}
+		checkf(0, TEXT("%s: PositionType: %s is NOT Supported."), *Context, NCsAnimMontage::EMSetPosition::Get().ToChar(Params.GetPositionType()));
+		return 0.0f;
+	}
+
+	float FLibrary::ConditionalSetPositionChecked(const FString& Context, UPrimitiveComponent* Component, const ParamsType& Params)
+	{
+		CS_IS_VALID_CHECKED(Params);
+
+		if (Params.GetbPlay())
+			ConditionalPlayChecked(Context, Component, ParamsType::MakePlayParams(Params));
+		if (Params.GetbPause())
+			PauseChecked(Context, Component, Params.GetAnim());
+
+		// Time
+		if (Params.GetPositionType() == NCsAnimMontage::ESetPosition::Time)
+		{
+			AnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), Params.GetNewPosition());
+			return Params.GetNewPosition();
+		}
+		// Percent
+		if (Params.GetPositionType() == NCsAnimMontage::ESetPosition::Percent)
+		{
+			const float NewPosition = GetPositionByPercentChecked(Context, Params.GetAnim(), Params.GetNewPositionAsPercent());
+
+			AnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), NewPosition);
+			return NewPosition;
+		}
+		checkf(0, TEXT("%s: PositionType: %s is NOT Supported."), *Context, NCsAnimMontage::EMSetPosition::Get().ToChar(Params.GetPositionType()));
+		return 0.0f;
+	}
+
+	#undef ParamsType
+
+	#pragma endregion SetPosition
 
 	#undef LogLevel
 	#undef ObjectLibrary

@@ -4,7 +4,7 @@
 #pragma once
 #include "Editor/UnrealEdEngine.h"
 // Interfaces
-#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
 #include "Object/CsGetCreatedObjects.h"
 #include "Play/Mode/CsGetPlayMode.h"
 #include "PIE/CsGetPIEInfo.h"
@@ -560,22 +560,9 @@ public:
 
 #pragma endregion DataRootSet
 
-// References
-#pragma region
-public:
-
-	bool Check_PrintBlueprintReferencesReport(const TCHAR* Stream);
-
-	void PrintBlueprintReferencesReport(const FName& AssetName);
-
-#pragma endregion References
-
 // Asset
 #pragma region
 public:
-
-	bool Check_GetObjectPaths(const TCHAR* Stream);
-	void GetObjectPaths(const FString& AssetPath);
 
 	bool Check_LoadObject(const TCHAR* Stream);
 	void LoadObject(const FString& AssetPath);

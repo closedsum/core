@@ -5,6 +5,7 @@
 #include "UObject/Object.h"
 // Types
 #include "Animation/CsTypes_Anim.h"
+#include "Animation/CsTypes_AnimMontage.h"
 
 #include "CsScriptLibrary_AnimMontage.generated.h"
 
@@ -86,4 +87,13 @@ public:
 	static UAnimMontage* GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
 
 #pragma endregion Get
+
+// Play
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCoreLibrary|Library|AnimMontage", meta = (AutoCreateRefTerm = "Context,Params"))
+	static float PlayByPath(const FString& Context, UPrimitiveComponent* Component, const FCsAnimMontage_PlayByPathParams& Params);
+
+#pragma endregion Play
 };

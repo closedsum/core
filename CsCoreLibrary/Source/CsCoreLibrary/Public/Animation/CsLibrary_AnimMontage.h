@@ -64,6 +64,14 @@ namespace NCsAnimMontage
 
 	#pragma endregion Get
 
+	// Length
+	#pragma region
+	public:
+
+		static float GetPositionByPercentChecked(const FString& Context, UAnimMontage* Anim, const float& Percent);
+
+	#pragma endregion Length
+
 	// Play
 	#pragma region
 	public:
@@ -148,10 +156,81 @@ namespace NCsAnimMontage
 		}
 
 		static float SafePlay(const FString& Context, UPrimitiveComponent* Component, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogLevel);
+		FORCEINLINE static float SafePlay(const FString& Context, UPrimitiveComponent* Component, const FCsAnimMontage_PlayByPathParams& Params, LogLevel)
+		{
+			bool Success = false;
+			return SafePlay(Context, Component, Params, Success, Log);
+		}
+
+		/**
+		* Play Anim on the AnimInstance associated with Component.
+		* NOTE: 
+		*  Component MUST be of type: USkeletalMeshComponent.
+		* 
+		* @param Context				The calling context.
+		* @param Component
+		* @param Params
+		* return
+		*/
+		static float ConditionalPlayChecked(const FString& Context, UPrimitiveComponent* Component, const ParamsType& Params);
+		FORCEINLINE static float ConditionalPlayChecked(const FString& Context, UPrimitiveComponent* Component, const FCsAnimMontage_PlayParams& Params)
+		{
+			return ConditionalPlayChecked(Context, Component, ParamsType::Make(Params));
+		}
 
 	#undef ParamsType
 
 	#pragma endregion Play
+
+	// Pause
+	#pragma region
+	public:
+
+		static void PauseChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim);
+
+	#pragma endregion Pause
+
+	// SetPosition
+	#pragma region
+	public:
+
+	#define ParamsType NCsAnimMontage::NSetPosition::FParams
+
+		/**
+		* Set the Position Anim of the AnimInstance associated with Component.
+		* NOTE: 
+		*  Component MUST be of type: USkeletalMeshComponent.
+		* 
+		* @param Context				The calling context.
+		* @param Component
+		* @param Params
+		* return
+		*/
+		static float SetPositionChecked(const FString& Context, UPrimitiveComponent* Component, const ParamsType& Params);
+		FORCEINLINE static float SetPositionChecked(const FString& Context, UPrimitiveComponent* Component, const FCsAnimMontage_SetPositionParams& Params)
+		{
+			return SetPositionChecked(Context, Component, ParamsType::Make(Params));
+		}
+
+		/**
+		* Set the Position Anim of the AnimInstance associated with Component.
+		* NOTE: 
+		*  Component MUST be of type: USkeletalMeshComponent.
+		* 
+		* @param Context				The calling context.
+		* @param Component
+		* @param Params
+		* return
+		*/
+		static float ConditionalSetPositionChecked(const FString& Context, UPrimitiveComponent* Component, const ParamsType& Params);
+		FORCEINLINE static float ConditionalSetPositionChecked(const FString& Context, UPrimitiveComponent* Component, const FCsAnimMontage_SetPositionParams& Params)
+		{
+			return ConditionalSetPositionChecked(Context, Component, ParamsType::Make(Params));
+		}
+
+	#undef ParamsType
+
+	#pragma endregion SetPosition
 
 	#undef LogLevel
 	};

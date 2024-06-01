@@ -142,7 +142,7 @@ public:
 	*/
 	FORCEINLINE void SetCurrentInputActionMap(const FString& Context, const int32& Map) 
 	{ 
-		checkf(Map >= 0, TEXT("%s: Map: %s is NOT Valid."), *Context, Map);
+		checkf(Map >= 0, TEXT("%s: Map: %d is NOT Valid."), *Context, Map);
 
 		CS_SET_BITFLAG(CurrentInputActionMap, Map); 
 	}
@@ -182,7 +182,7 @@ public:
 	*/
 	FORCEINLINE void ClearCurrentInputActionMap(const FString& Context, const int32& Map) 
 	{
-		checkf(Map >= 0, TEXT("%s: Map: %s is NOT Valid."), *Context, Map);
+		checkf(Map >= 0, TEXT("%s: Map: %d is NOT Valid."), *Context, Map);
 
 		CS_CLEAR_BITFLAG(CurrentInputActionMap, Map); 
 	}

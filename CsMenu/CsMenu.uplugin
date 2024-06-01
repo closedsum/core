@@ -43,6 +43,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "CsManager",
+			"Enabled": true
+		},
+		{
 			"Name": "CsTypes",
 			"Enabled": true
 		},
@@ -51,7 +55,7 @@
 			"Enabled": true
 		},
 		{
-			"Name": "CsPlugin",
+			"Name": "CsTime",
 			"Enabled": true
 		}
 	]

@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Library/Script/CsScriptLibrary_Character.h"
+#include "CsCoreLibrary.h"
 
 // CVar
 #include "Script/CsCVars_Script.h"
@@ -143,14 +144,14 @@ ACharacter* UCsScriptLibrary_Character::GetByLabel(const FString& Context, const
 // Anim
 #pragma region
 
-float UCsScriptLibrary_Character::Montage_Play(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayParams& Params)
+float UCsScriptLibrary_Character::Montage_Play(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayParams& Params)
 {
 	CONDITIONAL_SET_CTXT(Montage_Play);
 
 	return CharacterLibrary::SafePlay(Context, Character, Params);
 }
 
-float UCsScriptLibrary_Character::Montage_PlayByPath(const FString& Context, ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params)
+float UCsScriptLibrary_Character::Montage_PlayByPath(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params)
 {
 	CONDITIONAL_SET_CTXT(Montage_PlayByPath);
 

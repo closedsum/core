@@ -8,7 +8,6 @@
 #include "Managers/Achievement/CsCVars_Manager_Achievement.h"
 // Types
 #include "CsMacro_Misc.h"
-#include "Types/CsCached.h"
 // Library
 #include "Library/CsLibrary_String.h"
 #include "Library/CsLibrary_Math.h"
@@ -23,10 +22,12 @@
 #include "UObject/Package.h"
 
 #if WITH_EDITOR
-#include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/Achievement/CsGetManagerAchievement.h"
 #endif // #if WITH_EDITOR
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Achievement)
 
 // Cached
 #pragma region
@@ -1029,9 +1030,9 @@ void UCsManager_Achievement::Construct_Local_OnlineAchievementDesc()
 
 void UCsManager_Achievement::Reset_Local_OnlineAchievementDesc()
 {
-	Local_OnlineAchievementDesc->Title = FText::FromString(NCsCached::Str::Empty);
-	Local_OnlineAchievementDesc->LockedDesc = FText::FromString(NCsCached::Str::Empty);
-	Local_OnlineAchievementDesc->UnlockedDesc = FText::FromString(NCsCached::Str::Empty);
+	Local_OnlineAchievementDesc->Title = FText::FromString(TEXT(""));
+	Local_OnlineAchievementDesc->LockedDesc = FText::FromString(TEXT(""));
+	Local_OnlineAchievementDesc->UnlockedDesc = FText::FromString(TEXT(""));
 	Local_OnlineAchievementDesc->bIsHidden = false;
 	Local_OnlineAchievementDesc->UnlockTime = FDateTime::Now();
 }
@@ -1126,12 +1127,12 @@ EOnlineCachedResult::Type UCsManager_Achievement::GetCachedAchievementDescriptio
 
 void UCsManager_Achievement::PrintDescription(ICsAchievement* Achievement)
 {
-	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: Achievement: %s with Id: %s."), *(Achievement->GetType().DisplayNameToChar()), *Achievement->GetId());
+	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: Achievement: %s with Id: %s."), Achievement->GetType().DisplayNameToChar(), *Achievement->GetId());
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - Progress: %f."), (float)Achievement->GetProgress());
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - Title: %s."), *(Achievement->GetTitle().ToString()));
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - Description: %s."), *(Achievement->GetDescription().ToString()));
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - Unlocked Description: %s."), *(Achievement->GetUnlockedDescription().ToString()));
-	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - IsHIdden: %s."), *(Achievement->IsHidden() ? NCsCached::Str::True : NCsCached::Str::False));
+	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - IsHIdden: %s."), Achievement->IsHidden() ? TEXT("True") : TEXT("False"));
 	UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::PrintDescription: - Unlock Time: %s."), *(Achievement->GetUnlockTime().ToString()));
 
 	const ProgressType& Type = Achievement->GetProgressType();
@@ -1733,7 +1734,7 @@ void UCsManager_Achievement::Write(const FECsAchievement& Achievement, const Val
 		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogManagerAchievementTransactions))
 			{
-				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Reset for Achievement: %s to Count: %d for Player: %s - %s."), Achievement.ToChar(), Count, *GetLocalPlayerNickname(), *(UserId.ToString()));
+				UE_LOG(LogCsPlatformServices, Warning, TEXT("%s: Queueing Reset for Achievement: %s to Count: %d for Player: %s - %s."), *Context, Achievement.ToChar(), Count, *GetLocalPlayerNickname(), *(UserId.ToString()));
 			}
 		#endif // #if !UE_BUILD_SHIPPING
 
@@ -3628,7 +3629,7 @@ void UCsManager_Achievement::OnQueryAchievementsComplete(const FUniqueNetId& Pla
 	typedef NCsAchievement::EMAction ActionMapType;
 	typedef NCsAchievement::EAction ActionType;
 
-	checkf(ActionInfo->Action == ActionType::QueryIds, TEXT("UCsManager_Achievement::OnQueryAchievementsComplete: Current Action: %s is NOT QueryIds."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
+	checkf(ActionInfo->Action == ActionType::QueryIds, TEXT("UCsManager_Achievement::OnQueryAchievementsComplete: Current Action: %s is NOT QueryIds."), ActionMapType::Get().ToChar(ActionInfo->Action));
 
 	if (!Success)
 	{
@@ -3668,7 +3669,7 @@ void UCsManager_Achievement::OnQueryAchievementDescriptionsComplete(const FUniqu
 	typedef NCsAchievement::EMAction ActionMapType;
 	typedef NCsAchievement::EAction ActionType;
 
-	checkf(ActionInfo->Action == ActionType::QueryDescriptions, TEXT("UCsManager_Achievement::OnQueryAchievementDescriptionsComplete: Current Action: %s is NOT QueryDescriptions."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
+	checkf(ActionInfo->Action == ActionType::QueryDescriptions, TEXT("UCsManager_Achievement::OnQueryAchievementDescriptionsComplete: Current Action: %s is NOT QueryDescriptions."), ActionMapType::Get().ToChar(ActionInfo->Action));
 
 	if (!Success)
 	{

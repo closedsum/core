@@ -654,14 +654,14 @@ namespace NCsPooledObject
 					{
 						checkf(O->Script_GetCache_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_GetCache_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 
-						checkf(O->Script_Allocate_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Allocate_Impl is NOT bound to any function."), *Name, *ClassName);
+						checkf(O->Script_Allocate_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Allocate_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 
-						checkf(O->Script_Deallocate_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Deallocate_Impl is NOT bound to any function."), *Name, *ClassName);
+						checkf(O->Script_Deallocate_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Deallocate_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 					}
 					// ICsUpdate Script Interface
 					if (O->IsScriptUpdate())
 					{
-						checkf(O->Script_Update_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsUpdate. Script_Update_Impl is NOT bound to any function."), *Name, *ClassName);
+						checkf(O->Script_Update_Impl.IsBound(), TEXT("%s:CreatePool: Object: %s with Class: %s implements a script interface of type: ICsUpdate. Script_Update_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 					}
 					// ICsOnConstructObject Script Interface
 					if (O->IsScriptOnConstructObject())
@@ -742,14 +742,14 @@ namespace NCsPooledObject
 				{
 					checkf(O->Script_GetCache_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_GetCache_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 
-					checkf(O->Script_Allocate_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Allocate_Impl is NOT bound to any function."), *Name, *ClassName);
+					checkf(O->Script_Allocate_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Allocate_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 
-					checkf(O->Script_Deallocate_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Deallocate_Impl is NOT bound to any function."), *Name, *ClassName);
+					checkf(O->Script_Deallocate_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsPooledObject. Script_Deallocate_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 				}
 				// ICsUpdate Script Interface
 				if (O->IsScriptUpdate())
 				{
-					checkf(O->Script_Update_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsUpdate. Script_Update_Impl is NOT bound to any function."), *Name, *ClassName);
+					checkf(O->Script_Update_Impl.IsBound(), TEXT("%s:AddToPool: Object: %s with Class: %s implements a script interface of type: ICsUpdate. Script_Update_Impl is NOT bound to any function."), *Name, *ObjectName, *ClassName);
 				}
 				// ICsOnConstructObject Script Interface
 				if (O->IsScriptOnConstructObject())

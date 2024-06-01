@@ -273,13 +273,6 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 	if (Super::Exec(InWorld, Stream, Ar))
 		return true;
 
-	// References
-	{
-		if (Check_PrintBlueprintReferencesReport(Stream))
-			return true;
-	}
-	if (Check_GetObjectPaths(Stream))
-		return true;
 	if (Check_LoadObject(Stream))
 		return true;
 	return false;
@@ -1225,211 +1218,74 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payloads(UDataTable* DataTa
 
 void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payload(FCsPayload& Payload)
 {
-	using namespace NCsEdEngine::NCached;
+	//using namespace NCsEdEngine::NCached;
 
-	const FString& Context = Str::OnObjectPreSave_Update_DataRootSet_Payload;
+	//const FString& Context = Str::OnObjectPreSave_Update_DataRootSet_Payload;
 
-	// Get Settings
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+	//// Get Settings
+	//UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
-	// TODO: FIX
-	return;
+	//// TODO: FIX
+	//return;
 
-	if (!Settings)
-		return;
+	//if (!Settings)
+	//	return;
 
-	// Get DataRootSet
-	TSoftClassPtr<UObject> SoftObject	= Settings->DataRootSet;
-	UClass* Class						= SoftObject.LoadSynchronous();
-	UObject* Object						= Class ? Class->GetDefaultObject<UObject>() : nullptr;
-	ICsGetDataRootSet* GetDataRootSet	= Object ? Cast<ICsGetDataRootSet>(Object) : nullptr;
+	//// Get DataRootSet
+	//TSoftClassPtr<UObject> SoftObject	= Settings->DataRootSet;
+	//UClass* Class						= SoftObject.LoadSynchronous();
+	//UObject* Object						= Class ? Class->GetDefaultObject<UObject>() : nullptr;
+	//ICsGetDataRootSet* GetDataRootSet	= Object ? Cast<ICsGetDataRootSet>(Object) : nullptr;
 
-	if (!GetDataRootSet)
-		return;
+	//if (!GetDataRootSet)
+	//	return;
 
-	// Add / Update the Payload to the Datas | DataTables
-	if (Payload.bUpdateDataRootSetOnSave)
-	{
-		FCsDataRootSet& DataRootSet = const_cast<FCsDataRootSet&>(GetDataRootSet->GetCsDataRootSet());
+	//// Add / Update the Payload to the Datas | DataTables
+	//if (Payload.bUpdateDataRootSetOnSave)
+	//{
+	//	FCsDataRootSet& DataRootSet = const_cast<FCsDataRootSet&>(GetDataRootSet->GetCsDataRootSet());
 
-		// Datas
+	//	// Datas
 
-		// DataTables
-		if (UDataTable* DataTables = DataRootSet.DataTables)
-		{
-			for (FCsPayload_DataTable& Payload_DataTable : Payload.DataTables)
-			{
-				// Check Name is Valid
-				const FName& Name = Payload_DataTable.Name;
+	//	// DataTables
+	//	if (UDataTable* DataTables = DataRootSet.DataTables)
+	//	{
+	//		for (FCsPayload_DataTable& Payload_DataTable : Payload.DataTables)
+	//		{
+	//			// Check Name is Valid
+	//			const FName& Name = Payload_DataTable.Name;
 
-				if (Name == NAME_None)
-				{
-					UE_LOG(LogCsEditor, Warning, TEXT("%s: Name is NOT Valid."), *Context);
-					continue;
-				}
+	//			if (Name == NAME_None)
+	//			{
+	//				UE_LOG(LogCsEditor, Warning, TEXT("%s: Name is NOT Valid."), *Context);
+	//				continue;
+	//			}
 
-				// Check for Valid Path
-				TSoftObjectPtr<UDataTable>& DT = Payload_DataTable.DataTable;
-				const FSoftObjectPath& Path	   = DT.ToSoftObjectPath();
+	//			// Check for Valid Path
+	//			TSoftObjectPtr<UDataTable>& DT = Payload_DataTable.DataTable;
+	//			const FSoftObjectPath& Path	   = DT.ToSoftObjectPath();
 
-				if (!Path.IsValid())
-				{
-					UE_LOG(LogCsEditor, Warning, TEXT("%s: Path is NOT Valid for Name: %s."), *Context, *(Name.ToString()));
-					continue;
-				}
+	//			if (!Path.IsValid())
+	//			{
+	//				UE_LOG(LogCsEditor, Warning, TEXT("%s: Path is NOT Valid for Name: %s."), *Context, *(Name.ToString()));
+	//				continue;
+	//			}
 
-				// Add to Map of DataTables to Add to DataRootSet->DataTables
-				if (Payload_DataTable.bAllRows)
-					DataRootSet.AddDataTable(Name, DT);
-				else
-					DataRootSet.AddDataTable(Name, DT, Payload_DataTable.Rows);
-			}
-		}
-	}
-	Payload.bUpdateDataRootSetOnSave = false;
+	//			// Add to Map of DataTables to Add to DataRootSet->DataTables
+	//			if (Payload_DataTable.bAllRows)
+	//				DataRootSet.AddDataTable(Name, DT);
+	//			else
+	//				DataRootSet.AddDataTable(Name, DT, Payload_DataTable.Rows);
+	//		}
+	//	}
+	//}
+	//Payload.bUpdateDataRootSetOnSave = false;
 }
 
 #pragma endregion DataRootSet
 
-// References
-#pragma region
-
-bool UCsEdEngine::Check_PrintBlueprintReferencesReport(const TCHAR* Stream)
-{
-	const FString Command	 = TEXT("PrintReferencesReport");
-	const FString Parameters = TEXT("[assetname]");
-	const FString Format	 = Command + TEXT(" ") + Parameters;
-
-	if (FParse::Command(&Stream, *Command))
-	{
-		typedef NCsString::FLibrary StringLibrary;
-
-		const FName AssetName = StringLibrary::Stream_GetName(Stream);
-
-		if (AssetName == NAME_None)
-		{
-			return false;
-		}
-
-		PrintBlueprintReferencesReport(AssetName);
-		return true;
-	}
-	return false;
-}
-
-void UCsEdEngine::PrintBlueprintReferencesReport(const FName& AssetName)
-{
-	UBlueprint* Bp = NCsAsset::FLibrary::FindObjectByClass<UBlueprint>(FName("Blueprint"), AssetName, ECsFindObjectByClassRule::Exact);
-
-	const FString AssetNameAsString = AssetName.ToString();
-
-	if (!Bp)
-	{
-		UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::PrintBlueprintReferencesReport: Failed to find Blueprint with name: %s."), *AssetNameAsString);
-		return;
-	}
-
-	const FString Path = Bp->GetPathName();
-
-	UClass* Class = Bp->GeneratedClass.Get();
-	
-	if (!Class)
-	{
-		UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::PrintBlueprintReferencesReport: Failed to find Class for Blueprint: %s @ %s."), *AssetNameAsString, *Path);
-		return;
-	}
-
-	UObject* DOb = Class->GetDefaultObject();
-
-	if (!DOb)
-	{
-		UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::PrintBlueprintReferencesReport: Failed to find Default Object for Blueprint: %s @ %s."), *AssetNameAsString, *Path);
-		return;
-	}
-
-	FCsLibraryLoad_GetReferencesReport Report;
-	Report.Name = AssetNameAsString;
-	Report.Path = Path;
-	
-	// If Actor, Spawn Actor in World
-	if (Class->IsChildOf(AActor::StaticClass()))
-	{
-		if (GEditor)
-		{
-			const TArray<FEditorViewportClient*>& Clients = GEditor->GetAllViewportClients();
-
-			for (FEditorViewportClient* Client : Clients)
-			{
-				UWorld* World = Client->GetWorld();
-
-				if (World &&
-					World->WorldType == EWorldType::Editor)
-				{
-					AActor* A = World->SpawnActor(Class);
-
-					NCsLoad::FGetObjectPaths OutPaths;
-					OutPaths.SetRootName(AssetNameAsString);
-
-					//UCsLibrary_Load::GetObjectPaths(Cast<UObject>(A), Class, OutPaths);
-
-					OutPaths.Print();
-					A->Destroy();
-					break;
-				}
-			}
-		}
-	}
-	// Object
-	else
-	{
-		NCsLoad::FGetObjectPaths OutPaths;
-		OutPaths.SetRootName(AssetNameAsString);
-
-		//UCsLibrary_Load::GetObjectPaths(DOb, DOb->GetClass(), OutPaths);
-	}
-}
-
-#pragma endregion References
-
 // Asset
 #pragma region
-
-bool UCsEdEngine::Check_GetObjectPaths(const TCHAR* Stream)
-{
-	const FString Command	 = TEXT("GetObjectPaths");
-	const FString Parameters = TEXT("[path]");
-	const FString Format	 = Command + TEXT(" ") + Parameters;
-
-	if (FParse::Command(&Stream, *Command))
-	{
-		typedef NCsString::FLibrary StringLibrary;
-
-		FString AssetPath;
-		
-		const bool Success = StringLibrary::Stream_GetValue(Stream, AssetPath, false);
-
-		if (Success)
-		{
-			GetObjectPaths(AssetPath);
-			return true;
-		}
-	}
-	return false;
-}
-
-void UCsEdEngine::GetObjectPaths(const FString& AssetPath)
-{
-	FSoftObjectPath Path(AssetPath);
-
-	if (UObject* Object = Path.TryLoad())
-	{
-		NCsLoad::FGetObjectPaths Result;
-
-		UCsLibrary_Load::GetObjectPaths(Object, Object->GetClass(), Result);
-
-		Result.Print();
-	}
-}
 
 bool UCsEdEngine::Check_LoadObject(const TCHAR* Stream)
 {

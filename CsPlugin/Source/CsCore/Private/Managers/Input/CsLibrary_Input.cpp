@@ -867,7 +867,7 @@ namespace NCsInput
 
 			checkf(Key.IsValid(), TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString()));
 
-			checkf(NCsInput::NKey::FLibrary::IsValidForDevice(Context, Device, Key), TEXT("%s: Key: %s is NOT Valid for Device: %s."), *Context, *(Key.ToString()), *(EMCsInputDevice::Get().ToChar(Device)));
+			checkf(NCsInput::NKey::FLibrary::IsValidForDevice(Context, Device, Key), TEXT("%s: Key: %s is NOT Valid for Device: %s."), *Context, *(Key.ToString()), EMCsInputDevice::Get().ToChar(Device));
 
 			const FName& ActionName = Action.GetFName();
 

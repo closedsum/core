@@ -18,8 +18,8 @@
 #include "UObject/Package.h"
 
 #if WITH_EDITOR
-#include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Coordinators/GameEvent/CsGetCoordinatorGameEvent.h"
 #endif // #if WITH_EDITOR
 

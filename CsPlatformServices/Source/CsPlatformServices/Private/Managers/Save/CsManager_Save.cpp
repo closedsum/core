@@ -24,8 +24,8 @@
 #include "HAL/FileManager.h"
 
 #if WITH_EDITOR
-#include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/Save/CsGetManagerSave.h"
 #endif // #if WITH_EDITOR
 
@@ -2592,7 +2592,7 @@ void UCsManager_Save::OnEnumerateUserFilesComplete(bool WasSuccessful, const FUn
 	typedef NCsSave::EMAction ActionMapType;
 	typedef NCsSave::EAction ActionType;
 
-	checkf(ActionInfo->Action == ActionType::Enumerate, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Current Action: %s is NOT Enumerate."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
+	checkf(ActionInfo->Action == ActionType::Enumerate, TEXT("UCsManager_Save::OnEnumerateUserFilesComplete: Current Action: %s is NOT Enumerate."), ActionMapType::Get().ToChar(ActionInfo->Action));
 
 	typedef NCsSave::NFile::FInfo FileInfoType;
 
@@ -2742,7 +2742,7 @@ void UCsManager_Save::OnReadUserFileComplete(bool WasSuccessful, const FUniqueNe
 	typedef NCsSave::EMAction ActionMapType;
 	typedef NCsSave::EAction ActionType;
 
-	checkf(ActionInfo->Action == ActionType::Read, TEXT("UCsManager_Save::OnReadUserFileComplete: Current Action: %s is NOT Read."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
+	checkf(ActionInfo->Action == ActionType::Read, TEXT("UCsManager_Save::OnReadUserFileComplete: Current Action: %s is NOT Read."), ActionMapType::Get().ToChar(ActionInfo->Action));
 
 	const ECsPlayerProfile& Profile = ActionInfo->Profile;
 	const FString& ProfileName		= ProfileNames[(uint8)Profile];
@@ -2817,7 +2817,7 @@ void UCsManager_Save::OnWriteUserFileComplete(bool WasSuccessful, const FUniqueN
 	typedef NCsSave::EMAction ActionMapType;
 	typedef NCsSave::EAction ActionType;
 
-	checkf(ActionInfo->Action == ActionType::Write, TEXT("UCsManager_Save::OnWriteUserFileComplete: Current Action: %s is NOT Write."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
+	checkf(ActionInfo->Action == ActionType::Write, TEXT("UCsManager_Save::OnWriteUserFileComplete: Current Action: %s is NOT Write."), ActionMapType::Get().ToChar(ActionInfo->Action));
 
 	const ECsPlayerProfile& Profile = ActionInfo->Profile;
 	const FString& ProfileName		= ProfileNames[(uint8)Profile];
@@ -2876,7 +2876,7 @@ void UCsManager_Save::OnDeleteUserFileComplete(bool WasSuccessful, const FUnique
 	typedef NCsSave::EMAction ActionMapType;
 	typedef NCsSave::EAction ActionType;
 
-	checkf(ActionInfo->Action == ActionType::Delete, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Current Action: %s is NOT Delete."), *(ActionMapType::Get().ToChar(ActionInfo->Action)));
+	checkf(ActionInfo->Action == ActionType::Delete, TEXT("UCsManager_Save::OnDeleteUserFileComplete: Current Action: %s is NOT Delete."), ActionMapType::Get().ToChar(ActionInfo->Action));
 
 	const ECsPlayerProfile& Profile = ActionInfo->Profile;
 

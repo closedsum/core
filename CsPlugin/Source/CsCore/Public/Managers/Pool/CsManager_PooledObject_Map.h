@@ -38,9 +38,7 @@ namespace NCsPooledObject
 			// TODO: Check InterfaceType implements _getUObject
 
 			static_assert(std::is_base_of<FCsPooledObject, InterfaceContainerType>(), "NCsPooledObject::NManager::TTMap: InterfaceContainerType is NOT a child of: FCsPooledObject.");
-
 			static_assert(std::is_abstract<PayloadType>(), "NCsPooledObject::NManager::TTMap: PayloadType MUST be abstract.");
-
 			static_assert(std::is_base_of<ICsGetInterfaceMap, PayloadType>(), "NCsPooledObject::NManager::TTMap: PayloadType does NOT implement the interface: ICsGetInterfaceMap.");
 
 		private:
@@ -730,7 +728,7 @@ namespace NCsPooledObject
 			*/
 			const InterfaceContainerType* AddToAllocatedObjects(const KeyType& Type, InterfaceType* Object)
 			{
-				checkf(Object, TEXT("%s::AddToAllocatedObjects: Object is NULL."));
+				checkf(Object, TEXT("%s::AddToAllocatedObjects: Object is NULL."), *Name);
 
 				return AddToAllocatedObjects(Type, Object, Object->_getUObject());
 			}

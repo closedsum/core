@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"Version": 2,
+	"VersionName": "0.0.1",
+	"FriendlyName": "Closed Sum Games Macro",
+	"Description": "Closed Sum Games Macro",
+	"Category": "Programming",
+	"CreatedBy": "Closed Sum Games LLC",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "5.4.0",
+	"CanContainContent": true,
+	"Installed": true,
+  "Modules": [
+	{
+      "Name": "CsManager",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ]
+}

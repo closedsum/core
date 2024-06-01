@@ -2021,7 +2021,7 @@ namespace NCsValid
 
 				ObjectType* DOb = Cast<ObjectType>(O);
 
-				checkf(DOb, TEXT("%s: DefaultObject: %s is NOT of type: %s."), *Context, *(ObjectType::StaticClass()->GetName()));
+				checkf(DOb, TEXT("%s: DefaultObject: %s is NOT of type: %s."), *Context, *AName, *(ObjectType::StaticClass()->GetName()));
 				return DOb;
 			#else
 				return Cast<ObjectType>(A.GetDefaultObject());

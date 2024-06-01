@@ -24,6 +24,8 @@ namespace NCsScriptLibraryAnimMontage
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimMontage, LoadByStringPath);
 			// Get
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimMontage, GetByPath);
+			// Play
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimMontage, PlayByPath);
 		}
 	}
 }
@@ -70,6 +72,18 @@ UAnimMontage* UCsScriptLibrary_AnimMontage::GetByPath(const FString& Context, UO
 }
 
 #pragma endregion Get
+
+// Play
+#pragma region
+
+float UCsScriptLibrary_AnimMontage::PlayByPath(const FString& Context, UPrimitiveComponent* Component, const FCsAnimMontage_PlayByPathParams& Params)
+{
+	CONDITIONAL_SET_CTXT(PlayByPath);
+
+	return AnimMontageLibrary::SafePlay(Ctxt, Component, Params);
+}
+
+#pragma endregion Play
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT

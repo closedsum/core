@@ -188,7 +188,7 @@ namespace NCsAbility
 					if (S.Handle == Spec->Handle)
 						return true;
 				}
-				checkf(0, TEXT("%s: %s does NOT have Spec."), *Context);
+				checkf(0, TEXT("%s: %s does NOT have Spec."), *Context, *PrintOwnerWithClass(Component));
 				return false;
 			}
 
@@ -222,7 +222,7 @@ namespace NCsAbility
 
 					Count += LocalCount > 0 ? 1 : 0;
 				}
-				checkf(Count == 1, TEXT("%s: More than ONE Ability found with Tag: %s."), *(Tag.ToString()));
+				checkf(Count == 1, TEXT("%s: More than ONE Ability found with Tag: %s."), *Context, *(Tag.ToString()));
 				return Count > 0;
 			}
 

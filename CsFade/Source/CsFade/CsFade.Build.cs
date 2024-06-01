@@ -37,9 +37,11 @@ public class CsFade : ModuleRules
                     "CsEnum",
                     "CsValid",
                     "CsStructOps",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore"
+                    "CsCoroutine",
+                    "CsCore" // TODO: Remove: Dependent on DataRootSet
 ,                }
             );
 

@@ -8,7 +8,7 @@
 // Library
 #include "Library/CsLibrary_World.h"
 // Singleton
-#include "Managers/Singleton/CsManager_Singleton_Actor.h"
+#include "Singleton/CsManager_Singleton_Actor.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 //#include "Managers/FX/Actor/CsManager_FX.h"

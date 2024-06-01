@@ -449,6 +449,11 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 			else
 			if (PropertyName.Contains("bPopulateSubset"))
 			{
+				typedef NCsData::NEntry::NTool::FImpl DataEntryToolType;
+
+				ICsGetDataEntryTool* GetDataEntryTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetDataEntryTool);
+				DataEntryToolType* DataEntryTool	  = GetDataEntryTool->GetDataEntryTool();
+
 				UProjectPackagingSettings* PackageSettings = GetMutableDefault<UProjectPackagingSettings>();
 
 				const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
@@ -489,7 +494,7 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 
 										RowPtr->Name = RowName;
 
-										RowPtr->Populate();
+										DataEntryTool->Data_PopulateImpl(RowPtr);
 									}
 								}
 								Datas->MarkPackageDirty();
@@ -510,7 +515,7 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 
 										RowPtr->Name = RowName;
 
-										RowPtr->Populate();
+										DataEntryTool->ScriptData_PopulateImpl(RowPtr);
 									}
 								}
 								ScriptDatas->MarkPackageDirty();
@@ -531,7 +536,7 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 
 										RowPtr->Name = RowName;
 
-										RowPtr->Populate();
+										DataEntryTool->DataTable_PopulateImpl(DataTables, RowName, RowPtr, true);
 									}
 								}
 								DataTables->MarkPackageDirty();

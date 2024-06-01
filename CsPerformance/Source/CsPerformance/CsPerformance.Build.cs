@@ -21,9 +21,9 @@ public class CsPerformance : ModuleRules
                     "CsMacro",
                     "CsContainer",
                     "CsValid",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore",
                     "UMG"
 ,                }
             );

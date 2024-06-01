@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CoreMinimal.h"
 // Log
 #include "Utility/CsCoreLibraryLog.h"
 

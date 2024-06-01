@@ -3,7 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"
-#include "Types/CsCached.h"
+// Types
+#include "Misc/DateTime.h"
 
 #include "CsTypes_Save.generated.h"
 
@@ -151,8 +152,8 @@ namespace NCsSave
 
 			void Reset()
 			{
-				FileName = NCsCached::Str::Empty;
-				FileNameWithExt = NCsCached::Str::Empty;
+				FileName.Empty();
+				FileNameWithExt.Empty();
 				bValid = false;
 				bRead = false;
 				ReadTime = FDateTime::Now();

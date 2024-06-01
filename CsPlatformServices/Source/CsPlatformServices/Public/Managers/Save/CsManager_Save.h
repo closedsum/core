@@ -488,7 +488,7 @@ public:
 	* @param Save		The Save (slot) to perform the action on.
 	* @param Data		Data for the action.
 	*/
-	void QueueAction(const ECsPlayerProfile& Profile, const ActionType& Action, const ECsSave& Save, const FString& Data = NCsCached::Str::Empty);
+	void QueueAction(const ECsPlayerProfile& Profile, const ActionType& Action, const ECsSave& Save, const FString& Data = TEXT(""));
 
 protected:
 
@@ -500,7 +500,7 @@ protected:
 	* @param Index		The File Index to perform the action on.
 	* @param Data		Data for the action.
 	*/
-	void QueueAction(const ECsPlayerProfile& Profile, const ActionType& Action, const int32& Index, const FString& Data = NCsCached::Str::Empty);
+	void QueueAction(const ECsPlayerProfile& Profile, const ActionType& Action, const int32& Index, const FString& Data = TEXT(""));
 
 	/**
 	* Queue action. The action gets enqueued into the list of actions being processed.

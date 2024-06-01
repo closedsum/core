@@ -31,7 +31,9 @@ public class CsPhysics : ModuleRules
                     "CsEnum",
                     "CsValid",
                     "CsContainer",
+                    "CsManager",
                     "CsTypes",
+                    "CsScopedTimer",
                     "CsCoreLibrary",
                     "CsCore"
 ,                }

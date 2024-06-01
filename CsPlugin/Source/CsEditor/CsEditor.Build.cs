@@ -46,8 +46,11 @@ public class CsEditor : ModuleRules
                     "CsEnum",
                     "CsEnumEditor",
                     "CsContainer",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
+                    "CsTime",
+                    "CsCoroutine",
                     "CsCore"
                 }
             );

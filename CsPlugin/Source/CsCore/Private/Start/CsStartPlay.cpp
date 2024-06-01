@@ -44,7 +44,7 @@ void FCsStartPlay::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsStartPlay:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsStartPlay."), *(Object->GetName()));
+				checkf(false, TEXT("FCsStartPlay:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsStartPlay."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 	}

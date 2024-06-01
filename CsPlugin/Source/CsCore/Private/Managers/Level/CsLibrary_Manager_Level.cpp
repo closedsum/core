@@ -22,7 +22,7 @@
 	// Common
 #include "Library/CsLibrary_World.h"
 // Managers
-#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
 // Library
 #include "Game/CsLibrary_GameInstance.h"
 #endif // #if WITH_EDITOR

@@ -34,8 +34,8 @@
 // Library
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 // Singleton
-#include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/Trace/CsGetManagerTrace.h"
 #endif // #if WITH_EDITOR
 
@@ -1072,20 +1072,20 @@ void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTran
 			}
 		}
 
-		UE_LOG(LogCsPhysics, Warning, TEXT("-- bAsync: %f"), Request->bAsync ? TEXT("True") : TEXT("False"));
-		UE_LOG(LogCsPhysics, Warning, TEXT("-- Start: %s"), *(*Request->Start.ToString()));
+		UE_LOG(LogCsPhysics, Warning, TEXT("-- bAsync: %s"), Request->bAsync ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCsPhysics, Warning, TEXT("-- Start: %s"), *(Request->Start.ToString()));
 
 		// Line | Sweep
 		if (Type == ECsTraceType::Line ||
 			Type == ECsTraceType::Sweep)
 		{
-			UE_LOG(LogCsPhysics, Warning, TEXT("-- End: %s"), *(*Request->End.ToString()));
+			UE_LOG(LogCsPhysics, Warning, TEXT("-- End: %s"), *(Request->End.ToString()));
 		}
 		// Overlap | OverlapBlocking
 		if (Type == ECsTraceType::Overlap ||
 			Type == ECsTraceType::OverlapBlocking)
 		{
-			UE_LOG(LogCsPhysics, Warning, TEXT("-- Rotation: %s"), *(*Request->Rotation.ToString()));
+			UE_LOG(LogCsPhysics, Warning, TEXT("-- Rotation: %s"), *(Request->Rotation.ToString()));
 		}
 
 		// Channel

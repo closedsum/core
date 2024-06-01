@@ -74,8 +74,8 @@ public:
 
 #if WITH_EDITOR
 
-	void AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable, void(*Log)(const FString&) = &FCsLog::Warning);
-	void AddDataTable(const FName& Entryname, const TSoftObjectPtr<UDataTable>& DataTable, const TSet<FName>& RowNames, void(*Log)(const FString&) = &FCsLog::Warning);
+	//void AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable, void(*Log)(const FString&) = &FCsLog::Warning);
+	//void AddDataTable(const FName& Entryname, const TSoftObjectPtr<UDataTable>& DataTable, const TSet<FName>& RowNames, void(*Log)(const FString&) = &FCsLog::Warning);
 
 #endif // #if WITH_EDITOR
 

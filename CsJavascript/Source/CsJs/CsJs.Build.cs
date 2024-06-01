@@ -22,9 +22,12 @@ public class CsJs : ModuleRules
                     "CsMacro",
                     "CsContainer",
                     "CsValid",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore"
+                    "CsTime",
+                    "CsCoroutine",
+                    "CsCore" // TODO: Remove
                 }
             );
 

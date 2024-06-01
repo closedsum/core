@@ -52,7 +52,7 @@ FCsUnitTestPlan_Impl::~FCsUnitTestPlan_Impl()
 
 void FCsUnitTestPlan_Impl::SetMyRoot(UObject* InRoot)
 {
-	checkf(InRoot, TEXT("%s::SetMyRoot: InRoot is NULL."));
+	checkf(InRoot, TEXT("%s::SetMyRoot: InRoot is NULL."), *Name);
 
 	MyRoot = InRoot;
 

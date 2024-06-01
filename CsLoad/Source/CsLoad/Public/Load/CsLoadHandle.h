@@ -9,7 +9,7 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsLoadHandle
+struct CSLOAD_API FCsLoadHandle
 {
 	GENERATED_USTRUCT_BODY()
 

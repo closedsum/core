@@ -8,7 +8,7 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSettings_Manager_Load
+struct CSLOAD_API FCsSettings_Manager_Load
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -31,7 +31,7 @@ public:
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSettings_Manager_Load_UnitTest
+struct CSLOAD_API FCsSettings_Manager_Load_UnitTest
 {
 	GENERATED_USTRUCT_BODY()
 

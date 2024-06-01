@@ -54,7 +54,7 @@ enum class ECsObjectPathDependencyGroup : uint8
 };
 
 
-struct CSCORE_API EMCsObjectPathDependencyGroup : public TCsEnumMap<ECsObjectPathDependencyGroup>
+struct CSTYPES_API EMCsObjectPathDependencyGroup : public TCsEnumMap<ECsObjectPathDependencyGroup>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsObjectPathDependencyGroup, ECsObjectPathDependencyGroup)
 };
@@ -65,28 +65,28 @@ namespace NCsObjectPathDependencyGroup
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Enum;
-		extern CSCORE_API const Type Texture;
-		extern CSCORE_API const Type Font;
-		extern CSCORE_API const Type MaterialParameterCollection;
-		extern CSCORE_API const Type MaterialFunction;
-		extern CSCORE_API const Type Material;
-		extern CSCORE_API const Type MaterialInstance;
-		extern CSCORE_API const Type StaticMesh;
-		extern CSCORE_API const Type Skeletal;
-		extern CSCORE_API const Type Sound;
-		extern CSCORE_API const Type FX;
-		extern CSCORE_API const Type AnimationAsset;
-		extern CSCORE_API const Type BlendSpace;
-		extern CSCORE_API const Type AnimComposite;
-		extern CSCORE_API const Type Blueprint;
-		extern CSCORE_API const Type Sequencer;
-		extern CSCORE_API const Type DataTable;
-		extern CSCORE_API const Type Other;
-		extern CSCORE_API const Type ECsObjectPathDependencyGroup_MAX;
+		extern CSTYPES_API const Type Enum;
+		extern CSTYPES_API const Type Texture;
+		extern CSTYPES_API const Type Font;
+		extern CSTYPES_API const Type MaterialParameterCollection;
+		extern CSTYPES_API const Type MaterialFunction;
+		extern CSTYPES_API const Type Material;
+		extern CSTYPES_API const Type MaterialInstance;
+		extern CSTYPES_API const Type StaticMesh;
+		extern CSTYPES_API const Type Skeletal;
+		extern CSTYPES_API const Type Sound;
+		extern CSTYPES_API const Type FX;
+		extern CSTYPES_API const Type AnimationAsset;
+		extern CSTYPES_API const Type BlendSpace;
+		extern CSTYPES_API const Type AnimComposite;
+		extern CSTYPES_API const Type Blueprint;
+		extern CSTYPES_API const Type Sequencer;
+		extern CSTYPES_API const Type DataTable;
+		extern CSTYPES_API const Type Other;
+		extern CSTYPES_API const Type ECsObjectPathDependencyGroup_MAX;
 	}
 
-	extern CSCORE_API const uint8 MAX;
+	extern CSTYPES_API const uint8 MAX;
 }
 
 #pragma endregion ObjectPathDependencyGroup

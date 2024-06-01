@@ -9,17 +9,17 @@
 #pragma region
 
 USTRUCT()
-struct CSCORE_API FCsResourceSize
+struct CSTYPES_API FCsResourceSize
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsTypes|Load")
 	int32 Bytes;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsTypes|Load")
 	float Kilobytes;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsTypes|Load")
 	float Megabytes;
 
 	FCsResourceSize()

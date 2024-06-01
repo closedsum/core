@@ -4,9 +4,9 @@
 #pragma once
 #include "CsCVars.h"
 
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerLoad;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarManagerLoadAsyncOrder;
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarDisplayLoading;
+extern CSLOAD_API TAutoConsoleVariable<int32> CsCVarLogManagerLoad;
+extern CSLOAD_API TAutoConsoleVariable<int32> CsCVarManagerLoadAsyncOrder;
+extern CSLOAD_API TAutoConsoleVariable<int32> CsCVarDisplayLoading;
 
 // CVarLog
 #pragma region
@@ -15,11 +15,11 @@ namespace NCsCVarLog
 {
 	typedef FECsCVarLog Type;
 
-	extern CSCORE_API const Type LogManagerLoad;
+	extern CSLOAD_API const Type LogManagerLoad;
 
 	namespace Map
 	{
-		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerLoad);
+		extern CSLOAD_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerLoad);
 	}
 }
 

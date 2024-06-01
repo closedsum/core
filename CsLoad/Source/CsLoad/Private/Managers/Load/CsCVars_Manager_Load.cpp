@@ -29,11 +29,11 @@ TAutoConsoleVariable<int32> CsCVarDisplayLoading(
 
 namespace NCsCVarLog
 {
-	CSCORE_API CS_CREATE_ENUM_STRUCT(LogManagerLoad);
+	CSLOAD_API CS_CREATE_ENUM_STRUCT(LogManagerLoad);
 
 	namespace Map
 	{
-		CSCORE_API CS_ADD_TO_CVAR_MAP(LogManagerLoad, CsCVarLogManagerLoad);
+		CSLOAD_API CS_ADD_TO_CVAR_MAP(LogManagerLoad, CsCVarLogManagerLoad);
 	}
 }
 

@@ -2,7 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Load/CsManagerLoad_Task_LoadObjects.h"
-#include "CsCore.h"
+#include "CsLoad.h"
 
 // CVar
 #include "Managers/Load/CsCVars_Manager_Load.h"
@@ -54,6 +54,12 @@ UCsManagerLoad_Task_LoadObjects::UCsManagerLoad_Task_LoadObjects(const FObjectIn
 {
 }
 
+#define USING_NS_CACHED using namespace NCsManagerLoadTaskLoadObjects::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsManagerLoadTaskLoadObjects::NCached; \
+	const FString& Context = Str::__FunctionName
+#define MathLibrary NCsMath::FLibrary
+#define TimeLibrary NCsTime::FLibrary
+
 void UCsManagerLoad_Task_LoadObjects::Init()
 {
 	// FirstToLast
@@ -99,15 +105,13 @@ void UCsManagerLoad_Task_LoadObjects::Update(const FCsDeltaTime& DeltaTime)
 	if (Count < Paths.Num())
 		return;
 
-	typedef NCsTime::FLibrary TimeLibrary;
-
 	const float CurrentTime = TimeLibrary::GetCurrentDateTimeSeconds();
 	const float LoadTime    = CurrentTime - StartTime;
 
 	// All AssetReferences are LOADED
 	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("UCsManagerLoad_Task_LoadObjects::OnUpdate: Finished Loading %d Assets. %s in %f seconds."), Count, *(SizeLoaded.ToString()), LoadTime);
+		UE_LOG(LogCsLoad, Log, TEXT("UCsManagerLoad_Task_LoadObjects::OnUpdate: Finished Loading %d Assets. %s in %f seconds."), Count, *(SizeLoaded.ToString()), LoadTime);
 	}
 
 	bComplete = true;
@@ -124,9 +128,7 @@ void UCsManagerLoad_Task_LoadObjects::Update(const FCsDeltaTime& DeltaTime)
 
 void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 {
-	using namespace NCsManagerLoadTaskLoadObjects::NCached;
-
-	const FString& Context = Str::OnFinishLoadObjectPath;
+	SET_CONTEXT(OnFinishLoadObjectPath);
 
 	FSoftObjectPath& Path = Paths[Count];
 
@@ -141,8 +143,6 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 	++Count;
 
 	// Get Memory loaded and the time it took
-	typedef NCsMath::FLibrary MathLibrary;
-
 	const int32 Bytes	  = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
 	const float Kilobytes = MathLibrary::BytesToKilobytes(Bytes);
 	const float Megabytes = MathLibrary::BytesToMegabytes(Bytes);
@@ -151,14 +151,12 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 	SizeLoaded.Kilobytes += Kilobytes;
 	SizeLoaded.Megabytes += Megabytes;
 
-	typedef NCsTime::FLibrary TimeLibrary;
-
 	const float CurrentTime = TimeLibrary::GetCurrentDateTimeSeconds();
 	const float LoadingTime	= CurrentTime - StartTime;
 
 	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("%s: Finished Loading %s. %f mb (%f kb, %d bytes) in %f seconds."), *Context, *Path.ToString(), Megabytes, Kilobytes, Bytes, LoadingTime);
+		UE_LOG(LogCsLoad, Log, TEXT("%s: Finished Loading %s. %f mb (%f kb, %d bytes) in %f seconds."), *Context, *Path.ToString(), Megabytes, Kilobytes, Bytes, LoadingTime);
 	}
 
 	// Broadcast the event to anyone listening
@@ -178,7 +176,7 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 
 		if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Log, TEXT("%s: Requesting Load of %s."), *Context, *(NextPath.ToString()));
+			UE_LOG(LogCsLoad, Log, TEXT("%s: Requesting Load of %s."), *Context, *(NextPath.ToString()));
 		}
 		OnStartLoadObjectPath_Event.ExecuteIfBound(NextPath);
 		StreamableHandles.Add(StreamableManager->RequestAsyncLoad(NextPath, OnFinishLoadObjectPathDelegate));
@@ -195,8 +193,6 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
 		checkf(Object, TEXT("UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths: Failed to Resolve Path @ %s."), *(Path.ToString()));
 
 		// Get Memory loaded and the time it took
-		typedef NCsMath::FLibrary MathLibrary;
-
 		const int32 Bytes	  = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
 		const float Kilobytes = MathLibrary::BytesToKilobytes(Bytes);
 		const float Megabytes = MathLibrary::BytesToMegabytes(Bytes);
@@ -218,10 +214,7 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
 #define PayloadType NCsLoad::NManager::NLoadObjectPaths::FPayload
 FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const PayloadType& Payload)
 {
-#undef PayloadType
-	using namespace NCsManagerLoadTaskLoadObjects::NCached;
-
-	const FString& Context = Str::LoadObjectPaths;
+	SET_CONTEXT(LoadObjectPaths);
 
 	Order = Payload.AsyncOrder;
 
@@ -244,14 +237,14 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const PayloadType
 
 	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("%s: Requesting Load of %d Assets."), *Context, Size);
+		UE_LOG(LogCsLoad, Log, TEXT("%s: Requesting Load of %d Assets."), *Context, Size);
 		// None | Bulk
 		if (Order == ECsLoadAsyncOrder::None ||
 			Order == ECsLoadAsyncOrder::Bulk)
 		{
 			for (const FSoftObjectPath& Path : ObjectPaths)
 			{
-				UE_LOG(LogCs, Log, TEXT("%s: Requesting Load of %s."), *Context, *(Path.ToString()));
+				UE_LOG(LogCsLoad, Log, TEXT("%s: Requesting Load of %s."), *Context, *(Path.ToString()));
 			}
 		}
 	}
@@ -262,7 +255,7 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const PayloadType
 	{
 		if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Log, TEXT("%s: Requesting Load of %s."), *Context, *(ObjectPaths[CS_FIRST].ToString()));
+			UE_LOG(LogCsLoad, Log, TEXT("%s: Requesting Load of %s."), *Context, *(ObjectPaths[CS_FIRST].ToString()));
 		}
 		OnStartLoadObjectPath_Event.ExecuteIfBound(ObjectPaths[CS_FIRST]);
 		StreamableHandles.Add(StreamableManager->RequestAsyncLoad(ObjectPaths[CS_FIRST], OnFinishLoadObjectPathDelegate));
@@ -273,13 +266,17 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const PayloadType
 		StreamableHandles.Add(StreamableManager->RequestAsyncLoad(ObjectPaths, OnFinishLoadObjectPathsDelegate));
 	}
 
-	typedef NCsTime::FLibrary TimeLibrary;
-
 	StartTime = TimeLibrary::GetCurrentDateTimeSeconds();
 
 	Handle.New();
 
 	return Handle;
 }
+#undef PayloadType
 
 #pragma endregion Load
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
+#undef MathLibrary
+#undef TimeLibrary

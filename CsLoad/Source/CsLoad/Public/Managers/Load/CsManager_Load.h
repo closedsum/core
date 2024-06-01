@@ -24,12 +24,12 @@ namespace NCsLoad
 			{
 			#define TaskType UCsManagerLoad_Task_LoadObjects
 
-				struct CSCORE_API FResource : public TCsResourceContainer<TaskType>
+				struct CSLOAD_API FResource : public TCsResourceContainer<TaskType>
 				{
 					~FResource(){}
 				};
 
-				struct CSCORE_API FManager : public NCsResource::NManager::NPointer::TFixed<TaskType, FResource, 0>
+				struct CSLOAD_API FManager : public NCsResource::NManager::NPointer::TFixed<TaskType, FResource, 0>
 				{
 					~FManager(){}
 				};
@@ -48,7 +48,7 @@ class ICsGetManagerLoad;
 class UWorld;
 
 UCLASS(transient)
-class CSCORE_API UCsManager_Load : public UObject
+class CSLOAD_API UCsManager_Load : public UObject
 {
 	GENERATED_UCLASS_BODY()
 public:

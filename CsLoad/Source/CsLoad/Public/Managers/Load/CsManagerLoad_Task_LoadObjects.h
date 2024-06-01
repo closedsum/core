@@ -20,7 +20,7 @@ namespace NCsLoad
 {
 	namespace NObjectPath
 	{
-		struct CSCORE_API FInfo
+		struct CSLOAD_API FInfo
 		{
 		public:
 
@@ -81,7 +81,7 @@ namespace NCsLoad
 	{
 		namespace NLoadObjectPaths
 		{
-			struct CSCORE_API FPayload
+			struct CSLOAD_API FPayload
 			{
 			public:
 
@@ -108,7 +108,7 @@ class UWorld;
 class UCsManager_Load;
 
 UCLASS(Transient)
-class CSCORE_API UCsManagerLoad_Task_LoadObjects : public UObject
+class CSLOAD_API UCsManagerLoad_Task_LoadObjects : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

@@ -14,8 +14,6 @@
 // Data
 #include "Managers/Data/CsSettings_Manager_Data.h"
 #include "Data/CsSettings_Data.h"
-// Load
-#include "Managers/Load/CsSettings_Manager_Load.h"
 // Input
 #include "Managers/Input/CsTypes_InputSystem.h"
 #include "Managers/Input/CsTypes_Input.h"
@@ -120,15 +118,6 @@ public:
 #endif // #if WITH_EDITOR
 
 #pragma endregion Data
-
-// Load
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Load", meta = (DisplayName = "Manager Load"))
-	FCsSettings_Manager_Load Manager_Load;
-
-#pragma endregion Load
 
 // Input
 #pragma region

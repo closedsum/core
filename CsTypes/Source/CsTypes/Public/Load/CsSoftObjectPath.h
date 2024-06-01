@@ -5,8 +5,6 @@
 // Types
 #include "Load/CsObjectPathDependencyGroup.h"
 #include "Load/CsResourceSize.h"
-// Log
-#include "Utility/CsLog.h"
 
 #include "CsSoftObjectPath.generated.h"
 
@@ -14,14 +12,14 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSoftObjectPath
+struct CSTYPES_API FCsSoftObjectPath
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsTypes|Load")
 	FSoftObjectPath Path;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsTypes|Load")
 	FCsResourceSize Size;
 
 	FCsSoftObjectPath() :
@@ -59,23 +57,23 @@ struct CSCORE_API FCsSoftObjectPath
 class UObject;
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsTArraySoftObjectPath
+struct CSTYPES_API FCsTArraySoftObjectPath
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsTypes|Load")
 	TArray<FCsSoftObjectPath> Paths;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsTypes|Load")
 	TSet<FCsSoftObjectPath> Set;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsTypes|Load")
 	TArray<FSoftObjectPath> Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsTypes|Load")
 	TSet<FSoftObjectPath> InternalSet;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsTypes|Load")
 	FCsResourceSize Size;
 
 	FCsTArraySoftObjectPath() :
@@ -168,11 +166,11 @@ struct CSCORE_API FCsTArraySoftObjectPath
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsTArraySoftObjectPathByGroup
+struct CSTYPES_API FCsTArraySoftObjectPathByGroup
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsTypes|Load")
 	FCsTArraySoftObjectPath PathsByGroup[(uint8)ECsObjectPathDependencyGroup::ECsObjectPathDependencyGroup_MAX];
 
 	FCsTArraySoftObjectPathByGroup()
@@ -194,17 +192,17 @@ struct CSCORE_API FCsTArraySoftObjectPathByGroup
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSoftObjectPathAsString
+struct CSTYPES_API FCsSoftObjectPathAsString
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsTypes|Load")
 	FString PackageName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsTypes|Load")
 	FString AssetName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsTypes|Load")
 	FString SubPath;
 
 	FCsSoftObjectPathAsString() :

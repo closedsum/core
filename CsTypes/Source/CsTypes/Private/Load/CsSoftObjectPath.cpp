@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Load/CsSoftObjectPath.h"
+#include "CsTypes.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsSoftObjectPath)
 
@@ -26,7 +27,7 @@ void FCsTArraySoftObjectPath::Populate(UObject* O, const FSoftObjectPath& Path, 
 
 	if (bLog)
 	{
-		UE_LOG(LogCs, Warning, TEXT("- Adding Path: %s [%s]."), *(Path.ToString()), *(PathAtId.Size.ToString()));
+		UE_LOG(LogCsTypes, Warning, TEXT("- Adding Path: %s [%s]."), *(Path.ToString()), *(PathAtId.Size.ToString()));
 	}
 }
 
@@ -49,7 +50,7 @@ void FCsTArraySoftObjectPath::Populate(const TSet<FSoftObjectPath>& InSet, bool 
 		{
 			if (bLog)
 			{
-				UE_LOG(LogCs, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
+				UE_LOG(LogCsTypes, Warning, TEXT("--- Failed to load Path: %s @ %s."), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 			}
 			continue;
 		}
@@ -69,7 +70,7 @@ void FCsTArraySoftObjectPath::Populate(const TSet<FSoftObjectPath>& InSet, bool 
 
 		if (bLog)
 		{
-			UE_LOG(LogCs, Warning, TEXT("---- [%d] [%s] %s @ %s."), I, *(PathAtId.Size.ToString()), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
+			UE_LOG(LogCsTypes, Warning, TEXT("---- [%d] [%s] %s @ %s."), I, *(PathAtId.Size.ToString()), *(Path.GetAssetName()), *(Path.GetAssetPathString()));
 		}
 		++I;
 	}
@@ -79,7 +80,7 @@ void FCsTArraySoftObjectPath::Populate(const TSet<FSoftObjectPath>& InSet, bool 
 
 	if (bLog)
 	{
-		UE_LOG(LogCs, Warning, TEXT("- Summary: Populated %d Paths [%s]."), Internal.Num(), *(Size.ToString()));
+		UE_LOG(LogCsTypes, Warning, TEXT("- Summary: Populated %d Paths [%s]."), Internal.Num(), *(Size.ToString()));
 	}
 }
 

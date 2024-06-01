@@ -4,7 +4,7 @@
 #include "Managers/Load/CsSettings_Manager_Load.h"
 
 // Settings
-#include "Settings/CsDeveloperSettings.h"
+#include "Settings/CsLoadSettings.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Load)
 
@@ -13,7 +13,7 @@
 
 const FCsSettings_Manager_Load& FCsSettings_Manager_Load::Get()
 {
-	return GetMutableDefault<UCsDeveloperSettings>()->Manager_Load;
+	return GetMutableDefault<UCsLoadSettings>()->Manager_Load;
 }
 
 #pragma endregion FCsSettings_Manager_Load

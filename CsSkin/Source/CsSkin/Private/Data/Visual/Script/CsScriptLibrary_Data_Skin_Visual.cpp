@@ -13,7 +13,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsSkinLog.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Data_Skin_Visual)
 
@@ -74,7 +74,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_Material(const FString& Co
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_Material : Context;
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	void(*Log)(const FString&) = &NCsSkin::FLog::Warning;
 
 	if (!Object)
 	{
@@ -137,7 +137,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMesh(const FString& 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_StaticMesh : Context;
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	void(*Log)(const FString&) = &NCsSkin::FLog::Warning;
 
 	if (!Object)
 	{
@@ -201,7 +201,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMesh(const FString
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_SkeletalMesh : Context;
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	void(*Log)(const FString&) = &NCsSkin::FLog::Warning;
 
 	if (!Object)
 	{
@@ -265,7 +265,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMeshAndMaterial(cons
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_StaticMeshAndMaterial : Context;
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	void(*Log)(const FString&) = &NCsSkin::FLog::Warning;
 
 	if (!Object)
 	{
@@ -340,7 +340,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMeshAndMaterial(co
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_SkeletalMeshAndMaterial : Context;
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	void(*Log)(const FString&) = &NCsSkin::FLog::Warning;
 
 	if (!Object)
 	{

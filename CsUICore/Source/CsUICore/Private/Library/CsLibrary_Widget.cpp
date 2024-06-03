@@ -371,8 +371,13 @@ namespace NCsWidget
 		GVS->AddWidgetForPlayer(Widget, Player, Slot);
 	}
 
+	#undef LogLevel
+
 	namespace NRender
 	{
+		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
+		#define MathLibrary NCsMath::FLibrary
+
 		bool FLibrary::CanEaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
@@ -394,9 +399,6 @@ namespace NCsWidget
 		float FLibrary::GetPercentChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
 		{
 			check(CanEaseChecked(Context, Widget, Easing, Start, End, Alpha));
-
-			typedef NCsMath::FLibrary MathLibrary;
-
 			return MathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
 		}
 
@@ -411,8 +413,6 @@ namespace NCsWidget
 		{
 			if (!CanEase(Context, Widget, Easing, Start, End, Alpha, Log))
 				return false;
-
-			typedef NCsMath::FLibrary MathLibrary;
 
 			const float Percent = MathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
 
@@ -432,15 +432,15 @@ namespace NCsWidget
 		{
 			if (!CanEase(Context, Widget, Easing, Start, End, Alpha, Log))
 				return false;
-
-			typedef NCsMath::FLibrary MathLibrary;
-
 			const float Percent   = MathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
 			const FVector2d Scale = FMath::Lerp(Start, End, Alpha) * FVector2d(1.0f);
 
 			Widget->SetRenderScale(Scale);
 			return true;
 		}
+
+		#undef MathLibrary
+		#undef LogLevel
 
 	// Anim
 	#pragma region
@@ -458,8 +458,6 @@ namespace NCsWidget
 		*/
 
 	#pragma endregion Anim
-
-	#undef LogLevel
 	}
 
 	namespace NPosition

@@ -31,7 +31,7 @@ public class CsSkin : ModuleRules
                     "CsValid",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore"
+                    "CsData"
                 }
             );
 

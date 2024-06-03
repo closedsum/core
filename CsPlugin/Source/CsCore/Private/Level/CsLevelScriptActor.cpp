@@ -10,7 +10,7 @@
 // Managers
 #include "Managers/Data/CsManager_Data.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
+#include "Settings/CsDataSettings.h"
 // Data
 #include "Data/CsGetDataRootSet.h"
 
@@ -350,9 +350,9 @@ void ACsLevelScriptActor::PopulatePayloadCombined()
 	{
 		const FName LevelName = GetLevelFName();
 
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+		UCsDataSettings* Settings = GetMutableDefault<UCsDataSettings>();
 
-		UCsLibrary_Load::LoadStruct(Settings, UCsDeveloperSettings::StaticClass(), NCsLoadFlags::All, NCsLoadCodes::None);
+		UCsLibrary_Load::LoadStruct(Settings, UCsDataSettings::StaticClass(), NCsLoadFlags::All, NCsLoadCodes::None);
 		
 		// DataRootSet
 		if (UObject* Object = Settings->DataRootSet.LoadSynchronous())

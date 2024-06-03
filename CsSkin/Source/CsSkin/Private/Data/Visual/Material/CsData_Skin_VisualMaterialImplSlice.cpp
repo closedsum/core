@@ -26,7 +26,7 @@ void FCsData_Skin_VisualMaterialImplSlice::CopyToSliceAsValue(SliceType* Slice) 
 	Slice->SetMaterials(Materials.Get());
 }
 
-SliceType* FCsData_Skin_VisualMaterialImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+SliceType* FCsData_Skin_VisualMaterialImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
@@ -57,7 +57,7 @@ SliceType* FCsData_Skin_VisualMaterialImplSlice::AddSafeSliceAsValue(const FStri
 
 #undef SliceType
 
-bool FCsData_Skin_VisualMaterialImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualMaterialImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	if (!Materials.IsValid(Context, Log))
 		return false;
@@ -73,7 +73,7 @@ void FCsData_Skin_VisualMaterialImplSlice::SetChecked(const FString& Context, UP
 	MaterialLibrary::SetChecked(Context, Component, Materials.Get());
 }
 
-bool FCsData_Skin_VisualMaterialImplSlice::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualMaterialImplSlice::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	if (!Materials.IsValid(Context, Log))
 		return false;
@@ -106,7 +106,7 @@ namespace NCsSkin
 					}
 				}
 
-				/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+				/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/)
 				{
 					using namespace NCsSkin::NData::NVisual::NMaterial::NImplSlice::NCached;
 
@@ -193,7 +193,7 @@ namespace NCsSkin
 					return true;
 				}
 
-				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 				{
 					CS_IS_TARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
 
@@ -208,7 +208,7 @@ namespace NCsSkin
 					MaterialLibrary::SetChecked(Context, Component, GetMaterials());
 				}
 
-				bool FImplSlice::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FImplSlice::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 				{
 					typedef NCsMaterial::FLibrary MaterialLibrary;
 

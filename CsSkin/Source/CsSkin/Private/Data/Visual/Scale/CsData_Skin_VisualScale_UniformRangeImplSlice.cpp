@@ -31,7 +31,7 @@ void FCsData_Skin_VisualScale_UniformRangeImplSlice::CopyToSliceAsValue(SliceTyp
 	Slice->SetMaxUniformScale(Max);
 }
 
-SliceType* FCsData_Skin_VisualScale_UniformRangeImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+SliceType* FCsData_Skin_VisualScale_UniformRangeImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
@@ -69,7 +69,7 @@ bool FCsData_Skin_VisualScale_UniformRangeImplSlice::IsValidChecked(const FStrin
 	return true;
 }
 
-bool FCsData_Skin_VisualScale_UniformRangeImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualScale_UniformRangeImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	CS_IS_FLOAT_GREATER_THAN(Min, 0.0f)
 	CS_IS_FLOAT_GREATER_THAN(Max, 0.0f)
@@ -88,7 +88,7 @@ void FCsData_Skin_VisualScale_UniformRangeImplSlice::SetChecked(const FString& C
 		Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector3d::OneVector);
 }
 
-bool FCsData_Skin_VisualScale_UniformRangeImplSlice::SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualScale_UniformRangeImplSlice::SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
@@ -130,7 +130,7 @@ namespace NCsSkin
 							}
 						}
 
-						/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+						/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/)
 						{
 							using namespace NCsSkin::NData::NVisual::NScale::NUniform::NRange::NImplSlice::NCached;
 
@@ -220,7 +220,7 @@ namespace NCsSkin
 							return true;
 						}
 
-						bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+						bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 						{
 							CS_IS_FLOAT_GREATER_THAN(GetMinUniformScale(), 0.0f)
 							CS_IS_FLOAT_GREATER_THAN(GetMaxUniformScale(), 0.0f)
@@ -242,7 +242,7 @@ namespace NCsSkin
 								Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector3d::OneVector);
 						}
 
-						bool FImplSlice::SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+						bool FImplSlice::SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 						{
 							if (!IsValid(Context, Log))
 								return false;

@@ -5,6 +5,7 @@
 #include "UObject/Object.h"
 // Types
 #include "Types/CsTypes_UserWidget_Anim.h"
+#include "Templates/SubclassOf.h"
 
 
 #include "CsScriptLibrary_Widget.generated.h"

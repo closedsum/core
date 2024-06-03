@@ -10,7 +10,7 @@
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 // Library
 	// Settings
-#include "Settings/CsLibrary_DeveloperSettings.h"
+#include "Settings/CsLibrary_DataSettings.h"
 // Data
 #include "Engine/DataTable.h"
 // Class
@@ -355,7 +355,7 @@ namespace NCsAsset
 				if (AssetPath == Str::AssetPath_AnimGraphRuntime)
 					return false;
 
-				typedef NCsCore::NSettings::FLibrary SettingsLibrary;
+				typedef NCsData::NSettings::FLibrary SettingsLibrary;
 
 				const TArray<FString>& IgnoreAssetPaths = SettingsLibrary::GetIgnoreAssetPaths();
 

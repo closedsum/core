@@ -27,7 +27,8 @@ public class CsJs : ModuleRules
                     "CsCoreLibrary",
                     "CsTime",
                     "CsCoroutine",
-                    "CsCore" // TODO: Remove
+                    "CsData",
+                    "CsCore"
                 }
             );
 

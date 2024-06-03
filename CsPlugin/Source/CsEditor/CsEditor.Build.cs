@@ -51,6 +51,7 @@ public class CsEditor : ModuleRules
                     "CsCoreLibrary",
                     "CsTime",
                     "CsCoroutine",
+                    "CsData",
                     "CsCore"
                 }
             );

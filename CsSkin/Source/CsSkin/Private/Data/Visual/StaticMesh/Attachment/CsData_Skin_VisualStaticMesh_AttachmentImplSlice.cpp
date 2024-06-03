@@ -51,7 +51,7 @@ void FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::CopyToSliceAsValue(Slice
 	}
 }
 
-SliceType* FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+SliceType* FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
@@ -91,7 +91,7 @@ bool FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::IsValidChecked(const FSt
 	return true;
 }
 
-bool FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	for (const FCsStaticMeshAttachment& Attachment : Attachments)
 	{
@@ -110,7 +110,7 @@ void FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AttachChecked(const FStr
 	}
 }
 
-bool FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
@@ -148,7 +148,7 @@ namespace NCsSkin
 						}
 					}
 
-					/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+					/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/)
 					{
 						using namespace NCsSkin::NData::NVisual::NStaticMesh::NAttachment::NImplSlice::NCached;
 
@@ -254,7 +254,7 @@ namespace NCsSkin
 						return true;
 					}
 
-					bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+					bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 					{
 						typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
 
@@ -277,7 +277,7 @@ namespace NCsSkin
 						}
 					}
 
-					bool FImplSlice::AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+					bool FImplSlice::AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 					{
 						if (!IsValid(Context, Log))
 							return false;

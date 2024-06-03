@@ -7,7 +7,7 @@
 	// Settings
 #include "Settings/CsLibrary_DeveloperSettings.h"
 // Utility
-#include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsLibrary_EnumStruct.h"
 #include "Utility/CsLog.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsInputActionMap)

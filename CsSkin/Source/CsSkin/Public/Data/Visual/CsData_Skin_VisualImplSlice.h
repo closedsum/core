@@ -5,7 +5,7 @@
 // Types
 #include "CsMacro_Namespace.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsSkinLog.h"
 // Data
 #include "Data/Visual/CsData_Skin_Visual.h"
 
@@ -40,11 +40,11 @@ public:
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 
-	SliceType* AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	SliceType* AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 
 #undef SliceType
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
@@ -119,10 +119,10 @@ namespace NCsSkin
 					delete static_cast<NCsSkin::NData::NVisual::FImplSlice*>(Ptr);
 				}
 
-				static FImplSlice* AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+				static FImplSlice* AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) = &NCsSkin::FLog::Warning);
 
 				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 			};
 		}
 	}

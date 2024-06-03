@@ -39,8 +39,6 @@ public class CsSkinEditor : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "UnrealEd",
-                    "CsCore",
-                    "CsEditor",
                     "CsSkin"
                 }
             );

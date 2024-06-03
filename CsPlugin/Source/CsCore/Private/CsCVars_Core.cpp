@@ -173,30 +173,6 @@ TAutoConsoleVariable<int32> CsCVarLogLevelPayloadPopulate(
 
 #pragma endregion Level
 
-// Payload
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogPayloadPopulate(
-	TEXT("log.payload.populate"),
-	1,
-	TEXT("Log Payload Populate."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Payload
-
-// Data
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogDataEntryPopulate(
-	TEXT("log.data.entry.populate"),
-	1,
-	TEXT("Log Data Entry Populate."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Data
-
 // CVarLog
 #pragma region
 
@@ -218,10 +194,6 @@ namespace NCsCVarLog
 
 	// Level
 	CSCORE_API CS_CREATE_ENUM_STRUCT(LogLevelPayloadPopulate);
-	// Payload
-	CSCORE_API CS_CREATE_ENUM_STRUCT(LogPayloadPopulate);
-	// Data
-	CSCORE_API CS_CREATE_ENUM_STRUCT(LogDataEntryPopulate);
 
 	namespace Map
 	{
@@ -239,10 +211,6 @@ namespace NCsCVarLog
 
 		// Level
 		CSCORE_API CS_ADD_TO_CVAR_MAP(LogLevelPayloadPopulate, CsCVarLogLevelPayloadPopulate);
-		// Payload
-		CSCORE_API CS_ADD_TO_CVAR_MAP(LogPayloadPopulate, CsCVarLogPayloadPopulate);
-		// Data
-		CSCORE_API CS_ADD_TO_CVAR_MAP(LogDataEntryPopulate, CsCVarLogDataEntryPopulate);
 	}
 }
 

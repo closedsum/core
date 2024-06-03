@@ -4,7 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Interfaces
-#include "Data/CsData.h"
+#include "Data/ICsData.h"
 #include "Data/Visual/CsData_Skin_Visual.h"
 #include "Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMesh.h"
 #include "Data/Visual/Material/CsData_Skin_VisualMaterial.h"

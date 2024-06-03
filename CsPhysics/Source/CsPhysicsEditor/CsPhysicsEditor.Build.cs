@@ -47,8 +47,6 @@ public class CsPhysicsEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
-                    "CsCore",
-                    "CsEditor",
                     "CsPhysics"
                 }
             );

@@ -2590,7 +2590,7 @@ bool UCsManager_Input_Default::IsValidKey(const ECsInputDevice& Device, const FK
 
 const FKey& UCsManager_Input_Default::GetKey(const FString& KeyName)
 {
-	if (KeyName == NCsCached::Str::Empty)
+	if (KeyName == TEXT(""))
 		return EKeys::Invalid;
 
 	const int32 KeyCount = AllKeys.Num();

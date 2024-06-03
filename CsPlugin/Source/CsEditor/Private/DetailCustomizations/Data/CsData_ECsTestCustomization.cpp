@@ -16,7 +16,7 @@
 #include "Test/CsData_ECsTest.h"
 #include "DetailCustomizations/EnumStruct/Input/ECsInputActionCustomization.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
+#include "Settings/CsDataSettings.h"
 // Data
 #include "Data/CsGetDataRootSet.h"
 // Helper
@@ -129,7 +129,7 @@ void FCsData_ECsTestCustomization::CustomizeChildren(TSharedRef<class IPropertyH
 
 	return;
 
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+	UCsDataSettings* Settings = GetMutableDefault<UCsDataSettings>();
 
 	UClass* Class					  = Settings->DataRootSet.LoadSynchronous();
 	UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;

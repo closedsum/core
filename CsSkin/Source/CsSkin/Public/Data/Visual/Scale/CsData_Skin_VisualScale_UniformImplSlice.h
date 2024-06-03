@@ -8,7 +8,7 @@
 // Data
 #include "Data/Visual/Scale/CsData_Skin_VisualScale_Uniform.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsSkinLog.h"
 
 #include "CsData_Skin_VisualScale_UniformImplSlice.generated.h"
 
@@ -46,15 +46,15 @@ public:
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 
-	SliceType* AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	SliceType* AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 
 #undef SliceType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 
 	void SetChecked(const FString& Context, USceneComponent* Component) const;
-	bool SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
@@ -145,13 +145,13 @@ namespace NCsSkin
 							delete static_cast<NCsSkin::NData::NVisual::NScale::NUniform::FImplSlice*>(Ptr);
 						}
 
-						static FImplSlice* AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+						static FImplSlice* AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) = &NCsSkin::FLog::Warning);
 
 						bool IsValidChecked(const FString& Context) const;
-						bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 
 						void SetChecked(const FString& Context, USceneComponent* Component) const;
-						bool SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+						bool SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 					};
 
 				#undef UniformScaleVisualDataType

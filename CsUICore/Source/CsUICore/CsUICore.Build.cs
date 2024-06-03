@@ -26,7 +26,7 @@ public class CsUICore : ModuleRules
                     "CsValid",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore"
+                    "CsData"
 ,                }
             );
 

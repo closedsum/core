@@ -97,31 +97,31 @@ struct CSUICORE_API FCsUserWidgetAnimPlayParams : public FTableRowBase
 public:
 
 	/** Name of the Animation. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FName Name;
 
 	/** The time in the animation from which to start playing, 
 		relative to the start position. For looped animations, 
 		this will only affect the first playback of the animation. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (UIMin = "0.0", ClampMin = "0"))
 	float StartAtTime;
 
 	/** The absolute time in the animation where to stop, 
 		this is only considered in the last loop.
 		0.0f to ignore EndAtTime. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (UIMin = "0.0", ClampMin = "0"))
 	float EndAtTime;
 
 	/** The number of times to loop this animation (0 to loop indefinitely) */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (UIMin = "0", ClampMin = "0"))
 	int32 NumLoopsToPlay;
 
 	/** Specifies the playback mode. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	ECsUserWidgetAnimPlayMode PlayMode;
 
 	/** The speed at which the animation should play. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (UIMin = "0.0", ClampMin = "0"))
 	float PlaybackSpeed;
 
 	FCsUserWidgetAnimPlayParams() :
@@ -161,31 +161,31 @@ struct CSUICORE_API FCsUserWidget_Anim_PlayParams : public FTableRowBase
 public:
 
 	/** Name of the Animation. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FName Name;
 
 	/** The time in the animation from which to start playing, 
 		relative to the start position. For looped animations, 
 		this will only affect the first playback of the animation. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (UIMin = "0.0", ClampMin = "0"))
 	float StartAtTime;
 
 	/** The absolute time in the animation where to stop, 
 		this is only considered in the last loop.
 		0.0f to ignore EndAtTime. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (UIMin = "0.0", ClampMin = "0"))
 	float EndAtTime;
 
 	/** The number of times to loop this animation (0 to loop indefinitely) */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (UIMin = "0", ClampMin = "0"))
 	int32 NumLoopsToPlay;
 
 	/** Specifies the playback mode. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	ECsUserWidgetAnimPlayMode PlayMode;
 
 	/** The speed at which the animation should play. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (UIMin = "0.0", ClampMin = "0"))
 	float PlaybackSpeed;
 
 	FCsUserWidget_Anim_PlayParams() :

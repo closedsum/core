@@ -31,20 +31,6 @@ namespace NCsCore
 
 		#pragma endregion Enum
 
-		// Data
-		#pragma region
-		public:
-			
-			static const TSoftClassPtr<UObject>& GetDataRootSetChecked(const FString& Context);
-			static const TSoftClassPtr<UObject>& GetDataRootSet();
-
-			static UObject* LoadDataRootSetChecked(const FString& Context);
-			static UObject* SafeLoadDataRootSet(const FString& Context);
-
-			static const TArray<FString>& GetIgnoreAssetPaths();
-
-		#pragma endregion Data
-
 		// Input
 		#pragma region
 		public:

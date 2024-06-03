@@ -50,7 +50,8 @@ public class CsCore : ModuleRules
                     "CsConsoleCommand",
                     "CsTime",
                     "CsCoroutine",
-                    "CsLoad"
+                    "CsLoad",
+                    "CsData"
                 }
             );
 

@@ -41,7 +41,7 @@ public class CsFade : ModuleRules
                     "CsTypes",
                     "CsCoreLibrary",
                     "CsCoroutine",
-                    "CsCore" // TODO: Remove: Dependent on DataRootSet
+                    "CsData"
 ,                }
             );
 

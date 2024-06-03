@@ -54,6 +54,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsData",
+      "Enabled": true
+    },
+    {
       "Name": "CsPlugin",
       "Enabled": true
     },

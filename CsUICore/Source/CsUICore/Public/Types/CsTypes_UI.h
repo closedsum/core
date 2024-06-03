@@ -2,6 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "UObject/SoftObjectPtr.h"
+#include "Templates/SubclassOf.h"
 // Data
 #include "Data/CsTableRowBase_Data.h"
 // Log
@@ -22,19 +25,19 @@ struct CSUICORE_API FCsUserWidget : public FCsTableRowBase_Data
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	TSoftClassPtr<UUserWidget> Widget;
 
 	UPROPERTY()
 	int32 Widget_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = DataTable)
 	UUserWidget* Widget_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = DataTable)
 	UClass* Widget_Class;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = DataTable)
 	TSubclassOf<UUserWidget> Widget_SubclassOf;
 
 	FCsUserWidget() :

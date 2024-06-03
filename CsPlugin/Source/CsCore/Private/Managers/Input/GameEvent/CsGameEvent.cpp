@@ -7,7 +7,7 @@
 	// Settings
 #include "Settings/CsLibrary_DeveloperSettings.h"
 // Utility
-#include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsLibrary_EnumStruct.h"
 #include "Utility/CsLog.h"
 // Input
 #include "Managers/Input/Definition/CsTypes_InputDefinition.h"

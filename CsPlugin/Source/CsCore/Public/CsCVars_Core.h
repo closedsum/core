@@ -91,20 +91,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogLevelPayloadPopulate;
 
 #pragma endregion Level
 
-// Payload
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogPayloadPopulate;
-
-#pragma endregion Payload
-
-// Data
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogDataEntryPopulate;
-
-#pragma endregion Data
-
 namespace NCsCVarLog
 {
 	// GameState
@@ -123,10 +109,6 @@ namespace NCsCVarLog
 
 	// Level
 	extern CSCORE_API const Type LogLevelPayloadPopulate;
-	// Payload
-	extern CSCORE_API const Type LogPayloadPopulate;
-	// Data
-	extern CSCORE_API const Type LogDataEntryPopulate;
 
 	namespace Map
 	{
@@ -150,9 +132,5 @@ namespace NCsCVarLog
 
 		// Level
 		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogLevelPayloadPopulate);
-		// Payload
-		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogPayloadPopulate);
-		// Data
-		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogDataEntryPopulate);
 	}
 }

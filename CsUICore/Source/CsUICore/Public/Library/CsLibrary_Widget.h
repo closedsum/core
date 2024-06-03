@@ -21,8 +21,7 @@ class UButton;
 class UImage;
 class UProgressBar;
 class UBorder;
-
-struct FCsRoutine;
+class ULocalPlayer;
 
 namespace NCsWidget
 {

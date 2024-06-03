@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "CsUICore.h"
+#include "Modules/ModuleManager.h"
 
 IMPLEMENT_GAME_MODULE(FDefaultGameModuleImpl, CsUICore);
 

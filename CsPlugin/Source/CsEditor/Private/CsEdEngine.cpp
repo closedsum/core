@@ -5,15 +5,11 @@
 #include "CsEditor.h"
 
 #include "CsCVars_Core.h"
+#include "CsCVars_Data.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Type
 #include "Data/CsTypes_DataEntry.h"
-#include "Managers/Input/CsTypes_Input.h"
-#include "Library/Load/CsTypes_Library_Load.h"
-#include "Load/CsObjectPathDependencyGroup.h"
-// Enum
-#include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 // Library
 	// Data
 #include "Data/CsLibrary_Data.h"
@@ -29,14 +25,13 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
-
-#include "Factories/BlueprintFactory.h"
 // Data
 #include "Data/CsGetDataRootSet.h"
 // Setting
 #include "Settings/Tool/CsSettingsTool.h"
 #include "Settings/CsUserSettings.h"
 #include "Settings/CsDeveloperSettings.h"
+#include "Settings/CsDataSettings.h"
 #include "Settings/ProjectPackagingSettings.h"
 #include "Settings/LevelEditorPlaySettings.h"
 // Property
@@ -52,14 +47,15 @@
 #include "Framework/Application/SlateApplication.h"
 // Enum
 #include "Types/Enum/Tool/CsEnumStructLayoutTool.h"
-#include "Engine/UserDefinedEnum.h"
+// Utility
+#include "Utility/CsLibrary_EnumStruct.h"
+#include "Utility/CsLibrary_EnumStructImpl.h"
 // Editor
 #include "Editor.h"
 #include "LevelEditor.h"
 #include "PackageTools.h"
 // Module
 #include "Modules/ModuleManager.h"
-#include "AssetRegistry/AssetRegistryModule.h"
 // SourceControl
 #include "SourceControlHelpers.h"
 
@@ -144,6 +140,9 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 	UCsManager_Time::Init(this);
 	UCsCoroutineScheduler::Init(this);
 
+	NCsEnum::NStruct::NLayout::FLibrary::ConditionalAddLayout = &NCsEnum::NStruct::NLayout::NImpl::FLibrary::ConditionalAddLayout;
+	NCsEnum::NStruct::NLayout::FLibrary::AddPropertyChange = &NCsEnum::NStruct::NLayout::NImpl::FLibrary::AddPropertyChange;
+
 	PostInit();
 }
 
@@ -226,13 +225,14 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 
 	Standalone.bActive = true;
 
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+	UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>();
+	UCsDataSettings* DataSettings        = GetMutableDefault<UCsDataSettings>();
 
 	// If Mobile, set the appropriate DataRootSet
 	if (Params.SessionPreviewTypeOverride.IsSet() &&
 		(Params.SessionPreviewTypeOverride == EPlaySessionPreviewType::MobilePreview ||
 		 (Params.SessionPreviewTypeOverride == EPlaySessionPreviewType::VulkanPreview &&
-		  Settings->bPIE_VulkanPreviewMobile)))
+		  ModuleSettings->bPIE_VulkanPreviewMobile)))
 	{
 		FString& CmdParams = OpCmdParams.GetValue();
 
@@ -241,11 +241,11 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 			CmdParams += TEXT(" -") + Str::StandaloneMobileFromEditor;
 		}
 
-		Settings->DataRootSet = Settings->GetDataRootSet(ECsPlatform::Android);
+		DataSettings->DataRootSet = DataSettings->GetDataRootSet(ECsPlatform::Android);
 
-		FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
-		Settings->PostEditChangeProperty(PropChangeEvent);
-		Settings->TryUpdateDefaultConfigFile();
+		FPropertyChangedEvent PropChangeEvent(UCsDataSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDataSettings, DataRootSet)));
+		DataSettings->PostEditChangeProperty(PropChangeEvent);
+		DataSettings->TryUpdateDefaultConfigFile();
 
 		UProjectPackagingSettings* PackageSettings = GetMutableDefault< UProjectPackagingSettings>();
 
@@ -254,7 +254,7 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 			PackageSettings->DirectoriesToAlwaysCook.AddDefaulted();
 		}
 
-		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = Settings->GetDirectoryToAlwaysCook(ECsPlatform::Android);
+		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = DataSettings->GetDirectoryToAlwaysCook(ECsPlatform::Android);
 		PackageSettings->TryUpdateDefaultConfigFile();
 	}
 	
@@ -405,6 +405,7 @@ void UCsEdEngine::OnEndPIE(bool IsSimulating)
 	PIEInfo.SetEnding();
 
 	UCsDeveloperSettings* ModuleSettings   = GetMutableDefault<UCsDeveloperSettings>();
+	UCsDataSettings* DataSettings		   = GetMutableDefault<UCsDataSettings>();
 	ULevelEditorPlaySettings* PlaySettings = GetMutableDefault<ULevelEditorPlaySettings>();
 
 	const EPlayModeType PlayModeType = PlaySettings->LastExecutedPlayModeType;
@@ -415,11 +416,11 @@ void UCsEdEngine::OnEndPIE(bool IsSimulating)
 		// Mobile
 		if (ModuleSettings->bPIE_Mobile)
 		{
-			ModuleSettings->DataRootSet = ModuleSettings->GetDataRootSet(ECsPlatform::Windows);
+			DataSettings->DataRootSet = DataSettings->GetDataRootSet(ECsPlatform::Windows);
 
-			FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
-			ModuleSettings->PostEditChangeProperty(PropChangeEvent);
-			ModuleSettings->TryUpdateDefaultConfigFile();
+			FPropertyChangedEvent PropChangeEvent(UCsDataSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDataSettings, DataRootSet)));
+			DataSettings->PostEditChangeProperty(PropChangeEvent);
+			DataSettings->TryUpdateDefaultConfigFile();
 		}
 	}
 	NCsPIE::FDelegates::OnEnd_Event.Broadcast(IsSimulating);
@@ -689,6 +690,7 @@ void UCsEdEngine::OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent
 	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
 
 	UCsDeveloperSettings* ModuleSettings   = GetMutableDefault<UCsDeveloperSettings>();
+	UCsDataSettings* DataSettings		   = GetMutableDefault<UCsDataSettings>();
 	ULevelEditorPlaySettings* PlaySettings = GetMutableDefault<ULevelEditorPlaySettings>();
 
 	// "Capture" Play button press in editor and alter settings
@@ -707,11 +709,11 @@ void UCsEdEngine::OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent
 					// Mobile
 					if (ModuleSettings->bPIE_Mobile)
 					{
-						ModuleSettings->DataRootSet = ModuleSettings->GetDataRootSet(ECsPlatform::Android);
+						DataSettings->DataRootSet = DataSettings->GetDataRootSet(ECsPlatform::Android);
 
-						FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
-						ModuleSettings->PostEditChangeProperty(PropChangeEvent);
-						ModuleSettings->TryUpdateDefaultConfigFile();
+						FPropertyChangedEvent PropChangeEvent(UCsDataSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDataSettings, DataRootSet)));
+						DataSettings->PostEditChangeProperty(PropChangeEvent);
+						DataSettings->TryUpdateDefaultConfigFile();
 
 						PlaySettings->NewWindowWidth  = ModuleSettings->PIE_Mobile.NewWindowWidth;
 						PlaySettings->NewWindowHeight = ModuleSettings->PIE_Mobile.NewWindowHeight;
@@ -763,7 +765,7 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 		DataTableTool.ProcessChange(DataTable);
 
 		// Settings
-		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
+		if (UCsDataSettings* DataSettings = GetMutableDefault<UCsDataSettings>())
 		{
 			// TODO: Save out to .json
 			
@@ -775,7 +777,7 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 
 				for (int32 I = 0; I < Count; ++I)
 				{
-					DataRootSets.Add(Settings->DataRootSets[I].DataRootSet);
+					DataRootSets.Add(DataSettings->DataRootSets[I].DataRootSet);
 				}
 
 				for (TSoftClassPtr<UObject> SoftClass : DataRootSets)
@@ -876,9 +878,11 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 			// Enum Struct
 			if (UserSettings->bOnSave_DataTable_EnumStructLayoutResolveChanges)
 			{			
+				UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>();
+
 				TSoftObjectPtr<UDataTable> DataTableSoftObject(DataTable);
 
-				TMap<FName, FCsEnumStructLayoutHistory>& EnumStructlayoutHistoryMap = Settings->EnumStructlayoutHistoryMap;
+				TMap<FName, FCsEnumStructLayoutHistory>& EnumStructlayoutHistoryMap = ModuleSettings->EnumStructlayoutHistoryMap;
 
 				bool bResolveLayoutChanges = false;
 
@@ -931,7 +935,7 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 
 				TArray<UObject*> ObjectsToSave;
 
-				UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+				UCsDataSettings* DataSettings = GetMutableDefault<UCsDataSettings>();
 
 				// DataRootSet
 				TSet<TSoftClassPtr<UObject>> DataRootSets;
@@ -940,7 +944,7 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 
 				for (int32 I = 0; I < Count; ++I)
 				{
-					DataRootSets.Add(Settings->DataRootSets[I].DataRootSet);
+					DataRootSets.Add(DataSettings->DataRootSets[I].DataRootSet);
 				}
 
 				for (TSoftClassPtr<UObject> SoftClass : DataRootSets)
@@ -1187,16 +1191,16 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_DataTables(UDataTable* Data
 void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payloads(UDataTable* DataTable)
 {
 	// Get Settings
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+	UCsDataSettings* DataSettings = GetMutableDefault<UCsDataSettings>();
 
 	// TODO: FIX
 	return;
 
-	if (!Settings)
+	if (!DataSettings)
 		return;
 
 	// Get DataRootSet
-	TSoftClassPtr<UObject> SoftObject	= Settings->DataRootSet;
+	TSoftClassPtr<UObject> SoftObject	= DataSettings->DataRootSet;
 	UClass* Class						= SoftObject.LoadSynchronous();
 	UObject* Object						= Class ? Class->GetDefaultObject<UObject>() : nullptr;
 	ICsGetDataRootSet* GetDataRootSet	= Object ? Cast<ICsGetDataRootSet>(Object) : nullptr;
@@ -1358,15 +1362,15 @@ char UCsEdEngine::FStandalone::Monitor_Internal(FCsRoutine* R)
 
 	// Set DataRootSet back to Windows
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-		Settings->DataRootSet		   = Settings->GetDataRootSet(ECsPlatform::Windows);
+		UCsDataSettings* DataSettings = GetMutableDefault<UCsDataSettings>();
+		DataSettings->DataRootSet	  = DataSettings->GetDataRootSet(ECsPlatform::Windows);
 
-		FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
-		Settings->PostEditChangeProperty(PropChangeEvent);
-		Settings->TryUpdateDefaultConfigFile();
+		FPropertyChangedEvent PropChangeEvent(UCsDataSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDataSettings, DataRootSet)));
+		DataSettings->PostEditChangeProperty(PropChangeEvent);
+		DataSettings->TryUpdateDefaultConfigFile();
 
 		UProjectPackagingSettings* PackageSettings		   = GetMutableDefault< UProjectPackagingSettings>();
-		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = Settings->GetDirectoryToAlwaysCook(ECsPlatform::Windows);
+		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = DataSettings->GetDirectoryToAlwaysCook(ECsPlatform::Windows);
 		PackageSettings->TryUpdateDefaultConfigFile();
 	}
 

@@ -35,8 +35,7 @@ public class CsPhysics : ModuleRules
                     "CsTypes",
                     "CsScopedTimer",
                     "CsCoreLibrary",
-                    "CsData",
-                    "CsCore"
+                    "CsData"
 ,                }
             );
 

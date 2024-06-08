@@ -14,11 +14,14 @@
 	"CanContainContent": true,
 	"Installed": true,
   "Modules": [
-	{
-      "Name": "CsValid",
-      "Type": "Runtime",
-      "LoadingPhase": "Default"
-    }
+		{
+			"Name": "CsValid",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		}
 ],
 	"Plugins": [
 		{

@@ -14,11 +14,14 @@
 	"CanContainContent": true,
 	"Installed": true,
   "Modules": [
-    {
-      "Name": "CsUICore",
-      "Type": "Runtime",
-      "LoadingPhase": "Default"
-    }
+		{
+			"Name": "CsUICore",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		}
   ],
 	"Plugins": [
 		{

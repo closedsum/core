@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Actor/Script/CsScriptLibrary_ScriptableActor.h"
-#include "CsJs.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -10,6 +9,8 @@
 #include "Actor/CsLibrary_ScriptableActor.h"
 // Actor
 #include "Actor/CsScriptScriptableActor.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_ScriptableActor)
 
 // Cached
 #pragma region

@@ -7,7 +7,7 @@
 #include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Trace_Viewport.h"
-#include "Managers/Input/CsLibrary_Input.h"
+#include "Input/CsLibrary_Input_Mouse.h"
 #include "Library/CsLibrary_Valid.h"
 
 namespace NCsInput

@@ -44,6 +44,7 @@ namespace NCsSceneComponent
 	#define USING_NS_CACHED using namespace NCsSceneComponent::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsSceneComponent::NLibrary::NCached; \
 		const FString& Context = Str::__FunctionName
+	#define LogLevel void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
 
 	public:
 
@@ -163,7 +164,84 @@ namespace NCsSceneComponent
 
 	#pragma endregion Movement
 
+	// Attach / Detach
+	#pragma region
+	public:
+
+		static bool DoesSocketExistChecked(const FString& Context, USceneComponent* Component, const FName& Socket);
+
+		static bool SafeDoesSocketExist(const FString& Context, USceneComponent* Component, const FName& Socket, LogLevel);
+
+		// Attach
+	#pragma region
+	public:
+
+		static bool AttachChecked_KeepRelativeTransform(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket = NAME_None);
+
+		static bool SafeAttach_KeepRelativeTransform(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket = NAME_None, LogLevel);
+		FORCEINLINE static bool SafeAttach_KeepRelativeTransform(const FString& Context, USceneComponent* Child, USceneComponent* Parent, bool& OutSuccess, const FName& Socket = NAME_None, LogLevel)
+		{
+			OutSuccess = SafeAttach_KeepRelativeTransform(Context, Child, Parent, Socket, Log);
+			return OutSuccess;
+		}
+
+		static bool AttachChecked_KeepWorldTransform(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket = NAME_None);
+
+		static bool SafeAttach_KeepWorldTransform(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket = NAME_None, LogLevel);
+		FORCEINLINE static bool SafeAttach_KeepWorldTransform(const FString& Context, USceneComponent* Child, USceneComponent* Parent, bool& OutSuccess, const FName& Socket = NAME_None, LogLevel)
+		{
+			OutSuccess = SafeAttach_KeepWorldTransform(Context, Child, Parent, Socket, Log);
+			return OutSuccess;
+		}
+
+		static bool AttachChecked_SnapToTargetNotIncludingScale(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket = NAME_None);
+
+		static bool SafeAttach_SnapToTargetNotIncludingScale(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket = NAME_None, LogLevel);
+		FORCEINLINE static bool SafeAttach_SnapToTargetNotIncludingScale(const FString& Context, USceneComponent* Child, USceneComponent* Parent, bool& OutSuccess, const FName& Socket = NAME_None, LogLevel)
+		{
+			OutSuccess = SafeAttach_SnapToTargetNotIncludingScale(Context, Child, Parent, Socket, Log);
+			return OutSuccess;
+		}
+
+		static bool AttachChecked_SnapToTargetIncludingScale(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket = NAME_None);
+
+		static bool SafeAttach_SnapToTargetIncludingScale(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket = NAME_None, LogLevel);
+		FORCEINLINE static bool SafeAttach_SnapToTargetIncludingScale(const FString& Context, USceneComponent* Child, USceneComponent* Parent, bool& OutSuccess, const FName& Socket = NAME_None,  LogLevel)
+		{
+			OutSuccess = SafeAttach_SnapToTargetIncludingScale(Context, Child, Parent, Socket, Log);
+			return OutSuccess;
+		}
+
+	#pragma endregion Attach
+
+		// Detach
+	#pragma region
+	public:
+
+		static void DetachChecked_KeepRelativeTransform(const FString& Context, USceneComponent* Component);
+
+		static bool SafeDetach_KeepRelativeTransform(const FString& Context, USceneComponent* Component, LogLevel);
+		FORCEINLINE static bool SafeDetach_KeepRelativeTransform(const FString& Context, USceneComponent* Component, bool& OutSuccess, LogLevel)
+		{
+			OutSuccess = SafeDetach_KeepRelativeTransform(Context, Component, Log);
+			return OutSuccess;
+		}
+
+		static void DetachChecked_KeepWorldTransform(const FString& Context, USceneComponent* Component);
+
+		static bool SafeDetach_KeepWorldTransform(const FString& Context, USceneComponent* Component, LogLevel);
+		FORCEINLINE static bool SafeDetach_KeepWorldTransform(const FString& Context, USceneComponent* Component, bool& OutSuccess, LogLevel)
+		{
+			OutSuccess = SafeDetach_KeepWorldTransform(Context, Component, Log);
+			return OutSuccess;
+		}
+
+	#pragma endregion Detach
+
+	#pragma endregion Attach / Detach
+
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
+	#undef LogLevel
 	};
 }

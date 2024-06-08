@@ -576,10 +576,24 @@ namespace NCsCoroutine
 		#pragma region
 
 		FImpl::FImpl() :
-			RegisterMap()
+			Index(INDEX_NONE),
+			Group(),
+			CoroutineImpl(),
+			StartTime(),
+			Owner(),
+			AbortImpls(),
+			OnAborts(),
+			OnEnds(),
+			ParentHandle(),
+			bDoInit(true),
+			bPerformFirstUpdate(true),
+			AbortMessages(),
+			RegisterMap(),
+			bDeltaTimeScalar(false),
+			DeltaTimeScalar(nullptr),
+			Name(nullptr),
+			Name_Internal(NAME_None)
 		{
-			Index = INDEX_NONE;
-
 			Group = EMCsUpdateGroup::Get().GetMAX();
 
 			Reset();

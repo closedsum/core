@@ -5,7 +5,6 @@
 // Types
 #include "CsMacro_Namespace.h"
 #include "Managers/Trace/CsTypes_Trace.h"
-#include "UniqueObject/CsTypes_UniqueObject.h"
 #include "WorldCollision.h"
 
 // NCsTrace::NRequest::FRequest
@@ -25,7 +24,7 @@ namespace NCsTrace
 			int64 TotalCount;
 
 			/** */
-			TMap<FCsUniqueObjectId, int64> CountById;
+			TMap<uint32, int64> CountById;
 
 			/** */
 			int64 CountByType[(uint8)ECsTraceType::ECsTraceType_MAX];
@@ -104,7 +103,7 @@ namespace NCsTrace
 			TMap<FTraceHandle, RequestType*> RequestsByTraceHandle;
 
 			/** */
-			TMap<FCsUniqueObjectId, TMap<FTraceHandle, RequestType*>> RequestsById;
+			TMap<uint32, TMap<FTraceHandle, RequestType*>> RequestsById;
 
 			/** */
 			TMap<ECsTraceType, TMap<FTraceHandle, RequestType*>> RequestsByType;

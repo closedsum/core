@@ -10,7 +10,43 @@
 #include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 
 FCsRoutine::FCsRoutine() :
-	RegisterMap()
+	pt(),
+	CoroutineImpl(),
+	// Time
+	Group(),
+	ScopeName(),
+	StartTime(),
+	ElapsedTime(),
+	DeltaTime(),
+	TickCount(0),
+	Delay(0.0f),
+	bDeltaTimeScalar(false),
+	DeltaTimeScalar(nullptr),
+	RoutineScopedTimerHandle(),
+	CoroutineScopedTimerHandle(),
+	Handle(),
+	AbortImpls(),
+	OnAborts(),
+	State(NCsCoroutine::EState::Free),
+	Index(INDEX_NONE),
+	Name(nullptr),
+	Name_Internal(NAME_None),
+	// Run
+	bUpdateComplete(false),
+	bExecuteComplete(false),
+	// End
+	EndReason(NCsCoroutine::EEndReason::EEndReason_MAX),
+	OnEnds(),
+	// Owner
+	Owner(),
+	// Children
+	Parent(nullptr),
+	Children(),
+	// Registers
+	RegisterMap(),
+	// Message
+	Messages(),
+	Messages_Recieved()
 {
 	Parent = nullptr;
 
@@ -102,6 +138,10 @@ void FCsRoutine::Init(PayloadType* Payload)
 
 		RegisterMap.SetUsedValue(Type, I);
 	}
+
+	if (Payload->HasDeltaTimeScalar())
+		SetDeltaTimeScalar(Payload->DeltaTimeScalar);
+
 	Handle.New();
 
 	CS_GET_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle, &ScopeName, NCsScopedGroup::Coroutine, NCsCVarLog::LogRoutineScopedTimer);
@@ -190,6 +230,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 	}
 
 	DeltaTime    = InDeltaTime;
+	DeltaTime.Scale(GetDeltaTimeScalar());
 	ElapsedTime += DeltaTime;
 
 	++TickCount;
@@ -267,6 +308,8 @@ void FCsRoutine::Reset()
 	DeltaTime.Reset();
 	TickCount = 0;
 	Delay = 0.0f;
+	bDeltaTimeScalar = false;
+	DeltaTimeScalar = nullptr;
 
 	RoutineScopedTimerHandle.Reset();
 	CoroutineScopedTimerHandle.Reset();

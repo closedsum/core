@@ -1301,17 +1301,7 @@ void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncL
 {
 	SET_CONTEXT(AsyncLoadPayloadByGroup);
 
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
-
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, this, UpdateGroup);
-
-	typedef UCsManager_Data ClassType;
-	#define COROUTINE AsyncLoadPayloadByGroup_Internal
-
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
-
-	#undef COROUTINE
+	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Data, AsyncLoadPayloadByGroup_Internal, NCsUpdateGroup::GameInstance, this, this);
 
 	TArray<FCsStreamableHandle>& Handles = PayloadHandleMap_Loaded.FindOrAdd(PayloadName);
 	Handles.Reset(Handles.Max());
@@ -1323,9 +1313,9 @@ void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncL
 
 	CS_COROUTINE_PAYLOAD_PASS_NAME_START
 
-	CS_COROUTINE_PAYLOAD_PASS_NAME(Payload, PayloadName);
+	CS_COROUTINE_PAYLOAD_PASS_NAME(PayloadName);
 
-	CoroutineSchedulerLibrary::StartChecked(Context, this, Payload);
+	CS_COROUTINE_START(this);
 }
 
 char UCsManager_Data::AsyncLoadPayloadByGroup_Internal(FCsRoutine* R)

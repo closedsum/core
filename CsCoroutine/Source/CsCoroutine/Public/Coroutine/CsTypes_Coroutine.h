@@ -680,6 +680,10 @@ namespace NCsCoroutine
 
 			RegisterMapType RegisterMap;
 
+			bool bDeltaTimeScalar;
+
+			float* DeltaTimeScalar;
+
 		public:
 
 			FImpl();
@@ -718,6 +722,16 @@ namespace NCsCoroutine
 			}
 
 			void Init(const FString& Context, UObject* InOwner, const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup, const FString& InName, const FName& InNameInternal);
+
+			FORCEINLINE void SetDeltaTimeScalar(float* Scalar)
+			{
+				checkf(Scalar, TEXT("NCsCoroutine::NPayload::FImpl::SetDeltaTimeScalar: Scalar is NULL."));
+
+				DeltaTimeScalar  = Scalar;
+				bDeltaTimeScalar = true;
+			}
+
+			FORCEINLINE bool HasDeltaTimeScalar() const { return bDeltaTimeScalar; }
 
 			void Reset();
 
@@ -787,53 +801,112 @@ namespace NCsCoroutine
 	}
 }
 
+// Assume the following have been defined:
+//	const FString& Context 
+//  const FString& Name			= Str::__Function	(FString name of Function to call)
+//	const FName& NameInternal	= Name::__Function	(FName name of the Function to call)
+
+#define CS_COROUTINE_SETUP_UOBJECT(__ClassType, __Function, __Group, __UObject, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = NCsCoroutine::NScheduler::FLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
+	__Coroutine__Payload__->Init<__ClassType>(Context, __UObject, &__ClassType::__Function, __ContextObject, __Group, Str::__Function, Name::__Function)
+#define CS_COROUTINE_SETUP_RAW(__ClassType, __Function, __Group, __Pointer, __Owner, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = NCsCoroutine::NScheduler::FLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
+	__Coroutine__Payload__->Init<__ClassType>(Context, __Pointer, &__ClassType::__Function, __Owner, __ContextObject, __Group, Str::__Function, Name::__Function)
+#define CS_COROUTINE_SETUP_STATIC(__ClassType, __Function, __Group, __Owner, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = NCsCoroutine::NScheduler::FLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
+	__Coroutine__Payload__->Init<__ClassType>(Context, &__ClassType::__Function, __Owner, __ContextObject, __Group, Str::__Function, Name::__Function)
+
+// Assume const FString& Context has been defined
+#define CS_COROUTINE_START(__ContextObject) NCsCoroutine::NScheduler::FLibrary::StartChecked(Context, __ContextObject, __Coroutine__Payload__)
+
 // Payload
 #pragma region
 
+// Assume you have used one of the following macros:
+//	CS_COROUTINE_SETUP_UOBJECT
+//	CS_COROUTINE_SETUP_RAW
+//	CS_COROUTINE_SETUP_STATIC
+
 // Flag (bool)
 #define CS_COROUTINE_PAYLOAD_PASS_FLAG_START int32 __Coroutine__Payload__Flag__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_FLAG(__Payload, __Value) __Payload->SetValue_Flag(__Coroutine__Payload__Flag__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_FLAG(__Value) __Coroutine__Payload__->SetValue_Flag(__Coroutine__Payload__Flag__Counter__, __Value); \
 	++__Coroutine__Payload__Flag__Counter__
 // Int (int32)
 #define CS_COROUTINE_PAYLOAD_PASS_INT_START int32 __Coroutine__Payload__Int__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_INT(__Payload, __Value) __Payload->SetValue_Int(__Coroutine__Payload__Int__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_INT(__Value) __Coroutine__Payload__->SetValue_Int(__Coroutine__Payload__Int__Counter__, __Value); \
 	++__Coroutine__Payload__Int__Counter__
 // Unsigned Int (uint32)
 #define CS_COROUTINE_PAYLOAD_PASS_UNSIGNED_INT_START int32 __Coroutine__Payload__UnsignedInt__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_UNSIGNED_INT(__Payload, __Value) __Payload->SetValue_UnsignedInt(__Coroutine__Payload__UnsignedInt__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_UNSIGNED_INT(__Value) __Coroutine__Payload__->SetValue_UnsignedInt(__Coroutine__Payload__UnsignedInt__Counter__, __Value); \
 	++__Coroutine__Payload__UnsignedInt__Counter__
 // Float
 #define CS_COROUTINE_PAYLOAD_PASS_FLOAT_START int32 __Coroutine__Payload__Float__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_FLOAT(__Payload, __Value) __Payload->SetValue_Float(__Coroutine__Payload__Float__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_FLOAT(__Value) __Coroutine__Payload__->SetValue_Float(__Coroutine__Payload__Float__Counter__, __Value); \
 	++__Coroutine__Payload__Float__Counter__
 // Vector (FVector3f)
 #define CS_COROUTINE_PAYLOAD_PASS_VECTOR_START int32 __Coroutine__Payload__Vector__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_VECTOR(__Payload, __Value) __Payload->SetValue_Vector(__Coroutine__Payload__Vector__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_VECTOR(__Value) __Coroutine__Payload__->SetValue_Vector(__Coroutine__Payload__Vector__Counter__, __Value); \
 	++__Coroutine__Payload__Vector__Counter__
 // Rotator (FRotator3f)
 #define CS_COROUTINE_PAYLOAD_PASS_ROTATOR_START int32 __Coroutine__Payload__Rotator__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_ROTATOR(__Payload, __Value) __Payload->SetValue_Rotator(__Coroutine__Payload__Rotator__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_ROTATOR(__Value) __Coroutine__Payload__->SetValue_Rotator(__Coroutine__Payload__Rotator__Counter__, __Value); \
 	++__Coroutine__Payload__Rotator__Counter__
 // Color (FLinearColor)
 #define CS_COROUTINE_PAYLOAD_PASS_COLOR_START int32 __Coroutine__Payload__Color__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_COLOR(__Payload, __Value) __Payload->SetValue_Color(__Coroutine__Payload__Color__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_COLOR(__Value) __Coroutine__Payload__->SetValue_Color(__Coroutine__Payload__Color__Counter__, __Value); \
 	++__Coroutine__Payload__Color__Counter__
 // Name
 #define CS_COROUTINE_PAYLOAD_PASS_NAME_START int32 __Coroutine__Payload__Name__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_NAME(__Payload, __Value) __Payload->SetValue_Name(__Coroutine__Payload__Name__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_NAME(__Value) __Coroutine__Payload__->SetValue_Name(__Coroutine__Payload__Name__Counter__, __Value); \
 	++__Coroutine__Payload__Name__Counter__
 // String
 #define CS_COROUTINE_PAYLOAD_PASS_STRING_START int32 __Coroutine__Payload__String__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_STRING(__Payload, __Value) __Payload->SetValue_String(__Coroutine__Payload__String__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_STRING(__Value) __Coroutine__Payload__->SetValue_String(__Coroutine__Payload__String__Counter__, __Value); \
 	++__Coroutine__Payload__String__Counter__
 // Void
 #define CS_COROUTINE_PAYLOAD_PASS_OBJECT_START int32 __Coroutine__Payload__Object__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_OBJECT(__Payload, __Value) __Payload->SetValue_Object(__Coroutine__Payload__Object__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_OBJECT(__Value) __Coroutine__Payload__->SetValue_Object(__Coroutine__Payload__Object__Counter__, __Value); \
 	++__Coroutine__Payload__Object__Counter__
 // Void
 #define CS_COROUTINE_PAYLOAD_PASS_VOID_START int32 __Coroutine__Payload__Void__Counter__ = 0;
-#define CS_COROUTINE_PAYLOAD_PASS_VOID(__Payload, __Value) __Payload->SetValue_Void(__Coroutine__Payload__Void__Counter__, __Value); \
+#define CS_COROUTINE_PAYLOAD_PASS_VOID(__Value) __Coroutine__Payload__->SetValue_Void(__Coroutine__Payload__Void__Counter__, __Value); \
 	++__Coroutine__Payload__Void__Counter__
+
+	// Explicit
+#pragma region
+
+// Flag (bool)
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_FLAG(__Payload, __Value) __Coroutine__Payload__->SetValue_Flag(__Coroutine__Payload__Flag__Counter__, __Value); \
+	++__Coroutine__Payload__Flag__Counter__
+// Int (int32)
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_INT(__Payload, __Value) __Payload->SetValue_Int(__Coroutine__Payload__Int__Counter__, __Value); \
+	++__Coroutine__Payload__Int__Counter__
+// Unsigned Int (uint32)
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_UNSIGNED_INT(__Payload, __Value) __Payload->SetValue_UnsignedInt(__Coroutine__Payload__UnsignedInt__Counter__, __Value); \
+	++__Coroutine__Payload__UnsignedInt__Counter__
+// Float
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_FLOAT(__Payload, __Value) __Payload->SetValue_Float(__Coroutine__Payload__Float__Counter__, __Value); \
+	++__Coroutine__Payload__Float__Counter__
+// Vector (FVector3f)
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_VECTOR(__Payload, __Value) __Payload->SetValue_Vector(__Coroutine__Payload__Vector__Counter__, __Value); \
+	++__Coroutine__Payload__Vector__Counter__
+// Rotator (FRotator3f)
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_ROTATOR(__Payload, __Value) __Payload->SetValue_Rotator(__Coroutine__Payload__Rotator__Counter__, __Value); \
+	++__Coroutine__Payload__Rotator__Counter__
+// Color (FLinearColor)
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_COLOR(__Payload, __Value) __Payload->SetValue_Color(__Coroutine__Payload__Color__Counter__, __Value); \
+	++__Coroutine__Payload__Color__Counter__
+// Name
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_NAME(__Payload, __Value) __Payload->SetValue_Name(__Coroutine__Payload__Name__Counter__, __Value); \
+	++__Coroutine__Payload__Name__Counter__
+// String
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_STRING(__Payload, __Value) __Payload->SetValue_String(__Coroutine__Payload__String__Counter__, __Value); \
+	++__Coroutine__Payload__String__Counter__
+// Void
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_OBJECT(__Payload, __Value) __Payload->SetValue_Object(__Coroutine__Payload__Object__Counter__, __Value); \
+	++__Coroutine__Payload__Object__Counter__
+// Void
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_VOID(__Payload, __Value) __Payload->SetValue_Void(__Coroutine__Payload__Void__Counter__, __Value); \
+	++__Coroutine__Payload__Void__Counter__
+
+#pragma endregion Explicit
 
 #pragma endregion Payload
 

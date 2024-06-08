@@ -14,10 +14,13 @@
 	"CanContainContent": true,
 	"Installed": true,
   "Modules": [
-    {
-      "Name": "CsPropertyTypes",
-      "Type": "Runtime",
-      "LoadingPhase": "Default"
-    }
+		{
+			"Name": "CsPropertyTypes",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		}
   ]
 }

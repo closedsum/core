@@ -15,6 +15,7 @@
 #include "Managers/Trace/CsManager_Trace.h"
 // Components
 #include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 #if WITH_EDITOR
 // Library

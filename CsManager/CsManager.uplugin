@@ -14,10 +14,13 @@
 	"CanContainContent": true,
 	"Installed": true,
   "Modules": [
-	{
-      "Name": "CsManager",
-      "Type": "Runtime",
-      "LoadingPhase": "Default"
-    }
+		{
+			"Name": "CsManager",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		}
   ]
 }

@@ -17,8 +17,6 @@
 #include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 // Material
 #include "PhysicalMaterials/PhysicalMaterial.h"
-// UniqueObject
-#include "UniqueObject/CsUniqueObject.h"
 // Components
 #include "Components/PrimitiveComponent.h"
 // World
@@ -1064,12 +1062,9 @@ void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTran
 		{
 			UE_LOG(LogCsPhysics, Warning, TEXT("-- Caller: %s Class: %s"), *(Caller->GetName()), *(Caller->GetClass()->GetName()));
 
-			if (ICsUniqueObject* UniqueObject = Request->UniqueObject)
-			{
-				const FCsUniqueObjectId& Id = UniqueObject->GetId();
+			const uint32 Id = Caller->GetUniqueID();
 
-				UE_LOG(LogCsPhysics, Warning, TEXT("-- UniqueObject: %s"), *(Id.Id.ToString()));
-			}
+			UE_LOG(LogCsPhysics, Warning, TEXT("-- Id: %d"), Id);
 		}
 
 		UE_LOG(LogCsPhysics, Warning, TEXT("-- bAsync: %s"), Request->bAsync ? TEXT("True") : TEXT("False"));

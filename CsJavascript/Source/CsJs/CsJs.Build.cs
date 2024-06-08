@@ -28,6 +28,7 @@ public class CsJs : ModuleRules
                     "CsTime",
                     "CsCoroutine",
                     "CsData",
+                    "CsInput",
                     "CsCore"
                 }
             );

@@ -17,12 +17,18 @@
     {
       "Name": "CsPhysics",
       "Type": "Runtime",
-      "LoadingPhase": "Default"
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64"
+      ]
     },
     {
       "Name": "CsPhysicsEditor",
       "Type": "Editor",
-      "LoadingPhase": "Default"
+      "LoadingPhase": "Default",
+      "PlatformAllowList": [
+        "Win64"
+      ]
     }
   ],
   "Plugins": [
@@ -60,10 +66,6 @@
     },
     {
       "Name": "CsData",
-      "Enabled": true
-    },
-    {
-      "Name": "CsPlugin",
       "Enabled": true
     }
   ]

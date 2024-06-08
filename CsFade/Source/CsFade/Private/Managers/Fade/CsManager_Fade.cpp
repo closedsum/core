@@ -309,33 +309,26 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 		return;
 	}
 
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+	//typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
 	CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, MyRoot, UpdateGroup, FadeHandle);
 
-	PayloadType* Payload = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
-
-	typedef UCsManager_Fade ClassType;
-	#define COROUTINE Fade_Internal
-
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, MyRoot, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
-
-	#undef COROUTINE
+	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Fade, Fade_Internal, UpdateGroup, this, MyRoot);
 
 	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
 	CS_COROUTINE_PAYLOAD_PASS_FLOAT_START
 	CS_COROUTINE_PAYLOAD_PASS_COLOR_START
 
 	// From
-	CS_COROUTINE_PAYLOAD_PASS_COLOR(Payload, Params.GetFrom());
+	CS_COROUTINE_PAYLOAD_PASS_COLOR(Params.GetFrom());
 	// To
-	CS_COROUTINE_PAYLOAD_PASS_COLOR(Payload, Params.GetTo());
+	CS_COROUTINE_PAYLOAD_PASS_COLOR(Params.GetTo());
 	// Time
-	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, Params.GetTime());
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Params.GetTime());
 	// bCollapseOnEnd
-	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, Params.GetbCollapseOnEnd());
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Params.GetbCollapseOnEnd());
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
@@ -348,7 +341,7 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	FadeHandle = CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	FadeHandle = CS_COROUTINE_START(MyRoot);
 }
 
 char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
@@ -368,7 +361,7 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 	// bCollapseOnEnd
 	CS_COROUTINE_READ_FLAG_CONST_REF(R, bCollapseOnEnd);
 
-	const float Percent = Time > 0.0f ? R->ElapsedTime.Time / Time : 0.0f;
+	const float Percent = Time > 0.0f ? R->GetElapsedTime().Time / Time : 0.0f;
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -387,13 +380,13 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 				UE_LOG(LogCsFade, Warning, TEXT(" From: %s"), *(From.ToString()));
 				UE_LOG(LogCsFade, Warning, TEXT(" To: %s"), *(To.ToString()));
 				UE_LOG(LogCsFade, Warning, TEXT(" Percent: %f"), Percent);
-				UE_LOG(LogCsFade, Warning, TEXT(" ElapsedTime: %f"), R->ElapsedTime.Time);
+				UE_LOG(LogCsFade, Warning, TEXT(" ElapsedTime: %f"), R->GetElapsedTime().Time);
 			}
 		#endif // #if !UE_BUILD_SHIPPING
 
 			CS_COROUTINE_YIELD(R);
 		}
-	} while (R->ElapsedTime.Time < Time);
+	} while (R->GetElapsedTime().Time < Time);
 
 	FadeWidget->SetColorAndOpacity(To);
 

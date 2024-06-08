@@ -172,6 +172,16 @@ public:
 		return FString::Printf(TEXT("Time: %3.3f RealTime: %3.3f Timespan: %s Frame: %lld"), Time, RealTime, *(Timespan.ToString()), Frame);
 	}
 
+	void Scale(const float& Scalar)
+	{
+		checkf(Scalar > 0.0f, TEXT("FCsDeltaTime::Scale: Scalar: %f is NOT Valid. Scalar MUST be > 0.0f."), Scalar);
+
+		Time	 *= Scalar;
+		RealTime *= Scalar;
+		Timespan *= Scalar;
+		// TODO: Frame
+	}
+
 	static FCsDeltaTime GetDeltaTime(const FCsTime& A, const FCsTime& B)
 	{
 		FCsDeltaTime DeltaTime;

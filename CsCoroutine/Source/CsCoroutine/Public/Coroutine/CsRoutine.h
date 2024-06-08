@@ -68,6 +68,8 @@ public:
 
 	FORCEINLINE const FString& GetScopeName() const { return ScopeName; }
 
+private:
+
 	FCsTime StartTime;
 	FCsDeltaTime ElapsedTime;
 	FCsDeltaTime DeltaTime;
@@ -75,6 +77,29 @@ public:
 	int32 TickCount;
 
 	float Delay;
+
+	bool bDeltaTimeScalar;
+
+	float* DeltaTimeScalar;
+
+public:
+
+	FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
+	FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
+	FORCEINLINE const FCsDeltaTime& GetDeltaTime() const { return DeltaTime; }
+	FORCEINLINE const int32& GetTickCount() const { return TickCount; }
+	FORCEINLINE const float& GetDelay() const { return Delay; }
+
+	FORCEINLINE void SetDeltaTimeScalar(float* Scalar)
+	{
+		checkf(Scalar, TEXT("FCsRoutine::SetDeltaTimeScalar: Scalar is NULL."));
+
+		DeltaTimeScalar  = Scalar;
+		bDeltaTimeScalar = true;
+	}
+	FORCEINLINE float GetDeltaTimeScalar() const { return bDeltaTimeScalar ? *DeltaTimeScalar : 1.0f; }
+
+private:
 
 	FCsScopedTimerHandle RoutineScopedTimerHandle;
 	FCsScopedTimerHandle CoroutineScopedTimerHandle;
@@ -92,8 +117,6 @@ public:
 	TArray<AbortConditionImplType> AbortImpls;
 
 	TArray<OnAbortType> OnAborts;
-
-
 
 public:
 

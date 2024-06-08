@@ -145,7 +145,6 @@ struct CSPHYSICS_API FCsTraceRequest
 };
 
 class UObject;
-class ICsUniqueObject;
 
 // NCsTrace::NResponse::FResponse
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
@@ -183,9 +182,6 @@ namespace NCsTrace
 
 			/** */
 			TWeakObjectPtr<UObject> Caller;
-
-			/** */
-			ICsUniqueObject* UniqueObject;
 
 			/** */
 			bool bAsync;
@@ -248,7 +244,6 @@ namespace NCsTrace
 				ElapsedTime(),
 				StaleTime(1.0f),
 				Caller(nullptr),
-				UniqueObject(nullptr),
 				bAsync(false),
 				Type(ECsTraceType::ECsTraceType_MAX),
 				Method(ECsTraceMethod::ECsTraceMethod_MAX),
@@ -329,7 +324,6 @@ namespace NCsTrace
 				ElapsedTime.Reset();
 				StaleTime = 1.0f;
 				Caller = nullptr;
-				UniqueObject = nullptr;
 
 				bAsync = false;
 				Type = ECsTraceType::ECsTraceType_MAX;

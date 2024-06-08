@@ -25,6 +25,13 @@ FCsDeltaTime UCsScriptLibrary_Time::FCsDeltaTime_Copy(const FCsDeltaTime& DeltaT
 	return DeltaTime;
 }
 
+FCsDeltaTime UCsScriptLibrary_Time::FCsDeltaTime_Scale(const FCsDeltaTime& DeltaTime, const float& Scalar)
+{
+	FCsDeltaTime Copy = DeltaTime;
+	Copy.Scale(Scalar);
+	return Copy;
+}
+
 FCsDeltaTime UCsScriptLibrary_Time::Add_DeltaTime(const FCsDeltaTime& A, const FCsDeltaTime& B)
 {
 	return A + B;

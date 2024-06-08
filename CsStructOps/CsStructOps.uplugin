@@ -14,10 +14,13 @@
 	"CanContainContent": true,
 	"Installed": true,
   "Modules": [
-	{
-      "Name": "CsStructOps",
-      "Type": "Runtime",
-      "LoadingPhase": "Default"
-    }
+		{
+			"Name": "CsStructOps",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [
+				"Win64"
+			]
+		}
   ]
 }

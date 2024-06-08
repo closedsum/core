@@ -9,8 +9,6 @@
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "PhysicsEngine/PhysicsSettings.h"
-// Object
-#include "UniqueObject/CsUniqueObject.h"
 // Components
 #include "Components/CapsuleComponent.h"
 
@@ -163,21 +161,6 @@ namespace NCsTrace
 		void FRequest::SetCaller(UObject* InCaller)
 		{
 			Caller = InCaller;
-
-			if (InCaller)
-			{
-				UClass* Class = InCaller->GetClass();
-
-				if (Class->ImplementsInterface(UCsUniqueObject::StaticClass()))
-				{
-					// Interface
-					if (ICsUniqueObject* Interface = Cast<ICsUniqueObject>(InCaller))
-					{
-						UniqueObject = Interface;
-					}
-					// Script Interface
-				}
-			}
 		}
 
 		UObject* FRequest::GetCaller() const

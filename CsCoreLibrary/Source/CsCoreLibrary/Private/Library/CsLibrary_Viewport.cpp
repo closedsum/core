@@ -43,23 +43,24 @@ namespace NCsViewport
 				}
 			}
 
+			
+			#define USING_NS_CACHED using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
+			#define SET_CONTEXT(__FunctionName) using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached; \
+				const FString& Context = Str::__FunctionName
 			#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
+			#define PlayerLibrary NCsPlayer::FLibrary
+			#define MathLibrary NCsMath::FLibrary
 
 			bool FLibrary::CanProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext)
 			{
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
-
 				return true;
 			}
 
 			bool FLibrary::CanSafeProjectWorldToScreen(const FString& Context, const UObject* WorldContext, LogWarning)
 			{
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
 
 				if (!LocalPlayer)
@@ -75,9 +76,7 @@ namespace NCsViewport
 
 			bool FLibrary::CanSafeProjectWorldToScreen(const UObject* WorldContext)
 			{
-				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
-
-				const FString& Context = Str::CanSafeProjectWorldToScreen;
+				SET_CONTEXT(CanSafeProjectWorldToScreen);
 
 				return CanSafeProjectWorldToScreen(Context, WorldContext, nullptr);
 			}
@@ -86,11 +85,8 @@ namespace NCsViewport
 			{
 				check(CanProjectWorldToScreenChecked(Context, WorldContext));
 
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
-
-				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
+				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
 				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
@@ -102,8 +98,6 @@ namespace NCsViewport
 				FSceneViewProjectionData ProjectionData;
 				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
 				{
-					typedef NCsMath::FLibrary MathLibrary;
-
 					FMatrix const ViewProjectionMatrix = ProjectionData.ComputeViewProjectionMatrix();
 					FVector2d Position;
 					bool bResult					   = FSceneView::ProjectWorldToScreen(MathLibrary::Convert(WorldPosition), ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, Position);
@@ -126,11 +120,8 @@ namespace NCsViewport
 			{
 				check(CanProjectWorldToScreenChecked(Context, WorldContext));
 
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
-
-				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
+				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
 				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
@@ -154,8 +145,6 @@ namespace NCsViewport
 
 					const int32 Count = WorldPositions.Num();
 
-					typedef NCsMath::FLibrary MathLibrary;
-
 					for (int32 I = 0; I < Count; ++I)
 					{
 						const FVector3f& WorldPosition = WorldPositions[I];
@@ -173,18 +162,14 @@ namespace NCsViewport
 			{
 				check(CanProjectWorldToScreenChecked(Context, WorldContext));
 
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
-
-				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
+				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
 				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
 				FViewport* Viewport = GVC->Viewport;
 
 				checkf(Viewport, TEXT("%s: Failed to get Viewport from ViewportClient: %s for LocalPlayer: %s."), *Context, *(GVC->GetName()), *(LocalPlayer->GetName()));
-
 				checkf(WorldPositions.Num() == Indices.Num(), TEXT("%s: Mismatch between the WorldPositions.Num() != Indices.Num() (%d != %d)."), *Context, WorldPositions.Num(), Indices.Num());
 				checkf(WorldPositions.Num() == OutScreenPositions.Num(), TEXT("%s: Mismatch between the WorldPositions.Num() != OutScreenPositions.Num() (%d != %d)."), *Context, WorldPositions.Num(), OutScreenPositions.Num());
 				checkf(Indices.Num() >= Count, TEXT("%s: Count > Indices.Num() (%d > %d)."), *Context, Count, Indices.Num());
@@ -196,8 +181,6 @@ namespace NCsViewport
 				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
 				{
 					FMatrix44d const ViewProjectionMatrix = ProjectionData.ComputeViewProjectionMatrix();
-
-					typedef NCsMath::FLibrary MathLibrary;
 
 					for (int32 I = 0; I < Count; ++I)
 					{
@@ -217,19 +200,14 @@ namespace NCsViewport
 
 			bool FLibrary::CanDeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext)
 			{
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
-
 				return true;
 			}
 
 			bool FLibrary::CanSafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, LogWarning)
 			{
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
 
 				if (!LocalPlayer)
@@ -245,9 +223,7 @@ namespace NCsViewport
 
 			bool FLibrary::CanSafeDeprojectScreenToWorld(const UObject* WorldContext)
 			{
-				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
-
-				const FString& Context = Str::CanSafeDeprojectScreenToWorld;
+				SET_CONTEXT(CanSafeDeprojectScreenToWorld);
 
 				return CanSafeDeprojectScreenToWorld(Context, WorldContext, nullptr);
 			}
@@ -256,11 +232,8 @@ namespace NCsViewport
 			{
 				check(CanDeprojectScreenToWorldChecked(Context, WorldContext));
 
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
-
-				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
+				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
 				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 
@@ -272,8 +245,6 @@ namespace NCsViewport
 				FSceneViewProjectionData ProjectionData;
 				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
 				{
-					typedef NCsMath::FLibrary MathLibrary;
-
 					FMatrix const InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
 					FVector3d Position;
 					FVector3d Direction;
@@ -297,8 +268,6 @@ namespace NCsViewport
 
 				if (!CanSafeDeprojectScreenToWorld(Context, WorldContext, Log))
 					return false;
-
-				typedef NCsPlayer::FLibrary PlayerLibrary;
 
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
 
@@ -325,8 +294,6 @@ namespace NCsViewport
 				FSceneViewProjectionData ProjectionData;
 				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
 				{
-					typedef NCsMath::FLibrary MathLibrary;
-
 					FMatrix const InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
 					FVector3d Position;
 					FVector3d Direction;
@@ -344,17 +311,13 @@ namespace NCsViewport
 
 			bool FLibrary::SafeDeprojectScreenToWorld(const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection)
 			{
-				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
-
-				const FString& Context = Str::CanSafeDeprojectScreenToWorld;
+				SET_CONTEXT(SafeDeprojectScreenToWorld);
 
 				return SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, OutWorldPosition, OutWorldDirection);
 			}
 
 			FSceneViewport* FLibrary::GetViewportChecked(const FString& Context, const UObject* WorldContext)
 			{
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
@@ -362,15 +325,12 @@ namespace NCsViewport
 
 				FSceneViewport* SV = GVC->GetGameViewport();
 
-				checkf(SV, TEXT("%s: Failed get Viewport from LocalPlayer: %s with ViewportClient: %s."), *Context, *(LocalPlayer->GetName()), *(GVC->GetName()));
-		
+				checkf(SV, TEXT("%s: Failed get Viewport from LocalPlayer: %s with ViewportClient: %s."), *Context, *(LocalPlayer->GetName()), *(GVC->GetName()));	
 				return SV;
 			}
 
 			FSceneViewport* FLibrary::GetSafeViewport(const FString& Context, const UObject* WorldContext, LogWarning)
 			{
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-
 				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
 
 				if (!LocalPlayer)
@@ -395,18 +355,14 @@ namespace NCsViewport
 
 			FSceneViewport* FLibrary::GetSafeViewport(const UObject* WorldContext)
 			{
-				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
-
-				const FString& Context = Str::GetSafeViewport;
+				SET_CONTEXT(GetSafeViewport);
 
 				return GetSafeViewport(Context, WorldContext, nullptr);
 			}
 
 			FIntPoint FLibrary::GetSizeChecked(const FString& Context, const UObject* WorldContext)
 			{
-				FSceneViewport* SV = GetViewportChecked(Context, WorldContext);
-
-				return SV->GetSizeXY();
+				return GetViewportChecked(Context, WorldContext)->GetSizeXY();
 			}
 
 			FIntPoint FLibrary::GetSafeSize(const FString& Context, const UObject* WorldContext, LogWarning)
@@ -415,15 +371,12 @@ namespace NCsViewport
 
 				if (!SV)
 					return FIntPoint::NoneValue;
-
 				return SV->GetSizeXY();
 			}
 
 			FIntPoint FLibrary::GetSafeSize(const UObject* WorldContext)
 			{
-				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
-
-				const FString& Context = Str::GetSafeSize;
+				SET_CONTEXT(GetSafeSize);
 
 				return GetSafeSize(Context, WorldContext, nullptr);
 			}
@@ -435,8 +388,6 @@ namespace NCsViewport
 				bool Success = DeprojectScreenToWorldChecked(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection);
 
 				checkf(Success, TEXT("%s: Failed to deproject ScreenPosition: %s."), *Context, *(ScreenPosition.ToString()));
-
-				typedef NCsMath::FLibrary MathLibrary;
 
 				FCsRay Ray(WorldPosition, WorldDirection, true);
 				float T;
@@ -456,8 +407,6 @@ namespace NCsViewport
 					return false;
 				}
 
-				typedef NCsMath::FLibrary MathLibrary;
-
 				FCsRay Ray(WorldPosition, WorldDirection, true);
 				float T;
 
@@ -466,14 +415,16 @@ namespace NCsViewport
 
 			bool FLibrary::GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection)
 			{
-				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
-
-				const FString& Context = Str::GetSafeScreenWorldIntersection;
+				SET_CONTEXT(GetSafeScreenWorldIntersection);
 
 				return GetSafeScreenWorldIntersection(Context, WorldContext, ScreenPosition, Plane, OutIntersection, nullptr);
 			}
 
+			#undef USING_NS_CACHED
+			#undef SET_CONTEXT
 			#undef LogWarning
+			#undef PlayerLibrary
+			#undef MathLibrary
 		}
 	}
 
@@ -487,7 +438,6 @@ namespace NCsViewport
 			UGameViewportClient* GVC	= GameInstance->GetGameViewportClient();
 
 			checkf(GVC, TEXT("%s: Failed to get GameViewportClient from GameInstance."), *Context);
-
 			return GVC;
 		}
 	}

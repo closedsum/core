@@ -7,8 +7,6 @@
 #include "CsMacro_Misc.h"
 // Trace
 #include "Managers/Trace/CsTraceRequest.h"
-// UniqueObject
-#include "UniqueObject/CsUniqueObject.h"
 
 // NCsTrace::NManager::FCountInfo
 #pragma region
@@ -38,11 +36,10 @@ namespace NCsTrace
 			const FString& Context = Str::Increment;
 
 			// Id
-			if (ICsUniqueObject* UniqueObject = Request->UniqueObject)
+			if (UObject* Caller = Request->GetCaller())
 			{
-				const FCsUniqueObjectId& Id = UniqueObject->GetId();
-
-				int64& Count = CountById.FindOrAdd(Id);
+				const uint32 Id = Caller->GetUniqueID();
+				int64& Count    = CountById.FindOrAdd(Id);
 				++Count;
 			}
 			// Type
@@ -80,9 +77,9 @@ namespace NCsTrace
 			// Handle
 			RequestsByTraceHandle.Add(Handle, Request);
 			// Id
-			if (ICsUniqueObject* UniqueObject = Request->UniqueObject)
+			if (UObject* Caller = Request->GetCaller())
 			{
-				const FCsUniqueObjectId& Id = UniqueObject->GetId();
+				const uint32 Id = Caller->GetUniqueID();
 
 				TMap<FTraceHandle, RequestType*>& Map = RequestsById.FindOrAdd(Id);
 
@@ -103,9 +100,9 @@ namespace NCsTrace
 			// Handle
 			RequestsByTraceHandle.Remove(Handle);
 			// Id
-			if (ICsUniqueObject* UniqueObject = Request->UniqueObject)
+			if (UObject* Caller = Request->GetCaller())
 			{
-				const FCsUniqueObjectId& Id = UniqueObject->GetId();
+				const uint32 Id = Caller->GetUniqueID();
 
 				if (TMap<FTraceHandle, RequestType*>* Map = RequestsById.Find(Id))
 				{

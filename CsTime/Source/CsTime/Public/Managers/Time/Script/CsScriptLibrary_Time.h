@@ -16,18 +16,21 @@ class CSTIME_API UCsScriptLibrary_Time : public UObject
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Time", meta = (DisplayName = "FCsTime - Create"))
+	UFUNCTION(BlueprintCallable, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsTime - Create"))
 	static FCsTime FCsTime_Create();
 
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Time", meta = (DisplayName = "FCsTime - Copy"))
+	UFUNCTION(BlueprintCallable, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsTime - Copy"))
 	static FCsTime FCsTime_Copy(const FCsTime& Time);
 
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Time", meta = (DisplayName = "FCsDeltaTime - Copy"))
+	UFUNCTION(BlueprintCallable, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsDeltaTime - Copy"))
 	static FCsDeltaTime FCsDeltaTime_Copy(const FCsDeltaTime& DeltaTime);
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "DeltaTime + DeltaTime", CompactNodeTitle = "+", ScriptMethod = "Add", ScriptOperator = "+;+=", Keywords = "+ add plus", AutoCreateRefTerm = "A,B"), Category = "CsCore|Library|Time")
+	UFUNCTION(BlueprintPure, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsDeltaTime - Copy", AutoCreateRefTerm = "DeltaTime,Scalar"))
+	static FCsDeltaTime FCsDeltaTime_Scale(const FCsDeltaTime& DeltaTime, const float& Scalar);
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "DeltaTime + DeltaTime", CompactNodeTitle = "+", ScriptMethod = "Add", ScriptOperator = "+;+=", Keywords = "+ add plus", AutoCreateRefTerm = "A,B"), Category = "CsTime|Library|Time")
 	static FCsDeltaTime Add_DeltaTime(const FCsDeltaTime& A, const FCsDeltaTime& B);
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "DeltaTime - DeltaTime", CompactNodeTitle = "-", ScriptMethod = "Subtract", ScriptOperator = "-;-=", Keywords = "+ subtract minus", AutoCreateRefTerm = "A,B"), Category = "CsCore|Library|Time")
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "DeltaTime - DeltaTime", CompactNodeTitle = "-", ScriptMethod = "Subtract", ScriptOperator = "-;-=", Keywords = "+ subtract minus", AutoCreateRefTerm = "A,B"), Category = "CsTime|Library|Time")
 	static FCsDeltaTime Subtract_DeltaTime(const FCsDeltaTime& A, const FCsDeltaTime& B);
 };

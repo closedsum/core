@@ -58,6 +58,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsInput",
+      "Enabled": true
+    },
+    {
       "Name": "CsPlugin",
       "Enabled": true
     },

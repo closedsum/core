@@ -255,7 +255,6 @@ module.exports = class FJsCoroutineSchedule
 	    let payload = payloadContainer.Get();
 
         checkf(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.");
-
         check(payload.IsValidChecked(context));
 
         let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
@@ -306,7 +305,6 @@ module.exports = class FJsCoroutineSchedule
         let payload = payloadContainer.Get();
 
         checkf(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.");
-
         checkf(payload.IsValidChecked(context));
 
         let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;

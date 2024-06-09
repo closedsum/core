@@ -178,19 +178,9 @@ void UCsCoroutineScheduler::CleanUp()
 
 #pragma endregion Singleton
 
-// Start
-#pragma region
-
-#pragma endregion Start
-
-// Update
-#pragma region
-
-#pragma endregion Update
 
 // End
 #pragma region
-
 
 void UCsCoroutineScheduler::UCsCoroutineScheduler::EndAll()
 {
@@ -201,13 +191,3 @@ void UCsCoroutineScheduler::UCsCoroutineScheduler::EndAll()
 }
 
 #pragma endregion End
-
-// Payload
-#pragma region
-
-#pragma endregion Payload
-
-// Message
-#pragma region
-
-#pragma endregion Message

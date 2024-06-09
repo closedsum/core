@@ -128,9 +128,7 @@ public:
 	*/
 	FORCEINLINE const FCsRoutineHandle& Start(PayloadResourceType* PayloadContainer)
 	{
-		PayloadType* Payload = PayloadContainer->Get();
-
-		return Schedules[Payload->Group.GetValue()].Start(PayloadContainer);
+		return Schedules[PayloadContainer->Get()->Group.GetValue()].Start(PayloadContainer);
 	}
 
 	/**
@@ -152,9 +150,7 @@ public:
 	*/
 	FORCEINLINE const FCsRoutineHandle& StartChild(PayloadResourceType* PayloadContainer)
 	{
-		PayloadType* Payload = PayloadContainer->Get();
-
-		return Schedules[Payload->Group.GetValue()].StartChild(PayloadContainer);
+		return Schedules[PayloadContainer->Get()->Group.GetValue()].StartChild(PayloadContainer);
 	}
 
 	/**

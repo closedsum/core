@@ -2,7 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-#include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed_Int32.h"
 #include "Coroutine/CsRoutine.h"
 
 #define CS_ROUTINE_POOL_SIZE 2048
@@ -296,3 +296,330 @@ public:
 
 #pragma endregion Log
 };
+
+namespace NCsCoroutine
+{
+	namespace NSchedule
+	{
+		class CSCOROUTINE_API FCustom
+		{
+		public:
+
+			FCustom();
+
+			virtual ~FCustom();
+		
+		// Owner
+		#pragma region
+		private:
+
+		#define IDManagerType NCsResource::NManager::NValue::NFixed::NInt32::FManager
+
+			IDManagerType Manager_OwnerID;
+
+			// Max Owners * Max Allocated Routines (Stride)
+			TArray<int32> OwnerRoutineIDs;
+			TArray<int32> RoutineStrideByOwnerID;
+
+		public:
+
+			int32 AllocateOwnerID();
+
+			void DeallocateOwnerID(const int32& OwnerID);
+
+		private:
+
+			int32 GetOwnerID(const int32& RoutineIndex);
+			FORCEINLINE int32 GetOwnerID(FCsRoutine* R)
+			{
+				checkf(R, TEXT("NCsCoroutine::NSchedule::FCustom::GetOwnerID: R is NULL."));
+				return GetOwnerID(R->GetIndex());
+			}
+			int32 GetOwnerID(const FCsRoutineHandle& Handle);
+
+		#undef IDManagerType
+
+		#pragma endregion Owner
+
+		// Schedule
+		#pragma region
+		protected:
+
+			/** */
+			FECsUpdateGroup Group;
+
+		public:
+
+			/**
+			*
+			*
+			* @param InGroup
+			*/
+			void SetGroup(const FECsUpdateGroup& InGroup);
+
+		#pragma endregion Schedule
+
+		// Routine
+		#pragma region
+		protected:
+
+		#define RoutineManagerType NCsRoutine::FManager
+		#define RoutineResourceType NCsRoutine::FResource
+
+			/** */
+			RoutineManagerType Manager_Routine;
+
+		public:
+
+			/**
+			*
+			*
+			* @param Handle
+			* return
+			*/
+			RoutineResourceType* GetRoutineContainer(const FCsRoutineHandle& Handle) const;
+
+			/**
+			*
+			*
+			* @param Handle
+			* return
+			*/
+			FCsRoutine* GetRoutine(const FCsRoutineHandle& Handle) const;
+
+		#undef RoutineManagerType
+		#undef RoutineResourceType
+
+		#pragma endregion Routine
+
+		// Handle
+		#pragma region
+		public:
+
+			FORCEINLINE bool IsHandleValid(const FCsRoutineHandle& Handle) const
+			{
+				return GetRoutineContainer(Handle) != nullptr;
+			}
+
+			bool IsRunning(const FCsRoutineHandle& Handle) const;
+
+		#pragma endregion Handle
+
+		// Start
+		#pragma region
+		public:
+
+		#define PayloadResourceType NCsCoroutine::NPayload::FResource
+		#define PayloadType NCsCoroutine::NPayload::FImpl
+
+			/**
+			*
+			*
+			* @param PayloadContainer
+			* return
+			*/
+			const FCsRoutineHandle& Start(const int32& OwnerID, PayloadResourceType* PayloadContainer);
+
+			/**
+			*
+			*
+			* @param Payload
+			* return
+			*/
+			const FCsRoutineHandle& Start(const int32& OwnerID, PayloadType* Payload);
+
+			/**
+			*
+			*
+			* @param PayloadContainer
+			* return
+			*/
+			const FCsRoutineHandle& StartChild(const int32& OwnerID, PayloadResourceType* PayloadContainer);
+
+			/**
+			*
+			*
+			* @param Payload
+			* return
+			*/
+			const FCsRoutineHandle& StartChild(const int32& OwnerID, PayloadType* Payload);
+
+		#undef PayloadResourceType
+		#undef PayloadType
+
+		#pragma endregion Start
+
+		// End
+		#pragma region
+		public:
+
+			/**
+			* End all routines.
+			*/
+			bool End();
+
+			/**
+			* End all routines associated with Owner ID.
+			* 
+			* @param Owner ID
+			*/
+			bool End(const int32& OwnerID);
+
+			/**
+			* End the routine associated with the Handle.
+			*
+			* @param Handle		Handle to a routine.
+			* return			Whether the routine has successful ended.
+			*					NOTE: If the routine has already ended or send to queued to end, 
+			*						  this will return false.
+			*/
+			bool End(const int32& OwnerID, const FCsRoutineHandle& Handle);
+
+			/**
+			* End the routine associated with the Handle.
+			*
+			* @param Handle		Handle to a routine.
+			* return			Whether the routine has successful ended.
+			*					NOTE: If the routine has already ended or send to queued to end, 
+			*						  this will return false.
+			*/
+			FORCEINLINE bool End(const FCsRoutineHandle& Handle) 
+			{
+				return End(GetOwnerID(Handle), Handle);
+			}
+
+			/**
+			* Check if a routine associated with the Handle has already ended.
+			* NOTE: This returns True if Handle is NOT Valid.
+			* 
+			* @param Handle		Handle to a routine.
+			* return			Whether the routine has already ended.
+			*/
+			bool HasEnded(const FCsRoutineHandle& Handle) const;
+
+			/**
+			* Check if a routine associated with the Handle has just ended.
+			*
+			* @param Handle		Handle to a routine.
+			* return			Whether the routine has just ended.
+			*/
+			bool HasJustEnded(const FCsRoutineHandle& Handle) const;
+
+		private:
+
+			/** Handles to End either beginning of the next Update or the end of the
+				current Update.
+				NOTE: This list is populated when a Routine is currently being Executed and
+					  requested to End. */
+			TArray<FCsRoutineHandle> OwnerQueueEndHandles;
+			TArray<int32> QueueEndHandleStrideByOwnerID;
+
+		#pragma endregion End
+
+		// Update
+		#pragma region
+		public:
+
+			/**
+			*
+			*
+			* @param DeltaTime
+			*/
+			void Update(const int32& OwnerID, const FCsDeltaTime& DeltaTime);
+
+		#pragma endregion Update
+
+		// Payload
+		#pragma region
+		protected:
+
+		#define PayloadManagerType NCsCoroutine::NPayload::FManager
+		#define PayloadResourceType NCsCoroutine::NPayload::FResource
+		#define PayloadType NCsCoroutine::NPayload::FImpl
+
+			/** */
+			PayloadManagerType Manager_Payload;
+
+		public:
+
+			/**
+			*
+			*
+			* return
+			*/
+			FORCEINLINE PayloadResourceType* AllocatePayloadContainer()
+			{
+				return Manager_Payload.Allocate();
+			}
+
+			/**
+			*
+			*
+			* return
+			*/
+			FORCEINLINE PayloadType* AllocatePayload()
+			{
+				return Manager_Payload.AllocateResource();
+			}
+
+		protected:
+
+			/**
+			*
+			*
+			* @param Payload
+			* return
+			*/
+			PayloadResourceType* GetPayloadContainer(PayloadType* Payload);
+
+		#undef PayloadManagerType
+		#undef PayloadResourceType
+		#undef PayloadType
+
+		#pragma endregion Payload
+
+		// Message
+		#pragma region
+		public:
+
+		#define MessageType NCsCoroutine::EMessage
+
+			/**
+			*
+			*
+			* @param Type
+			* @param Message
+			* @param Owner
+			*/
+			void BroadcastMessage(const MessageType& Type, const FName& Message, void* Owner = nullptr);
+
+		#undef MessageType
+
+		#pragma endregion Message
+
+		// Log
+		#pragma region
+		public:
+
+		#define TransactionType NCsCoroutine::ETransaction
+
+			/**
+			*
+			*
+			* @param FunctionName
+			* @param Transaction
+			* @param R
+			*/
+			void LogTransaction(const FString& FunctionName, const TransactionType& Transaction, FCsRoutine* R);
+
+			/**
+			*
+			*/
+			void LogRunning();
+
+		#undef TransactionType
+
+		#pragma endregion Log
+		};
+	}
+}

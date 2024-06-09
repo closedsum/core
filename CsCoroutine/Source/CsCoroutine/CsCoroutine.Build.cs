@@ -26,6 +26,7 @@ public class CsCoroutine : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
+                    "DeveloperSettings",
                     "CsMacro",
                     "CsEnum",
                     "CsContainer",

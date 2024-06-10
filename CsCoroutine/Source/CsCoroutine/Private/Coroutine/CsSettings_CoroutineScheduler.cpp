@@ -21,8 +21,12 @@
 
 bool FCsSettings_CoroutineScheduler_Custom::IsValidChecked(const FString& Context) const
 {
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MaxGroups, 1)
+	CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(MaxGroups, 4)
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MaxOwners, 1)
+	CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(MaxOwners, 2048)
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MaxRoutinesPerOwner, 1)
+	CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(MaxRoutinesPerOwner, 2048)
 	return true;
 }
 

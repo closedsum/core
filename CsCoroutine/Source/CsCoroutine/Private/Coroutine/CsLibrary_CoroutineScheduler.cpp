@@ -294,6 +294,26 @@ namespace NCsCoroutine
 
 		#pragma endregion Handle
 
+		// Custom
+		#pragma region
+
+		void FLibrary::AllocageCustomGroupIndexAndOwnerIdChecked(const FString& Context, const UObject* ContextObject, int32& OutGroupIndex, int32& OutOwnerID)
+		{
+			GetChecked(Context, ContextObject)->AllocageCustomGroupIndexAndOwnerID(OutGroupIndex, OutOwnerID);
+		}
+
+			// Update
+		#pragma region
+
+		void FLibrary::CustomUpdateChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const int32& OwnerID, const FCsDeltaTime& DeltaTime)
+		{
+			GetChecked(Context, ContextObject)->CustomUpdate(GroupIndex, OwnerID, DeltaTime);
+		}
+
+		#pragma endregion Update
+
+		#pragma endregion Custom
+
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel

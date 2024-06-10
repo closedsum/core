@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Coroutine/CsCoroutineScheduler.h"
 
+// Settings
+#include "Coroutine/CsSettings_CoroutineScheduler.h"
 // Package
 #include "UObject/Package.h"
 
@@ -21,28 +23,32 @@
 UCsCoroutineScheduler* UCsCoroutineScheduler::s_Instance;
 bool UCsCoroutineScheduler::s_bShutdown = false;
 
-// Cache
-#pragma region
-
 namespace NCsCoroutineScheduler
 {
 	namespace NCached
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, GetFromWorldContextObject);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Allocate);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Start);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Update);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, AllocageCustomGroupIndexAndOwnerID);
 		}
 	}
 }
 
-#pragma endregion Cache
-
-UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	// Default
+	DefaultSchedules_Internal(),
+	DefaultSchedules(),
+	// Custom
+	CustomSchedules()
 {
 }
+
+#define USING_NS_CACHED using namespace NCsCoroutineScheduler::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsCoroutineScheduler::NCached; \
+	const FString& Context = Str::__FunctionName
+#define DefaultScheduleType NCsCoroutine::NSchedule::FDefault
+#define CustomScheduleType NCsCoroutine::NSchedule::FCustom
 
 // Singleton
 #pragma region
@@ -152,42 +158,105 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 
 void UCsCoroutineScheduler::Initialize()
 {
-	// Schedules
+	// Default
 	{
 		const int32& Count = EMCsUpdateGroup::Get().Num();
 
-		Schedules.Reset(Count);
+		DefaultSchedules_Internal.Reset(Count - 1);
+		DefaultSchedules.Reset(Count);
 
 		for (const FECsUpdateGroup& Group : EMCsUpdateGroup::Get())
 		{
-			Schedules.AddDefaulted();
-			FCsCoroutineSchedule& Schedule = Schedules.Last();
+			DefaultScheduleType& Schedule = DefaultSchedules_Internal.AddDefaulted_GetRef();
 			Schedule.SetGroup(Group);
+		}
+
+		DefaultSchedules.AddDefaulted();
+		DefaultSchedules[NCsUpdateGroup::Custom.GetValue()] = nullptr;
+
+		for (int32 I = 0; I < Count - 1; ++I)
+		{
+			DefaultSchedules.AddDefaulted();
+			DefaultSchedules[I + 1] = &(DefaultSchedules_Internal[I]);
+		}
+	}
+	// Custom
+	{
+		const FCsSettings_CoroutineScheduler_Custom& Settings = FCsSettings_CoroutineScheduler_Custom::Get();
+
+		const int32& MaxGroups = Settings.MaxGroups;
+
+		CustomSchedules.Reset(MaxGroups);
+
+		for (int32 I = 0; I < MaxGroups; ++I)
+		{
+			CustomScheduleType& Schedule = CustomSchedules.AddDefaulted_GetRef();
+			Schedule.SetGroup(NCsUpdateGroup::Custom);
 		}
 	}
 }
 
 void UCsCoroutineScheduler::CleanUp()
 {
-	for (FCsCoroutineSchedule& Schedule : Schedules)
+	for (DefaultScheduleType& Schedule : DefaultSchedules_Internal)
 	{
 		Schedule.End();
 	}
-	Schedules.Reset();
+	DefaultSchedules_Internal.Reset();
+	DefaultSchedules.Reset();
 }
 
 #pragma endregion Singleton
-
 
 // End
 #pragma region
 
 void UCsCoroutineScheduler::UCsCoroutineScheduler::EndAll()
 {
-	for (FCsCoroutineSchedule& Schedule : Schedules)
+	for (DefaultScheduleType& Schedule : DefaultSchedules_Internal)
+	{
+		Schedule.End();
+	}
+
+	for (CustomScheduleType& Schedule : CustomSchedules)
 	{
 		Schedule.End();
 	}
 }
 
 #pragma endregion End
+
+// Custom
+#pragma region
+
+	// Owner
+#pragma region
+
+void UCsCoroutineScheduler::AllocageCustomGroupIndexAndOwnerID(int32& OutGroupIndex, int32& OutOwnerID)
+{
+	SET_CONTEXT(AllocageCustomGroupIndexAndOwnerID);
+
+	const int32 Count = CustomSchedules.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		CustomScheduleType& Schedule = CustomSchedules[I];
+
+		if (Schedule.HasFreeOwnerID())
+		{
+			OutOwnerID	  = Schedule.AllocateOwnerID();
+			OutGroupIndex = I;
+			return;
+		}
+	}
+	checkf(0, TEXT("%s: All Custom Schedules are Exhausted."), *Context);
+}
+
+#pragma endregion Owner
+
+#pragma endregion Custom
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
+#undef DefaultScheduleType
+#undef CustomScheduleType

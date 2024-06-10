@@ -30,6 +30,7 @@ namespace NCsUpdateGroup
 	typedef FECsUpdateGroup Type;
 	typedef EMCsUpdateGroup EnumMapType;
 
+	extern CSTYPES_API const Type Custom;
 	extern CSTYPES_API const Type EditorEngine;
 	extern CSTYPES_API const Type GameInstance;
 	extern CSTYPES_API const Type GameState;

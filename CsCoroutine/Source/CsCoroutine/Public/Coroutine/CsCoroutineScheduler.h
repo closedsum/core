@@ -6,19 +6,6 @@
 
 #include "CsCoroutineScheduler.generated.h"
 
-namespace NCsCoroutineScheduler
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			extern const FString Allocate;
-			extern const FString Start;
-			extern const FString Update;
-		}
-	}
-}
-
 class ICsGetCoroutineScheduler;
 
 UCLASS(transient)
@@ -27,10 +14,6 @@ class CSCOROUTINE_API UCsCoroutineScheduler : public UObject
 	GENERATED_UCLASS_BODY()
 
 private:
-
-	typedef NCsCoroutine::EMessage MessageType;
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
-	typedef NCsCoroutine::NPayload::FResource PayloadResourceType;
 
 // Singleton
 #pragma region
@@ -108,17 +91,63 @@ public:
 		return MyOwner.IsValid() ? MyOwner.Get() : nullptr;
 	}
 
-
 #pragma endregion Owner
 
-protected:
+// Default
+#pragma region
+private:
+
+#define DefaultScheduleType NCsCoroutine::NSchedule::FDefault 
+#define PayloadResourceType NCsCoroutine::NPayload::FResource
+#define PayloadType NCsCoroutine::NPayload::FImpl
+
+	TArray<DefaultScheduleType> DefaultSchedules_Internal;
 
 	/** */
-	TArray<FCsCoroutineSchedule> Schedules;
+	TArray<DefaultScheduleType*> DefaultSchedules;
 
-// Start
+	FORCEINLINE const DefaultScheduleType& GetDefaultSchedule(const FECsUpdateGroup& Group) const
+	{
+		checkf(Group != NCsUpdateGroup::Custom, TEXT("UCsCoroutineScheduler::GetDefaultSchedule: Group: Custom is NOT a Default Schedule. Use the Custom related functions."));
+		return *(DefaultSchedules[Group.GetValue()]);
+	}
+
+	FORCEINLINE DefaultScheduleType& GetDefaultSchedule(const FECsUpdateGroup& Group)
+	{
+		checkf(Group != NCsUpdateGroup::Custom, TEXT("UCsCoroutineScheduler::GetDefaultSchedule: Group: Custom is NOT a Default Schedule. Use the Custom related functions."));
+		return *(DefaultSchedules[Group.GetValue()]);
+	}
+
+	FORCEINLINE const DefaultScheduleType& GetDefaultSchedule(const PayloadType* Payload) const
+	{
+		return GetDefaultSchedule(Payload->Group);
+	}
+
+	FORCEINLINE DefaultScheduleType& GetDefaultSchedule(const PayloadType* Payload)
+	{
+		return GetDefaultSchedule(Payload->Group);
+	}
+
+	FORCEINLINE const DefaultScheduleType& GetDefaultSchedule(const PayloadResourceType* PayloadContainer) const
+	{
+		return GetDefaultSchedule(PayloadContainer->Get());
+	}
+
+	FORCEINLINE DefaultScheduleType& GetDefaultSchedule(const PayloadResourceType* PayloadContainer)
+	{
+		return GetDefaultSchedule(PayloadContainer->Get());
+	}
+
+#undef DefaultScheduleType
+#undef PayloadResourceType
+#undef PayloadType
+
+	// Start
 #pragma region
 public:
+
+#define PayloadResourceType NCsCoroutine::NPayload::FResource
+#define PayloadType NCsCoroutine::NPayload::FImpl
 
 	/**
 	*
@@ -128,7 +157,7 @@ public:
 	*/
 	FORCEINLINE const FCsRoutineHandle& Start(PayloadResourceType* PayloadContainer)
 	{
-		return Schedules[PayloadContainer->Get()->Group.GetValue()].Start(PayloadContainer);
+		return GetDefaultSchedule(PayloadContainer).Start(PayloadContainer);
 	}
 
 	/**
@@ -139,7 +168,7 @@ public:
 	*/
 	FORCEINLINE const FCsRoutineHandle& Start(PayloadType* Payload)
 	{
-		return Schedules[Payload->Group.GetValue()].Start(Payload);
+		return GetDefaultSchedule(Payload).Start(Payload);
 	}
 
 	/**
@@ -150,7 +179,7 @@ public:
 	*/
 	FORCEINLINE const FCsRoutineHandle& StartChild(PayloadResourceType* PayloadContainer)
 	{
-		return Schedules[PayloadContainer->Get()->Group.GetValue()].StartChild(PayloadContainer);
+		return GetDefaultSchedule(PayloadContainer).StartChild(PayloadContainer);
 	}
 
 	/**
@@ -161,12 +190,15 @@ public:
 	*/
 	FORCEINLINE const FCsRoutineHandle& StartChild(PayloadType* Payload)
 	{
-		return Schedules[Payload->Group.GetValue()].StartChild(Payload);
+		return GetDefaultSchedule(Payload).StartChild(Payload);
 	}
+
+#undef PayloadResourceType
+#undef PayloadType
 
 #pragma endregion Start
 
-// Update
+	// Update
 #pragma region
 public:
 
@@ -178,14 +210,16 @@ public:
 	*/
 	FORCEINLINE void Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime)
 	{
-		Schedules[Group.GetValue()].Update(DeltaTime);
+		GetDefaultSchedule(Group).Update(DeltaTime);
 	}
 
 #pragma endregion Update
 	
-// End
+	// End
 #pragma region
 public:
+
+#define CustomScheduleType NCsCoroutine::NSchedule::FCustom
 
 	/**
 	*
@@ -195,7 +229,14 @@ public:
 	*/
 	FORCEINLINE bool End(const FECsUpdateGroup& Group)
 	{
-		return Schedules[Group.GetValue()].End();
+		if (Group == NCsUpdateGroup::Custom)
+		{
+			for (CustomScheduleType& Schedule : CustomSchedules)
+			{
+				Schedule.End();
+			}
+		}
+		return GetDefaultSchedule(Group).End();
 	}
 
 	/**
@@ -207,7 +248,14 @@ public:
 	*/
 	FORCEINLINE bool End(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
 	{
-		return Schedules[Group.GetValue()].End(Handle);
+		if (Group == NCsUpdateGroup::Custom)
+		{
+			for (CustomScheduleType& Schedule : CustomSchedules)
+			{
+				Schedule.End(Handle);
+			}
+		}
+		return GetDefaultSchedule(Group).End(Handle);
 	}
 
 
@@ -226,7 +274,7 @@ public:
 	*/
 	FORCEINLINE bool HasEnded(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
 	{
-		return Schedules[Group.GetValue()].HasEnded(Handle);
+		return GetDefaultSchedule(Group).HasEnded(Handle);
 	}
 
 	/**
@@ -238,14 +286,19 @@ public:
 	*/
 	FORCEINLINE bool HasJustEnded(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
 	{
-		return Schedules[Group.GetValue()].HasJustEnded(Handle);
+		return GetDefaultSchedule(Group).HasJustEnded(Handle);
 	}
+
+#undef CustomScheduleType
 
 #pragma endregion End
 
-// Payload
+	// Payload
 #pragma region
 public:
+
+#define PayloadResourceType NCsCoroutine::NPayload::FResource
+#define PayloadType NCsCoroutine::NPayload::FImpl
 
 	/**
 	*
@@ -255,7 +308,7 @@ public:
 	*/
 	FORCEINLINE PayloadResourceType* AllocatePayloadContainer(const FECsUpdateGroup& Group)
 	{
-		return Schedules[Group.GetValue()].AllocatePayloadContainer();
+		return GetDefaultSchedule(Group).AllocatePayloadContainer();
 	}
 
 	/**
@@ -266,12 +319,15 @@ public:
 	*/
 	FORCEINLINE PayloadType* AllocatePayload(const FECsUpdateGroup& Group)
 	{
-		return Schedules[Group.GetValue()].AllocatePayload();
+		return GetDefaultSchedule(Group).AllocatePayload();
 	}
+
+#undef PayloadResourceType
+#undef PayloadType
 
 #pragma endregion Payload
 
-// Handle
+	// Handle
 #pragma region
 public:
 
@@ -284,7 +340,7 @@ public:
 	*/
 	FORCEINLINE bool IsHandleValid(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
 	{
-		return Schedules[Group.GetValue()].GetRoutineContainer(Handle) != nullptr;
+		return GetDefaultSchedule(Group).GetRoutineContainer(Handle) != nullptr;
 	}
 
 	/**
@@ -296,12 +352,12 @@ public:
 	*/
 	FORCEINLINE bool IsRunning(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
 	{
-		return Schedules[Group.GetValue()].IsRunning(Handle);
+		return GetDefaultSchedule(Group).IsRunning(Handle);
 	}
 
 #pragma endregion Handle
 
-// Routine
+	// Routine
 #pragma region
 
 public:
@@ -314,19 +370,277 @@ public:
 	*/
 	FORCEINLINE FCsRoutine* GetRoutine(const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle) const
 	{
-		return Schedules[Group.GetValue()].GetRoutine(Handle);
+		return GetDefaultSchedule(Group).GetRoutine(Handle);
 	}
 
 #pragma endregion Routine
 
-// Message
+	// Message
 #pragma region
 public:
 
+#define CustomScheduleType NCsCoroutine::NSchedule::FCustom
+#define MessageType NCsCoroutine::EMessage
+
 	FORCEINLINE void BroadcastMessage(const FECsUpdateGroup& Group, const MessageType& Type, const FName& Message, void* InOwner = nullptr)
 	{
-		Schedules[Group.Value].BroadcastMessage(Type, Message, InOwner);
+		if (Group == NCsUpdateGroup::Custom)
+		{
+			for (CustomScheduleType& Schedule : CustomSchedules)
+			{
+				Schedule.BroadcastMessage(Type, Message, InOwner);
+			}
+		}
+		else
+		{
+			GetDefaultSchedule(Group).BroadcastMessage(Type, Message, InOwner);
+		}
 	}
 
+#undef MessageType
+#undef CustomScheduleType
+
 #pragma endregion Message
+
+#pragma endregion Default
+
+// Custom
+#pragma region
+private:
+
+#define CustomScheduleType NCsCoroutine::NSchedule::FCustom
+
+	TArray<CustomScheduleType> CustomSchedules;
+
+	FORCEINLINE const CustomScheduleType& GetCustomSchedule(const int32& GroupIndex) const 
+	{
+		checkf(GroupIndex >= 0 && GroupIndex < CustomSchedules.Num(), TEXT("UCsCoroutineScheduler::GetCustomSchedule: GroupIndex: %d is NOT in the Range [0, %d]."), GroupIndex, CustomSchedules.Num());
+		return CustomSchedules[GroupIndex];
+	}
+
+	FORCEINLINE CustomScheduleType& GetCustomSchedule(const int32& GroupIndex) 
+	{
+		checkf(GroupIndex >= 0 && GroupIndex < CustomSchedules.Num(), TEXT("UCsCoroutineScheduler::GetCustomSchedule: GroupIndex: %d is NOT in the Range [0, %d]."), GroupIndex, CustomSchedules.Num());
+		return CustomSchedules[GroupIndex];
+	}
+
+#undef CustomScheduleType
+
+	// Owner
+#pragma region
+public:
+
+	void AllocageCustomGroupIndexAndOwnerID(int32& OutGroupIndex, int32& OutOwnerID);
+
+#pragma endregion Owner
+
+	// Start
+#pragma region
+public:
+
+#define PayloadResourceType NCsCoroutine::NPayload::FResource
+#define PayloadType NCsCoroutine::NPayload::FImpl
+
+	/**
+	*
+	* 
+	* @param GroupIndex
+	* @param OwnerID
+	* @param PayloadContainer
+	* return
+	*/
+	FORCEINLINE const FCsRoutineHandle& CustomStart(const int32& GroupIndex, const int32& OwnerID, PayloadResourceType* PayloadContainer)
+	{
+		return GetCustomSchedule(GroupIndex).Start(OwnerID, PayloadContainer);
+	}
+
+	/**
+	*
+	*
+	* @param GroupIndex
+	* @param OwnerID
+	* @param Payload
+	* return
+	*/
+	FORCEINLINE const FCsRoutineHandle& CustomStart(const int32& GroupIndex, const int32& OwnerID, PayloadType* Payload)
+	{
+		return GetCustomSchedule(GroupIndex).Start(OwnerID, Payload);
+	}
+
+	/**
+	*
+	*
+	* @param GroupIndex
+	* @param OwnerID
+	* @param PayloadContainer
+	* return
+	*/
+	FORCEINLINE const FCsRoutineHandle& CustomStartChild(const int32& GroupIndex, const int32& OwnerID, PayloadResourceType* PayloadContainer)
+	{
+		return GetCustomSchedule(GroupIndex).StartChild(OwnerID, PayloadContainer);
+	}
+
+	/**
+	*
+	*
+	* @param GroupIndex
+	* @param OwnerID
+	* @param Payload
+	* return
+	*/
+	FORCEINLINE const FCsRoutineHandle& CustomStartChild(const int32& GroupIndex, const int32& OwnerID, PayloadType* Payload)
+	{
+		return GetCustomSchedule(GroupIndex).StartChild(OwnerID, Payload);
+	}
+
+#undef PayloadResourceType
+#undef PayloadType
+
+#pragma endregion Start
+
+	// Update
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param GroupIndex
+	* @param OwnerID
+	* @param DeltaTime
+	*/
+	FORCEINLINE void CustomUpdate(const int32& GroupIndex, const int32& OwnerID, const FCsDeltaTime& DeltaTime)
+	{
+		GetCustomSchedule(GroupIndex).Update(OwnerID, DeltaTime);
+	}
+
+#pragma endregion Update
+
+	// End
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param Group
+	* @param Handle
+	* return
+	*/
+	FORCEINLINE bool CustomEnd(const int32& GroupIndex, const FCsRoutineHandle& Handle)
+	{
+		return GetCustomSchedule(GroupIndex).End(Handle);
+	}
+
+	/**
+	* Check if a routine associated with the Group: Custom, GroupIndex and Handle has already ended.
+	* NOTE: This returns True if Handle is NOT Valid.
+	* 
+	* @param GroupIndex
+	* @param Handle		Handle to a routine.
+	* return			Whether the routine has already ended.
+	*/
+	FORCEINLINE bool HasCustomEnded(const int32& GroupIndex, const FCsRoutineHandle& Handle) const
+	{
+		return GetCustomSchedule(GroupIndex).HasEnded(Handle);
+	}
+
+	/**
+	* Check if a routine associated with the Group: Custom, GroupIndex and Handle has just ended.
+	*
+	* @param GroupIndex
+	* @param Handle		Handle to a routine.
+	* return			Whether the routine has just ended.
+	*/
+	FORCEINLINE bool HasCustomJustEnded(const int32& GroupIndex, const FCsRoutineHandle& Handle) const
+	{
+		return GetCustomSchedule(GroupIndex).HasJustEnded(Handle);
+	}
+
+#pragma endregion End
+
+	// Payload
+#pragma region
+public:
+
+#define PayloadResourceType NCsCoroutine::NPayload::FResource
+#define PayloadType NCsCoroutine::NPayload::FImpl
+
+	/**
+	*
+	*
+	* @param GroupIndex
+	* return
+	*/
+	FORCEINLINE PayloadResourceType* AllocateCustomPayloadContainer(const int32& GroupIndex)
+	{
+		return GetCustomSchedule(GroupIndex).AllocatePayloadContainer();
+	}
+
+	/**
+	*
+	*
+	* @param GroupIndex
+	* return
+	*/
+	FORCEINLINE PayloadType* AllocateCustomPayload(const int32& GroupIndex)
+	{
+		return GetCustomSchedule(GroupIndex).AllocatePayload();
+	}
+
+#undef PayloadResourceType
+#undef PayloadType
+
+#pragma endregion Payload
+
+	// Handle
+#pragma region
+public:
+
+	/**
+	* 
+	* 
+	* @param GroupIndex
+	* @param Handle
+	* return
+	*/
+	FORCEINLINE bool IsCustomHandleValid(const int32& GroupIndex, const FCsRoutineHandle& Handle) const
+	{
+		return GetCustomSchedule(GroupIndex).GetRoutineContainer(Handle) != nullptr;
+	}
+
+	/**
+	* 
+	* 
+	* @param Group
+	* @param Handle
+	* return
+	*/
+	FORCEINLINE bool IsCustomRunning(const int32& GroupIndex, const FCsRoutineHandle& Handle) const
+	{
+		return GetCustomSchedule(GroupIndex).IsRunning(Handle);
+	}
+
+#pragma endregion Handle
+
+	// Routine
+#pragma region
+
+public:
+
+	/**
+	*
+	*
+	* @param GroupIndex
+	* @param Handle
+	* return
+	*/
+	FORCEINLINE FCsRoutine* GetCustomRoutine(const int32& GroupIndex, const FCsRoutineHandle& Handle) const
+	{
+		return GetCustomSchedule(GroupIndex).GetRoutine(Handle);
+	}
+
+#pragma endregion Routine
+
+#pragma endregion Custom
 };

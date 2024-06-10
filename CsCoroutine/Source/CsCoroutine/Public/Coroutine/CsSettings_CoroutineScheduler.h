@@ -18,17 +18,22 @@ struct CSCOROUTINE_API FCsSettings_CoroutineScheduler_Custom
 
 public:
 
+	/** The number of Custom Schedules (groups of 2048 Routines) that are created. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCoroutine", meta = (UIMin = "1", ClampMin = "1", UIMax = "4", ClampMax = "4"))
+	int32 MaxGroups;
+
 	/** The maximum number of Owners for updating their own set of Routines. 
 		NOTE: Currently, MaxOwners * MaxRoutinesPerOwner <= 2048. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCoroutine", meta = (UIMin = "1", ClampMin = "1"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCoroutine", meta = (UIMin = "1", ClampMin = "1", UIMax = "2048", ClampMax = "2048"))
 	int32 MaxOwners;
 
 	/** The maximum number of Routines reserved for an Owner. 
 		NOTE: Currently, MaxOwners * MaxRoutinesPerOwner <= 2048. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCoroutine", meta = (UIMin = "1", ClampMin = "1"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCoroutine", meta = (UIMin = "1", ClampMin = "1", UIMax = "2048", ClampMax = "2048"))
 	int32 MaxRoutinesPerOwner;
 
 	FCsSettings_CoroutineScheduler_Custom() :
+		MaxGroups(1),
 		MaxOwners(128),
 		MaxRoutinesPerOwner(16)
 	{
@@ -51,7 +56,6 @@ struct CSCOROUTINE_API FCsSettings_CoroutineScheduler
 	GENERATED_USTRUCT_BODY()
 
 public:
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCoroutine")
 	FCsSettings_CoroutineScheduler_Custom Custom;

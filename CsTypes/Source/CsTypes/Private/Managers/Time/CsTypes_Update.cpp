@@ -10,6 +10,7 @@
 
 namespace NCsUpdateGroup
 {
+	CSTYPES_API CS_CREATE_ENUM_STRUCT_CUSTOM(Custom, "Custom");
 	CSTYPES_API CS_CREATE_ENUM_STRUCT_CUSTOM(EditorEngine, "Editor Engine");
 	CSTYPES_API CS_CREATE_ENUM_STRUCT_CUSTOM(GameInstance, "Game Instance");
 	CSTYPES_API CS_CREATE_ENUM_STRUCT_CUSTOM(GameState, "Game State");

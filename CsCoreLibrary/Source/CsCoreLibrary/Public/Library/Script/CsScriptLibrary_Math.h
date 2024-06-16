@@ -34,6 +34,18 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCoreLibrary|Library|Math", meta = (DisplayName = "integer <= integer (Checked)", CompactNodeTitle = "<=", Keywords = "<= less", AutoCreateRefTerm = "Context,A,B"))
 	static bool LessEqualChecked_IntInt(const FString& Context, const int32& A, const int32& B);
 
+	/** Returns true if A is in the Range: [B, C]. */
+	UFUNCTION(BlueprintPure, Category = "CsCoreLibrary|Library|Math", meta = (DisplayName = "integer: [integer, integer]", CompactNodeTitle = "[ ]", Keywords = "[ ] >= greater <= less", AutoCreateRefTerm = "Context,A,B,C"))
+	static bool RangeInclusive_IntIntInt(const FString& Context, const int32& A, const int32& B, const int32& C);
+
+	/** Returns true if A is in the Range: [B, C]. */
+	UFUNCTION(BlueprintPure, Category = "CsCoreLibrary|Library|Math", meta = (DisplayName = "integer: [integer, integer] (No Log)", CompactNodeTitle = "[ ]", Keywords = "[ ] >= greater <= less", AutoCreateRefTerm = "Context,A,B,C"))
+	static bool RangeInclusive_IntIntInt2(const FString& Context, const int32& A, const int32& B, const int32& C);
+
+	/** Returns true if A is in the Range: [B, C] and ASSERT if NOT. */
+	UFUNCTION(BlueprintPure, Category = "CsCoreLibrary|Library|Math", meta = (DisplayName = "integer: [integer, integer] (Checked)", CompactNodeTitle = "[ ]", Keywords = "[ ] >= greater <= less", AutoCreateRefTerm = "Context,A,B,C"))
+	static bool RangeInclusiveChecked_IntIntInt(const FString& Context, const int32& A, const int32& B, const int32& C);
+
 #pragma endregion Int
 
 // Float

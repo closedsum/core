@@ -144,7 +144,7 @@ module.exports = class NJsCommon
         * @param {object}       o 
         * @returns {boolean}
         */
-        static /*boolean*/ IsValidObject(o /*string*/)
+        static /*boolean*/ IsValidObject(o /*object*/)
         {
             return o != null && typeof o === "object";
         }
@@ -401,7 +401,7 @@ module.exports = class NJsCommon
             let self    = NJsCommon.FLibrary;
             let context = self.NCached.NStr.IsIntChecked2;
             
-            return IsIntChecked(context, a);
+            return self.IsIntChecked(context, a);
         }
 
         /**
@@ -442,7 +442,7 @@ module.exports = class NJsCommon
             let self    = NJsCommon.FLibrary;
             let context = self.NCached.NStr.IsFloatChecked2;
 
-            return IsFloatChecked(context, a);
+            return self.IsFloatChecked(context, a);
         }
 
         /**

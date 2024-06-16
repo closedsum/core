@@ -42,6 +42,12 @@ namespace NCsMath
 		return true;
 	}
 
+	bool FLibrary::IsIntInRangeInclusiveChecked(const FString& Context, const int32& A, const int32& B, const int32& C)
+	{
+		CS_IS_INT_IN_RANGE_INCLUSIVE_CHECKED(A, B, C)
+		return true;
+	}
+
 	#endif // #if WITH_EDITOR
 
 	bool FLibrary::SafeIsIntGreaterThan(const FString& Context, const int32& A, const int32& B, LogWarning)
@@ -65,6 +71,12 @@ namespace NCsMath
 	bool FLibrary::SafeIsIntLessThanOrEqual(const FString& Context, const int32& A, const int32& B, LogWarning)
 	{
 		CS_IS_INT_LESS_THAN_OR_EQUAL(A, B)
+		return true;
+	}
+
+	bool FLibrary::SafeIsIntInRangeInclusive(const FString& Context, const int32& A, const int32& B, const int32& C, LogWarning)
+	{
+		CS_IS_INT_IN_RANGE_INCLUSIVE(A, B, C)
 		return true;
 	}
 

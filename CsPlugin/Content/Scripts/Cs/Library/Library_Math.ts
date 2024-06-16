@@ -256,6 +256,29 @@ declare namespace NJsMath {
         */
         IsIntLessThanOrEqualChecked2(a: number, b: number): boolean;
 
+        /**
+        * Get whether or not 'a' is in the RANGE [l, r] (l <= a <= r) INCLUSIVE.
+        *  Assert if NOT.
+        *  
+        * @param {string}       context     The calling context.
+        * @param {number}       a           int
+        * @param {number}       l           int
+        * @param {number}       r           int
+        * @returns {boolean}
+        */
+        IsIntInRangeInclusiveChecked(context: string, a: number, l: number, r: number): boolean;
+
+        /**
+        * Get whether or not 'a' is in the RANGE [l, r] (l <= a <= r) INCLUSIVE.
+        *  Assert if NOT.
+        *  
+        * @param {number}       a           int
+        * @param {number}       l           int
+        * @param {number}       r           int
+        * @returns {boolean}
+        */
+        IsIntInRangeInclusiveChecked2(a: number, l: number, r: number): boolean;
+
     // #endregion Int
 
     // #region Float

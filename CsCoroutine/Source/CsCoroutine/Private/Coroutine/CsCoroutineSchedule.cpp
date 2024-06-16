@@ -589,6 +589,8 @@ namespace NCsCoroutine
 					// Start
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NSchedule::FCustom, Start);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NSchedule::FCustom, StartChild);
+					// End
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NSchedule::FCustom, End);
 					// Update
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NSchedule::FCustom, Update);
 				}
@@ -651,18 +653,31 @@ namespace NCsCoroutine
 
 			Manager_OwnerID.CreatePool(Settings.MaxOwners);
 
-			OwnerRoutineIDs.Reset(PoolSize);
+			typedef NCsResource::NManager::NValue::NFixed::NInt32::FResource ResourceType;
 
-			for (int32 I = 0; I < PoolSize; ++I)
-			{
-				OwnerRoutineIDs.Add(INDEX_NONE);
-			}
+			const TArray<ResourceType*>& Resources = Manager_OwnerID.GetPool();
 
 			RoutineStrideByOwnerID.Reset(MaxOwners);
+			QueueEndHandleStrideByOwnerID.Reset(MaxOwners);
 
 			for (int32 I = 0; I < MaxOwners; ++I)
 			{
+				// Manager_ID					
+				ResourceType* C = Resources[I];
+				int32& ID	= C->GetRef();
+				ID			= I;
+
 				RoutineStrideByOwnerID.Add(0);
+				QueueEndHandleStrideByOwnerID.Add(0);
+			}
+	
+			OwnerRoutineIDs.Reset(PoolSize);
+			OwnerQueueEndHandles.Reset(PoolSize);
+
+			for (int32 I = 0; I < PoolSize; ++I)
+			{	
+				OwnerRoutineIDs.Add(INDEX_NONE);
+				OwnerQueueEndHandles.AddDefaulted();
 			}
 		}
 
@@ -711,7 +726,9 @@ namespace NCsCoroutine
 					
 				for (int32 I = 0; I < Stride; ++I)
 				{
-					if (OwnerRoutineIDs[I] == RoutineIndex)
+					const int32 Index = Start + I;
+
+					if (OwnerRoutineIDs[Index] == RoutineIndex)
 					{
 						return ID;
 					}
@@ -827,14 +844,14 @@ namespace NCsCoroutine
 
 			FCsRoutine* R = Manager_Routine.AllocateResource();
 
-			++RoutineStrideByOwnerID[OwnerID];
-
 			const int32& MaxRoutinesPerOwner = FCsSettings_CoroutineScheduler_Custom::Get().MaxRoutinesPerOwner;
 
 			checkf(RoutineStrideByOwnerID[OwnerID] < MaxRoutinesPerOwner, TEXT("%s: Owner ID: %d has ALREADY allocated (%d) Max Routines Per Owner: %d."), *Context, OwnerID, RoutineStrideByOwnerID[OwnerID], MaxRoutinesPerOwner);
 
 			const int32 RoutineIdIndex		= (OwnerID * MaxRoutinesPerOwner) + RoutineStrideByOwnerID[OwnerID];
 			OwnerRoutineIDs[RoutineIdIndex] = R->GetIndex();
+
+			++RoutineStrideByOwnerID[OwnerID];
 
 			R->Init(Payload);
 
@@ -893,14 +910,14 @@ namespace NCsCoroutine
 
 			FCsRoutine* R = RoutineContainer->Get();
 
-			++RoutineStrideByOwnerID[OwnerID];
-
 			const int32& MaxRoutinesPerOwner = FCsSettings_CoroutineScheduler_Custom::Get().MaxRoutinesPerOwner;
 
 			checkf(RoutineStrideByOwnerID[OwnerID] < MaxRoutinesPerOwner, TEXT("%s: Owner ID: %d has ALREADY allocated (%d) Max Routines Per Owner: %d."), *Context, OwnerID, RoutineStrideByOwnerID[OwnerID], MaxRoutinesPerOwner);
 
 			const int32 RoutineIdIndex		= (OwnerID * MaxRoutinesPerOwner) + RoutineStrideByOwnerID[OwnerID];
 			OwnerRoutineIDs[RoutineIdIndex] = R->GetIndex();
+
+			++RoutineStrideByOwnerID[OwnerID];
 
 			Parent->AddChild(R);
 
@@ -968,10 +985,24 @@ namespace NCsCoroutine
 		
 			for (int32 I = 0; I < Stride; ++I)
 			{
-				const int32& RoutineIndex = OwnerRoutineIDs[Start + I];
+				const int32 Index		  = Start + I;
+				const int32& RoutineIndex = OwnerRoutineIDs[Index];
 
 				RoutineResourceType* RoutineContainer = Manager_Routine.GetAt(RoutineIndex);	
 				FCsRoutine* R						  = RoutineContainer->Get();
+
+				// If the Routine is currently being Updated, queue the End for either the
+                // beginning of the next Update or the end of the current Update.
+                if (!R->IsUpdateComplete())
+                {
+                    const int32 HandleStride = QueueEndHandleStrideByOwnerID[OwnerID];
+                    const int32 HandleIndex  = (OwnerID * MaxRoutinesPerOwner) + HandleStride;
+
+                    OwnerQueueEndHandles[HandleIndex] = R->GetHandle();
+
+                    ++QueueEndHandleStrideByOwnerID[OwnerID];
+                    continue;
+                }
 
 				if (!R->HasEnded())
 				{
@@ -984,11 +1015,22 @@ namespace NCsCoroutine
 
 				Result = true;
 			}
+
+			// Clear out routine information for ownerID
+            RoutineStrideByOwnerID[OwnerID] = 0;
+
+            for (int32 I = 0; I < MaxRoutinesPerOwner; ++I)
+            {
+                const int32 Index      = Start + I;
+                OwnerRoutineIDs[Index] = INDEX_NONE;
+            }
 			return Result;
 		}
 
 		bool FCustom::End(const int32& OwnerID, const FCsRoutineHandle& Handle)
 		{
+			SET_CONTEXT(End);
+
 			if (RoutineResourceType* Container = GetRoutineContainer(Handle))
 			{
 				FCsRoutine* R = Container->Get();
@@ -999,6 +1041,8 @@ namespace NCsCoroutine
 				{
 					return false;
 				}
+
+				check(Manager_OwnerID.IsAllocatedChecked(Context, OwnerID));
 
 				const int32& MaxRoutinesPerOwner = FCsSettings_CoroutineScheduler_Custom::Get().MaxRoutinesPerOwner;
 
@@ -1067,7 +1111,7 @@ namespace NCsCoroutine
 				
 				for (int32 I = 0; I < Stride; ++I)
 				{
-					const int32 Index			   = Start+ I;
+					const int32 Index			   = Start + I;
 					const FCsRoutineHandle& Handle = OwnerQueueEndHandles[Index];
 
 					End(OwnerID, Handle);
@@ -1082,12 +1126,14 @@ namespace NCsCoroutine
 				const int32 Start  = OwnerID * MaxRoutinesPerOwner;
 				const int32 Stride = RoutineStrideByOwnerID[OwnerID];
 		
+				// Indices "with in" the Stride (local to the Stride, so in the Range [0, Stride - 1])
 				static TArray<int32> IndicesToDeallocate;
 				IndicesToDeallocate.Reset(IndicesToDeallocate.Max());
 
 				for (int32 I = 0; I < Stride; ++I)
 				{
-					const int32& RoutineIndex = OwnerRoutineIDs[Start + I];
+					const int32 Index		  = Start + I;
+					const int32& RoutineIndex = OwnerRoutineIDs[Index];
 
 					RoutineResourceType* RoutineContainer = Manager_Routine.GetAt(RoutineIndex);
 					FCsRoutine* R						  = RoutineContainer->Get();
@@ -1127,9 +1173,11 @@ namespace NCsCoroutine
 
 					for (int32 J = I; J < Stride - 1; ++J)
 					{
-						int32 Temp			   = OwnerRoutineIDs[J + 1];
-						OwnerRoutineIDs[J + 1] = OwnerRoutineIDs[J];
-						OwnerRoutineIDs[J]	   = Temp;
+						const int32 Index = Start + J;
+
+						int32 Temp				   = OwnerRoutineIDs[Index + 1];
+						OwnerRoutineIDs[Index + 1] = OwnerRoutineIDs[Index];
+						OwnerRoutineIDs[Index]	   = Temp;
 					}
 				}
 

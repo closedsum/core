@@ -27,9 +27,12 @@ var FJsDoubleLinkedListNode = require('Cs/Containers/DoubleLinkedListNode');
 /** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
+var check			= CommonLibrary.check;
 var checkf 			= CommonLibrary.checkf;
 var IsValidObject 	= CommonLibrary.IsValidObject;
 var IsNullObject 	= CommonLibrary.IsNullObject;
+var IsIntChecked	= CommonLibrary.IsIntChecked;
+var IsIntChecked2	= CommonLibrary.IsIntChecked2;
 
 const INDEX_NONE = -1;
 
@@ -114,8 +117,7 @@ module.exports = class FJsManager_Resource_Fixed
             this.Resources[i] = new resourceClassType();
         }
 
-        this.Pool = new Array(this.PoolSize);
-
+        this.Pool  = new Array(this.PoolSize);
         this.Links = new Array(this.PoolSize);
 
         for (let i = 0; i < this.PoolSize; ++i)
@@ -179,8 +181,21 @@ module.exports = class FJsManager_Resource_Fixed
 	*/
     /*FJsResourceContainer*/ GetAt(index /*number*/)
 	{
-        checkf(index > INDEX_NONE && index < this.PoolSize, this.Name + ".GetAt: Index: " + index + " is >= 0 and < PoolSize: " + this.PoolSize);
+		check(IsIntChecked2(index));
+        checkf(index > INDEX_NONE && index < this.PoolSize, this.Name + ".GetAt: Index: " + index + " is NOT >= 0 and < PoolSize: " + this.PoolSize);
+		return this.Pool[index];
+	}
 
+	/**
+	*
+	* @param {string}				  context
+	* @param {number} 				  index
+	* @returns {FJsResourceContainer} ResourceContainerType
+	*/
+    /*FJsResourceContainer*/ GetAtChecked(context /*string*/, index /*number*/)
+	{
+		check(IsIntChecked(context, index));
+        checkf(index > INDEX_NONE && index < this.PoolSize, context + ": Index: " + index + " is NOT >= 0 and < PoolSize: " + this.PoolSize);
 		return this.Pool[index];
 	}
 
@@ -193,7 +208,6 @@ module.exports = class FJsManager_Resource_Fixed
     /*any*/ GetResourceAt(index /*number*/)
 	{
         checkf(index > INDEX_NONE && index < this.PoolSize, this.Name + ".GetResourceAt: Index: " + index + " is >= 0 and < PoolSize: " + this.PoolSize);
-
 		return this.Pool[index].Get();
 	}
 
@@ -366,7 +380,7 @@ module.exports = class FJsManager_Resource_Fixed
 
 			if (!m.IsAllocated())
 			{
-				checkf(m.Get(), this.Name + ".Allocate: Resource is NULL. Container " + this.PoolIndex + " no longer holds a reference to a resource.");
+				checkf(IsValidObject(m.Get()), this.Name + ".Allocate: Resource is NULL. Container " + this.PoolIndex + " no longer holds a reference to a resource.");
 
 				m.Allocate();
 				this.AddAllocatedLink(this.Links[this.PoolIndex]);
@@ -497,6 +511,25 @@ module.exports = class FJsManager_Resource_Fixed
 		if (IsValidObject(this.AllocatedHead))
 			return this.AllocateBefore(this.AllocatedHead.Element);
 		return this.Allocate();
+	}
+
+	/**
+	* @param {string} 		context 
+	* @param {number} 		index		int
+	* @returns {boolean}
+	*/
+	/*boolean*/ IsAllocatedChecked(context /*string*/, index /*number*/)
+	{
+		return this.GetAtChecked(context, index).IsAllocated();
+	}
+
+	/**
+	* @param {number} 		index		int
+	* @returns {boolean}
+	*/
+	/*boolean*/ IsAllocated(index /*number*/)
+	{
+		return this.GetAt(index).IsAllocated();
 	}
 
 	// #endregion Allocate

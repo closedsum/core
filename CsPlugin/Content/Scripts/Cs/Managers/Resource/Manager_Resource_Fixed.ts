@@ -33,6 +33,7 @@ declare class FJsManager_Resource_Fixed {
     AdvancePoolIndexByIncrement(): void;
     AdvancePoolIndexByOrder(): void;
     GetAt(index: number): FJsResourceContainer;
+    GetAtChecked(context: string, index: number): FJsResourceContainer;
     GetResourceAt(index: number): any;
     GetAllocatedContainer(resource: any): FJsResourceContainer;
     AddAllocatedLink(link: FJsDoubleLinkedListNode): void;
@@ -47,6 +48,8 @@ declare class FJsManager_Resource_Fixed {
     AllocateAfterHead(): FJsResourceContainer;
     AllocateBefore(): FJsResourceContainer;
     AllocateBeforeHead(): FJsResourceContainer;
+    IsAllocatedChecked(context: string, index: number): boolean;
+    IsAllocated(index: number): boolean;
     Deallocate(resourceContainer: FJsResourceContainer): boolean;
     DeallocateByResource(resource: any): boolean;
     DeallocateAtByIndex(index: number): boolean;

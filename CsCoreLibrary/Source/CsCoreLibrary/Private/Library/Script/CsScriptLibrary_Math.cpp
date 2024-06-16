@@ -30,6 +30,9 @@ namespace NCsScriptLibraryMath
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, GreaterEqualChecked_IntInt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, LessChecked_IntInt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, LessEqualChecked_IntInt);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, RangeInclusive_IntIntInt);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, RangeInclusive_IntIntInt2);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, RangeInclusiveChecked_IntIntInt);
 			// Float
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, GreaterChecked_FloatFloat);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, GreaterEqualChecked_FloatFloat);
@@ -87,6 +90,27 @@ bool UCsScriptLibrary_Math::LessEqualChecked_IntInt(const FString& Context, cons
 	CONDITIONAL_SET_CTXT(LessEqualChecked_IntInt);
 
 	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntLessThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsIntLessThanOrEqual(Ctxt, A, B, LogError));
+}
+
+bool UCsScriptLibrary_Math::RangeInclusive_IntIntInt(const FString& Context, const int32& A, const int32& B, const int32& C)
+{
+	CONDITIONAL_SET_CTXT(RangeInclusive_IntIntInt);
+
+	return MathLibrary::SafeIsIntInRangeInclusive(Ctxt, A, B, C);
+}
+
+bool UCsScriptLibrary_Math::RangeInclusive_IntIntInt2(const FString& Context, const int32& A, const int32& B, const int32& C)
+{
+	CONDITIONAL_SET_CTXT(RangeInclusive_IntIntInt2);
+
+	return MathLibrary::SafeIsIntInRangeInclusive(Ctxt, A, B, C, nullptr);
+}
+
+bool UCsScriptLibrary_Math::RangeInclusiveChecked_IntIntInt(const FString& Context, const int32& A, const int32& B, const int32& C)
+{
+	CONDITIONAL_SET_CTXT(RangeInclusiveChecked_IntIntInt);
+
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntInRangeInclusiveChecked(Ctxt, A, B, C), MathLibrary::SafeIsIntInRangeInclusive(Ctxt, A, B, C, LogError));
 }
 
 #pragma endregion Int

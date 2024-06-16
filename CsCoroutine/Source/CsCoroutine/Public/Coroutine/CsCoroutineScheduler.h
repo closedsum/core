@@ -424,13 +424,31 @@ private:
 		return CustomSchedules[GroupIndex];
 	}
 
+public:
+
+	FORCEINLINE bool IsValidGroupIndex(const FString& Context, const int32& GroupIndex, void(*Log)(const FString&)) const 
+	{
+		if (GroupIndex < 0 || GroupIndex > CustomSchedules.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: GroupIndex: %d is NOT in the Range [0, %d]."), *Context, GroupIndex, CustomSchedules.Num()));
+			return false;
+		}
+		return true;
+	}
+
 #undef CustomScheduleType
 
 	// Owner
 #pragma region
 public:
 
-	void AllocageCustomGroupIndexAndOwnerID(int32& OutGroupIndex, int32& OutOwnerID);
+	void AllocateCustomGroupIndexAndOwnerID(int32& OutGroupIndex, int32& OutOwnerID);
+
+	FORCEINLINE void DeallocateOwnerID(const int32& GroupIndex, const int32& OwnerID)
+	{
+		GetCustomSchedule(GroupIndex).DeallocateOwnerID(OwnerID);
+	}
 
 #pragma endregion Owner
 

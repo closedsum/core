@@ -21,6 +21,7 @@ module.exports = class FJsProperty
     }
 
     Get() { return this.Value; }
+    GetValue() { return this.Value; }
 
     IsBoolean() { return typeof this.Value === "boolean"; }
     IsNumber() { return typeof this.Value === "number"; }

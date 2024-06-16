@@ -29,7 +29,7 @@ namespace NCsCoroutineScheduler
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, AllocageCustomGroupIndexAndOwnerID);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, AllocateCustomGroupIndexAndOwnerID);
 		}
 	}
 }
@@ -168,7 +168,6 @@ void UCsCoroutineScheduler::Initialize()
 		for (const FECsUpdateGroup& Group : EMCsUpdateGroup::Get())
 		{
 			DefaultScheduleType& Schedule = DefaultSchedules_Internal.AddDefaulted_GetRef();
-			Schedule.SetGroup(Group);
 		}
 
 		DefaultSchedules.AddDefaulted();
@@ -178,6 +177,7 @@ void UCsCoroutineScheduler::Initialize()
 		{
 			DefaultSchedules.AddDefaulted();
 			DefaultSchedules[I + 1] = &(DefaultSchedules_Internal[I]);
+			DefaultSchedules[I + 1]->SetGroup(EMCsUpdateGroup::Get().GetEnumAt(I + 1));
 		}
 	}
 	// Custom
@@ -204,6 +204,12 @@ void UCsCoroutineScheduler::CleanUp()
 	}
 	DefaultSchedules_Internal.Reset();
 	DefaultSchedules.Reset();
+
+	for (CustomScheduleType& Schedule : CustomSchedules)
+	{
+		Schedule.End();
+	}
+	CustomSchedules.Reset();
 }
 
 #pragma endregion Singleton
@@ -232,9 +238,9 @@ void UCsCoroutineScheduler::UCsCoroutineScheduler::EndAll()
 	// Owner
 #pragma region
 
-void UCsCoroutineScheduler::AllocageCustomGroupIndexAndOwnerID(int32& OutGroupIndex, int32& OutOwnerID)
+void UCsCoroutineScheduler::AllocateCustomGroupIndexAndOwnerID(int32& OutGroupIndex, int32& OutOwnerID)
 {
-	SET_CONTEXT(AllocageCustomGroupIndexAndOwnerID);
+	SET_CONTEXT(AllocateCustomGroupIndexAndOwnerID);
 
 	const int32 Count = CustomSchedules.Num();
 

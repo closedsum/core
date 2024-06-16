@@ -25,17 +25,20 @@ namespace NCsMath
 		static bool IsIntGreaterThanOrEqualChecked(const FString& Context, const int32& A, const int32& B);
 		static bool IsIntLessThanChecked(const FString& Context, const int32& A, const int32& B);
 		static bool IsIntLessThanOrEqualChecked(const FString& Context, const int32& A, const int32& B);
+		static bool IsIntInRangeInclusiveChecked(const FString& Context, const int32& A, const int32& B, const int32& C);
 	#else
 		FORCEINLINE static bool IsIntGreaterThanChecked(const FString& Context, const int32& A, const int32& B) { return true; }
 		FORCEINLINE static bool IsIntGreaterThanOrEqualChecked(const FString& Context, const int32& A, const int32& B) { return true; }
 		FORCEINLINE static bool IsIntLessThanChecked(const FString& Context, const int32& A, const int32& B) { return true; }
 		FORCEINLINE static bool IsIntLessThanOrEqualChecked(const FString& Context, const int32& A, const int32& B) { return true; }
+		FORCEINLINE static bool IsIntInRangeInclusiveChecked(const FString& Context, const int32& A, const int32& B, const int32& C) { return true; }
 	#endif // #if WITH_EDITOR
 
 		static bool SafeIsIntGreaterThan(const FString& Context, const int32& A, const int32& B, LogWarning);
 		static bool SafeIsIntGreaterThanOrEqual(const FString& Context, const int32& A, const int32& B, LogWarning);
 		static bool SafeIsIntLessThan(const FString& Context, const int32& A, const int32& B, LogWarning);
 		static bool SafeIsIntLessThanOrEqual(const FString& Context, const int32& A, const int32& B, LogWarning);
+		static bool SafeIsIntInRangeInclusive(const FString& Context, const int32& A, const int32& B, const int32& C, LogWarning);
 
 	#pragma endregion Int
 

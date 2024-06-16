@@ -321,14 +321,16 @@ namespace NCsCoroutine
 		#pragma region
 		public:
 
-			static void AllocageCustomGroupIndexAndOwnerIdChecked(const FString& Context, const UObject* ContextObject, int32& OutGroupIndex, int32& OutOwnerID);
+			static void AllocateCustomGroupIndexAndOwnerIdChecked(const FString& Context, const UObject* ContextObject, int32& OutGroupIndex, int32& OutOwnerID);
+
+			static void DeallocateOwnerIdChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const int32& OwnerID);
 
 			// Start
 		#pragma region
 		public:
 
 		#define PayloadType NCsCoroutine::NPayload::FImpl
-			static const FCsRoutineHandle& CustomStartChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const int32& OwnerID, const PayloadType* Payload);
+			static const FCsRoutineHandle& CustomStartChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const int32& OwnerID, PayloadType* Payload);
 		#undef PayloadType
 			
 		#pragma endregion Start
@@ -384,58 +386,58 @@ namespace NCsCoroutine
 			static bool SafeCustomEnd(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle, LogLevel);
 
 			/**
-			* Safely end the Handle running on update group: Group.
+			* Safely end the Handle running on update group: Custom and GroupIndex.
 			*
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Group
+			* @param GroupIndex
 			* @param Handle
 			* return
 			*/
-			static bool SafeEnd(const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
+			static bool SafeCustomEnd(const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle);
 
 			/**
-			* End the Handles running on update group: Group.
+			* End the Handles running on update group: Custom and GroupIndex.
 			*
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Group
+			* @param GroupIndex
 			* @param Handle
 			* return
 			*/
-			static bool EndChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const TArray<FCsRoutineHandle>& Handles);
+			static bool CustomEndChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const TArray<FCsRoutineHandle>& Handles);
 
 			/**
-			* End the Handle running on update group: Group
+			* End the Handle running on update group: Custom and GroupIndex
 			* and Invalidate the Handle.
 			*
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Group
+			* @param GroupIndex
 			* @param Handle
 			* return
 			*/
-			static bool EndAndInvalidateChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, FCsRoutineHandle& Handle);
+			static bool CustomEndAndInvalidateChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, FCsRoutineHandle& Handle);
 
 			/**
-			* Safely end the Handle running on update group: Group
+			* Safely end the Handle running on update group: Custom and GroupIndex
 			* and Invalidate the Handle.
 			*
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Group
+			* @param GroupIndex
 			* @param Handle
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeEndAndInvalidate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, FCsRoutineHandle& Handle, LogLevel);
+			static bool SafeCustomEndAndInvalidate(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, FCsRoutineHandle& Handle, LogLevel);
 
 		#pragma endregion End
 
@@ -444,7 +446,7 @@ namespace NCsCoroutine
 		public:
 
 		#define PayloadType NCsCoroutine::NPayload::FImpl
-			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup);
+			static PayloadType* AllocateCustomPayloadChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex);
 		#undef PayloadType
 
 		#pragma endregion Payload
@@ -454,58 +456,58 @@ namespace NCsCoroutine
 		public:
 
 			/**
-			* Check whether a Coroutine with the given Handle for Group is valid.
+			* Check whether a Coroutine with the given Handle for Group: Custom and GroupIndex is valid.
 			*
 			* @param Context		The calling context
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Group
+			* @param GroupIndex
 			* @param Handle
 			* return
 			*/
-			static bool IsHandleValidChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
+			static bool IsCustomHandleValidChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle);
 
 			/**
-			* Safely check whether a Coroutine with the given Handle for Group is valid.
+			* Safely check whether a Coroutine with the given Handle for Group: Custom and GroupIndex is valid.
 			*
 			* @param Context		The calling context
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Group
+			* @param GroupIndex
 			* @param Handle
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeIsHandleValid(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, LogLevel);
+			static bool SafeIsCustomHandleValid(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle, LogLevel);
 
 			/**
-			* Check whether a Coroutine with the given Handle for Group is running.
+			* Check whether a Coroutine with the given Handle for Group: Custom and GroupIndex is running.
 			*
 			* @param Context		The calling context
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Group
+			* @param GroupIndex
 			* @param Handle
 			* return
 			*/
-			static bool IsRunningChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
+			static bool IsCustomRunningChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle);
 
 			/**
-			* Safely check whether a Coroutine with the given Handle for Group is running.
+			* Safely check whether a Coroutine with the given Handle for Group: Custom and GroupIndex is running.
 			*
 			* @param Context		The calling context
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Group
+			* @param GroupIndex
 			* @param Handle
 			* @param Log				(optional)
 			* return
 			*/
-			static bool SafeIsRunning(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, LogLevel);
+			static bool SafeIsCustomRunning(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle, LogLevel);
 
 		#pragma endregion Handle
 

@@ -102,6 +102,22 @@ namespace NCsValid
 				return true;
 			}
 
+			FORCEINLINE static bool RangeInclusiveChecked(const FString& Context, const int32& A, const FString& AName, const int32& B, const FString& BName, const int32& C, const FString& CName)
+			{
+				checkf(A >= B && A <= C, TEXT("%s: %s: %d is NOT in the Range [%d, %d] ([%s, %s])."), *Context, *AName, A, B, C, *BName, *CName);
+				return true;
+			}
+
+			FORCEINLINE static bool RangeInclusive(const FString& Context, const int32& A, const FString& AName, const int32& B, const FString& BName, const int32& C, const FString& CName, void(*Log)(const FString&))
+			{
+				if (A < B || A > C)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %d is NOT in the Range [%d, %d] ([%s, %s])."), *Context, *AName, A, B, C, *BName, *CName));
+					return false;
+				}
+				return true;
+			}
 		};
 	}
 
@@ -2238,6 +2254,14 @@ namespace NCsValid
 		static const FString __temp__str__ = #__A; \
 		check(NCsValid::NInt::FLibrary::LessThanOrEqualChecked(Context, __A, __temp__str__, __B)); \
 	}
+// Assume const FString& Context has been defined
+#define CS_IS_INT_IN_RANGE_INCLUSIVE_CHECKED(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__a = #__A; \
+		static const FString __temp__str__b = #__B; \
+		static const FString __temp__str__c = #__C; \
+		check(NCsValid::NInt::FLibrary::RangeInclusiveChecked(Context, __A, __temp__str__a, __B, __temp__str__b, __C, __temp__str__c)); \
+	}
 
 #pragma endregion Int
 
@@ -2819,6 +2843,7 @@ namespace NCsValid
 #define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL_CHECKED(__A, __B, __C)
 #define CS_IS_INT_LESS_THAN_CHECKED(__A, __B)
 #define CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(__A, __B)
+#define CS_IS_INT_IN_RANGE_INCLUSIVE_CHECKED(__A, __B, __C)
 // Float
 #define CS_IS_FLOAT_EQUAL_CHECKED(__A, __B)
 #define CS_IS_FLOAT_NOT_EQUAL_CHECKED(__A, __B)
@@ -3116,6 +3141,8 @@ namespace NCsValid
 // Int
 #pragma region
 
+#if !UE_BUILD_SHIPPING
+
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_INT_GREATER_THAN(__A, __B) \
 	{ \
@@ -3200,6 +3227,161 @@ namespace NCsValid
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NInt::FLibrary::LessThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return __Value; } \
 	}
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_IN_RANGE_INCLUSIVE(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__a = #__A; \
+		static const FString __temp__str__b = #__B; \
+		static const FString __temp__str__c = #__C; \
+		if (!NCsValid::NInt::FLibrary::RangeInclusive(Context, __A, __temp__str__a, __B, __temp__str__b, __C, __temp__str__c, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_IN_RANGE_INCLUSIVE_EXIT(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__a = #__A; \
+		static const FString __temp__str__b = #__B; \
+		static const FString __temp__str__c = #__C; \
+		if (!NCsValid::NInt::FLibrary::RangeInclusive(Context, __A, __temp__str__a, __B, __temp__str__b, __C, __temp__str__c, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_IN_RANGE_INCLUSIVE_RET_NULL(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__a = #__A; \
+		static const FString __temp__str__b = #__B; \
+		static const FString __temp__str__c = #__C; \
+		if (!NCsValid::NInt::FLibrary::RangeInclusive(Context, __A, __temp__str__a, __B, __temp__str__b, __C, __temp__str__c, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_IN_RANGE_INCLUSIVE_RET_VALUE(__A, __B, __C, __Value) \
+	{ \
+		static const FString __temp__str__a = #__A; \
+		static const FString __temp__str__b = #__B; \
+		static const FString __temp__str__c = #__C; \
+		if (!NCsValid::NInt::FLibrary::RangeInclusive(Context, __A, __temp__str__a, __B, __temp__str__b, __C, __temp__str__c, Log)) { return __Value; } \
+	}
+
+#else
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN(__A, __B) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::GreaterThan(Context, __A, __temp__str__, __B, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_EXIT(__A, __B) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::GreaterThan(Context, __A, __temp__str__, __B, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_OR_EQUAL(__A, __B) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_OR_EQUAL_EXIT(__A, __B) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_OR_EQUAL_RET_NULL(__A, __B) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_OR_EQUAL_RET_VALUE(__A, __B, __Value) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return __Value; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::GreaterThanAndLessThanOrEqual(Context, __A, __temp__str__, __B, __C, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL_RET_NULL(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::GreaterThanAndLessThanOrEqual(Context, __A, __temp__str__, __B, __C, Log)) { return nullptr; } \
+	}
+	// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN(__A, __B) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::LessThan(Context, __A, __temp__str__, __B, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN_EXIT(__A, __B) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::LessThan(Context, __A, __temp__str__, __B, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN_OR_EQUAL(__A, __B) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::LessThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN_OR_EQUAL_EXIT(__A, __B) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::LessThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN_OR_EQUAL_RET_NULL(__A, __B) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::LessThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN_OR_EQUAL_RET_VALUE(__A, __B, __Value) \
+	{ \
+		static const FString __temp__str__; \
+		if (!NCsValid::NInt::FLibrary::LessThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return __Value; } \
+	}
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_IN_RANGE_INCLUSIVE(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		static const FString __temp__str__c; \
+		if (!NCsValid::NInt::FLibrary::RangeInclusive(Context, __A, __temp__str__a, __B, __temp__str__b, __C, __temp__str__c, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_IN_RANGE_INCLUSIVE_EXIT(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		static const FString __temp__str__c; \
+		if (!NCsValid::NInt::FLibrary::RangeInclusive(Context, __A, __temp__str__a, __B, __temp__str__b, __C, __temp__str__c, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_IN_RANGE_INCLUSIVE_RET_NULL(__A, __B, __C) \
+	{ \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		static const FString __temp__str__c; \
+		if (!NCsValid::NInt::FLibrary::RangeInclusive(Context, __A, __temp__str__a, __B, __temp__str__b, __C, __temp__str__c, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_IN_RANGE_INCLUSIVE_RET_VALUE(__A, __B, __C, __Value) \
+	{ \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		static const FString __temp__str__c; \
+		if (!NCsValid::NInt::FLibrary::RangeInclusive(Context, __A, __temp__str__a, __B, __temp__str__b, __C, __temp__str__c, Log)) { return __Value; } \
+	}
+
+#endif // #if !UE_BUILD_SHIPPING
 
 #pragma endregion Int
 

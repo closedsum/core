@@ -54,7 +54,7 @@ declare namespace NJsCommon {
         * @param {object}   o 
         * @returns {boolean}
         */
-        IsValidObject(o: string): boolean;
+        IsValidObject(o: object): boolean;
 
         /**
         * Get whether or not 'o' is a valid object.

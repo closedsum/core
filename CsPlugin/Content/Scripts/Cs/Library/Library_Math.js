@@ -44,6 +44,7 @@ module.exports = class NJsMath
                 static IsIntGreaterThanOrEqualChecked   = ClassName + ".IsIntGreaterThanOrEqualChecked";
                 static IsIntLessThanChecked             = ClassName + ".IsIntLessThanChecked";
                 static IsIntLessThanOrEqualChecked      = ClassName + ".IsIntLessThanOrEqualChecked";
+                static IsIntInRangeInclusiveChecked     = ClassName + ".IsIntInRangeInclusiveChecked";
                 // Float
                 static IsFloatGreaterThanChecked          = ClassName + ".IsFloatGreaterThanChecked";
                 static IsFloatGreaterThanOrEqualChecked   = ClassName + ".IsFloatGreaterThanOrEqualChecked";
@@ -78,6 +79,8 @@ module.exports = class NJsMath
                 NJsMath.FLibrary.IsIntLessThanChecked2 = NJsMath.FLibrary.FDisableCheck.IsIntLessThanChecked2;
                 NJsMath.FLibrary.IsIntLessThanOrEqualChecked  = NJsMath.FLibrary.FDisableCheck.IsIntLessThanOrEqualChecked;
                 NJsMath.FLibrary.IsIntLessThanOrEqualChecked2 = NJsMath.FLibrary.FDisableCheck.IsIntLessThanOrEqualChecked2;
+                NJsMath.FLibrary.IsIntInRangeInclusiveChecked  = NJsMath.FLibrary.FDisableCheck.IsIntInRangeInclusiveChecked;
+                NJsMath.FLibrary.IsIntInRangeInclusiveChecked2 = NJsMath.FLibrary.FDisableCheck.IsIntInRangeInclusiveChecked2;
                 // Float
                 NJsMath.FLibrary.IsFloatGreaterThanChecked  = NJsMath.FLibrary.FDisableCheck.IsFloatGreaterThanChecked;
                 NJsMath.FLibrary.IsFloatGreaterThanChecked2 = NJsMath.FLibrary.FDisableCheck.IsFloatGreaterThanChecked2;
@@ -111,6 +114,8 @@ module.exports = class NJsMath
             static /*boolean*/ IsIntLessThanChecked2(a /*number*/, b /*number*/) { return true; }
             static /*boolean*/ IsIntLessThanOrEqualChecked(context /*string*/, a /*number*/, b /*number*/) { return true; }
             static /*boolean*/ IsIntLessThanOrEqualChecked2(a /*number*/, b /*number*/) { return true; }
+            static /*boolean*/ IsIntInRangeInclusiveChecked(context /*string*/, a /*number*/, l /*number*/, r /*number*/) { return true; }
+            static /*boolean*/ IsIntInRangeInclusiveChecked2(a /*number*/, l /*number*/, r /*number*/) { return true; }
             // Float
             static /*boolean*/ IsFloatGreaterThanChecked(context /*string*/, a /*number*/, b /*number*/) { return true; }
             static /*boolean*/ IsFloatGreaterThanChecked2(a /*number*/, b /*number*/) { return true; }
@@ -521,6 +526,41 @@ module.exports = class NJsMath
             let context = self.NCached.NStr.IsIntLessThanOrEqualChecked;
 
             return self.IsIntLessThanOrEqualChecked(context, a, b);
+        }
+
+        /**
+        * Get whether or not 'a' is in the RANGE [l, r] (l <= a <= r) INCLUSIVE.
+        *  Assert if NOT.
+        *  
+        * @param {string}       context     The calling context.
+        * @param {number}       a           int
+        * @param {number}       l           int
+        * @param {number}       r           int
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsIntInRangeInclusiveChecked(context /*string*/, a /*number*/, l /*number*/, r /*number*/)
+        {
+            let self  = NJsMath.FLibrary;
+            
+            return self.IsIntGreaterThanOrEqualChecked(context, a, l) &&
+                   self.IsIntLessThanOrEqualChecked(context, a, r);
+        }
+        
+        /**
+        * Get whether or not 'a' is in the RANGE [l, r] (l <= a <= r) INCLUSIVE.
+        *  Assert if NOT.
+        *  
+        * @param {number}       a           int
+        * @param {number}       l           int
+        * @param {number}       r           int
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsIntInRangeInclusiveChecked2(a /*number*/, l /*number*/, r /*number*/)
+        {
+            let self    = NJsMath.FLibrary;
+            let context = self.NCached.NStr.IsIntInRangeInclusiveChecked;
+
+            return self.IsIntInRangeInclusiveChecked(context, a, l, r);
         }
 
     // #endregion Int

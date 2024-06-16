@@ -67,9 +67,7 @@ module.exports = class FJsAllocationOrder
     Create(size /*number*/)
     {
         checkf(CommonLibrary.IsInt(size), "FJsAllocationOrder.Create: s is NOT an Integer.");
-
         checkf(size > 0, "FJsAllocationOrder.Create: size: %d is NOT > 0.", size);
-
         checkf(size !== this.Size, "FJsAllocationOrder.Create: Size is already size: %d.", size);
 
         this.Shutdown();
@@ -104,6 +102,8 @@ module.exports = class FJsAllocationOrder
         if (this.Tail)
         {
             link.LinkAfter(this.Tail);
+
+            this.Tail = link;
         }
         else
         {
@@ -190,7 +190,7 @@ module.exports = class FJsAllocationOrder
     Advance()
     {
         let value = this.Head.Element;
-        
+
         this.MoveHeadToTail();
 
         return value;

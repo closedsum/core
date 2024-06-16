@@ -34,7 +34,10 @@ namespace NCsCoroutine
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, GetContextRoot);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, GetSafeContextRoot);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, GetSafe);
+					// Default
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, SafeEnd);
+					// Custom
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, SafeCustomEnd);
 				}
 			}
 		}
@@ -133,7 +136,10 @@ namespace NCsCoroutine
 
 		#pragma endregion Get
 
-		// Start
+		// Default
+		#pragma region
+
+			// Start
 		#pragma region
 
 		#define PayloadType NCsCoroutine::NPayload::FImpl
@@ -147,7 +153,7 @@ namespace NCsCoroutine
 			
 		#pragma endregion Start
 
-		// Update
+			// Update
 		#pragma region
 
 		void FLibrary::UpdateChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime)
@@ -159,7 +165,7 @@ namespace NCsCoroutine
 
 		#pragma endregion Update
 
-		// End
+			// End
 		#pragma region
 		
 		bool FLibrary::EndChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
@@ -239,7 +245,7 @@ namespace NCsCoroutine
 
 		#pragma endregion End
 
-		// Payload
+			// Payload
 		#pragma region
 		
 		#define PayloadType NCsCoroutine::NPayload::FImpl
@@ -253,7 +259,7 @@ namespace NCsCoroutine
 
 		#pragma endregion Payload
 
-		// Handle
+			// Handle
 		#pragma region
 		
 		bool FLibrary::IsHandleValidChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
@@ -294,13 +300,32 @@ namespace NCsCoroutine
 
 		#pragma endregion Handle
 
+		#pragma endregion Default
+
 		// Custom
 		#pragma region
 
-		void FLibrary::AllocageCustomGroupIndexAndOwnerIdChecked(const FString& Context, const UObject* ContextObject, int32& OutGroupIndex, int32& OutOwnerID)
+		void FLibrary::AllocateCustomGroupIndexAndOwnerIdChecked(const FString& Context, const UObject* ContextObject, int32& OutGroupIndex, int32& OutOwnerID)
 		{
-			GetChecked(Context, ContextObject)->AllocageCustomGroupIndexAndOwnerID(OutGroupIndex, OutOwnerID);
+			GetChecked(Context, ContextObject)->AllocateCustomGroupIndexAndOwnerID(OutGroupIndex, OutOwnerID);
 		}
+
+		void FLibrary::DeallocateOwnerIdChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const int32& OwnerID)
+		{
+			GetChecked(Context, ContextObject)->DeallocateOwnerID(GroupIndex, OwnerID);
+		}
+
+			// Start
+		#pragma region
+
+		#define PayloadType NCsCoroutine::NPayload::FImpl
+		const FCsRoutineHandle& FLibrary::CustomStartChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const int32& OwnerID, PayloadType* Payload)
+		{
+			return GetChecked(Context, ContextObject)->CustomStart(GroupIndex, OwnerID, Payload);
+		}
+		#undef PayloadType
+			
+		#pragma endregion Start
 
 			// Update
 		#pragma region
@@ -311,6 +336,115 @@ namespace NCsCoroutine
 		}
 
 		#pragma endregion Update
+
+			// End
+		#pragma region
+	
+		bool FLibrary::CustomEndChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle)
+		{
+			return GetChecked(Context, ContextObject)->CustomEnd(GroupIndex, Handle);
+		}
+
+		bool FLibrary::SafeCustomEnd(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle, LogLevel)
+		{
+			if (UCsCoroutineScheduler* Scheduler = GetSafe(Context, ContextObject, Log))
+			{
+				if (Scheduler->IsValidGroupIndex(Context, GroupIndex, Log))
+					return Scheduler->CustomEnd(GroupIndex, Handle);
+			}
+			return false;
+		}
+
+		bool FLibrary::SafeCustomEnd(const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle)
+		{
+			SET_CONTEXT(SafeCustomEnd);
+
+			return SafeCustomEnd(Context, ContextObject, GroupIndex, Handle);
+		}
+
+		bool FLibrary::CustomEndChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const TArray<FCsRoutineHandle>& Handles)
+		{
+			bool Result = true;
+
+			for (const FCsRoutineHandle& Handle : Handles)
+			{
+				Result &= GetChecked(Context, ContextObject)->CustomEnd(GroupIndex, Handle);
+			}
+			return Result;
+		}
+
+		bool FLibrary::CustomEndAndInvalidateChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, FCsRoutineHandle& Handle)
+		{
+			const bool Result = GetChecked(Context, ContextObject)->CustomEnd(GroupIndex, Handle);
+
+			Handle.Invalidate();
+			return Result;
+		}
+
+		bool FLibrary::SafeCustomEndAndInvalidate(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, FCsRoutineHandle& Handle, LogLevel)
+		{
+			if (UCsCoroutineScheduler* Scheduler = GetSafe(Context, ContextObject, Log))
+			{
+				if (Scheduler->IsValidGroupIndex(Context, GroupIndex, Log))
+				{
+					const bool Result = Scheduler->CustomEnd(GroupIndex, Handle);
+
+					Handle.Invalidate();
+					return Result;
+				}
+			}
+			Handle.Invalidate();
+			return false;
+		}
+
+		#pragma endregion End
+
+			// Payload
+		#pragma region
+
+		#define PayloadType NCsCoroutine::NPayload::FImpl
+		PayloadType* FLibrary::AllocateCustomPayloadChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex)
+		{	
+			return GetChecked(Context, ContextObject)->AllocateCustomPayload(GroupIndex);
+		}
+		#undef PayloadType
+
+		#pragma endregion Payload
+
+			// Handle
+		#pragma region
+
+		bool FLibrary::IsCustomHandleValidChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle)
+		{
+			return GetChecked(Context, ContextObject)->IsCustomHandleValid(GroupIndex, Handle);
+		}
+
+		bool FLibrary::SafeIsCustomHandleValid(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle, LogLevel)
+		{
+			if (UCsCoroutineScheduler* Scheduler = GetSafe(Context, ContextObject))
+			{
+				if (Scheduler->IsValidGroupIndex(Context, GroupIndex, Log))
+					return Scheduler->IsCustomHandleValid(GroupIndex, Handle);
+			}
+			return false;
+		}
+
+		bool FLibrary::IsCustomRunningChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle)
+		{
+			return GetChecked(Context, ContextObject)->IsCustomRunning(GroupIndex, Handle);
+		}
+
+		bool FLibrary::SafeIsCustomRunning(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const FCsRoutineHandle& Handle, LogLevel)
+		{
+			if (UCsCoroutineScheduler* Scheduler = GetSafe(Context, ContextObject))
+			{
+				if (Scheduler->IsValidGroupIndex(Context, GroupIndex, Log))
+					return Scheduler->IsCustomRunning(GroupIndex, Handle);
+			}
+			return false;
+		}
+
+		#pragma endregion Handle
 
 		#pragma endregion Custom
 

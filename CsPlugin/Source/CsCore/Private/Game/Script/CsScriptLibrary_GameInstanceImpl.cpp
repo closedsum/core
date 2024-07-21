@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Game/Script/CsScriptLibrary_GameInstanceImpl.h"
 
+// CVar
+#include "Script/CsCVars_Script.h"
 // Types
 #include "CsMacro_Misc.h"
 // Library
@@ -19,6 +21,9 @@ namespace NCsScriptLibraryGameInstanceImpl
 	{
 		namespace Str
 		{
+			// Get
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameInstanceImpl, Get);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameInstanceImpl, GetChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameInstanceImpl, IsMobilePreviewEditor);
 		}
 	}
@@ -31,13 +36,38 @@ UCsScriptLibrary_GameInstanceImpl::UCsScriptLibrary_GameInstanceImpl(const FObje
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryGameInstanceImpl::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryGameInstanceImpl::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
+#define LogError &FCsLog::Error
+
+// Get
+#pragma region
+
+UCsGameInstance* UCsScriptLibrary_GameInstanceImpl::Get(const FString& Context, const UObject* WorldContextObject)
+{
+	CONDITIONAL_SET_CTXT(Get);
+
+	return CsGameInstanceImplLibrary::GetSafe(Ctxt, WorldContextObject);
+}
+
+UCsGameInstance* UCsScriptLibrary_GameInstanceImpl::GetChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
+{
+	CONDITIONAL_SET_CTXT(GetChecked);
+
+	OutSuccess = true;
+	return CS_SCRIPT_GET_CHECKED(CsGameInstanceImplLibrary::GetChecked(Context, WorldContextObject), CsGameInstanceImplLibrary::GetSafe(Ctxt, WorldContextObject, OutSuccess, LogError));
+}
+
+#pragma endregion Get
+
 bool UCsScriptLibrary_GameInstanceImpl::IsMobilePreviewEditor(const FString& Context, const UObject* WorldContextObject)
 {
-	using namespace NCsScriptLibraryGameInstanceImpl::NCached;
+	CONDITIONAL_SET_CTXT(IsMobilePreviewEditor);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::IsMobilePreviewEditor : Context;
-
-	typedef NCsGameInstance::NImpl::FLibrary GameInstanceLibrary;
-
-	return GameInstanceLibrary::SafeIsMobilePreviewEditor(Ctxt, WorldContextObject);
+	return CsGameInstanceImplLibrary::SafeIsMobilePreviewEditor(Ctxt, WorldContextObject);
 }
+
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
+#undef LogError

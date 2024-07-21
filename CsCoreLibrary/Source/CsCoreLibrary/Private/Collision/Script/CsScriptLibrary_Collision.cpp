@@ -66,9 +66,7 @@ bool UCsScriptLibrary_Collision::SetFromObject_CollisionPreset(const FString& Co
 		return ImplAsStruct->SetSafe(Ctxt, Component);
 	}
 
-	typedef NCsObject::FLibrary ObjectLibrary;
-
-	UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: Failed to find any properties from %s for CollisionPreset."), *Ctxt, *(ObjectLibrary::PrintObjectAndClass(Object)));
+	UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: Failed to find any properties from %s for CollisionPreset."), *Ctxt, *(CsObjectLibrary::PrintObjectAndClass(Object)));
 	UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset."), *Context);
 	return false;
 }

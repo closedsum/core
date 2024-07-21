@@ -456,12 +456,11 @@ namespace NCsAnim
 						
 						// Frame
 						{
-							typedef NCsMaterial::FLibrary MaterialLibrary;
 							typedef NCsAnim::N2D::NMaterial::NFlipbook::FFrame FrameType;
 
 							const FrameType& Frame = Anim.Frames[FrameIndex];
 
-							MaterialLibrary::SetChecked(Context, Component, Frame.GetMaterial(), Frame.GetIndex());
+							CsMaterialLibrary::SetChecked(Context, Component, Frame.GetMaterial(), Frame.GetIndex());
 						}
 
 						CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= DeltaTime);

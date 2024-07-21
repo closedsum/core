@@ -73,9 +73,7 @@ bool FCsStaticMeshAttachment::IsValidChecked(const FString& Context) const
 	// Check Transform is Valid
 	check(IsTransformValidChecked(Context));
 
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	check(MaterialLibrary::IsValidChecked(Context, Mesh.GetChecked(Context), Materials.GetChecked(Context)))
+	check(CsMaterialLibrary::IsValidChecked(Context, Mesh.GetChecked(Context), Materials.GetChecked(Context)))
 	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(CustomDepthStencilValue, 0)
 	CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(CustomDepthStencilValue, 255)
 	// Check Tags is Valid
@@ -93,9 +91,7 @@ bool FCsStaticMeshAttachment::IsValid(const FString& Context, void(*Log)(const F
 	if (!IsTransformValid(Context, Log))
 		return false;
 
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	if (!MaterialLibrary::IsValid(Context, Mesh.GetChecked(Context), Materials.GetChecked(Context), Log))
+	if (!CsMaterialLibrary::IsValid(Context, Mesh.GetChecked(Context), Materials.GetChecked(Context), Log))
 		return false;
 
 	CS_IS_INT_GREATER_THAN_OR_EQUAL(CustomDepthStencilValue, 0)
@@ -153,9 +149,7 @@ void FCsStaticMeshAttachment::AttachChecked(const FString& Context, USceneCompon
 	Child->SetRenderCustomDepth(bRenderCustomDepth);
 	Child->SetCustomDepthStencilValue(CustomDepthStencilValue);
 
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	MaterialLibrary::SetChecked(Context, Child, Materials.GetChecked(Context));
+	CsMaterialLibrary::SetChecked(Context, Child, Materials.GetChecked(Context));
 }
 
 bool FCsStaticMeshAttachment::AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
@@ -181,9 +175,7 @@ bool FCsStaticMeshAttachment::AttachSafe(const FString& Context, USceneComponent
 	Child->SetRenderCustomDepth(bRenderCustomDepth);
 	Child->SetCustomDepthStencilValue(CustomDepthStencilValue);
 
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	MaterialLibrary::SetChecked(Context, Child, Materials.GetChecked(Context));
+	CsMaterialLibrary::SetChecked(Context, Child, Materials.GetChecked(Context));
 	return true;
 }
 
@@ -200,10 +192,7 @@ namespace NCsStaticMesh
 			CS_IS_TARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
 			// Check Transform is Valid
 			check(IsTransformValidChecked(Context));
-
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
-			check(MaterialLibrary::IsValidChecked(Context, GetMesh(), GetMaterials()))
+			check(CsMaterialLibrary::IsValidChecked(Context, GetMesh(), GetMaterials()))
 			CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCustomDepthStencilValue(), 0)
 			CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(GetCustomDepthStencilValue(), 255)
 			// Check GetTags() is Valid
@@ -222,9 +211,7 @@ namespace NCsStaticMesh
 			if (!IsTransformValid(Context, Log))
 				return false;
 
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
-			if (!MaterialLibrary::IsValid(Context, GetMesh(), GetMaterials(), Log))
+			if (!CsMaterialLibrary::IsValid(Context, GetMesh(), GetMaterials(), Log))
 				return false;
 
 			CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCustomDepthStencilValue(), 0)
@@ -285,9 +272,7 @@ namespace NCsStaticMesh
 			Child->bRenderCustomDepth = GetbRenderCustomDepth();
 			Child->CustomDepthStencilValue = GetCustomDepthStencilValue();
 
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
-			MaterialLibrary::SetChecked(Context, Child, OtherMaterials);
+			CsMaterialLibrary::SetChecked(Context, Child, OtherMaterials);
 		}
 
 		void FAttachment::AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const
@@ -317,9 +302,7 @@ namespace NCsStaticMesh
 			Child->bRenderCustomDepth = GetbRenderCustomDepth();
 			Child->CustomDepthStencilValue = GetCustomDepthStencilValue();
 
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
-			MaterialLibrary::SetSafe(Context, Child, GetMaterials(), Log);
+			CsMaterialLibrary::SetSafe(Context, Child, GetMaterials(), Log);
 			return true;
 		}
 
@@ -362,9 +345,7 @@ namespace NCsStaticMesh
 			Child->bRenderCustomDepth = GetbRenderCustomDepth();
 			Child->CustomDepthStencilValue = GetCustomDepthStencilValue();
 
-			typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
-			MIDLibrary::SetChecked(Context, Child, OtherMaterials, OutMIDs);
+			CsMIDLibrary::SetChecked(Context, Child, OtherMaterials, OutMIDs);
 
 			Child->SetComponentTickEnabled(true);
 			Child->SetHiddenInGame(false);

@@ -30,7 +30,6 @@ namespace NCsGameplayEffect
 #define USING_NS_CACHED using namespace NCsGameplayEffect::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsGameplayEffect::NCached; \
 	const FString& Context = Str::__FunctionName
-#define ObjectLibrary NCsObject::FLibrary
 
 UGameplayEffect* FCsGameplayEffect::SafeLoad(const FString& Context, void(*Log)(const FString&) /*=&NCsGameplayAbilities::FLog::Warning*/)
 {
@@ -38,7 +37,7 @@ UGameplayEffect* FCsGameplayEffect::SafeLoad(const FString& Context, void(*Log)(
 
 	const FSoftObjectPath& Path = Effect.ToSoftObjectPath();
 
-	if (!ObjectLibrary::IsValidObject(Effect_Internal))
+	if (!CsObjectLibrary::IsValidObject(Effect_Internal))
 	{
 		Effect_Class = Effect.LoadSynchronous();
 
@@ -91,7 +90,6 @@ UObject* FCsGameplayEffect::SafeLoadSoftClass(const FString& Context, void(*Log)
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef ObjectLibrary
 
 #pragma endregion FCsGameplayEffect
 

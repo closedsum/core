@@ -310,15 +310,13 @@ namespace NCsGameEvent
 
 					// TODO: Look into Queuing GameEvent so its processing inline with other events
 
-					typedef NCsGameEvent::NCoordinator::FLibrary GameEventCoordinatorLibrary;
-
 					// Try Get Location
 					{
 						FVector3f Location = FVector3f::ZeroVector;
 
 						if (GetLocation(Context, StrAsChar, Location, Definition))
 						{
-							GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, 0.0f, Location, &FCsLog::Warning);
+							CsGameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, 0.0f, Location, &FCsLog::Warning);
 							return true;
 						}
 					}
@@ -338,16 +336,16 @@ namespace NCsGameEvent
 							
 								if (GetLocation(Context, StrAsChar, Location, Definition))
 								{
-									GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, Value, Location, &FCsLog::Warning);
+									CsGameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, Value, Location, &FCsLog::Warning);
 									return true;
 								}
 							}
-							GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, Value, FVector3f::ZeroVector, &FCsLog::Warning);
+							CsGameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, Value, FVector3f::ZeroVector, &FCsLog::Warning);
 							return true;
 						}
 					}
 
-					GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, 0.0f, FVector3f::ZeroVector, &FCsLog::Warning);
+					CsGameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, 0.0f, FVector3f::ZeroVector, &FCsLog::Warning);
 					return true;
 				}
 			}

@@ -61,9 +61,7 @@ namespace NCsMaterial
 					IndexByNameMap.Add(InNames[I], I);
 				}
 
-				typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
-				MIDLibrary::PopulateScalarParameterValuesChecked(Context, Outer->MID, InNames, Values);
+				CsMIDLibrary::PopulateScalarParameterValuesChecked(Context, Outer->MID, InNames, Values);
 
 				for (int32 I = 0; I < Count; ++I)
 				{
@@ -123,9 +121,7 @@ namespace NCsMaterial
 					IndexByNameMap.Add(InNames[I], I);
 				}
 
-				typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
-				MIDLibrary::PopulateVectorParameterValuesChecked(Context, Outer->MID, InNames, Values);
+				CsMIDLibrary::PopulateVectorParameterValuesChecked(Context, Outer->MID, InNames, Values);
 
 				for (int32 I = 0; I < Count; ++I)
 				{

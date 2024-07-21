@@ -11,33 +11,31 @@
 namespace NCsTexture
 {
 	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define ObjectLibrary NCsObject::FLibrary
 
 	// Load
 	#pragma region
 
 	UTexture* FLibrary::LoadChecked(const FString& Context, const FSoftObjectPath& Path)
 	{
-		return ObjectLibrary::LoadChecked<UTexture>(Context, Path);
+		return CsObjectLibrary::LoadChecked<UTexture>(Context, Path);
 	}
 
 	UTexture* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogWarning)
 	{
-		return ObjectLibrary::SafeLoad<UTexture>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UTexture>(Context, Path, Log);
 	}
 
 	UTexture* FLibrary::LoadChecked(const FString& Context, const FString& Path)
 	{
-		return ObjectLibrary::LoadChecked<UTexture>(Context, Path);
+		return CsObjectLibrary::LoadChecked<UTexture>(Context, Path);
 	}
 
 	UTexture* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogWarning)
 	{
-		return ObjectLibrary::SafeLoad<UTexture>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UTexture>(Context, Path, Log);
 	}
 
 	#pragma endregion Load
 
 	#undef LogWarning
-	#undef ObjectLibrary
 }

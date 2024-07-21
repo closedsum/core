@@ -53,6 +53,12 @@ namespace NCsGameState
 		* return				GameState
 		*/
 		static AGameStateBase* GetSafe(const FString& Context, const UObject* WorldContext, LogLevel);
+		FORCEINLINE static AGameStateBase* GetSafe(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogLevel)
+		{
+			AGameStateBase* GameState = GetSafe(Context, WorldContext, Log);
+			OutSuccess				  = GameState != nullptr;
+			return GameState;
+		}
 
 		/**
 		* Safely get GameState of type: T from WorldContext.
@@ -118,3 +124,5 @@ namespace NCsGameState
 	#undef LogLevel
 	};
 }
+
+using CsGameStateLibrary = NCsGameState::FLibrary;

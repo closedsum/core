@@ -136,9 +136,7 @@ void UCsGameInstance::Init()
 	UCsCoroutineScheduler::Init(this);
 	UCsManager_Load::Init(this);
 
-	typedef NCsGameEvent::NCoordinator::FLibrary GameEventCoordinatorLibrary;
-
-	UCsCoordinator_GameEvent::Init(this, GameEventCoordinatorLibrary::GetClassChecked(Context));
+	UCsCoordinator_GameEvent::Init(this, CsGameEventCoordinatorLibrary::GetClassChecked(Context));
 }
 
 void UCsGameInstance::Shutdown()

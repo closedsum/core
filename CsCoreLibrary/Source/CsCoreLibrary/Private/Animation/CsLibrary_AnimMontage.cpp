@@ -16,7 +16,6 @@
 namespace NCsAnimMontage
 {
 	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define ObjectLibrary NCsObject::FLibrary
 	#define PropertyLibrary NCsProperty::FLibrary
 	#define AnimInstanceLibrary NCsAnimInstance::FLibrary
 
@@ -25,12 +24,12 @@ namespace NCsAnimMontage
 
 	UAnimMontage* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<UAnimMontage>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UAnimMontage>(Context, Path, Log);
 	}
 
 	UAnimMontage* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<UAnimMontage>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UAnimMontage>(Context, Path, Log);
 	}
 
 	#pragma endregion Load
@@ -243,7 +242,6 @@ namespace NCsAnimMontage
 	#pragma endregion SetPosition
 
 	#undef LogLevel
-	#undef ObjectLibrary
 	#undef PropertyLibrary
 	#undef AnimInstanceLibrary
 }

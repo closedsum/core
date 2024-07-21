@@ -388,10 +388,7 @@ namespace NCsTime
 
 					CS_IS_PTR_NULL(MyRoot)
 
-					typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-					TimeManagerLibrary::SafePause(Context, MyRoot, UpdateGroup);
-
+					CsTimeManagerLibrary::SafePause(Context, MyRoot, UpdateGroup);
 					return true;
 				}
 			}
@@ -445,10 +442,7 @@ namespace NCsTime
 
 					CS_IS_PTR_NULL(MyRoot)
 
-					typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-					TimeManagerLibrary::SafeUnpause(Context, MyRoot, UpdateGroup);
-
+					CsTimeManagerLibrary::SafeUnpause(Context, MyRoot, UpdateGroup);
 					return true;
 				}
 			}
@@ -508,10 +502,7 @@ namespace NCsTime
 
 					CS_IS_PTR_NULL(MyRoot)
 
-					typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-					TimeManagerLibrary::SetSafeCustomUpdate(Context, MyRoot, UpdateGroup, DeltaTime, true);
-
+					CsTimeManagerLibrary::SetSafeCustomUpdate(Context, MyRoot, UpdateGroup, DeltaTime, true);
 					return true;
 				}
 			}

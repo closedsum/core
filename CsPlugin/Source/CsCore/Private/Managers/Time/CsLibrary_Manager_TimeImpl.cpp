@@ -49,7 +49,6 @@ namespace NCsTime
 			#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
 			#define WorldLibrary NCsWorld::FLibrary
 			#define GameInstanceLibrary NCsGameInstance::FLibrary
-			#define TimeManagerLibrary NCsTime::NManager::FLibrary
 
 			// Get
 			#pragma region
@@ -59,13 +58,13 @@ namespace NCsTime
 			#if UE_BUILD_SHIPPING
 				return UCsManager_Time::Get<UCsManager_TimeImpl>(nullptr);
 			#else
-				return TimeManagerLibrary::GetChecked<UCsManager_TimeImpl>(Context, ContextObject);
+				return CsTimeManagerLibrary::GetChecked<UCsManager_TimeImpl>(Context, ContextObject);
 			#endif // #if UE_BUILD_SHIPPING
 			}
 
 			UCsManager_TimeImpl* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
 			{
-				return TimeManagerLibrary::GetSafe<UCsManager_TimeImpl>(Context, ContextObject, Log);
+				return CsTimeManagerLibrary::GetSafe<UCsManager_TimeImpl>(Context, ContextObject, Log);
 			}
 
 			UCsManager_TimeImpl* FLibrary::GetSafe(const UObject* ContextObject)
@@ -101,7 +100,6 @@ namespace NCsTime
 			#undef LogLevel
 			#undef WorldLibrary
 			#undef GameInstanceLibrary
-			#undef TimeManagerLibrary
 		}
 	}
 }

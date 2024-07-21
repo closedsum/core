@@ -1167,7 +1167,7 @@ namespace NCsActor
 
 		if (Components.Num() == CS_EMPTY)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has NO components."), *Context, *NCsObject::FLibrary::PrintNameAndClass(A)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has NO components."), *Context, *CsObjectLibrary::PrintNameAndClass(A)));
 		}
 
 		UActorComponent* Component = nullptr;
@@ -1178,7 +1178,7 @@ namespace NCsActor
 			{
 				if (Component)
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has MORE than 1 component with Tag: %s."), *Context, *NCsObject::FLibrary::PrintNameAndClass(A), *(Tag.ToString())));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has MORE than 1 component with Tag: %s."), *Context, *CsObjectLibrary::PrintNameAndClass(A), *(Tag.ToString())));
 				}
 				Component = C;
 			}
@@ -1186,7 +1186,7 @@ namespace NCsActor
 
 		if (!Component)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has NO components with Tag: %s."), *Context, *NCsObject::FLibrary::PrintNameAndClass(A), *(Tag.ToString())));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has NO components with Tag: %s."), *Context, *CsObjectLibrary::PrintNameAndClass(A), *(Tag.ToString())));
 		}
 		return Component;
 	}
@@ -1338,20 +1338,19 @@ namespace NCsActor
 	// Material
 	#pragma region
 
-	#define MaterialLibrary NCsMaterial::FLibrary
 
 	void FLibrary::SetMaterialChecked(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index)
 	{
 		UPrimitiveComponent* Component = GetRootPrimitiveComponentChecked(Context, Actor);
 
-		MaterialLibrary::SetChecked(Context, Component, Material, Index);
+		CsMaterialLibrary::SetChecked(Context, Component, Material, Index);
 	}
 
 	void FLibrary::SetSafeMaterial(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index, LogLevel)
 	{
 		if (UPrimitiveComponent* Component = GetSafeRootPrimitiveComponent(Context, Actor, Log))
 		{
-			MaterialLibrary::SetSafe(Context, Component, Material, Index, Log);
+			CsMaterialLibrary::SetSafe(Context, Component, Material, Index, Log);
 		}
 	}
 
@@ -1368,18 +1367,16 @@ namespace NCsActor
 	{
 		UPrimitiveComponent* Component = GetRootPrimitiveComponentChecked(Context, Actor);
 
-		MaterialLibrary::SetChecked(Context, Component, Materials);
+		CsMaterialLibrary::SetChecked(Context, Component, Materials);
 	}
 
 	void FLibrary::SetSafeMaterials(const FString& Context, AActor* Actor, const TArray<UMaterialInterface*>& Materials, LogLevel)
 	{
 		if (UPrimitiveComponent* Component = GetSafeRootPrimitiveComponent(Context, Actor, Log))
 		{
-			MaterialLibrary::SetSafe(Context, Component, Materials, Log);
+			CsMaterialLibrary::SetSafe(Context, Component, Materials, Log);
 		}
 	}
-
-	#undef MaterialLibrary
 
 	#pragma endregion Material
 
@@ -1393,9 +1390,7 @@ namespace NCsActor
 		if (!World)
 			return nullptr;
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
-		UClass* Class = ObjectLibrary::SafeLoad<UClass>(Context, Path, Log);
+		UClass* Class = CsObjectLibrary::SafeLoad<UClass>(Context, Path, Log);
 
 		if (!Class)
 			return nullptr;

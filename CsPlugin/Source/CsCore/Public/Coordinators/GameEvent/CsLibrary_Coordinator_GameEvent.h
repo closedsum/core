@@ -256,3 +256,5 @@ namespace NCsGameEvent
 		};
 	}
 }
+
+using CsGameEventCoordinatorLibrary = NCsGameEvent::NCoordinator::FLibrary;

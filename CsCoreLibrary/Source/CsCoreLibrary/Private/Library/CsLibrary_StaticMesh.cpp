@@ -17,31 +17,29 @@
 namespace NCsStaticMesh
 {
 	#define LogWarning void(*Log)(const FString&) /*=&FCsLog::Warning*/
-	#define ObjectLibrary NCsObject::FLibrary
 	#define WorldLibrary NCsWorld::FLibrary
-	#define MaterialLibrary NCsMaterial::FLibrary
 
 	// Load
 	#pragma region
 
 	UStaticMesh* FLibrary::LoadChecked(const FString& Context, const FSoftObjectPath& Path)
 	{
-		return ObjectLibrary::LoadChecked<UStaticMesh>(Context, Path);
+		return CsObjectLibrary::LoadChecked<UStaticMesh>(Context, Path);
 	}
 
 	UStaticMesh* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		return ObjectLibrary::SafeLoad<UStaticMesh>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UStaticMesh>(Context, Path, Log);
 	}
 
 	UStaticMesh* FLibrary::LoadChecked(const FString& Context, const FString& Path)
 	{
-		return ObjectLibrary::LoadChecked<UStaticMesh>(Context, Path);
+		return CsObjectLibrary::LoadChecked<UStaticMesh>(Context, Path);
 	}
 
 	UStaticMesh* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		return ObjectLibrary::SafeLoad<UStaticMesh>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UStaticMesh>(Context, Path, Log);
 	}
 
 	#pragma endregion Load
@@ -121,7 +119,7 @@ namespace NCsStaticMesh
 		// Materials
 		if (!From->OverrideMaterials.IsEmpty())
 		{
-			MaterialLibrary::SetChecked(Context, ToComponent, From->OverrideMaterials);
+			CsMaterialLibrary::SetChecked(Context, ToComponent, From->OverrideMaterials);
 		}
 
 		// Collision
@@ -149,7 +147,7 @@ namespace NCsStaticMesh
 		Component->SetVisibleFlag(false);
 		Component->SetHiddenInGame(true);
 		
-		MaterialLibrary::ClearOverrideChecked(Context, Component);
+		CsMaterialLibrary::ClearOverrideChecked(Context, Component);
 
 		Component->SetStaticMesh(nullptr);
 		Component->SetComponentTickEnabled(false);
@@ -164,7 +162,5 @@ namespace NCsStaticMesh
 	#pragma endregion Destroy
 
 	#undef LogWarning
-	#undef ObjectLibrary
 	#undef WorldLibrary
-	#undef MaterialLibrary
 }

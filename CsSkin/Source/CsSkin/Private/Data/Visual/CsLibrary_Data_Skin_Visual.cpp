@@ -83,13 +83,12 @@ namespace NCsSkin
 
 				// Material
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
-				typedef NCsMaterial::FLibrary MaterialLibrary;
 
 				const MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin);
 
 				if (MaterialSkin)
 				{
-					check(MaterialLibrary::IsValidChecked(Context, MaterialSkin->GetMaterials()));
+					check(CsMaterialLibrary::IsValidChecked(Context, MaterialSkin->GetMaterials()));
 				}
 				// MaterialWithParameters
 				typedef NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters MaterialWithParamsSkinType;
@@ -196,13 +195,12 @@ namespace NCsSkin
 
 				// Material
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
-				typedef NCsMaterial::FLibrary MaterialLibrary;
 
 				const MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin);
 
 				if (MaterialSkin)
 				{
-					if (!MaterialLibrary::IsValid(Context, MaterialSkin->GetMaterials(), Log))
+					if (!CsMaterialLibrary::IsValid(Context, MaterialSkin->GetMaterials(), Log))
 						return false;
 				}
 				// MaterialWithParameters
@@ -361,11 +359,10 @@ namespace NCsSkin
 
 				// Materials
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
-				typedef NCsMaterial::FLibrary MaterialLibrary;
 
 				const MaterialSkinType* MaterialSkin = GetInterfaceChecked<MaterialSkinType>(Context, Skin);
 
-				MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
+				CsMaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
 			}
 
 			void FLibrary::SetSafeStaticMeshAndMaterials(const FString& Context, const SkinType* Skin, UStaticMeshComponent* Component, LogLevel)
@@ -378,11 +375,10 @@ namespace NCsSkin
 
 					// Materials
 					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
-					typedef NCsMaterial::FLibrary MaterialLibrary;
 
 					if (const MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin))
 					{
-						MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
+						CsMaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
 					}
 					else
 					{
@@ -502,14 +498,12 @@ namespace NCsSkin
 			{	
 				SetSkeletalMeshChecked(Context, Skin, Component);
 
-				typedef NCsMaterial::FLibrary MaterialLibrary;
-
 				// Material
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinDataType;
 
 				if (const MaterialSkinDataType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinDataType>(Context, Skin))
 				{
-					MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
+					CsMaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
 					return;
 				}
 				// MaterialWithParameters
@@ -542,14 +536,12 @@ namespace NCsSkin
 				{
 					SetSkeletalMeshChecked(Context, SkeletalMeshSkin, Component);
 
-					typedef NCsMaterial::FLibrary MaterialLibrary;
-
 					// Material
 					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinDataType;
 
 					if (const MaterialSkinDataType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinDataType>(Context, Skin))
 					{
-						return MaterialLibrary::SetSafe(Context, Component, MaterialSkin->GetMaterials());
+						return CsMaterialLibrary::SetSafe(Context, Component, MaterialSkin->GetMaterials());
 					}
 					// MaterialWithParameters
 					typedef NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters MaterialWithParamsSkinDataType;
@@ -716,9 +708,7 @@ namespace NCsSkin
 
 				if (const MaterialSkinDataType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinDataType>(Context, Skin))
 				{
-					typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
-					MIDLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials(), OutMIDs);
+					CsMIDLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials(), OutMIDs);
 
 					Result.bSuccess			= true;
 					Result.Type				= FSetMaterials::ESkin::Material;
@@ -731,9 +721,7 @@ namespace NCsSkin
 				if (const MaterialWithParamsSkinDataType* MaterialWithParamsSkin = GetSafeInterfaceChecked<MaterialWithParamsSkinDataType>(Context, Skin))
 				{
 					// Clear existing MIDs from OutMIDs
-					typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
-					MIDLibrary::Destroy(OutMIDs);
+					CsMIDLibrary::Destroy(OutMIDs);
 
 					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
 
@@ -769,9 +757,7 @@ namespace NCsSkin
 
 				if (const MaterialSkinDataType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinDataType>(Context, Skin))
 				{
-					typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
-					if (!MIDLibrary::SetSafe(Context, Component, MaterialSkin->GetMaterials(), OutMIDs, Log))
+					if (!CsMIDLibrary::SetSafe(Context, Component, MaterialSkin->GetMaterials(), OutMIDs, Log))
 						return Result;
 
 					Result.bSuccess			= true;
@@ -785,9 +771,7 @@ namespace NCsSkin
 				if (const MaterialWithParamsSkinDataType* MaterialWithParamsSkin = GetSafeInterfaceChecked<MaterialWithParamsSkinDataType>(Context, Skin))
 				{
 					// Clear existing MIDs from OutMIDs
-					typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
-					MIDLibrary::Destroy(OutMIDs);
+					CsMIDLibrary::Destroy(OutMIDs);
 
 					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
 

@@ -1268,3 +1268,6 @@ namespace NCsMaterial
 		};
 	}
 }
+
+using CsMaterialLibrary = NCsMaterial::FLibrary;
+using CsMIDLibrary = NCsMaterial::NMID::FLibrary;

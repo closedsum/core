@@ -89,8 +89,6 @@ bool FCsMaterialAnimParameterScalar::IsValid(const FString& Context, void(*Log)(
 // FCsMaterialAnimFrame
 #pragma region
 
-#define MIDLibrary NCsMaterial::NMID::FLibrary
-
 #define FrameType NCsMaterial::NAnim::FFrame
 #define VectorType NCsMaterial::NAnim::NParameter::FVectorType
 #define ScalarType NCsMaterial::NAnim::NParameter::FScalarType
@@ -191,13 +189,13 @@ bool FCsMaterialAnimFrame::IsValid(const FString& Context, UMaterialInstanceDyna
 	// Check VectorParameters is Valid
 	for (const FCsMaterialAnimParameterVector& Param : VectorParameters)
 	{
-		if (!MIDLibrary::IsVectorParameterValid(Context, MID, Param.Name, Log))
+		if (!CsMIDLibrary::IsVectorParameterValid(Context, MID, Param.Name, Log))
 			return false;
 	}
 	// Check ScalarParameters is Valid
 	for (const FCsMaterialAnimParameterScalar& Param : ScalarParameters)
 	{
-		if (!MIDLibrary::IsScalarParameterValid(Context, MID, Param.Name, Log))
+		if (!CsMIDLibrary::IsScalarParameterValid(Context, MID, Param.Name, Log))
 			return false;
 	}
 	return true;
@@ -213,7 +211,7 @@ bool FCsMaterialAnimFrame::IsValid(const FString& Context, const TArray<UMateria
 	{
 		for (UMaterialInstanceDynamic* MID : MIDs)
 		{
-			if (!MIDLibrary::IsVectorParameterValid(Context, MID, Param.Name, Log))
+			if (!CsMIDLibrary::IsVectorParameterValid(Context, MID, Param.Name, Log))
 				return false;
 		}
 	}
@@ -222,7 +220,7 @@ bool FCsMaterialAnimFrame::IsValid(const FString& Context, const TArray<UMateria
 	{
 		for (UMaterialInstanceDynamic* MID : MIDs)
 		{
-			if (!MIDLibrary::IsScalarParameterValid(Context, MID, Param.Name, Log))
+			if (!CsMIDLibrary::IsScalarParameterValid(Context, MID, Param.Name, Log))
 				return false;
 		}
 	}
@@ -239,7 +237,7 @@ bool FCsMaterialAnimFrame::IsValid(const FString& Context, const TArray<TWeakObj
 	{
 		for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
 		{
-			if (!MIDLibrary::IsVectorParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.Name, Log))
+			if (!CsMIDLibrary::IsVectorParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.Name, Log))
 				return false;
 		}
 	}
@@ -248,20 +246,17 @@ bool FCsMaterialAnimFrame::IsValid(const FString& Context, const TArray<TWeakObj
 	{
 		for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
 		{
-			if (!MIDLibrary::IsScalarParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.Name, Log))
+			if (!CsMIDLibrary::IsScalarParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.Name, Log))
 				return false;
 		}
 	}
 	return true;
 }
 
-#undef MIDLibrary
-
 namespace NCsMaterial
 {
 	namespace NAnim
 	{
-		#define MIDLibrary NCsMaterial::NMID::FLibrary
 		#define VectorType NCsMaterial::NAnim::NParameter::FVectorType
 		#define ScalarType NCsMaterial::NAnim::NParameter::FScalarType
 
@@ -308,12 +303,12 @@ namespace NCsMaterial
 			// Check VectorParameters is Valid
 			for (const VectorType& Param : VectorParameters)
 			{
-				check(MIDLibrary::IsVectorParameterValidChecked(Context, MID, Param.GetName()));
+				check(CsMIDLibrary::IsVectorParameterValidChecked(Context, MID, Param.GetName()));
 			}
 			// Check ScalarParameters is Valid
 			for (const ScalarType& Param : ScalarParameters)
 			{
-				check(MIDLibrary::IsScalarParameterValidChecked(Context, MID, Param.GetName()));
+				check(CsMIDLibrary::IsScalarParameterValidChecked(Context, MID, Param.GetName()));
 			}
 			return true;
 		}
@@ -326,13 +321,13 @@ namespace NCsMaterial
 			// Check VectorParameters is Valid
 			for (const VectorType& Param : VectorParameters)
 			{
-				if (!MIDLibrary::IsVectorParameterValid(Context, MID, Param.GetName(), Log))
+				if (!CsMIDLibrary::IsVectorParameterValid(Context, MID, Param.GetName(), Log))
 					return false;
 			}
 			// Check ScalarParameters is Valid
 			for (const ScalarType& Param : ScalarParameters)
 			{
-				if (!MIDLibrary::IsScalarParameterValid(Context, MID, Param.GetName(), Log))
+				if (!CsMIDLibrary::IsScalarParameterValid(Context, MID, Param.GetName(), Log))
 					return false;
 			}
 			return true;
@@ -347,7 +342,7 @@ namespace NCsMaterial
 			{
 				for (UMaterialInstanceDynamic* MID : MIDs)
 				{
-					check(MIDLibrary::IsVectorParameterValidChecked(Context, MID, Param.GetName()));
+					check(CsMIDLibrary::IsVectorParameterValidChecked(Context, MID, Param.GetName()));
 				}
 			}
 			// Check ScalarParameters is Valid
@@ -355,7 +350,7 @@ namespace NCsMaterial
 			{
 				for (UMaterialInstanceDynamic* MID : MIDs)
 				{
-					check(MIDLibrary::IsScalarParameterValidChecked(Context, MID, Param.GetName()));
+					check(CsMIDLibrary::IsScalarParameterValidChecked(Context, MID, Param.GetName()));
 				}
 			}
 			return true;
@@ -371,7 +366,7 @@ namespace NCsMaterial
 			{
 				for (UMaterialInstanceDynamic* MID : MIDs)
 				{
-					if (!MIDLibrary::IsVectorParameterValid(Context, MID, Param.GetName(), Log))
+					if (!CsMIDLibrary::IsVectorParameterValid(Context, MID, Param.GetName(), Log))
 						return false;
 				}
 			}
@@ -380,7 +375,7 @@ namespace NCsMaterial
 			{
 				for (UMaterialInstanceDynamic* MID : MIDs)
 				{
-					if (!MIDLibrary::IsScalarParameterValid(Context, MID, Param.GetName(), Log))
+					if (!CsMIDLibrary::IsScalarParameterValid(Context, MID, Param.GetName(), Log))
 						return false;
 				}
 			}
@@ -396,7 +391,7 @@ namespace NCsMaterial
 			{
 				for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
 				{
-					check(MIDLibrary::IsVectorParameterValidChecked(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName()));
+					check(CsMIDLibrary::IsVectorParameterValidChecked(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName()));
 				}
 			}
 			// Check ScalarParameters is Valid
@@ -404,7 +399,7 @@ namespace NCsMaterial
 			{
 				for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
 				{
-					check(MIDLibrary::IsScalarParameterValidChecked(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName()));
+					check(CsMIDLibrary::IsScalarParameterValidChecked(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName()));
 				}
 			}
 			return true;
@@ -420,7 +415,7 @@ namespace NCsMaterial
 			{
 				for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
 				{
-					if (!MIDLibrary::IsVectorParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName(), Log))
+					if (!CsMIDLibrary::IsVectorParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName(), Log))
 						return false;
 				}
 			}
@@ -429,14 +424,13 @@ namespace NCsMaterial
 			{
 				for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
 				{
-					if (!MIDLibrary::IsScalarParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName(), Log))
+					if (!CsMIDLibrary::IsScalarParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName(), Log))
 						return false;
 				}
 			}
 			return true;
 		}
 
-		#undef MIDLibrary
 		#undef VectorType
 		#undef ScalarType
 	}

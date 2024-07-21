@@ -185,9 +185,7 @@ namespace NCsSkin
 						{
 							if (Log)
 							{
-								typedef NCsObject::FLibrary ObjectLibrary;
-
-								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: UniformScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::IUniform)."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
+								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: UniformScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::IUniform)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
 								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualScale_UniformImplSlice with name: VisualUniformScaleSlice."), *Context));
 								Log(FString::Printf(TEXT("%s: - OR"), *Context));
 								Log(FString::Printf(TEXT("%s: - Failed to get float property with name: UniformScale."), *Context));

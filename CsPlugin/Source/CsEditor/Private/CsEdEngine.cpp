@@ -369,7 +369,7 @@ void UCsEdEngine::OnPostInit()
 	typedef NCsSettings::FTool SettingsTool;
 
 	SettingsTool::ToggleProjectSettings();
-
+	
 	// ICsAsset_Event
 	GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OnAssetOpenedInEditor().AddUObject(this, &UCsEdEngine::OnAssetOpenedInEditor);
 	GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OnAssetEditorRequestClose().AddUObject(this, &UCsEdEngine::OnAssetEditorRequestClose);

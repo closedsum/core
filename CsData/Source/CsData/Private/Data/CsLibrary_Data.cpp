@@ -221,8 +221,6 @@ namespace NCsData
 	// Implement
 	#pragma region
 
-	#define ObjectLibrary NCsObject::FLibrary
-
 	bool FLibrary::ScriptImplementsChecked(const FString& Context, const UObject* Object)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Object)
@@ -230,7 +228,7 @@ namespace NCsData
 		UClass* Class = Object->GetClass();
 
 		checkf(Class, TEXT("%s: Failed to get class from Object: %s."), *Context, *(Object->GetName()));
-		checkf(Class->ImplementsInterface(UCsScriptData::StaticClass()), TEXT("%s: %s does NOT implement the interface: ICsScriptData."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
+		checkf(Class->ImplementsInterface(UCsScriptData::StaticClass()), TEXT("%s: %s does NOT implement the interface: ICsScriptData."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object));
 		return true;
 	}
 
@@ -250,7 +248,7 @@ namespace NCsData
 
 		if (!Success)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsScriptData."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsScriptData."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object)));
 		}
 		return Success;
 	}
@@ -262,7 +260,7 @@ namespace NCsData
 		UClass* Class = Object->GetClass();
 
 		checkf(Class, TEXT("%s: Failed to get class from Object: %s."), *Context, *(Object->GetName()));
-		checkf(Class->ImplementsInterface(UCsData::StaticClass()), TEXT("%s: %s does NOT implement the interface: ICsData."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
+		checkf(Class->ImplementsInterface(UCsData::StaticClass()), TEXT("%s: %s does NOT implement the interface: ICsData."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object));
 		return true;
 	}
 
@@ -282,7 +280,7 @@ namespace NCsData
 
 		if (!Success)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsData."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsData."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object)));
 		}
 		return Success;
 	}
@@ -293,8 +291,6 @@ namespace NCsData
 
 		return SafeImplements(Context, Object, nullptr);
 	}
-
-	#undef ObjectLibrary
 
 	#pragma endregion Implment
 

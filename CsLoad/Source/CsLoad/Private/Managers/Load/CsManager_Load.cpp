@@ -200,11 +200,9 @@ void UCsManager_Load::CleanUp()
 
 	const FString& Context = Str::CleanUp;
 
-	typedef NCsObject::FLibrary ObjectLibrary;
-
 	for (UObject* O : Tasks)
 	{
-		ObjectLibrary::SafeMarkAsGarbage(O);
+		CsObjectLibrary::SafeMarkAsGarbage(O);
 	}
 
 	Tasks.Reset();

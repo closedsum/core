@@ -51,6 +51,12 @@ namespace NCsGameInstance
 			* return				GameInstance
 			*/
 			static UCsGameInstance* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
+			FORCEINLINE static UCsGameInstance* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+			{
+				UCsGameInstance* GameInstance = GetSafe(Context, ContextObject, Log);
+				OutSuccess					  = GameInstance != nullptr;
+				return GameInstance;
+			}
 
 		#pragma endregion Get
 
@@ -180,3 +186,5 @@ namespace NCsGameInstance
 		};
 	}
 }
+
+using CsGameInstanceImplLibrary = NCsGameInstance::NImpl::FLibrary;

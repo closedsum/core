@@ -44,7 +44,6 @@ UCsScriptLibrary_Object::UCsScriptLibrary_Object(const FObjectInitializer& Objec
 #define USING_NS_CACHED using namespace NCsScriptLibraryObject::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryObject::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define ObjectLibrary NCsObject::FLibrary
 
 // Load
 #pragma region
@@ -53,14 +52,14 @@ UObject* UCsScriptLibrary_Object::LoadBySoftObjectPath(const FString& Context, c
 {
 	CONDITIONAL_SET_CTXT(LoadBySoftObjectPath);
 
-	return ObjectLibrary::SafeLoad(Ctxt, Path);
+	return CsObjectLibrary::SafeLoad(Ctxt, Path);
 }
 
 UObject* UCsScriptLibrary_Object::LoadByStringPath(const FString& Context, const FString& Path)
 {
 	CONDITIONAL_SET_CTXT(LoadByStringPath);
 
-	return ObjectLibrary::SafeLoad(Ctxt, Path);
+	return CsObjectLibrary::SafeLoad(Ctxt, Path);
 }
 
 #pragma endregion Load
@@ -69,26 +68,26 @@ UObject* UCsScriptLibrary_Object::ConstructObject(const FString& Context, UObjec
 {
 	CONDITIONAL_SET_CTXT(ConstructObject);
 
-	return ObjectLibrary::SafeConstruct(Ctxt, Outer, Class);
+	return CsObjectLibrary::SafeConstruct(Ctxt, Outer, Class);
 }
 
 UObject* UCsScriptLibrary_Object::GetDefaultObject(const FString& Context, UObject* Object)
 {
 	CONDITIONAL_SET_CTXT(GetDefaultObject);
 
-	return ObjectLibrary::GetSafeDefaultObject(Ctxt, Object);
+	return CsObjectLibrary::GetSafeDefaultObject(Ctxt, Object);
 }
 
 int32 UCsScriptLibrary_Object::Object_GetUniqueID(const FString& Context, const UObject* Object)
 {
 	CONDITIONAL_SET_CTXT(Object_GetUniqueID);
 
-	return ObjectLibrary::GetSafeUniqueID(Ctxt, Object);
+	return CsObjectLibrary::GetSafeUniqueID(Ctxt, Object);
 }
 
 int32 UCsScriptLibrary_Object::DOb_GetUniqueID(const FString& Context, const UObject* Object)
 {
-	if (UObject* DOb = ObjectLibrary::GetSafeDefaultObject(Context, Object))
+	if (UObject* DOb = CsObjectLibrary::GetSafeDefaultObject(Context, Object))
 		return DOb->GetUniqueID();
 	return INDEX_NONE;
 }
@@ -97,23 +96,22 @@ bool UCsScriptLibrary_Object::IsValidChecked(const FString& Context, UObject* Ob
 {
 	CONDITIONAL_SET_CTXT(IsValidChecked);
 
-	return CS_SCRIPT_GET_CHECKED(ObjectLibrary::IsValidChecked(Ctxt, Object), ObjectLibrary::SafeIsValid(Ctxt, Object));
+	return CS_SCRIPT_GET_CHECKED(CsObjectLibrary::IsValidChecked(Ctxt, Object), CsObjectLibrary::SafeIsValid(Ctxt, Object));
 }
 
 bool UCsScriptLibrary_Object::SafeIsValid(const FString& Context, UObject* Object)
 {
 	CONDITIONAL_SET_CTXT(SafeIsValid);
 
-	return ObjectLibrary::SafeIsValid(Ctxt, Object);
+	return CsObjectLibrary::SafeIsValid(Ctxt, Object);
 }
 
 bool UCsScriptLibrary_Object::Object_MarkPendingKill(const FString& Context, UObject* Object)
 {
 	CONDITIONAL_SET_CTXT(Object_MarkPendingKill);
 
-	return ObjectLibrary::SafeMarkAsGarbage(Ctxt, Object);
+	return CsObjectLibrary::SafeMarkAsGarbage(Ctxt, Object);
 }
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef ObjectLibrary

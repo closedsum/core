@@ -129,7 +129,6 @@ namespace NCsPlayer
 		}
 
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-		#define ObjectLibrary NCsObject::FLibrary
 
 		const ULocalPlayer* FLibrary::GetChecked(const FString& Context, const APawn* Pawn)
 		{
@@ -154,19 +153,18 @@ namespace NCsPlayer
 				}
 				else
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No LocalPlayer for PlayerController: %s."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn)));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No LocalPlayer for PlayerController: %s."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn)));
 					return INDEX_NONE;
 				}
 			}
 			else
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s with Class: %s"), *Context, *(Pawn->GetName()), *ObjectLibrary::PrintNameAndClass(Pawn->GetController())));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s with Class: %s"), *Context, *(Pawn->GetName()), *CsObjectLibrary::PrintNameAndClass(Pawn->GetController())));
 				return INDEX_NONE;
 			}
 		}
 
 		#undef LogLevel
-		#undef ObjectLibrary
 
 		namespace NFirst
 		{
@@ -517,7 +515,6 @@ namespace NCsPlayer
 		}
 
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-		#define ObjectLibrary NCsObject::FLibrary
 		#define WorldLibrary NCsWorld::FLibrary
 
 		APlayerController* FLibrary::GetOrFirstLocalChecked(const FString& Context, APawn* Pawn)
@@ -561,13 +558,13 @@ namespace NCsPlayer
 					}
 					else
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No LocalPlayer for PlayerController: %s."), *Context, *ObjectLibrary::PrintNameAndClass(PlayerContext)));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No LocalPlayer for PlayerController: %s."), *Context, *CsObjectLibrary::PrintNameAndClass(PlayerContext)));
 						return INDEX_NONE;
 					}
 				}
 				else
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s with Class: %s"), *Context, *(PlayerContext->GetName()), *ObjectLibrary::PrintNameAndClass(Pawn->GetController())));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s with Class: %s"), *Context, *(PlayerContext->GetName()), *CsObjectLibrary::PrintNameAndClass(Pawn->GetController())));
 					return INDEX_NONE;
 				}
 			}
@@ -579,11 +576,11 @@ namespace NCsPlayer
 				}
 				else
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No LocalPlayer for PlayerController: %s."), *Context, *ObjectLibrary::PrintNameAndClass(PlayerContext)));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No LocalPlayer for PlayerController: %s."), *Context, *CsObjectLibrary::PrintNameAndClass(PlayerContext)));
 					return INDEX_NONE;
 				}
 			}
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerContext: %s with Class: %s is NOT of type APawn or APlayerController."), *Context, *ObjectLibrary::PrintNameAndClass(PlayerContext)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerContext: %s with Class: %s is NOT of type APawn or APlayerController."), *Context, *CsObjectLibrary::PrintNameAndClass(PlayerContext)));
 			return INDEX_NONE;
 		}
 
@@ -605,7 +602,6 @@ namespace NCsPlayer
 		}
 
 		#undef LogLevel
-		#undef ObjectLibrary
 		#undef WorldLibrary
 	}
 

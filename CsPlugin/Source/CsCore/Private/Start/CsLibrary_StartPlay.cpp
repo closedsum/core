@@ -14,7 +14,6 @@
 namespace NCsStartPlay
 {
 	#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-	#define ObjectLibrary NCsObject::FLibrary
 
 	bool FLibrary::ImplementsChecked(const FString& Context, const UObject* Object)
 	{
@@ -24,7 +23,7 @@ namespace NCsStartPlay
 			Object->GetClass()->ImplementsInterface(UCsScriptStartPlay::StaticClass()))
 			return true;
 
-		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
+		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object));
 		return true;
 	}
 
@@ -43,7 +42,7 @@ namespace NCsStartPlay
 			OutIsScript = true;
 			return true;
 		}
-		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
+		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object));
 		return true;
 	}
 
@@ -55,7 +54,7 @@ namespace NCsStartPlay
 			Object->GetClass()->ImplementsInterface(UCsScriptStartPlay::StaticClass()))
 			return true;
 
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object)));
 		return true;
 	}
 
@@ -75,7 +74,7 @@ namespace NCsStartPlay
 			return true;
 		}
 
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object)));
 		return true;
 	}
 
@@ -93,7 +92,7 @@ namespace NCsStartPlay
 			return ICsScriptStartPlay::Execute_Script_HasStartedPlay(Object);
 		}
 
-		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
+		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object));
 		return false;
 	}
 
@@ -111,7 +110,7 @@ namespace NCsStartPlay
 			return ICsScriptStartPlay::Execute_Script_HasStartedPlay(Object);
 		}
 
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object)));
 		return false;
 	}
 
@@ -129,7 +128,7 @@ namespace NCsStartPlay
 		{
 			ICsScriptStartPlay::Execute_Script_StartPlay(Object);
 		}
-		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
+		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object));
 	}
 
 	void FLibrary::SafeStartPlay(const FString& Context, UObject* Object, LogLevel)
@@ -146,9 +145,8 @@ namespace NCsStartPlay
 		{
 			ICsScriptStartPlay::Execute_Script_StartPlay(Object);
 		}
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object)));
 	}
 
 	#undef LogLevel
-	#undef ObjectLibrary
 }

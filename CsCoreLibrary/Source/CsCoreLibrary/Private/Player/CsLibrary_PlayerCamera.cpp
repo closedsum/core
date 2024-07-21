@@ -21,7 +21,6 @@ namespace NCsPlayer
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
-		#define ObjectLibrary NCsObject::FLibrary
 		#define MathLibrary NCsMath::FLibrary
 
 		bool FLibrary::IsValidChecked(const FString& Context, const FViewTargetTransitionParams& TransitionParams)
@@ -96,11 +95,11 @@ namespace NCsPlayer
 
 			AController* Controller = Pawn->GetController();
 
-			checkf(Controller, TEXT("%s: %s does NOT have a controller."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn));
+			checkf(Controller, TEXT("%s: %s does NOT have a controller."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn));
 
 			APlayerController* PC = Cast<APlayerController>(Controller);
 
-			checkf(PC, TEXT("%s: %s does NOT have a controller of type: APlayerController."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn));
+			checkf(PC, TEXT("%s: %s does NOT have a controller of type: APlayerController."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn));
 
 			APlayerCameraManager* PCM = PC->PlayerCameraManager;
 
@@ -116,7 +115,7 @@ namespace NCsPlayer
 
 			if (!Controller)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT have a controller."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn)));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT have a controller."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn)));
 				return nullptr;
 			}
 
@@ -124,7 +123,7 @@ namespace NCsPlayer
 
 			if (!PC)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT have a controller of type: APlayerController."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn)));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT have a controller of type: APlayerController."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn)));
 				return nullptr;
 			}
 
@@ -187,7 +186,7 @@ namespace NCsPlayer
 			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
 			APlayerController* PC	  = PCM->PCOwner.Get();
 
-			checkf(ObjectLibrary::IsValidObject(PC), TEXT("%s: PlayerCameraManager associated with ControllerId: %d has an Invalid reference to a PlayerController."), *Context, ControllerId);
+			checkf(CsObjectLibrary::IsValidObject(PC), TEXT("%s: PlayerCameraManager associated with ControllerId: %d has an Invalid reference to a PlayerController."), *Context, ControllerId);
 
 			PCM->SetViewTarget(NewViewTarget, TransitionParams);
 		#endif // #if UE_BUILD_SHIPPING
@@ -207,7 +206,7 @@ namespace NCsPlayer
 
 			APlayerController* PC = PCM->PCOwner.Get();
 
-			if (!ObjectLibrary::IsValidObject(PC))
+			if (!CsObjectLibrary::IsValidObject(PC))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerCameraManager associated with ControllerId: %d has an Invalid reference to a PlayerController."), *Context, ControllerId));
 				return false;
@@ -252,7 +251,7 @@ namespace NCsPlayer
 			APlayerCameraManager* PCM = GetChecked(Context, Pawn);
 			APlayerController* PC	  = PCM->PCOwner.Get();
 
-			checkf(ObjectLibrary::IsValidObject(PC), TEXT("%s: PlayerCameraManager associated with %s has an Invalid reference to a PlayerController."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn));
+			checkf(CsObjectLibrary::IsValidObject(PC), TEXT("%s: PlayerCameraManager associated with %s has an Invalid reference to a PlayerController."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn));
 
 			PCM->SetViewTarget(NewViewTarget, TransitionParams);
 		#endif // #if UE_BUILD_SHIPPING
@@ -272,9 +271,9 @@ namespace NCsPlayer
 
 			APlayerController* PC = PCM->PCOwner.Get();
 
-			if (!ObjectLibrary::IsValidObject(PC))
+			if (!CsObjectLibrary::IsValidObject(PC))
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerCameraManager associated with %s has an Invalid reference to a PlayerController."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn)));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerCameraManager associated with %s has an Invalid reference to a PlayerController."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn)));
 				return false;
 			}
 			PCM->SetViewTarget(NewViewTarget, TransitionParams);
@@ -289,7 +288,7 @@ namespace NCsPlayer
 			APlayerCameraManager* PCM = GetChecked(Context, Pawn);
 			APlayerController* PC	  = PCM->PCOwner.Get();
 
-			checkf(ObjectLibrary::IsValidObject(PC), TEXT("%s: PlayerCameraManager associated with %s has an Invalid reference to a PlayerController."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn));
+			checkf(CsObjectLibrary::IsValidObject(PC), TEXT("%s: PlayerCameraManager associated with %s has an Invalid reference to a PlayerController."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn));
 
 			PCM->SetViewTarget(Pawn);
 		#endif // #if UE_BUILD_SHIPPING
@@ -328,11 +327,11 @@ namespace NCsPlayer
 		{
 			APlayerCameraManager* PCM = GetChecked(Context, PlayerController);
 
-			checkf(PCM, TEXT("%s: %s has NO Player Camera Manager."), *Context, *ObjectLibrary::PrintNameAndClass(PlayerController));
+			checkf(PCM, TEXT("%s: %s has NO Player Camera Manager."), *Context, *CsObjectLibrary::PrintNameAndClass(PlayerController));
 
 			AActor* VT = PCM->GetViewTarget();
 
-			checkf(VT, TEXT("%s: Failed to get View Target for PlayerCameraManager associated with %s."), *Context, *ObjectLibrary::PrintNameAndClass(PlayerController));
+			checkf(VT, TEXT("%s: Failed to get View Target for PlayerCameraManager associated with %s."), *Context, *CsObjectLibrary::PrintNameAndClass(PlayerController));
 			return VT;
 		}
 
@@ -340,11 +339,11 @@ namespace NCsPlayer
 		{
 			APlayerCameraManager* PCM = GetChecked(Context, Pawn);
 
-			checkf(PCM, TEXT("%s: %s has NO Player Camera Manager."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn));
+			checkf(PCM, TEXT("%s: %s has NO Player Camera Manager."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn));
 
 			AActor* VT = PCM->GetViewTarget();
 
-			checkf(VT, TEXT("%s: Failed to get View Target for PlayerCameraManager associated with %s."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn));
+			checkf(VT, TEXT("%s: Failed to get View Target for PlayerCameraManager associated with %s."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn));
 			return VT;
 		}
 
@@ -359,7 +358,7 @@ namespace NCsPlayer
 
 			if (!VT)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get View Target for PlayerCameraManager associated with %s."), *Context, *ObjectLibrary::PrintNameAndClass(Pawn)));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get View Target for PlayerCameraManager associated with %s."), *Context, *CsObjectLibrary::PrintNameAndClass(Pawn)));
 				return nullptr;
 			}
 			return VT;
@@ -594,7 +593,6 @@ namespace NCsPlayer
 		#undef LogLevel
 		#undef PCLocalLibrary
 		#undef PCFirstLocalLibrary
-		#undef ObjectLibrary
 		#undef MathLibrary
 
 		namespace NLocal

@@ -184,9 +184,7 @@ namespace NCsSkin
 					{
 						if (Log)
 						{
-							typedef NCsObject::FLibrary ObjectLibrary;
-
-							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)."), *(ObjectLibrary::PrintObjectAndClass(Object))));
+							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)."), *(CsObjectLibrary::PrintObjectAndClass(Object))));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualSkeletalMeshImplSlice with name: VisualSkeletalMeshSlice.")));
 							Log(FString::Printf(TEXT("%s: - OR")));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsSkeletalMesh with name: SkeletalMesh.")));

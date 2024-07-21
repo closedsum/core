@@ -54,7 +54,6 @@ namespace NCsMaterial
 			#define LogWarning void(*Log)(const FString&) /*=&FCsLog::Warning*/
 			#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
 			#define MathLibrary NCsMath::FLibrary
-			#define MIDLibrary NCsMaterial::NMID::FLibrary
 
 			#define ParamsResourceType NCsMaterial::NAnim::NParams::FResource
 			#define ParamsType NCsMaterial::NAnim::NParams::FParams
@@ -222,7 +221,7 @@ namespace NCsMaterial
 							{
 								if (Percent == 0.0f)
 								{
-									MIDLibrary::SetVectorParameterValueChecked(Context, MIDs, Param.GetName(), End);
+									CsMIDLibrary::SetVectorParameterValueChecked(Context, MIDs, Param.GetName(), End);
 								}
 							}
 							else
@@ -238,7 +237,7 @@ namespace NCsMaterial
 
 								FLinearColor Current = Start + Alpha * Distance * Normal;
 
-								MIDLibrary::SetVectorParameterValueChecked(Context, MIDs, Param.GetName(), Current);
+								CsMIDLibrary::SetVectorParameterValueChecked(Context, MIDs, Param.GetName(), Current);
 							};
 						}
 						// Scalar
@@ -252,7 +251,7 @@ namespace NCsMaterial
 							{
 								if (Percent == 0.0f)
 								{
-									MIDLibrary::SetScalarParameterValueChecked(Context, MIDs, Param.GetName(), End);
+									CsMIDLibrary::SetScalarParameterValueChecked(Context, MIDs, Param.GetName(), End);
 								}
 							}
 							else
@@ -263,7 +262,7 @@ namespace NCsMaterial
 								const float Delta = End - Start;
 								float Final		  = Start + Alpha * Delta;
 
-								MIDLibrary::SetScalarParameterValueChecked(Context, MIDs, Param.GetName(), Final);
+								CsMIDLibrary::SetScalarParameterValueChecked(Context, MIDs, Param.GetName(), Final);
 							};
 						}
 
@@ -276,12 +275,12 @@ namespace NCsMaterial
 							// Vector
 							for (const VectorType& Param : Frame.VectorParameters)
 							{
-								MIDLibrary::SetVectorParameterValueChecked(Context, MIDs, Param.GetName(), Param.GetTo());
+								CsMIDLibrary::SetVectorParameterValueChecked(Context, MIDs, Param.GetName(), Param.GetTo());
 							}
 							// Float
 							for (const ScalarType& Param : Frame.ScalarParameters)
 							{
-								MIDLibrary::SetScalarParameterValueChecked(Context, MIDs, Param.GetName(), Param.GetTo());
+								CsMIDLibrary::SetScalarParameterValueChecked(Context, MIDs, Param.GetName(), Param.GetTo());
 							}
 
 							ElapsedTime.Reset();
@@ -342,7 +341,6 @@ namespace NCsMaterial
 			#undef LogWarning
 			#undef CoroutineSchedulerLibrary
 			#undef MathLibrary
-			#undef MIDLibrary
 		}
 	}
 }

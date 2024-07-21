@@ -183,9 +183,7 @@ namespace NCsWidget
 
 	UClass* FLibrary::LoadChecked(const FString& Context, const FSoftObjectPath& Path)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-		
-		UObject* O = ObjectLibrary::LoadChecked(Context, Path);
+		UObject* O = CsObjectLibrary::LoadChecked(Context, Path);
 
 		UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O);
 
@@ -204,9 +202,7 @@ namespace NCsWidget
 
 	UClass* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
-		UObject* O = ObjectLibrary::SafeLoad(Context, Path, Log);
+		UObject* O = CsObjectLibrary::SafeLoad(Context, Path, Log);
 
 		if (!O)
 			return nullptr;
@@ -246,11 +242,9 @@ namespace NCsWidget
 	{
 		using namespace NCsWidget::NLibrary::NCached;
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		checkf(Path.EndsWith(Str::_C), TEXT("%s: Path: %s does NOT end with '_C'."), *Context, *Path);
 
-		UObject* O = ObjectLibrary::LoadChecked(Context, Path);
+		UObject* O = CsObjectLibrary::LoadChecked(Context, Path);
 
 		UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O);
 
@@ -271,15 +265,13 @@ namespace NCsWidget
 	{
 		using namespace NCsWidget::NLibrary::NCached;
 
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		if (!Path.EndsWith(Str::_C))
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s does NOT end with '_C'."), *Context, *Path));
 			return nullptr;
 		}
 			
-		UObject* O = ObjectLibrary::SafeLoad(Context, Path, Log);
+		UObject* O = CsObjectLibrary::SafeLoad(Context, Path, Log);
 
 		if (!O)
 			return nullptr;

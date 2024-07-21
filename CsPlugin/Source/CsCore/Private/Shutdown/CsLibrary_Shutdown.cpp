@@ -36,8 +36,6 @@ namespace NCsShutdown
 	// Implement
 	#pragma region
 
-	#define ObjectLibrary NCsObject::FLibrary
-
 	bool FLibrary::ImplementsChecked(const FString& Context, const UObject* Object)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Object)
@@ -45,7 +43,7 @@ namespace NCsShutdown
 		UClass* Class = Object->GetClass();
 
 		checkf(Class, TEXT("%s: Failed to get class from Object: %s."), *Context, *(Object->GetName()));
-		checkf(Class->ImplementsInterface(UCsShutdown::StaticClass()), TEXT("%s: %s does NOT implement the interface: ICsShutdown."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
+		checkf(Class->ImplementsInterface(UCsShutdown::StaticClass()), TEXT("%s: %s does NOT implement the interface: ICsShutdown."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object));
 		return true;
 	}
 
@@ -65,7 +63,7 @@ namespace NCsShutdown
 
 		if (!Success)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsShutdown."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsShutdown."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object)));
 		}
 		return Success;
 	}
@@ -76,8 +74,6 @@ namespace NCsShutdown
 
 		return SafeImplements(Context, Object, nullptr);
 	}
-
-	#undef ObjectLibrary
 
 	#pragma endregion Implment
 

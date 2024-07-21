@@ -12,19 +12,18 @@
 namespace NCsBlendSpace
 {
 	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define ObjectLibrary NCsObject::FLibrary
 
 	// Load
 	#pragma region
 
 	UBlendSpace* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<UBlendSpace>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UBlendSpace>(Context, Path, Log);
 	}
 
 	UBlendSpace* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<UBlendSpace>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UBlendSpace>(Context, Path, Log);
 	}
 
 	#pragma endregion Load
@@ -42,24 +41,22 @@ namespace NCsBlendSpace
 	#pragma endregion Get
 
 	#undef LogLevel
-	#undef ObjectLibrary
 
 	namespace N1D
 	{
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-		#define ObjectLibrary NCsObject::FLibrary
 
 		// Load
 		#pragma region
 
 		UBlendSpace1D* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
 		{
-			return ObjectLibrary::SafeLoad<UBlendSpace1D>(Context, Path, Log);
+			return CsObjectLibrary::SafeLoad<UBlendSpace1D>(Context, Path, Log);
 		}
 
 		UBlendSpace1D* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogLevel)
 		{
-			return ObjectLibrary::SafeLoad<UBlendSpace1D>(Context, Path, Log);
+			return CsObjectLibrary::SafeLoad<UBlendSpace1D>(Context, Path, Log);
 		}
 
 		#pragma endregion Load
@@ -77,6 +74,5 @@ namespace NCsBlendSpace
 		#pragma endregion Get
 
 		#undef LogLevel
-		#undef ObjectLibrary
 	}
 }

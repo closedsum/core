@@ -51,36 +51,31 @@ UCsScriptLibrary_Material::UCsScriptLibrary_Material(const FObjectInitializer& O
 }
 
 #define USING_NS_CACHED using namespace NCsScriptLibraryMaterial::NCached;
-#define MaterialLibrary NCsMaterial::FLibrary
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryMaterial::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 
 // Load
 #pragma region
 
 UMaterialInterface* UCsScriptLibrary_Material::LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path)
 {
-	USING_NS_CACHED
+	CONDITIONAL_SET_CTXT(LoadBySoftObjectPath);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
-
-	return MaterialLibrary::SafeLoad(Ctxt, Path);
+	return CsMaterialLibrary::SafeLoad(Ctxt, Path);
 }
 
 UMaterialInterface* UCsScriptLibrary_Material::LoadByStringPath(const FString& Context, const FString& Path)
 {
-	USING_NS_CACHED
+	CONDITIONAL_SET_CTXT(LoadByStringPath);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
-
-	return MaterialLibrary::SafeLoad(Ctxt, Path);
+	return CsMaterialLibrary::SafeLoad(Ctxt, Path);
 }
 
 bool UCsScriptLibrary_Material::LoadByStringPaths(const FString& Context, const TArray<FString>& Paths, TArray<UMaterialInterface*>& OutMaterials)
 {
-	USING_NS_CACHED
+	CONDITIONAL_SET_CTXT(LoadByStringPaths);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPaths : Context;
-
-	return MaterialLibrary::SafeLoad(Ctxt, Paths, OutMaterials);
+	return CsMaterialLibrary::SafeLoad(Ctxt, Paths, OutMaterials);
 }
 
 #pragma endregion Load
@@ -90,38 +85,30 @@ bool UCsScriptLibrary_Material::LoadByStringPaths(const FString& Context, const 
 
 UMaterialInterface* UCsScriptLibrary_Material::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
 {
-	USING_NS_CACHED
+	CONDITIONAL_SET_CTXT(GetByPath);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetByPath : Context;
-
-	return MaterialLibrary::GetSafe(Ctxt, Object, Path, OutSuccess);
+	return CsMaterialLibrary::GetSafe(Ctxt, Object, Path, OutSuccess);
 }
 
 bool UCsScriptLibrary_Material::GetSoftObjectAsStringByPath(const FString& Context, UObject* Object, const FString& Path, FString& OutPath, bool& OutSuccess)
 {
-	USING_NS_CACHED
+	CONDITIONAL_SET_CTXT(GetSoftObjectAsStringByPath);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetSoftObjectAsStringByPath : Context;
-
-	return MaterialLibrary::GetSafe(Ctxt, Object, Path, OutPath, OutSuccess);
+	return CsMaterialLibrary::GetSafe(Ctxt, Object, Path, OutPath, OutSuccess);
 }
 
 bool UCsScriptLibrary_Material::GetArrayByPath(const FString& Context, UObject* Object, const FString& Path, TArray<UMaterialInterface*>& OutArray, bool& OutSuccess)
 {
-	USING_NS_CACHED
+	CONDITIONAL_SET_CTXT(GetArrayByPath);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetArrayByPath : Context;
-
-	return MaterialLibrary::GetSafe(Ctxt, Object, Path, OutArray, OutSuccess);
+	return CsMaterialLibrary::GetSafe(Ctxt, Object, Path, OutArray, OutSuccess);
 }
 
 bool UCsScriptLibrary_Material::GetSoftObjectArrayAsStringByPath(const FString& Context, UObject* Object, const FString& Path, TArray<FString>& OutArray, bool& OutSuccess)
 {
-	USING_NS_CACHED
+	CONDITIONAL_SET_CTXT(GetSoftObjectArrayAsStringByPath);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetSoftObjectArrayAsStringByPath : Context;
-
-	return MaterialLibrary::GetSafe(Ctxt, Object, Path, OutArray, OutSuccess);
+	return CsMaterialLibrary::GetSafe(Ctxt, Object, Path, OutArray, OutSuccess);
 }
 
 #pragma endregion Get
@@ -131,45 +118,35 @@ bool UCsScriptLibrary_Material::GetSoftObjectArrayAsStringByPath(const FString& 
 
 bool UCsScriptLibrary_Material::SetAll(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material)
 {
-	USING_NS_CACHED
+	CONDITIONAL_SET_CTXT(SetAll);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetAll : Context;
-
-	return MaterialLibrary::SetSafe(Ctxt, Component, Material);
+	return CsMaterialLibrary::SetSafe(Ctxt, Component, Material);
 }
 
 bool UCsScriptLibrary_Material::SetAt(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
 {
-	USING_NS_CACHED
+	CONDITIONAL_SET_CTXT(SetAt);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetAt : Context;
-
-	return MaterialLibrary::SetSafe(Ctxt, Component, Material, Index);
+	return CsMaterialLibrary::SetSafe(Ctxt, Component, Material, Index);
 }
 
 bool UCsScriptLibrary_Material::Set(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
 {
-	USING_NS_CACHED
+	CONDITIONAL_SET_CTXT(Set);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::Set : Context;
-
-	return MaterialLibrary::SetSafe(Ctxt, Component, Materials);
+	return CsMaterialLibrary::SetSafe(Ctxt, Component, Materials);
 }
 
 bool UCsScriptLibrary_Material::SetFromStruct(const FString& Context, const FCsTArrayMaterialInterface& Materials, UPrimitiveComponent* Component)
 {
-	USING_NS_CACHED
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromStruct : Context;
+	CONDITIONAL_SET_CTXT(SetFromStruct);
 
 	return Materials.SetSafe(Ctxt, Component);
 }
 
 bool UCsScriptLibrary_Material::SetFromObject(const FString& Context, UObject* Object, const FName& PropertyName, UPrimitiveComponent* Component)
 {
-	USING_NS_CACHED
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject : Context;
+	CONDITIONAL_SET_CTXT(SetFromObject);
 
 	void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning;
 
@@ -201,13 +178,11 @@ bool UCsScriptLibrary_Material::SetFromObject(const FString& Context, UObject* O
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component is NULL."), *Ctxt));
 				return false;
 			}
-			return MaterialLibrary::SetSafe(Ctxt, Component, *MaterialsPtr);
+			return CsMaterialLibrary::SetSafe(Ctxt, Component, *MaterialsPtr);
 		}
 	}
 	
-	typedef NCsObject::FLibrary ObjectLibrary;
-
-	UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: Failed to find any properties from %s for Property: %s of type: TArray<UMaterialInterface*>"), *Ctxt, *(ObjectLibrary::PrintObjectAndClass(Object)), *(PropertyName.ToString()));
+	UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: Failed to find any properties from %s for Property: %s of type: TArray<UMaterialInterface*>"), *Ctxt, *(CsObjectLibrary::PrintObjectAndClass(Object)), *(PropertyName.ToString()));
 	UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialInterface."), *Ctxt);
 	UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: - OR"), *Ctxt);
 	UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: - Failed to get array property of type: TArray<UMaterialInterface*>."), *Ctxt);
@@ -218,4 +193,4 @@ bool UCsScriptLibrary_Material::SetFromObject(const FString& Context, UObject* O
 #pragma endregion Set
 
 #undef USING_NS_CACHED
-#undef MaterialLibrary
+#undef CONDITIONAL_SET_CTXT

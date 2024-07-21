@@ -12,19 +12,18 @@
 namespace NCsAnimSequence
 {
 	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define ObjectLibrary NCsObject::FLibrary
 
 	// Load
 	#pragma region
 
 	UAnimSequence* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<UAnimSequence>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UAnimSequence>(Context, Path, Log);
 	}
 
 	UAnimSequence* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<UAnimSequence>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UAnimSequence>(Context, Path, Log);
 	}
 
 	#pragma endregion Load
@@ -42,5 +41,4 @@ namespace NCsAnimSequence
 	#pragma endregion Get
 
 	#undef LogLevel
-	#undef ObjectLibrary
 }

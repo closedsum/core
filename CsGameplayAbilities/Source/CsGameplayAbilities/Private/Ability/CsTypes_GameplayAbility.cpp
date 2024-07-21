@@ -64,7 +64,6 @@ namespace NCsGameplayAbility
 #define USING_NS_CACHED using namespace NCsGameplayAbility::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsGameplayAbility::NCached; \
 	const FString& Context = Str::__FunctionName
-#define ObjectLibrary NCsObject::FLibrary
 
 UGameplayAbility* FCsGameplayAbility::SafeLoad(const FString& Context, void(*Log)(const FString&) /*=&NCsGameplayAbilities::FLog::Warning*/)
 {
@@ -72,7 +71,7 @@ UGameplayAbility* FCsGameplayAbility::SafeLoad(const FString& Context, void(*Log
 
 	const FSoftObjectPath& Path = Ability.ToSoftObjectPath();
 
-	if (!ObjectLibrary::IsValidObject(Ability_Internal))
+	if (!CsObjectLibrary::IsValidObject(Ability_Internal))
 	{
 		Ability_Class = Ability.LoadSynchronous();
 
@@ -125,7 +124,6 @@ UObject* FCsGameplayAbility::SafeLoadSoftClass(const FString& Context, void(*Log
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef ObjectLibrary
 
 #pragma endregion FCsGameplayAbility
 

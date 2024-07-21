@@ -44,19 +44,18 @@ namespace NCsMaterial
 	#define SET_CONTEXT(__FunctionName) using namespace NCsMaterial::NLibrary::NCached; \
 		const FString& Context = Str::__FunctionName
 	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define ObjectLibrary NCsObject::FLibrary
 
 	// Load
 	#pragma region
 
 	UMaterialInterface* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<UMaterialInterface>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UMaterialInterface>(Context, Path, Log);
 	}
 
 	UMaterialInterface* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<UMaterialInterface>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UMaterialInterface>(Context, Path, Log);
 	}
 
 	bool FLibrary::SafeLoad(const FString& Context, const TArray<FString>& Paths, TArray<UMaterialInterface*>& OutMaterials, LogLevel)
@@ -259,13 +258,13 @@ namespace NCsMaterial
 
 	bool FLibrary::IsValidChecked_ArrayIndex(const FString& Context, UMaterialInterface* Material, const int32& Index)
 	{
-		checkf(ObjectLibrary::IsValidObject(Material), TEXT("%s: Materials[%d] is NULL or Pending Kill."), *Context, Index);
+		checkf(CsObjectLibrary::IsValidObject(Material), TEXT("%s: Materials[%d] is NULL or Pending Kill."), *Context, Index);
 		return true;
 	}
 
 	bool FLibrary::IsValid_ArrayIndex(const FString& Context, UMaterialInterface* Material, const int32& Index, LogLevel)
 	{
-		if (!ObjectLibrary::IsValidObject(Material))
+		if (!CsObjectLibrary::IsValidObject(Material))
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Materials[%d] is NULL or Pending Kill."), *Context, Index));
 			return false;
@@ -570,7 +569,7 @@ namespace NCsMaterial
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
 			{
-				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
+				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
 		}
@@ -590,7 +589,7 @@ namespace NCsMaterial
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
 			{
-				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
+				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
 		}
@@ -610,7 +609,7 @@ namespace NCsMaterial
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
 			{
-				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
+				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
 		}
@@ -629,7 +628,7 @@ namespace NCsMaterial
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
 			{
-				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
+				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
 		}
@@ -650,7 +649,7 @@ namespace NCsMaterial
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
 			{
-				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
+				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
 		}
@@ -670,7 +669,7 @@ namespace NCsMaterial
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
 			{
-				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
+				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
 		}
@@ -690,7 +689,7 @@ namespace NCsMaterial
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
 			{
-				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
+				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
 		}
@@ -709,7 +708,7 @@ namespace NCsMaterial
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
 			{
-				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
+				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
 		}
@@ -1341,7 +1340,6 @@ namespace NCsMaterial
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
 	#undef LogLevel
-	#undef ObjectLibrary
 
 	namespace NMID
 	{
@@ -1365,8 +1363,6 @@ namespace NCsMaterial
 		}
 
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-		#define ObjectLibrary NCsObject::FLibrary
-		#define MaterialLibrary NCsMaterial::FLibrary
 
 		bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs)
 		{
@@ -1381,10 +1377,10 @@ namespace NCsMaterial
 
 		void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Mesh, UMaterialInterface* Material, const int32& Index, UMaterialInstanceDynamic*& OutMID)
 		{
-			MaterialLibrary::ClearOverrideChecked(Context, Mesh, Index);
-			MaterialLibrary::IsValidChecked(Context, Mesh, Index);
+			CsMaterialLibrary::ClearOverrideChecked(Context, Mesh, Index);
+			CsMaterialLibrary::IsValidChecked(Context, Mesh, Index);
 
-			ObjectLibrary::SafeMarkAsGarbage(Context, OutMID, nullptr);
+			CsObjectLibrary::SafeMarkAsGarbage(Context, OutMID, nullptr);
 
 			CS_IS_PENDING_KILL_CHECKED(Material)
 
@@ -1393,12 +1389,12 @@ namespace NCsMaterial
 
 		bool FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Mesh, UMaterialInterface* Material, const int32& Index, UMaterialInstanceDynamic*& OutMID, LogLevel)
 		{
-			if (!MaterialLibrary::SafeClearOverride(Context, Mesh, Index, Log))
+			if (!CsMaterialLibrary::SafeClearOverride(Context, Mesh, Index, Log))
 				return false;
-			if (!MaterialLibrary::IsValid(Context, Mesh, Index, Log))
+			if (!CsMaterialLibrary::IsValid(Context, Mesh, Index, Log))
 				return false;
 
-			ObjectLibrary::SafeMarkAsGarbage(Context, OutMID, nullptr);
+			CsObjectLibrary::SafeMarkAsGarbage(Context, OutMID, nullptr);
 
 			CS_IS_PENDING_KILL(Material)
 
@@ -1408,7 +1404,7 @@ namespace NCsMaterial
 
 		void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Mesh, const TArray<UMaterialInterface*>& Materials, TArray<UMaterialInstanceDynamic*>& OutMIDs)
 		{
-			MaterialLibrary::ClearOverrideChecked(Context, Mesh);
+			CsMaterialLibrary::ClearOverrideChecked(Context, Mesh);
 			Destroy(OutMIDs);
 
 			const int32 Count = Materials.Num();
@@ -1425,7 +1421,7 @@ namespace NCsMaterial
 
 		bool FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Mesh, const TArray<UMaterialInterface*>& Materials, TArray<UMaterialInstanceDynamic*>& OutMIDs, LogLevel)
 		{
-			if (!MaterialLibrary::SafeClearOverride(Context, Mesh, Log))
+			if (!CsMaterialLibrary::SafeClearOverride(Context, Mesh, Log))
 				return false;
 
 			Destroy(OutMIDs);
@@ -1448,7 +1444,7 @@ namespace NCsMaterial
 
 		void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& OutMIDs, const TArray<UMaterialInterface*>& Materials)
 		{
-			MaterialLibrary::ClearOverrideChecked(Context, Mesh);
+			CsMaterialLibrary::ClearOverrideChecked(Context, Mesh);
 			Destroy(OutMIDs);
 
 			const int32 Count = Materials.Num();
@@ -1480,7 +1476,7 @@ namespace NCsMaterial
 
 		void FLibrary::SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& OutMIDs, const TArray<UMaterialInterface*>& Materials)
 		{
-			MaterialLibrary::ClearOverrideChecked(Context, Mesh);
+			CsMaterialLibrary::ClearOverrideChecked(Context, Mesh);
 			Destroy(OutMIDs);
 
 			const int32 Count = Materials.Num();
@@ -1520,7 +1516,7 @@ namespace NCsMaterial
 			{
 				UMaterialInstanceDynamic* MID = OutMIDs[I];
 
-				ObjectLibrary::SafeMarkAsGarbage(MID);
+				CsObjectLibrary::SafeMarkAsGarbage(MID);
 
 				OutMIDs.RemoveAt(I, 1, false);
 			}
@@ -2673,7 +2669,5 @@ namespace NCsMaterial
 		#pragma endregion Scalar
 
 		#undef LogLevel
-		#undef ObjectLibrary
-		#undef MaterialLibrary
 	}
 }

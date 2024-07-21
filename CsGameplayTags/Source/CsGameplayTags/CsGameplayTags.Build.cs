@@ -25,7 +25,14 @@ public class CsGameplayTags : ModuleRules
                 new string[] {
                     "Core",
                     "CoreUObject",
-                    "GameplayTags"
+                    "DeveloperSettings",
+                    "GameplayTags",
+                    "CsMacro",
+                    "CsValid",
+                    "CsEnum",
+                    "CsManager",
+                    "CsTypes",
+                    "CsCoreLibrary"
                 }
             );
 

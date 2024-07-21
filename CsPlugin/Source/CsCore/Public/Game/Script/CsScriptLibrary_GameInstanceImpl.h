@@ -6,10 +6,24 @@
 
 #include "CsScriptLibrary_GameInstanceImpl.generated.h"
 
+class UCsGameInstance;
+
 UCLASS()
 class CSCORE_API UCsScriptLibrary_GameInstanceImpl : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+// Get
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Game Instance", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static UCsGameInstance* Get(const FString& Context, const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Game Instance", meta = (DisplayName = "Get (Checked)", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static UCsGameInstance* GetChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
+
+#pragma endregion Get
 
 public:
 
@@ -21,6 +35,6 @@ public:
 	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 	* return				Whether the instance running is a Mobile Preview with Editor .
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCoreLibrary|Library|Game Instance", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Game Instance", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static bool IsMobilePreviewEditor(const FString& Context, const UObject* WorldContextObject);
 };

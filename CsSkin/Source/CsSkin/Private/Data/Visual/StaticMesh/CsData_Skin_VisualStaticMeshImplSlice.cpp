@@ -184,9 +184,7 @@ namespace NCsSkin
 					{
 						if (Log)
 						{
-							typedef NCsObject::FLibrary ObjectLibrary;
-
-							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
+							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMeshImplSlice with name: VisualStaticMeshSlice."), *Context));
 							Log(FString::Printf(TEXT("%s: - OR"), *Context));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsStaticMesh with name: StaticMesh."), *Context));

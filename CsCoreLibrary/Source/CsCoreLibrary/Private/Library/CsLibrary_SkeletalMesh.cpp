@@ -26,29 +26,25 @@ namespace NCsSkeletalMesh
 	// Load
 	#pragma region
 
-	#define ObjectLibrary NCsObject::FLibrary
-
 	USkeletalMesh* FLibrary::LoadChecked(const FString& Context, const FSoftObjectPath& Path)
 	{
-		return ObjectLibrary::LoadChecked<USkeletalMesh>(Context, Path);
+		return CsObjectLibrary::LoadChecked<USkeletalMesh>(Context, Path);
 	}
 
 	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
 	}
 
 	USkeletalMesh* FLibrary::LoadChecked(const FString& Context, const FString& Path)
 	{
-		return ObjectLibrary::LoadChecked<USkeletalMesh>(Context, Path);
+		return CsObjectLibrary::LoadChecked<USkeletalMesh>(Context, Path);
 	}
 
 	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
 	}
-
-	#undef ObjectLibrary
 
 	#pragma endregion Load
 

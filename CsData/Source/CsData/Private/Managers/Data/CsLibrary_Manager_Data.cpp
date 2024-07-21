@@ -37,7 +37,6 @@ namespace NCsData
 		#define SET_CONTEXT(__FunctionName) using namespace NCsData::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsData::FLog::Warning*/
-		#define ObjectLibrary NCsObject::FLibrary
 		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 		// ContextRoot
@@ -106,7 +105,7 @@ namespace NCsData
 
 			UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
 
-			if (!ObjectLibrary::IsValidObject(Manager_Data))
+			if (!CsObjectLibrary::IsValidObject(Manager_Data))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Data."), *Context));
 			}
@@ -444,7 +443,6 @@ namespace NCsData
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef ObjectLibrary
 		#undef GameInstanceLibrary
 	}
 }

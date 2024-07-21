@@ -56,10 +56,7 @@ void FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::SetChecked(const FString& C
 	CS_IS_PTR_NULL_CHECKED(Component);
 
 	Component->SetSkeletalMesh(Mesh.Get());
-
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	MaterialLibrary::SetChecked(Context, Component, Materials.Get());
+	CsMaterialLibrary::SetChecked(Context, Component, Materials.Get());
 }
 
 bool FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
@@ -70,10 +67,7 @@ bool FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::SetSafe(const FString& Cont
 	CS_IS_PTR_NULL(Component)
 
 	Component->SetSkeletalMesh(Mesh.Get());
-
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	return MaterialLibrary::SetSafe(Context, Component, Materials.Get());
+	return CsMaterialLibrary::SetSafe(Context, Component, Materials.Get());
 }
 
 const FName NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl::Name = FName("NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl");
@@ -138,10 +132,7 @@ namespace NCsSkin
 					CS_IS_PTR_NULL_CHECKED(Component);
 
 					Component->SetSkeletalMesh(GetSkeletalMesh());
-
-					typedef NCsMaterial::FLibrary MaterialLibrary;
-
-					MaterialLibrary::SetChecked(Context, Component, GetMaterials());
+					CsMaterialLibrary::SetChecked(Context, Component, GetMaterials());
 				}
 
 				bool FImpl::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
@@ -151,11 +142,8 @@ namespace NCsSkin
 
 					CS_IS_PTR_NULL(Component)
 
-					Component->SetSkeletalMesh(GetSkeletalMesh());
-					
-					typedef NCsMaterial::FLibrary MaterialLibrary;
-
-					return MaterialLibrary::SetSafe(Context, Component, GetMaterials());
+					Component->SetSkeletalMesh(GetSkeletalMesh());		
+					return CsMaterialLibrary::SetSafe(Context, Component, GetMaterials());
 				}
 			}
 		}

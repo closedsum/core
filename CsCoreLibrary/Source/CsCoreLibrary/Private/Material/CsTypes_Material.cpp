@@ -41,15 +41,11 @@ UMaterialInterface* FCsMaterialInterface::SafeLoad(const FString& Context, void(
 // FCsTArrayMaterialInterface
 #pragma region
 
-#define MaterialLibrary NCsMaterial::FLibrary
-
 void FCsTArrayMaterialInterface::SetChecked(const FString& Context, UPrimitiveComponent* Component) const
 {
 	check(IsValidChecked(Context))
-
 	CS_IS_PTR_NULL_CHECKED(Component)
-
-	MaterialLibrary::SetChecked(Context, Component, Materials_Internal);
+	CsMaterialLibrary::SetChecked(Context, Component, Materials_Internal);
 }
 
 bool FCsTArrayMaterialInterface::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
@@ -58,19 +54,13 @@ bool FCsTArrayMaterialInterface::SetSafe(const FString& Context, UPrimitiveCompo
 		return false;
 
 	CS_IS_PTR_NULL(Component)
-
-	return MaterialLibrary::SetSafe(Context, Component, Materials_Internal, Log);
+	return CsMaterialLibrary::SetSafe(Context, Component, Materials_Internal, Log);
 }
-
-#undef MaterialLibrary
 
 #pragma endregion FCsTArrayMaterialInterface
 
 // FCsMaterialParameterFloat
 #pragma region
-
-#define MaterialLibrary NCsMaterial::FLibrary
-#define MIDLibrary NCsMaterial::NMID::FLibrary
 
 #define ParamsType NCsMaterial::NParameter::NFloat::FValue
 
@@ -103,31 +93,28 @@ bool FCsMaterialParameterFloat::IsValid(const FString& Context, void(*Log)(const
 bool FCsMaterialParameterFloat::IsValidChecked(const FString& Context, UMaterialInterface* Material) const
 {
 	check(IsValidChecked(Context));
-	return MaterialLibrary::IsScalarParameterValidChecked(Context, Material, Name);
+	return CsMaterialLibrary::IsScalarParameterValidChecked(Context, Material, Name);
 }
 
 bool FCsMaterialParameterFloat::IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
-	return MaterialLibrary::IsScalarParameterValid(Context, Material, Name, Log);
+	return CsMaterialLibrary::IsScalarParameterValid(Context, Material, Name, Log);
 }
 
 void FCsMaterialParameterFloat::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
 {
 	check(IsValidChecked(Context));
-	MIDLibrary::SetScalarParameterValueChecked(Context, MID, Name, Value);
+	CsMIDLibrary::SetScalarParameterValueChecked(Context, MID, Name, Value);
 }
 
 bool FCsMaterialParameterFloat::SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
-	return MIDLibrary::SetSafeScalarParameterValue(Context, MID, Name, Value, Log);
+	return CsMIDLibrary::SetSafeScalarParameterValue(Context, MID, Name, Value, Log);
 }
-
-#undef MaterialLibrary
-#undef MIDLibrary
 
 namespace NCsMaterial
 {
@@ -135,9 +122,6 @@ namespace NCsMaterial
 	{
 		namespace NFloat
 		{
-			#define MaterialLibrary NCsMaterial::FLibrary
-			#define MIDLibrary NCsMaterial::NMID::FLibrary
-
 			bool FValue::IsValidChecked(const FString& Context) const
 			{
 				CS_IS_NAME_NONE_CHECKED(GetName())
@@ -153,31 +137,28 @@ namespace NCsMaterial
 			bool FValue::IsValidChecked(const FString& Context, UMaterialInterface* Material) const
 			{
 				check(IsValidChecked(Context));
-				return MaterialLibrary::IsScalarParameterValidChecked(Context, Material, GetName());
+				return CsMaterialLibrary::IsScalarParameterValidChecked(Context, Material, GetName());
 			}
 
 			bool FValue::IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 			{
 				if (!IsValid(Context, Log))
 					return false;
-				return MaterialLibrary::IsScalarParameterValid(Context, Material, GetName(), Log);
+				return CsMaterialLibrary::IsScalarParameterValid(Context, Material, GetName(), Log);
 			}
 
 			void FValue::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
 			{
 				check(IsValidChecked(Context));
-				MIDLibrary::SetScalarParameterValueChecked(Context, MID, GetName(), GetValue());
+				CsMIDLibrary::SetScalarParameterValueChecked(Context, MID, GetName(), GetValue());
 			}
 
 			bool FValue::SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 			{
 				if (!IsValid(Context, Log))
 					return false;
-				return MIDLibrary::SetSafeScalarParameterValue(Context, MID, GetName(), GetValue(), Log);
+				return CsMIDLibrary::SetSafeScalarParameterValue(Context, MID, GetName(), GetValue(), Log);
 			}
-
-			#undef MaterialLibrary
-			#undef MIDLibrary
 		}
 	}
 }
@@ -187,9 +168,6 @@ namespace NCsMaterial
 
 // FCsMaterialParameterFloatRange
 #pragma region
-
-#define MaterialLibrary NCsMaterial::FLibrary
-#define MIDLibrary NCsMaterial::NMID::FLibrary
 
 #define ParamsType NCsMaterial::NParameter::NFloat::FRange
 
@@ -226,31 +204,28 @@ bool FCsMaterialParameterFloatRange::IsValid(const FString& Context, void(*Log)(
 bool FCsMaterialParameterFloatRange::IsValidChecked(const FString& Context, UMaterialInterface* Material) const
 {
 	check(IsValidChecked(Context));
-	return MaterialLibrary::IsScalarParameterValidChecked(Context, Material, Name);
+	return CsMaterialLibrary::IsScalarParameterValidChecked(Context, Material, Name);
 }
 
 bool FCsMaterialParameterFloatRange::IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
-	return MaterialLibrary::IsScalarParameterValid(Context, Material, Name, Log);
+	return CsMaterialLibrary::IsScalarParameterValid(Context, Material, Name, Log);
 }
 
 void FCsMaterialParameterFloatRange::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
 {
 	check(IsValidChecked(Context));
-	MIDLibrary::SetScalarParameterValueChecked(Context, MID, Name, CalculateValue());
+	CsMIDLibrary::SetScalarParameterValueChecked(Context, MID, Name, CalculateValue());
 }
 
 bool FCsMaterialParameterFloatRange::SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
-	return MIDLibrary::SetSafeScalarParameterValue(Context, MID, Name, CalculateValue(), Log);
+	return CsMIDLibrary::SetSafeScalarParameterValue(Context, MID, Name, CalculateValue(), Log);
 }
-
-#undef MaterialLibrary
-#undef MIDLibrary
 
 namespace NCsMaterial
 {
@@ -258,9 +233,6 @@ namespace NCsMaterial
 	{
 		namespace NFloat
 		{
-			#define MaterialLibrary NCsMaterial::FLibrary
-			#define MIDLibrary NCsMaterial::NMID::FLibrary
-
 			bool FRange::IsValidChecked(const FString& Context) const
 			{
 				CS_IS_NAME_NONE_CHECKED(GetName())
@@ -278,31 +250,28 @@ namespace NCsMaterial
 			bool FRange::IsValidChecked(const FString& Context, UMaterialInterface* Material) const
 			{
 				check(IsValidChecked(Context));
-				return MaterialLibrary::IsScalarParameterValidChecked(Context, Material, GetName());
+				return CsMaterialLibrary::IsScalarParameterValidChecked(Context, Material, GetName());
 			}
 
 			bool FRange::IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 			{
 				if (!IsValid(Context, Log))
 					return false;
-				return MaterialLibrary::IsScalarParameterValid(Context, Material, GetName(), Log);
+				return CsMaterialLibrary::IsScalarParameterValid(Context, Material, GetName(), Log);
 			}
 
 			void FRange::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
 			{
 				check(IsValidChecked(Context));
-				MIDLibrary::SetScalarParameterValueChecked(Context, MID, GetName(), CalculateValue());
+				CsMIDLibrary::SetScalarParameterValueChecked(Context, MID, GetName(), CalculateValue());
 			}
 
 			bool FRange::SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 			{
 				if (!IsValid(Context, Log))
 					return false;
-				return MIDLibrary::SetSafeScalarParameterValue(Context, MID, GetName(), CalculateValue(), Log);
+				return CsMIDLibrary::SetSafeScalarParameterValue(Context, MID, GetName(), CalculateValue(), Log);
 			}
-
-			#undef MaterialLibrary
-			#undef MIDLibrary
 		}
 	}
 }
@@ -311,9 +280,6 @@ namespace NCsMaterial
 
 // FCsMaterialParameterColor
 #pragma region
-
-#define MaterialLibrary NCsMaterial::FLibrary
-#define MIDLibrary NCsMaterial::NMID::FLibrary
 
 #define ParamsType NCsMaterial::NParameter::NColor::FValue
 
@@ -346,31 +312,28 @@ bool FCsMaterialParameterColor::IsValid(const FString& Context, void(*Log)(const
 bool FCsMaterialParameterColor::IsValidChecked(const FString& Context, UMaterialInterface* Material) const
 {
 	check(IsValidChecked(Context));
-	return MaterialLibrary::IsVectorParameterValidChecked(Context, Material, Name);
+	return CsMaterialLibrary::IsVectorParameterValidChecked(Context, Material, Name);
 }
 
 bool FCsMaterialParameterColor::IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
-	return MaterialLibrary::IsVectorParameterValid(Context, Material, Name, Log);
+	return CsMaterialLibrary::IsVectorParameterValid(Context, Material, Name, Log);
 }
 
 void FCsMaterialParameterColor::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
 {
 	check(IsValidChecked(Context));
-	MIDLibrary::SetVectorParameterValueChecked(Context, MID, Name, Value);
+	CsMIDLibrary::SetVectorParameterValueChecked(Context, MID, Name, Value);
 }
 
 bool FCsMaterialParameterColor::SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
-	return MIDLibrary::SetSafeVectorParameterValue(Context, MID, Name, Value, Log);
+	return CsMIDLibrary::SetSafeVectorParameterValue(Context, MID, Name, Value, Log);
 }
-
-#undef MaterialLibrary
-#undef MIDLibrary
 
 namespace NCsMaterial
 {
@@ -378,9 +341,6 @@ namespace NCsMaterial
 	{
 		namespace NColor
 		{
-			#define MaterialLibrary NCsMaterial::FLibrary
-			#define MIDLibrary NCsMaterial::NMID::FLibrary
-
 			bool FValue::IsValidChecked(const FString& Context) const
 			{
 				CS_IS_NAME_NONE_CHECKED(GetName())
@@ -396,31 +356,28 @@ namespace NCsMaterial
 			bool FValue::IsValidChecked(const FString& Context, UMaterialInterface* Material) const
 			{
 				check(IsValidChecked(Context));
-				return MaterialLibrary::IsVectorParameterValidChecked(Context, Material, GetName());
+				return CsMaterialLibrary::IsVectorParameterValidChecked(Context, Material, GetName());
 			}
 
 			bool FValue::IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 			{
 				if (!IsValid(Context, Log))
 					return false;
-				return MaterialLibrary::IsVectorParameterValid(Context, Material, GetName(), Log);
+				return CsMaterialLibrary::IsVectorParameterValid(Context, Material, GetName(), Log);
 			}
 
 			void FValue::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
 			{
 				check(IsValidChecked(Context));
-				MIDLibrary::SetVectorParameterValueChecked(Context, MID, GetName(), GetValue());
+				CsMIDLibrary::SetVectorParameterValueChecked(Context, MID, GetName(), GetValue());
 			}
 
 			bool FValue::SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 			{
 				if (!IsValid(Context, Log))
 					return false;
-				return MIDLibrary::SetSafeVectorParameterValue(Context, MID, GetName(), GetValue(), Log);
+				return CsMIDLibrary::SetSafeVectorParameterValue(Context, MID, GetName(), GetValue(), Log);
 			}
-
-			#undef MaterialLibrary
-			#undef MIDLibrary
 		}
 	}
 }
@@ -429,9 +386,6 @@ namespace NCsMaterial
 
 // FCsMaterialParameterColorRange
 #pragma region
-
-#define MaterialLibrary NCsMaterial::FLibrary
-#define MIDLibrary NCsMaterial::NMID::FLibrary
 
 #define ParamsType NCsMaterial::NParameter::NColor::FRange
 
@@ -466,31 +420,28 @@ bool FCsMaterialParameterColorRange::IsValid(const FString& Context, void(*Log)(
 bool FCsMaterialParameterColorRange::IsValidChecked(const FString& Context, UMaterialInterface* Material) const
 {
 	check(IsValidChecked(Context));
-	return MaterialLibrary::IsVectorParameterValidChecked(Context, Material, Name);
+	return CsMaterialLibrary::IsVectorParameterValidChecked(Context, Material, Name);
 }
 
 bool FCsMaterialParameterColorRange::IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
-	return MaterialLibrary::IsVectorParameterValid(Context, Material, Name, Log);
+	return CsMaterialLibrary::IsVectorParameterValid(Context, Material, Name, Log);
 }
 
 void FCsMaterialParameterColorRange::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
 {
 	check(IsValidChecked(Context));
-	MIDLibrary::SetVectorParameterValueChecked(Context, MID, Name, CalculateValue());
+	CsMIDLibrary::SetVectorParameterValueChecked(Context, MID, Name, CalculateValue());
 }
 
 bool FCsMaterialParameterColorRange::SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
-	return MIDLibrary::SetSafeVectorParameterValue(Context, MID, Name, CalculateValue(), Log);
+	return CsMIDLibrary::SetSafeVectorParameterValue(Context, MID, Name, CalculateValue(), Log);
 }
-
-#undef MaterialLibrary
-#undef MIDLibrary
 
 namespace NCsMaterial
 {
@@ -498,9 +449,6 @@ namespace NCsMaterial
 	{
 		namespace NColor
 		{
-			#define MaterialLibrary NCsMaterial::FLibrary
-			#define MIDLibrary NCsMaterial::NMID::FLibrary
-
 			bool FRange::IsValidChecked(const FString& Context) const
 			{
 				CS_IS_NAME_NONE_CHECKED(GetName())
@@ -516,31 +464,28 @@ namespace NCsMaterial
 			bool FRange::IsValidChecked(const FString& Context, UMaterialInterface* Material) const
 			{
 				check(IsValidChecked(Context));
-				return MaterialLibrary::IsVectorParameterValidChecked(Context, Material, GetName());
+				return CsMaterialLibrary::IsVectorParameterValidChecked(Context, Material, GetName());
 			}
 
 			bool FRange::IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 			{
 				if (!IsValid(Context, Log))
 					return false;
-				return MaterialLibrary::IsVectorParameterValid(Context, Material, GetName(), Log);
+				return CsMaterialLibrary::IsVectorParameterValid(Context, Material, GetName(), Log);
 			}
 
 			void FRange::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
 			{
 				check(IsValidChecked(Context));
-				MIDLibrary::SetVectorParameterValueChecked(Context, MID, GetName(), CalculateValue());
+				CsMIDLibrary::SetVectorParameterValueChecked(Context, MID, GetName(), CalculateValue());
 			}
 
 			bool FRange::SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 			{
 				if (!IsValid(Context, Log))
 					return false;
-				return MIDLibrary::SetSafeVectorParameterValue(Context, MID, GetName(), CalculateValue(), Log);
+				return CsMIDLibrary::SetSafeVectorParameterValue(Context, MID, GetName(), CalculateValue(), Log);
 			}
-
-			#undef MaterialLibrary
-			#undef MIDLibrary
 		}
 	}
 }
@@ -549,8 +494,6 @@ namespace NCsMaterial
 
 // FCsMaterialInterface_WithParameters
 #pragma region
-
-#define MIDLibrary NCsMaterial::NMID::FLibrary
 
 #define MaterialType NCsMaterial::NInterface::FWithParameters
 
@@ -700,7 +643,7 @@ void FCsMaterialInterface_WithParameters::SetChecked(const FString& Context, UPr
 {
 	check(IsValidChecked(Context));
 
-	MIDLibrary::SetChecked(Context, Component, Material.GetChecked(Context), Index, OutMID);
+	CsMIDLibrary::SetChecked(Context, Component, Material.GetChecked(Context), Index, OutMID);
 	// Float
 	for (const FCsMaterialParameterFloat& Param : FloatParameters)
 	{
@@ -718,7 +661,7 @@ bool FCsMaterialInterface_WithParameters::SetSafe(const FString& Context, UPrimi
 	if (!IsValid(Context, Log))
 		return false;
 
-	MIDLibrary::SetChecked(Context, Component, Material.GetChecked(Context), Index, OutMID);
+	CsMIDLibrary::SetChecked(Context, Component, Material.GetChecked(Context), Index, OutMID);
 	// Float
 	for (const FCsMaterialParameterFloat& Param : FloatParameters)
 	{
@@ -734,15 +677,10 @@ bool FCsMaterialInterface_WithParameters::SetSafe(const FString& Context, UPrimi
 	return true;
 }
 
-#undef MIDLibrary
-
 namespace NCsMaterial
 {
 	namespace NInterface
 	{
-		#define MaterialLibrary NCsMaterial::FLibrary
-		#define MIDLibrary NCsMaterial::NMID::FLibrary
-
 		bool FWithParameters::IsValidChecked(const FString& Context) const
 		{
 			CS_IS_PTR_NULL_CHECKED(GetMaterial());
@@ -789,7 +727,7 @@ namespace NCsMaterial
 		{
 			check(IsValidChecked(Context));
 
-			MIDLibrary::SetChecked(Context, Component, GetMaterial(), Index, OutMID);
+			CsMIDLibrary::SetChecked(Context, Component, GetMaterial(), Index, OutMID);
 			// Float
 			typedef NCsMaterial::NParameter::NFloat::FValue FloatParameterType;
 			
@@ -811,7 +749,7 @@ namespace NCsMaterial
 			if (!IsValid(Context, Log))
 				return false;
 
-			if (!MIDLibrary::SetSafe(Context, Component, GetMaterial(), Index, OutMID, Log))
+			if (!CsMIDLibrary::SetSafe(Context, Component, GetMaterial(), Index, OutMID, Log))
 				return false;
 
 			// Float
@@ -836,18 +774,15 @@ namespace NCsMaterial
 		void FWithParameters::SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index) const
 		{
 			check(IsValidChecked(Context));
-			MaterialLibrary::SetChecked(Context, Component, GetMaterial(), Index);
+			CsMaterialLibrary::SetChecked(Context, Component, GetMaterial(), Index);
 		}
 
 		bool FWithParameters::SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 		{
 			if (!IsValid(Context, Log))
 				return false;
-			return MaterialLibrary::SetSafe(Context, Component, GetMaterial(), Index, Log);
+			return CsMaterialLibrary::SetSafe(Context, Component, GetMaterial(), Index, Log);
 		}
-
-		#undef MaterialLibrary
-		#undef MIDLibrary
 	}
 }
 
@@ -855,8 +790,6 @@ namespace NCsMaterial
 
 // FCsMaterialInterface_WithRangeParameters
 #pragma region
-
-#define MIDLibrary NCsMaterial::NMID::FLibrary
 
 #define MaterialType NCsMaterial::NInterface::FWithRangeParameters
 
@@ -1006,7 +939,7 @@ void FCsMaterialInterface_WithRangeParameters::SetChecked(const FString& Context
 {
 	check(IsValidChecked(Context));
 
-	MIDLibrary::SetChecked(Context, Component, Material.GetChecked(Context), Index, OutMID);
+	CsMIDLibrary::SetChecked(Context, Component, Material.GetChecked(Context), Index, OutMID);
 	// Float
 	for (const FCsMaterialParameterFloatRange& Param : FloatParameters)
 	{
@@ -1024,7 +957,7 @@ bool FCsMaterialInterface_WithRangeParameters::SetSafe(const FString& Context, U
 	if (!IsValid(Context, Log))
 		return false;
 
-	MIDLibrary::SetChecked(Context, Component, Material.GetChecked(Context), Index, OutMID);
+	CsMIDLibrary::SetChecked(Context, Component, Material.GetChecked(Context), Index, OutMID);
 	// Float
 	for (const FCsMaterialParameterFloatRange& Param : FloatParameters)
 	{
@@ -1040,14 +973,10 @@ bool FCsMaterialInterface_WithRangeParameters::SetSafe(const FString& Context, U
 	return true;
 }
 
-#undef MIDLibrary
-
 namespace NCsMaterial
 {
 	namespace NInterface
 	{
-		#define MaterialLibrary NCsMaterial::FLibrary
-		#define MIDLibrary NCsMaterial::NMID::FLibrary
 		#define FloatParameterType NCsMaterial::NParameter::NFloat::FRange
 		#define ColorParameterType NCsMaterial::NParameter::NColor::FRange
 
@@ -1089,7 +1018,7 @@ namespace NCsMaterial
 		{
 			check(IsValidChecked(Context));
 
-			MIDLibrary::SetChecked(Context, Component, GetMaterial(), Index, OutMID);
+			CsMIDLibrary::SetChecked(Context, Component, GetMaterial(), Index, OutMID);
 			// Float
 			for (const FloatParameterType& Param : GetFloatParameters())
 			{
@@ -1107,7 +1036,7 @@ namespace NCsMaterial
 			if (!IsValid(Context, Log))
 				return false;
 
-			if (!MIDLibrary::SetSafe(Context, Component, GetMaterial(), Index, OutMID, Log))
+			if (!CsMIDLibrary::SetSafe(Context, Component, GetMaterial(), Index, OutMID, Log))
 				return false;
 
 			// Float
@@ -1128,18 +1057,16 @@ namespace NCsMaterial
 		void FWithRangeParameters::SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index) const
 		{
 			check(IsValidChecked(Context));
-			MaterialLibrary::SetChecked(Context, Component, GetMaterial(), Index);
+			CsMaterialLibrary::SetChecked(Context, Component, GetMaterial(), Index);
 		}
 
 		bool FWithRangeParameters::SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 		{
 			if (!IsValid(Context, Log))
 				return false;
-			return MaterialLibrary::SetSafe(Context, Component, GetMaterial(), Index, Log);
+			return CsMaterialLibrary::SetSafe(Context, Component, GetMaterial(), Index, Log);
 		}
 
-		#undef MaterialLibrary
-		#undef MIDLibrary
 		#undef FloatParameterType
 		#undef ColorParameterType
 	}

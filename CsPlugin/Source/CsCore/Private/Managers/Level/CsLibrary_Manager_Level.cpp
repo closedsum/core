@@ -48,7 +48,6 @@ namespace NCsLevel
 		#define SET_CONTEXT(__FunctionName) using namespace NCsLevel::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-		#define ObjectLibrary NCsObject::FLibrary
 		#define WorldLibrary NCsWorld::FLibrary
 		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
@@ -115,7 +114,7 @@ namespace NCsLevel
 
 			UCsManager_Level* Manager_Level = UCsManager_Level::GetSafe(Context, ContextRoot, Log);
 
-			if (!ObjectLibrary::IsValidObject(Manager_Level))
+			if (!CsObjectLibrary::IsValidObject(Manager_Level))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Level."), *Context));
 			}
@@ -135,7 +134,7 @@ namespace NCsLevel
 
 			UCsManager_Level* Manager_Level = UCsManager_Level::GetSafe(Context, ContextRoot, Log);
 
-			if (!ObjectLibrary::IsValidObject(Manager_Level))
+			if (!CsObjectLibrary::IsValidObject(Manager_Level))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Level."), *Context));
 			}
@@ -339,7 +338,6 @@ namespace NCsLevel
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef ObjectLibrary
 		#undef WorldLibrary
 		#undef GameInstanceLibrary
 	}

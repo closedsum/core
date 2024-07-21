@@ -241,10 +241,9 @@ void UCsManager_Level::Initialize()
 	SET_CONTEXT(Initialize);
 
 	// Bind to Delegates
-	typedef NCsGameInstance::NImpl::FLibrary GameInstanceLibrary;
 
 	NCsWorld::FDelegates::OnPostWorldInitialization_Simple_Event.AddUObject(this, &UCsManager_Level::OnPostWorldInitialization);
-	GameInstanceLibrary::GetTransition_OnFinish_EventChecked(Context, MyRoot).AddUObject(this, &UCsManager_Level::GameInstance_Transition_OnFinish);
+	CsGameInstanceImplLibrary::GetTransition_OnFinish_EventChecked(Context, MyRoot).AddUObject(this, &UCsManager_Level::GameInstance_Transition_OnFinish);
 	NCsLevel::NStreaming::NDynamic::FDelegates::OnAdded_Event.AddUObject(this, &UCsManager_Level::Level_Streaming_OnAdded);
 }
 

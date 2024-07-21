@@ -13,7 +13,6 @@
 namespace NCsGameplayAbility
 {
 	#define LogLevel void(*Log)(const FString&) /*=&NCsGameplayAbilities::FLog::Warning*/
-	#define ObjectLibrary NCsObject::FLibrary
 
 	// Spec
 	#pragma region
@@ -46,7 +45,7 @@ namespace NCsGameplayAbility
 
 	void FLibrary::BuildChecked(const FString& Context, UGameplayAbility* AbilityClass, const int32& Level, const int32& InputID, FGameplayAbilitySpec& OutSpec)
 	{
-		check(ObjectLibrary::IsDefaultObjectChecked(Context, AbilityClass));
+		check(CsObjectLibrary::IsDefaultObjectChecked(Context, AbilityClass));
 		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Level, 0)
 		
 		OutSpec = FGameplayAbilitySpec(AbilityClass, Level, InputID);
@@ -76,5 +75,4 @@ namespace NCsGameplayAbility
 	#pragma endregion Spec
 
 	#undef LogLevel
-	#undef ObjectLibrary
 }

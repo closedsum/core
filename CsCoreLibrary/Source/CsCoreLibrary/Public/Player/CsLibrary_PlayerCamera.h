@@ -358,3 +358,5 @@ namespace NCsPlayer
 		}
 	}
 }
+
+using CsPlayerCameraLibrary = NCsPlayer::NCamera::FLibrary;

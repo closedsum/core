@@ -1,4 +1,6 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "System/CsLibrary_AbilitySystemComponent.h"
 
 // Library
@@ -43,7 +45,6 @@ namespace NCsAbility
 		namespace NComponent
 		{
 			#define LogLevel void(*Log)(const FString&) /*=&NCsGameplayAbilities::FLog::Warning*/
-			#define ObjectLibrary NCsObject::FLibrary
 			#define AbilitySystemLibrary NCsAbility::NSystem::FLibrary
 			#define GameplayAbilityLibrary NCsGameplayAbility::FLibrary
 
@@ -362,7 +363,7 @@ namespace NCsAbility
 
 				for (UGameplayEffect* Effect : Effects)
 				{
-					check(ObjectLibrary::IsDefaultObjectChecked(Context, Effect));
+					check(CsObjectLibrary::IsDefaultObjectChecked(Context, Effect));
 
 					FActiveGameplayEffectHandle Handle = From->ApplyGameplayEffectToTarget(Effect, To);
 
@@ -373,7 +374,6 @@ namespace NCsAbility
 			#pragma endregion Effect
 
 			#undef LogLevel
-			#undef ObjectLibrary
 			#undef AbilitySystemLibrary
 			#undef GameplayAbilityLibrary
 		}

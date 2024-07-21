@@ -194,3 +194,5 @@ namespace NCsObject
 	#undef LogLevel
 	};
 }
+
+using CsObjectLibrary = NCsObject::FLibrary;

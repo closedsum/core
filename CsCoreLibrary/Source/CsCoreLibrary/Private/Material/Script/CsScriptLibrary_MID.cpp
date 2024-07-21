@@ -40,7 +40,6 @@ UCsScriptLibrary_MID::UCsScriptLibrary_MID(const FObjectInitializer& ObjectIniti
 #define USING_NS_CACHED using namespace NCsScriptLibraryMID::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryMID::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define MIDLibrary NCsMaterial::NMID::FLibrary
 
 // Scalar
 #pragma region
@@ -49,14 +48,14 @@ bool UCsScriptLibrary_MID::SetScalarParameterValue(const FString& Context, UMate
 {
 	CONDITIONAL_SET_CTXT(SetScalarParameterValue);
 
-	return MIDLibrary::SetSafeScalarParameterValue(Ctxt, MID, ParamName, Value);
+	return CsMIDLibrary::SetSafeScalarParameterValue(Ctxt, MID, ParamName, Value);
 }
 
 bool UCsScriptLibrary_MID::SetArrayScalarParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
 {
 	CONDITIONAL_SET_CTXT(SetArrayScalarParameterValue);
 
-	return MIDLibrary::SetSafeScalarParameterValue(Ctxt, MIDs, ParamName, Value);
+	return CsMIDLibrary::SetSafeScalarParameterValue(Ctxt, MIDs, ParamName, Value);
 }
 
 #pragma endregion Scalar
@@ -68,11 +67,10 @@ bool UCsScriptLibrary_MID::SetVectorParameterValue(const FString& Context, UMate
 {
 	CONDITIONAL_SET_CTXT(SetVectorParameterValue);
 
-	return MIDLibrary::SetSafeVectorParameterValue(Ctxt, MID, ParamName, Value);
+	return CsMIDLibrary::SetSafeVectorParameterValue(Ctxt, MID, ParamName, Value);
 }
 
 #pragma endregion Vector
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef MIDLibrary

@@ -45,11 +45,11 @@ void UCsManager_Input_Enhanced::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	/*typedef NCsObject::FLibrary ObjectLibrary;
+	/*
 
 	for (UCsInputListener* Listener : Listeners)
 	{
-		ObjectLibrary::SafeMarkAsGarbage(Listener);
+		CsObjectLibrary::SafeMarkAsGarbage(Listener);
 	}
 	Listeners.Reset();*/
 }

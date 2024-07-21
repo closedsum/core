@@ -18,19 +18,18 @@
 namespace NCsAnimInstance
 {
 	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define ObjectLibrary NCsObject::FLibrary
 
 	// Load
 	#pragma region
 
 	UAnimBlueprint* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<UAnimBlueprint>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UAnimBlueprint>(Context, Path, Log);
 	}
 
 	UAnimBlueprint* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogLevel)
 	{
-		return ObjectLibrary::SafeLoad<UAnimBlueprint>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UAnimBlueprint>(Context, Path, Log);
 	}
 
 	#pragma endregion Load
@@ -47,7 +46,7 @@ namespace NCsAnimInstance
 		if (!ClassPath.EndsWith(TEXT("_C")))
 			ClassPath.Append(TEXT("_C"));
 
-		UObject* O = ObjectLibrary::SafeLoad(Context, ClassPath, Log);
+		UObject* O = CsObjectLibrary::SafeLoad(Context, ClassPath, Log);
 
 		if (!O)
 			return nullptr;
@@ -113,5 +112,4 @@ namespace NCsAnimInstance
 	#pragma endregion Get
 
 	#undef LogLevel
-	#undef ObjectLibrary
 }

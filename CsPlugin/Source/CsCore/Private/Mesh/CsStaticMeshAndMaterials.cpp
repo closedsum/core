@@ -14,10 +14,7 @@ bool FCsStaticMeshAndMaterials::IsValidChecked(const FString& Context) const
 	check(Mesh.IsValidChecked(Context));
 	// Check Materials is Valid
 	check(Materials.IsValidChecked(Context));
-
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	check(MaterialLibrary::IsValidChecked(Context, Mesh.Get(), Materials.Get()))
+	check(CsMaterialLibrary::IsValidChecked(Context, Mesh.Get(), Materials.Get()))
 	return true;
 }
 
@@ -29,10 +26,7 @@ bool FCsStaticMeshAndMaterials::IsValid(const FString& Context, void(*Log)(const
 	// Check Materials is Valid
 	if (!Materials.IsValid(Context, Log))
 		return false;
-
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	if (!MaterialLibrary::IsValid(Context, Mesh.Get(), Materials.Get(), Log))
+	if (!CsMaterialLibrary::IsValid(Context, Mesh.Get(), Materials.Get(), Log))
 		return false;
 	return true;
 }

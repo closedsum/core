@@ -30,7 +30,6 @@ namespace NCsAttributeSet
 #define USING_NS_CACHED using namespace NCsAttributeSet::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsAttributeSet::NCached; \
 	const FString& Context = Str::__FunctionName
-#define ObjectLibrary NCsObject::FLibrary
 
 UAttributeSet* FCsAttributeSet::SafeLoad(const FString& Context, void(*Log)(const FString&) /*=&NCsGameplayAbilities::FLog::Warning*/)
 {
@@ -38,7 +37,7 @@ UAttributeSet* FCsAttributeSet::SafeLoad(const FString& Context, void(*Log)(cons
 
 	const FSoftObjectPath& Path = Set.ToSoftObjectPath();
 
-	if (!ObjectLibrary::IsValidObject(Set_Internal))
+	if (!CsObjectLibrary::IsValidObject(Set_Internal))
 	{
 		Set_Class = Set.LoadSynchronous();
 
@@ -91,6 +90,5 @@ UObject* FCsAttributeSet::SafeLoadSoftClass(const FString& Context, void(*Log)(c
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef ObjectLibrary
 
 #pragma endregion FCsGameplayAbility

@@ -612,9 +612,7 @@ namespace NCsCoroutine
 			CS_IS_STRING_EMPTY_CHECKED(InName)
 			CS_IS_NAME_NONE_CHECKED(InNameInternal)
 
-			typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-			StartTime = TimeManagerLibrary::GetTimeChecked(Context, ContextObject, UpdateGroup);
+			StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, ContextObject, UpdateGroup);
 			Owner.SetObject(InOwner);
 			SetName(InName);
 			SetFName(InNameInternal);

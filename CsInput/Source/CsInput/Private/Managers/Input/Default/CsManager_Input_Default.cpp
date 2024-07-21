@@ -140,11 +140,9 @@ void UCsManager_Input_Default::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	typedef NCsObject::FLibrary ObjectLibrary;
-
 	for (UCsInputListener* Listener : Listeners)
 	{
-		ObjectLibrary::SafeMarkAsGarbage(Listener);
+		CsObjectLibrary::SafeMarkAsGarbage(Listener);
 	}
 	Listeners.Reset();
 }

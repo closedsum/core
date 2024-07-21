@@ -35,7 +35,6 @@ namespace NCsBlueprint
 		const FString& Context = Str::__FunctionName
 	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 	#define NO_LOG void(*Log)(const FString&) = nullptr;
-	#define ObjectLibrary NCsObject::FLibrary
 	#define WorldLibrary NCsWorld::FLibrary
 
 	// Load
@@ -43,22 +42,22 @@ namespace NCsBlueprint
 
 	UBlueprint* FLibrary::LoadChecked(const FString& Context, const FSoftObjectPath& Path)
 	{
-		return ObjectLibrary::LoadChecked<UBlueprint>(Context, Path);
+		return CsObjectLibrary::LoadChecked<UBlueprint>(Context, Path);
 	}
 
 	UBlueprint* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogWarning)
 	{
-		return ObjectLibrary::SafeLoad<UBlueprint>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UBlueprint>(Context, Path, Log);
 	}
 
 	UBlueprint* FLibrary::LoadChecked(const FString& Context, const FString& Path)
 	{
-		return ObjectLibrary::LoadChecked<UBlueprint>(Context, Path);
+		return CsObjectLibrary::LoadChecked<UBlueprint>(Context, Path);
 	}
 
 	UBlueprint* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogWarning)
 	{
-		return ObjectLibrary::SafeLoad<UBlueprint>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UBlueprint>(Context, Path, Log);
 	}
 
 	UBlueprintGeneratedClass* FLibrary::LoadClassChecked(const FString& Context, const TSoftObjectPtr<UBlueprint>& Blueprint)
@@ -92,7 +91,7 @@ namespace NCsBlueprint
 		if (!ClassPath.EndsWith(NCsBlueprint::NLibrary::NCached::Str::_C))
 			ClassPath.Append(NCsBlueprint::NLibrary::NCached::Str::_C);
 
-		UObject* O					   = ObjectLibrary::LoadChecked(Context, ClassPath);
+		UObject* O					   = CsObjectLibrary::LoadChecked(Context, ClassPath);
 		UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O);
 
 		CS_IS_PENDING_KILL_CHECKED(BpGC)
@@ -108,7 +107,7 @@ namespace NCsBlueprint
 		if (!ClassPath.EndsWith(NCsBlueprint::NLibrary::NCached::Str::_C))
 			ClassPath.Append(NCsBlueprint::NLibrary::NCached::Str::_C);
 
-		UObject* O = ObjectLibrary::SafeLoad(Context, ClassPath, Log);
+		UObject* O = CsObjectLibrary::SafeLoad(Context, ClassPath, Log);
 
 		if (!O)
 			return nullptr;
@@ -203,7 +202,7 @@ namespace NCsBlueprint
 		if (!ClassPath.EndsWith(NCsBlueprint::NLibrary::NCached::Str::_C))
 			ClassPath.Append(NCsBlueprint::NLibrary::NCached::Str::_C);
 
-		UObject* O = ObjectLibrary::SafeLoad(Context, ClassPath, Log);
+		UObject* O = CsObjectLibrary::SafeLoad(Context, ClassPath, Log);
 
 		if (!O)
 			return nullptr;
@@ -310,6 +309,5 @@ namespace NCsBlueprint
 	#undef SET_CONTEXT
 	#undef LogWarning
 	#undef NO_LOG
-	#undef ObjectLibrary
 	#undef WorldLibrary
 }

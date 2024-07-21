@@ -125,6 +125,12 @@ namespace NCsTime
 			* return				UCsManager_Time.
 			*/
 			static UCsManager_Time* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
+			FORCEINLINE static UCsManager_Time* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+			{
+				UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log);
+				OutSuccess					  = Manager_Time != nullptr;
+				return Manager_Time;
+			}
 
 			/**
 			* Safely get the reference to UCsManager_Time from a ContextObject.
@@ -432,3 +438,5 @@ namespace NCsTime
 		};
 	}
 }
+
+using CsTimeManagerLibrary = NCsTime::NManager::FLibrary;

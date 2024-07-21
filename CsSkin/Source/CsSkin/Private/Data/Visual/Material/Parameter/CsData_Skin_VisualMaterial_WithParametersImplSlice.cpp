@@ -81,9 +81,7 @@ void FCsData_Skin_VisualMaterial_WithParametersImplSlice::SetChecked(const FStri
 {
 	check(IsValidChecked(Context));
 
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	//MaterialLibrary::SetChecked(Context, Component, Materials.Get());
+	//CsMaterialLibrary::SetChecked(Context, Component, Materials.Get());
 }
 
 bool FCsData_Skin_VisualMaterial_WithParametersImplSlice::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
@@ -91,9 +89,7 @@ bool FCsData_Skin_VisualMaterial_WithParametersImplSlice::SetSafe(const FString&
 	if (!IsValid(Context, Log))
 		return false;
 
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	//return MaterialLibrary::SetSafe(Context, Component, Materials.Get(), Log);
+	//return CsMaterialLibrary::SetSafe(Context, Component, Materials.Get(), Log);
 	return true;
 }
 
@@ -190,9 +186,7 @@ namespace NCsSkin
 						{
 							if (Log)
 							{
-								typedef NCsObject::FLibrary ObjectLibrary;
-
-								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: FCsData_Skin_VisualMaterial_WithParametersImplSlice (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)."), *(ObjectLibrary::PrintObjectAndClass(Object))));
+								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: FCsData_Skin_VisualMaterial_WithParametersImplSlice (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)."), *(CsObjectLibrary::PrintObjectAndClass(Object))));
 								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualMaterial_WithParametersImplSlice with name: VisualMaterialWithParamsSlice.")));
 								Log(FString::Printf(TEXT("%s: - OR")));
 								Log(FString::Printf(TEXT("%s: - Failed to get array struct property of type: TArray<FCsMaterialInterface_WithRangeParameters> with name: Materials.")));
@@ -219,16 +213,12 @@ namespace NCsSkin
 
 					void FImplSlice::SetChecked(const FString& Context, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs) const
 					{
-						typedef NCsMaterial::FLibrary MaterialLibrary;
-
-						//MaterialLibrary::SetChecked(Context, Component, GetMaterials());
+						//CsMaterialLibrary::SetChecked(Context, Component, GetMaterials());
 					}
 
 					bool FImplSlice::SetSafe(const FString& Context, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 					{
-						typedef NCsMaterial::FLibrary MaterialLibrary;
-
-						//return MaterialLibrary::SetSafe(Context, Component, GetMaterials(), Log);
+						//return CsMaterialLibrary::SetSafe(Context, Component, GetMaterials(), Log);
 						return true;
 					}
 				}

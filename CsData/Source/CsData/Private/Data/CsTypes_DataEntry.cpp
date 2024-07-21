@@ -382,9 +382,7 @@ void FCsDataEntry_DataTable::Unload()
 {
 	SET_CONTEXT(Unload);
 
-	typedef NCsObject::FLibrary ObjectLibrary;
-
-	if (ObjectLibrary::IsValidObject(DataTable_Internal))
+	if (CsObjectLibrary::IsValidObject(DataTable_Internal))
 	{
 		TArray<FCsTableRowBase_Data*> AllRows;
 		DataTable_Internal->GetAllRows(Context, AllRows);

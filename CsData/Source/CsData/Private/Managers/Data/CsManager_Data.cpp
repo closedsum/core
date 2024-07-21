@@ -1903,9 +1903,7 @@ bool UCsManager_Data::SafeAddDataObject_Loaded(const FString& Context, const FNa
 
 	if (!InterfaceData)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsData."), *Context, *(ObjectLibrary::PrintObjectAndClass(Data))));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsData."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Data))));
 		return false;
 	}
 	

@@ -52,7 +52,6 @@ namespace NCsTrace
 		#define SET_CONTEXT(__FunctionName) using namespace NCsTrace::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/
-		#define MathLibrary NCsMath::FLibrary
 		#define SkeletalMeshLibrary NCsSkeletalMesh::FLibrary
 
 		// ContextRoot
@@ -239,14 +238,14 @@ namespace NCsTrace
 				if (Params.Space == BoneSpaceType::Bone)
 				{
 					const FRotator Rotation = NCsSkeletalMesh::FLibrary::GetSafeBoneOrSocketRotation(Context, Params.Component, Params.BoneOrSocket, OutSuccess, Log);
-					Start					= MathLibrary::Add(Start, Rotation, Params.Location);
+					Start					= CsMathLibrary::Add(Start, Rotation, Params.Location);
 				}
 				// Component
 				else
 				if (Params.Space == BoneSpaceType::Component)
 				{
 					const FRotator Rotation = Params.Component->GetComponentRotation();
-					Start					= MathLibrary::Add(Start, Rotation, Params.Location);
+					Start					= CsMathLibrary::Add(Start, Rotation, Params.Location);
 				}
 
 				if (!OutSuccess)
@@ -258,8 +257,8 @@ namespace NCsTrace
 				Request->Type				  = ECsTraceType::Sweep;
 				Request->Method				  = ECsTraceMethod::Single;
 				Request->Query				  = ECsTraceQuery::Channel;
-				Request->Start				  = MathLibrary::Convert(Start);
-				Request->End				  = MathLibrary::Convert(Start);
+				Request->Start				  = CsMathLibrary::Convert(Start);
+				Request->End				  = CsMathLibrary::Convert(Start);
 				Request->Channel			  = Params.Channel;
 				Request->Params.bTraceComplex = Params.bTraceComplex;
 				Request->Shape.SetSphere(Params.Radius);
@@ -313,21 +312,21 @@ namespace NCsTrace
 			if (Params.Space == BoneSpaceType::Bone)
 			{
 				const FRotator Rotation = NCsSkeletalMesh::FLibrary::GetBoneOrSocketRotationChecked(Context, Params.Component, Params.BoneOrSocket);
-				Start					= MathLibrary::Add(Start, Rotation, Params.Location);
+				Start					= CsMathLibrary::Add(Start, Rotation, Params.Location);
 			}
 			// Component
 			else
 			if (Params.Space == BoneSpaceType::Component)
 			{
 				const FRotator Rotation = Params.Component->GetComponentRotation();
-				Start					= MathLibrary::Add(Start, Rotation, Params.Location);
+				Start					= CsMathLibrary::Add(Start, Rotation, Params.Location);
 			}
 
 			Request->Type				  = ECsTraceType::Sweep;
 			Request->Method				  = ECsTraceMethod::Single;
 			Request->Query				  = ECsTraceQuery::Channel;
-			Request->Start				  = MathLibrary::Convert(Start);
-			Request->End				  = MathLibrary::Convert(Start);
+			Request->Start				  = CsMathLibrary::Convert(Start);
+			Request->End				  = CsMathLibrary::Convert(Start);
 			Request->Channel			  = Params.Channel;
 			Request->Params.bTraceComplex = Params.bTraceComplex;
 			Request->Shape.SetSphere(Params.Radius);
@@ -390,9 +389,9 @@ namespace NCsTrace
 			Request->Type	  = ECsTraceType::Sweep;
 			Request->Method   = ECsTraceMethod::Multi;
 			Request->Query	  = ECsTraceQuery::Channel;
-			Request->Start	  = MathLibrary::Convert(Component->GetComponentLocation());
-			Request->End	  = MathLibrary::Convert(Component->GetComponentLocation());
-			Request->Rotation = MathLibrary::Convert(Component->GetComponentRotation());
+			Request->Start	  = CsMathLibrary::Convert(Component->GetComponentLocation());
+			Request->End	  = CsMathLibrary::Convert(Component->GetComponentLocation());
+			Request->Rotation = CsMathLibrary::Convert(Component->GetComponentRotation());
 			Request->SetShape(Component);
 			Request->Channel						  = Channel;
 			Request->Params							  = Params;
@@ -433,9 +432,9 @@ namespace NCsTrace
 			Request->Type	  = ECsTraceType::Sweep;
 			Request->Method	  = ECsTraceMethod::Multi;
 			Request->Query	  = ECsTraceQuery::Channel;
-			Request->Start	  = MathLibrary::Convert(Component->GetComponentLocation());
-			Request->End	  = MathLibrary::Convert(Component->GetComponentLocation());
-			Request->Rotation = MathLibrary::Convert(Component->GetComponentRotation());
+			Request->Start	  = CsMathLibrary::Convert(Component->GetComponentLocation());
+			Request->End	  = CsMathLibrary::Convert(Component->GetComponentLocation());
+			Request->Rotation = CsMathLibrary::Convert(Component->GetComponentRotation());
 			Request->SetShape(Component);
 			Request->Channel						  = Channel;
 			Request->Params							  = Params;
@@ -497,9 +496,9 @@ namespace NCsTrace
 			Request->Type	  = ECsTraceType::Sweep;
 			Request->Method   = ECsTraceMethod::Multi;
 			Request->Query	  = ECsTraceQuery::Channel;
-			Request->Start	  = MathLibrary::Convert(Component->GetComponentLocation());
-			Request->End	  = MathLibrary::Convert(Component->GetComponentLocation());
-			Request->Rotation = MathLibrary::Convert(Component->GetComponentRotation());
+			Request->Start	  = CsMathLibrary::Convert(Component->GetComponentLocation());
+			Request->End	  = CsMathLibrary::Convert(Component->GetComponentLocation());
+			Request->Rotation = CsMathLibrary::Convert(Component->GetComponentRotation());
 			Request->SetShape(Component);
 			Request->Channel = Channel;
 			Request->Params  = Params;
@@ -571,7 +570,6 @@ namespace NCsTrace
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef MathLibrary
 		#undef SkeletalMeshLibrary
 	}
 }

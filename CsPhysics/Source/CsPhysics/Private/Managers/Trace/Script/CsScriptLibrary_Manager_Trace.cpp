@@ -49,7 +49,6 @@ UCsScriptLibrary_Manager_Trace::UCsScriptLibrary_Manager_Trace(const FObjectInit
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerTrace::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define TraceManagerLibrary NCsTrace::NManager::FLibrary
-#define MathLibrary NCsMath::FLibrary
 #define RequestType NCsTrace::NRequest::FRequest
 #define ResponseType NCsTrace::NResponse::FResponse
 
@@ -83,8 +82,8 @@ bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(const FString& Con
 	if (RequestType* Request = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
 	{
 		// Fill out Request
-		Request->Start				  = MathLibrary::Convert(Start);
-		Request->End				  = MathLibrary::Convert(End);
+		Request->Start				  = CsMathLibrary::Convert(Start);
+		Request->End				  = CsMathLibrary::Convert(End);
 		Request->Channel			  = Channel;
 		Request->Params.bTraceComplex = bTraceComplex;
 
@@ -122,8 +121,8 @@ bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByChannel(const FString& C
 	if (RequestType* Request = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
 	{
 		// Fill out Request
-		Request->Start				  = MathLibrary::Convert(Start);
-		Request->End				  = MathLibrary::Convert(End);
+		Request->Start				  = CsMathLibrary::Convert(Start);
+		Request->End				  = CsMathLibrary::Convert(End);
 		Request->Channel			  = Channel;
 		Request->Params.bTraceComplex = bTraceComplex;
 		Request->Shape.SetSphere(Radius);
@@ -164,8 +163,8 @@ bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByObjectType(const FString
 	if (RequestType* Request = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
 	{
 		// Fill out Request
-		Request->Start	= MathLibrary::Convert(Start);
-		Request->End	= MathLibrary::Convert(End);
+		Request->Start	= CsMathLibrary::Convert(Start);
+		Request->End	= CsMathLibrary::Convert(End);
 		
 		NCsCollisionObjectQueryParams::Populate(Request->ObjectParams, ObjectTypes);
 
@@ -264,6 +263,5 @@ bool UCsScriptLibrary_Manager_Trace::SweepByCapsuleComponentAgainstObjectOnly(co
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
 #undef TraceManagerLibrary
-#undef MathLibrary
 #undef RequestType
 #undef ResponseType

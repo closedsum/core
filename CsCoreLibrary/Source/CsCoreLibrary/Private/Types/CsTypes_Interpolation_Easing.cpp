@@ -25,8 +25,6 @@ namespace NCsEasing
 
 	float FFloat::Ease(const float& Alpha) const
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
-		return MathLibrary::Ease(GetType(), Alpha, GetMin(), GetMax(), 1.0f);
+		return CsMathLibrary::Ease(GetType(), Alpha, GetMin(), GetMax(), 1.0f);
 	}
 }

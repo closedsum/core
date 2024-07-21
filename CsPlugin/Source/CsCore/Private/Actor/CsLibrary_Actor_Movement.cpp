@@ -47,7 +47,6 @@ namespace NCsActor
 		}
 		
 		#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-		#define MathLibrary NCsMath::FLibrary
 
 		// Interp
 		#pragma region
@@ -192,12 +191,12 @@ namespace NCsActor
 			// Actor
 			if (Mover == MoverType::Actor)
 			{
-				Params->GetMoveActor()->SetActorLocation(MathLibrary::Convert(Start));
+				Params->GetMoveActor()->SetActorLocation(CsMathLibrary::Convert(Start));
 			}
 			// Component
 			if (Mover == MoverType::Component)
 			{
-				Params->GetMoveComponent()->SetWorldLocation(MathLibrary::Convert(Start));
+				Params->GetMoveComponent()->SetWorldLocation(CsMathLibrary::Convert(Start));
 			}
 			Current = Start;
 
@@ -209,11 +208,11 @@ namespace NCsActor
 					// Linear
 					if (Easing == ECsEasingType::Linear)
 					{
-						Current = MathLibrary::VInterpConstantTo(Current, End, R->GetDeltaTime().Time, InterpSpeed);
+						Current = CsMathLibrary::VInterpConstantTo(Current, End, R->GetDeltaTime().Time, InterpSpeed);
 					}
 					else
 					{					
-						const float Alpha		= MathLibrary::Ease(Easing, Percent, 0.0f, 1.0f, 1.0f);
+						const float Alpha		= CsMathLibrary::Ease(Easing, Percent, 0.0f, 1.0f, 1.0f);
 						// TODO: Optimize, get size and normal in one function.
 						const FVector3f Direction = (End - Start).GetSafeNormal();
 						const float Distance	= (End - Start).Size();
@@ -223,12 +222,12 @@ namespace NCsActor
 					// Actor
 					if (Mover == MoverType::Actor)
 					{
-						Params->GetMoveActor()->SetActorLocation(MathLibrary::Convert(Current));
+						Params->GetMoveActor()->SetActorLocation(CsMathLibrary::Convert(Current));
 					}
 					// Component
 					if (Mover == MoverType::Component)
 					{
-						Params->GetMoveComponent()->SetWorldLocation(MathLibrary::Convert(Current));
+						Params->GetMoveComponent()->SetWorldLocation(CsMathLibrary::Convert(Current));
 					}
 				
 					CS_COROUTINE_YIELD(R);
@@ -238,12 +237,12 @@ namespace NCsActor
 			// Actor
 			if (Mover == MoverType::Actor)
 			{
-				Params->GetMoveActor()->SetActorLocation(MathLibrary::Convert(End));
+				Params->GetMoveActor()->SetActorLocation(CsMathLibrary::Convert(End));
 			}
 			// Component
 			if (Mover == MoverType::Component)
 			{
-				Params->GetMoveComponent()->SetWorldLocation(MathLibrary::Convert(End));
+				Params->GetMoveComponent()->SetWorldLocation(CsMathLibrary::Convert(End));
 			}
 
 			CS_COROUTINE_END(R);
@@ -267,6 +266,5 @@ namespace NCsActor
 		#pragma endregion Movement
 
 		#undef LogWarning
-		#undef MathLibrary
 	}
 }

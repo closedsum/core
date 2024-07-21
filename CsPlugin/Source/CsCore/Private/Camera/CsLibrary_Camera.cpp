@@ -46,7 +46,6 @@ namespace NCsCamera
 	#define SET_CONTEXT(__FunctionName) using namespace NCsCamera::NLibrary::NCached; \
 		const FString& Context = Str::__FunctionName
 	#define WorldLibrary NCsWorld::FLibrary
-	#define MathLibrary NCsMath::FLibrary
 
 	// Get
 	#pragma region
@@ -200,13 +199,13 @@ namespace NCsCamera
 		if (ICsGetCameraComponent* GetCameraComponent = Cast<ICsGetCameraComponent>(Object))
 		{
 			UCameraComponent* Camera = GetCameraComponent->GetCameraComponent();
-			return MathLibrary::Convert(Camera->GetComponentLocation());
+			return CsMathLibrary::Convert(Camera->GetComponentLocation());
 		}
 		// PlayerController
 		else
 		if (APlayerController* PC = Cast<APlayerController>(Object))
 		{
-			return MathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Location);
+			return CsMathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Location);
 		}
 		// Pawn
 		else
@@ -215,7 +214,7 @@ namespace NCsCamera
 			// PlayerController
 			if (APlayerController* C = Cast<APlayerController>(Pawn->Controller))
 			{
-				return MathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Location);
+				return CsMathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Location);
 			}
 		}
 		return FVector3f::ZeroVector;
@@ -237,13 +236,13 @@ namespace NCsCamera
 		if (ICsGetCameraComponent* GetCameraComponent = Cast<ICsGetCameraComponent>(Object))
 		{
 			UCameraComponent* Camera = GetCameraComponent->GetCameraComponent();
-			return MathLibrary::Convert(Camera->GetComponentLocation());
+			return CsMathLibrary::Convert(Camera->GetComponentLocation());
 		}
 		// PlayerController
 		else
 		if (APlayerController* PC = Cast<APlayerController>(Object))
 		{
-			return MathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Location);
+			return CsMathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Location);
 		}
 		// Pawn
 		else
@@ -252,7 +251,7 @@ namespace NCsCamera
 			// PlayerController
 			if (APlayerController* C = Cast<APlayerController>(Pawn->Controller))
 			{
-				return MathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Location);
+				return CsMathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Location);
 			}
 			else
 			{
@@ -287,13 +286,13 @@ namespace NCsCamera
 		if (ICsGetCameraComponent* GetCameraComponent = Cast<ICsGetCameraComponent>(Object))
 		{
 			UCameraComponent* Camera = GetCameraComponent->GetCameraComponent();
-			return MathLibrary::Convert(Camera->GetComponentRotation());
+			return CsMathLibrary::Convert(Camera->GetComponentRotation());
 		}
 		// PlayerController
 		else
 		if (APlayerController* PC = Cast<APlayerController>(Object))
 		{
-			return MathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Rotation);
+			return CsMathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Rotation);
 		}
 		// Pawn
 		else
@@ -302,7 +301,7 @@ namespace NCsCamera
 			// PlayerController
 			if (APlayerController* C = Cast<APlayerController>(Pawn->Controller))
 			{
-				return MathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Rotation);
+				return CsMathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Rotation);
 			}
 		}
 		return FRotator3f::ZeroRotator;
@@ -323,13 +322,13 @@ namespace NCsCamera
 		if (ICsGetCameraComponent* GetCameraComponent = Cast<ICsGetCameraComponent>(Object))
 		{
 			UCameraComponent* Camera = GetCameraComponent->GetCameraComponent();
-			return MathLibrary::Convert(Camera->GetComponentRotation());
+			return CsMathLibrary::Convert(Camera->GetComponentRotation());
 		}
 		// PlayerController
 		else
 		if (APlayerController* PC = Cast<APlayerController>(Object))
 		{
-			return MathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Rotation);
+			return CsMathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Rotation);
 		}
 		// Pawn
 		else
@@ -338,7 +337,7 @@ namespace NCsCamera
 			// PlayerController
 			if (APlayerController* C = Cast<APlayerController>(Pawn->Controller))
 			{
-				return MathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Rotation);
+				return CsMathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Rotation);
 			}
 			else
 			{
@@ -373,5 +372,4 @@ namespace NCsCamera
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
 	#undef WorldLibrary
-	#undef MathLibrary
 }

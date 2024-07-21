@@ -53,7 +53,6 @@ namespace NCsMaterial
 
 			#define LogWarning void(*Log)(const FString&) /*=&FCsLog::Warning*/
 			#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
-			#define MathLibrary NCsMath::FLibrary
 
 			#define ParamsResourceType NCsMaterial::NAnim::NParams::FResource
 			#define ParamsType NCsMaterial::NAnim::NParams::FParams
@@ -230,10 +229,10 @@ namespace NCsMaterial
 
 								float DistanceSq;
 								float Distance;
-								const FLinearColor Normal = MathLibrary::GetSafeNormal(StartToEnd, DistanceSq, Distance);
+								const FLinearColor Normal = CsMathLibrary::GetSafeNormal(StartToEnd, DistanceSq, Distance);
 						
 								const ECsEasingType& Easing = Param.GetEasing();
-								const float Alpha			= MathLibrary::Ease(Easing, Percent, 0.0f, 1.0f, 1.0f);
+								const float Alpha			= CsMathLibrary::Ease(Easing, Percent, 0.0f, 1.0f, 1.0f);
 
 								FLinearColor Current = Start + Alpha * Distance * Normal;
 
@@ -257,7 +256,7 @@ namespace NCsMaterial
 							else
 							{
 								const ECsEasingType& Easing = Param.GetEasing();
-								const float Alpha			= MathLibrary::Ease(Easing, Percent, 0.0f, 1.0f, 1.0f);
+								const float Alpha			= CsMathLibrary::Ease(Easing, Percent, 0.0f, 1.0f, 1.0f);
 
 								const float Delta = End - Start;
 								float Final		  = Start + Alpha * Delta;
@@ -340,7 +339,6 @@ namespace NCsMaterial
 
 			#undef LogWarning
 			#undef CoroutineSchedulerLibrary
-			#undef MathLibrary
 		}
 	}
 }

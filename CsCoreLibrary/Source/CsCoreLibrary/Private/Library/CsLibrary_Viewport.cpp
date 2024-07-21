@@ -49,7 +49,6 @@ namespace NCsViewport
 				const FString& Context = Str::__FunctionName
 			#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 			#define PlayerLibrary NCsPlayer::FLibrary
-			#define MathLibrary NCsMath::FLibrary
 
 			bool FLibrary::CanProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext)
 			{
@@ -100,9 +99,9 @@ namespace NCsViewport
 				{
 					FMatrix const ViewProjectionMatrix = ProjectionData.ComputeViewProjectionMatrix();
 					FVector2d Position;
-					bool bResult					   = FSceneView::ProjectWorldToScreen(MathLibrary::Convert(WorldPosition), ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, Position);
+					bool bResult					   = FSceneView::ProjectWorldToScreen(CsMathLibrary::Convert(WorldPosition), ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, Position);
 
-					OutScreenPosition = MathLibrary::Convert(Position);
+					OutScreenPosition = CsMathLibrary::Convert(Position);
 
 					if (bPlayerViewportRelative)
 					{
@@ -150,9 +149,9 @@ namespace NCsViewport
 						const FVector3f& WorldPosition = WorldPositions[I];
 						FVector2f& ScreenPosition	 = OutScreenPositions[I];
 						FVector2d Position;
-						Result &= FSceneView::ProjectWorldToScreen(MathLibrary::Convert(WorldPosition), ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, Position);
+						Result &= FSceneView::ProjectWorldToScreen(CsMathLibrary::Convert(WorldPosition), ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, Position);
 
-						ScreenPosition = MathLibrary::Convert(Position);
+						ScreenPosition = CsMathLibrary::Convert(Position);
 					}
 				}
 				return Result;
@@ -190,9 +189,9 @@ namespace NCsViewport
 						FVector2f& ScreenPosition	 = OutScreenPositions[Index];
 						FVector2d Position;
 
-						Result &= FSceneView::ProjectWorldToScreen(MathLibrary::Convert(WorldPosition), ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, Position);
+						Result &= FSceneView::ProjectWorldToScreen(CsMathLibrary::Convert(WorldPosition), ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, Position);
 
-						ScreenPosition = MathLibrary::Convert(Position);
+						ScreenPosition = CsMathLibrary::Convert(Position);
 					}
 				}
 				return Result;
@@ -248,10 +247,10 @@ namespace NCsViewport
 					FMatrix const InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
 					FVector3d Position;
 					FVector3d Direction;
-					FSceneView::DeprojectScreenToWorld(MathLibrary::Convert(ScreenPosition), ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ Position, /*out*/ Direction);
+					FSceneView::DeprojectScreenToWorld(CsMathLibrary::Convert(ScreenPosition), ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ Position, /*out*/ Direction);
 
-					OutWorldPosition = MathLibrary::Convert(Position);
-					OutWorldDirection = MathLibrary::Convert(Direction);
+					OutWorldPosition = CsMathLibrary::Convert(Position);
+					OutWorldDirection = CsMathLibrary::Convert(Direction);
 					return true;
 				}
 
@@ -297,10 +296,10 @@ namespace NCsViewport
 					FMatrix const InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
 					FVector3d Position;
 					FVector3d Direction;
-					FSceneView::DeprojectScreenToWorld(MathLibrary::Convert(ScreenPosition), ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ Position, /*out*/ Direction);
+					FSceneView::DeprojectScreenToWorld(CsMathLibrary::Convert(ScreenPosition), ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ Position, /*out*/ Direction);
 
-					OutWorldPosition = MathLibrary::Convert(Position);
-					OutWorldDirection = MathLibrary::Convert(Direction);
+					OutWorldPosition = CsMathLibrary::Convert(Position);
+					OutWorldDirection = CsMathLibrary::Convert(Direction);
 					return true;
 				}
 
@@ -392,7 +391,7 @@ namespace NCsViewport
 				FCsRay Ray(WorldPosition, WorldDirection, true);
 				float T;
 
-				return MathLibrary::RayPlaneIntersectionChecked(Context, Ray, Plane, T, OutIntersection);
+				return CsMathLibrary::RayPlaneIntersectionChecked(Context, Ray, Plane, T, OutIntersection);
 			}
 
 			bool FLibrary::GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection, LogWarning)
@@ -410,7 +409,7 @@ namespace NCsViewport
 				FCsRay Ray(WorldPosition, WorldDirection, true);
 				float T;
 
-				return MathLibrary::SafeRayPlaneIntersection(Context, Ray, Plane, T, OutIntersection, Log);
+				return CsMathLibrary::SafeRayPlaneIntersection(Context, Ray, Plane, T, OutIntersection, Log);
 			}
 
 			bool FLibrary::GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection)
@@ -424,7 +423,6 @@ namespace NCsViewport
 			#undef SET_CONTEXT
 			#undef LogWarning
 			#undef PlayerLibrary
-			#undef MathLibrary
 		}
 	}
 

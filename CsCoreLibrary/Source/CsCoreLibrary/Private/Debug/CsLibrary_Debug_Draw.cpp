@@ -22,114 +22,82 @@ namespace NCsDebug
 	{
 		void FLibrary::DrawDebugLine(const UWorld* InWorld, FVector3f const& LineStart, FVector3f const& LineEnd, FColor const& Color, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/, float Thickness /*=0.f*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugLine(InWorld, MathLibrary::Convert(LineStart), MathLibrary::Convert(LineEnd), Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
+			::DrawDebugLine(InWorld, CsMathLibrary::Convert(LineStart), CsMathLibrary::Convert(LineEnd), Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
 		}
 
 		void FLibrary::DrawDebugPoint(const UWorld* InWorld, FVector3f const& Position, float Size, FColor const& PointColor, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugPoint(InWorld, MathLibrary::Convert(Position), Size, PointColor, bPersistentLines, LifeTime, DepthPriority);
+			::DrawDebugPoint(InWorld, CsMathLibrary::Convert(Position), Size, PointColor, bPersistentLines, LifeTime, DepthPriority);
 		}
 
 		void DrawDebugPoint(const UWorld* InWorld, FVector3f const& Position, float Size, FColor const& PointColor, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugPoint(InWorld, MathLibrary::Convert(Position), Size, PointColor, bPersistentLines, LifeTime, DepthPriority);
+			::DrawDebugPoint(InWorld, CsMathLibrary::Convert(Position), Size, PointColor, bPersistentLines, LifeTime, DepthPriority);
 		}
 
 		void FLibrary::DrawDebugDirectionalArrow(const UWorld* InWorld, FVector3f const& LineStart, FVector3f const& LineEnd, float ArrowSize, FColor const& Color, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/, float Thickness /*=0.f*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugDirectionalArrow(InWorld, MathLibrary::Convert(LineStart), MathLibrary::Convert(LineEnd), ArrowSize, Color, bPersistentLines, LifeTime,DepthPriority, Thickness);
+			::DrawDebugDirectionalArrow(InWorld, CsMathLibrary::Convert(LineStart), CsMathLibrary::Convert(LineEnd), ArrowSize, Color, bPersistentLines, LifeTime,DepthPriority, Thickness);
 		}
 
 		void FLibrary::DrawDebugBox(const UWorld* InWorld, FVector3f const& Center, FVector3f const& Extent, FColor const& Color, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/, float Thickness /*=0.f*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugBox(InWorld, MathLibrary::Convert(Center), MathLibrary::Convert(Extent), Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
+			::DrawDebugBox(InWorld, CsMathLibrary::Convert(Center), CsMathLibrary::Convert(Extent), Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
 		}
 
 		void FLibrary::DrawDebugBox(const UWorld* InWorld, FVector3f const& Center, FVector3f const& Extent, const FQuat4f& Rotation, FColor const& Color, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/, float Thickness /*=0.f*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugBox(InWorld, MathLibrary::Convert(Center), MathLibrary::Convert(Extent), MathLibrary::Convert(Rotation), Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
+			::DrawDebugBox(InWorld, CsMathLibrary::Convert(Center), CsMathLibrary::Convert(Extent), CsMathLibrary::Convert(Rotation), Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
 		}
 
 		void FLibrary::DrawDebugCircle(const UWorld* InWorld, const FMatrix44f& TransformMatrix, float Radius, int32 Segments, const FColor& Color, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/, float Thickness /*=0.f*/, bool bDrawAxis /*=true*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugCircle(InWorld, MathLibrary::Convert(TransformMatrix), Radius, Segments, Color, bPersistentLines, LifeTime, DepthPriority, Thickness, bDrawAxis);
+			::DrawDebugCircle(InWorld, CsMathLibrary::Convert(TransformMatrix), Radius, Segments, Color, bPersistentLines, LifeTime, DepthPriority, Thickness, bDrawAxis);
 		}
 
 		void FLibrary::DrawDebugCircle(const UWorld* InWorld, FVector3f Center, float Radius, int32 Segments, const FColor& Color, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/, float Thickness /*=0.f*/, FVector3f YAxis /*=FVector3f(0.f, 1.f, 0.f)*/, FVector3f ZAxis /*=FVector3f(0.f, 0.f, 1.f)*/, bool bDrawAxis /*=true*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugCircle(InWorld, MathLibrary::Convert(Center), Radius, Segments, Color, bPersistentLines, LifeTime, DepthPriority, Thickness, MathLibrary::Convert(YAxis), MathLibrary::Convert(ZAxis), bDrawAxis);
+			::DrawDebugCircle(InWorld, CsMathLibrary::Convert(Center), Radius, Segments, Color, bPersistentLines, LifeTime, DepthPriority, Thickness, CsMathLibrary::Convert(YAxis), CsMathLibrary::Convert(ZAxis), bDrawAxis);
 		}
 
 		void FLibrary::DrawDebugCapsule(const UWorld* InWorld, FVector3f const& Center, float HalfHeight, float Radius, const FQuat4f& Rotation, FColor const& Color, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/, float Thickness /*=0*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugCapsule(InWorld, MathLibrary::Convert(Center), HalfHeight, Radius, MathLibrary::Convert(Rotation), Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
+			::DrawDebugCapsule(InWorld, CsMathLibrary::Convert(Center), HalfHeight, Radius, CsMathLibrary::Convert(Rotation), Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
 		}
 
 		void FLibrary::DrawDebug2DDonut(const UWorld* InWorld, const FMatrix44f& TransformMatrix, float InnerRadius, float OuterRadius, int32 Segments, const FColor& Color, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/, float Thickness /*=0.f*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebug2DDonut(InWorld, MathLibrary::Convert(TransformMatrix), InnerRadius, OuterRadius, Segments, Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
+			::DrawDebug2DDonut(InWorld, CsMathLibrary::Convert(TransformMatrix), InnerRadius, OuterRadius, Segments, Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
 		}
 
 		void FLibrary::DrawDebugSphere(const UWorld* InWorld, FVector3f const& Center, float Radius, int32 Segments, FColor const& Color, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/, float Thickness /*=0.f*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugSphere(InWorld, MathLibrary::Convert(Center), Radius, Segments, Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
+			::DrawDebugSphere(InWorld, CsMathLibrary::Convert(Center), Radius, Segments, Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
 		}
 
 		void FLibrary::DrawDebugCone(const UWorld* InWorld, FVector3f const& Origin, FVector3f const& Direction, float Length, float AngleWidth, float AngleHeight, int32 NumSides, FColor const& Color, bool bPersistentLines /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/, float Thickness /*=0.f*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugCone(InWorld, MathLibrary::Convert(Origin), MathLibrary::Convert(Direction), Length, AngleWidth, AngleHeight, NumSides, Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
+			::DrawDebugCone(InWorld, CsMathLibrary::Convert(Origin), CsMathLibrary::Convert(Direction), Length, AngleWidth, AngleHeight, NumSides, Color, bPersistentLines, LifeTime, DepthPriority, Thickness);
 		}
 
 		void FLibrary::DrawDebugString(const UWorld* InWorld, FVector3f const& TextLocation, const FString& Text, class AActor* TestBaseActor /*=NULL*/, FColor const& TextColor /*=FColor::White*/, float Duration /*=-1.000000*/, bool bDrawShadow /*=false*/, float FontScale /*=1.f*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugString(InWorld, MathLibrary::Convert(TextLocation), Text, TestBaseActor, TextColor, Duration, bDrawShadow, FontScale);
+			::DrawDebugString(InWorld, CsMathLibrary::Convert(TextLocation), Text, TestBaseActor, TextColor, Duration, bDrawShadow, FontScale);
 		}
 
 		void FLibrary::DrawDebugSolidBox(const UWorld* InWorld, FBox3f const& Box, FColor const& Color, const FTransform3f& Transform /*=FTransform3f::Identity*/, bool bPersistent /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugSolidBox(InWorld, MathLibrary::Convert(Box), Color, MathLibrary::Convert(Transform), bPersistent, LifeTime, DepthPriority);
+			::DrawDebugSolidBox(InWorld, CsMathLibrary::Convert(Box), Color, CsMathLibrary::Convert(Transform), bPersistent, LifeTime, DepthPriority);
 		}
 
 		void FLibrary::DrawDebugSolidBox(const UWorld* InWorld, FVector3f const& Center, FVector3f const& Extent, FColor const& Color, bool bPersistent /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugSolidBox(InWorld, MathLibrary::Convert(Center), MathLibrary::Convert(Extent), Color, bPersistent, LifeTime, DepthPriority);
+			::DrawDebugSolidBox(InWorld, CsMathLibrary::Convert(Center), CsMathLibrary::Convert(Extent), Color, bPersistent, LifeTime, DepthPriority);
 		}
 		
 		void FLibrary::DrawDebugSolidBox(const UWorld* InWorld, FVector3f const& Center, FVector3f const& Extent, FQuat4f const& Rotation, FColor const& Color, bool bPersistent /*=false*/, float LifeTime /*=-1.f*/, uint8 DepthPriority /*=0*/)
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			::DrawDebugSolidBox(InWorld, MathLibrary::Convert(Center), MathLibrary::Convert(Extent), MathLibrary::Convert(Rotation), Color, bPersistent, LifeTime, DepthPriority);
+			::DrawDebugSolidBox(InWorld, CsMathLibrary::Convert(Center), CsMathLibrary::Convert(Extent), CsMathLibrary::Convert(Rotation), Color, bPersistent, LifeTime, DepthPriority);
 		}
 
 		FCollisionQueryParams FLibrary::ConfigureCollisionParams(FName TraceTag, bool bTraceComplex, const TArray<AActor*>& ActorsToIgnore, bool bIgnoreSelf, UObject* WorldContextObject)
@@ -237,8 +205,6 @@ namespace NCsDebug
 		{
 			if (DrawDebugType != EDrawDebugTrace::None)
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				bool bPersistent = DrawDebugType == EDrawDebugTrace::Persistent;
 				float LifeTime   = (DrawDebugType == EDrawDebugTrace::ForDuration) ? DrawTime : 0.f;
 
@@ -246,9 +212,9 @@ namespace NCsDebug
 				if (bHit && OutHit.bBlockingHit)
 				{
 					// Red up to the blocking hit, green thereafter
-					DrawDebugLine(World, Start, MathLibrary::Convert(OutHit.ImpactPoint), TraceColor.ToFColor(true), bPersistent, LifeTime);
-					DrawDebugLine(World, MathLibrary::Convert(OutHit.ImpactPoint), End, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
-					DrawDebugPoint(World, MathLibrary::Convert(OutHit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, TraceColor.ToFColor(true), bPersistent, LifeTime);
+					DrawDebugLine(World, Start, CsMathLibrary::Convert(OutHit.ImpactPoint), TraceColor.ToFColor(true), bPersistent, LifeTime);
+					DrawDebugLine(World, CsMathLibrary::Convert(OutHit.ImpactPoint), End, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
+					DrawDebugPoint(World, CsMathLibrary::Convert(OutHit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, TraceColor.ToFColor(true), bPersistent, LifeTime);
 				}
 				else
 				{
@@ -263,8 +229,6 @@ namespace NCsDebug
 		{
 			if (DrawDebugType != EDrawDebugTrace::None)
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				bool bPersistent = DrawDebugType == EDrawDebugTrace::Persistent;
 				float LifeTime   = (DrawDebugType == EDrawDebugTrace::ForDuration) ? DrawTime : 0.f;
 
@@ -272,7 +236,7 @@ namespace NCsDebug
 				if (bHit && OutHits.Last().bBlockingHit)
 				{
 					// Red up to the blocking hit, green thereafter
-					FVector3f const BlockingHitPoint = MathLibrary::Convert(OutHits.Last().ImpactPoint);
+					FVector3f const BlockingHitPoint = CsMathLibrary::Convert(OutHits.Last().ImpactPoint);
 					DrawDebugLine(World, Start, BlockingHitPoint, TraceColor.ToFColor(true), bPersistent, LifeTime);
 					DrawDebugLine(World, BlockingHitPoint, End, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
 				}
@@ -286,7 +250,7 @@ namespace NCsDebug
 				for (int32 HitIdx = 0; HitIdx < OutHits.Num(); ++HitIdx)
 				{
 					FHitResult const& Hit = OutHits[HitIdx];
-					DrawDebugPoint(World, MathLibrary::Convert(Hit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, (Hit.bBlockingHit ? TraceColor.ToFColor(true) : TraceHitColor.ToFColor(true)), bPersistent, LifeTime);
+					DrawDebugPoint(World, CsMathLibrary::Convert(Hit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, (Hit.bBlockingHit ? TraceColor.ToFColor(true) : TraceHitColor.ToFColor(true)), bPersistent, LifeTime);
 				}
 			}
 		}
@@ -295,17 +259,15 @@ namespace NCsDebug
 		{
 			if (DrawDebugType != EDrawDebugTrace::None && (World != nullptr))
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				bool bPersistent = DrawDebugType == EDrawDebugTrace::Persistent;
 				float LifeTime = (DrawDebugType == EDrawDebugTrace::ForDuration) ? DrawTime : 0.f;
 
 				if (bHit && OutHit.bBlockingHit)
 				{
 					// Red up to the blocking hit, green thereafter
-					SweptBox(World, Start, MathLibrary::Convert(OutHit.Location), Orientation, HalfSize, TraceColor.ToFColor(true), bPersistent, LifeTime);
-					SweptBox(World, MathLibrary::Convert(OutHit.Location), End, Orientation, HalfSize, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
-					DrawDebugPoint(World, MathLibrary::Convert(OutHit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, TraceColor.ToFColor(true), bPersistent, LifeTime);
+					SweptBox(World, Start, CsMathLibrary::Convert(OutHit.Location), Orientation, HalfSize, TraceColor.ToFColor(true), bPersistent, LifeTime);
+					SweptBox(World, CsMathLibrary::Convert(OutHit.Location), End, Orientation, HalfSize, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
+					DrawDebugPoint(World, CsMathLibrary::Convert(OutHit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, TraceColor.ToFColor(true), bPersistent, LifeTime);
 				}
 				else
 				{
@@ -319,15 +281,13 @@ namespace NCsDebug
 		{
 			if (DrawDebugType != EDrawDebugTrace::None && (World != nullptr))
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				bool bPersistent = DrawDebugType == EDrawDebugTrace::Persistent;
 				float LifeTime = (DrawDebugType == EDrawDebugTrace::ForDuration) ? DrawTime : 0.f;
 
 				if (bHit && OutHits.Last().bBlockingHit)
 				{
 					// Red up to the blocking hit, green thereafter
-					FVector3f const BlockingHitPoint = MathLibrary::Convert(OutHits.Last().Location);
+					FVector3f const BlockingHitPoint = CsMathLibrary::Convert(OutHits.Last().Location);
 					SweptBox(World, Start, BlockingHitPoint, Orientation, HalfSize, TraceColor.ToFColor(true), bPersistent, LifeTime);
 					SweptBox(World, BlockingHitPoint, End, Orientation, HalfSize, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
 				}
@@ -341,7 +301,7 @@ namespace NCsDebug
 				for (int32 HitIdx = 0; HitIdx < OutHits.Num(); ++HitIdx)
 				{
 					FHitResult const& Hit = OutHits[HitIdx];
-					DrawDebugPoint(World, MathLibrary::Convert(Hit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, (Hit.bBlockingHit ? TraceColor.ToFColor(true) : TraceHitColor.ToFColor(true)), bPersistent, LifeTime);
+					DrawDebugPoint(World, CsMathLibrary::Convert(Hit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, (Hit.bBlockingHit ? TraceColor.ToFColor(true) : TraceHitColor.ToFColor(true)), bPersistent, LifeTime);
 				}
 			}
 		}
@@ -350,17 +310,15 @@ namespace NCsDebug
 		{
 			if (DrawDebugType != EDrawDebugTrace::None)
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				bool bPersistent = DrawDebugType == EDrawDebugTrace::Persistent;
 				float LifeTime = (DrawDebugType == EDrawDebugTrace::ForDuration) ? DrawTime : 0.f;
 
 				if (bHit && OutHit.bBlockingHit)
 				{
 					// Red up to the blocking hit, green thereafter
-					SweptSphere(World, Start, MathLibrary::Convert(OutHit.Location), Radius, TraceColor.ToFColor(true), bPersistent, LifeTime);
-					SweptSphere(World, MathLibrary::Convert(OutHit.Location), End, Radius, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
-					DrawDebugPoint(World, MathLibrary::Convert(OutHit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, TraceColor.ToFColor(true), bPersistent, LifeTime);
+					SweptSphere(World, Start, CsMathLibrary::Convert(OutHit.Location), Radius, TraceColor.ToFColor(true), bPersistent, LifeTime);
+					SweptSphere(World, CsMathLibrary::Convert(OutHit.Location), End, Radius, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
+					DrawDebugPoint(World, CsMathLibrary::Convert(OutHit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, TraceColor.ToFColor(true), bPersistent, LifeTime);
 				}
 				else
 				{
@@ -374,15 +332,13 @@ namespace NCsDebug
 		{
 			if (DrawDebugType != EDrawDebugTrace::None)
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				bool bPersistent = DrawDebugType == EDrawDebugTrace::Persistent;
 				float LifeTime = (DrawDebugType == EDrawDebugTrace::ForDuration) ? DrawTime : 0.f;
 
 				if (bHit && OutHits.Last().bBlockingHit)
 				{
 					// Red up to the blocking hit, green thereafter
-					FVector3f const BlockingHitPoint = MathLibrary::Convert(OutHits.Last().Location);
+					FVector3f const BlockingHitPoint = CsMathLibrary::Convert(OutHits.Last().Location);
 					SweptSphere(World, Start, BlockingHitPoint, Radius, TraceColor.ToFColor(true), bPersistent, LifeTime);
 					SweptSphere(World, BlockingHitPoint, End, Radius, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
 				}
@@ -396,7 +352,7 @@ namespace NCsDebug
 				for (int32 HitIdx = 0; HitIdx < OutHits.Num(); ++HitIdx)
 				{
 					FHitResult const& Hit = OutHits[HitIdx];
-					DrawDebugPoint(World, MathLibrary::Convert(Hit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, (Hit.bBlockingHit ? TraceColor.ToFColor(true) : TraceHitColor.ToFColor(true)), bPersistent, LifeTime);
+					DrawDebugPoint(World, CsMathLibrary::Convert(Hit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, (Hit.bBlockingHit ? TraceColor.ToFColor(true) : TraceHitColor.ToFColor(true)), bPersistent, LifeTime);
 				}
 			}
 		}
@@ -405,8 +361,6 @@ namespace NCsDebug
 		{
 			if (DrawDebugType != EDrawDebugTrace::None)
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				bool bPersistent = DrawDebugType == EDrawDebugTrace::Persistent;
 				float LifeTime = (DrawDebugType == EDrawDebugTrace::ForDuration) ? DrawTime : 0.f;
 
@@ -414,12 +368,12 @@ namespace NCsDebug
 				{
 					// Red up to the blocking hit, green thereafter
 					DrawDebugCapsule(World, Start, HalfHeight, Radius, FQuat4f::Identity, TraceColor.ToFColor(true), bPersistent, LifeTime);
-					DrawDebugCapsule(World, MathLibrary::Convert(OutHit.Location), HalfHeight, Radius, FQuat4f::Identity, TraceColor.ToFColor(true), bPersistent, LifeTime);
-					DrawDebugLine(World, Start, MathLibrary::Convert(OutHit.Location), TraceColor.ToFColor(true), bPersistent, LifeTime);
-					DrawDebugPoint(World, MathLibrary::Convert(OutHit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, TraceColor.ToFColor(true), bPersistent, LifeTime);
+					DrawDebugCapsule(World, CsMathLibrary::Convert(OutHit.Location), HalfHeight, Radius, FQuat4f::Identity, TraceColor.ToFColor(true), bPersistent, LifeTime);
+					DrawDebugLine(World, Start, CsMathLibrary::Convert(OutHit.Location), TraceColor.ToFColor(true), bPersistent, LifeTime);
+					DrawDebugPoint(World, CsMathLibrary::Convert(OutHit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, TraceColor.ToFColor(true), bPersistent, LifeTime);
 
 					DrawDebugCapsule(World, End, HalfHeight, Radius, FQuat4f::Identity, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
-					DrawDebugLine(World, MathLibrary::Convert(OutHit.Location), End, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
+					DrawDebugLine(World, CsMathLibrary::Convert(OutHit.Location), End, TraceHitColor.ToFColor(true), bPersistent, LifeTime);
 				}
 				else
 				{
@@ -435,15 +389,13 @@ namespace NCsDebug
 		{
 			if (DrawDebugType != EDrawDebugTrace::None)
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				bool bPersistent = DrawDebugType == EDrawDebugTrace::Persistent;
 				float LifeTime = (DrawDebugType == EDrawDebugTrace::ForDuration) ? DrawTime : 0.f;
 
 				if (bHit && OutHits.Last().bBlockingHit)
 				{
 					// Red up to the blocking hit, green thereafter
-					FVector3f const BlockingHitPoint = MathLibrary::Convert(OutHits.Last().Location);
+					FVector3f const BlockingHitPoint = CsMathLibrary::Convert(OutHits.Last().Location);
 					DrawDebugCapsule(World, Start, HalfHeight, Radius, FQuat4f::Identity, TraceColor.ToFColor(true), bPersistent, LifeTime);
 					DrawDebugCapsule(World, BlockingHitPoint, HalfHeight, Radius, FQuat4f::Identity, TraceColor.ToFColor(true), bPersistent, LifeTime);
 					DrawDebugLine(World, Start, BlockingHitPoint, TraceColor.ToFColor(true), bPersistent, LifeTime);
@@ -463,7 +415,7 @@ namespace NCsDebug
 				for (int32 HitIdx = 0; HitIdx < OutHits.Num(); ++HitIdx)
 				{
 					FHitResult const& Hit = OutHits[HitIdx];
-					DrawDebugPoint(World, MathLibrary::Convert(Hit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, (Hit.bBlockingHit ? TraceColor.ToFColor(true) : TraceHitColor.ToFColor(true)), bPersistent, LifeTime);
+					DrawDebugPoint(World, CsMathLibrary::Convert(Hit.ImpactPoint), DEBUG_IMPACTPOINT_SIZE, (Hit.bBlockingHit ? TraceColor.ToFColor(true) : TraceHitColor.ToFColor(true)), bPersistent, LifeTime);
 				}
 			}
 		}
@@ -483,9 +435,7 @@ namespace NCsDebug
 					APlayerController* PlayerController = Iterator->Get();
 					if (PlayerController && PlayerController->MyHUD && PlayerController->Player)
 					{
-						typedef NCsMath::FLibrary MathLibrary;
-
-						PlayerController->MyHUD->AddDebugText(Text, BaseAct, Duration, MathLibrary::Convert(TextLocation), MathLibrary::Convert(TextLocation), TextColor, true, (TestBaseActor == NULL), false, nullptr, FontScale, bDrawShadow);
+						PlayerController->MyHUD->AddDebugText(Text, BaseAct, Duration, CsMathLibrary::Convert(TextLocation), CsMathLibrary::Convert(TextLocation), TextColor, true, (TestBaseActor == NULL), false, nullptr, FontScale, bDrawShadow);
 					}
 				}
 			}

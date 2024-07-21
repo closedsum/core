@@ -229,10 +229,8 @@ void FCsDebugDrawCircle::DrawAtLocation(AActor* Actor, const FECsCVarDraw& Other
 {
 	if (CanDraw(Actor, OtherCVar))
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
 		FTransform3f InTransform = FTransform3f::Identity;
-		InTransform.SetLocation(MathLibrary::Convert(Actor->GetActorLocation()));
+		InTransform.SetLocation(CsMathLibrary::Convert(Actor->GetActorLocation()));
 
 		Draw_Internal(Actor, InTransform, InMinRadius, InMaxRadius);
 	}
@@ -242,10 +240,8 @@ void FCsDebugDrawCircle::DrawAtLocation(AActor* Actor, const float& InMinRadius,
 {
 	if (CanDraw(Actor))
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
 		FTransform3f InTransform = FTransform3f::Identity;
-		InTransform.SetLocation(MathLibrary::Convert(Actor->GetActorLocation()));
+		InTransform.SetLocation(CsMathLibrary::Convert(Actor->GetActorLocation()));
 
 		Draw_Internal(Actor, InTransform, InMinRadius, InMaxRadius);
 	}
@@ -526,10 +522,8 @@ void FCsDebugDrawPie::DrawAtLocation(AActor* Actor, const FECsCVarDraw& OtherCVa
 {
 	if (CanDraw(Actor, OtherCVar))
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
 		FTransform3f InTransform = FTransform3f::Identity;
-		InTransform.SetLocation(MathLibrary::Convert(Actor->GetActorLocation()));
+		InTransform.SetLocation(CsMathLibrary::Convert(Actor->GetActorLocation()));
 
 		Draw_Internal(Actor, Angle, InTransform, InRadius);
 	}
@@ -539,10 +533,8 @@ void FCsDebugDrawPie::DrawAtLocation(AActor* Actor, const float& InRadius) const
 {
 	if (CanDraw(Actor))
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
 		FTransform3f InTransform = FTransform3f::Identity;
-		InTransform.SetLocation(MathLibrary::Convert(Actor->GetActorLocation()));
+		InTransform.SetLocation(CsMathLibrary::Convert(Actor->GetActorLocation()));
 
 		Draw_Internal(Actor, Angle, InTransform, InRadius);
 	}
@@ -916,13 +908,12 @@ void FCsDebugDrawTraceLine::Draw(const UObject* WorldContext, const FVector3f& S
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;
 		typedef NCsDebug::NDraw::FLibrary DrawLibrary;
-		typedef NCsMath::FLibrary MathLibrary;
 
 		UWorld* World = WorldLibrary::GetSafe(WorldContext);
 
 		if (Hit.bBlockingHit)
 		{
-			const FVector3f ImpactPoint = MathLibrary::Convert(Hit.ImpactPoint);
+			const FVector3f ImpactPoint = CsMathLibrary::Convert(Hit.ImpactPoint);
 
 			DrawLibrary::DrawDebugLine(World, Start, ImpactPoint, Color, false, LifeTime, 0 , Thickness);
 			DrawLibrary::DrawDebugLine(World, ImpactPoint, End, HitColor, false, LifeTime, 0, Thickness);
@@ -937,11 +928,9 @@ void FCsDebugDrawTraceLine::Draw(const UObject* WorldContext, const FVector3f& S
 
 void FCsDebugDrawTraceLine::Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& End, const bool& BlockingHit, const FVector3f& ImpactPoint) const
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	FHitResult Hit;
 	Hit.bBlockingHit = BlockingHit;
-	Hit.ImpactPoint  = MathLibrary::Convert(ImpactPoint);
+	Hit.ImpactPoint  = CsMathLibrary::Convert(ImpactPoint);
 
 	Draw(WorldContext, Start, End, Hit);
 }
@@ -1143,15 +1132,13 @@ void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector3f& Start, const F
 	}
 	else
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
 		// Line
 		if (Shape->IsLine())
 			Draw(World, Start, End, Hit);
 		// Box
 		else
 		if (Shape->IsBox())
-			Draw(World, Start, End, MathLibrary::Convert(Shape->GetExtent()), FRotator3f::ZeroRotator, Hit);
+			Draw(World, Start, End, CsMathLibrary::Convert(Shape->GetExtent()), FRotator3f::ZeroRotator, Hit);
 		// Sphere
 		else
 		if (Shape->IsSphere())

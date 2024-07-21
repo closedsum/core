@@ -70,7 +70,6 @@ namespace NCsScriptLibraryActor
 #define SET_LOG_WARNING void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning;
 #define LogError &NCsCore::NLibrary::FLog::Error
 #define ActorLibrary NCsActor::FLibrary
-#define MathLibrary NCsMath::FLibrary
 
 UCsScriptLibrary_Actor::UCsScriptLibrary_Actor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -221,7 +220,7 @@ bool UCsScriptLibrary_Actor::RotateByPitch(const FString& Context, AActor* Actor
 
 	FQuat Q = Actor->GetActorQuat();
 
-	MathLibrary::RotateByPitchDegrees(Q, Degrees);
+	CsMathLibrary::RotateByPitchDegrees(Q, Degrees);
 
 	return Actor->SetActorRotation(Q, Teleport);
 }
@@ -235,7 +234,7 @@ bool UCsScriptLibrary_Actor::RotateByYaw(const FString& Context, AActor* Actor, 
 
 	FQuat Q = Actor->GetActorQuat();
 
-	MathLibrary::RotateByYawDegrees(Q, Degrees);
+	CsMathLibrary::RotateByYawDegrees(Q, Degrees);
 
 	return Actor->SetActorRotation(Q, Teleport);
 }
@@ -249,7 +248,7 @@ bool UCsScriptLibrary_Actor::RotateByRoll(const FString& Context, AActor* Actor,
 
 	FQuat Q = Actor->GetActorQuat();
 
-	MathLibrary::RotateByRollDegrees(Q, Degrees);
+	CsMathLibrary::RotateByRollDegrees(Q, Degrees);
 
 	return Actor->SetActorRotation(Q, Teleport);
 }
@@ -344,4 +343,3 @@ bool UCsScriptLibrary_Actor::GetNormal2DAtoB(const FString& Context, AActor* A, 
 #undef SET_LOG_WARNING
 #undef LogError
 #undef ActorLibrary
-#undef MathLibrary

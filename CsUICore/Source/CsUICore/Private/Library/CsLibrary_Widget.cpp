@@ -368,7 +368,6 @@ namespace NCsWidget
 	namespace NRender
 	{
 		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-		#define MathLibrary NCsMath::FLibrary
 
 		bool FLibrary::CanEaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
 		{
@@ -391,7 +390,7 @@ namespace NCsWidget
 		float FLibrary::GetPercentChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
 		{
 			check(CanEaseChecked(Context, Widget, Easing, Start, End, Alpha));
-			return MathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
+			return CsMathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
 		}
 
 		void FLibrary::Opacity_EaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
@@ -406,7 +405,7 @@ namespace NCsWidget
 			if (!CanEase(Context, Widget, Easing, Start, End, Alpha, Log))
 				return false;
 
-			const float Percent = MathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
+			const float Percent = CsMathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
 
 			Widget->SetRenderOpacity(Percent);
 			return true;
@@ -424,14 +423,13 @@ namespace NCsWidget
 		{
 			if (!CanEase(Context, Widget, Easing, Start, End, Alpha, Log))
 				return false;
-			const float Percent   = MathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
+			const float Percent   = CsMathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
 			const FVector2d Scale = FMath::Lerp(Start, End, Alpha) * FVector2d(1.0f);
 
 			Widget->SetRenderScale(Scale);
 			return true;
 		}
 
-		#undef MathLibrary
 		#undef LogLevel
 
 	// Anim
@@ -474,7 +472,6 @@ namespace NCsWidget
 			#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NPosition::NScreen::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-			#define MathLibrary NCsMath::FLibrary
 
 			FVector2d FLibrary::GetBySlot2dChecked(const FString& Context, UWidget* Widget)
 			{
@@ -491,7 +488,7 @@ namespace NCsWidget
 
 			FVector2f FLibrary::GetBySlot2fChecked(const FString& Context, UWidget* Widget)
 			{
-				return MathLibrary::Convert(GetBySlot2dChecked(Context, Widget));
+				return CsMathLibrary::Convert(GetBySlot2dChecked(Context, Widget));
 			}
 
 			FVector2d FLibrary::GetSafeBySlot2d(const FString& Context, UWidget* Widget, LogLevel)
@@ -526,7 +523,7 @@ namespace NCsWidget
 
 			FVector2f FLibrary::GetSafeBySlot2f(const FString& Context, UWidget* Widget, LogLevel)
 			{
-				return MathLibrary::Convert(GetSafeBySlot2d(Context, Widget, Log));
+				return CsMathLibrary::Convert(GetSafeBySlot2d(Context, Widget, Log));
 			}
 
 			FVector2d FLibrary::GetSafeBySlot2d(UWidget* Widget)
@@ -554,7 +551,7 @@ namespace NCsWidget
 
 			FVector2f FLibrary::GetAbsoluteByCachedGeometry2fChecked(const FString& Context, UWidget* Widget)
 			{
-				return MathLibrary::Convert(GetAbsoluteByCachedGeometry2dChecked(Context, Widget));
+				return CsMathLibrary::Convert(GetAbsoluteByCachedGeometry2dChecked(Context, Widget));
 			}
 
 			FVector2d FLibrary::GetSafeAbsoluteByCachedGeometry2d(const FString& Context, UWidget* Widget, LogLevel)
@@ -581,7 +578,7 @@ namespace NCsWidget
 
 			FVector2f FLibrary::GetSafeAbsoluteByCachedGeometry2f(const FString& Context, UWidget* Widget, LogLevel)
 			{
-				return MathLibrary::Convert(GetSafeAbsoluteByCachedGeometry2d(Context, Widget, Log));
+				return CsMathLibrary::Convert(GetSafeAbsoluteByCachedGeometry2d(Context, Widget, Log));
 			}
 
 			FVector2d FLibrary::GetSafeAbsoluteByCachedGeometry2d(UWidget* Widget)
@@ -601,7 +598,6 @@ namespace NCsWidget
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef MathLibrary
 		}
 
 		namespace NViewport
@@ -621,7 +617,6 @@ namespace NCsWidget
 			#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NPosition::NViewport::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-			#define MathLibrary NCsMath::FLibrary
 			#define WidgetScreenPositionLibrary NCsWidget::NPosition::NScreen::FLibrary
 
 			void FLibrary::GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition)
@@ -637,8 +632,8 @@ namespace NCsWidget
 				FVector2d ViewportPosition;
 				GetByCachedGeometryChecked(Context, Widget, PixelPosition, ViewportPosition);
 
-				OutPixelPosition	= MathLibrary::Convert(PixelPosition);
-				OutViewportPosition = MathLibrary::Convert(ViewportPosition);
+				OutPixelPosition	= CsMathLibrary::Convert(PixelPosition);
+				OutViewportPosition = CsMathLibrary::Convert(ViewportPosition);
 			}
 
 			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition, LogLevel)
@@ -660,8 +655,8 @@ namespace NCsWidget
 				FVector2d ViewportPosition;
 				GetSafeByCachedGeometry(Context, Widget, PixelPosition, ViewportPosition, Log);
 
-				OutPixelPosition    = MathLibrary::Convert(PixelPosition);
-				OutViewportPosition = MathLibrary::Convert(ViewportPosition);
+				OutPixelPosition    = CsMathLibrary::Convert(PixelPosition);
+				OutViewportPosition = CsMathLibrary::Convert(ViewportPosition);
 			}
 
 			void FLibrary::GetSafeByCachedGeometry(UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition)
@@ -681,7 +676,6 @@ namespace NCsWidget
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef MathLibrary
 			#undef WidgetScreenPositionLibrary
 		}
 
@@ -703,7 +697,6 @@ namespace NCsWidget
 			#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NPosition::NWorld::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-			#define MathLibrary NCsMath::FLibrary
 			#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 			#define WidgetScreenPositionLibrary NCsWidget::NPosition::NScreen::FLibrary
 			#define WidgetViewportPositionLibrary NCsWidget::NPosition::NViewport::FLibrary
@@ -727,8 +720,8 @@ namespace NCsWidget
 				FVector3d Direction;
 				const bool Result = GetBySlotChecked(Context, WorldContext, ControllerId, Widget, Position, Direction);
 
-				OutPosition  = MathLibrary::Convert(Position);
-				OutDirection = MathLibrary::Convert(Direction);
+				OutPosition  = CsMathLibrary::Convert(Position);
+				OutDirection = CsMathLibrary::Convert(Direction);
 				return Result;
 			}
 
@@ -754,8 +747,8 @@ namespace NCsWidget
 				FVector3d Direction;
 				const bool Result = GetSafeBySlot(Context, WorldContext, ControllerId, Widget, Position, Direction);
 
-				OutPosition  = MathLibrary::Convert(Position);
-				OutDirection = MathLibrary::Convert(Direction);
+				OutPosition  = CsMathLibrary::Convert(Position);
+				OutDirection = CsMathLibrary::Convert(Direction);
 				return Result;
 			}
 
@@ -794,8 +787,8 @@ namespace NCsWidget
 				FVector3d Direction;
 				const bool Result = GetByCachedGeometryChecked(Context, WorldContext, ControllerId, Widget, Position, Direction);
 				
-				OutPosition  = MathLibrary::Convert(Position);
-				OutDirection = MathLibrary::Convert(Direction);
+				OutPosition  = CsMathLibrary::Convert(Position);
+				OutDirection = CsMathLibrary::Convert(Direction);
 
 				return Result;
 			}
@@ -825,8 +818,8 @@ namespace NCsWidget
 				FVector3d Direction;
 				const bool Result = GetSafeByCachedGeometry(Context, WorldContext, ControllerId, Widget, Position, Direction);
 
-				OutPosition  = MathLibrary::Convert(Position);
-				OutDirection = MathLibrary::Convert(Direction);
+				OutPosition  = CsMathLibrary::Convert(Position);
+				OutDirection = CsMathLibrary::Convert(Direction);
 				return Result;
 			}
 
@@ -847,7 +840,6 @@ namespace NCsWidget
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef MathLibrary
 			#undef PCLocalLibrary
 			#undef WidgetScreenPositionLibrary
 			#undef WidgetViewportPositionLibrary

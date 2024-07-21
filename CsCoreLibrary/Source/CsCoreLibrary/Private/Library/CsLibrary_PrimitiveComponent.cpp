@@ -24,9 +24,6 @@ namespace NCsPrimitiveComponent
 			}
 		}
 	}
-
-	#define MathLibrary NCsMath::FLibrary
-
 	// Movement
 	#pragma region
 
@@ -34,17 +31,15 @@ namespace NCsPrimitiveComponent
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		return MathLibrary::Convert(Component->GetPhysicsLinearVelocity(BoneName));
+		return CsMathLibrary::Convert(Component->GetPhysicsLinearVelocity(BoneName));
 	}
 
 	FVector3f FLibrary::GetPhysicsAngularVelocityInDegreesChecked(const FString& Context, const UPrimitiveComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		return MathLibrary::Convert(Component->GetPhysicsAngularVelocityInDegrees());
+		return CsMathLibrary::Convert(Component->GetPhysicsAngularVelocityInDegrees());
 	}
 
 	#pragma endregion Movement
-
-	#undef MathLibrary
 }

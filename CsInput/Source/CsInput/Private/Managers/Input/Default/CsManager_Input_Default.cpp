@@ -756,8 +756,6 @@ void UCsManager_Input_Default::OnPostProcessInput_CaptureTouchInput(const float&
 	const FIntPoint Size = ViewportLibrary::GetSizeChecked(Context, this);
 	*/
 	// Check if any Touch Locations have been updated
-	typedef NCsMath::FLibrary MathLibrary;
-
 	const int32 Count = TouchAxisActions.Num();
 
 	for (int32 I = 0; I < Count; ++I)
@@ -767,7 +765,7 @@ void UCsManager_Input_Default::OnPostProcessInput_CaptureTouchInput(const float&
 
 		FVector3f CurrentPosition = Info.Location;
 
-		const FVector3f Touch = MathLibrary::Convert(PlayerInput->Touches[I]);
+		const FVector3f Touch = CsMathLibrary::Convert(PlayerInput->Touches[I]);
 		const bool IsPressed  = Touch.Z != 0.0f;
 
 		if (IsPressed)
@@ -828,8 +826,6 @@ void UCsManager_Input_Default::OnPostProcessInput_LogCaptureTouchInput()
 	using namespace NCsManagerInput::NCached;
 
 	const FString& Context = Str::OnPostProcessInput_CaptureTouchInput;
-
-	typedef NCsMath::FLibrary MathLibrary;
 
 	// Action | Action Event Change
 	if (CS_CVAR_LOG_IS_SHOWING(LogInputTouchAction) ||
@@ -910,7 +906,7 @@ void UCsManager_Input_Default::OnPostProcessInput_LogCaptureTouchInput()
 		for (int32 I = 0; I < Count; ++I)
 		{
 			const FECsInputAction& Action = TouchAxisActions[I];
-			const FVector3f Touch		  = MathLibrary::Convert(PlayerInput->Touches[I]);
+			const FVector3f Touch		  = CsMathLibrary::Convert(PlayerInput->Touches[I]);
 
 			const bool IsPressed = Touch.Z != 0.0f;
 
@@ -929,7 +925,7 @@ void UCsManager_Input_Default::OnPostProcessInput_LogCaptureTouchInput()
 			for (const int32& I : Indices)
 			{
 				const FECsInputAction& Action = TouchAxisActions[I];
-				const FVector3f Touch		  = MathLibrary::Convert(PlayerInput->Touches[I]);
+				const FVector3f Touch		  = CsMathLibrary::Convert(PlayerInput->Touches[I]);
 
 				const bool IsPressed = Touch.Z != 0.0f;
 
@@ -957,7 +953,7 @@ void UCsManager_Input_Default::OnPostProcessInput_LogCaptureTouchInput()
 
 			FVector3f CurrentPosition = Info.Location;
 
-			const FVector3f Touch = MathLibrary::Convert(PlayerInput->Touches[I]);
+			const FVector3f Touch = CsMathLibrary::Convert(PlayerInput->Touches[I]);
 			const bool IsPressed = Touch.Z != 0.0f;
 
 			if (IsPressed)
@@ -1015,7 +1011,7 @@ void UCsManager_Input_Default::OnPostProcessInput_LogCaptureTouchInput()
 
 				FVector3f CurrentPosition = Info.Location;
 
-				const FVector3f Touch = MathLibrary::Convert(PlayerInput->Touches[I]);
+				const FVector3f Touch = CsMathLibrary::Convert(PlayerInput->Touches[I]);
 				const bool IsPressed = Touch.Z != 0.0f;
 
 				if (IsPressed)
@@ -1680,9 +1676,7 @@ void UCsManager_Input_Default::SetInputActionMappingByMap(FECsInputActionMap Map
 
 FCsInput* UCsManager_Input_Default::GetPreviousInputAction(const FECsInputAction& Action)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
-	const int32 LastInputFrame = MathLibrary::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
+	const int32 LastInputFrame = CsMathLibrary::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action);
 
 	return Input;
@@ -1690,9 +1684,7 @@ FCsInput* UCsManager_Input_Default::GetPreviousInputAction(const FECsInputAction
 
 FCsInput* UCsManager_Input_Default::GetPreviousInputAction(const FECsInputAction& Action, const ECsInputEvent& Event)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
-	const int32 LastInputFrame = MathLibrary::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
+	const int32 LastInputFrame = CsMathLibrary::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action, Event);
 
 	return Input;
@@ -1700,9 +1692,7 @@ FCsInput* UCsManager_Input_Default::GetPreviousInputAction(const FECsInputAction
 
 FCsInput* UCsManager_Input_Default::GetPreviousInputAction(const FECsInputAction& Action, const TArray<ECsInputEvent>& Events)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
-	const int32 LastInputFrame = MathLibrary::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
+	const int32 LastInputFrame = CsMathLibrary::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action, Events);
 
 	return Input;
@@ -1710,9 +1700,7 @@ FCsInput* UCsManager_Input_Default::GetPreviousInputAction(const FECsInputAction
 
 FCsInput* UCsManager_Input_Default::GetPreviousPreviousInputAction(const FECsInputAction& Action)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
-	const int32 LastInputFrame = MathLibrary::Mod(CurrentInputFrameIndex - 2, CS_MAX_INPUT_FRAMES);
+	const int32 LastInputFrame = CsMathLibrary::Mod(CurrentInputFrameIndex - 2, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action);
 
 	return Input;
@@ -2056,8 +2044,6 @@ void UCsManager_Input_Default::OnAction_Released(const FECsInputAction& Action, 
 
 void UCsManager_Input_Default::OnTouchAction_Pressed(ETouchIndex::Type Index, FVector3d Location)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	const FECsInputAction& Action = TouchActions[(uint8)Index];
 
 	FCsInputInfo& Info   = InputActionEventInfos[Action.GetValue()];
@@ -2065,7 +2051,7 @@ void UCsManager_Input_Default::OnTouchAction_Pressed(ETouchIndex::Type Index, FV
 
 	Info.ResetLocation();
 
-	Info.Location = MathLibrary::Convert(Location);
+	Info.Location = CsMathLibrary::Convert(Location);
 
 	Event = ECsInputEvent::FirstPressed;
 
@@ -2074,8 +2060,6 @@ void UCsManager_Input_Default::OnTouchAction_Pressed(ETouchIndex::Type Index, FV
 
 void UCsManager_Input_Default::OnTouchAction_Released(ETouchIndex::Type Index, FVector3d Location)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	const FECsInputAction& Action = TouchActions[(uint8)Index];
 
 	FCsInputInfo& Info	 = InputActionEventInfos[Action.GetValue()];
@@ -2083,7 +2067,7 @@ void UCsManager_Input_Default::OnTouchAction_Released(ETouchIndex::Type Index, F
 
 	Info.ResetLocation();
 
-	Info.Location = MathLibrary::Convert(Location);
+	Info.Location = CsMathLibrary::Convert(Location);
 
 	Event = ECsInputEvent::FirstReleased;
 

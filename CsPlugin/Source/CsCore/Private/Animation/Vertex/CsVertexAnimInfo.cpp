@@ -151,9 +151,7 @@ namespace NCsAnim
 		{	
 			const float Percent = FMath::Clamp(ElapsedTime / GetBlendInTime(), 0.0f, 1.0f);
 				
-			//typedef NCsMath::FLibrary MathLibrary;
-
-			//return MathLibrary::Ease(ECsEasingType::Linear, Percent, 0.0, 1.0f, 1.0f);
+			//return CsMathLibrary::Ease(ECsEasingType::Linear, Percent, 0.0, 1.0f, 1.0f);
 			return Percent;
 		}
 
@@ -161,9 +159,7 @@ namespace NCsAnim
 		{
 			const float Percent = FMath::Clamp((GetLength() - ElapsedTime) / GetBlendOutTime(), 0.0f, 1.0f);
 
-			//typedef NCsMath::FLibrary MathLibrary;
-
-			//return MathLibrary::Ease(ECsEasingType::Linear, Percent, 0.0, 1.0f, 1.0f);
+			//return CsMathLibrary::Ease(ECsEasingType::Linear, Percent, 0.0, 1.0f, 1.0f);
 			return Percent;
 		}
 	}

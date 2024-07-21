@@ -1615,3 +1615,5 @@ namespace NCsMath
 	#undef LogWarning
 	};
 }
+
+using CsMathLibrary = NCsMath::FLibrary;

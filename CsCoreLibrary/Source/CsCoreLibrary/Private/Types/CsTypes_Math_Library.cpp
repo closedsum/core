@@ -31,7 +31,6 @@ namespace NCsRotationRules
 	#define USING_NS_CACHED using namespace NCsRotationRules::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsRotationRules::NCached; \
 		const FString& Context = Str::__FunctionName
-	#define MathLibrary NCsMath::FLibrary
 
 	FRotator3f GetRotation(AActor* Actor, const int32& Rules)
 	{
@@ -39,7 +38,7 @@ namespace NCsRotationRules
 
 		CS_IS_PTR_NULL_CHECKED(Actor)
 
-		return GetRotation(MathLibrary::Convert(Actor->GetActorRotation()), Rules);
+		return GetRotation(CsMathLibrary::Convert(Actor->GetActorRotation()), Rules);
 	}
 
 	FRotator3f GetRotation(USceneComponent* Component, const int32& Rules)
@@ -48,12 +47,11 @@ namespace NCsRotationRules
 
 		CS_IS_PTR_NULL_CHECKED(Component)
 
-		return GetRotation(MathLibrary::Convert(Component->GetComponentRotation()), Rules);
+		return GetRotation(CsMathLibrary::Convert(Component->GetComponentRotation()), Rules);
 	}
 
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
-	#undef MathLibrary
 }
 
 #pragma endregion RotationRules
@@ -63,8 +61,6 @@ namespace NCsRotationRules
 
 namespace NCsTransformRules
 {
-	#define MathLibrary NCsMath::FLibrary
-
 	void SetRelativeTransform(USceneComponent* Component, const FTransform3d& Transform, const int32& Rules)
 	{
 		check(Component);
@@ -98,7 +94,7 @@ namespace NCsTransformRules
 	{
 		check(Component);
 
-		const FTransform3d T = MathLibrary::Convert(Transform);
+		const FTransform3d T = CsMathLibrary::Convert(Transform);
 
 		// Location | Rotation | Scale
 		if (Rules == All)
@@ -158,7 +154,7 @@ namespace NCsTransformRules
 	{
 		check(Actor);
 
-		const FTransform3d T = MathLibrary::Convert(Transform);
+		const FTransform3d T = CsMathLibrary::Convert(Transform);
 
 		// Location | Rotation | Scale
 		if (Rules == All)
@@ -229,7 +225,7 @@ namespace NCsTransformRules
 	{
 		check(Component);
 
-		const FTransform3d T = MathLibrary::Convert(Transform);
+		const FTransform3d T = CsMathLibrary::Convert(Transform);
 
 		// TODO: FIX: NOTE: SetActorTransform is producing some weird results
 		
@@ -311,7 +307,7 @@ namespace NCsTransformRules
 	{
 		check(Actor);
 
-		const FTransform3d T = MathLibrary::Convert(Transform);
+		const FTransform3d T = CsMathLibrary::Convert(Transform);
 
 		// TODO: FIX: NOTE: SetActorTransform is producing some weird results
 		
@@ -383,7 +379,7 @@ namespace NCsTransformRules
 	{
 		check(Component);
 
-		const FTransform3d T = MathLibrary::Convert(Transform);
+		const FTransform3d T = CsMathLibrary::Convert(Transform);
 
 		// Location
 		if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
@@ -457,19 +453,17 @@ namespace NCsTransformRules
 
 	bool AreTransformsEqual(const FTransform3f& A, const FTransform3d& B, const int32& Rules)
 	{
-		const FTransform3f T = MathLibrary::Convert(B);
+		const FTransform3f T = CsMathLibrary::Convert(B);
 
 		return AreTransformsEqual(A, T, Rules);
 	}
 
 	bool AreTransformsEqual(const FTransform3d& A, const FTransform3f& B, const int32& Rules)
 	{
-		const FTransform3f T = MathLibrary::Convert(A);
+		const FTransform3f T = CsMathLibrary::Convert(A);
 
 		return AreTransformsEqual(T, B, Rules);
 	}
-
-	#undef MathLibrary
 }
 
 #pragma endregion TransformRules

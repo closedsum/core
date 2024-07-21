@@ -39,27 +39,26 @@ namespace NCsSceneComponent
 	}
 
 	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define MathLibrary NCsMath::FLibrary
 
 	FVector3f FLibrary::GetScaleChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		return MathLibrary::Convert(Component->GetComponentScale());
+		return CsMathLibrary::Convert(Component->GetComponentScale());
 	}
 
 	void FLibrary::SetScaleChecked(const FString& Context, USceneComponent* Component, const FVector3f& Scale)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		Component->SetWorldScale3D(MathLibrary::Convert(Scale));
+		Component->SetWorldScale3D(CsMathLibrary::Convert(Scale));
 	}
 
 	void FLibrary::SetRelativeScaleChecked(const FString& Context, USceneComponent* Component, const FVector3f& Scale)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		Component->SetRelativeScale3D(MathLibrary::Convert(Scale));
+		Component->SetRelativeScale3D(CsMathLibrary::Convert(Scale));
 
 	}
 
@@ -70,35 +69,35 @@ namespace NCsSceneComponent
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		return MathLibrary::Convert(Component->GetComponentRotation());
+		return CsMathLibrary::Convert(Component->GetComponentRotation());
 	}
 
 	void FLibrary::SetRotationChecked(const FString& Context, USceneComponent* Component, const FRotator3f& Rotation)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		Component->SetWorldRotation(MathLibrary::Convert(Rotation));
+		Component->SetWorldRotation(CsMathLibrary::Convert(Rotation));
 	}
 
 	FRotator3f FLibrary::GetRelativeRotationChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		return MathLibrary::Convert(Component->GetRelativeRotation());
+		return CsMathLibrary::Convert(Component->GetRelativeRotation());
 	}
 
 	FQuat4f FLibrary::GetQuatChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		return MathLibrary::Convert(Component->GetComponentQuat());
+		return CsMathLibrary::Convert(Component->GetComponentQuat());
 	}
 
 	FTransform3f FLibrary::GetTransformChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		return MathLibrary::Convert(Component->GetComponentTransform());
+		return CsMathLibrary::Convert(Component->GetComponentTransform());
 	}
 
 	#pragma endregion Orientation
@@ -110,21 +109,21 @@ namespace NCsSceneComponent
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		return MathLibrary::Convert(Component->GetComponentLocation());
+		return CsMathLibrary::Convert(Component->GetComponentLocation());
 	}
 
 	void FLibrary::SetLocationChecked(const FString& Context, USceneComponent* Component, const FVector3f& Location)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		Component->SetWorldLocation(MathLibrary::Convert(Location));
+		Component->SetWorldLocation(CsMathLibrary::Convert(Location));
 	}
 
 	void FLibrary::SetRelativeLocationChecked(const FString& Context, USceneComponent* Component, const FVector3f& Location)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		Component->SetRelativeLocation(MathLibrary::Convert(Location));
+		Component->SetRelativeLocation(CsMathLibrary::Convert(Location));
 	}
 
 	FVector3f FLibrary::GetSocketLocationChecked(const FString& Context, const USceneComponent* Component, const FName& SocketName)
@@ -132,14 +131,14 @@ namespace NCsSceneComponent
 		CS_IS_PENDING_KILL_CHECKED(Component)
 		CS_IS_NAME_NONE_CHECKED(SocketName)
 
-		return MathLibrary::Convert(Component->GetSocketLocation(SocketName));
+		return CsMathLibrary::Convert(Component->GetSocketLocation(SocketName));
 	}
 
 	FVector3f FLibrary::GetUpChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		return MathLibrary::Convert(Component->GetUpVector());
+		return CsMathLibrary::Convert(Component->GetUpVector());
 	}
 
 	#pragma endregion Movement
@@ -347,5 +346,4 @@ namespace NCsSceneComponent
 	#pragma endregion Attach / Detach
 
 	#undef LogLevel
-	#undef MathLibrary
 }

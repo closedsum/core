@@ -21,7 +21,6 @@ namespace NCsPlayer
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
-		#define MathLibrary NCsMath::FLibrary
 
 		bool FLibrary::IsValidChecked(const FString& Context, const FViewTargetTransitionParams& TransitionParams)
 		{
@@ -146,28 +145,28 @@ namespace NCsPlayer
 		{
 			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
 
-			return MathLibrary::Convert(Cast<AActor>(PCM)->GetActorLocation());
+			return CsMathLibrary::Convert(Cast<AActor>(PCM)->GetActorLocation());
 		}
 
 		FVector3f FLibrary::GetLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
-			return MathLibrary::Convert(GetChecked(Context, WorldContext, ControllerId)->GetCameraLocation());
+			return CsMathLibrary::Convert(GetChecked(Context, WorldContext, ControllerId)->GetCameraLocation());
 		}
 
 		void FLibrary::GetLocationAndRotationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector3f& OutLocation, FRotator3f& OutRotation)
 		{
 			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
 
-			OutLocation = MathLibrary::Convert(PCM->GetCameraLocation());
-			OutRotation = MathLibrary::Convert(PCM->GetCameraRotation());
+			OutLocation = CsMathLibrary::Convert(PCM->GetCameraLocation());
+			OutRotation = CsMathLibrary::Convert(PCM->GetCameraRotation());
 		}
 
 		void FLibrary::GetLocationAndDirectionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector3f& OutLocation, FVector3f& OutDirection)
 		{
 			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
 
-			OutLocation  = MathLibrary::Convert(PCM->GetCameraLocation());
-			OutDirection = MathLibrary::Convert(PCM->GetCameraRotation().Vector());
+			OutLocation  = CsMathLibrary::Convert(PCM->GetCameraLocation());
+			OutDirection = CsMathLibrary::Convert(PCM->GetCameraRotation().Vector());
 		}
 
 		#pragma endregion Orientation
@@ -593,7 +592,6 @@ namespace NCsPlayer
 		#undef LogLevel
 		#undef PCLocalLibrary
 		#undef PCFirstLocalLibrary
-		#undef MathLibrary
 
 		namespace NLocal
 		{

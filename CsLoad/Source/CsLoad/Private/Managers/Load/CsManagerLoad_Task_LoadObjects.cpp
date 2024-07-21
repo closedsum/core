@@ -57,7 +57,6 @@ UCsManagerLoad_Task_LoadObjects::UCsManagerLoad_Task_LoadObjects(const FObjectIn
 #define USING_NS_CACHED using namespace NCsManagerLoadTaskLoadObjects::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerLoadTaskLoadObjects::NCached; \
 	const FString& Context = Str::__FunctionName
-#define MathLibrary NCsMath::FLibrary
 #define TimeLibrary NCsTime::FLibrary
 
 void UCsManagerLoad_Task_LoadObjects::Init()
@@ -144,8 +143,8 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 
 	// Get Memory loaded and the time it took
 	const int32 Bytes	  = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
-	const float Kilobytes = MathLibrary::BytesToKilobytes(Bytes);
-	const float Megabytes = MathLibrary::BytesToMegabytes(Bytes);
+	const float Kilobytes = CsMathLibrary::BytesToKilobytes(Bytes);
+	const float Megabytes = CsMathLibrary::BytesToMegabytes(Bytes);
 
 	SizeLoaded.Bytes	 += Bytes;
 	SizeLoaded.Kilobytes += Kilobytes;
@@ -194,8 +193,8 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
 
 		// Get Memory loaded and the time it took
 		const int32 Bytes	  = Object->GetResourceSizeBytes(EResourceSizeMode::Exclusive);
-		const float Kilobytes = MathLibrary::BytesToKilobytes(Bytes);
-		const float Megabytes = MathLibrary::BytesToMegabytes(Bytes);
+		const float Kilobytes = CsMathLibrary::BytesToKilobytes(Bytes);
+		const float Megabytes = CsMathLibrary::BytesToMegabytes(Bytes);
 
 		SizeLoaded.Bytes	 += Bytes;
 		SizeLoaded.Kilobytes += Kilobytes;
@@ -278,5 +277,4 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const PayloadType
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef MathLibrary
 #undef TimeLibrary

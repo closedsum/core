@@ -611,8 +611,6 @@ namespace NCsMovement
 
 				FVector3f FParams::GetEndLocation() const
 				{
-					typedef NCsMath::FLibrary MathLibrary;
-
 					// TODO: Need to do Relative Location (i.e. check MoveSpace: World or Relative)
 					
 					// Location
@@ -620,13 +618,13 @@ namespace NCsMovement
 						return GetToLocation();
 					// Actor
 					if (GetDestination() == DestinationType::Actor)
-						return MathLibrary::Convert(GetToActor()->GetActorLocation()) + GetToLocation();
+						return CsMathLibrary::Convert(GetToActor()->GetActorLocation()) + GetToLocation();
 					// Component
 					if (GetDestination() == DestinationType::Component)
-						return MathLibrary::Convert(GetToComponent()->GetComponentLocation()) + GetToLocation();
+						return CsMathLibrary::Convert(GetToComponent()->GetComponentLocation()) + GetToLocation();
 					// Bone
 					if (GetDestination() == DestinationType::Bone)
-						return MathLibrary::Convert(GetToMeshComponent()->GetBoneLocation(GetToBone())) + GetToLocation();
+						return CsMathLibrary::Convert(GetToMeshComponent()->GetBoneLocation(GetToBone())) + GetToLocation();
 
 					typedef NCsMovement::EMDestination DestinationMapType;
 
@@ -973,10 +971,8 @@ namespace NCsSpeed
 			{
 				const float AdjustedDeltaTime = DeltaTime / Info->GetTime();
 
-				typedef NCsMath::FLibrary MathLibrary;
-
 				CurrentAlpha				= FMath::Clamp(CurrentAlpha + AdjustedDeltaTime, 0.0f, 1.0f);
-				const float Percent		    = MathLibrary::Ease(Info->GetEasing(), CurrentAlpha, 0.0f, 1.0f, 1.0f);
+				const float Percent		    = CsMathLibrary::Ease(Info->GetEasing(), CurrentAlpha, 0.0f, 1.0f, 1.0f);
 				const float AdjustedPercent = Info->GetDirection() == DirectionType::Increasing ? Percent : 1.0f - Percent;
 
 				// Remap Percent from [0.0f, 1.0f] to [MinSpeedAsPercent, 1.0f]

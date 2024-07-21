@@ -38,18 +38,16 @@ namespace NCsCollision
 		const FVector3d LocalHitPos = Component->GetComponentToWorld().InverseTransformPosition(Hit.Location);
 
 		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(UVChannel, 0)
-		
-		typedef NCsMath::FLibrary MathLibrary;
 
 	#if WITH_EDITOR
 		FVector2d UV;
 		const bool Result = UGameplayStatics::FindCollisionUV(Hit, UVChannel, UV);
-		OutUV = MathLibrary::Convert(UV);
+		OutUV = CsMathLibrary::Convert(UV);
 		return Result;
 	#else
 		FVector2d UV;
 		const bool Result = BodySetup->CalcUVAtLocation(LocalHitPos, Hit.FaceIndex, UVChannel, UV);
-		OutUV = MathLibrary::Convert(UV);
+		OutUV = CsMathLibrary::Convert(UV);
 		return Result;
 	#endif // #if WITH_EDITOR
 	}
@@ -59,23 +57,17 @@ namespace NCsCollision
 
 	FVector3f FLibrary::GetLocation(const FHitResult& Hit)
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
-		return MathLibrary::Convert(Hit.Location);
+		return CsMathLibrary::Convert(Hit.Location);
 	}
 
 	FRotator3f FLibrary::GetImpactRotation(const FHitResult& Hit)
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
-		return MathLibrary::Convert(Hit.ImpactNormal.Rotation());
+		return CsMathLibrary::Convert(Hit.ImpactNormal.Rotation());
 	}
 
 	FQuat4f FLibrary::GetImpactQuat(const FHitResult& Hit)
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
-		return MathLibrary::Convert(Hit.ImpactNormal.ToOrientationQuat());
+		return CsMathLibrary::Convert(Hit.ImpactNormal.ToOrientationQuat());
 	}
 
 	#pragma endregion HitResult

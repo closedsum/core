@@ -21,7 +21,6 @@ namespace NCsSkeletalMesh
 {
 	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 	#define LogWarning void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning;
-	#define MathLibrary NCsMath::FLibrary
 
 	// Load
 	#pragma region
@@ -110,7 +109,7 @@ namespace NCsSkeletalMesh
 	FVector3f FLibrary::GetBoneLocation3fChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& Bone)
 	{
 		check(IsBoneValidChecked(Context, Component, Bone));
-		return MathLibrary::Convert(Component->GetBoneLocation(Bone));
+		return CsMathLibrary::Convert(Component->GetBoneLocation(Bone));
 	}
 
 	FRotator FLibrary::GetBoneRotationChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules)
@@ -126,7 +125,7 @@ namespace NCsSkeletalMesh
 	{
 		check(IsBoneValidChecked(Context, Component, Bone));
 
-		FRotator3f Rotation = MathLibrary::Convert(Component->GetBoneQuaternion(Bone).Rotator());
+		FRotator3f Rotation = CsMathLibrary::Convert(Component->GetBoneQuaternion(Bone).Rotator());
 
 		return NCsRotationRules::GetRotationChecked(Context, Rotation, Rules);
 	}
@@ -168,7 +167,7 @@ namespace NCsSkeletalMesh
 	{
 		check(IsSocketValidChecked(Context, Component, Socket));
 
-		const FTransform3f Transform = MathLibrary::Convert(Component->GetSocketTransform(Socket));
+		const FTransform3f Transform = CsMathLibrary::Convert(Component->GetSocketTransform(Socket));
 
 		return Transform.GetLocation();
 	}
@@ -187,7 +186,7 @@ namespace NCsSkeletalMesh
 	{
 		check(IsSocketValidChecked(Context, Component, Socket));
 
-		const FTransform3f Transform = MathLibrary::Convert(Component->GetSocketTransform(Socket));
+		const FTransform3f Transform = CsMathLibrary::Convert(Component->GetSocketTransform(Socket));
 		FRotator3f Rotation			 = Transform.GetRotation().Rotator();
 
 		return NCsRotationRules::GetRotationChecked(Context, Rotation, Rules);
@@ -293,7 +292,7 @@ namespace NCsSkeletalMesh
 	FRotator3f FLibrary::GetBoneOrSocketRotation3fChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket)
 	{
 		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));
-		return MathLibrary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Rotator());
+		return CsMathLibrary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Rotator());
 	}
 
 	FRotator3f FLibrary::GetSafeBoneOrSocketRotation3f(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel)
@@ -304,7 +303,7 @@ namespace NCsSkeletalMesh
 			return FRotator3f::ZeroRotator;
 
 		OutSuccess = true;
-		return MathLibrary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Rotator());
+		return CsMathLibrary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Rotator());
 	}
 
 	FVector FLibrary::GetBoneOrSocketDirectionChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket)
@@ -316,7 +315,7 @@ namespace NCsSkeletalMesh
 	FVector3f FLibrary::GetBoneOrSocketDirection3fChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket)
 	{
 		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));
-		return MathLibrary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Vector());
+		return CsMathLibrary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Vector());
 	}
 
 	FVector FLibrary::GetBoneOrSocketDirectionChecked(const FString& Context, const USceneComponent* Component, const FName& BoneOrSocket)
@@ -342,7 +341,7 @@ namespace NCsSkeletalMesh
 	FVector3f FLibrary::GetBoneOrSocketLocation3fChecked(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket)
 	{
 		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));
-		return MathLibrary::Convert(Component->GetBoneLocation(BoneOrSocket));
+		return CsMathLibrary::Convert(Component->GetBoneLocation(BoneOrSocket));
 	}
 
 	FVector FLibrary::GetSafeBoneOrSocketLocation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel)
@@ -372,5 +371,4 @@ namespace NCsSkeletalMesh
 
 	#undef LogLevel
 	#undef LogWarning
-	#undef MathLibrary
 }

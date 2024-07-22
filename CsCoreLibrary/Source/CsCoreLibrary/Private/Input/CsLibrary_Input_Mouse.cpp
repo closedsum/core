@@ -40,7 +40,6 @@ namespace NCsInput
 		#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NMouse::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 		#define ViewportLibrary NCsViewport::NLocal::NPlayer::FLibrary 
 
 		// Show / Hide
@@ -48,12 +47,12 @@ namespace NCsInput
 
 		bool FLibrary::IsShowingCursorChecked(const FString& Context, const UObject* WorldContext)
 		{
-			return PCFirstLocalLibrary::GetChecked(Context, WorldContext)->bShowMouseCursor;
+			return CsPCFirstLocalLibrary::GetChecked(Context, WorldContext)->bShowMouseCursor;
 		}
 
 		bool FLibrary::SafeIsShowingCursor(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log);
+			APlayerController* PC = CsPCFirstLocalLibrary::GetSafe(Context, WorldContext, Log);
 
 			return PC ? PC->bShowMouseCursor : false;
 		}
@@ -67,12 +66,12 @@ namespace NCsInput
 
 		void FLibrary::ShowCursorChecked(const FString& Context, const UObject* WorldContext)
 		{
-			PCFirstLocalLibrary::GetChecked(Context, WorldContext)->bShowMouseCursor = true;
+			CsPCFirstLocalLibrary::GetChecked(Context, WorldContext)->bShowMouseCursor = true;
 		}
 
 		bool FLibrary::SafeShowCursor(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
+			if (APlayerController* PC = CsPCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
 			{
 				PC->bShowMouseCursor = true;
 				return true;
@@ -89,12 +88,12 @@ namespace NCsInput
 
 		void FLibrary::HideCursorChecked(const FString& Context, const UObject* WorldContext)
 		{
-			PCFirstLocalLibrary::GetChecked(Context, WorldContext)->bShowMouseCursor  = false;
+			CsPCFirstLocalLibrary::GetChecked(Context, WorldContext)->bShowMouseCursor  = false;
 		}
 
 		bool FLibrary::SafeHideCursor(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
+			if (APlayerController* PC = CsPCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
 			{
 				PC->bShowMouseCursor = false;
 				return true;
@@ -255,7 +254,6 @@ namespace NCsInput
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef PCFirstLocalLibrary
 		#undef ViewportLibrary
 	}
 }

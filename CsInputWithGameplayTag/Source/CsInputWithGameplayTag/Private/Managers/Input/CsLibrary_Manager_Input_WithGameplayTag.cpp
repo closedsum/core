@@ -40,7 +40,6 @@ namespace NCsInput
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&NCsInput::NWithGameplayTag::FLog::Warning*/
 			#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
-			#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
 			// Get
 			#pragma region
@@ -248,7 +247,6 @@ namespace NCsInput
 			#undef SET_CONTEXT
 			#undef LogLevel
 			#undef PCLocalLibrary
-			#undef PCFirstLocalLibrary
 		}
 	}
 }

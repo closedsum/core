@@ -40,14 +40,13 @@ namespace NCsInput
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsInput::FLog::Warning*/
 		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
-		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
 		// Get
 		#pragma region
 
 		ICsManager_Input* FLibrary::GetFirstChecked(const FString& Context, UWorld* World)
 		{
-			return GetChecked(Context, PCFirstLocalLibrary::GetChecked(Context, World));
+			return GetChecked(Context, CsPCFirstLocalLibrary::GetChecked(Context, World));
 		}
 
 		ICsManager_Input* FLibrary::GetFirstChecked(UWorld* World)
@@ -59,7 +58,7 @@ namespace NCsInput
 
 		ICsManager_Input* FLibrary::GetFirstChecked(const FString& Context, const UObject* WorldContext)
 		{
-			return GetChecked(Context, PCFirstLocalLibrary::GetChecked(Context, WorldContext));
+			return GetChecked(Context, CsPCFirstLocalLibrary::GetChecked(Context, WorldContext));
 		}
 
 		ICsManager_Input* FLibrary::GetFirstChecked(const UObject* WorldContext)
@@ -71,7 +70,7 @@ namespace NCsInput
 
 		ICsManager_Input* FLibrary::GetSafeFirst(const FString& Context, UWorld* World, LogLevel)
 		{
-			if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, World, Log))
+			if (APlayerController* PC = CsPCFirstLocalLibrary::GetSafe(Context, World, Log))
 			{
 				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
 				{
@@ -94,7 +93,7 @@ namespace NCsInput
 
 		ICsManager_Input* FLibrary::GetSafeFirst(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
+			if (APlayerController* PC = CsPCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
 			{
 				if (ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC))
 				{
@@ -394,7 +393,6 @@ namespace NCsInput
 		#undef SET_CONTEXT
 		#undef LogLevel
 		#undef PCLocalLibrary
-		#undef PCFirstLocalLibrary
 
 		namespace NInputActionMap
 		{

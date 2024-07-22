@@ -37,7 +37,6 @@ namespace NCsGameState
 		#define SET_CONTEXT(__FunctionName) using namespace NCsGameState::NImpl::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-		#define GameStateLibrary NCsGameState::FLibrary
 
 		FString FLibrary::PrintGameStateAndClass(AGameStateBase* GameState)
 		{
@@ -49,7 +48,7 @@ namespace NCsGameState
 
 		bool FLibrary::IsStartupCompleteChecked(const FString& Context, const UObject* WorldContext)
 		{
-			AGameStateBase* GameState		= GameStateLibrary::GetChecked(Context, WorldContext);
+			AGameStateBase* GameState		= CsGameStateLibrary::GetChecked(Context, WorldContext);
 			ICsGameState_Startup* Interface = CS_INTERFACE_CAST_CHECKED(GameState, AGameStateBase, ICsGameState_Startup);
 
 			return Interface->IsStartupComplete();
@@ -57,7 +56,7 @@ namespace NCsGameState
 
 		bool FLibrary::SafeIsStartupComplete(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (AGameStateBase* GameState = GameStateLibrary::GetSafe(Context, WorldContext, Log))
+			if (AGameStateBase* GameState = CsGameStateLibrary::GetSafe(Context, WorldContext, Log))
 			{
 				ICsGameState_Startup* Interface = CS_INTERFACE_CAST(GameState, AGameStateBase, ICsGameState_Startup);
 
@@ -75,7 +74,7 @@ namespace NCsGameState
 
 		bool FLibrary::HasFinishedTransitionOutChecked(const FString& Context, const UObject* WorldContext)
 		{
-			AGameStateBase* GameState		   = GameStateLibrary::GetChecked(Context, WorldContext);
+			AGameStateBase* GameState		   = CsGameStateLibrary::GetChecked(Context, WorldContext);
 			ICsGameState_Transition* Interface = CS_INTERFACE_CAST_CHECKED(GameState, AGameStateBase, ICsGameState_Transition);
 
 			return Interface->HasFinishedTransitionOut();
@@ -83,7 +82,7 @@ namespace NCsGameState
 
 		void FLibrary::TransitionOutChecked(const FString& Context, const UObject* WorldContext)
 		{
-			AGameStateBase* GameState		   = GameStateLibrary::GetChecked(Context, WorldContext);
+			AGameStateBase* GameState		   = CsGameStateLibrary::GetChecked(Context, WorldContext);
 			ICsGameState_Transition* Interface = CS_INTERFACE_CAST_CHECKED(GameState, AGameStateBase, ICsGameState_Transition);
 
 			Interface->TransitionOut();
@@ -96,7 +95,7 @@ namespace NCsGameState
 		
 		bool FLibrary::HasFinishedExitGameChecked(const FString& Context, const UObject* WorldContext)
 		{
-			AGameStateBase* GameState		 = GameStateLibrary::GetChecked(Context, WorldContext);
+			AGameStateBase* GameState		 = CsGameStateLibrary::GetChecked(Context, WorldContext);
 			ICsGameState_ExitGame* Interface = CS_INTERFACE_CAST_CHECKED(GameState, AGameStateBase, ICsGameState_ExitGame);
 
 			return Interface->HasFinishedExitGame();
@@ -104,7 +103,7 @@ namespace NCsGameState
 
 		bool FLibrary::SafeHasFinishedExitGame(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			AGameStateBase* GameState = GameStateLibrary::GetSafe(Context, WorldContext, Log);
+			AGameStateBase* GameState = CsGameStateLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!GameState)
 				return true;
@@ -128,6 +127,5 @@ namespace NCsGameState
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef GameStateLibrary
 	}
 }

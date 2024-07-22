@@ -15,14 +15,13 @@ namespace NCsInput
 {
 	namespace NTouch
 	{
-		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 		#define ViewportLibrary NCsViewport::NLocal::NPlayer::FLibrary 
 
 		bool FLibrary::GetPositionChecked(const FString& Context, const UObject* WorldContext, const ETouchIndex::Type& FingerIndex, FIntPoint& OutPosition)
 		{
 			checkf((int32)FingerIndex < EKeys::NUM_TOUCH_KEYS, TEXT("%s: FingerIndex is NOT Valid."), *Context);
 
-			APlayerController* PC	  = PCFirstLocalLibrary::GetChecked(Context, WorldContext);
+			APlayerController* PC	  = CsPCFirstLocalLibrary::GetChecked(Context, WorldContext);
 			UPlayerInput* PlayerInput = PC->PlayerInput;
 
 			checkf(PlayerInput, TEXT("%s: PlayerInput is NULL for PlayerController: %s."), *Context, *(PC->GetName()));
@@ -43,7 +42,6 @@ namespace NCsInput
 			return false;
 		}
 
-		#undef PCFirstLocalLibrary
 		#undef ViewportLibrary
 	}
 }

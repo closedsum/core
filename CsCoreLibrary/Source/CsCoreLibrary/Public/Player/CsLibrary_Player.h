@@ -271,6 +271,12 @@ namespace NCsPlayer
 					static APlayerController* GetChecked(const FString& Context, const UObject* WorldContext);
 
 					static APlayerController* GetSafe(const FString& Context, const UObject* WorldContext, LogLevel);
+					FORCEINLINE static APlayerController* GetSafe(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogLevel)
+					{
+						APlayerController* PC = GetSafe(Context, WorldContext, Log);
+						OutSuccess			  = PC != nullptr;
+						return PC;
+					}
 
 					template<typename T>
 					FORCEINLINE static T* GetSafe(const FString& Context, const UObject* WorldContext, LogLevel)
@@ -454,3 +460,5 @@ namespace NCsPlayer
 		};
 	}
 }
+
+using CsPCFirstLocalLibrary = NCsPlayer::NController::NLocal::NFirst::FLibrary;

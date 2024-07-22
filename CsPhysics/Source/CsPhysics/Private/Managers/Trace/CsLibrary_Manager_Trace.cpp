@@ -69,10 +69,7 @@ namespace NCsTrace
 
 				return GetManagerSingleton->_getUObject();
 			}
-
-			typedef NCsGameState::FLibrary GameStateLibrary;
-
-			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
+			return CsGameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel)
@@ -85,10 +82,7 @@ namespace NCsTrace
 
 				return GetManagerSingleton->_getUObject();
 			}
-
-			typedef NCsGameState::FLibrary GameStateLibrary;
-
-			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
+			return CsGameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)

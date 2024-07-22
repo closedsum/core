@@ -16,16 +16,16 @@ class CSTIME_API UCsScriptLibrary_Time : public UObject
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsTime - Create"))
+	UFUNCTION(BlueprintCallable, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsTime - Create", ScriptName = "fcstime_create"))
 	static FCsTime FCsTime_Create();
 
-	UFUNCTION(BlueprintCallable, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsTime - Copy"))
+	UFUNCTION(BlueprintCallable, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsTime - Copy", ScriptName = "fcstime_copy"))
 	static FCsTime FCsTime_Copy(const FCsTime& Time);
 
-	UFUNCTION(BlueprintCallable, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsDeltaTime - Copy"))
+	UFUNCTION(BlueprintCallable, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsDeltaTime - Copy", ScriptName = "fcsdeltatime_copy"))
 	static FCsDeltaTime FCsDeltaTime_Copy(const FCsDeltaTime& DeltaTime);
 
-	UFUNCTION(BlueprintPure, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsDeltaTime - Copy", AutoCreateRefTerm = "DeltaTime,Scalar"))
+	UFUNCTION(BlueprintPure, Category = "CsTime|Library|Time", meta = (DisplayName = "FCsDeltaTime - Copy", ScriptName = "fcsdeltatime_scale", AutoCreateRefTerm = "DeltaTime,Scalar"))
 	static FCsDeltaTime FCsDeltaTime_Scale(const FCsDeltaTime& DeltaTime, const float& Scalar);
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "DeltaTime + DeltaTime", CompactNodeTitle = "+", ScriptMethod = "Add", ScriptOperator = "+;+=", Keywords = "+ add plus", AutoCreateRefTerm = "A,B"), Category = "CsTime|Library|Time")

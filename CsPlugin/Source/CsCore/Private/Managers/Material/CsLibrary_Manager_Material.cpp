@@ -52,10 +52,7 @@ namespace NCsMaterial
 
 				return GetManagerSingleton->_getUObject();
 			}
-
-			typedef NCsGameState::FLibrary GameStateLibrary;
-
-			return GameStateLibrary::GetAsObjectChecked(Context, ContextObject);
+			return CsGameStateLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -70,10 +67,7 @@ namespace NCsMaterial
 				}
 				return nullptr;
 			}
-
-			typedef NCsGameState::FLibrary GameStateLibrary;
-
-			return GameStateLibrary::GetSafeAsObject(Context, ContextObject, Log);
+			return CsGameStateLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)

@@ -42,9 +42,7 @@ namespace NCsConsoleCommand
 
 			CS_IS_PENDING_KILL_CHECKED(World)
 
-			typedef NCsPlayer::NController::NLocal::NFirst::FLibrary PlayerLibrary;
-
-			if (APlayerController* PC = PlayerLibrary::Get(World))
+			if (APlayerController* PC = CsPCFirstLocalLibrary::Get(World))
 			{
 				FString Output = PC->ConsoleCommand(Cmd);
 				return !Output.IsEmpty();

@@ -13,6 +13,8 @@ class CSCORELIBRARY_API UCsScriptLibrary_PlayerController : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+// Get
+#pragma region
 public:
 
 	/**
@@ -24,4 +26,17 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCoreLibrary|Library|Player|Controller", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static APlayerController* GetFirstLocal(const FString& Context, const UObject* WorldContextObject);
+
+	/**
+	* Get the First Local Player Controller
+	*
+	* @param Context			The calling context
+	* @param WorldContextObject
+	* @param OutSuccess			(out)
+	* return					Player Controller
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCoreLibrary|Library|Player|Controller", meta = (DisplayName = "Get First Local (Checked)", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static APlayerController* GetFirstLocalChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
+
+#pragma endregion Get
 };

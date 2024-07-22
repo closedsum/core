@@ -20,7 +20,6 @@ namespace NCsPlayer
 	{
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
-		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
 		bool FLibrary::IsValidChecked(const FString& Context, const FViewTargetTransitionParams& TransitionParams)
 		{
@@ -591,18 +590,16 @@ namespace NCsPlayer
 
 		#undef LogLevel
 		#undef PCLocalLibrary
-		#undef PCFirstLocalLibrary
 
 		namespace NLocal
 		{
 			namespace NFirst
 			{
 				#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-				#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
 				APlayerCameraManager* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogLevel)
 				{
-					if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
+					if (APlayerController* PC = CsPCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
 					{
 						if (!PC->PlayerCameraManager)
 						{
@@ -626,11 +623,10 @@ namespace NCsPlayer
 				{
 					CS_IS_PENDING_KILL_CHECKED(ViewTarget)
 
-					PCFirstLocalLibrary::GetChecked(Context, WorldContext)->SetViewTarget(ViewTarget);
+					CsPCFirstLocalLibrary::GetChecked(Context, WorldContext)->SetViewTarget(ViewTarget);
 				}
 
 				#undef LogLevel
-				#undef PCFirstLocalLibrary
 			}
 		}
 	}

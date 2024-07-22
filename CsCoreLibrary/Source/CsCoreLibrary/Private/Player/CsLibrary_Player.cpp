@@ -615,22 +615,19 @@ namespace NCsPlayer
 			}
 		}
 
-		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
-
 		APlayerState* FLibrary::GetFirstLocal(UWorld* World)
 		{
-			if (APlayerController* PC = PCFirstLocalLibrary::Get(World))
+			if (APlayerController* PC = CsPCFirstLocalLibrary::Get(World))
 				return PC->PlayerState;
 			return nullptr;
 		}
 
 		APlayerState* FLibrary::GetFirstLocalChecked(const FString& Context, UWorld* World)
 		{
-			APlayerController* PC = PCFirstLocalLibrary::GetChecked(Context, World);
+			APlayerController* PC = CsPCFirstLocalLibrary::GetChecked(Context, World);
 			APlayerState* PS	  = PC->PlayerState;
 
 			checkf(PS, TEXT("%s: Failed to get PlayerState from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
-
 			return PS;
 		}
 
@@ -640,8 +637,6 @@ namespace NCsPlayer
 				return false;
 			return PlayerState == GetFirstLocal(World);
 		}
-
-		#undef PCFirstLocalLibrary
 	}
 	
 	namespace NPawn
@@ -656,11 +651,10 @@ namespace NCsPlayer
 
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 		#define PlayerControllerLibrary NCsPlayer::NController::FLibrary
-		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
 		APawn* FLibrary::GetSafeFirstLocal(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			if (APlayerController* PC = PCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
+			if (APlayerController* PC = CsPCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
 			{
 				APawn* Pawn = PC->GetPawn();
 
@@ -676,14 +670,14 @@ namespace NCsPlayer
 
 		APawn* FLibrary::GetFirstLocal(UWorld* World)
 		{
-			if (APlayerController* PC = PCFirstLocalLibrary::Get(World))
+			if (APlayerController* PC = CsPCFirstLocalLibrary::Get(World))
 				return PC->GetPawn();
 			return nullptr;
 		}
 
 		APawn* FLibrary::GetFirstLocalChecked(const FString& Context, UWorld* World)
 		{
-			APlayerController* PC = PCFirstLocalLibrary::GetChecked(Context, World);
+			APlayerController* PC = CsPCFirstLocalLibrary::GetChecked(Context, World);
 			APawn* P			  = PC->GetPawn();
 
 			checkf(P, TEXT("%s: Failed to get Pawn from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName()));
@@ -725,18 +719,16 @@ namespace NCsPlayer
 
 		#undef LogLevel
 		#undef PlayerControllerLibrary
-		#undef PCFirstLocalLibrary
 	}
 
 	namespace NInput
 	{
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
-		#define PCFirstLocalLibrary NCsPlayer::NController::NLocal::NFirst::FLibrary
 
 		UPlayerInput* FLibrary::GetFirstLocal(UWorld* World)
 		{
-			if (APlayerController* PC = PCFirstLocalLibrary::Get(World))
+			if (APlayerController* PC = CsPCFirstLocalLibrary::Get(World))
 				return PC->PlayerInput;
 			return nullptr;
 		}
@@ -779,16 +771,13 @@ namespace NCsPlayer
 
 		#undef LogLevel
 		#undef PCLocalLibrary
-		#undef PCFirstLocalLibrary
 	}
 	
 	namespace NHud
 	{
 		AHUD* FLibrary::GetFirstLocal(UWorld* World)
 		{
-			typedef NCsPlayer::NController::NLocal::NFirst::FLibrary PCFirstLocalLibrary;
-
-			if (APlayerController* PC = PCFirstLocalLibrary::Get(World))
+			if (APlayerController* PC = CsPCFirstLocalLibrary::Get(World))
 				return PC->MyHUD;
 			return nullptr;
 		}

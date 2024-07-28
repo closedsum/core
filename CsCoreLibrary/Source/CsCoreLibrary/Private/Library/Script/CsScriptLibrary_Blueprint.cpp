@@ -37,7 +37,6 @@ UCsScriptLibrary_Blueprint::UCsScriptLibrary_Blueprint(const FObjectInitializer&
 #define USING_NS_CACHED using namespace NCsScriptLibraryBlueprint::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryBlueprint::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define BlueprintLibrary NCsBlueprint::FLibrary
 
 // Load
 #pragma region
@@ -46,14 +45,14 @@ UBlueprint* UCsScriptLibrary_Blueprint::LoadBySoftObjectPath(const FString& Cont
 {
 	CONDITIONAL_SET_CTXT(LoadBySoftObjectPath);
 
-	return BlueprintLibrary::SafeLoad(Ctxt, Path);
+	return CsBlueprintLibrary::SafeLoad(Ctxt, Path);
 }
 
 UBlueprint* UCsScriptLibrary_Blueprint::LoadByStringPath(const FString& Context, const FString& Path)
 {
 	CONDITIONAL_SET_CTXT(LoadByStringPath);
 
-	return BlueprintLibrary::SafeLoad(Ctxt, Path);
+	return CsBlueprintLibrary::SafeLoad(Ctxt, Path);
 }
 
 UBlueprintGeneratedClass* UCsScriptLibrary_Blueprint::LoadAndGetGeneratedClassByStringPath(const FString& Context, const FString& Path)
@@ -61,11 +60,11 @@ UBlueprintGeneratedClass* UCsScriptLibrary_Blueprint::LoadAndGetGeneratedClassBy
 	CONDITIONAL_SET_CTXT(LoadAndGetGeneratedClassByStringPath);
 
 #if WITH_EDITOR
-	if (UBlueprint* Blueprint = BlueprintLibrary::SafeLoad(Ctxt, Path))
-		return BlueprintLibrary::GetSafeClass(Ctxt, Blueprint);
+	if (UBlueprint* Blueprint = CsBlueprintLibrary::SafeLoad(Ctxt, Path))
+		return CsBlueprintLibrary::GetSafeClass(Ctxt, Blueprint);
 	return nullptr;
 #else
-	return BlueprintLibrary::GetSafeClass(Ctxt, Path);
+	return CsBlueprintLibrary::GetSafeClass(Ctxt, Path);
 #endif //  #if WITH_EDITOR
 }
 
@@ -74,11 +73,11 @@ UObject* UCsScriptLibrary_Blueprint::LoadAndGetDefaultObjectByStringPath(const F
 	CONDITIONAL_SET_CTXT(LoadAndGetDefaultObjectByStringPath);
 
 #if WITH_EDITOR
-	if (UBlueprint* Blueprint = BlueprintLibrary::SafeLoad(Ctxt, Path))
-		return BlueprintLibrary::GetSafeDefaultObject(Ctxt, Blueprint);
+	if (UBlueprint* Blueprint = CsBlueprintLibrary::SafeLoad(Ctxt, Path))
+		return CsBlueprintLibrary::GetSafeDefaultObject(Ctxt, Blueprint);
 	return nullptr;
 #else
-	return BlueprintLibrary::GetSafeDefaultObject(Ctxt, Path);
+	return CsBlueprintLibrary::GetSafeDefaultObject(Ctxt, Path);
 #endif // #if WITH_EDITOR
 }
 
@@ -91,14 +90,14 @@ UBlueprintGeneratedClass* UCsScriptLibrary_Blueprint::GetGeneratedClass(const FS
 {
 	CONDITIONAL_SET_CTXT(GetGeneratedClass);
 
-	return BlueprintLibrary::GetSafeClass(Ctxt, Blueprint);
+	return CsBlueprintLibrary::GetSafeClass(Ctxt, Blueprint);
 }
 
 UObject* UCsScriptLibrary_Blueprint::GetDefaultObject(const FString& Context, UBlueprint* Blueprint)
 {
 	CONDITIONAL_SET_CTXT(GetDefaultObject);
 
-	return BlueprintLibrary::GetSafeDefaultObject(Ctxt, Blueprint);
+	return CsBlueprintLibrary::GetSafeDefaultObject(Ctxt, Blueprint);
 }
 
 #pragma endregion Get
@@ -175,4 +174,3 @@ FName UCsScriptLibrary_Blueprint::GetFName_SoftClassPtr(const TSoftClassPtr<UObj
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef BlueprintLibrary

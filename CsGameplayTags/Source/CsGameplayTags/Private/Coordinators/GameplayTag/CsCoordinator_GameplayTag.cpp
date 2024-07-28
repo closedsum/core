@@ -300,9 +300,7 @@ void UCsCoordinator_GameplayTag::Update(const FCsDeltaTime& DeltaTime)
 
 UObject* UCsCoordinator_GameplayTag::GetWorldContext() const
 {
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	return WorldLibrary::GetSafeAsObject(MyRoot);
+	return CsWorldLibrary::GetSafeAsObject(MyRoot);
 }
 
 // Tag

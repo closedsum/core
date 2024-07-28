@@ -172,3 +172,6 @@ namespace NCsWorld
 		};
 	}
 }
+
+using CsWorldLibrary = NCsWorld::FLibrary;
+using CsSeamlessTravelHandlerLibrary = NCsWorld::NSeamlessTravelHandler::FLibrary;

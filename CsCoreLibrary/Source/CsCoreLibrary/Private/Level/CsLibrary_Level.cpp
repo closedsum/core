@@ -39,7 +39,6 @@ namespace NCsLevel
 		#define SET_CONTEXT(__FunctionName) using namespace NCsLevel::NPersistent::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString& Context) /*=&NCsCore::NLibrary::FLog::Warning*/
-		#define WorldLibrary NCsWorld::FLibrary
 
 		// Get
 		#pragma region
@@ -94,7 +93,7 @@ namespace NCsLevel
 
 		ULevel* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return nullptr;
@@ -149,7 +148,7 @@ namespace NCsLevel
 
 		FString FLibrary::GetSafeName(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 			
 			if (!World)
 				return FString();
@@ -246,7 +245,7 @@ namespace NCsLevel
 
 		FName FLibrary::GetSafeFName(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return NAME_None;
@@ -292,7 +291,7 @@ namespace NCsLevel
 
 		bool FLibrary::SafeIsName(const FString& Context, const UObject* WorldContext, const FString& MapPackageName, LogLevel)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return false;
@@ -390,7 +389,7 @@ namespace NCsLevel
 
 		ALevelScriptActor* FLibrary::GetSafeScriptActor(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return nullptr;
@@ -409,6 +408,5 @@ namespace NCsLevel
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef WorldLibrary
 	}
 }

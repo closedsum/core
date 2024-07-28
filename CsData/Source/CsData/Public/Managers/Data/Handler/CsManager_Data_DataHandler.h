@@ -25,12 +25,8 @@
 class UObject;
 class UDataTable;
 
-#define PropertyLibrary NCsProperty::FLibrary
 #define DataManagerLibrary NCsData::NManager::FLibrary
 #define DataLibrary NCsData::FLibrary
-#if WITH_EDITOR
-#define WorldLibrary NCsWorld::FLibrary
-#endif // #if WITH_EDITOR
 
 namespace NCsData
 {
@@ -207,7 +203,7 @@ namespace NCsData
 					const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
 					// Data
-					FStructProperty* DataProperty = PropertyLibrary::FindStructPropertyByName<DataContainerType>(RowStruct, Name::Data);
+					FStructProperty* DataProperty = CsPropertyLibrary::FindStructPropertyByName<DataContainerType>(RowStruct, Name::Data);
 
 					if (!DataProperty)
 					{	
@@ -216,7 +212,7 @@ namespace NCsData
 
 					// Check which rows from the DataTable have been loaded	
 				#if WITH_EDITOR
-					if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+					if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 					{
 						if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
 						{
@@ -233,7 +229,7 @@ namespace NCsData
 						uint8* RowPtr		 = nullptr;
 
 					#if WITH_EDITOR
-						if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+						if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 						{
 							RowPtr = Pair.Value;
 						}
@@ -259,7 +255,7 @@ namespace NCsData
 							checkf(O, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
 
 						#if WITH_EDITOR
-							if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+							if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 							{
 								if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
 								{
@@ -708,9 +704,5 @@ namespace NCsData
 	}
 }
 
-#undef PropertyLibrary
 #undef DataManagerLibrary
 #undef DataLibrary
-#if WITH_EDITOR
-#undef WorldLibrary
-#endif // #if WITH_EDITOR

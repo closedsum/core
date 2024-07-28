@@ -17,7 +17,6 @@
 namespace NCsStaticMesh
 {
 	#define LogWarning void(*Log)(const FString&) /*=&FCsLog::Warning*/
-	#define WorldLibrary NCsWorld::FLibrary
 
 	// Load
 	#pragma region
@@ -74,7 +73,7 @@ namespace NCsStaticMesh
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		AStaticMeshActor* Actor = WorldLibrary::SpawnChecked<AStaticMeshActor>(Context, WorldContext);
+		AStaticMeshActor* Actor = CsWorldLibrary::SpawnChecked<AStaticMeshActor>(Context, WorldContext);
 			
 		CopyChecked(Context, Component, Actor);
 		return Actor;	
@@ -162,5 +161,4 @@ namespace NCsStaticMesh
 	#pragma endregion Destroy
 
 	#undef LogWarning
-	#undef WorldLibrary
 }

@@ -43,7 +43,6 @@ namespace NCsCharacter
 	#define SET_CONTEXT(__FunctionName) using namespace NCsCharacter::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define WorldLibrary NCsWorld::FLibrary
 	#define AnimMontageLibrary NCsAnimMontage::FLibrary
 
 	// Get
@@ -51,7 +50,7 @@ namespace NCsCharacter
 
 	ACharacter* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_NAME_NONE_CHECKED(Tag)
 
@@ -101,7 +100,7 @@ namespace NCsCharacter
 
 	ACharacter* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, LogWarning)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -154,7 +153,7 @@ namespace NCsCharacter
 
 	void FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
@@ -185,14 +184,12 @@ namespace NCsCharacter
 				OutCharacters.Add(A);
 		}
 
-		typedef NCsName::FLibrary NameLibrary;
-
-		checkf(OutCharacters.Num() > CS_EMPTY, TEXT("%s: Failed to find Characters with Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
+		checkf(OutCharacters.Num() > CS_EMPTY, TEXT("%s: Failed to find Characters with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags)));
 	}
 	
 	ACharacter* FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
@@ -231,15 +228,13 @@ namespace NCsCharacter
 			}
 		}
 
-		typedef NCsName::FLibrary NameLibrary;
-
-		checkf(Count == 1, TEXT("%s: Found %d Character. Failed to find Only ONE Character with Tags: %s."), *Context, Count, *(NameLibrary::ToString(Tags)));
+		checkf(Count == 1, TEXT("%s: Found %d Character. Failed to find Only ONE Character with Tags: %s."), *Context, Count, *(CsNameLibrary::ToString(Tags)));
 		return C;
 	}
 
 	bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, LogWarning)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE(Tags)
@@ -270,11 +265,9 @@ namespace NCsCharacter
 				OutCharacters.Add(A);
 		}
 
-		typedef NCsName::FLibrary NameLibrary;
-
 		if (OutCharacters.Num() == CS_EMPTY)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Characters with Tags: %s."), *Context, *(NameLibrary::ToString(Tags))));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Characters with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags))));
 		}
 		return OutCharacters.Num() > CS_EMPTY;
 	}
@@ -320,7 +313,7 @@ namespace NCsCharacter
 
 	ACharacter* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, LogWarning)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -353,7 +346,7 @@ namespace NCsCharacter
 	ACharacter* FLibrary::GetByLabelChecked(const FString& Context, const UObject* WorldContext, const FString& Label)
 	{
 	#if WITH_EDITOR
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_STRING_EMPTY_CHECKED(Label)
 
@@ -380,7 +373,7 @@ namespace NCsCharacter
 	ACharacter* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, LogWarning)
 	{
 	#if WITH_EDITOR
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -465,6 +458,5 @@ namespace NCsCharacter
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
 	#undef LogWarning
-	#undef WorldLibrary
 	#undef AnimMontageLibrary
 }

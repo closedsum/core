@@ -432,7 +432,7 @@ module.exports = class FJsManager_Resource_Fixed
 
 				m.Allocate();
 				r    = m;
-				link = links[this.PoolIndex];
+				link = this.Links[this.PoolIndex];
 				break;
 			}
 		}
@@ -662,6 +662,7 @@ module.exports = class FJsManager_Resource_Fixed
 		{
 			current	= next;
 			let m	= current.Element;
+			next	= current.GetNextLink()
 
 			let index = m.GetIndex();
 

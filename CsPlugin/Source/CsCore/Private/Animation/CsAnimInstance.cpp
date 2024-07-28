@@ -62,9 +62,7 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 	Super::NativeUpdateAnimation(DeltaTimeX);
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorPreview(GetWorld()))
+	if (CsWorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		OnTick_Handle_bSetupInGameSimulation();
 		OnTick_Handle_ShowEditorIcons();

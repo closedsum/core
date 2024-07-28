@@ -48,8 +48,6 @@ namespace NCsEnum
 				const FString& Context = Str::__FunctionName
 
 			#define SettingsLibrary NCsCore::NSettings::FLibrary
-			#define BlueprintLibrary NCsBlueprint::FLibrary
-			#define PropertyLibrary NCsProperty::FLibrary
 			
 			/*static*/ void FTool::DetermineChanges(TMap<FName, UStruct*>& OutStructMap)
 			{
@@ -126,11 +124,11 @@ namespace NCsEnum
 									if (Object)
 									{
 										// Blueprint
-										if (BlueprintLibrary::Is(Object))
+										if (CsBlueprintLibrary::Is(Object))
 										{
-											if (UObject* CDOb = BlueprintLibrary::GetSafeClassDefaultObject(Context, Object, nullptr))
+											if (UObject* CDOb = CsBlueprintLibrary::GetSafeClassDefaultObject(Context, Object, nullptr))
 											{	
-												if (PropertyLibrary::HasStructProperty(Context, CDOb->GetClass(), Struct, nullptr))
+												if (CsPropertyLibrary::HasStructProperty(Context, CDOb->GetClass(), Struct, nullptr))
 												{
 													if (AssetEditorSubsystem->OpenEditorForAsset(Object))
 													{		
@@ -233,11 +231,11 @@ namespace NCsEnum
 								else
 								{
 									// Blueprint
-									if (BlueprintLibrary::Is(Object))
+									if (CsBlueprintLibrary::Is(Object))
 									{
-										if (UObject* DOb = BlueprintLibrary::GetSafeDefaultObject(Context, Object, nullptr))
+										if (UObject* DOb = CsBlueprintLibrary::GetSafeDefaultObject(Context, Object, nullptr))
 										{	
-											if (PropertyLibrary::HasStructProperty(Context, DOb->GetClass(), Struct, nullptr))
+											if (CsPropertyLibrary::HasStructProperty(Context, DOb->GetClass(), Struct, nullptr))
 											{
 												if (AssetEditorSubsystem->OpenEditorForAsset(Object))
 												{		
@@ -258,9 +256,9 @@ namespace NCsEnum
 											}
 										}
 										else
-										if (UObject* CDOb = BlueprintLibrary::GetSafeClassDefaultObject(Context, Object, nullptr))
+										if (UObject* CDOb = CsBlueprintLibrary::GetSafeClassDefaultObject(Context, Object, nullptr))
 										{	
-											if (PropertyLibrary::HasStructProperty(Context, CDOb->GetClass(), Struct, nullptr))
+											if (CsPropertyLibrary::HasStructProperty(Context, CDOb->GetClass(), Struct, nullptr))
 											{
 												if (AssetEditorSubsystem->OpenEditorForAsset(Object))
 												{		
@@ -290,7 +288,7 @@ namespace NCsEnum
 									}
 									else
 									{
-										if (PropertyLibrary::HasStructProperty(Context, Object->GetClass(), Struct, nullptr))
+										if (CsPropertyLibrary::HasStructProperty(Context, Object->GetClass(), Struct, nullptr))
 										{
 											if (AssetEditorSubsystem->OpenEditorForAsset(Object))
 											{		
@@ -328,8 +326,6 @@ namespace NCsEnum
 			}
 
 			#undef SettingsLibrary
-			#undef BlueprintLibrary
-			#undef PropertyLibrary
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT

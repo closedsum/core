@@ -38,3 +38,5 @@ namespace NCsName
 		static bool ContainsChecked(const FString& Context, const TArray<FName>& Names, const FName& Name);
 	};
 }
+
+using CsNameLibrary = NCsName::FLibrary;

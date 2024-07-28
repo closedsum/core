@@ -78,16 +78,14 @@ namespace NCsMaterial
 	// Get
 	#pragma region
 	
-	#define PropertyLibrary NCsProperty::FLibrary
-
 	UMaterialInterface* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel)
 	{
-		return PropertyLibrary::GetObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		return CsPropertyLibrary::GetObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
 
 	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPath, bool& OutSuccess, LogLevel)
 	{
-		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		FSoftObjectPtr SoftObjectPtr = CsPropertyLibrary::GetSoftObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 		OutPath					     = SoftObjectPtr.ToString();
 
 		return OutSuccess;
@@ -95,20 +93,18 @@ namespace NCsMaterial
 
 	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TArray<TSoftObjectPtr<UMaterialInterface>>& OutArray, bool& OutSuccess, LogLevel)
 	{
-		return PropertyLibrary::GetArraySoftObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutArray, OutSuccess, Log);
+		return CsPropertyLibrary::GetArraySoftObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutArray, OutSuccess, Log);
 	}
 
 	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TArray<FString>& OutArray, bool& OutSuccess, LogLevel)
 	{
-		return PropertyLibrary::GetArraySoftObjectPropertyValueAsStringByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutArray, OutSuccess, Log);
+		return CsPropertyLibrary::GetArraySoftObjectPropertyValueAsStringByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutArray, OutSuccess, Log);
 	}
 
 	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TArray<UMaterialInterface*>& OutArray, bool& OutSuccess, LogLevel)
 	{
-		return PropertyLibrary::GetArrayObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutArray, OutSuccess, Log);
+		return CsPropertyLibrary::GetArrayObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutArray, OutSuccess, Log);
 	}
-
-	#undef PropertyLibrary
 
 	#pragma endregion Get
 

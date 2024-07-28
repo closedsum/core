@@ -29,7 +29,6 @@ namespace NCsGameMode
 	#define USING_NS_CACHED using namespace NCsGameMode::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsGameMode::NLibrary::NCached; \
 		const FString& Context = Str::__FunctionName
-	#define WorldLibrary NCsWorld::FLibrary
 
 	FString FLibrary::PrintGameModeAndClass(AGameModeBase* GameMode)
 	{
@@ -38,7 +37,7 @@ namespace NCsGameMode
 
 	AGameModeBase* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 	{
-		UWorld* World			 = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World			= CsWorldLibrary::GetChecked(Context, WorldContext);
 		AGameModeBase* GameMode = World->GetAuthGameMode();
 
 		checkf(GameMode, TEXT("%s: Failed to get GameMode from World: %s."), *Context, *(World->GetName()));
@@ -47,7 +46,7 @@ namespace NCsGameMode
 
 	AGameModeBase* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!World)
 			return nullptr;
@@ -88,5 +87,4 @@ namespace NCsGameMode
 
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
-	#undef WorldLibrary
 }

@@ -135,10 +135,7 @@ void FCsStaticMeshAttachment::AttachChecked(const FString& Context, USceneCompon
 	CS_IS_PTR_NULL_CHECKED(Child)
 
 	check(IsValidChecked(Context));
-
-	typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-	check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
+	check(CsSkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
 
 	Child->AttachToComponent(Parent, AttachmentTransformRules.ToRule(), Bone);
 	NCsTransformRules::SetRelativeTransform(Child, Transform, TransformRules);
@@ -161,9 +158,7 @@ bool FCsStaticMeshAttachment::AttachSafe(const FString& Context, USceneComponent
 	if (!IsValid(Context, Log))
 		return false;
 
-	typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-	if (!SkeletalMeshLibrary::ConditionalSafeIsBoneOrSocketValid(Context, Parent, Bone, Log))
+	if (!CsSkeletalMeshLibrary::ConditionalSafeIsBoneOrSocketValid(Context, Parent, Bone, Log))
 		return false;
 
 	Child->AttachToComponent(Parent, AttachmentTransformRules.ToRule(), Bone);
@@ -258,10 +253,7 @@ namespace NCsStaticMesh
 			CS_IS_TARRAY_ANY_NULL_CHECKED(OtherMaterials, UMaterialInterface)
 
 			check(IsValidChecked(Context));
-
-			typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, GetBone()));
+			check(CsSkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, GetBone()));
 
 			Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
 			NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
@@ -288,9 +280,7 @@ namespace NCsStaticMesh
 			if (!IsValid(Context, Log))
 				return false;
 
-			typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-			if (!SkeletalMeshLibrary::ConditionalSafeIsBoneOrSocketValid(Context, Parent, GetBone(), Log))
+			if (!CsSkeletalMeshLibrary::ConditionalSafeIsBoneOrSocketValid(Context, Parent, GetBone(), Log))
 				return false;
 
 			Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
@@ -312,10 +302,7 @@ namespace NCsStaticMesh
 			CS_IS_PTR_NULL_CHECKED(Child)
 
 			check(IsTransformValidChecked(Context));
-
-			typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, GetBone()));
+			check(CsSkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, GetBone()));
 
 			Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
 			NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
@@ -331,10 +318,7 @@ namespace NCsStaticMesh
 			CS_IS_TARRAY_ANY_NULL_CHECKED(OtherMaterials, UMaterialInterface)
 
 			check(IsValidChecked(Context));
-
-			typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, GetBone()));
+			check(CsSkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, GetBone()));
 
 			Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
 			NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());

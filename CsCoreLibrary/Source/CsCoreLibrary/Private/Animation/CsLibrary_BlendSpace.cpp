@@ -33,9 +33,7 @@ namespace NCsBlendSpace
 	
 	UBlendSpace* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel)
 	{
-		typedef NCsProperty::FLibrary PropertyLibrary;
-
-		return PropertyLibrary::GetObjectPropertyValueByPath<UBlendSpace>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		return CsPropertyLibrary::GetObjectPropertyValueByPath<UBlendSpace>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
 
 	#pragma endregion Get
@@ -66,9 +64,7 @@ namespace NCsBlendSpace
 	
 		UBlendSpace1D* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel)
 		{
-			typedef NCsProperty::FLibrary PropertyLibrary;
-
-			return PropertyLibrary::GetObjectPropertyValueByPath<UBlendSpace1D>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+			return CsPropertyLibrary::GetObjectPropertyValueByPath<UBlendSpace1D>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 		}
 
 		#pragma endregion Get

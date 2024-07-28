@@ -47,7 +47,6 @@ namespace NCsTime
 			#define SET_CONTEXT(__FunctionName) using namespace NCsTime::NManager::NImpl::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-			#define WorldLibrary NCsWorld::FLibrary
 			#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 			// Get
@@ -98,7 +97,6 @@ namespace NCsTime
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef WorldLibrary
 			#undef GameInstanceLibrary
 		}
 	}

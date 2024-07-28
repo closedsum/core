@@ -74,9 +74,7 @@ namespace NCsAnimInstance
 
 	UAnimBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel)
 	{
-		typedef NCsProperty::FLibrary PropertyLibrary;
-
-		return PropertyLibrary::GetObjectPropertyValueByPath<UAnimBlueprintGeneratedClass>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		return CsPropertyLibrary::GetObjectPropertyValueByPath<UAnimBlueprintGeneratedClass>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
 
 	UAnimInstance* FLibrary::GetChecked(const FString& Context, UPrimitiveComponent* Component)

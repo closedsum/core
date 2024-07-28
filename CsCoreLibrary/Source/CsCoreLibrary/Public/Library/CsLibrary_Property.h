@@ -2531,3 +2531,5 @@ namespace NCsProperty
 	#undef LogLevel
 	};
 }
+
+using CsPropertyLibrary = NCsProperty::FLibrary;

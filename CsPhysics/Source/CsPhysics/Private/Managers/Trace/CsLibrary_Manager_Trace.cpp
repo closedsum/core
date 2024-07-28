@@ -52,7 +52,6 @@ namespace NCsTrace
 		#define SET_CONTEXT(__FunctionName) using namespace NCsTrace::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/
-		#define SkeletalMeshLibrary NCsSkeletalMesh::FLibrary
 
 		// ContextRoot
 		#pragma region
@@ -61,9 +60,7 @@ namespace NCsTrace
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
-			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
 				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(WorldContext, UObject, ICsGetManagerSingleton);
 
@@ -74,9 +71,7 @@ namespace NCsTrace
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
-			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
 				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(WorldContext, UObject, ICsGetManagerSingleton);
 
@@ -220,7 +215,7 @@ namespace NCsTrace
 			{
 				// Fill out Request
 				bool OutSuccess = false;
-				FVector Start	= SkeletalMeshLibrary::GetSafeBoneOrSocketLocation(Context, Params.Component, Params.BoneOrSocket, OutSuccess, Log);
+				FVector Start	= CsSkeletalMeshLibrary::GetSafeBoneOrSocketLocation(Context, Params.Component, Params.BoneOrSocket, OutSuccess, Log);
 
 				if (!OutSuccess)
 				{
@@ -231,7 +226,7 @@ namespace NCsTrace
 				// Bone
 				if (Params.Space == BoneSpaceType::Bone)
 				{
-					const FRotator Rotation = NCsSkeletalMesh::FLibrary::GetSafeBoneOrSocketRotation(Context, Params.Component, Params.BoneOrSocket, OutSuccess, Log);
+					const FRotator Rotation = CsSkeletalMeshLibrary::GetSafeBoneOrSocketRotation(Context, Params.Component, Params.BoneOrSocket, OutSuccess, Log);
 					Start					= CsMathLibrary::Add(Start, Rotation, Params.Location);
 				}
 				// Component
@@ -300,12 +295,12 @@ namespace NCsTrace
 		{
 			RequestType* Request = AllocateRequestChecked(Context, Params.GetWorldContext());
 			// Fill out Request
-			FVector Start	= SkeletalMeshLibrary::GetBoneOrSocketLocationChecked(Context, Params.Component, Params.BoneOrSocket);
+			FVector Start	= CsSkeletalMeshLibrary::GetBoneOrSocketLocationChecked(Context, Params.Component, Params.BoneOrSocket);
 
 			// Bone
 			if (Params.Space == BoneSpaceType::Bone)
 			{
-				const FRotator Rotation = NCsSkeletalMesh::FLibrary::GetBoneOrSocketRotationChecked(Context, Params.Component, Params.BoneOrSocket);
+				const FRotator Rotation = CsSkeletalMeshLibrary::GetBoneOrSocketRotationChecked(Context, Params.Component, Params.BoneOrSocket);
 				Start					= CsMathLibrary::Add(Start, Rotation, Params.Location);
 			}
 			// Component
@@ -564,6 +559,5 @@ namespace NCsTrace
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef SkeletalMeshLibrary
 	}
 }

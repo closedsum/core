@@ -47,7 +47,6 @@ namespace NCsCoroutine
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCoroutine::FLog::Warning*/
 	#if WITH_EDITOR
-		#define WorldLibrary NCsWorld::FLibrary
 		#define GameInstanceLibrary NCsGameInstance::FLibrary
 	#endif // #if WITH_EDITOR
 
@@ -58,7 +57,7 @@ namespace NCsCoroutine
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
+			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
 				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(ContextObject, UObject, ICsGetManagerSingleton);
 
@@ -72,7 +71,7 @@ namespace NCsCoroutine
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
-			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
+			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
 				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(ContextObject, UObject, ICsGetManagerSingleton))
 				{
@@ -452,7 +451,6 @@ namespace NCsCoroutine
 		#undef SET_CONTEXT
 		#undef LogLevel
 	#if WITH_EDITOR
-		#undef WorldLibrary
 		#undef GameInstanceLibrary
 	#endif // #if WITH_EDITOR
 	}

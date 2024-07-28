@@ -27,7 +27,6 @@ namespace NCsLevel
 		namespace NLocal
 		{
 			#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-			#define WorldLibrary NCsWorld::FLibrary
 
 			// Is
 			#pragma region
@@ -76,7 +75,7 @@ namespace NCsLevel
 			{
 				CS_IS_NAME_NONE_CHECKED(LevelName)
 
-				UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+				UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 				
 				// Special case for PIE, the PackageName gets mangled.
 				if (!World->StreamingLevelsPrefix.IsEmpty())
@@ -102,7 +101,7 @@ namespace NCsLevel
 
 				CS_IS_NAME_NONE_RET_VALUE(LevelName, FString())
 
-				UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+				UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 				if (!World)
 					return FString();
@@ -164,7 +163,7 @@ namespace NCsLevel
 
 				// Search for the level object by name.
 				FString SearchPackageName = GetSearchPackageNameChecked(Context, WorldContext, LevelName);
-				UWorld* World			  = WorldLibrary::GetChecked(Context, WorldContext);
+				UWorld* World			  = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 				for (ULevelStreaming* LevelStreaming : World->GetStreamingLevels())
 				{
@@ -188,7 +187,7 @@ namespace NCsLevel
 				if (SearchPackageName.IsEmpty())
 					return nullptr;
 
-				UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+				UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 					
 				if (!World)
 					return nullptr;
@@ -424,7 +423,6 @@ namespace NCsLevel
 			#pragma endregion Unload
 
 			#undef LogLevel
-			#undef WorldLibrary
 		}		
 	}
 
@@ -432,8 +430,6 @@ namespace NCsLevel
 	{
 		namespace NDynamic
 		{
-			#define WorldLibrary NCsWorld::FLibrary
-
 			// Load
 			#pragma region
 
@@ -448,7 +444,7 @@ namespace NCsLevel
 
 				checkf(OutSuccess, TEXT("%s: Failed to Load Streaming Level: %s."), *Context, *(Params.Level.ToString()));
 
-				NCsLevel::NStreaming::NDynamic::FDelegates::OnAdded_Event.Broadcast(WorldLibrary::GetChecked(Context, WorldContext), LevelStreaming);
+				NCsLevel::NStreaming::NDynamic::FDelegates::OnAdded_Event.Broadcast(CsWorldLibrary::GetChecked(Context, WorldContext), LevelStreaming);
 			}
 
 			#undef LoadParamsType
@@ -509,8 +505,6 @@ namespace NCsLevel
 			#undef UnloadParamsType
 
 			#pragma endregion Unload
-
-			#undef WorldLibrary
 		}
 	}
 

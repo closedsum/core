@@ -130,3 +130,5 @@ namespace NCsBlueprint
 	#undef LogWarning
 	};
 }
+
+using CsBlueprintLibrary = NCsBlueprint::FLibrary;

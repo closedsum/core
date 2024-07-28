@@ -117,3 +117,5 @@ namespace NCsStaticMesh
 	#undef LogWarning
 	};
 }
+
+using CsStaticMeshLibrary = NCsStaticMesh::FLibrary;

@@ -107,10 +107,8 @@ void ACsMannequin_Silhouette::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
-		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
+	if (CsWorldLibrary::IsPlayInEditor(GetWorld()) ||
+		CsWorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		OnObjectModifiedHandle = FCoreUObjectDelegates::OnObjectModified.AddUObject(this, &ACsMannequin_Silhouette::OnObjectModified);
 
@@ -124,10 +122,8 @@ void ACsMannequin_Silhouette::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
-		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
+	if (CsWorldLibrary::IsPlayInEditor(GetWorld()) ||
+		CsWorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		TickInEditor(DeltaSeconds);
 	}
@@ -137,10 +133,8 @@ void ACsMannequin_Silhouette::Tick(float DeltaSeconds)
 bool ACsMannequin_Silhouette::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
-		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
+	if (CsWorldLibrary::IsPlayInEditor(GetWorld()) ||
+		CsWorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		return true;
 	}
@@ -153,10 +147,8 @@ bool ACsMannequin_Silhouette::ShouldTickIfViewportsOnly() const
 void ACsMannequin_Silhouette::OnDestroy(AActor* Actor)
 {
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
-		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
+	if (CsWorldLibrary::IsPlayInEditor(GetWorld()) ||
+		CsWorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		FCoreUObjectDelegates::OnObjectModified.Remove(OnObjectModifiedHandle);
 	}
@@ -529,10 +521,8 @@ void ACsMannequin_Silhouette::PostEditChangeChainProperty(FPropertyChangedChainE
 
 	//int32 Index;
 
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	TSet<FString> PropertyNames;
-	PropertyLibrary::GetPropertyNamesInChain(e, PropertyNames);
+	CsPropertyLibrary::GetPropertyNamesInChain(e, PropertyNames);
 
 	ACsMannequin_Silhouette* DOb = GetClass()->GetDefaultObject<ACsMannequin_Silhouette>();
 

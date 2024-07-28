@@ -108,11 +108,9 @@ namespace NCsActor
 		// Get
 		#pragma region
 
-		#define WorldLibrary NCsWorld::FLibrary
-
 		void FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, TArray<AActor*>& OutActors)
 		{
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 			for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
 			{
@@ -126,15 +124,12 @@ namespace NCsActor
 
 				OutActors.Add(A);
 			}
-
-			typedef NCsName::FLibrary NameLibrary;
-
 			checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find any Scriptable Actors (implements the interface: ICsScriptableActor)."), *Context);
 		}
 
 		bool FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, TArray<AActor*>& OutActors, void(*Log)(const FString&) /*=&NCsJs::FLog::Warning*/)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return false;
@@ -152,8 +147,6 @@ namespace NCsActor
 				OutActors.Add(A);
 			}
 
-			typedef NCsName::FLibrary NameLibrary;
-
 			if (OutActors.Num() == CS_EMPTY)
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find any Scriptable Actors (implements the interface: ICsScriptableActor)."), *Context));
@@ -164,7 +157,7 @@ namespace NCsActor
 
 		AActor* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 		{
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 			CS_IS_NAME_NONE_CHECKED(Tag)
 
@@ -218,7 +211,7 @@ namespace NCsActor
 
 		AActor* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 			if (!World)
 				return nullptr;
@@ -275,7 +268,7 @@ namespace NCsActor
 
 		void FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors)
 		{
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 			CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
 			CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
@@ -306,15 +299,12 @@ namespace NCsActor
 				if (HasAllTags)
 					OutActors.Add(A);
 			}
-
-			typedef NCsName::FLibrary NameLibrary;
-
-			checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find Scriptable Actors (implements the interface: ICsScriptableActor) with Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
+			checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find Scriptable Actors (implements the interface: ICsScriptableActor) with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags)));
 		}
 
 		bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 			CS_IS_TARRAY_EMPTY(Tags, FName)
 			CS_IS_TARRAY_ANY_NONE(Tags)
@@ -346,11 +336,9 @@ namespace NCsActor
 					OutActors.Add(A);
 			}
 
-			typedef NCsName::FLibrary NameLibrary;
-
 			if (OutActors.Num() == CS_EMPTY)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Scriptable Actors (implements the interface: ICsScriptableActor) with Tags: %s."), *Context, *(NameLibrary::ToString(Tags))));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Scriptable Actors (implements the interface: ICsScriptableActor) with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags))));
 			}
 			return OutActors.Num() > CS_EMPTY;
 		}
@@ -384,7 +372,7 @@ namespace NCsActor
 
 		AActor* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 			if (!World)
 				return nullptr;
@@ -425,7 +413,7 @@ namespace NCsActor
 		AActor* FLibrary::GetByLabelChecked(const FString& Context, const UObject* WorldContext, const FString& Label)
 		{
 		#if WITH_EDITOR
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 			checkf(!Label.IsEmpty(), TEXT("%s: Label is EMPTY."), *Context);
 
@@ -454,7 +442,7 @@ namespace NCsActor
 		AActor* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 		#if WITH_EDITOR
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 			if (!World)
 				return nullptr;
@@ -495,8 +483,6 @@ namespace NCsActor
 
 			return GetSafeByLabel(Context, WorldContext, Label, nullptr);
 		}
-
-		#undef WorldLibrary
 
 		#pragma endregion Get
 	}

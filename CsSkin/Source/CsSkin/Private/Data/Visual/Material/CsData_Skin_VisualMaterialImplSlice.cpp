@@ -116,11 +116,9 @@ namespace NCsSkin
 					}
 
 					CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
-
 					CS_IS_PTR_NULL_RET_NULL(Object)
 
 					// Check for properties matching interface: MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
-					typedef NCsProperty::FLibrary PropertyLibrary;
 
 					FImplSlice* Slice = nullptr;
 					bool Success	  = false;
@@ -128,7 +126,7 @@ namespace NCsSkin
 					// Try FCsData_Skin_VisualStaticMeshImplSlice
 					typedef FCsData_Skin_VisualMaterialImplSlice StructSliceType;
 
-					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualMaterialSlice, nullptr))
+					if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualMaterialSlice, nullptr))
 					{
 						Slice = new FImplSlice();
 
@@ -146,7 +144,7 @@ namespace NCsSkin
 					// Try individual properties
 					else
 					{
-						FCsTArrayMaterialInterface* MaterialsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsTArrayMaterialInterface>(Context, Object, Object->GetClass(), Name::Materials, nullptr);
+						FCsTArrayMaterialInterface* MaterialsPtr = CsPropertyLibrary::GetStructPropertyValuePtr<FCsTArrayMaterialInterface>(Context, Object, Object->GetClass(), Name::Materials, nullptr);
 
 						if (MaterialsPtr)
 						{

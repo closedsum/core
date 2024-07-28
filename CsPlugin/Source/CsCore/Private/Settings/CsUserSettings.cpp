@@ -54,10 +54,8 @@ void UCsUserSettings::PostEditChangeChainProperty(FPropertyChangedChainEvent& e)
 
 	//int32 Index;
 	/*
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	TSet<FString> PropertyNames;
-	PropertyLibrary::GetPropertyNamesInChain(e, PropertyNames);
+	CsPropertyLibrary::GetPropertyNamesInChain(e, PropertyNames);
 	*/
 	Super::PostEditChangeChainProperty(e);
 }

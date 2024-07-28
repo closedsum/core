@@ -19,7 +19,6 @@
 namespace NCsDataRootSet
 {
 	#define SettingsLibrary NCsData::NSettings::FLibrary
-	#define WorldLibrary NCsWorld::FLibrary
 	#define DataManagerLibrary NCsData::NManager::FLibrary
 
 	UObject* FLibrary::GetSafeImpl(const FString& Context)
@@ -41,12 +40,12 @@ namespace NCsDataRootSet
 			return SettingsLibrary::SafeLoadDataRootSet(Context);
 		}
 		// Check if World from WorldContext is Valid.
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
 
-		if (WorldLibrary::IsGameWorld(World))
+		if (CsWorldLibrary::IsGameWorld(World))
 		{
 			return DataManagerLibrary::GetSafeDataRootSetImpl(Context, WorldContext);
 		}
@@ -70,7 +69,7 @@ namespace NCsDataRootSet
 	UObject* FLibrary::GetImplChecked(const FString& Context, const UObject* WorldContext)
 	{
 	#if WITH_EDITOR
-		if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+		if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 		{
 			return SettingsLibrary::LoadDataRootSetChecked(Context);
 		}
@@ -117,12 +116,12 @@ namespace NCsDataRootSet
 			return nullptr;
 		}
 
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
 
-		if (WorldLibrary::IsGameWorld(World))
+		if (CsWorldLibrary::IsGameWorld(World))
 		{
 			return DataManagerLibrary::GetSafeDataTable(Context, WorldContext, DataTableSoftObject);
 		}
@@ -207,6 +206,5 @@ namespace NCsDataRootSet
 	#undef MemberType
 
 	#undef SettingsLibrary
-	#undef WorldLibrary
 	#undef DataManagerLibrary
 }

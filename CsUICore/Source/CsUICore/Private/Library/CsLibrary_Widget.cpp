@@ -63,8 +63,6 @@ namespace NCsWidget
 		CS_IS_PENDING_KILL_CHECKED(Owner)
 		CS_IS_SUBCLASS_OF_NULL_CHECKED(UserWidgetClass, UUserWidget)
 
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UUserWidget* Widget		 = nullptr;
 		bool CastOwnerSuccessful = false;
 
@@ -312,35 +310,31 @@ namespace NCsWidget
 	// Get
 	#pragma region
 	
-	#define PropertyLibrary NCsProperty::FLibrary
-
 	UUserWidget* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel)
 	{
-		return PropertyLibrary::GetObjectPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		return CsPropertyLibrary::GetObjectPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
 
 	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftClassPtr<UUserWidget>& OutSoftClassPtr, bool& OutSuccess, LogLevel)
 	{
-		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		FSoftObjectPtr SoftObjectPtr = CsPropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 		OutSoftClassPtr			     = SoftObjectPtr.ToSoftObjectPath();
 		return OutSuccess;
 	}
 
 	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftClassPath& OutSoftClassPath, bool& OutSuccess, LogLevel)
 	{
-		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		FSoftObjectPtr SoftObjectPtr = CsPropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 		OutSoftClassPath			 = SoftObjectPtr.ToSoftObjectPath().ToString();
 		return OutSuccess;
 	}
 
 	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, LogLevel)
 	{
-		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		FSoftObjectPtr SoftObjectPtr = CsPropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 		OutPathAsString				 = SoftObjectPtr.ToString();
 		return OutSuccess;
 	}
-
-	#undef PropertyLibrary
 
 	#pragma endregion Get
 
@@ -350,9 +344,7 @@ namespace NCsWidget
 		CS_IS_PENDING_KILL_CHECKED(Widget)
 		CS_IS_PENDING_KILL_CHECKED(Player)
 
-		typedef NCsWorld::FLibrary WorldLibrary;
-
-		UWorld* World				= WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World				= CsWorldLibrary::GetChecked(Context, WorldContext);
 		UGameViewportSubsystem* GVS = UGameViewportSubsystem::Get(World);
 
 		CS_IS_PTR_NULL_CHECKED(GVS)
@@ -864,20 +856,19 @@ namespace NCsWidget
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NAnimation::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-		#define PropertyLibrary NCsProperty::FLibrary
 
 		UWidgetAnimation* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& AnimName)
 		{
 			CS_IS_PENDING_KILL_CHECKED(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName);
+			return CsPropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName);
 		}
 
 		UWidgetAnimation* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, LogLevel)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName, Log);
+			return CsPropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName, Log);
 		}
 
 		UWidgetAnimation* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, bool& OutSuccess, LogLevel)
@@ -886,7 +877,7 @@ namespace NCsWidget
 
 			CS_IS_PENDING_KILL_RET_NULL(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName, OutSuccess, Log);
+			return CsPropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName, OutSuccess, Log);
 		}
 
 		UWidgetAnimation* FLibrary::GetSafe(UUserWidget* Widget, const FName& AnimName)
@@ -913,7 +904,7 @@ namespace NCsWidget
 			CS_IS_PENDING_KILL_CHECKED(Widget)
 			CS_IS_VALID_CHECKED(Params);
 
-			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.GetName());
+			UWidgetAnimation* Animation = CsPropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.GetName());
 
 			if (Params.GetEndAtTime() > 0.0f)
 				Widget->PlayAnimationTimeRange(Animation, Params.GetStartAtTime(), Params.GetEndAtTime(), Params.GetNumLoopsToPlay(), (EUMGSequencePlayMode::Type)Params.GetPlayMode(), Params.GetPlaybackSpeed());
@@ -926,7 +917,7 @@ namespace NCsWidget
 			CS_IS_PENDING_KILL_EXIT(Widget)
 			CS_IS_VALID_EXIT(Params)
 
-			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.GetName(), Log);
+			UWidgetAnimation* Animation = CsPropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.GetName(), Log);
 
 			if (!Animation)
 				return;
@@ -951,7 +942,7 @@ namespace NCsWidget
 			CS_IS_PENDING_KILL_CHECKED(Widget)
 			CS_IS_VALID_CHECKED(Params);
 
-			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
+			UWidgetAnimation* Animation = CsPropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
 
 			if (Params.EndAtTime > 0.0f)
 				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
@@ -964,7 +955,7 @@ namespace NCsWidget
 			CS_IS_PENDING_KILL(Widget)
 			CS_IS_VALID(Params)
 
-			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
+			UWidgetAnimation* Animation = CsPropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
 
 			if (!Animation)
 				return false;
@@ -988,7 +979,7 @@ namespace NCsWidget
 			CS_IS_PENDING_KILL_CHECKED(Widget)
 			CS_IS_VALID_CHECKED(Params);
 
-			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
+			UWidgetAnimation* Animation = CsPropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
 
 			if (Params.EndAtTime > 0.0f)
 				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
@@ -1001,7 +992,7 @@ namespace NCsWidget
 			CS_IS_PENDING_KILL(Widget)
 			CS_IS_VALID(Params)
 
-			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
+			UWidgetAnimation* Animation = CsPropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
 
 			if (!Animation)
 				return false;
@@ -1076,7 +1067,6 @@ namespace NCsWidget
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef PropertyLibrary
 		#undef LogLevel
 	}
 
@@ -1097,20 +1087,19 @@ namespace NCsWidget
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NTextBlock::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-		#define PropertyLibrary NCsProperty::FLibrary
 
 		UTextBlock* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 		{
 			CS_IS_PENDING_KILL_CHECKED(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValueChecked<UTextBlock>(Context, Widget, Widget->GetClass(), PropertyName);
+			return CsPropertyLibrary::GetObjectPropertyValueChecked<UTextBlock>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
 		UTextBlock* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValue<UTextBlock>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+			return CsPropertyLibrary::GetObjectPropertyValue<UTextBlock>(Context, Widget, Widget->GetClass(), PropertyName, Log);
 		}
 
 		UTextBlock* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
@@ -1123,7 +1112,6 @@ namespace NCsWidget
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef PropertyLibrary
 	}
 
 	namespace NButton
@@ -1143,20 +1131,19 @@ namespace NCsWidget
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NButton::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-		#define PropertyLibrary NCsProperty::FLibrary
 
 		UButton* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValueChecked<UButton>(Context, Widget, Widget->GetClass(), PropertyName);
+			return CsPropertyLibrary::GetObjectPropertyValueChecked<UButton>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
 		UButton* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
 		{
 			CS_IS_PTR_NULL_RET_NULL(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValue<UButton>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+			return CsPropertyLibrary::GetObjectPropertyValue<UButton>(Context, Widget, Widget->GetClass(), PropertyName, Log);
 		}
 
 		UButton* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
@@ -1169,7 +1156,6 @@ namespace NCsWidget
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef PropertyLibrary
 	}
 
 	namespace NImage
@@ -1189,20 +1175,19 @@ namespace NCsWidget
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NImage::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-		#define PropertyLibrary NCsProperty::FLibrary
 
 		UImage* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValueChecked<UImage>(Context, Widget, Widget->GetClass(), PropertyName);
+			return CsPropertyLibrary::GetObjectPropertyValueChecked<UImage>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
 		UImage* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
 		{
 			CS_IS_PTR_NULL_RET_NULL(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValue<UImage>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+			return CsPropertyLibrary::GetObjectPropertyValue<UImage>(Context, Widget, Widget->GetClass(), PropertyName, Log);
 		}
 
 		UImage* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
@@ -1215,7 +1200,6 @@ namespace NCsWidget
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef PropertyLibrary
 	}
 
 	namespace NProgressBar
@@ -1235,20 +1219,19 @@ namespace NCsWidget
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NProgressBar::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-		#define PropertyLibrary NCsProperty::FLibrary
 
 		UProgressBar* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 		{
 			CS_IS_PENDING_KILL_CHECKED(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValueChecked<UProgressBar>(Context, Widget, Widget->GetClass(), PropertyName);
+			return CsPropertyLibrary::GetObjectPropertyValueChecked<UProgressBar>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
 		UProgressBar* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValue<UProgressBar>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+			return CsPropertyLibrary::GetObjectPropertyValue<UProgressBar>(Context, Widget, Widget->GetClass(), PropertyName, Log);
 		}
 
 		UProgressBar* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
@@ -1261,7 +1244,6 @@ namespace NCsWidget
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef PropertyLibrary
 	}
 
 	namespace NBorder
@@ -1281,20 +1263,19 @@ namespace NCsWidget
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NBorder::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-		#define PropertyLibrary NCsProperty::FLibrary
 
 		UBorder* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValueChecked<UBorder>(Context, Widget, Widget->GetClass(), PropertyName);
+			return CsPropertyLibrary::GetObjectPropertyValueChecked<UBorder>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
 		UBorder* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
 		{
 			CS_IS_PTR_NULL_RET_NULL(Widget)
 
-			return PropertyLibrary::GetObjectPropertyValue<UBorder>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+			return CsPropertyLibrary::GetObjectPropertyValue<UBorder>(Context, Widget, Widget->GetClass(), PropertyName, Log);
 		}
 
 		UBorder* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
@@ -1307,6 +1288,5 @@ namespace NCsWidget
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef PropertyLibrary
 	}
 }

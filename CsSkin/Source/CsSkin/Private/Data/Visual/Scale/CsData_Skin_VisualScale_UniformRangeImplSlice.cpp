@@ -145,11 +145,9 @@ namespace NCsSkin
 							}
 
 							CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
-
 							CS_IS_PTR_NULL_RET_NULL(Object)
 
 							// Check for properties matching interface: UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
-							typedef NCsProperty::FLibrary PropertyLibrary;
 
 							FImplSlice* Slice = nullptr;
 							bool Success	  = false;
@@ -157,7 +155,7 @@ namespace NCsSkin
 							// Try FCsData_Skin_VisualScale_UniformRangeImplSlice
 							typedef FCsData_Skin_VisualScale_UniformRangeImplSlice StructSliceType;
 
-							if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualUniformRangeScaleSlice, nullptr))
+							if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualUniformRangeScaleSlice, nullptr))
 							{
 								Slice = new FImplSlice();
 
@@ -175,8 +173,8 @@ namespace NCsSkin
 							// Try individual properties
 							else
 							{
-								float* MinUniformScalePtr = PropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::MinUniformScale, nullptr);
-								float* MaxUniformScalePtr = PropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::MaxUniformScale, nullptr);
+								float* MinUniformScalePtr = CsPropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::MinUniformScale, nullptr);
+								float* MaxUniformScalePtr = CsPropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::MaxUniformScale, nullptr);
 
 								if (MinUniformScalePtr &&
 									MaxUniformScalePtr)

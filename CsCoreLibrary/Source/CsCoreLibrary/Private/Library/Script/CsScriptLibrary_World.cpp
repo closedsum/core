@@ -38,18 +38,17 @@ UCsScriptLibrary_World::UCsScriptLibrary_World(const FObjectInitializer& ObjectI
 #define USING_NS_CACHED using namespace NCsScriptLibraryWorld::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryWorld::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define WorldLibrary NCsWorld::FLibrary
 
 bool UCsScriptLibrary_World::IsPlayInEditorPreview(const UObject* WorldContextObject)
 {
-	return WorldLibrary::IsPlayInEditorPreview(WorldContextObject);
+	return CsWorldLibrary::IsPlayInEditorPreview(WorldContextObject);
 }
 
 void UCsScriptLibrary_World::RemoveNetworkActor(const FString& Context, AActor* Actor)
 {
 	CONDITIONAL_SET_CTXT(RemoveNetworkActor);
 
-	UWorld* World = WorldLibrary::GetSafe(Ctxt, Actor);
+	UWorld* World = CsWorldLibrary::GetSafe(Ctxt, Actor);
 
 	if (!World)
 	{
@@ -61,4 +60,3 @@ void UCsScriptLibrary_World::RemoveNetworkActor(const FString& Context, AActor* 
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef WorldLibrary

@@ -40,14 +40,12 @@ namespace NCsTrigger
 		return FString::Printf(TEXT("Trigger: %s with Class: %s"), *(Actor->GetName()), *(Actor->GetClass()->GetName()));
 	}
 
-	#define WorldLibrary NCsWorld::FLibrary
-
 	// Get
 	#pragma region
 
 	void FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, TArray<ATriggerBase*>& OutTriggers)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		for (TActorIterator<ATriggerBase> It(World); It; ++It)
 		{
@@ -63,7 +61,7 @@ namespace NCsTrigger
 
 	bool FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, TArray<ATriggerBase*>& OutTriggers, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!World)
 			return false;
@@ -88,7 +86,7 @@ namespace NCsTrigger
 
 	ATriggerBase* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_NAME_NONE_CHECKED(Tag)
 
@@ -138,7 +136,7 @@ namespace NCsTrigger
 
 	ATriggerBase* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -191,7 +189,7 @@ namespace NCsTrigger
 
 	void FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ATriggerBase*>& OutTriggers)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
@@ -221,15 +219,12 @@ namespace NCsTrigger
 			if (HasAllTags)
 				OutTriggers.Add(A);
 		}
-
-		typedef NCsName::FLibrary NameLibrary;
-
-		checkf(OutTriggers.Num() > CS_EMPTY, TEXT("%s: Failed to find Triggers with Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
+		checkf(OutTriggers.Num() > CS_EMPTY, TEXT("%s: Failed to find Triggers with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags)));
 	}
 
 	bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ATriggerBase*>& OutTriggers, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE(Tags)
@@ -260,23 +255,19 @@ namespace NCsTrigger
 				OutTriggers.Add(A);
 		}
 
-		typedef NCsName::FLibrary NameLibrary;
-
 		if (OutTriggers.Num() == CS_EMPTY)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Triggers with Tags: %s."), *Context, *(NameLibrary::ToString(Tags))));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Triggers with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags))));
 		}
 		return OutTriggers.Num() > CS_EMPTY;
 	}
 
 	ATriggerBase* FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
-
-		typedef NCsName::FLibrary NameLibrary;
 
 	#if UE_BUILD_SHIPPING
 		for (TActorIterator<ATriggerBase> Itr(World); Itr; ++Itr)
@@ -330,7 +321,7 @@ namespace NCsTrigger
 				}
 				else
 				{
-					checkf(0, TEXT("%s: There are more than one Triggers with the Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
+					checkf(0, TEXT("%s: There are more than one Triggers with the Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags)));
 				}
 			}
 		}
@@ -339,18 +330,16 @@ namespace NCsTrigger
 			return Actor;
 	#endif // UE_BUILD_SHIPPING
 
-		checkf(0, TEXT("%s: Failed to find Trigger with Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
+		checkf(0, TEXT("%s: Failed to find Trigger with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags)));
 		return nullptr;
 	}
 
 	ATriggerBase* FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_RET_NULL(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE_RET_NULL(Tags)
-
-		typedef NCsName::FLibrary NameLibrary;
 
 	#if UE_BUILD_SHIPPING
 		for (TActorIterator<ATriggerBase> Itr(World); Itr; ++Itr)
@@ -404,7 +393,7 @@ namespace NCsTrigger
 				}
 				else
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: There are more than one Triggers with the Tags: %s."), *Context, *(NameLibrary::ToString(Tags))));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: There are more than one Triggers with the Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags))));
 				}
 			}
 		}
@@ -413,7 +402,7 @@ namespace NCsTrigger
 			return Actor;
 	#endif // UE_BUILD_SHIPPING
 
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Trigger with Tags: %s."), *Context, *(NameLibrary::ToString(Tags))));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Trigger with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags))));
 		return nullptr;
 	}
 
@@ -422,7 +411,7 @@ namespace NCsTrigger
 		CS_IS_PTR_NULL_CHECKED(WorldContext)
 		CS_IS_NAME_NONE_CHECKED(Name)
 
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		for (TActorIterator<ATriggerBase> Itr(World); Itr; ++Itr)
 		{
@@ -442,7 +431,7 @@ namespace NCsTrigger
 
 	ATriggerBase* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -481,7 +470,7 @@ namespace NCsTrigger
 	ATriggerBase* FLibrary::GetByLabelChecked(const FString& Context, const UObject* WorldContext, const FString& Label)
 	{
 	#if WITH_EDITOR
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_STRING_EMPTY_CHECKED(Label)
 
@@ -508,7 +497,7 @@ namespace NCsTrigger
 	ATriggerBase* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 	#if WITH_EDITOR
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -545,6 +534,4 @@ namespace NCsTrigger
 	}
 
 	#pragma endregion Get
-
-	#undef WorldLibrary
 }

@@ -55,13 +55,11 @@ bool UCsScriptLibrary_Collision::SetFromObject_CollisionPreset(const FString& Co
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_CollisionPreset : Context;
 
 	// Check for properties of type: FCsCollisionPreset
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	bool Success = false;
 
 	typedef FCsCollisionPreset StructType;
 
-	if (StructType* ImplAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructType>(Ctxt, Object, Object->GetClass(), Name::CollisionPreset))
+	if (StructType* ImplAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructType>(Ctxt, Object, Object->GetClass(), Name::CollisionPreset))
 	{
 		return ImplAsStruct->SetSafe(Ctxt, Component);
 	}

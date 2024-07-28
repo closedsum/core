@@ -16,7 +16,6 @@
 namespace NCsAnimMontage
 {
 	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define PropertyLibrary NCsProperty::FLibrary
 	#define AnimInstanceLibrary NCsAnimInstance::FLibrary
 
 	// Load
@@ -39,7 +38,7 @@ namespace NCsAnimMontage
 	
 	UAnimMontage* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel)
 	{
-		return PropertyLibrary::GetObjectPropertyValueByPath<UAnimMontage>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		return CsPropertyLibrary::GetObjectPropertyValueByPath<UAnimMontage>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
 
 	#pragma endregion Get
@@ -242,6 +241,5 @@ namespace NCsAnimMontage
 	#pragma endregion SetPosition
 
 	#undef LogLevel
-	#undef PropertyLibrary
 	#undef AnimInstanceLibrary
 }

@@ -157,19 +157,18 @@ bool UCsScriptLibrary_Material::SetFromObject(const FString& Context, UObject* O
 	}
 
 	// Check for properties of type: FCsTArrayMaterialInterface or TArray<UMaterialInterface*> and name: PropertyName.
-	typedef NCsProperty::FLibrary PropertyLibrary;
 
 	// Try FCsTArrayMaterialInterface
 	typedef FCsTArrayMaterialInterface StructSliceType;
 
-	if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Ctxt, Object, Object->GetClass(), PropertyName, nullptr))
+	if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Ctxt, Object, Object->GetClass(), PropertyName, nullptr))
 	{
 		return SliceAsStruct->SetSafe(Ctxt, Component);
 	}
 	// Try individual properties
 	else
 	{
-		TArray<UMaterialInterface*>* MaterialsPtr = PropertyLibrary::GetArrayObjectPropertyValuePtr<UMaterialInterface>(Ctxt, Object, Object->GetClass(), PropertyName, nullptr);
+		TArray<UMaterialInterface*>* MaterialsPtr = CsPropertyLibrary::GetArrayObjectPropertyValuePtr<UMaterialInterface>(Ctxt, Object, Object->GetClass(), PropertyName, nullptr);
 
 		if (MaterialsPtr)
 		{

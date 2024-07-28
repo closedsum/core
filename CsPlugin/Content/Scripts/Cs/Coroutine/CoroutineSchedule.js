@@ -639,6 +639,7 @@ module.exports = class NJsCoroutine
                 {
                     // Owner
                     static GetOwnerID            = CustomClassName + ".GetOwnerID";
+                    static GetOwnerIDByRoutine   = CustomClassName + ".GetOwnerIDByRoutine";
                     // Routine
                     static GetRoutineContainer   = CustomClassName + ".GetRoutineContainer";
                     // Start
@@ -799,6 +800,8 @@ module.exports = class NJsCoroutine
 
             /*number*/ GetOwnerIDByRoutine(r /*FJsRoutine*/)
             {
+                let context = NStr.GetOwnerIDByRoutine;
+                
                 check(IsValidObjectChecked(context, r));
                 return GetOwnerID(r.GetIndex());
             }

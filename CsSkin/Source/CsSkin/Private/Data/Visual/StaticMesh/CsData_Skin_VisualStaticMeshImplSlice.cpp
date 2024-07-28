@@ -131,19 +131,16 @@ namespace NCsSkin
 					}
 
 					CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
-
 					CS_IS_PTR_NULL_RET_NULL(Object)
 
 					// Check for properties matching interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-					typedef NCsProperty::FLibrary PropertyLibrary;
-
 					FImplSlice* Slice = nullptr;
 					bool Success	  = false;
 
 					// Try FCsData_Skin_VisualStaticMeshImplSlice
 					typedef FCsData_Skin_VisualStaticMeshImplSlice StructSliceType;
 
-					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualStaticMeshSlice, nullptr))
+					if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualStaticMeshSlice, nullptr))
 					{
 						Slice = new FImplSlice();
 
@@ -161,7 +158,7 @@ namespace NCsSkin
 					// Try individual properties
 					else
 					{
-						FCsStaticMesh* StaticMeshPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsStaticMesh>(Context, Object, Object->GetClass(), Name::StaticMesh, nullptr);
+						FCsStaticMesh* StaticMeshPtr = CsPropertyLibrary::GetStructPropertyValuePtr<FCsStaticMesh>(Context, Object, Object->GetClass(), Name::StaticMesh, nullptr);
 
 						if (StaticMeshPtr)
 						{

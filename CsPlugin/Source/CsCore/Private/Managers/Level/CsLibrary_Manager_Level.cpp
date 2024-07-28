@@ -48,7 +48,6 @@ namespace NCsLevel
 		#define SET_CONTEXT(__FunctionName) using namespace NCsLevel::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-		#define WorldLibrary NCsWorld::FLibrary
 		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 		// ContextRoot
@@ -58,7 +57,7 @@ namespace NCsLevel
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
+			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
 				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(ContextObject, UObject, ICsGetManagerSingleton);
 
@@ -69,7 +68,7 @@ namespace NCsLevel
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
-			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
+			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
 				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(ContextObject, UObject, ICsGetManagerSingleton))
 				{
@@ -338,7 +337,6 @@ namespace NCsLevel
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef WorldLibrary
 		#undef GameInstanceLibrary
 	}
 }

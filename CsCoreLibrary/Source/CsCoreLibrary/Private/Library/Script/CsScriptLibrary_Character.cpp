@@ -61,9 +61,7 @@ ACharacter* UCsScriptLibrary_Character::Spawn(const FString& Context, const UObj
 {
 	CONDITIONAL_SET_CTXT(Spawn);
 
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	UWorld* World = WorldLibrary::GetSafe(Ctxt, WorldContextObject);
+	UWorld* World = CsWorldLibrary::GetSafe(Ctxt, WorldContextObject);
 
 	if (!World)
 		return nullptr;

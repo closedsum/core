@@ -109,7 +109,6 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerLevel::NCached; \
 	const FString& Context = Str::__FunctionName
 #define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
-#define WorldLibrary NCsWorld::FLibrary
 
 // Singleton
 #pragma region
@@ -266,7 +265,7 @@ void UCsManager_Level::SetMyRoot(UObject* InRoot)
 
 UObject* UCsManager_Level::GetWorldContext() const
 {
-	return WorldLibrary::GetSafe(MyRoot);
+	return CsWorldLibrary::GetSafe(MyRoot);
 }
 
 // Persistent Level
@@ -550,7 +549,7 @@ void UCsManager_Level::GameInstance_Transition_OnFinish()
 
 	// TODO: FUTURE: Handle Dynamic loading of levels not in the streaming list
 
-	UWorld* World = WorldLibrary::GetChecked(Context, MyRoot);
+	UWorld* World = CsWorldLibrary::GetChecked(Context, MyRoot);
 
 	// Populate Map
 	for (ULevelStreaming* LevelStreaming : World->GetStreamingLevels())
@@ -590,7 +589,7 @@ void UCsManager_Level::Level_Streaming_OnAdded(UWorld* World, ULevelStreaming* L
 {
 	SET_CONTEXT(Level_Streaming_OnAdded);
 
-	if (World == WorldLibrary::GetChecked(Context, GetWorldContext()))
+	if (World == CsWorldLibrary::GetChecked(Context, GetWorldContext()))
 	{
 		const uint32 Id					   = LevelStreaming->GetUniqueID();
 		ACsLevel_Streaming_EventHandler* A = World->SpawnActor<ACsLevel_Streaming_EventHandler>();
@@ -745,4 +744,3 @@ char UCsManager_Level::DestroyOtherPIEWorld_Internal(FCsRoutine* R)
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
 #undef CoroutineSchedulerLibrary
-#undef WorldLibrary

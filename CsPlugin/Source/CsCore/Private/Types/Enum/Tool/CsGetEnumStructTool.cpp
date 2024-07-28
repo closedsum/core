@@ -53,8 +53,6 @@ namespace NCsEnum
 			}
 
 			#define SettingsLibrary NCsCore::NSettings::FLibrary
-			#define BlueprintLibrary NCsBlueprint::FLibrary
-			#define PropertyLibrary NCsProperty::FLibrary
 			
 			void FImpl::AddPropertyChange(const FName& Name, UStruct* Struct)
 			{
@@ -93,11 +91,11 @@ namespace NCsEnum
 							continue;
 
 						// Blueprint
-						if (BlueprintLibrary::Is(Asset))
+						if (CsBlueprintLibrary::Is(Asset))
 						{
-							if (UObject* DOb = BlueprintLibrary::GetSafeDefaultObject(Context, Asset, nullptr))
+							if (UObject* DOb = CsBlueprintLibrary::GetSafeDefaultObject(Context, Asset, nullptr))
 							{	
-								if (PropertyLibrary::HasStructProperty(Context, DOb->GetClass(), Struct, nullptr))
+								if (CsPropertyLibrary::HasStructProperty(Context, DOb->GetClass(), Struct, nullptr))
 								{
 									History.References.Add(Path);
 
@@ -105,9 +103,9 @@ namespace NCsEnum
 								}
 							}
 							else
-							if (UObject* CDOb = BlueprintLibrary::GetSafeClassDefaultObject(Context, Asset, nullptr))
+							if (UObject* CDOb = CsBlueprintLibrary::GetSafeClassDefaultObject(Context, Asset, nullptr))
 							{	
-								if (PropertyLibrary::HasStructProperty(Context, CDOb->GetClass(), Struct, nullptr))
+								if (CsPropertyLibrary::HasStructProperty(Context, CDOb->GetClass(), Struct, nullptr))
 								{
 									History.References.Add(Path);
 
@@ -151,11 +149,11 @@ namespace NCsEnum
 							continue;
 
 						// Blueprint
-						if (BlueprintLibrary::Is(Object))
+						if (CsBlueprintLibrary::Is(Object))
 						{
-							if (UObject* DOb = BlueprintLibrary::GetSafeDefaultObject(Context, Object, nullptr))
+							if (UObject* DOb = CsBlueprintLibrary::GetSafeDefaultObject(Context, Object, nullptr))
 							{	
-								if (PropertyLibrary::HasStructProperty(Context, DOb->GetClass(), Change.Struct, nullptr))
+								if (CsPropertyLibrary::HasStructProperty(Context, DOb->GetClass(), Change.Struct, nullptr))
 								{
 									History.References.Add(Path);
 
@@ -163,9 +161,9 @@ namespace NCsEnum
 								}
 							}
 							else
-							if (UObject* CDOb = BlueprintLibrary::GetSafeClassDefaultObject(Context, Object, nullptr))
+							if (UObject* CDOb = CsBlueprintLibrary::GetSafeClassDefaultObject(Context, Object, nullptr))
 							{	
-								if (PropertyLibrary::HasStructProperty(Context, CDOb->GetClass(), Change.Struct, nullptr))
+								if (CsPropertyLibrary::HasStructProperty(Context, CDOb->GetClass(), Change.Struct, nullptr))
 								{
 									History.References.Add(Path);
 
@@ -175,7 +173,7 @@ namespace NCsEnum
 						}
 						else
 						{
-							if (PropertyLibrary::HasStructProperty(Context, Object->GetClass(), Change.Struct, nullptr))
+							if (CsPropertyLibrary::HasStructProperty(Context, Object->GetClass(), Change.Struct, nullptr))
 							{
 								History.References.Add(Path);
 
@@ -194,8 +192,6 @@ namespace NCsEnum
 			}
 
 			#undef SettingsLibrary
-			#undef BlueprintLibrary
-			#undef PropertyLibrary
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT

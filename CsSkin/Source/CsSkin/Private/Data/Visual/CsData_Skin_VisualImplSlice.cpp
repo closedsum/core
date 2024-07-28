@@ -99,7 +99,6 @@ namespace NCsSkin
 				CS_IS_PTR_NULL_RET_NULL(Object)
 
 				// Check for properties matching interface: SkinDataType (NCsSkin::NData::NVisual::IVisual)
-				typedef NCsProperty::FLibrary PropertyLibrary;
 
 				FImplSlice* Slice = nullptr;
 				bool Success	  = false;
@@ -107,7 +106,7 @@ namespace NCsSkin
 				// Try FCsData_Skin_VisualImplSlice
 				typedef FCsData_Skin_VisualImplSlice StructSliceType;
 
-				if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualSkinSlice, nullptr))
+				if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualSkinSlice, nullptr))
 				{
 					Slice = new FImplSlice();
 

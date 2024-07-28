@@ -33,22 +33,16 @@ namespace NCsConsoleCommand
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* WorldContext)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
-
+			UWorld* World				= CsWorldLibrary::GetChecked(Context, WorldContext);
 			UGameInstance* GameInstance = World->GetGameInstance();
 
 			checkf(GameInstance, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
-
 			return GameInstance;
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* WorldContext, LogLevel)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return nullptr;

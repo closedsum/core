@@ -203,7 +203,6 @@ namespace NCsPlayer
 			#define SET_CONTEXT(__FunctionName) using namespace NCsPlayer::NController::NLocal::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-			#define WorldLibrary NCsWorld::FLibrary
 
 			APlayerController* FLibrary::Get(const FString& Context, UWorld* World, const int32& ControllerId)
 			{
@@ -234,12 +233,12 @@ namespace NCsPlayer
 
 			APlayerController* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 			{
-				return GetChecked(Context, WorldLibrary::GetChecked(Context, WorldContext), ControllerId);
+				return GetChecked(Context, CsWorldLibrary::GetChecked(Context, WorldContext), ControllerId);
 			}
 
 			APlayerController* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
 			{
-				UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+				UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 				if (!World)
 					return nullptr;
@@ -267,7 +266,7 @@ namespace NCsPlayer
 			{
 				OutSuccess = false;
 
-				UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+				UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 				if (!World)
 					return nullptr;
@@ -359,12 +358,12 @@ namespace NCsPlayer
 
 			void FLibrary::GetAllChecked(const FString& Context, const UObject* WorldContext, TArray<APlayerController*>& OutControllers)
 			{
-				GetAllChecked(Context, WorldLibrary::GetChecked(Context, WorldContext), OutControllers);
+				GetAllChecked(Context, CsWorldLibrary::GetChecked(Context, WorldContext), OutControllers);
 			}
 
 			bool FLibrary::GetSafeAll(const FString& Context, const UObject* WorldContext, TArray<APlayerController*>& OutControllers, LogLevel)
 			{
-				if (UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log))
+				if (UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log))
 				{
 					return GetSafeAll(Context, World, OutControllers, Log);
 				}
@@ -375,7 +374,6 @@ namespace NCsPlayer
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef WorldLibrary
 
 			namespace NFirst
 			{
@@ -397,7 +395,6 @@ namespace NCsPlayer
 				#define SET_CONTEXT(__FunctionName) using namespace NCsPlayer::NController::NLocal::NFirst::NLibrary::NCached; \
 					const FString& Context = Str::__FunctionName
 				#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-				#define WorldLibrary NCsWorld::FLibrary
 
 				APlayerController* FLibrary::Get(const FString& Context, UWorld* World)
 				{
@@ -439,12 +436,12 @@ namespace NCsPlayer
 
 				APlayerController* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 				{
-					return GetChecked(Context, WorldLibrary::GetChecked(Context, WorldContext));
+					return GetChecked(Context, CsWorldLibrary::GetChecked(Context, WorldContext));
 				}
 
 				APlayerController* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogLevel) 
 				{
-					return GetSafe(Context, WorldLibrary::GetSafe(Context, WorldContext), Log);
+					return GetSafe(Context, CsWorldLibrary::GetSafe(Context, WorldContext), Log);
 				}
 
 				APlayerController* FLibrary::GetSafe(const UObject* WorldContext)
@@ -498,7 +495,6 @@ namespace NCsPlayer
 				#undef USING_NS_CACHED
 				#undef SET_CONTEXT
 				#undef LogLevel
-				#undef WorldLibrary
 			}
 		}
 
@@ -515,7 +511,6 @@ namespace NCsPlayer
 		}
 
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-		#define WorldLibrary NCsWorld::FLibrary
 
 		APlayerController* FLibrary::GetOrFirstLocalChecked(const FString& Context, APawn* Pawn)
 		{
@@ -602,7 +597,6 @@ namespace NCsPlayer
 		}
 
 		#undef LogLevel
-		#undef WorldLibrary
 	}
 
 	namespace NState

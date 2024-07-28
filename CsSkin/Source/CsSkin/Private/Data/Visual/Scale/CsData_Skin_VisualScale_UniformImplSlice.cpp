@@ -132,11 +132,9 @@ namespace NCsSkin
 						}
 
 						CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
-
 						CS_IS_PTR_NULL_RET_NULL(Object)
 
 						// Check for properties matching interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-						typedef NCsProperty::FLibrary PropertyLibrary;
 
 						FImplSlice* Slice = nullptr;
 						bool Success	  = false;
@@ -144,7 +142,7 @@ namespace NCsSkin
 						// Try FCsData_Skin_VisualScale_UniformImplSlice
 						typedef FCsData_Skin_VisualScale_UniformImplSlice StructSliceType;
 
-						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualUniformScaleSlice, nullptr))
+						if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualUniformScaleSlice, nullptr))
 						{
 							Slice = new FImplSlice();
 
@@ -162,7 +160,7 @@ namespace NCsSkin
 						// Try individual properties
 						else
 						{
-							float* UniformScalePtr = PropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::UniformScale, nullptr);
+							float* UniformScalePtr = CsPropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::UniformScale, nullptr);
 
 							if (UniformScalePtr)
 							{

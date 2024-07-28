@@ -300,9 +300,7 @@ void UCsCoordinator_GameEvent::Update(const FCsDeltaTime& DeltaTime)
 
 UObject* UCsCoordinator_GameEvent::GetWorldContext() const
 {
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	return WorldLibrary::GetSafeAsObject(MyRoot);
+	return CsWorldLibrary::GetSafeAsObject(MyRoot);
 }
 
 void UCsCoordinator_GameEvent::OnGameEventInfo_ManagerInput0(const FCsGameEventInfo& Info)

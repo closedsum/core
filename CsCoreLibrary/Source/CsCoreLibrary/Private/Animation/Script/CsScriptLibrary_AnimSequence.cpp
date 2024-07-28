@@ -83,9 +83,7 @@ bool UCsScriptLibrary_AnimSequence::SetProperty(const FString& Context, UObject*
 {
 	CONDITIONAL_SET_CTXT(SetProperty);
 
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
-	return PropertyLibrary::SetObjectPropertyByName<UAnimSequence>(Ctxt, Object, Object->GetClass(), PropertyName, Anim);
+	return CsPropertyLibrary::SetObjectPropertyByName<UAnimSequence>(Ctxt, Object, Object->GetClass(), PropertyName, Anim);
 }
 
 #pragma endregion Property

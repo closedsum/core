@@ -131,19 +131,16 @@ namespace NCsSkin
 					}
 
 					CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
-
 					CS_IS_PTR_NULL_RET_NULL(Object)
 
 					// Check for properties matching interface: SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
-					typedef NCsProperty::FLibrary PropertyLibrary;
-
 					FImplSlice* Slice = nullptr;
 					bool Success	  = false;
 
 					// Try FCsData_Skin_VisualSkeletalMeshImplSlice
 					typedef FCsData_Skin_VisualSkeletalMeshImplSlice StructSliceType;
 
-					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualSkeletalMeshSlice, nullptr))
+					if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualSkeletalMeshSlice, nullptr))
 					{
 						Slice = new FImplSlice();
 
@@ -161,7 +158,7 @@ namespace NCsSkin
 					// Try individual properties
 					else
 					{
-						FCsSkeletalMesh* SkeletalMeshPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsSkeletalMesh>(Context, Object, Object->GetClass(), Name::SkeletalMesh, nullptr);
+						FCsSkeletalMesh* SkeletalMeshPtr = CsPropertyLibrary::GetStructPropertyValuePtr<FCsSkeletalMesh>(Context, Object, Object->GetClass(), Name::SkeletalMesh, nullptr);
 
 						if (SkeletalMeshPtr)
 						{

@@ -54,8 +54,6 @@ namespace NCsActor
 	}
 
 	#define LogLevel void(*Log)(const FString&)/*=&NCsCore::NLibrary::FLog::Warning*/
-	#define WorldLibrary NCsWorld::FLibrary
-	#define NameLibrary NCsName::FLibrary
 
 	FString FLibrary::PrintActorAndClass(const AActor* Actor)
 	{
@@ -69,7 +67,7 @@ namespace NCsActor
 
 	void FLibrary::GetAllChecked(const FString& Context, const UObject* WorldContext, TArray<AActor*>& OutActors)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
 		{
@@ -85,7 +83,7 @@ namespace NCsActor
 
 	void FLibrary::GetAllOfClassChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, TArray<AActor*>& OutActors)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		checkf(ActorClass.Get(), TEXT("%s: ActorClass is NULL"), *Context);
 
@@ -103,7 +101,7 @@ namespace NCsActor
 
 	bool FLibrary::GetSafeAllOfClass(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, TArray<AActor*>& OutActors, LogLevel)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!World)
 			return false;
@@ -130,7 +128,7 @@ namespace NCsActor
 
 	AActor* FLibrary::GetByClassChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_SUBCLASS_OF_NULL_CHECKED(ActorClass, AActor)
 
@@ -175,7 +173,7 @@ namespace NCsActor
 
 	AActor* FLibrary::GetByClassAndTagChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const FName& Tag)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_SUBCLASS_OF_NULL_CHECKED(ActorClass, AActor)
 		CS_IS_NAME_NONE_CHECKED(Tag)
@@ -225,7 +223,7 @@ namespace NCsActor
 
 	AActor* FLibrary::GetSafeByClassAndTag(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const FName& Tag, LogLevel)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -279,7 +277,7 @@ namespace NCsActor
 
 	AActor* FLibrary::GetByClassAndInterfaceChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const UClass* InterfaceClass)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_SUBCLASS_OF_NULL_CHECKED(ActorClass, AActor)
 		CS_IS_PENDING_KILL_CHECKED(InterfaceClass)
@@ -330,7 +328,7 @@ namespace NCsActor
 
 	AActor* FLibrary::GetByClassAndInterfaceAndTagChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const UClass* InterfaceClass, const FName& Tag)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_SUBCLASS_OF_NULL_CHECKED(ActorClass, AActor)
 		CS_IS_PENDING_KILL_CHECKED(InterfaceClass)
@@ -384,7 +382,7 @@ namespace NCsActor
 
 	AActor* FLibrary::GetSafeByClassAndInterfaceAndTag(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const UClass* InterfaceClass, const FName& Tag, LogLevel)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -441,7 +439,7 @@ namespace NCsActor
 
 	AActor* FLibrary::GetByInterfaceChecked(const FString& Context, const UObject* WorldContext, const UClass* InterfaceClass)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_PENDING_KILL_CHECKED(InterfaceClass)
 
@@ -491,7 +489,7 @@ namespace NCsActor
 
 	void FLibrary::GetAllByInterfaceChecked(const FString& Context, const UObject* WorldContext, const UClass* InterfaceClass, TArray<AActor*>& OutActors)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_PENDING_KILL_CHECKED(InterfaceClass)
 
@@ -513,7 +511,7 @@ namespace NCsActor
 
 	bool FLibrary::GetSafeAllByInterface(const FString& Context, const UObject* WorldContext, const UClass* InterfaceClass, TArray<AActor*>& OutActors, LogLevel)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!World)
 			return false;
@@ -542,7 +540,7 @@ namespace NCsActor
 
 	AActor* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_NAME_NONE_CHECKED(Tag)
 
@@ -592,7 +590,7 @@ namespace NCsActor
 
 	AActor* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, LogLevel)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -645,7 +643,7 @@ namespace NCsActor
 
 	void FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
@@ -675,12 +673,12 @@ namespace NCsActor
 			if (HasAllTags)
 				OutActors.Add(A);
 		}
-		checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find Actors with Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
+		checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find Actors with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags)));
 	}
 
 	bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors, LogLevel)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE(Tags)
@@ -713,14 +711,14 @@ namespace NCsActor
 
 		if (OutActors.Num() == CS_EMPTY)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actors with Tags: %s."), *Context, *(NameLibrary::ToString(Tags))));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actors with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags))));
 		}
 		return OutActors.Num() > CS_EMPTY;
 	}
 
 	AActor* FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
@@ -777,7 +775,7 @@ namespace NCsActor
 				}
 				else
 				{
-					checkf(0, TEXT("%s: There are more than one Actors with the Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
+					checkf(0, TEXT("%s: There are more than one Actors with the Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags)));
 				}
 			}
 		}
@@ -786,13 +784,13 @@ namespace NCsActor
 			return Actor;
 	#endif // UE_BUILD_SHIPPING
 
-		checkf(0, TEXT("%s: Failed to find Actor with Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
+		checkf(0, TEXT("%s: Failed to find Actor with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags)));
 		return nullptr;
 	}
 
 	AActor* FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, LogLevel)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_RET_NULL(Tags, FName)
 		CS_IS_TARRAY_ANY_NONE_RET_NULL(Tags)
@@ -849,7 +847,7 @@ namespace NCsActor
 				}
 				else
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: There are more than one Actors with the Tags: %s."), *Context, *(NameLibrary::ToString(Tags))));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: There are more than one Actors with the Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags))));
 				}
 			}
 		}
@@ -858,7 +856,7 @@ namespace NCsActor
 			return Actor;
 	#endif // UE_BUILD_SHIPPING
 
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actor with Tags: %s."), *Context, *(NameLibrary::ToString(Tags))));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actor with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags))));
 		return nullptr;
 	}
 
@@ -889,7 +887,7 @@ namespace NCsActor
 
 	AActor* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, LogLevel)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -928,7 +926,7 @@ namespace NCsActor
 	AActor* FLibrary::GetByLabelChecked(const FString& Context, const UObject* WorldContext, const FString& Label)
 	{
 	#if WITH_EDITOR
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		checkf(!Label.IsEmpty(), TEXT("%s: Label is EMPTY."), *Context);
 
@@ -955,7 +953,7 @@ namespace NCsActor
 	AActor* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, LogLevel)
 	{
 	#if WITH_EDITOR
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
 			return nullptr;
@@ -1384,7 +1382,7 @@ namespace NCsActor
 
 	AActor* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!World)
 			return nullptr;
@@ -1634,6 +1632,4 @@ namespace NCsActor
 	#pragma endregion Tick
 
 	#undef LogLevel
-	#undef WorldLibrary
-	#undef NameLibrary
 }

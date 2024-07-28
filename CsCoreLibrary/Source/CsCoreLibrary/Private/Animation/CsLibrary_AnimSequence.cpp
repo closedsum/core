@@ -33,9 +33,7 @@ namespace NCsAnimSequence
 	
 	UAnimSequence* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 	{
-		typedef NCsProperty::FLibrary PropertyLibrary;
-
-		return PropertyLibrary::GetObjectPropertyValueByPath<UAnimSequence>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		return CsPropertyLibrary::GetObjectPropertyValueByPath<UAnimSequence>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
 
 	#pragma endregion Get

@@ -12,7 +12,6 @@
 namespace NCsActorComponent
 {
 	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define NameLibrary NCsName::FLibrary
 
 	void FLibrary::GetChecked(const FString& Context, const TSet<UActorComponent*>& Components, const TArray<FName>& Tags, TArray<UActorComponent*>& OutComponents)
 	{
@@ -25,7 +24,7 @@ namespace NCsActorComponent
 
 		for (UActorComponent* Component : Components)
 		{
-			if (NameLibrary::Contains(Component->ComponentTags, Tags))
+			if (CsNameLibrary::Contains(Component->ComponentTags, Tags))
 				OutComponents.Add(Component);
 		}
 	}
@@ -41,12 +40,11 @@ namespace NCsActorComponent
 
 		for (UActorComponent* Component : Components)
 		{
-			if (NameLibrary::Contains(Component->ComponentTags, Tags))
+			if (CsNameLibrary::Contains(Component->ComponentTags, Tags))
 				OutComponents.Add(Component);
 		}
 		return !OutComponents.IsEmpty();
 	}
 
 	#undef LogWarning
-	#undef NameLibrary
 }

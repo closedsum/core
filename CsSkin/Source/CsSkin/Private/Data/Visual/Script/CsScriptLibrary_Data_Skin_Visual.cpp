@@ -83,14 +83,12 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_Material(const FString& Co
 	}
 
 	// Check for properties matching interface: MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	bool Success = false;
 
 	// Try FCsData_Skin_VisualMaterialImplSlice
 	typedef FCsData_Skin_VisualMaterialImplSlice StructSliceType;
 
-	if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Ctxt, Object, Object->GetClass(), Name::VisualMaterialSlice, nullptr))
+	if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Ctxt, Object, Object->GetClass(), Name::VisualMaterialSlice, nullptr))
 	{
 		return SliceAsStruct->SetSafe(Ctxt, Component);
 	}
@@ -99,7 +97,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_Material(const FString& Co
 	{
 		typedef FCsTArrayMaterialInterface StructType;
 
-		StructType* MaterialsPtr = PropertyLibrary::GetStructPropertyValuePtr<StructType>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
+		StructType* MaterialsPtr = CsPropertyLibrary::GetStructPropertyValuePtr<StructType>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
 
 		if (MaterialsPtr)
 		{
@@ -141,14 +139,12 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMesh(const FString& 
 	}
 
 	// Check for properties matching interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	bool Success = false;
 
 	// Try FCsData_Skin_VisualStaticMeshImplSlice
 	typedef FCsData_Skin_VisualStaticMeshImplSlice StructSliceType;
 
-	if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Ctxt, Object, Object->GetClass(), Name::VisualStaticMeshSlice, nullptr))
+	if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Ctxt, Object, Object->GetClass(), Name::VisualStaticMeshSlice, nullptr))
 	{
 		return SliceAsStruct->SetSafe(Ctxt, Component);
 	}
@@ -157,7 +153,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMesh(const FString& 
 	{
 		typedef FCsStaticMesh StructType;
 
-		StructType* MeshPtr = PropertyLibrary::GetStructPropertyValuePtr<StructType>(Ctxt, Object, Object->GetClass(), Name::Mesh, nullptr);
+		StructType* MeshPtr = CsPropertyLibrary::GetStructPropertyValuePtr<StructType>(Ctxt, Object, Object->GetClass(), Name::Mesh, nullptr);
 
 		if (MeshPtr)
 		{
@@ -203,14 +199,12 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMesh(const FString
 	}
 
 	// Check for properties matching interface: SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	bool Success = false;
 
 	// Try FCsData_Skin_VisualSkeletalMeshImplSlice
 	typedef FCsData_Skin_VisualSkeletalMeshImplSlice StructSliceType;
 
-	if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Ctxt, Object, Object->GetClass(), Name::VisualSkeletalMeshSlice, nullptr))
+	if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Ctxt, Object, Object->GetClass(), Name::VisualSkeletalMeshSlice, nullptr))
 	{
 		return SliceAsStruct->SetSafe(Ctxt, Component);
 	}
@@ -219,7 +213,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMesh(const FString
 	{
 		typedef FCsSkeletalMesh StructType;
 
-		StructType* MeshPtr = PropertyLibrary::GetStructPropertyValuePtr<StructType>(Ctxt, Object, Object->GetClass(), Name::Mesh, nullptr);
+		StructType* MeshPtr = CsPropertyLibrary::GetStructPropertyValuePtr<StructType>(Ctxt, Object, Object->GetClass(), Name::Mesh, nullptr);
 
 		if (MeshPtr)
 		{
@@ -267,22 +261,20 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMeshAndMaterial(cons
 	// Check for properties matching interface: 
 	// - StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 	// - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	bool Success = false;
 
 	// Try FCsData_Skin_VisualStaticMeshAndMaterialImpl
 	typedef FCsData_Skin_VisualStaticMeshAndMaterialImpl StructImplType;
 
-	if (StructImplType* ImplAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructImplType>(Ctxt, Object, Object->GetClass(), Name::VisualStaticMeshAndMaterialImpl, nullptr))
+	if (StructImplType* ImplAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructImplType>(Ctxt, Object, Object->GetClass(), Name::VisualStaticMeshAndMaterialImpl, nullptr))
 	{
 		return ImplAsStruct->SetSafe(Ctxt, Component);
 	}
 	// Try individual properties
 	else
 	{
-		FCsStaticMesh* MeshPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsStaticMesh>(Ctxt, Object, Object->GetClass(), Name::Mesh, nullptr);
-		FCsTArrayMaterialInterface* MaterialsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsTArrayMaterialInterface>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
+		FCsStaticMesh* MeshPtr = CsPropertyLibrary::GetStructPropertyValuePtr<FCsStaticMesh>(Ctxt, Object, Object->GetClass(), Name::Mesh, nullptr);
+		FCsTArrayMaterialInterface* MaterialsPtr = CsPropertyLibrary::GetStructPropertyValuePtr<FCsTArrayMaterialInterface>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
 
 		if (MeshPtr &&
 			MaterialsPtr)
@@ -337,22 +329,20 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMeshAndMaterial(co
 	// Check for properties matching interface: 
 	// - SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 	// - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	bool Success = false;
 
 	// Try FCsData_Skin_VisualSkeletalMeshAndMaterialImpl
 	typedef FCsData_Skin_VisualSkeletalMeshAndMaterialImpl StructImplType;
 
-	if (StructImplType* ImplAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructImplType>(Ctxt, Object, Object->GetClass(), Name::VisualSkeletalMeshAndMaterialImpl, nullptr))
+	if (StructImplType* ImplAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructImplType>(Ctxt, Object, Object->GetClass(), Name::VisualSkeletalMeshAndMaterialImpl, nullptr))
 	{
 		return ImplAsStruct->SetSafe(Ctxt, Component);
 	}
 	// Try individual properties
 	else
 	{
-		FCsSkeletalMesh* MeshPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsSkeletalMesh>(Ctxt, Object, Object->GetClass(), Name::Mesh, nullptr);
-		FCsTArrayMaterialInterface* MaterialsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsTArrayMaterialInterface>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
+		FCsSkeletalMesh* MeshPtr = CsPropertyLibrary::GetStructPropertyValuePtr<FCsSkeletalMesh>(Ctxt, Object, Object->GetClass(), Name::Mesh, nullptr);
+		FCsTArrayMaterialInterface* MaterialsPtr = CsPropertyLibrary::GetStructPropertyValuePtr<FCsTArrayMaterialInterface>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
 
 		if (MeshPtr &&
 			MaterialsPtr)

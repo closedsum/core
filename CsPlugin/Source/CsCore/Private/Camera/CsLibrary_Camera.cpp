@@ -45,14 +45,13 @@ namespace NCsCamera
 	#define USING_NS_CACHED using namespace NCsCamera::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsCamera::NLibrary::NCached; \
 		const FString& Context = Str::__FunctionName
-	#define WorldLibrary NCsWorld::FLibrary
 
 	// Get
 	#pragma region
 
 	ACameraActor* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_NAME_NONE_CHECKED(Tag)
 
@@ -119,7 +118,7 @@ namespace NCsCamera
 		{
 			CS_IS_PENDING_KILL_CHECKED(Component)
 
-			ACameraActor* Camera = WorldLibrary::SpawnChecked<ACameraActor>(Context, WorldContext);
+			ACameraActor* Camera = CsWorldLibrary::SpawnChecked<ACameraActor>(Context, WorldContext);
 			
 			CopyChecked(Context, Component, Camera);
 			return Camera;				
@@ -371,5 +370,4 @@ namespace NCsCamera
 
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
-	#undef WorldLibrary
 }

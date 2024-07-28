@@ -52,9 +52,7 @@ namespace NCsSkeletalMesh
 
 	USkeletalMesh* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel)
 	{
-		typedef NCsProperty::FLibrary PropertyLibrary;
-
-		return PropertyLibrary::GetObjectPropertyValueByPath<USkeletalMesh>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		return CsPropertyLibrary::GetObjectPropertyValueByPath<USkeletalMesh>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
 
 	#pragma endregion Get

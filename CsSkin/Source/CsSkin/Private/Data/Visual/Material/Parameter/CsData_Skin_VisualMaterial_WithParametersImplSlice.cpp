@@ -137,7 +137,6 @@ namespace NCsSkin
 						CS_IS_PTR_NULL_RET_NULL(Object)
 
 						// Check for properties matching interface: MaterialVisualWithParamsDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)
-						typedef NCsProperty::FLibrary PropertyLibrary;
 
 						FImplSlice* Slice = nullptr;
 						bool Success	  = false;
@@ -145,7 +144,7 @@ namespace NCsSkin
 						// Try FCsData_Skin_VisualMaterial_WithParametersImplSlice
 						typedef FCsData_Skin_VisualMaterial_WithParametersImplSlice StructSliceType;
 
-						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualMaterialWithParamsSlice, nullptr))
+						if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualMaterialWithParamsSlice, nullptr))
 						{
 							Slice = new FImplSlice();
 
@@ -163,7 +162,7 @@ namespace NCsSkin
 						// Try individual properties
 						else
 						{
-							TArray<FCsMaterialInterface_WithRangeParameters>* MaterialsPtr = PropertyLibrary::GetArrayStructPropertyValuePtr<FCsMaterialInterface_WithRangeParameters>(Context, Object, Object->GetClass(), Name::Materials, nullptr);
+							TArray<FCsMaterialInterface_WithRangeParameters>* MaterialsPtr = CsPropertyLibrary::GetArrayStructPropertyValuePtr<FCsMaterialInterface_WithRangeParameters>(Context, Object, Object->GetClass(), Name::Materials, nullptr);
 
 							if (MaterialsPtr)
 							{

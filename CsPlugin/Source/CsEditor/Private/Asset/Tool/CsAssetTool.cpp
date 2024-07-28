@@ -10,8 +10,6 @@
 
 namespace NCsAsset
 {
-	#define BlueprintLibrary NCsBlueprint::FLibrary
-
 	const TArray<TWeakObjectPtr<UObject>>& FTool::GetOpenedAssets()
 	{
 		return Cast<UCsEdEngine>(GEngine)->GetOpenedAssets();
@@ -41,11 +39,9 @@ namespace NCsAsset
 		{
 			UObject* A = O.IsValid() ? O.Get() : nullptr;
 
-			if (DefaultObject == BlueprintLibrary::GetSafeClassDefaultObject(A))
+			if (DefaultObject == CsBlueprintLibrary::GetSafeClassDefaultObject(A))
 				return true;
 		}
 		return false;
 	}
-
-	#undef BlueprintLibrary
 }

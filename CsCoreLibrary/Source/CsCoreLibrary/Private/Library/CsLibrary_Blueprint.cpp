@@ -35,7 +35,6 @@ namespace NCsBlueprint
 		const FString& Context = Str::__FunctionName
 	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
 	#define NO_LOG void(*Log)(const FString&) = nullptr;
-	#define WorldLibrary NCsWorld::FLibrary
 
 	// Load
 	#pragma region
@@ -300,7 +299,7 @@ namespace NCsBlueprint
 		UBlueprintGeneratedClass* BpGC = LoadClassChecked(Context, Blueprint);
 	#endif // #if WITH_EDITOR
 
-		return WorldLibrary::SpawnChecked(Context, WorldContext, BpGC);
+		return CsWorldLibrary::SpawnChecked(Context, WorldContext, BpGC);
 	}
 
 	#pragma endregion Spawn
@@ -309,5 +308,4 @@ namespace NCsBlueprint
 	#undef SET_CONTEXT
 	#undef LogWarning
 	#undef NO_LOG
-	#undef WorldLibrary
 }

@@ -27,9 +27,7 @@ namespace NCsMaterial
 		{
 			UMaterialParameterCollectionInstance* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, UMaterialParameterCollection* Collection)
 			{
-				typedef NCsWorld::FLibrary WorldLibrary;
-
-				UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+				UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 				CS_IS_PENDING_KILL_CHECKED(Collection);
 

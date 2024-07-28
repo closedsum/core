@@ -66,10 +66,8 @@ void UCsInputSettings::PostEditChangeChainProperty(FPropertyChangedChainEvent& e
 
 	//int32 Index;
 
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	TSet<FString> PropertyNames;
-	PropertyLibrary::GetPropertyNamesInChain(e, PropertyNames);
+	CsPropertyLibrary::GetPropertyNamesInChain(e, PropertyNames);
 
 	typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
 

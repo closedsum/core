@@ -33,7 +33,6 @@ namespace NCsConsoleCommand
 		#define USING_NS_CACHED using namespace NCsConsoleCommand::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsConsoleCommand::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define WorldLibrary NCsWorld::FLibrary
 		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 		bool FLibrary::Exec(UWorld* World, const TCHAR* Cmd, FOutputDevice& Out /*= *GLog*/)
@@ -57,7 +56,7 @@ namespace NCsConsoleCommand
 		{
 			SET_CONTEXT(Exec);
 
-			return Exec(WorldLibrary::GetChecked(Context, WorldContext), *Cmd);
+			return Exec(CsWorldLibrary::GetChecked(Context, WorldContext), *Cmd);
 		}
 
 		bool FLibrary::ConsumeNextCharAndCheckNotEmpty(const FString& Context, FString& Str, const FString& Definition)
@@ -76,7 +75,6 @@ namespace NCsConsoleCommand
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef WorldLibrary
 		#undef GameInstanceLibrary
 	}
 }

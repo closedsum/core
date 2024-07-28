@@ -104,9 +104,8 @@ namespace NCsData
 						const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
 						// Get the Property named "Class" if it exists.
-						typedef NCsProperty::FLibrary PropertyLibrary;
 
-						FStructProperty* ClassProperty = PropertyLibrary::FindStructPropertyByName<InterfaceUStructContainerType>(RowStruct, Name::Class);
+						FStructProperty* ClassProperty = CsPropertyLibrary::FindStructPropertyByName<InterfaceUStructContainerType>(RowStruct, Name::Class);
 
 						if (!ClassProperty)
 						{
@@ -118,9 +117,7 @@ namespace NCsData
 
 						// Cache any class related information that is loaded.
 					#if WITH_EDITOR
-						typedef NCsWorld::FLibrary WorldLibrary;
-
-						if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+						if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 						{
 							if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
 							{
@@ -137,7 +134,7 @@ namespace NCsData
 							uint8* RowPtr		 = nullptr;
 
 						#if WITH_EDITOR
-							if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+							if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 							{
 								RowPtr = Pair.Value;
 							}
@@ -164,7 +161,7 @@ namespace NCsData
 								checkf(O, TEXT("%s: Failed to get character from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
 
 							#if WITH_EDITOR
-								if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+								if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 								{
 									if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
 									{
@@ -196,9 +193,8 @@ namespace NCsData
 							const UScriptStruct* RowStruct = DataTable->GetRowStruct();
 
 							// Get the Property named "Class" if it exists.
-							typedef NCsProperty::FLibrary PropertyLibrary;
 
-							FStructProperty* ClassProperty = PropertyLibrary::FindStructPropertyByName<EnumClassType>(RowStruct, Name::Class);
+							FStructProperty* ClassProperty = CsPropertyLibrary::FindStructPropertyByName<EnumClassType>(RowStruct, Name::Class);
 
 							if (!ClassProperty)
 							{
@@ -210,9 +206,7 @@ namespace NCsData
 
 							// Cache any class related information that is loaded.
 						#if WITH_EDITOR
-							typedef NCsWorld::FLibrary WorldLibrary;
-
-							if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+							if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 							{
 								if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
 								{
@@ -229,7 +223,7 @@ namespace NCsData
 								uint8* RowPtr = nullptr;
 
 							#if WITH_EDITOR
-								if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+								if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 								{
 									RowPtr = Pair.Value;
 								}
@@ -258,7 +252,7 @@ namespace NCsData
 									InterfaceContainerType& Container = ClassByTypeMap.Add(RowName);
 
 								#if WITH_EDITOR
-									if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+									if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 									{
 										if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
 										{

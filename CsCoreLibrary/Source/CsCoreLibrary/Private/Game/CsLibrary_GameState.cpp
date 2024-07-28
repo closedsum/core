@@ -30,7 +30,6 @@ namespace NCsGameState
 	#define SET_CONTEXT(__FunctionName) using namespace NCsGameState::NLibrary::NCached; \
 		const FString& Context = Str::__FunctionName
 	#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-	#define WorldLibrary NCsWorld::FLibrary
 
 	FString FLibrary::PrintGameStateAndClass(AGameStateBase* GameState)
 	{
@@ -39,7 +38,7 @@ namespace NCsGameState
 
 	AGameStateBase* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 	{
-		UWorld* World			  = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World			  = CsWorldLibrary::GetChecked(Context, WorldContext);
 		AGameStateBase* GameState = World->GetGameState();
 
 		checkf(GameState, TEXT("%s: Failed to get GameState from World: %s."), *Context, *(World->GetName()));
@@ -48,7 +47,7 @@ namespace NCsGameState
 
 	AGameStateBase* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogLevel)
 	{
-		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!World)
 			return nullptr;
@@ -92,5 +91,4 @@ namespace NCsGameState
 	#undef USING_NS_CACHED
 	#undef LogLevel
 	#undef SET_CONTEXT
-	#undef WorldLibrary
 }

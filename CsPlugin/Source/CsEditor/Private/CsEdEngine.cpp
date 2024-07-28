@@ -911,20 +911,19 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 	// Data
 	if (UserSettings->bOnSave_Data_PopulatePaths)
 	{
-		typedef NCsBlueprint::FLibrary BlueprintLibrary;
 		typedef NCsData::FLibrary DataLibrary;
 
-		if (BlueprintLibrary::Is(Object))
+		if (CsBlueprintLibrary::Is(Object))
 		{
 			UObject* DefaultObject = nullptr;
-			UObject* BpC		   = BlueprintLibrary::GetSafeClass(Object);
+			UObject* BpC		   = CsBlueprintLibrary::GetSafeClass(Object);
 
-			if (UObject* DOb = BlueprintLibrary::GetSafeDefaultObject(Object))
+			if (UObject* DOb = CsBlueprintLibrary::GetSafeDefaultObject(Object))
 			{
 				DefaultObject = DOb;
 			}
 			else
-			if (UObject* CDOb = BlueprintLibrary::GetSafeClassDefaultObject(Object))
+			if (UObject* CDOb = CsBlueprintLibrary::GetSafeClassDefaultObject(Object))
 			{
 				DefaultObject = CDOb;
 			}
@@ -1024,8 +1023,6 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 								// Search each row for each DataTable if it contains a reference to Data (Object)
 								if (UDataTable* DT = RowPtr->DataTable.LoadSynchronous())
 								{
-									typedef NCsProperty::FLibrary PropertyLibrary;
-
 									const UScriptStruct* RowStruct	   = DT->GetRowStruct();
 									const TMap<FName, uint8*>& _RowMap = DT->GetRowMap();
 
@@ -1037,10 +1034,10 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 										UStruct* Struct = nullptr;
 										uint8* StructValue = nullptr;;
 
-										if (PropertyLibrary::GetStructPropertyValuePtr(Context, _RowPtr, RowStruct, Name::Data, Struct, StructValue, nullptr))
+										if (CsPropertyLibrary::GetStructPropertyValuePtr(Context, _RowPtr, RowStruct, Name::Data, Struct, StructValue, nullptr))
 										{
 											// Look for a SoftClassPtr with Property Name: Data
-											if (FSoftObjectPtr* SoftObjectPtr = PropertyLibrary::GetSoftClassPropertyValuePtr(Context, StructValue, Struct, Name::Data, nullptr))
+											if (FSoftObjectPtr* SoftObjectPtr = CsPropertyLibrary::GetSoftClassPropertyValuePtr(Context, StructValue, Struct, Name::Data, nullptr))
 											{
 												if (ObjectSoftClass.ToSoftObjectPath() == SoftObjectPtr->ToSoftObjectPath())
 												{
@@ -1054,7 +1051,7 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 											}
 										}
 										// Look for a SoftClassPtr with Property Name: Data
-										if (FSoftObjectPtr* SoftObjectPtr = PropertyLibrary::GetSoftClassPropertyValuePtr(Context, StructValue, Struct, Name::Data, nullptr))
+										if (FSoftObjectPtr* SoftObjectPtr = CsPropertyLibrary::GetSoftClassPropertyValuePtr(Context, StructValue, Struct, Name::Data, nullptr))
 										{
 											if (ObjectSoftClass.ToSoftObjectPath() == SoftObjectPtr->ToSoftObjectPath())
 											{

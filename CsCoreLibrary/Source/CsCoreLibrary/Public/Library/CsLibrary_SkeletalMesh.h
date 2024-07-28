@@ -507,3 +507,5 @@ namespace NCsSkeletalMesh
 	#undef LogLevel
 	};
 }
+
+using CsSkeletalMeshLibrary = NCsSkeletalMesh::FLibrary;

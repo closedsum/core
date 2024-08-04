@@ -58,13 +58,11 @@ namespace NCsActor
 		{
 			using namespace NCsActor::NMovement::NLibrary::NCached;
 
-			typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
 			ParamsType* P = Params->Get();
 
 			check(P->IsValidChecked(Context));
 			// Get Coroutine Scheduler
-			UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);
+			UObject* ContextRoot = CsCoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);
 
 			UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
 			const FECsUpdateGroup& UpdateGroup = Params->Get()->GetGroup();
@@ -136,14 +134,12 @@ namespace NCsActor
 		
 			// Check to get Context Root for CoroutineScheduler
 			{
-				typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+				UObject* ContextRoot = CsCoroutineSchedulerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
 
-				UObject* ContextRoot = CoroutineSchedulerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
-
-	#if WITH_EDITOR
+			#if WITH_EDITOR
 				if (!ContextRoot)
 					return FCsRoutineHandle::Invalid;
-	#endif // #if WITH_EDITOR
+			#endif // #if WITH_EDITOR
 			}
 			return MoveByInterpChecked(Context, WorldContext, Params);
 		}

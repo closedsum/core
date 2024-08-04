@@ -806,15 +806,15 @@ namespace NCsCoroutine
 //  const FString& Name			= Str::__Function	(FString name of Function to call)
 //	const FName& NameInternal	= Name::__Function	(FName name of the Function to call)
 
-#define CS_COROUTINE_SETUP_UOBJECT(__ClassType, __Function, __Group, __UObject, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = NCsCoroutine::NScheduler::FLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
+#define CS_COROUTINE_SETUP_UOBJECT(__ClassType, __Function, __Group, __UObject, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
 	__Coroutine__Payload__->Init<__ClassType>(Context, __UObject, &__ClassType::__Function, __ContextObject, __Group, Str::__Function, Name::__Function)
-#define CS_COROUTINE_SETUP_RAW(__ClassType, __Function, __Group, __Pointer, __Owner, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = NCsCoroutine::NScheduler::FLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
+#define CS_COROUTINE_SETUP_RAW(__ClassType, __Function, __Group, __Pointer, __Owner, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
 	__Coroutine__Payload__->Init<__ClassType>(Context, __Pointer, &__ClassType::__Function, __Owner, __ContextObject, __Group, Str::__Function, Name::__Function)
-#define CS_COROUTINE_SETUP_STATIC(__ClassType, __Function, __Group, __Owner, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = NCsCoroutine::NScheduler::FLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
+#define CS_COROUTINE_SETUP_STATIC(__ClassType, __Function, __Group, __Owner, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
 	__Coroutine__Payload__->Init<__ClassType>(Context, &__ClassType::__Function, __Owner, __ContextObject, __Group, Str::__Function, Name::__Function)
 
 // Assume const FString& Context has been defined
-#define CS_COROUTINE_START(__ContextObject) NCsCoroutine::NScheduler::FLibrary::StartChecked(Context, __ContextObject, __Coroutine__Payload__)
+#define CS_COROUTINE_START(__ContextObject) CsCoroutineSchedulerLibrary::StartChecked(Context, __ContextObject, __Coroutine__Payload__)
 
 // Payload
 #pragma region

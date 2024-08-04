@@ -52,7 +52,6 @@ namespace NCsMaterial
 			}
 
 			#define LogWarning void(*Log)(const FString&) /*=&FCsLog::Warning*/
-			#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
 
 			#define ParamsResourceType NCsMaterial::NAnim::NParams::FResource
 			#define ParamsType NCsMaterial::NAnim::NParams::FParams
@@ -66,7 +65,7 @@ namespace NCsMaterial
 				check(P->IsValidChecked(Context));
 
 				// Get Coroutine Scheduler
-				UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);
+				UObject* ContextRoot = CsCoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);
 
 				UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(ContextRoot);
 				const FECsUpdateGroup& UpdateGroup = Params->Get()->GetGroup();
@@ -119,12 +118,12 @@ namespace NCsMaterial
 
 				// Check to get Context Root for CoroutineScheduler
 				{
-					UObject* ContextRoot = CoroutineSchedulerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
+					UObject* ContextRoot = CsCoroutineSchedulerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
 
-			#if WITH_EDITOR
+				#if WITH_EDITOR
 					if (!ContextRoot)
 						return FCsRoutineHandle::Invalid;
-			#endif // #if WITH_EDITOR
+				#endif // #if WITH_EDITOR
 				}
 				return PlayAnimChecked(Context, WorldContext, Params);
 			}
@@ -338,7 +337,6 @@ namespace NCsMaterial
 			#undef ParamsType
 
 			#undef LogWarning
-			#undef CoroutineSchedulerLibrary
 		}
 	}
 }

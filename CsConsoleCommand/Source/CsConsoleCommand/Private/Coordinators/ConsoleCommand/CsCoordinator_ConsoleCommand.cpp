@@ -53,7 +53,6 @@ UCsCoordinator_ConsoleCommand::UCsCoordinator_ConsoleCommand(const FObjectInitia
 #define USING_NS_CACHED using namespace NCsCoordinatorConsoleCommand::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsCoordinatorConsoleCommand::NCached; \
 	const FString& Context = Str::__FunctionName
-#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 // Singleton
 #pragma region
@@ -199,7 +198,7 @@ UCsCoordinator_ConsoleCommand::UCsCoordinator_ConsoleCommand(const FObjectInitia
 {
 	SET_CONTEXT(GetFromWorldContextObject);
 
-	if (UObject* GameInstance = GameInstanceLibrary::GetSafeAsObject(WorldContextObject))
+	if (UObject* GameInstance = CsGameInstanceLibrary::GetSafeAsObject(WorldContextObject))
 	{
 		// Game State
 		if (UCsCoordinator_ConsoleCommand* Coordinator = GetSafe(GameInstance))
@@ -333,4 +332,3 @@ const TArray<InfoType>* UCsCoordinator_ConsoleCommand::GetConsoleCommandInfos(co
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef GameInstanceLibrary

@@ -234,6 +234,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "CsCore|Mangager|Time")
 	FCsManagerTime_OnUpdate OnUpdate_ScriptEvent;
 
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Mangager|Time")
+	FCsManagerTime_OnUpdate2 OnUpdate2_ScriptEvent;
+
 	FORCEINLINE FCsManagerTime_OnUpdate& GetOnUpdate_ScriptEvent() { return OnUpdate_ScriptEvent; }
 	
 	FORCEINLINE void SetCustom(const FECsUpdateGroup& Group, const bool& ClearOnUpdate)

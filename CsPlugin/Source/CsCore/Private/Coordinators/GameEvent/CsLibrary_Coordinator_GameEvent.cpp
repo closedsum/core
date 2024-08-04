@@ -35,7 +35,6 @@ namespace NCsGameEvent
 		#define USING_NS_CACHED using namespace NCsGameEvent::NCoordinator::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsGameEvent::NCoordinator::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 		// ContextRoot
 		#pragma region
@@ -44,12 +43,12 @@ namespace NCsGameEvent
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			return GameInstanceLibrary::GetChecked(Context, ContextObject);
+			return CsGameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
+			return CsGameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
@@ -252,6 +251,5 @@ namespace NCsGameEvent
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef GameInstanceLibrary
 	}
 }

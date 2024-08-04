@@ -124,7 +124,6 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 #define USING_NS_CACHED using namespace NCsManagerJavascript::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerJavascript::NCached; \
 	const FString& Context = Str::__FunctionName
-#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
 #define JavascriptCommonLibrary NCsJs::NCommon::FLibrary
 
 // Singleton
@@ -354,7 +353,7 @@ void UCsManager_Javascript::SetupEntryPoint(UGameInstance* InGameInstance /*=nul
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 	
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
+	PayloadType* Payload			   = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
 	typedef UCsManager_Javascript ClassType;
 	#define COROUTINE SetupEntryPoint_Internal
@@ -370,7 +369,7 @@ void UCsManager_Javascript::SetupEntryPoint(UGameInstance* InGameInstance /*=nul
 
 	bSetupEntryPointComplete = false;
 
-	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	CsCoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
@@ -456,7 +455,7 @@ void UCsManager_Javascript::SetupAndRunEntryPoint(UGameInstance* InGameInstance 
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
+	PayloadType* Payload			   = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
 	typedef UCsManager_Javascript ClassType;
 	#define COROUTINE SetupAndRunEntryPoint_Internal
@@ -470,7 +469,7 @@ void UCsManager_Javascript::SetupAndRunEntryPoint(UGameInstance* InGameInstance 
 	if (!GameInstance)
 		GameInstance = Cast<UGameInstance>(MyRoot);
 
-	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	CsCoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 char UCsManager_Javascript::SetupAndRunEntryPoint_Internal(FCsRoutine* R)
@@ -554,7 +553,7 @@ void UCsManager_Javascript::SetupScriptObjects(UGameInstance* InGameInstance /*=
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 	
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
+	PayloadType* Payload			   = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
 	typedef UCsManager_Javascript ClassType;
 	#define COROUTINE SetupScriptObjects_Internal
@@ -567,7 +566,7 @@ void UCsManager_Javascript::SetupScriptObjects(UGameInstance* InGameInstance /*=
 
 	bSetupScriptObjectsComplete = false;
 
-	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	CsCoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
@@ -672,7 +671,7 @@ void UCsManager_Javascript::SetupAndRunScripts(UGameInstance* InGameInstance /*=
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
+	PayloadType* Payload			   = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
 	typedef UCsManager_Javascript ClassType;
 	#define COROUTINE SetupAndRunScripts_Internal
@@ -683,7 +682,7 @@ void UCsManager_Javascript::SetupAndRunScripts(UGameInstance* InGameInstance /*=
 
 	GameInstance = InGameInstance;
 
-	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	CsCoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 char UCsManager_Javascript::SetupAndRunScripts_Internal(FCsRoutine* R)
@@ -1156,5 +1155,4 @@ void UCsManager_Javascript::OnAnyKey_Pressed(const FKey& Key)
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef CoroutineSchedulerLibrary
 #undef JavascriptCommonLibrary

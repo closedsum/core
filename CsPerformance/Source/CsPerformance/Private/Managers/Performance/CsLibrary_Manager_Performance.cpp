@@ -38,16 +38,14 @@ namespace NCsPerformance
 
 		#if WITH_EDITOR
 
-		#define GameInstanceLibrary NCsGameInstance::FLibrary
-
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
+			return CsGameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
+			return CsGameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
@@ -58,8 +56,6 @@ namespace NCsPerformance
 
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
-
-		#undef GameInstanceLibrary
 
 		#endif // #if WITH_EDITOR
 

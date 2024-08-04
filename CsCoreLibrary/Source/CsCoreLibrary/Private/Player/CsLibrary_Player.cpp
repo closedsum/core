@@ -36,11 +36,10 @@ namespace NCsPlayer
 	}
 
 	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 	ULocalPlayer* FLibrary::GetFirstLocalChecked(const FString& Context, const UObject* WorldContext)
 	{
-		UGameInstance* GameInstance = GameInstanceLibrary::GetChecked(Context, WorldContext);
+		UGameInstance* GameInstance = CsGameInstanceLibrary::GetChecked(Context, WorldContext);
 		ULocalPlayer* LocalPlayer   = GameInstance->GetFirstGamePlayer();
 
 		checkf(LocalPlayer, TEXT("%s: Failed to get LocalPlayer from GameInstance: %s."), *Context, *(GameInstance->GetName()));
@@ -50,7 +49,7 @@ namespace NCsPlayer
 
 	ULocalPlayer* FLibrary::GetSafeFirstLocal(const FString& Context, const UObject* WorldContext, LogLevel)
 	{
-		UGameInstance* GameInstance = GameInstanceLibrary::GetSafe(Context, WorldContext, Log);
+		UGameInstance* GameInstance = CsGameInstanceLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!GameInstance)
 			return nullptr;
@@ -77,7 +76,7 @@ namespace NCsPlayer
 	{
 		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
-		UGameInstance* GameInstance = GameInstanceLibrary::GetChecked(Context, WorldContext);
+		UGameInstance* GameInstance = CsGameInstanceLibrary::GetChecked(Context, WorldContext);
 		ULocalPlayer* LocalPlayer   = GameInstance->GetLocalPlayerByIndex(Index);
 
 		checkf(LocalPlayer, TEXT("%s: Failed to get LocalPlayer[%d] from GameInstance: %s."), *Context, Index, *(GameInstance->GetName()));
@@ -89,7 +88,7 @@ namespace NCsPlayer
 	{
 		CS_IS_INT_GREATER_THAN_OR_EQUAL_RET_NULL(Index, 0)
 
-		UGameInstance* GameInstance = GameInstanceLibrary::GetSafe(Context, WorldContext, Log);
+		UGameInstance* GameInstance = CsGameInstanceLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!GameInstance)
 			return nullptr;
@@ -113,7 +112,6 @@ namespace NCsPlayer
 	}
 
 	#undef LogLevel
-	#undef GameInstanceLibrary
 
 	namespace NLocal
 	{
@@ -168,18 +166,14 @@ namespace NCsPlayer
 
 		namespace NFirst
 		{
-			#define GameInstanceLibrary NCsGameInstance::FLibrary
-
 			const ULocalPlayer* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 			{
-				UGameInstance* GameInstance		= GameInstanceLibrary::GetChecked(Context, WorldContext);
+				UGameInstance* GameInstance		= CsGameInstanceLibrary::GetChecked(Context, WorldContext);
 				const ULocalPlayer* LocalPlayer = GameInstance->GetFirstGamePlayer();
 
 				CS_IS_PENDING_KILL_CHECKED(LocalPlayer)
 				return LocalPlayer;
 			}
-
-			#undef GameInstanceLibrary
 		}
 	}
 

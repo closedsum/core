@@ -38,16 +38,12 @@ namespace NCsAchievement
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-			return GameInstanceLibrary::GetChecked(Context, ContextObject);
+			return CsGameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, LogLevel)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
+			return CsGameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)

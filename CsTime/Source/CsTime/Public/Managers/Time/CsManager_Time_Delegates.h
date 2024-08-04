@@ -19,6 +19,7 @@ struct CSTIME_API FCsManager_Time_Delegates_STUB
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerTime_OnUpdate, const FECsUpdateGroup&, Group, const FCsDeltaTime&, DeltaTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerTime_OnUpdate2, FECsUpdateGroup, Group, FCsDeltaTime, DeltaTime);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerTime_OnSetScaledDeltaTime, const FECsUpdateGroup&, Group, const float&, Scale);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerTime_OnResetScaledDeltaTime, const FECsUpdateGroup&, Group);
 

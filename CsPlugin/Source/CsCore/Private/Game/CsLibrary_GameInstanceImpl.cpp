@@ -18,7 +18,6 @@ namespace NCsGameInstance
 	namespace NImpl
 	{
 		#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 		FString FLibrary::PrintObjectAndClass(const UGameInstance* Object)
 		{
@@ -39,12 +38,12 @@ namespace NCsGameInstance
 
 		UCsGameInstance* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
-			return GameInstanceLibrary::GetChecked<UCsGameInstance>(Context, ContextObject);
+			return CsGameInstanceLibrary::GetChecked<UCsGameInstance>(Context, ContextObject);
 		}
 
 		UCsGameInstance* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
-			return GameInstanceLibrary::GetSafe<UCsGameInstance>(Context, ContextObject, Log);
+			return CsGameInstanceLibrary::GetSafe<UCsGameInstance>(Context, ContextObject, Log);
 		}
 
 		#pragma endregion Get
@@ -149,6 +148,5 @@ namespace NCsGameInstance
 		#pragma endregion Events
 
 		#undef LogLevel
-		#undef GameInstanceLibrary
 	}
 }

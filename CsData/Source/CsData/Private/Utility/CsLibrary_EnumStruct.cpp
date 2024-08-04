@@ -26,13 +26,12 @@ namespace NCsEnum
 			const FName FLibrary::NamePropertyName = FName("Name");
 			const FName FLibrary::DisplayNamePropertyName = FName("DisplayName");
 
-			#define GameInstanceLibrary NCsGameInstance::FLibrary
 			#define DataManagerLibrary NCsData::NManager::FLibrary
 
 			UObject* FLibrary::GetDataRootSetImpl(const FString& Context, UObject* ContextRoot)
 			{
 				// Check context to determine how to load DataRootSetImpl
-				if (GameInstanceLibrary::IsSafe(ContextRoot))
+				if (CsGameInstanceLibrary::IsSafe(ContextRoot))
 				{
 					return DataManagerLibrary::GetDataRootSetImplChecked(Context, ContextRoot);
 				}
@@ -55,7 +54,7 @@ namespace NCsEnum
 			UDataTable* FLibrary::GetDataTable(const FString& Context, const UObject* ContextRoot, const TSoftObjectPtr<UDataTable>& DT_SoftObject)
 			{
 				// Check context to determine how to load the DataTable
-				if (GameInstanceLibrary::IsSafe(ContextRoot))
+				if (CsGameInstanceLibrary::IsSafe(ContextRoot))
 				{
 					return DataManagerLibrary::GetDataTableChecked(Context, ContextRoot, DT_SoftObject);
 				}
@@ -196,7 +195,6 @@ namespace NCsEnum
 
 			#undef PayloadType
 
-			#undef GameInstanceLibrary
 			#undef DataManagerLibrary
 
 		}

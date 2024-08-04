@@ -48,7 +48,6 @@ namespace NCsLevel
 		#define SET_CONTEXT(__FunctionName) using namespace NCsLevel::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 		// ContextRoot
 		#pragma region
@@ -63,7 +62,7 @@ namespace NCsLevel
 
 				return GetManagerSingleton->_getUObject();
 			}
-			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
+			return CsGameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
@@ -76,7 +75,7 @@ namespace NCsLevel
 				}
 				return nullptr;
 			}
-			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
+			return CsGameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
@@ -337,6 +336,5 @@ namespace NCsLevel
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef GameInstanceLibrary
 	}
 }

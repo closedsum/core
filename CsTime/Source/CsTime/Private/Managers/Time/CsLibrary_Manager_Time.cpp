@@ -44,7 +44,6 @@ namespace NCsTime
 		#define SET_CONTEXT(__FunctionName) using namespace NCsTime::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsTime::FLog::Warning*/
-		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 		// ContextRoot
 		#pragma region
@@ -62,7 +61,7 @@ namespace NCsTime
 
 			if (ContextObject == GEngine)
 				return GEngine;
-			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
+			return CsGameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
@@ -78,7 +77,7 @@ namespace NCsTime
 
 			if (ContextObject == GEngine)
 				return GEngine;
-			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
+			return CsGameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
@@ -324,6 +323,5 @@ namespace NCsTime
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef GameInstanceLibrary
 	}
 }

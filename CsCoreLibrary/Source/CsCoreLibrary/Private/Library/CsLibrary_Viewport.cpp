@@ -430,9 +430,7 @@ namespace NCsViewport
 	{
 		UGameViewportClient* FLibrary::GetClientChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-			UGameInstance* GameInstance = GameInstanceLibrary::GetChecked(Context, WorldContext);
+			UGameInstance* GameInstance = CsGameInstanceLibrary::GetChecked(Context, WorldContext);
 			UGameViewportClient* GVC	= GameInstance->GetGameViewportClient();
 
 			checkf(GVC, TEXT("%s: Failed to get GameViewportClient from GameInstance."), *Context);

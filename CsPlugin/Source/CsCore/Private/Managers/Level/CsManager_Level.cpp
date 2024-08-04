@@ -108,7 +108,6 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 #define USING_NS_CACHED using namespace NCsManagerLevel::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerLevel::NCached; \
 	const FString& Context = Str::__FunctionName
-#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
 
 // Singleton
 #pragma region
@@ -743,4 +742,3 @@ char UCsManager_Level::DestroyOtherPIEWorld_Internal(FCsRoutine* R)
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef CoroutineSchedulerLibrary

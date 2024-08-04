@@ -12,8 +12,6 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_TimeImpl.h"
-// Game
-#include "Engine/GameInstance.h"
 // World
 #include "Engine/World.h"
 
@@ -21,7 +19,6 @@
 // Library
 	// Common
 #include "Library/CsLibrary_World.h"
-#include "Game/CsLibrary_GameInstance.h"
 // Managers
 #include "Singleton/CsGetManagerSingleton.h"
 #endif // #if WITH_EDITOR
@@ -47,7 +44,6 @@ namespace NCsTime
 			#define SET_CONTEXT(__FunctionName) using namespace NCsTime::NManager::NImpl::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-			#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 			// Get
 			#pragma region
@@ -87,9 +83,7 @@ namespace NCsTime
 				const FCsDeltaTime& ScaledDeltaTime = Manager_Time->GetScaledDeltaTime(Group);
 
 				// Update CoroutineScheduler
-				typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-				CoroutineSchedulerLibrary::UpdateChecked(Context, ContextObject, Group, ScaledDeltaTime);
+				CsCoroutineSchedulerLibrary::UpdateChecked(Context, ContextObject, Group, ScaledDeltaTime);
 			}
 
 			#pragma endregion Time
@@ -97,7 +91,6 @@ namespace NCsTime
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef GameInstanceLibrary
 		}
 	}
 }

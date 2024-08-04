@@ -161,7 +161,6 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 #define USING_NS_CACHED using namespace NCsManagerData::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerData::NCached; \
 	const FString& Context = Str::__FunctionName
-#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
 
 // Singleton
 #pragma region
@@ -1181,7 +1180,7 @@ void UCsManager_Data::AsyncLoadPayloads(const TArray<FName>& PayloadNames, OnAsy
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, this, UpdateGroup);
+	PayloadType* Payload			   = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, this, UpdateGroup);
 
 	typedef UCsManager_Data ClassType;
 	#define COROUTINE AsyncLoadPayloads_Internal
@@ -1202,7 +1201,7 @@ void UCsManager_Data::AsyncLoadPayloads(const TArray<FName>& PayloadNames, OnAsy
 
 	OnAsyncLoadPayloadsCompleted_Once_Event = Delegate;
 
-	CoroutineSchedulerLibrary::StartChecked(Context, this, Payload);
+	CsCoroutineSchedulerLibrary::StartChecked(Context, this, Payload);
 }
 
 char UCsManager_Data::AsyncLoadPayloads_Internal(FCsRoutine* R)
@@ -1962,4 +1961,3 @@ bool UCsManager_Data::SafeRemoveDataCompositionObject_Loaded(const FString& Cont
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef CoroutineSchedulerLibrary

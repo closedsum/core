@@ -517,3 +517,5 @@ namespace NCsCoroutine
 		};
 	}
 }
+
+using CsCoroutineSchedulerLibrary = NCsCoroutine::NScheduler::FLibrary;

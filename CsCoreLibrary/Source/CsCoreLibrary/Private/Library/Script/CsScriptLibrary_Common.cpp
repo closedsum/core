@@ -37,15 +37,13 @@ UCsScriptLibrary_Common::UCsScriptLibrary_Common(const FObjectInitializer& Objec
 #define USING_NS_CACHED using namespace NCsScriptLibraryCommon::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryCommon::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 UGameInstance* UCsScriptLibrary_Common::GetGameInstanceFromContext(const FString& Context, const UObject* WorldContextObject)
 {
 	CONDITIONAL_SET_CTXT(GetGameInstanceFromContext);
 
-	return GameInstanceLibrary::GetSafe(Ctxt, WorldContextObject);
+	return CsGameInstanceLibrary::GetSafe(Ctxt, WorldContextObject);
 }
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef GameInstanceLibrary

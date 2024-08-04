@@ -228,3 +228,5 @@ namespace NCsGameInstance
 	#undef LogLevel
 	};
 }
+
+using CsGameInstanceLibrary = NCsGameInstance::FLibrary;

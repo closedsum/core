@@ -77,7 +77,6 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 #define USING_NS_CACHED using namespace NCsManagerFade::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerFade::NCached; \
 	const FString& Context = Str::__FunctionName
-#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
 
 // Singleton
 #pragma region
@@ -313,7 +312,7 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, MyRoot, UpdateGroup, FadeHandle);
+	CsCoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, MyRoot, UpdateGroup, FadeHandle);
 
 	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Fade, Fade_Internal, UpdateGroup, this, MyRoot);
 
@@ -462,7 +461,7 @@ void UCsManager_Fade::StopFade()
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
-	CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, MyRoot, UpdateGroup, FadeHandle);
+	CsCoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, MyRoot, UpdateGroup, FadeHandle);
 
 	bFadeComplete = false;
 }
@@ -475,4 +474,3 @@ void UCsManager_Fade::ClearFade()
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef CoroutineSchedulerLibrary

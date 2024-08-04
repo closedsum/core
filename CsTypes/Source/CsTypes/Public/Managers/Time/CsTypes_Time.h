@@ -19,13 +19,13 @@ public:
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsTypes|Time")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsTypes|Time")
 	float Time;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsTypes|Time")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsTypes|Time")
 	float RealTime;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsTypes|Time")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsTypes|Time")
 	FDateTime DateTime;
 
 	UPROPERTY()
@@ -39,7 +39,6 @@ public:
 	{
 		DateTime = FDateTime::Now();
 	}
-	~FCsTime() {}
 
 	void Reset()
 	{
@@ -68,13 +67,13 @@ public:
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsTypes|Time")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsTypes|Time")
 	float Time;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsTypes|Time")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsTypes|Time")
 	float RealTime;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsTypes|Time")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsTypes|Time")
 	FTimespan Timespan;
 
 	UPROPERTY()
@@ -97,8 +96,6 @@ public:
 		Time = InTime;
 		Timespan = FTimespan::Zero();
 	}
-
-	~FCsDeltaTime() {}
 
 	FORCEINLINE bool operator==(const FCsDeltaTime& B) const
 	{

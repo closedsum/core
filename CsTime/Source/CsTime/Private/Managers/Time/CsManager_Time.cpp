@@ -199,9 +199,7 @@ void UCsManager_Time::Initialize()
 	}
 
 #if WITH_EDITOR
-	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-	if (!GameInstanceLibrary::IsSafe(MyRoot))
+	if (!CsGameInstanceLibrary::IsSafe(MyRoot))
 		return;
 #endif // #if WITH_EDITOR
 
@@ -232,6 +230,10 @@ void UCsManager_Time::Update(const FECsUpdateGroup& Group, const float& DeltaTim
 	UpdateGroups[Group.GetValue()].Update(DeltaTime);
 
 	OnUpdate_ScriptEvent.Broadcast(Group, GetScaledDeltaTime(Group));
+	// NOTE: For scripts (i.e. Python) that don't handle const ref properly
+#if WITH_EDITOR
+	OnUpdate2_ScriptEvent.Broadcast(Group, GetScaledDeltaTime(Group));
+#endif // #if WITH_EDITOR
 }
 
 void UCsManager_Time::Update(const FECsUpdateGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime)
@@ -239,6 +241,10 @@ void UCsManager_Time::Update(const FECsUpdateGroup& Group, const float& DeltaTim
 	UpdateGroups[Group.GetValue()].Update(DeltaTime, Time, RealTime);
 
 	OnUpdate_ScriptEvent.Broadcast(Group, GetScaledDeltaTime(Group));
+	// NOTE: For scripts (i.e. Python) that don't handle const ref properly
+#if WITH_EDITOR
+	OnUpdate2_ScriptEvent.Broadcast(Group, GetScaledDeltaTime(Group));
+#endif // #if WITH_EDITOR
 }
 
 #pragma endregion Update

@@ -31,7 +31,6 @@ namespace NCsSave
 		#define USING_NS_CACHED using namespace NCsSave::NManager::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsSave::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 		// ContextRoot
 		#pragma region
@@ -40,12 +39,12 @@ namespace NCsSave
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
+			return CsGameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
 		{
-			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
+			return CsGameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
@@ -282,6 +281,5 @@ namespace NCsSave
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef GameInstanceLibrary
 	}
 }

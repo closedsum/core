@@ -31,20 +31,19 @@ UCsScriptLibrary_CoroutineScheduler::UCsScriptLibrary_CoroutineScheduler(const F
 #define USING_NS_CACHED using namespace NCsScriptLibraryCoroutineScheduler::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryCoroutineScheduler::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
 
 bool UCsScriptLibrary_CoroutineScheduler::IsHandleValid(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
 {
 	CONDITIONAL_SET_CTXT(IsHandleValid);
 
-	return CoroutineSchedulerLibrary::SafeIsHandleValid(Ctxt, WorldContextObject, Group, Handle);
+	return CsCoroutineSchedulerLibrary::SafeIsHandleValid(Ctxt, WorldContextObject, Group, Handle);
 }
 
 bool UCsScriptLibrary_CoroutineScheduler::IsRunning(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
 {
 	CONDITIONAL_SET_CTXT(IsRunning);
 
-	return CoroutineSchedulerLibrary::SafeIsRunning(Ctxt, WorldContextObject, Group, Handle);
+	return CsCoroutineSchedulerLibrary::SafeIsRunning(Ctxt, WorldContextObject, Group, Handle);
 }
 
 // End
@@ -54,11 +53,10 @@ bool UCsScriptLibrary_CoroutineScheduler::End(const FString& Context, const UObj
 {
 	CONDITIONAL_SET_CTXT(End);
 
-	return CoroutineSchedulerLibrary::SafeEnd(Ctxt, WorldContextObject, Group, Handle);
+	return CsCoroutineSchedulerLibrary::SafeEnd(Ctxt, WorldContextObject, Group, Handle);
 }
 
 #pragma endregion End
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef CoroutineSchedulerLibrary

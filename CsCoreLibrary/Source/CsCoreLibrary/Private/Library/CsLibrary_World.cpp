@@ -257,13 +257,12 @@ namespace NCsWorld
 		#define USING_NS_CACHED using namespace NCsWorld::NSeamlessTravelHandler::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWorld::NSeamlessTravelHandler::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 		void FLibrary::SetHandlerLoadedData(UWorld* World, UObject* InLevelPackage, UWorld* InLoadedWorld)
 		{
 			SET_CONTEXT(SetHandlerLoadedData);
 			
-			FWorldContext* WorldContext	    = GameInstanceLibrary::GetEngineChecked(Context, World)->GetWorldContextFromWorld(World);
+			FWorldContext* WorldContext	    = CsGameInstanceLibrary::GetEngineChecked(Context, World)->GetWorldContextFromWorld(World);
 			FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
 
 			// Get pointer to start of struct
@@ -305,7 +304,7 @@ namespace NCsWorld
 		#if WITH_EDITOR
 			if (GIsEditor)
 			{
-				FWorldContext* WorldContext = GameInstanceLibrary::GetEngineChecked(Context, CurrentWorld)->GetWorldContextFromWorld(CurrentWorld);
+				FWorldContext* WorldContext = CsGameInstanceLibrary::GetEngineChecked(Context, CurrentWorld)->GetWorldContextFromWorld(CurrentWorld);
 				if (WorldContext->WorldType == EWorldType::PIE)
 				{
 					FString URLMapPackageName = UWorld::ConvertToPIEPackageName(PendingTravelURL.Map, WorldContext->PIEInstance);
@@ -366,7 +365,7 @@ namespace NCsWorld
 
 			CS_IS_PENDING_KILL_CHECKED(World)
 
-			FWorldContext* WorldContext			  = GameInstanceLibrary::GetEngineChecked(Context, World)->GetWorldContextFromWorld(World);
+			FWorldContext* WorldContext			  = CsGameInstanceLibrary::GetEngineChecked(Context, World)->GetWorldContextFromWorld(World);
 			const FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
 
 			return Handler.IsInTransition();
@@ -380,7 +379,7 @@ namespace NCsWorld
 
 			CS_IS_PENDING_KILL_CHECKED(World)
 
-			FWorldContext* WorldContext	    = GameInstanceLibrary::GetEngineChecked(Context, World)->GetWorldContextFromWorld(World);
+			FWorldContext* WorldContext	    = CsGameInstanceLibrary::GetEngineChecked(Context, World)->GetWorldContextFromWorld(World);
 			FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
 
 			// Get pointer to start of struct
@@ -397,7 +396,7 @@ namespace NCsWorld
 
 			CS_IS_PENDING_KILL_CHECKED(World)
 
-			FWorldContext* WorldContext	    = GameInstanceLibrary::GetEngineChecked(Context, World)->GetWorldContextFromWorld(World);
+			FWorldContext* WorldContext	    = CsGameInstanceLibrary::GetEngineChecked(Context, World)->GetWorldContextFromWorld(World);
 			FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
 
 			// Get pointer to start of struct
@@ -420,7 +419,7 @@ namespace NCsWorld
 
 			CS_IS_PENDING_KILL_CHECKED(World)
 
-			FWorldContext* WorldContext	    = GameInstanceLibrary::GetEngineChecked(Context, World)->GetWorldContextFromWorld(World);
+			FWorldContext* WorldContext	    = CsGameInstanceLibrary::GetEngineChecked(Context, World)->GetWorldContextFromWorld(World);
 			FSeamlessTravelHandler& Handler = WorldContext->SeamlessTravelHandler;
 
 			// Get pointer to start of struct
@@ -454,7 +453,6 @@ namespace NCsWorld
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef GameInstanceLibrary
 	}
 
 	namespace NPIE

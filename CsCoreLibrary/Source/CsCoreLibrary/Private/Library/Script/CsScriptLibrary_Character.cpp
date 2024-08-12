@@ -46,6 +46,8 @@ namespace NCsScriptLibraryCharacter
 
 #pragma endregion Cached
 
+void(*UCsScriptLibrary_Character::LogError)(const FString&) = &NCsCore::NLibrary::FLog::Error;
+
 UCsScriptLibrary_Character::UCsScriptLibrary_Character(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -54,8 +56,6 @@ UCsScriptLibrary_Character::UCsScriptLibrary_Character(const FObjectInitializer&
 #define USING_NS_CACHED using namespace NCsScriptLibraryCharacter::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryCharacter::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define LogError &NCsCore::NLibrary::FLog::Error
-#define CharacterLibrary NCsCharacter::FLibrary
 
 ACharacter* UCsScriptLibrary_Character::Spawn(const FString& Context, const UObject* WorldContextObject)
 {
@@ -83,14 +83,14 @@ ACharacter* UCsScriptLibrary_Character::GetByTag(const FString& Context, const U
 {
 	CONDITIONAL_SET_CTXT(GetByTag);
 
-	return CharacterLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
+	return CsCharacterLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
 }
 
 ACharacter* UCsScriptLibrary_Character::GetByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags)
 {
 	CONDITIONAL_SET_CTXT(GetByTags);
 
-	return CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags);
+	return CsCharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags);
 }
 
 ACharacter* UCsScriptLibrary_Character::GetByTagsChecked(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, bool& OutSuccess)
@@ -98,21 +98,21 @@ ACharacter* UCsScriptLibrary_Character::GetByTagsChecked(const FString& Context,
 	CONDITIONAL_SET_CTXT(GetByTagsChecked);
 
 	OutSuccess = true;
-	return CS_SCRIPT_GET_CHECKED(CharacterLibrary::GetByTagsChecked(Ctxt, WorldContextObject, Tags), CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutSuccess, LogError));
+	return CS_SCRIPT_LIBRARY_GET_CUSTOM_CHECKED_5(GetByTagsChecked, GetSafeByTags, WorldContextObject, Tags);
 }
 
 bool UCsScriptLibrary_Character::GetAnyByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters)
 {
 	CONDITIONAL_SET_CTXT(GetAnyByTags);
 
-	return CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutCharacters);
+	return CsCharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutCharacters);
 }
 
 bool UCsScriptLibrary_Character::GetAllByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters)
 {
 	CONDITIONAL_SET_CTXT(GetAllByTags);
 
-	return CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutCharacters);
+	return CsCharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutCharacters);
 }
 
 void UCsScriptLibrary_Character::GetAllByTagsChecked(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, bool& OutSuccess)
@@ -120,21 +120,21 @@ void UCsScriptLibrary_Character::GetAllByTagsChecked(const FString& Context, con
 	CONDITIONAL_SET_CTXT(GetAllByTagsChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(CharacterLibrary::GetByTagsChecked(Ctxt, WorldContextObject, Tags, OutCharacters), CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutCharacters, OutSuccess, LogError));
+	CS_SCRIPT_LIBRARY_CUSTOM_CHECKED_6(GetByTagsChecked, GetSafeByTags, WorldContextObject, Tags, OutCharacters)
 }
 
 ACharacter* UCsScriptLibrary_Character::GetByName(const FString& Context, const UObject* WorldContextObject, const FName& Name)
 {
 	CONDITIONAL_SET_CTXT(GetByName);
 
-	return CharacterLibrary::GetSafeByName(Ctxt, WorldContextObject, Name);
+	return CsCharacterLibrary::GetSafeByName(Ctxt, WorldContextObject, Name);
 }
 
 ACharacter* UCsScriptLibrary_Character::GetByLabel(const FString& Context, const UObject* WorldContextObject, const FString& Label)
 {
 	CONDITIONAL_SET_CTXT(GetByLabel);
 
-	return CharacterLibrary::GetSafeByLabel(Ctxt, WorldContextObject, Label);
+	return CsCharacterLibrary::GetSafeByLabel(Ctxt, WorldContextObject, Label);
 }
 
 #pragma endregion Get
@@ -146,19 +146,17 @@ float UCsScriptLibrary_Character::Montage_Play(const FString& Context, const ACh
 {
 	CONDITIONAL_SET_CTXT(Montage_Play);
 
-	return CharacterLibrary::SafePlay(Context, Character, Params);
+	return CsCharacterLibrary::SafePlay(Context, Character, Params);
 }
 
 float UCsScriptLibrary_Character::Montage_PlayByPath(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params)
 {
 	CONDITIONAL_SET_CTXT(Montage_PlayByPath);
 
-	return CharacterLibrary::SafePlay(Context, Character, Params);
+	return CsCharacterLibrary::SafePlay(Context, Character, Params);
 }
 
 #pragma endregion Anim
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef LogError
-#undef CharacterLibrary

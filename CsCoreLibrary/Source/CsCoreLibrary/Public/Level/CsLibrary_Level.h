@@ -431,3 +431,5 @@ namespace NCsLevel
 		};
 	}
 }
+
+using CsPersistentLevelLibrary = NCsLevel::NPersistent::FLibrary;

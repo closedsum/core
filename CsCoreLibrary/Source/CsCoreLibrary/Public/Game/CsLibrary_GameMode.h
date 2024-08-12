@@ -119,3 +119,5 @@ namespace NCsGameMode
 	#undef LogLevel
 	};
 }
+
+using CsGameModeLibrary = NCsGameMode::FLibrary;

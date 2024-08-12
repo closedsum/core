@@ -4,6 +4,8 @@
 #pragma once
 // Interfaces
 #include "UObject/Interface.h"
+// Types
+#include "GameplayTagContainer.h"
 
 #include "CsManager_Input_WithGameplayTag.generated.h"
 
@@ -22,4 +24,10 @@ public:
 	virtual void Init() = 0;
 
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) = 0;
+
+	virtual bool HasMapping(const FGameplayTag& Tag) const = 0;
+
+	virtual void SetMappingActive(const FGameplayTag& Tag) = 0;
+
+	virtual void SetMappingInactive(const FGameplayTag& Tag) = 0;
 };

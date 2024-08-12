@@ -45,7 +45,6 @@ UCsScriptLibrary_Level_Streaming::UCsScriptLibrary_Level_Streaming(const FObject
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryLevelStreaming::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define LogError &NCsCore::NLibrary::FLog::Error
-#define LevelStreamingLibrary NCsLevel::NStreaming::NLocal::FLibrary
 
 // Load
 #pragma region
@@ -54,7 +53,7 @@ bool UCsScriptLibrary_Level_Streaming::Load(const FString& Context, const UObjec
 {
 	CONDITIONAL_SET_CTXT(Load);
 
-	return LevelStreamingLibrary::SafeLoad(Ctxt, WorldContextObject, Params);
+	return CsLocalLevelStreamingLibrary::SafeLoad(Ctxt, WorldContextObject, Params);
 }
 
 void UCsScriptLibrary_Level_Streaming::LoadChecked(const FString& Context, const UObject* WorldContextObject, const FCsLevel_Streaming_LoadParams& Params, bool& OutSuccess)
@@ -62,14 +61,14 @@ void UCsScriptLibrary_Level_Streaming::LoadChecked(const FString& Context, const
 	CONDITIONAL_SET_CTXT(LoadChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(LevelStreamingLibrary::LoadChecked(Ctxt, WorldContextObject, Params), LevelStreamingLibrary::SafeLoad(Ctxt, WorldContextObject, Params, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsLocalLevelStreamingLibrary::LoadChecked(Ctxt, WorldContextObject, Params), CsLocalLevelStreamingLibrary::SafeLoad(Ctxt, WorldContextObject, Params, OutSuccess, LogError))
 }
 
 bool UCsScriptLibrary_Level_Streaming::LoadByPath(const FString& Context, const UObject* WorldContextObject, const FCsLevel_Streaming_LoadWithPathParams& Params)
 {
 	CONDITIONAL_SET_CTXT(LoadByPath);
 
-	return LevelStreamingLibrary::SafeLoad(Ctxt, WorldContextObject, Params);
+	return CsLocalLevelStreamingLibrary::SafeLoad(Ctxt, WorldContextObject, Params);
 }
 
 void UCsScriptLibrary_Level_Streaming::LoadByPathChecked(const FString& Context, const UObject* WorldContextObject, const FCsLevel_Streaming_LoadWithPathParams& Params, bool& OutSuccess)
@@ -77,7 +76,7 @@ void UCsScriptLibrary_Level_Streaming::LoadByPathChecked(const FString& Context,
 	CONDITIONAL_SET_CTXT(LoadByPathChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(LevelStreamingLibrary::LoadChecked(Ctxt, WorldContextObject, Params), LevelStreamingLibrary::SafeLoad(Ctxt, WorldContextObject, Params, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsLocalLevelStreamingLibrary::LoadChecked(Ctxt, WorldContextObject, Params), CsLocalLevelStreamingLibrary::SafeLoad(Ctxt, WorldContextObject, Params, OutSuccess, LogError))
 }
 
 #pragma endregion Load
@@ -89,7 +88,7 @@ bool UCsScriptLibrary_Level_Streaming::Unload(const FString& Context, const UObj
 {
 	CONDITIONAL_SET_CTXT(Unload);
 
-	return LevelStreamingLibrary::SafeUnload(Ctxt, WorldContextObject, Params);
+	return CsLocalLevelStreamingLibrary::SafeUnload(Ctxt, WorldContextObject, Params);
 }
 
 void UCsScriptLibrary_Level_Streaming::UnloadChecked(const FString& Context, const UObject* WorldContextObject, const FCsLevel_Streaming_UnloadParams& Params, bool& OutSuccess)
@@ -97,14 +96,14 @@ void UCsScriptLibrary_Level_Streaming::UnloadChecked(const FString& Context, con
 	CONDITIONAL_SET_CTXT(UnloadChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(LevelStreamingLibrary::UnloadChecked(Ctxt, WorldContextObject, Params), LevelStreamingLibrary::SafeUnload(Ctxt, WorldContextObject, Params, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsLocalLevelStreamingLibrary::UnloadChecked(Ctxt, WorldContextObject, Params), CsLocalLevelStreamingLibrary::SafeUnload(Ctxt, WorldContextObject, Params, OutSuccess, LogError))
 }
 
 bool UCsScriptLibrary_Level_Streaming::UnloadByPath(const FString& Context, const UObject* WorldContextObject, const FCsLevel_Streaming_UnloadWithPathParams& Params)
 {
 	CONDITIONAL_SET_CTXT(UnloadByPath);
 
-	return LevelStreamingLibrary::SafeUnload(Ctxt, WorldContextObject, Params);
+	return CsLocalLevelStreamingLibrary::SafeUnload(Ctxt, WorldContextObject, Params);
 }
 
 void UCsScriptLibrary_Level_Streaming::UnloadByPathChecked(const FString& Context, const UObject* WorldContextObject, const FCsLevel_Streaming_UnloadWithPathParams& Params, bool& OutSuccess)
@@ -112,7 +111,7 @@ void UCsScriptLibrary_Level_Streaming::UnloadByPathChecked(const FString& Contex
 	CONDITIONAL_SET_CTXT(UnloadByPathChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(LevelStreamingLibrary::UnloadChecked(Ctxt, WorldContextObject, Params), LevelStreamingLibrary::SafeUnload(Ctxt, WorldContextObject, Params, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsLocalLevelStreamingLibrary::UnloadChecked(Ctxt, WorldContextObject, Params), CsLocalLevelStreamingLibrary::SafeUnload(Ctxt, WorldContextObject, Params, OutSuccess, LogError))
 }
 
 #pragma endregion Unload
@@ -120,4 +119,3 @@ void UCsScriptLibrary_Level_Streaming::UnloadByPathChecked(const FString& Contex
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
 #undef LogError
-#undef LevelStreamingLibrary

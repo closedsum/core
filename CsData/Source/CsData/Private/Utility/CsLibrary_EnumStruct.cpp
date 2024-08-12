@@ -26,14 +26,12 @@ namespace NCsEnum
 			const FName FLibrary::NamePropertyName = FName("Name");
 			const FName FLibrary::DisplayNamePropertyName = FName("DisplayName");
 
-			#define DataManagerLibrary NCsData::NManager::FLibrary
-
 			UObject* FLibrary::GetDataRootSetImpl(const FString& Context, UObject* ContextRoot)
 			{
 				// Check context to determine how to load DataRootSetImpl
 				if (CsGameInstanceLibrary::IsSafe(ContextRoot))
 				{
-					return DataManagerLibrary::GetDataRootSetImplChecked(Context, ContextRoot);
+					return CsDataManagerLibrary::GetDataRootSetImplChecked(Context, ContextRoot);
 				}
 				else
 				{
@@ -56,7 +54,7 @@ namespace NCsEnum
 				// Check context to determine how to load the DataTable
 				if (CsGameInstanceLibrary::IsSafe(ContextRoot))
 				{
-					return DataManagerLibrary::GetDataTableChecked(Context, ContextRoot, DT_SoftObject);
+					return CsDataManagerLibrary::GetDataTableChecked(Context, ContextRoot, DT_SoftObject);
 				}
 				else
 				{
@@ -194,9 +192,6 @@ namespace NCsEnum
 			}
 
 			#undef PayloadType
-
-			#undef DataManagerLibrary
-
 		}
 	}
 }

@@ -193,7 +193,41 @@ namespace NCsData
 	#pragma region
 	public:
 
+		/**
+		* Call the method Script_Load for Object.
+		*  Object MUST implement the interface: ICsScriptData
+		* 
+		* @param Context	The calling context.
+		* @param Object
+		* @param LoadFlags
+		* @param OutSuccess	(out)
+		* @param Log		(optional)
+		* return			Whether the Load was successful or not.			
+		*/
 		static bool SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess, LogLevel);
+		FORCEINLINE static bool SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, LogLevel)
+		{
+			bool OutSuccess = false;
+			return SafeScript_Load(Context, Object, LoadFlags, OutSuccess, Log);
+		}
+
+		/**
+		* Call the method Script_Load for the Default Object loaded from Path.
+		*  Object MUST implement the interface: ICsScriptData
+		* 
+		* @param Context	The calling context.
+		* @param Path
+		* @param LoadFlags
+		* @param OutSuccess	(out)
+		* @param Log		(optional)
+		* return			Object that implements the interface: ICsScriptData		
+		*/
+		static UObject* SafeScript_Load(const FString& Context, const FString& Path, const int32& LoadFlags, bool& OutSuccess, LogLevel);
+		FORCEINLINE static UObject* SafeScript_Load(const FString& Context, const FString& Path, const int32& LoadFlags, LogLevel)
+		{
+			bool OutSuccess = false;
+			return SafeScript_Load(Context, Path, LoadFlags, OutSuccess, Log);
+		}
 
 	#pragma endregion ICsScriptData
 
@@ -396,3 +430,5 @@ namespace NCsData
 	};
 #undef DataType
 }
+
+using CsDataLibrary = NCsData::FLibrary;

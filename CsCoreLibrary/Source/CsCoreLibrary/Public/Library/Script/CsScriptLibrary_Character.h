@@ -8,6 +8,9 @@
 
 #include "CsScriptLibrary_Character.generated.h"
 
+// NCsCharacter::FLibrary
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsCharacter, FLibrary)
+
 class ACharacter;
 class UAnimMontage;
 
@@ -15,6 +18,12 @@ UCLASS()
 class CSCORELIBRARY_API UCsScriptLibrary_Character : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	typedef NCsCharacter::FLibrary NativeLibrary;
+
+	static void(*LogError)(const FString&);
 
 public:
 

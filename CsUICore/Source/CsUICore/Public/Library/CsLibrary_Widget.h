@@ -918,3 +918,14 @@ namespace NCsWidget
 		};
 	}
 }
+
+using CsWidgetLibrary = NCsWidget::FLibrary;
+using CsWidgetScreenPositionLibrary = NCsWidget::NPosition::NScreen::FLibrary;
+using CsWidgetViewportPositionLibrary = NCsWidget::NPosition::NViewport::FLibrary;
+using CsWidgetWorldPositionLibrary = NCsWidget::NPosition::NWorld::FLibrary;
+using CsWidgetBorderLibrary = NCsWidget::NBorder::FLibrary;
+using CsWidgetProgressBarLibrary = NCsWidget::NProgressBar::FLibrary;
+using CsWidgetImageLibrary = NCsWidget::NImage::FLibrary;
+using CSWidgetButtonLibrary = NCsWidget::NButton::FLibrary;
+using CsWidgetTextBlockLibrary = NCsWidget::NTextBlock::FLibrary;
+using CsWidgetAnimationLibrary = NCsWidget::NAnimation::FLibrary;

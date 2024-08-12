@@ -141,9 +141,7 @@ namespace NCsData
 							else
 						#endif // #if WITH_EDITOR
 							{
-								typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-								RowPtr = DataManagerLibrary::GetSafeDataTableRow(Context, MyRoot, DataTableSoftObject, RowName, nullptr);
+								RowPtr = CsDataManagerLibrary::GetSafeDataTableRow(Context, MyRoot, DataTableSoftObject, RowName, nullptr);
 							}
 
 							if (!RowPtr)
@@ -230,9 +228,7 @@ namespace NCsData
 								else
 							#endif // #if WITH_EDITOR
 								{
-									typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-									RowPtr = DataManagerLibrary::GetSafeDataTableRow(Context, MyRoot, DataTableSoftObject, RowName, nullptr);
+									RowPtr = CsDataManagerLibrary::GetSafeDataTableRow(Context, MyRoot, DataTableSoftObject, RowName, nullptr);
 								}
 
 								if (!RowPtr)

@@ -22,10 +22,24 @@ public:
 	* @param Context	The calling context.
 	* @param Object
 	* @param LoadFlags
-	* return			
+	* @param OutSuccess	(out)
+	* return			Whether the Load was successful or not.			
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsData|Library|Data|ICsScriptData", meta = (AutoCreateRefTerm = "Context,LoadFlags"))
 	static bool Script_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess);
+
+	/**
+	* Call the method Script_Load for the Default Object loaded from Path.
+	*  Object MUST implement the interface: ICsScriptData
+	* 
+	* @param Context	The calling context.
+	* @param Path
+	* @param LoadFlags
+	* @param OutSuccess	(out)
+	* return			Object that implements the interface: ICsScriptData.			
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsData|Library|Data|ICsScriptData", meta = (AutoCreateRefTerm = "Context,Path,LoadFlags"))
+	static UObject* Script_LoadByPath(const FString& Context, const FString& Path, const int32& LoadFlags, bool& OutSuccess);
 
 #pragma endregion ICsScriptData
 };

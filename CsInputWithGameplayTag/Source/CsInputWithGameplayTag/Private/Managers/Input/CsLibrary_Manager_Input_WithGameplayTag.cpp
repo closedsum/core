@@ -7,6 +7,8 @@
 #include "CsMacro_Misc.h"
 // Library
 #include "Player/CsLibrary_Player.h"
+#include "CsLibrary_GameplayTags.h"
+#include "CsLibrary_Valid_GameplayTags.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Input/CsManager_Input_WithGameplayTag.h"
@@ -39,7 +41,6 @@ namespace NCsInput
 			#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NWithGameplayTag::NManager::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&NCsInput::NWithGameplayTag::FLog::Warning*/
-			#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 
 			// Get
 			#pragma region
@@ -122,12 +123,12 @@ namespace NCsInput
 
 			ICsManager_Input_WithGameplayTag* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 			{
-				return GetChecked(Context, PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId));
+				return GetChecked(Context, CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId));
 			}
 
 			ICsManager_Input_WithGameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
 			{
-				APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
 				if (!PC)
 					return nullptr;
@@ -136,7 +137,7 @@ namespace NCsInput
 
 			ICsManager_Input_WithGameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, LogLevel)
 			{
-				APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, OutSuccess, Log);
+				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, OutSuccess, Log);
 
 				if (!PC)
 					return nullptr;
@@ -181,7 +182,7 @@ namespace NCsInput
 
 				TArray<APlayerController*> PlayerControllers;
 
-				PCLocalLibrary::GetAll(WorldContext, PlayerControllers);
+				CsPCLocalLibrary::GetAll(WorldContext, PlayerControllers);
 
 				int32 Count = 0;
 
@@ -215,7 +216,7 @@ namespace NCsInput
 			{
 				TArray<APlayerController*> PlayerControllers;
 
-				PCLocalLibrary::GetAll(WorldContext, PlayerControllers);
+				CsPCLocalLibrary::GetAll(WorldContext, PlayerControllers);
 
 				int32 Count = 0;
 
@@ -243,10 +244,131 @@ namespace NCsInput
 				return Count > CS_EMPTY;
 			}
 
+			// Tag
+			#pragma region
+			
+				// HasMapping
+
+			bool FLibrary::HasMappingChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag)
+			{
+				CS_IS_GAMEPLAY_TAG_VALID_CHECKED(Tag)
+				checkf(GetChecked(Context, WorldContext, ControllerId)->HasMapping(Tag), TEXT("%s: No mapping associated with Tag: %s."), *Context, *(Tag.ToString()));
+				return true;
+			}
+
+			bool FLibrary::HasMappingChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag)
+			{
+				return HasMappingChecked(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetChecked(Context, Tag));
+			}
+
+			bool FLibrary::HasMappingChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag)
+			{
+				return HasMappingChecked(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetChecked(Context, Tag));
+			}
+
+			bool FLibrary::SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, LogLevel)
+			{
+				if (ICsManager_Input_WithGameplayTag* Interface = GetSafe(Context, WorldContext, ControllerId))
+				{
+					CS_IS_GAMEPLAY_TAG_VALID(Tag)
+
+					if (!Interface->HasMapping(Tag))
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No mapping associated with Tag: %s."), *Context, *(Tag.ToString())))
+						return false;
+					}
+					return true;
+				}
+				return false;
+			}
+
+			bool FLibrary::SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, LogLevel)
+			{
+				return SafeHasMapping(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
+			}
+
+			bool FLibrary::SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, LogLevel)
+			{
+				return SafeHasMapping(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
+			}
+
+				// SetMappingActive
+
+			void FLibrary::SetMappingActiveChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag)
+			{
+				check(HasMappingChecked(Context, WorldContext, ControllerId, Tag));
+				GetChecked(Context, WorldContext, ControllerId)->SetMappingActive(Tag);
+			}
+
+			void FLibrary::SetMappingActiveChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag)
+			{
+				SetMappingActiveChecked(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetChecked(Context, Tag));
+			}
+
+			void FLibrary::SetMappingActiveChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag)
+			{
+				SetMappingActiveChecked(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetChecked(Context, Tag));
+			}
+
+			bool FLibrary::SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, LogLevel)
+			{
+				if (!SafeHasMapping(Context, WorldContext, ControllerId, Tag, Log))
+					return false;
+				GetChecked(Context, WorldContext, ControllerId)->SetMappingActive(Tag);
+				return true;
+			}
+
+			bool FLibrary::SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, LogLevel)
+			{
+				return SafeSetMappingActive(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
+			}
+
+			bool FLibrary::SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, LogLevel)
+			{
+				return SafeSetMappingActive(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
+			}
+
+				// SetMappingInactive
+
+			void FLibrary::SetMappingInactiveChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag)
+			{
+				check(HasMappingChecked(Context, WorldContext, ControllerId, Tag));
+				GetChecked(Context, WorldContext, ControllerId)->SetMappingInactive(Tag);
+			}
+
+			void FLibrary::SetMappingInactiveChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag)
+			{
+				SetMappingInactiveChecked(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetChecked(Context, Tag));
+			}
+
+			void FLibrary::SetMappingInactiveChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag)
+			{
+				SetMappingInactiveChecked(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetChecked(Context, Tag));
+			}
+
+			bool FLibrary::SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, LogLevel)
+			{
+				if (!SafeHasMapping(Context, WorldContext, ControllerId, Tag, Log))
+					return false;
+				GetChecked(Context, WorldContext, ControllerId)->SetMappingInactive(Tag);
+				return true;
+			}
+
+			bool FLibrary::SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, LogLevel)
+			{
+				return SafeSetMappingInactive(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
+			}
+
+			bool FLibrary::SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, LogLevel)
+			{
+				return SafeSetMappingInactive(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
+			}
+
+			#pragma endregion Tag
+
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef PCLocalLibrary
 		}
 	}
 }

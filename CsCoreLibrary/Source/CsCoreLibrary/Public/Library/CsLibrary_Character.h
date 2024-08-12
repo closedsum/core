@@ -314,3 +314,5 @@ namespace NCsCharacter
 	#undef SET_CONTEXT
 	};
 }
+
+using CsCharacterLibrary = NCsCharacter::FLibrary;

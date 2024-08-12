@@ -655,6 +655,17 @@ namespace NCsActor
 		*/
 		static AActor* SafeSpawn(const FString& Context, const UObject* WorldContext, const FString& Path, LogLevel);
 
+		/**
+		* Safely spawn an Actor in the World with the given ActorClass.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Path			String path to the Actor class to load and then spawn.
+		* @param Log
+		* return				Spawned Actor.
+		*/
+		static AActor* SafeSpawn(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, LogLevel);
+
 	#pragma endregion Spawn
 
 	// Distance
@@ -854,3 +865,5 @@ namespace NCsActor
 	#undef LogLevel
 	};
 }
+
+using CsActorLibrary = NCsActor::FLibrary;

@@ -47,6 +47,22 @@ public:
 
 	void PostProcessInput(const float DeltaTime, const bool bGamePaused);
 
+	FORCEINLINE bool HasMapping(const FGameplayTag& Tag) const { return IndexByMappingTagMap.Find(Tag) != nullptr; }
+
+	FORCEINLINE void SetMappingActive(const FGameplayTag& Tag)
+	{
+		check(HasMapping(Tag));
+
+		MappingInfos[IndexByMappingTagMap[Tag]].bActive = true;
+	}
+
+	void SetMappingInactive(const FGameplayTag& Tag)
+	{
+		check(HasMapping(Tag))
+
+		MappingInfos[IndexByMappingTagMap[Tag]].bActive = false;
+	}
+
 #pragma endregion ICsManager_Input_WithGameplayTag
 
 // ICsManager_Input_WithGameplayTag_Event
@@ -105,6 +121,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "CsInputWithGameplayTag|Managers|Input")
 	FCsManagerInputWithGameplayTag_OnAction OnAction_ScriptEvent;
+
+	UPROPERTY(BlueprintAssignable, Category = "CsInputWithGameplayTag|Managers|Input")
+	FCsManagerInputWithGameplayTag_OnAction2 OnAction2_ScriptEvent;
 
 #undef OnPressedRawEventType
 #undef OnReleasedRawEventType

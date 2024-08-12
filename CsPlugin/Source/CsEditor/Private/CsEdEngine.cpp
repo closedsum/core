@@ -911,8 +911,6 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 	// Data
 	if (UserSettings->bOnSave_Data_PopulatePaths)
 	{
-		typedef NCsData::FLibrary DataLibrary;
-
 		if (CsBlueprintLibrary::Is(Object))
 		{
 			UObject* DefaultObject = nullptr;
@@ -928,7 +926,7 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveCon
 				DefaultObject = CDOb;
 			}
 		
-			if (DataLibrary::SafeImplements(DefaultObject))
+			if (CsDataLibrary::SafeImplements(DefaultObject))
 			{
 				TSoftClassPtr<UObject> ObjectSoftClass(BpC);
 

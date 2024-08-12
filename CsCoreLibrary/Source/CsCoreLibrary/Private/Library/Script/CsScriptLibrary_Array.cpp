@@ -14,8 +14,6 @@ UCsScriptLibrary_Array::UCsScriptLibrary_Array(const FObjectInitializer& ObjectI
 {
 }
 	
-#define ArrayLibrary NCsArray::FLibrary
-
 bool UCsScriptLibrary_Array::MakeShuffle_int32_0toN(const int32& N, TArray<int32>& OutArray)
 {
 	if (N <= 0)
@@ -33,8 +31,6 @@ bool UCsScriptLibrary_Array::MakeShuffle_int32_0toN(const int32& N, TArray<int32
 		OutArray.Add(I);
 	}
 
-	ArrayLibrary::Shuffle<int32>(OutArray);
+	CsArrayLibrary::Shuffle<int32>(OutArray);
 	return true;
 }
-
-#undef ArrayLibrary

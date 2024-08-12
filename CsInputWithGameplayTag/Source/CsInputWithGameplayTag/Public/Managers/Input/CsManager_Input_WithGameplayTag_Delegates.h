@@ -23,6 +23,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInputWithGameplayTag_OnRel
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInputWithGameplayTag_OnAction_Raw, const FCsInput_WithGameplayTag_Event&, Event);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInputWithGameplayTag_OnAction, const FCsInput_WithGameplayTag_Event&, Event);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInputWithGameplayTag_OnAction2, FCsInput_WithGameplayTag_Event, Event);
 
 namespace NCsInput
 {

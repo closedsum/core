@@ -177,9 +177,7 @@ bool FCsDataRootSet::IsPersistentLevel(UObject* WorldContext, const MapType& Typ
 	if (Type == MapType::Main)
 		MapName = MainMap.GetLongPackageName();
 		
-	typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
-
-	return LevelLibrary::SafeIsName(WorldContext, MapName);
+	return CsPersistentLevelLibrary::SafeIsName(WorldContext, MapName);
 }
 #undef MapType
 

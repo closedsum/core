@@ -30,7 +30,6 @@ namespace NCsGameplayTag
 			}
 		}
 
-		#define GameplayTagsLibrary NCsGameplayTags::FLibrary
 		#define OnDeferredChangeEventType NCsGameplayTag::NCount::FOnDeferredChange
 		#define OnCountChangedEventType NCsGameplayTag::NCount::FOnCountChanged
 		#define EventType NCsGameplayTag::NCount::EEvent
@@ -42,7 +41,7 @@ namespace NCsGameplayTag
 			// map only counts the number of GE/sources that are giving that tag.
 			static FGameplayTagContainer TagAndParentsContainer;
 			
-			GameplayTagsLibrary::Copy(Tag.GetGameplayTagParents(), TagAndParentsContainer);
+			CsGameplayTagsLibrary::Copy(Tag.GetGameplayTagParents(), TagAndParentsContainer);
 
 			for (auto CompleteTagIt = TagAndParentsContainer.CreateConstIterator(); CompleteTagIt; ++CompleteTagIt)
 			{
@@ -120,7 +119,7 @@ namespace NCsGameplayTag
 			// Check if change delegates are required to fire for the tag or any of its parents based on the count change
 			static FGameplayTagContainer TagAndParentsContainer;
 			
-			GameplayTagsLibrary::Copy(Tag.GetGameplayTagParents(), TagAndParentsContainer);
+			CsGameplayTagsLibrary::Copy(Tag.GetGameplayTagParents(), TagAndParentsContainer);
 
 			bool CreatedSignificantChange				 = false;
 
@@ -195,7 +194,6 @@ namespace NCsGameplayTag
 			return GatherTagChangeDelegates(Tag, CountDelta, DeferredTagChangeDelegates);
 		}
 
-		#undef GameplayTagsLibrary
 		#undef OnDeferredChangeEventType
 		#undef OnCountChangedEventType
 		#undef EventType

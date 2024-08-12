@@ -84,19 +84,17 @@ void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context
 		}
 		else
 		{
-			typedef NCsActor::FLibrary ActorLibrary;
-
 #if WITH_EDITOR
 			// Label
 			if (!MoveActorLabel.IsEmpty())
 			{
-				MoveActor = ActorLibrary::GetByLabelChecked(Context, WorldContext, MoveActorLabel);
+				MoveActor = CsActorLibrary::GetByLabelChecked(Context, WorldContext, MoveActorLabel);
 				return;
 			}
 			// Name
 			if (MoveObjectName != NAME_None)
 			{
-				MoveActor = ActorLibrary::GetByNameChecked(Context, WorldContext, MoveObjectName);
+				MoveActor = CsActorLibrary::GetByNameChecked(Context, WorldContext, MoveObjectName);
 				return;
 			}
 
@@ -105,7 +103,7 @@ void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context
 			// Name
 			if (MoveObjectName != NAME_None)
 			{
-				MoveActor = ActorLibrary::GetByNameChecked(Context, WorldContext, MoveObjectName);
+				MoveActor = CsActorLibrary::GetByNameChecked(Context, WorldContext, MoveObjectName);
 				return;
 			}
 
@@ -137,19 +135,17 @@ void FCsMoveByInterp_Params::ConditionalSetSafeDestinationObject(const FString& 
 		}
 		else
 		{
-			typedef NCsActor::FLibrary ActorLibrary;
-
 #if WITH_EDITOR
 			// Label
 			if (!ToActorLabel.IsEmpty())
 			{
-				ToActor = ActorLibrary::GetByLabelChecked(Context, WorldContext, ToActorLabel);
+				ToActor = CsActorLibrary::GetByLabelChecked(Context, WorldContext, ToActorLabel);
 				return;
 			}
 			// Name
 			if (ToObjectName != NAME_None)
 			{
-				ToActor = ActorLibrary::GetByNameChecked(Context, WorldContext, ToObjectName);
+				ToActor = CsActorLibrary::GetByNameChecked(Context, WorldContext, ToObjectName);
 				return;
 			}
 
@@ -158,7 +154,7 @@ void FCsMoveByInterp_Params::ConditionalSetSafeDestinationObject(const FString& 
 			// Name
 			if (ToObjectName != NAME_None)
 			{
-				MoveActor = ActorLibrary::GetByNameChecked(Context, WorldContext, ToObjectName);
+				MoveActor = CsActorLibrary::GetByNameChecked(Context, WorldContext, ToObjectName);
 				return;
 			}
 
@@ -366,19 +362,17 @@ namespace NCsMovement
 						}
 						else
 						{
-							typedef NCsActor::FLibrary ActorLibrary;
-
 				#if WITH_EDITOR
 							// Label
 							if (!GetMoveActorLabel().IsEmpty())
 							{
-								MoveActor = ActorLibrary::GetByLabelChecked(Context, WorldContext, GetMoveActorLabel());
+								MoveActor = CsActorLibrary::GetByLabelChecked(Context, WorldContext, GetMoveActorLabel());
 								return;
 							}
 							// Name
 							if (GetMoveObjectName() != NAME_None)
 							{
-								MoveActor = ActorLibrary::GetByNameChecked(Context, WorldContext, GetMoveObjectName());
+								MoveActor = CsActorLibrary::GetByNameChecked(Context, WorldContext, GetMoveObjectName());
 								return;
 							}
 
@@ -387,7 +381,7 @@ namespace NCsMovement
 							// Name
 							if (GetMoveObjectName() != NAME_None)
 							{
-								MoveActor = ActorLibrary::GetByNameChecked(Context, WorldContext, GetMoveObjectName());
+								MoveActor = CsActorLibrary::GetByNameChecked(Context, WorldContext, GetMoveObjectName());
 								return;
 							}
 
@@ -423,19 +417,17 @@ namespace NCsMovement
 						}
 						else
 						{
-							typedef NCsActor::FLibrary ActorLibrary;
-
 				#if WITH_EDITOR
 							// Label
 							if (!GetToActorLabel().IsEmpty())
 							{
-								ToActor = ActorLibrary::GetByLabelChecked(Context, WorldContext, GetToActorLabel());
+								ToActor = CsActorLibrary::GetByLabelChecked(Context, WorldContext, GetToActorLabel());
 								return;
 							}
 							// Name
 							if (GetToObjectName() != NAME_None)
 							{
-								ToActor = ActorLibrary::GetByNameChecked(Context, WorldContext, GetToObjectName());
+								ToActor = CsActorLibrary::GetByNameChecked(Context, WorldContext, GetToObjectName());
 								return;
 							}
 
@@ -444,7 +436,7 @@ namespace NCsMovement
 							// Name
 							if (GetToObjectName() != NAME_None)
 							{
-								ToActor = ActorLibrary::GetByNameChecked(Context, WorldContext, GetToObjectName());
+								ToActor = CsActorLibrary::GetByNameChecked(Context, WorldContext, GetToObjectName());
 								return;
 							}
 

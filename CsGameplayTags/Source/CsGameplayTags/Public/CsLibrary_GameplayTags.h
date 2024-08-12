@@ -5,16 +5,66 @@
 // Types
 #include "GameplayTagContainer.h"
 // Log
-//#include "Utility/CsGameplayAbilitiesLog.h"
+#include "Utility/CsGameplayTagsLog.h"
 
 namespace NCsGameplayTags
 {
 	struct CSGAMEPLAYTAGS_API FLibrary final
 	{
-	//#define LogLevel void(*Log)(const FString&) = &NCsGameplayAbilities::FLog::Warning
+	#define LogLevel void(*Log)(const FString&) = &NCsGameplayTags::FLog::Warning
 
 	public:
 		
+		/**
+		* Get the GameplayTag associated with Name.
+		* 
+		* @param Context	The calling context
+		* @param Name		The Name of the GameplayTag
+		* return			GameplayTag associated with Name.
+		*/
+		static FGameplayTag GetChecked(const FString& Context, const FName& Name);
+
+		/**
+		* Get the GameplayTag associated with Name.
+		* 
+		* @param Context	The calling context
+		* @param Name		The Name of the GameplayTag
+		* return			GameplayTag associated with Name.
+		*/
+		static FGameplayTag GetChecked(const FString& Context, const FString& Name);
+
+		/**
+		* Safely get the GameplayTag associated with Name.
+		* 
+		* @param Context	The calling context
+		* @param Name		The Name of the GameplayTag
+		* @param OutSuccess	(out)
+		* @param Log		(optional)
+		* return			GameplayTag associated with Name.
+		*/
+		static FGameplayTag GetSafe(const FString& Context, const FName& Name, bool& OutSuccess, LogLevel);
+		FORCEINLINE static FGameplayTag GetSafe(const FString& Context, const FName& Name, LogLevel)
+		{
+			bool OutSuccess = false;
+			return GetSafe(Context, Name, OutSuccess, Log);
+		}
+
+		/**
+		* Safely get the GameplayTag associated with Name.
+		* 
+		* @param Context	The calling context
+		* @param Name		The Name of the GameplayTag
+		* @param OutSuccess	(out)
+		* @param Log		(optional)
+		* return			GameplayTag associated with Name.
+		*/
+		static FGameplayTag GetSafe(const FString& Context, const FString& Name, bool& OutSuccess, LogLevel);
+		FORCEINLINE static FGameplayTag GetSafe(const FString& Context, const FString& Name, LogLevel)
+		{
+			bool OutSuccess = false;
+			return GetSafe(Context, Name, OutSuccess, Log);
+		}
+
 		FORCEINLINE static TArray<FGameplayTag>& GetGameplayTags(FGameplayTagContainer& Container)
 		{
 			// Get pointer to start of struct (TArray<FGameplayTag> GameplayTags)
@@ -80,6 +130,8 @@ namespace NCsGameplayTags
 			ParentTags.Reset(ParentTags.Max());
 		}
 
-	//#undef LogLevel
+	#undef LogLevel
 	};
 }
+
+using CsGameplayTagsLibrary = NCsGameplayTags::FLibrary;

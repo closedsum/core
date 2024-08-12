@@ -673,3 +673,5 @@ namespace NCsData
 		};
 	}
 }
+
+using CsDataManagerLibrary = NCsData::NManager::FLibrary;

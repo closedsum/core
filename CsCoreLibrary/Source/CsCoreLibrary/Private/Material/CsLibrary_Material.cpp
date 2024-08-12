@@ -1678,11 +1678,9 @@ namespace NCsMaterial
 			// Are all Names in ParamNames Valid
 			CS_IS_TARRAY_ANY_NONE_CHECKED(ParamNames)
 
-			typedef NCsArray::FLibrary ArrayLibrary;
-
 			static TArray<FName> Names;
 
-			ArrayLibrary::Copy<FName>(Names, ParamNames);
+			CsArrayLibrary::Copy<FName>(Names, ParamNames);
 
 			// MaterialInstance
 			for (const FScalarParameterValue& Value : MID->ScalarParameterValues)
@@ -1890,12 +1888,10 @@ namespace NCsMaterial
 			checkf(Names.Num() == Values.Num(), TEXT("%s: The sizes Names: %d != Values: %d."), *Context, Names.Num(), Values.Num());
 
 			// Find or Add
-			typedef NCsArray::FLibrary ArrayLibrary;
-
 			static TArray<int32> Indices;
 
 			// Determine what needs to be Added
-			ArrayLibrary::PopulateRange(Indices, 0, Names.Num() - 1);
+			CsArrayLibrary::PopulateRange(Indices, 0, Names.Num() - 1);
 
 			int32 Count = MID->ScalarParameterValues.Num();
 
@@ -2334,12 +2330,10 @@ namespace NCsMaterial
 			checkf(Names.Num() == Values.Num(), TEXT("%s: The sizes Names: %d != Values: %d."), *Context, Names.Num(), Values.Num());
 
 			// Find or Add
-			typedef NCsArray::FLibrary ArrayLibrary;
-
 			static TArray<int32> Indices;
 
 			// Determine what needs to be Added
-			ArrayLibrary::PopulateRange(Indices, 0, Names.Num() - 1);
+			CsArrayLibrary::PopulateRange(Indices, 0, Names.Num() - 1);
 
 			int32 Count = MID->VectorParameterValues.Num();
 

@@ -39,7 +39,6 @@ UCsScriptLibrary_GameStateImpl::UCsScriptLibrary_GameStateImpl(const FObjectInit
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryGameStateImpl::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define LogError &FCsLog::Error
-#define GameStateLibrary NCsGameState::NImpl::FLibrary
 
 // ICsGameState_Startup
 #pragma region
@@ -48,7 +47,7 @@ bool CLASS_TYPE::IsStartupComplete(const FString& Context, const UObject* WorldC
 {
 	CONDITIONAL_SET_CTXT(IsStartupComplete);
 
-	return GameStateLibrary::SafeIsStartupComplete(Ctxt, WorldContextObject);
+	return CsGameStateImplLibrary::SafeIsStartupComplete(Ctxt, WorldContextObject);
 }
 
 bool CLASS_TYPE::IsStartupCompleteChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
@@ -56,7 +55,7 @@ bool CLASS_TYPE::IsStartupCompleteChecked(const FString& Context, const UObject*
 	CONDITIONAL_SET_CTXT(IsStartupCompleteChecked);
 
 	OutSuccess = true;
-	return CS_SCRIPT_GET_CHECKED(GameStateLibrary::IsStartupCompleteChecked(Ctxt, WorldContextObject), GameStateLibrary::SafeIsStartupComplete(Ctxt, WorldContextObject, OutSuccess, LogError));
+	return CS_SCRIPT_GET_CHECKED(CsGameStateImplLibrary::IsStartupCompleteChecked(Ctxt, WorldContextObject), CsGameStateImplLibrary::SafeIsStartupComplete(Ctxt, WorldContextObject, OutSuccess, LogError));
 }
 
 #pragma endregion ICsGameState_Startup
@@ -65,4 +64,3 @@ bool CLASS_TYPE::IsStartupCompleteChecked(const FString& Context, const UObject*
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
 #undef LogError
-#undef GameStateLibrary

@@ -10,6 +10,7 @@
 #include "CsLibrary_InputMappingContext.h"
 #include "CsLibrary_InputAction.h"
 #include "Object/CsLibrary_Object.h"
+#include "CsLibrary_Valid_GameplayTags.h"
 #include "Library/CsLibrary_Valid.h"
 // Data
 #include "Enhanced/Data/CsData_EnhancedInput_WithGameplayTag.h"
@@ -347,6 +348,10 @@ void UCsManager_EnhancedInput_WithGameplayTag::PostProcessInput(const float Delt
 			Last_Event = Event;
 
 			OnAction_Event.Broadcast(Event);
+			// NOTE: For scripts (i.e. Python) that don't handle const ref properly
+		#if WITH_EDITOR
+			OnAction2_ScriptEvent.Broadcast(EventType::Make(Event));
+		#endif // #if WITH_EDITOR
 			OnAction_Raw_ScriptEvent.Broadcast(EventType::Make(Event));
 		}
 	}

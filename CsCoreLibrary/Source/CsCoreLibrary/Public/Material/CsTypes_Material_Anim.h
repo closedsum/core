@@ -300,8 +300,6 @@ namespace NCsMaterial
 			{
 				SetDuration(B.GetDuration());
 
-				typedef NCsArray::FLibrary ArrayLibrary;
-
 				ScalarParameters.Reset(FMath::Max(ScalarParameters.Max(), B.ScalarParameters.Num()));
 
 				for (const ScalarType& Param : B.ScalarParameters)
@@ -310,8 +308,8 @@ namespace NCsMaterial
 					Scalar			   = Param;
 				}
 
-				//ArrayLibrary::Copy<VectorType>(VectorParameters, B.VectorParameters);
-				//ArrayLibrary::Copy<ScalarType>(ScalarParameters, B.ScalarParameters);
+				//CsArrayLibrary::Copy<VectorType>(VectorParameters, B.VectorParameters);
+				//CsArrayLibrary::Copy<ScalarType>(ScalarParameters, B.ScalarParameters);
 				return *this;
 			}
 

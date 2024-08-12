@@ -148,11 +148,7 @@ void FCsDataEntry_Data::Unload()
 	SET_CONTEXT(Unload);
 
 	if (IsValid(Data_Internal))
-	{
-		typedef NCsData::FLibrary DataLibrary;
-
-		DataLibrary::UnloadChecked(Context, Data_Internal);
-	}
+		CsDataLibrary::UnloadChecked(Context, Data_Internal);
 
 	Data_Internal = nullptr;
 	Data_Class = nullptr;
@@ -276,11 +272,7 @@ void FCsDataEntry_ScriptData::Unload()
 	SET_CONTEXT(Unload);
 
 	if (IsValid(Data_Internal))
-	{
-		typedef NCsData::FLibrary DataLibrary;
-
-		DataLibrary::Script_UnloadChecked(Context, Data_Internal);
-	}
+		CsDataLibrary::Script_UnloadChecked(Context, Data_Internal);
 
 	Data_Internal = nullptr;
 	Data_Class = nullptr;

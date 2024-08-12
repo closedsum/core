@@ -1571,7 +1571,7 @@ namespace NCsProperty
 		FORCEINLINE static UClass* GetClassPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, LogLevel)
 		{
 			if (TObjectPtr<UObject>* ValuePtr = GetClassPropertyValuePtr(Context, StructValue, Struct, PropertyName, Log))
-				return ValuePtr->GetClass();
+				return Cast<UClass>(ValuePtr->Get());
 			return nullptr;
 		}
 		FORCEINLINE static UClass* GetClassPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, bool& OutSuccess, LogLevel)

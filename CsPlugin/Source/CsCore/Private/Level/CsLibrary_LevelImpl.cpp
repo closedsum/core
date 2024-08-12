@@ -36,14 +36,13 @@ namespace NCsLevel
 			#define SET_CONTEXT(__FunctionName) using namespace NCsLevel::NPersistent::NImpl::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString& Context) /*=&FCsLog::Warning*/
-			#define LevelLibrary NCsLevel::NPersistent::FLibrary
 
 			// SetupData
 			#pragma region
 
 			UObject* FLibrary::GetSetupDataAsObjectChecked(const FString& Context, const UObject* WorldContext)
 			{
-				ICsGetLevelSetupData* GetLevelSetupData = LevelLibrary::GetScriptActorChecked<ICsGetLevelSetupData>(Context, WorldContext);
+				ICsGetLevelSetupData* GetLevelSetupData = CsPersistentLevelLibrary::GetScriptActorChecked<ICsGetLevelSetupData>(Context, WorldContext);
 				ICsData_Level_Setup* SetupData			= GetLevelSetupData->GetLevelSetupData();
 
 				CS_IS_PTR_NULL_CHECKED(SetupData)
@@ -54,7 +53,7 @@ namespace NCsLevel
 
 			UObject* FLibrary::GetSafeSetupDataAsObject(const FString& Context, const UObject* WorldContext, LogLevel)
 			{
-				if (ICsGetLevelSetupData* GetLevelSetupData = LevelLibrary::GetSafeScriptActor<ICsGetLevelSetupData>(Context, WorldContext, Log))
+				if (ICsGetLevelSetupData* GetLevelSetupData = CsPersistentLevelLibrary::GetSafeScriptActor<ICsGetLevelSetupData>(Context, WorldContext, Log))
 				{
 					ICsData_Level_Setup* SetupData = GetLevelSetupData->GetLevelSetupData();
 
@@ -86,7 +85,7 @@ namespace NCsLevel
 				ICsGetLevelPayload* GetLevelPayload = GetSetupDataChecked<ICsGetLevelPayload>(Context, WorldContext);
 				const FCsPayload& Payload			= GetLevelPayload->GetLevelPayload();
 				OutPayload							= const_cast<FCsPayload*>(&Payload);
-				OutLevelName						= LevelLibrary::GetFNameChecked(Context, WorldContext);
+				OutLevelName						= CsPersistentLevelLibrary::GetFNameChecked(Context, WorldContext);
 			}
 
 			bool FLibrary::GetSafePayloadAndLevelName(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -101,7 +100,7 @@ namespace NCsLevel
 
 				const FCsPayload& Payload = GetLevelPayload->GetLevelPayload();
 				OutPayload				  = const_cast<FCsPayload*>(&Payload);
-				OutLevelName			  = LevelLibrary::GetSafeFName(Context, WorldContext, Log);
+				OutLevelName			  = CsPersistentLevelLibrary::GetSafeFName(Context, WorldContext, Log);
 
 				if (OutLevelName == NAME_None)
 					return false;
@@ -113,7 +112,6 @@ namespace NCsLevel
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef LevelLibrary
 		}
 	}
 }

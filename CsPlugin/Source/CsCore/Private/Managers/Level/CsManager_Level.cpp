@@ -422,9 +422,7 @@ void UCsManager_Level::ChangeMap(const ChangeMapParamsType& Params)
 		CS_COROUTINE_PAYLOAD_PASS_STRING(Params.Map);
 		CS_COROUTINE_PAYLOAD_PASS_STRING(Params.TransitionMap);
 
-		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
-
-		CurrentMap = LevelLibrary::GetSafeName(MyRoot);
+		CurrentMap = CsPersistentLevelLibrary::GetSafeName(MyRoot);
 
 		ChangeMapInfo.bActive = true;
 		ChangeMapInfo.bCompleted = false;
@@ -491,9 +489,7 @@ void UCsManager_Level::ChangeMap_TransitionAsDestination(const ChangeMapParamsTy
 	CS_COROUTINE_PAYLOAD_PASS_STRING(Params.Map);
 	CS_COROUTINE_PAYLOAD_PASS_STRING(Params.TransitionMap);
 
-	typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
-
-	CurrentMap = LevelLibrary::GetSafeName(MyRoot);
+	CurrentMap = CsPersistentLevelLibrary::GetSafeName(MyRoot);
 
 	ChangeMapInfo.bActive = true;
 	ChangeMapInfo.bCompleted = false;

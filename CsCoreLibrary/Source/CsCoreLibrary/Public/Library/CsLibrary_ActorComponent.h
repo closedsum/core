@@ -43,3 +43,5 @@ namespace NCsActorComponent
 	#undef LogWarning
 	};
 }
+
+using CsActorComponentLibrary = NCsActorComponent::FLibrary;

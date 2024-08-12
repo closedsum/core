@@ -10,6 +10,7 @@
 #include "Managers/Data/CsLibrary_Manager_Data.h"
 	// Common
 #include "Object/CsLibrary_Object.h"
+#include "Library/CsLibrary_Class.h"
 #include "Library/CsLibrary_Valid.h"
 // Interface
 #include "Data/CsScriptData.h"
@@ -37,7 +38,6 @@ namespace NCsData
 	#define SET_CONTEXT(__FunctionName) using namespace NCsData::NLibrary::NCached; \
 		const FString& Context = Str::__FunctionName
 	#define LogLevel void(*Log)(const FString&) /*=&NCsData::FLog::Warning*/
-	#define DataManagerLibrary NCsData::NManager::FLibrary
 
 	FString FLibrary::PrintObjectAndClass(UObject* Object)
 	{
@@ -216,6 +216,18 @@ namespace NCsData
 		return true;
 	}
 
+	UObject* FLibrary::SafeScript_Load(const FString& Context, const FString& Path, const int32& LoadFlags, bool& OutSuccess, LogLevel)
+	{
+		OutSuccess = false;
+
+		if (UObject* DOb = CsClassLibrary::SafeLoadDefaultObject(Context, Path, OutSuccess, Log))
+		{
+			if (SafeScript_Load(Context, DOb, LoadFlags, OutSuccess, Log))
+				return DOb;
+		}
+		return nullptr;
+	}
+
 	#pragma endregion ICsScriptData
 
 	// Implement
@@ -320,7 +332,7 @@ namespace NCsData
 
 	DataType* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const FName& DataName)
 	{
-		ICsData* UData = DataManagerLibrary::GetDataChecked(Context, WorldContext, DataName);
+		ICsData* UData = CsDataManagerLibrary::GetDataChecked(Context, WorldContext, DataName);
 		DataType* Data = UData->_getIData();
 
 		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
@@ -329,7 +341,7 @@ namespace NCsData
 
 	DataType* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel)
 	{
-		if (ICsData* UData = DataManagerLibrary::GetSafeData(Context, WorldContext, DataName, Log))
+		if (ICsData* UData = CsDataManagerLibrary::GetSafeData(Context, WorldContext, DataName, Log))
 		{
 			DataType* Data = UData->_getIData();
 
@@ -369,7 +381,7 @@ namespace NCsData
 
 	UObject* FLibrary::GetScriptChecked(const FString& Context, const UObject* WorldContext, const FName& DataName)
 	{
-		UObject* UData = DataManagerLibrary::GetScriptDataObjectChecked(Context, WorldContext, DataName);
+		UObject* UData = CsDataManagerLibrary::GetScriptDataObjectChecked(Context, WorldContext, DataName);
 		
 		check(ScriptImplementsChecked(Context, UData));
 		return UData;
@@ -377,7 +389,7 @@ namespace NCsData
 
 	UObject* FLibrary::GetSafeScript(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel)
 	{
-		if (UObject* UData = DataManagerLibrary::GetSafeScriptDataObject(Context, WorldContext, DataName, Log))
+		if (UObject* UData = CsDataManagerLibrary::GetSafeScriptDataObject(Context, WorldContext, DataName, Log))
 		{
 			if (!SafeScriptImplements(Context, UData, Log))
 				return nullptr;
@@ -393,5 +405,4 @@ namespace NCsData
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
 	#undef LogLevel
-	#undef DataManagerLibrary
 }

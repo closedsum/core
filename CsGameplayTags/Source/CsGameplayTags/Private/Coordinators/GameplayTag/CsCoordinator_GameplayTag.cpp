@@ -60,7 +60,6 @@ UCsCoordinator_GameplayTag::UCsCoordinator_GameplayTag(const FObjectInitializer&
 #define USING_NS_CACHED using namespace NCsCoordinatorGameplayTag::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsCoordinatorGameplayTag::NCached; \
 	const FString& Context = Str::__FunctionName
-#define GameplayTagsLibrary NCsGameplayTags::FLibrary
 
 // Singleton
 #pragma region
@@ -308,7 +307,7 @@ UObject* UCsCoordinator_GameplayTag::GetWorldContext() const
 
 void UCsCoordinator_GameplayTag::GetOwnedTags(FGameplayTagContainer& OutTagContainer) const
 {
-	GameplayTagsLibrary::Copy(GetOwnedTags(), OutTagContainer);
+	CsGameplayTagsLibrary::Copy(GetOwnedTags(), OutTagContainer);
 }
 
 void UCsCoordinator_GameplayTag::UpdateTagMap_Internal(const FGameplayTagContainer& Container, const int32& CountDelta)
@@ -434,4 +433,3 @@ void UCsCoordinator_GameplayTag::ProcessQueuedGameplayTagEvents(const FECsGamepl
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef GameplayTagsLibrary

@@ -113,3 +113,5 @@ namespace NCsGameState
 		};
 	}
 }
+
+using CsGameStateImplLibrary = NCsGameState::NImpl::FLibrary;

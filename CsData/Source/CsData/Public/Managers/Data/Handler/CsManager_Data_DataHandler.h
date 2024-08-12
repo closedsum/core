@@ -25,9 +25,6 @@
 class UObject;
 class UDataTable;
 
-#define DataManagerLibrary NCsData::NManager::FLibrary
-#define DataLibrary NCsData::FLibrary
-
 namespace NCsData
 {
 	namespace NManager
@@ -236,7 +233,7 @@ namespace NCsData
 						else
 					#endif // #if WITH_EDITOR
 						{
-							RowPtr = DataManagerLibrary::GetSafeDataTableRow(Context, MyRoot, DataTableSoftObject, RowName, nullptr);
+							RowPtr = CsDataManagerLibrary::GetSafeDataTableRow(Context, MyRoot, DataTableSoftObject, RowName, nullptr);
 						}
 
 						if (!RowPtr)
@@ -264,13 +261,13 @@ namespace NCsData
 							}
 						#endif // #if WITH_EDITOR
 
-							if (DataLibrary::SafeScriptImplements(Context, O, nullptr))
+							if (CsDataLibrary::SafeScriptImplements(Context, O, nullptr))
 							{
 								DataAsUObjectMap.Add(RowName, O);
 							}
 							else
 							{
-								InterfaceDataType* IData = DataLibrary::GetChecked<InterfaceDataType>(Context, O);
+								InterfaceDataType* IData = CsDataLibrary::GetChecked<InterfaceDataType>(Context, O);
 
 								DataMap.Add(RowName, IData);
 							}
@@ -653,9 +650,9 @@ namespace NCsData
 						const FName& EntryName = Pair.Key;
 						UObject* O			   = Pair.Value;
 
-						if (!DataLibrary::SafeScriptImplements(Context, O, nullptr))
+						if (!CsDataLibrary::SafeScriptImplements(Context, O, nullptr))
 						{
-							InterfaceDataType* IData = DataLibrary::GetChecked<InterfaceDataType>(Context, O);
+							InterfaceDataType* IData = CsDataLibrary::GetChecked<InterfaceDataType>(Context, O);
 
 							DataMap[EntryName] = IData;
 						}
@@ -703,6 +700,3 @@ namespace NCsData
 		}
 	}
 }
-
-#undef DataManagerLibrary
-#undef DataLibrary

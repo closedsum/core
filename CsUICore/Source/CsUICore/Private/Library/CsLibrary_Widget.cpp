@@ -263,13 +263,12 @@ namespace NCsWidget
 	{
 		using namespace NCsWidget::NLibrary::NCached;
 
-		if (!Path.EndsWith(Str::_C))
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s does NOT end with '_C'."), *Context, *Path));
-			return nullptr;
-		}
+		FString ClassPath = Path;
+
+		if (!ClassPath.EndsWith(Str::_C))
+			ClassPath.Append(Str::_C);
 			
-		UObject* O = CsObjectLibrary::SafeLoad(Context, Path, Log);
+		UObject* O = CsObjectLibrary::SafeLoad(Context, ClassPath, Log);
 
 		if (!O)
 			return nullptr;
@@ -609,11 +608,10 @@ namespace NCsWidget
 			#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NPosition::NViewport::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-			#define WidgetScreenPositionLibrary NCsWidget::NPosition::NScreen::FLibrary
 
 			void FLibrary::GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition)
 			{
-				const FVector2d AbsolutePosition = WidgetScreenPositionLibrary::GetAbsoluteByCachedGeometry2dChecked(Context, Widget);
+				const FVector2d AbsolutePosition = CsWidgetScreenPositionLibrary::GetAbsoluteByCachedGeometry2dChecked(Context, Widget);
 
 				USlateBlueprintLibrary::AbsoluteToViewport(Widget->GetWorld(), AbsolutePosition, OutPixelPosition, OutViewportPosition);
 			}
@@ -630,7 +628,7 @@ namespace NCsWidget
 
 			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition, LogLevel)
 			{
-				const FVector2d AbsolutePosition = WidgetScreenPositionLibrary::GetSafeAbsoluteByCachedGeometry2d(Context, Widget, Log);
+				const FVector2d AbsolutePosition = CsWidgetScreenPositionLibrary::GetSafeAbsoluteByCachedGeometry2d(Context, Widget, Log);
 
 				if (AbsolutePosition == FVector2d(-1.0))
 				{
@@ -668,7 +666,6 @@ namespace NCsWidget
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef WidgetScreenPositionLibrary
 		}
 
 		namespace NWorld
@@ -689,17 +686,14 @@ namespace NCsWidget
 			#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NPosition::NWorld::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
-			#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
-			#define WidgetScreenPositionLibrary NCsWidget::NPosition::NScreen::FLibrary
-			#define WidgetViewportPositionLibrary NCsWidget::NPosition::NViewport::FLibrary
 
 			bool FLibrary::GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection)
 			{
 				// Get PlayerController associated with ControllerId
-				APlayerController* PC = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
+				APlayerController* PC = CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 				
 				// Get Screen Position of the Widget
-				FVector2d ScreenPosition = WidgetScreenPositionLibrary::GetBySlot2dChecked(Context, Widget);
+				FVector2d ScreenPosition = CsWidgetScreenPositionLibrary::GetBySlot2dChecked(Context, Widget);
 				
 				// Deproject Screen to World
 				return UGameplayStatics::DeprojectScreenToWorld(PC, ScreenPosition, OutPosition, OutDirection);
@@ -720,10 +714,10 @@ namespace NCsWidget
 			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, LogLevel)
 			{
 				// Get PlayerController associated with ControllerId
-				APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 				
 				// Get Screen Position of the Widget
-				FVector2d ScreenPosition = WidgetScreenPositionLibrary::GetBySlot2dChecked(Context, Widget);
+				FVector2d ScreenPosition = CsWidgetScreenPositionLibrary::GetBySlot2dChecked(Context, Widget);
 
 				if (ScreenPosition == FVector2d(-1.0f))
 					return false;
@@ -761,12 +755,12 @@ namespace NCsWidget
 			bool FLibrary::GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection)
 			{
 				// Get PlayerController associated with ControllerId
-				APlayerController* PC = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
+				APlayerController* PC = CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 
 				// Get Pixel Position of the Widget
 				FVector2d PixelPosition;
 				FVector2d ViewportPosition;
-				WidgetViewportPositionLibrary::GetByCachedGeometryChecked(Context, Widget, PixelPosition, ViewportPosition);
+				CsWidgetViewportPositionLibrary::GetByCachedGeometryChecked(Context, Widget, PixelPosition, ViewportPosition);
 
 				// Deproject Screen to World
 				return UGameplayStatics::DeprojectScreenToWorld(PC, PixelPosition, OutPosition, OutDirection);
@@ -788,13 +782,13 @@ namespace NCsWidget
 			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, LogLevel)
 			{
 				// Get PlayerController associated with ControllerId
-				APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 				// Get Screen Position of the Widget
 				// Get Pixel Position of the Widget
 
 				FVector2d PixelPosition;
 				FVector2d ViewportPosition;
-				WidgetViewportPositionLibrary::GetSafeByCachedGeometry(Context, Widget, PixelPosition, ViewportPosition, Log);
+				CsWidgetViewportPositionLibrary::GetSafeByCachedGeometry(Context, Widget, PixelPosition, ViewportPosition, Log);
 
 				if (PixelPosition == FVector2d(-1.0f))
 					return false;
@@ -832,9 +826,6 @@ namespace NCsWidget
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef PCLocalLibrary
-			#undef WidgetScreenPositionLibrary
-			#undef WidgetViewportPositionLibrary
 		}
 	}
 

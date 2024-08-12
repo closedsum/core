@@ -24,6 +24,10 @@ class CSUICORE_API UCsScriptLibrary_Widget : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	static void(*LogError)(const FString&);
+
 public:
 
 	/**
@@ -211,6 +215,12 @@ UCLASS()
 class CSUICORE_API UCsScriptLibrary_Widget_Animation : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	static void(*LogError)(const FString&);
+
+public:
 
 	UFUNCTION(BlueprintPure, Category = "CsUICore|Library|Widget|Animation", meta = (AutoCreateRefTerm = "Context"))
 	static bool HasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation);

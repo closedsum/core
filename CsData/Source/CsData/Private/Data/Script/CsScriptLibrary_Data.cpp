@@ -21,6 +21,7 @@ namespace NCsScriptLibraryData
 		{
 			// ICsScriptData
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Data, Script_Load);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Data, Script_LoadByPath);
 		}
 	}
 }
@@ -35,7 +36,6 @@ UCsScriptLibrary_Data::UCsScriptLibrary_Data(const FObjectInitializer& ObjectIni
 #define USING_NS_CACHED using namespace NCsScriptLibraryData::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryData::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define DataLibrary NCsData::FLibrary
 
 // ICsScriptData
 #pragma region
@@ -44,11 +44,17 @@ bool UCsScriptLibrary_Data::Script_Load(const FString& Context, UObject* Object,
 {
 	CONDITIONAL_SET_CTXT(Script_Load);
 
-	return DataLibrary::SafeScript_Load(Ctxt, Object, LoadFlags, OutSuccess);
+	return CsDataLibrary::SafeScript_Load(Ctxt, Object, LoadFlags, OutSuccess);
+}
+
+UObject* UCsScriptLibrary_Data::Script_LoadByPath(const FString& Context, const FString& Path, const int32& LoadFlags, bool& OutSuccess)
+{
+	CONDITIONAL_SET_CTXT(Script_Load);
+
+	return CsDataLibrary::SafeScript_Load(Ctxt, Path, LoadFlags, OutSuccess);
 }
 
 #pragma endregion ICsScriptData
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef DataLibrary

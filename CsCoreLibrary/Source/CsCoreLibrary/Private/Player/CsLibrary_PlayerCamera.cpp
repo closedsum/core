@@ -19,7 +19,6 @@ namespace NCsPlayer
 	namespace NCamera
 	{
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 
 		bool FLibrary::IsValidChecked(const FString& Context, const FViewTargetTransitionParams& TransitionParams)
 		{
@@ -68,7 +67,7 @@ namespace NCsPlayer
 
 		APlayerCameraManager* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
-			APlayerController* PC = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
+			APlayerController* PC = CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 
 			checkf(PC->PlayerCameraManager, TEXT("%s: Player Controller: %s has NO Player Camera Manager."), *Context, *(PC->GetName()));
 			return PC->PlayerCameraManager;
@@ -76,7 +75,7 @@ namespace NCsPlayer
 
 		APlayerCameraManager* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
 		{
-			if (APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId))
+			if (APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId))
 			{
 				if (!PC->PlayerCameraManager)
 				{
@@ -589,7 +588,6 @@ namespace NCsPlayer
 		#pragma endregion View
 
 		#undef LogLevel
-		#undef PCLocalLibrary
 
 		namespace NLocal
 		{

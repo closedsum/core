@@ -1380,7 +1380,7 @@ namespace NCsActor
 	// Spawn
 	#pragma region
 
-	AActor* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
+	AActor* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path, LogLevel)
 	{
 		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
@@ -1401,7 +1401,7 @@ namespace NCsActor
 		return Actor;
 	}
 
-	AActor* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FString& Path, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
+	AActor* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FString& Path, LogLevel)
 	{
 		FSoftObjectPath SoftPath(Path);
 
@@ -1410,6 +1410,24 @@ namespace NCsActor
 			SoftPath = FSoftObjectPath(Path + NCsActor::NLibrary::NCached::Str::_C);
 		}
 		return SafeSpawn(Context, WorldContext, SoftPath, Log);
+	}
+
+	AActor* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, LogLevel)
+	{
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
+
+		if (!World)
+			return nullptr;
+
+		CS_IS_SUBCLASS_OF_NULL_RET_NULL(ActorClass, AActor)
+
+		AActor* Actor = World->SpawnActor<AActor>(ActorClass);
+
+		if (!Actor)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to Spawn Actor with Class: %s."), *Context, *(ActorClass->GetName())));
+		}
+		return Actor;
 	}
 
 	#pragma endregion Spawn

@@ -39,7 +39,6 @@ namespace NCsInput
 		#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsInput::FLog::Warning*/
-		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 
 		// Get
 		#pragma region
@@ -194,12 +193,12 @@ namespace NCsInput
 
 		ICsManager_Input* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
-			return GetChecked(Context, PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId));
+			return GetChecked(Context, CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId));
 		}
 
 		ICsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
 		{
-			APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+			APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
 			if (!PC)
 				return nullptr;
@@ -208,11 +207,10 @@ namespace NCsInput
 
 		ICsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, LogLevel)
 		{
-			APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, OutSuccess, Log);
+			APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, OutSuccess, Log);
 
 			if (!PC)
 				return nullptr;
-
 			return GetSafe(Context, PC, OutSuccess, Log);
 		}
 
@@ -327,7 +325,7 @@ namespace NCsInput
 
 			TArray<APlayerController*> PlayerControllers;
 
-			PCLocalLibrary::GetAll(WorldContext, PlayerControllers);
+			CsPCLocalLibrary::GetAll(WorldContext, PlayerControllers);
 
 			int32 Count = 0;
 
@@ -361,7 +359,7 @@ namespace NCsInput
 		{
 			TArray<APlayerController*> PlayerControllers;
 
-			PCLocalLibrary::GetAll(WorldContext, PlayerControllers);
+			CsPCLocalLibrary::GetAll(WorldContext, PlayerControllers);
 
 			int32 Count = 0;
 
@@ -392,7 +390,6 @@ namespace NCsInput
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 		#undef LogLevel
-		#undef PCLocalLibrary
 
 		namespace NInputActionMap
 		{
@@ -414,7 +411,6 @@ namespace NCsInput
 			#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
 			#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-			#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 
 			// Set
 			#pragma region
@@ -506,7 +502,7 @@ namespace NCsInput
 			{
 				TArray<APlayerController*> PlayerControllers;
 
-				PCLocalLibrary::GetAllChecked(Context, World, PlayerControllers);
+				CsPCLocalLibrary::GetAllChecked(Context, World, PlayerControllers);
 
 				for (APlayerController* PC : PlayerControllers)
 				{
@@ -518,7 +514,7 @@ namespace NCsInput
 			{
 				TArray<APlayerController*> PlayerControllers;
 
-				PCLocalLibrary::GetAllChecked(Context, WorldContext, PlayerControllers);
+				CsPCLocalLibrary::GetAllChecked(Context, WorldContext, PlayerControllers);
 
 				for (APlayerController* PC : PlayerControllers)
 				{
@@ -528,14 +524,14 @@ namespace NCsInput
 
 			void FLibrary::SetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map)
 			{
-				APlayerController* PC = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
+				APlayerController* PC = CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 
 				SetChecked(Context, PC, Map);
 			}
 
 			bool FLibrary::SetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map, LogLevel)
 			{
-				APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
 				return SetSafe(Context, PC, Map);
 			}
@@ -655,14 +651,14 @@ namespace NCsInput
 
 			void FLibrary::ClearChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map)
 			{
-				APlayerController* PC = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
+				APlayerController* PC = CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 
 				ClearChecked(Context, PC, Map);
 			}
 
 			bool FLibrary::SafeClear(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map, LogLevel)
 			{
-				APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
 				return SafeClear(Context, PC, Map, Log);
 			}
@@ -671,7 +667,7 @@ namespace NCsInput
 			{
 				TArray<APlayerController*> PlayerControllers;
 
-				PCLocalLibrary::GetAllChecked(Context, World, PlayerControllers);
+				CsPCLocalLibrary::GetAllChecked(Context, World, PlayerControllers);
 
 				for (APlayerController* PC : PlayerControllers)
 				{
@@ -683,7 +679,7 @@ namespace NCsInput
 			{
 				TArray<APlayerController*> PlayerControllers;
 
-				PCLocalLibrary::GetAllChecked(Context, WorldContext, PlayerControllers);
+				CsPCLocalLibrary::GetAllChecked(Context, WorldContext, PlayerControllers);
 
 				for (APlayerController* PC : PlayerControllers)
 				{
@@ -693,7 +689,7 @@ namespace NCsInput
 
 			void FLibrary::ClearChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const int32& Map)
 			{
-				APlayerController* PC = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
+				APlayerController* PC = CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 
 				ClearChecked(Context, PC, Map);
 			}
@@ -744,7 +740,7 @@ namespace NCsInput
 			{
 				TArray<APlayerController*> PlayerControllers;
 
-				PCLocalLibrary::GetAllChecked(Context, World, PlayerControllers);
+				CsPCLocalLibrary::GetAllChecked(Context, World, PlayerControllers);
 
 				for (APlayerController* PC : PlayerControllers)
 				{
@@ -756,7 +752,7 @@ namespace NCsInput
 			{
 				TArray<APlayerController*> PlayerControllers;
 
-				PCLocalLibrary::GetAllChecked(Context, WorldContext, PlayerControllers);
+				CsPCLocalLibrary::GetAllChecked(Context, WorldContext, PlayerControllers);
 
 				for (APlayerController* PC : PlayerControllers)
 				{
@@ -768,7 +764,7 @@ namespace NCsInput
 			{
 				TArray<APlayerController*> PlayerControllers;
 
-				if (PCLocalLibrary::GetSafeAll(Context, WorldContext, PlayerControllers, Log))
+				if (CsPCLocalLibrary::GetSafeAll(Context, WorldContext, PlayerControllers, Log))
 				{
 					for (APlayerController* PC : PlayerControllers)
 					{
@@ -786,14 +782,14 @@ namespace NCsInput
 
 			void FLibrary::ResetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 			{
-				APlayerController* PC = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
+				APlayerController* PC = CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 
 				ResetChecked(Context, PC);
 			}
 
 			bool FLibrary::SafeReset(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
 			{
-				APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
 				return SafeReset(Context, PC, Log);
 			}
@@ -803,7 +799,6 @@ namespace NCsInput
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel
-			#undef PCLocalLibrary
 		}
 
 		namespace NProfile

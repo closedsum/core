@@ -280,6 +280,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsCoreLibrary|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Path"))
 	static AActor* SpawnByStringPath(const FString& Context, const UObject* WorldContextObject, const FString& Path);
 
+	UFUNCTION(BlueprintCallable, Category = "CsCoreLibrary|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ActorClass"))
+	static AActor* Spawn(const FString& Context, const UObject* WorldContextObject, const TSubclassOf<AActor>& ActorClass);
+
 #pragma endregion Spawn
 
 // Distance

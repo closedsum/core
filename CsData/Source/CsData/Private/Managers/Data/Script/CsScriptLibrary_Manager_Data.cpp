@@ -49,7 +49,6 @@ UCsScriptLibrary_Manager_Data::UCsScriptLibrary_Manager_Data(const FObjectInitia
 #define USING_NS_CACHED using namespace NCsScriptLibraryManagerData::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerData::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define DataManagerLibrary NCsData::NManager::FLibrary
 
 // Get
 #pragma region
@@ -61,14 +60,14 @@ UObject* UCsScriptLibrary_Manager_Data::GetDataObject(const FString& Context, co
 {
 	CONDITIONAL_SET_CTXT(GetDataObject);
 
-	return DataManagerLibrary::GetSafeDataObject(Ctxt, WorldContextObject, EntryName);
+	return CsDataManagerLibrary::GetSafeDataObject(Ctxt, WorldContextObject, EntryName);
 }
 
 UObject* UCsScriptLibrary_Manager_Data::GetDataObjectByPath(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path)
 {
 	CONDITIONAL_SET_CTXT(GetDataObjectByPath);
 
-	return DataManagerLibrary::GetSafeDataObject(Ctxt, WorldContextObject, Path);
+	return CsDataManagerLibrary::GetSafeDataObject(Ctxt, WorldContextObject, Path);
 }
 
 #pragma endregion Data
@@ -80,7 +79,7 @@ UObject* UCsScriptLibrary_Manager_Data::GetScriptDataObject(const FString& Conte
 {
 	CONDITIONAL_SET_CTXT(GetScriptDataObject);
 
-	return DataManagerLibrary::GetSafeScriptDataObject(Ctxt, WorldContextObject, EntryName);
+	return CsDataManagerLibrary::GetSafeScriptDataObject(Ctxt, WorldContextObject, EntryName);
 }
 
 UObject* UCsScriptLibrary_Manager_Data::GetScriptDataObjectChecked(const FString& Context, const UObject* WorldContextObject, const FName& EntryName, bool& OutSuccess)
@@ -88,14 +87,14 @@ UObject* UCsScriptLibrary_Manager_Data::GetScriptDataObjectChecked(const FString
 	CONDITIONAL_SET_CTXT(GetScriptDataObjectChecked);
 
 	OutSuccess = true;
-	return CS_SCRIPT_GET_CHECKED(DataManagerLibrary::GetScriptDataObjectChecked(Ctxt, WorldContextObject, EntryName), DataManagerLibrary::GetSafeScriptDataObject(Ctxt, WorldContextObject, EntryName, OutSuccess));
+	return CS_SCRIPT_GET_CHECKED(CsDataManagerLibrary::GetScriptDataObjectChecked(Ctxt, WorldContextObject, EntryName), CsDataManagerLibrary::GetSafeScriptDataObject(Ctxt, WorldContextObject, EntryName, OutSuccess));
 }
 
 UObject* UCsScriptLibrary_Manager_Data::GetScriptDataObjectByPath(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path)
 {
 	CONDITIONAL_SET_CTXT(GetScriptDataObjectByPath);
 
-	return DataManagerLibrary::GetSafeScriptDataObject(Ctxt, WorldContextObject, Path);
+	return CsDataManagerLibrary::GetSafeScriptDataObject(Ctxt, WorldContextObject, Path);
 }
 
 UObject* UCsScriptLibrary_Manager_Data::GetScriptDataObjectByPathChecked(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path, bool& OutSuccess)
@@ -103,7 +102,7 @@ UObject* UCsScriptLibrary_Manager_Data::GetScriptDataObjectByPathChecked(const F
 	CONDITIONAL_SET_CTXT(GetScriptDataObjectByPathChecked);
 
 	OutSuccess = true;
-	return CS_SCRIPT_GET_CHECKED(DataManagerLibrary::GetScriptDataObjectChecked(Ctxt, WorldContextObject, Path), DataManagerLibrary::GetSafeScriptDataObject(Ctxt, WorldContextObject, Path, OutSuccess));
+	return CS_SCRIPT_GET_CHECKED(CsDataManagerLibrary::GetScriptDataObjectChecked(Ctxt, WorldContextObject, Path), CsDataManagerLibrary::GetSafeScriptDataObject(Ctxt, WorldContextObject, Path, OutSuccess));
 }
 
 #pragma endregion ScriptData
@@ -115,21 +114,21 @@ UDataTable* UCsScriptLibrary_Manager_Data::GetDataTable(const FString& Context, 
 {
 	CONDITIONAL_SET_CTXT(GetDataTable);
 
-	return DataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, EntryName);
+	return CsDataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, EntryName);
 }
 
 UDataTable* UCsScriptLibrary_Manager_Data::GetDataTableByPath(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path)
 {
 	CONDITIONAL_SET_CTXT(GetDataTableByPath);
 
-	return DataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, Path);
+	return CsDataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, Path);
 }
 
 UDataTable* UCsScriptLibrary_Manager_Data::GetDataTableBySoftObject(const FString& Context, const UObject* WorldContextObject, TSoftObjectPtr<UDataTable> SoftObject)
 {
 	CONDITIONAL_SET_CTXT(GetDataTableBySoftObject);
 
-	return DataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, SoftObject);
+	return CsDataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, SoftObject);
 }
 
 #pragma endregion DataTable
@@ -146,14 +145,14 @@ bool UCsScriptLibrary_Manager_Data::AddDataObject_Loaded(const FString& Context,
 {
 	CONDITIONAL_SET_CTXT(AddDataObject_Loaded);
 
-	return DataManagerLibrary::SafeAddDataObject_Loaded(Ctxt, WorldContextObject, EntryName, Data);
+	return CsDataManagerLibrary::SafeAddDataObject_Loaded(Ctxt, WorldContextObject, EntryName, Data);
 }
 
 bool UCsScriptLibrary_Manager_Data::RemoveDataCompositionObject_Loaded(const FString& Context, const UObject* WorldContextObject, const FName& DataName)
 {
 	CONDITIONAL_SET_CTXT(RemoveDataCompositionObject_Loaded);;
 
-	return DataManagerLibrary::SafeRemoveDataCompositionObject_Loaded(Ctxt, WorldContextObject, DataName);
+	return CsDataManagerLibrary::SafeRemoveDataCompositionObject_Loaded(Ctxt, WorldContextObject, DataName);
 }
 
 #pragma endregion Data
@@ -162,4 +161,3 @@ bool UCsScriptLibrary_Manager_Data::RemoveDataCompositionObject_Loaded(const FSt
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef DataManagerLibrary

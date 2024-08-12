@@ -712,7 +712,6 @@ namespace NCsPlayer
 	namespace NInput
 	{
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-		#define PCLocalLibrary NCsPlayer::NController::NLocal::FLibrary
 
 		UPlayerInput* FLibrary::GetFirstLocal(UWorld* World)
 		{
@@ -723,17 +722,16 @@ namespace NCsPlayer
 
 		UPlayerInput* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
-			APlayerController* PC	  = PCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
+			APlayerController* PC	  = CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId);
 			UPlayerInput* PlayerInput = PC->PlayerInput;
 
 			CS_IS_PTR_NULL_CHECKED(PlayerInput)
-
 			return PlayerInput;
 		}
 
 		UPlayerInput* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
 		{
-			if (APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log))
+			if (APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log))
 			{
 				UPlayerInput* PlayerInput = PC->PlayerInput;
 
@@ -746,19 +744,17 @@ namespace NCsPlayer
 
 		bool FLibrary::CanGetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
 		{
-			if (APlayerController* PC = PCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log))
+			if (APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log))
 			{
 				UPlayerInput* PlayerInput = PC->PlayerInput;
 
 				CS_IS_PTR_NULL(PlayerInput)
-
 				return true;
 			}
 			return false;
 		}
 
 		#undef LogLevel
-		#undef PCLocalLibrary
 	}
 	
 	namespace NHud

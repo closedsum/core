@@ -454,7 +454,6 @@ namespace NCsLevel
 			// Unload
 			#pragma region
 
-			#define LocalLibrary NCsLevel::NStreaming::NLocal::FLibrary
 			#define UnloadParamsType NCsLevel::NStreaming::NDynamic::NUnload::FParams
 
 			void FLibrary::UnloadChecked(const FString& Context, const UObject* WorldContext, const UnloadParamsType& Params)
@@ -501,7 +500,6 @@ namespace NCsLevel
 				}
 			}
 
-			#undef LocalLibrary
 			#undef UnloadParamsType
 
 			#pragma endregion Unload

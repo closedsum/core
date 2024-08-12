@@ -36,11 +36,10 @@ SkinDataType* FCsData_Skin_VisualPtr::Load(const FString& Context, const int32& 
 			IData->Load(LoadFlags);
 
 			typedef NCsData::IData DataType;
-			typedef NCsData::FLibrary DataLibrary;
 
 			if (DataType* Interface = IData->_getIData())
 			{
-				if (SkinDataType* SkinData = DataLibrary::GetSafeInterfaceChecked<SkinDataType>(Context, Interface))
+				if (SkinDataType* SkinData = CsDataLibrary::GetSafeInterfaceChecked<SkinDataType>(Context, Interface))
 				{
 					return SkinData;
 				}

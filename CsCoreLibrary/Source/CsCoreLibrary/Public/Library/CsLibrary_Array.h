@@ -427,6 +427,8 @@ namespace NCsArray
 	};
 }
 
+using CsArrayLibrary = NCsArray::FLibrary;
+
 // Assume const FString& Context has been defined
 #define CS_RESET_ARRAY_WITH_MAX_CHECKED(__Array, __Type, __Count, __Max) NCsArray::FLibrary::ResetChecked<__Type>(Context, __Array, __Count, __Max)
 // Assume const FString& Context has been defined

@@ -13,8 +13,6 @@ namespace NCsGameMode
 {
 	namespace NImpl
 	{
-		#define GameModeLibrary NCsGameMode::FLibrary
-
 		FString FLibrary::PrintGameModeAndClass(AGameModeBase* GameMode)
 		{
 			return FString::Printf(TEXT("GameMode: %s with Class: %s"), *(GameMode->GetName()), *(GameMode->GetClass()->GetName()));
@@ -27,7 +25,7 @@ namespace NCsGameMode
 
 		OnPostSeamlessTravelCompleteEventType& FLibrary::GetPostSeamlessTravel_OnComplete_EventChecked(const FString& Context, const UObject* WorldContext)
 		{
-			AGameModeBase* GameMode		 = GameModeLibrary::GetChecked(Context, WorldContext);
+			AGameModeBase* GameMode		 = CsGameModeLibrary::GetChecked(Context, WorldContext);
 			ICsGameMode_Event* Interface = CS_INTERFACE_CAST_CHECKED(GameMode, AGameModeBase, ICsGameMode_Event);
 
 			return Interface->GetPostSeamlessTravel_OnComplete_Event();
@@ -36,7 +34,5 @@ namespace NCsGameMode
 		#undef OnPostSeamlessTravelCompleteEventType
 
 		#pragma endregion ICsGameMode_Event
-
-		#undef GameModeLibrary
 	}
 }

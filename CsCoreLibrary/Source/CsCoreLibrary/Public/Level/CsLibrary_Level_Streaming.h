@@ -176,13 +176,17 @@ namespace NCsLevel
 			{
 			#define LogLevel void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
 
+			private:
+				
+				typedef NCsLevel::NStreaming::NLocal::FLibrary LocalLibrary;
+
 			// Is
 			#pragma region
 			public:
 
 				FORCEINLINE static bool SafeIs(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UWorld>& Level, LogLevel)
 				{
-					return !NCsLevel::NStreaming::NLocal::FLibrary::SafeIs(Context, WorldContext, Level, Log);
+					return !LocalLibrary::SafeIs(Context, WorldContext, Level, Log);
 				}
 
 			#pragma endregion Is
@@ -244,8 +248,10 @@ namespace NCsLevel
 	{
 		struct CSCORELIBRARY_API FLibrary final
 		{
-			#define LocalLibrary NCsLevel::NStreaming::NLocal::FLibrary
-			#define DynamicLibrary NCsLevel::NStreaming::NDynamic::FLibrary
+		private:
+
+			typedef NCsLevel::NStreaming::NLocal::FLibrary LocalLibrary;
+			typedef NCsLevel::NStreaming::NDynamic::FLibrary DynamicLibrary;
 
 			// Load
 			#pragma region
@@ -309,9 +315,10 @@ namespace NCsLevel
 				static const FName& GetPackageNameToLoadChecked(const FString& Context, ULevelStreaming* LevelStreaming);
 
 				static const TArray<AActor*>& GetActorsChecked(const FString& Context, ULevelStreaming* LevelStreaming);
-
-			#undef LocalLibrary
-			#undef DynamicLibrary
 		};
 	}
 }
+
+using CsLevelStreamingLibrary = NCsLevel::NStreaming::FLibrary;
+using CsLocalLevelStreamingLibrary = NCsLevel::NStreaming::NLocal::FLibrary;
+using CsLevelDyanmicStreamingLibrary = NCsLevel::NStreaming::NDynamic::FLibrary;

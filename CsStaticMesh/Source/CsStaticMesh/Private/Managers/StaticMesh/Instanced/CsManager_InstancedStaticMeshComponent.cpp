@@ -15,7 +15,7 @@
 #include "Managers/StaticMesh/Instanced/CsSettings_Manager_InstancedStaticMeshComponent.h"
 // Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/StaticMesh/Instanced/CsGetManagerInstancedStaticMeshComponent.h"
 // Component
 #include "Components/InstancedStaticMeshComponent.h"

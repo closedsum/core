@@ -37,7 +37,7 @@
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/Playback/CsGetManagerPlayback.h"
 #endif // #if WITH_EDITOR
 

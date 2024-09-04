@@ -27,7 +27,7 @@
 #include "Managers/SkeletalMesh/CsLibrary_Manager_SkeletalMeshActor.h"
 // Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/SkeletalMesh/CsGetManagerSkeletalMeshActor.h"
 #endif // #if WITH_EDITOR
 

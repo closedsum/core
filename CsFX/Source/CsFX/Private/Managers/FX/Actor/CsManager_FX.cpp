@@ -25,7 +25,7 @@
 #if WITH_EDITOR
 // Managers
 #include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/FX/Actor/CsGetManagerFX.h"
 #endif // #if WITH_EDITOR
 

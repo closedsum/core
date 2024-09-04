@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsManager_Singleton.h"
 // Get Singleton
 #include "Managers/Sound/CsGetManagerSound.h"
 

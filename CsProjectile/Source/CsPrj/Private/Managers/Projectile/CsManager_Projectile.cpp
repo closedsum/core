@@ -60,7 +60,7 @@
 #include "Library/CsLibrary_World.h"
 // Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/Projectile/CsGetManagerProjectile.h"
 #endif // #if WITH_EDITOR
 

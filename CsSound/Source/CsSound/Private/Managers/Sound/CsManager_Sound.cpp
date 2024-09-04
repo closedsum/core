@@ -31,7 +31,7 @@
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 // Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/Sound/CsGetManagerSound.h"
 #endif // #if WITH_EDITOR
 

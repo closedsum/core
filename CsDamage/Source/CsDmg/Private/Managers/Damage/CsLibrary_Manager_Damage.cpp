@@ -51,7 +51,6 @@ namespace NCsDamage
 		#define SET_CONTEXT(__FunctionName) using namespace NCsDamage::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 	#if WITH_EDITOR
-		#define WorldLibrary NCsWorld::FLibrary
 		#define GameStateLibrary NCsGameState::FLibrary
 	#endif // #if WITH_EDITOR
 
@@ -62,7 +61,7 @@ namespace NCsDamage
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* WorldContext)
 		{
-			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
 				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(WorldContext, UObject, ICsGetManagerSingleton);
 
@@ -73,7 +72,7 @@ namespace NCsDamage
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
-			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
 				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(WorldContext, UObject, ICsGetManagerSingleton))
 				{
@@ -562,7 +561,6 @@ namespace NCsDamage
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
 	#if WITH_EDITOR
-		#undef WorldLibrary
 		#undef GameStateLibrary
 	#endif // #if WITH_EDITOR
 

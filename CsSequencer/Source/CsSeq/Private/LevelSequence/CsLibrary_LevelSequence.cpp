@@ -47,11 +47,9 @@ namespace NCsLevelSequence
 		// Get
 		#pragma region
 
-		#define WorldLibrary NCsWorld::FLibrary
-
 		ALevelSequenceActor* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 		{
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 			CS_IS_NAME_NONE_CHECKED(Tag)
 
@@ -101,7 +99,7 @@ namespace NCsLevelSequence
 
 		ALevelSequenceActor* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 			if (!World)
 				return nullptr;
@@ -154,7 +152,7 @@ namespace NCsLevelSequence
 
 		ALevelSequenceActor* FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags)
 		{
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 			CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
 			CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
@@ -228,7 +226,7 @@ namespace NCsLevelSequence
 
 		ALevelSequenceActor* FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
 		{
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 			CS_IS_TARRAY_EMPTY_RET_NULL(Tags, FName)
 			CS_IS_TARRAY_ANY_NONE_RET_NULL(Tags)
@@ -302,7 +300,7 @@ namespace NCsLevelSequence
 
 		ALevelSequenceActor* FLibrary::GetByNameChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 			if (!World)
 				return nullptr;
@@ -327,7 +325,7 @@ namespace NCsLevelSequence
 
 		ALevelSequenceActor* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
 		{
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 			if (!World)
 				return nullptr;
@@ -367,7 +365,7 @@ namespace NCsLevelSequence
 		{
 		#if WITH_EDITOR
 
-			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 			checkf(!Label.IsEmpty(), TEXT("%s: Label is EMPTY."), *Context);
 
@@ -394,7 +392,7 @@ namespace NCsLevelSequence
 		ALevelSequenceActor* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
 		{
 		#if WITH_EDITOR
-			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
+			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
 			if (!World)
 				return nullptr;
@@ -433,8 +431,6 @@ namespace NCsLevelSequence
 
 			return GetSafeByLabel(Context, WorldContext, Label, nullptr);
 		}
-
-		#undef WorldLibrary
 
 		#pragma endregion Get
 

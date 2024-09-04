@@ -55,9 +55,7 @@ namespace NCsProjectile
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
-			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
 				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(WorldContext, UObject, ICsGetManagerSingleton);
 
@@ -71,9 +69,7 @@ namespace NCsProjectile
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
-			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
 				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(WorldContext, UObject, ICsGetManagerSingleton))
 				{

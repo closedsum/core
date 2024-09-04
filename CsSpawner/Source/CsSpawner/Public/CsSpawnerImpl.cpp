@@ -160,10 +160,8 @@ void ACsSpawnerImpl::Tick(float DeltaSeconds)
 bool ACsSpawnerImpl::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
-		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
+	if (CsWorldLibrary::IsPlayInEditor(GetWorld()) ||
+		CsWorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		return true;
 	}

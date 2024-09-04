@@ -90,9 +90,7 @@ namespace NCsFX
 		CS_IS_PENDING_KILL_CHECKED(WorldContext)
 		CS_IS_PTR_NULL_CHECKED(Collection)
 
-		typedef NCsWorld::FLibrary WorldLibrary;
-
-		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
 		UNiagaraParameterCollectionInstance* Instance = UNiagaraFunctionLibrary::GetNiagaraParameterCollection(World, Collection);
 		
@@ -1553,9 +1551,7 @@ namespace NCsFX
 		FNiagaraSystemInstance* SystemInstance = GetSystemInstanceChecked(Context, Component);
 
 	#if WITH_EDITOR
-		typedef NCsWorld::FLibrary WorldLibrary;
-
-		if (WorldLibrary::IsPlayInEditorOrEditorPreview(Component))
+		if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(Component))
 		{
 			// Do Nothing
 		}
@@ -1587,9 +1583,7 @@ namespace NCsFX
 		FNiagaraSystemInstance* SystemInstance = GetSystemInstanceChecked(Context, Component);
 
 	#if WITH_EDITOR
-		typedef NCsWorld::FLibrary WorldLibrary;
-		
-		if (WorldLibrary::IsPlayInEditorOrEditorPreview(Component))
+		if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(Component))
 		{
 			// Do Nothing
 		}

@@ -73,12 +73,10 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 	typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadImplType;
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
 	UWorld* CurrentWorld = MeshComp->GetWorld();
 
-	if (WorldLibrary::IsPlayInGame(CurrentWorld) ||
-		WorldLibrary::IsPlayInPIE(CurrentWorld))
+	if (CsWorldLibrary::IsPlayInGame(CurrentWorld) ||
+		CsWorldLibrary::IsPlayInPIE(CurrentWorld))
 	{
 		PooledPayloadImplType PooledPayload;
 		PooledPayload.Instigator = MeshComp;

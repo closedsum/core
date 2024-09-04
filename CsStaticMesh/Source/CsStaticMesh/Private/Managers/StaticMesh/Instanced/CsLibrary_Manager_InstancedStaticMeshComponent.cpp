@@ -39,7 +39,6 @@ namespace NCsStaticMesh
 				#define SET_CONTEXT(__FunctionName) using namespace NCsStaticMesh::NInstanced::NComponent::NManager::NLibrary::NCached; \
 					const FString& Context = Str::__FunctionName
 				#define LogLevel void(*Log)(const FString&) /*=&NCsStaticMesh::FLog::Warning*/
-				#define WorldLibrary NCsWorld::FLibrary
 				#define GameStateLibrary NCsGameState::FLibrary
 
 				// ContextRoot
@@ -47,7 +46,7 @@ namespace NCsStaticMesh
 
 				UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* WorldContext)
 				{
-					if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+					if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 					{
 						const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(WorldContext, UObject, ICsGetManagerSingleton);
 
@@ -58,7 +57,7 @@ namespace NCsStaticMesh
 
 				UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel)
 				{
-					if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+					if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 					{
 						if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(WorldContext, UObject, ICsGetManagerSingleton))
 						{
@@ -129,7 +128,6 @@ namespace NCsStaticMesh
 				#undef USING_NS_CACHED
 				#undef SET_CONTEXT
 				#undef LogLevel
-				#undef WorldLibrary
 				#undef GameStateLibrary
 			}
 		}

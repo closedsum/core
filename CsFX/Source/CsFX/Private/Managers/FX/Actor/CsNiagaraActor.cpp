@@ -38,9 +38,7 @@ void ACsNiagaraActor::PostRegisterAllComponents()
 bool ACsNiagaraActor::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(this))
 	{
 		return true;
 	}

@@ -125,10 +125,8 @@ void ACsSoundPooledImpl::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditor(GetWorld()) ||
-		WorldLibrary::IsPlayInEditorPreview(GetWorld()))
+	if (CsWorldLibrary::IsPlayInEditor(GetWorld()) ||
+		CsWorldLibrary::IsPlayInEditorPreview(GetWorld()))
 	{
 		ConstructCache();
 	}

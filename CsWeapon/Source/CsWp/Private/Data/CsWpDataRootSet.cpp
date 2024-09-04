@@ -144,9 +144,7 @@ UDataTable* FCsWpDataRootSet::GetSafeDataTable(const FString& Context, const UOb
 UDataTable* FCsWpDataRootSet::GetDataTableChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 	{
 		return GetDataTableChecked(Context, MemberType);
 	}
@@ -174,9 +172,7 @@ UDataTable* FCsWpDataRootSet::GetDataTableChecked(const FString& Context, const 
 uint8* FCsWpDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const
 {
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 	{
 		return GetDataTableRowChecked(Context, MemberType, RowName);
 	}
@@ -190,9 +186,7 @@ uint8* FCsWpDataRootSet::GetDataTableRowChecked(const FString& Context, const UO
 uint8* FCsWpDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const
 {
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 	{
 		return GetDataTableRowChecked(Context, MemberType, RowStruct, RowName);
 	}

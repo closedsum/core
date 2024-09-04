@@ -112,9 +112,7 @@ void ACsSkeletalMeshActorPooledImpl::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(this))
 	{
 		GetSkeletalMeshComponent()->SetComponentTickEnabled(false);
 

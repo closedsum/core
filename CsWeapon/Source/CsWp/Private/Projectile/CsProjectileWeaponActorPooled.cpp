@@ -327,9 +327,7 @@ void ACsProjectileWeaponActorPooled::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(this))
 	{
 		SkeletalMeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
 
@@ -657,9 +655,7 @@ void ACsProjectileWeaponActorPooled::StopFire()
 
 const UObject* ACsProjectileWeaponActorPooled::GetWorldContext() const
 {
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(this))
 	{
 		if (MyOwnerAsActor)
 		{

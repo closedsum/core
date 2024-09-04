@@ -324,9 +324,7 @@ void ACsProjectilePooledImpl::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(this))
 	{
 		CollisionComponent->OnComponentHit.AddDynamic(this, &ACsProjectilePooledImpl::OnHit);
 
@@ -362,9 +360,7 @@ void ACsProjectilePooledImpl::Tick(float DeltaSeconds)
 bool ACsProjectilePooledImpl::ShouldTickIfViewportsOnly() const
 {
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(this))
 	{
 		return true;
 	}
@@ -629,9 +625,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 		typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
 	#if WITH_EDITOR
-		typedef NCsWorld::FLibrary WorldLibrary;
-
-		if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+		if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(this))
 		{
 			CoroutineSchedulerLibrary::SafeEndAndInvalidate(Context, GetWorldContext(), NCsUpdateGroup::GameState, Launch_Delayed_Handle, nullptr);
 		}
@@ -711,9 +705,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	if (Variables)
 	{
 	#if WITH_EDITOR
-		typedef NCsWorld::FLibrary WorldLibrary;
-
-		if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+		if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(this))
 		{
 			VariablesLibrary::SafeDeallocate(Context, GetWorldContext(), Variables, nullptr);
 		}
@@ -1553,9 +1545,7 @@ FVector3f ACsProjectilePooledImpl::Tracking_GetDestination() const
 
 const UObject* ACsProjectilePooledImpl::GetWorldContext() const
 {
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(this))
 	{
 		return Cache->GetInstigator();
 	}

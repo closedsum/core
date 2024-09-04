@@ -66,7 +66,6 @@ ACsManager_InstancedStaticMeshComponent::ACsManager_InstancedStaticMeshComponent
 #define USING_NS_CACHED using namespace NCsManagerInstancedStaticMeshComponent::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerInstancedStaticMeshComponent::NCached; \
 	const FString& Context = Str::__FunctionName
-#define WorldLibrary NCsWorld::FLibrary
 
 // UObject Interface
 #pragma region
@@ -110,7 +109,7 @@ void ACsManager_InstancedStaticMeshComponent::BeginDestroy()
 
 	if (!Manager_ISMC)
 	{
-		UWorld* World = WorldLibrary::GetChecked(Context, InRoot);
+		UWorld* World = CsWorldLibrary::GetChecked(Context, InRoot);
 
 		Manager_ISMC = World->SpawnActor<ACsManager_InstancedStaticMeshComponent>(ManagerInstancedStaticMeshComponentClass, FTransform3d::Identity);
 
@@ -258,4 +257,3 @@ void ACsManager_InstancedStaticMeshComponent::SetMyRoot(UObject* InRoot)
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef WorldLibrary

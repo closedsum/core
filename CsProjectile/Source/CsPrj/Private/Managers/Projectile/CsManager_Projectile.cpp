@@ -459,9 +459,7 @@ void UCsManager_Projectile::SetupInternal()
 	UObject* ContextRoot = nullptr;
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 	{
 		// Do Nothing
 	}
@@ -517,9 +515,7 @@ void UCsManager_Projectile::SetupInternal()
 #endif // #if !UE_BUILD_SHIPPING
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 	{
 		Settings = FCsSettings_Manager_Projectile::GetEd();
 

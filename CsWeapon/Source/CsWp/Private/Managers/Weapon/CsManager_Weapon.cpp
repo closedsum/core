@@ -415,9 +415,7 @@ void UCsManager_Weapon::SetupInternal()
 	UObject* ContextRoot = nullptr;
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 	{
 		// Do Nothing
 	}
@@ -473,9 +471,7 @@ void UCsManager_Weapon::SetupInternal()
 
 
 #if WITH_EDITOR
-	typedef NCsWorld::FLibrary WorldLibrary;
-
-	if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+	if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 	{
 		Settings = FCsSettings_Manager_Weapon::GetEd();
 

@@ -270,9 +270,7 @@ UCsManager_Beam::UCsManager_Beam(const FObjectInitializer& ObjectInitializer)
 
 	const FString& Context = Str::GetFromWorldContextObject;
 
-	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
-
-	if (UObject* ContextRoot = BeamManagerLibrary::GetSafe(Context, WorldContextObject))
+	if (UObject* ContextRoot = CsBeamManagerLibrary::GetSafe(Context, WorldContextObject))
 	{
 		if (UCsManager_Beam* Manager = GetSafe(ContextRoot))
 			return Manager;

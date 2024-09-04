@@ -43,9 +43,7 @@ void UCsScriptLibrary_Manager_Beam::SetTypeMapKeyValue(const FString& Context, c
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetTypeMapKeyValue : Context;
 
-	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
-
-	BeamManagerLibrary::SafeSetAndAddTypeMapKeyValue(Context, WorldContextObject, Key, Value);
+	CsBeamManagerLibrary::SafeSetAndAddTypeMapKeyValue(Context, WorldContextObject, Key, Value);
 }
 
 #pragma endregion Settings
@@ -59,14 +57,12 @@ int32 UCsScriptLibrary_Manager_Beam::Spawn(const FString& Context, const UObject
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Spawn : Context;
 
-	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
-
 	// Check Payload is Valid
 	if (!Payload.IsValid(Ctxt))
 		return INDEX_NONE;
 
 	// Try to allocate a native payload
-	UCsManager_Beam* Manager_Beam = BeamManagerLibrary::GetSafe(Ctxt, WorldContextObject);
+	UCsManager_Beam* Manager_Beam = CsBeamManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
 	if (!Manager_Beam)
 		return INDEX_NONE;

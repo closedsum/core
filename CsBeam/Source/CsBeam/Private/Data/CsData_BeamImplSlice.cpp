@@ -49,11 +49,10 @@ SliceType* FCsData_BeamImplSlice::SafeConstruct_Internal(const FString& Context,
 		return nullptr;
 
 	#define DataHandlerType NCsData::NManager::NHandler::TData
-	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
 	typedef NCsBeam::NData::IData DataType;
 	typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
 	
-	DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = BeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = CsBeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 	
 	#undef DataHandlerType
 
@@ -164,11 +163,10 @@ namespace NCsBeam
 		/*static*/ FImplSlice* FImplSlice::SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& DataName, void(*Log)(const FString&) /*=&FCLog::Warning*/)
 		{
 			#define DataHandlerType NCsData::NManager::NHandler::TData
-			typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
 			typedef NCsBeam::NData::IData DataType;
 			typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
 	
-			DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = BeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+			DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = CsBeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 	
 			#undef DataHandlerType
 

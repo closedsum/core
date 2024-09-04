@@ -228,10 +228,8 @@ void ACsBeamActorPooledImpl::SetType(const FECsBeam& InType)
 	{
 		Type = InType;
 
-		typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
-
 		// Get Data associated with Type
-		Data = BeamManagerLibrary::GetDataChecked(Context, this, Type);
+		Data = CsBeamManagerLibrary::GetDataChecked(Context, this, Type);
 	}
 }
 
@@ -295,9 +293,7 @@ void ACsBeamActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	// Get Data associated with Type
 	// TODO: FUTURE: Add to list of preserved changes
-	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
-
-	Data = BeamManagerLibrary::GetDataChecked(Context, this, Type);
+	Data = CsBeamManagerLibrary::GetDataChecked(Context, this, Type);
 
 	// Cache collision related data
 	typedef NCsBeam::NData::FLibrary BeamDataLibrary;

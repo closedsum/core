@@ -45,11 +45,10 @@ SliceType* FCsData_Beam_VisualImpactImplSlice::AddSafeSliceAsValue(const FString
 SliceType* FCsData_Beam_VisualImpactImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCLog::Warning*/) const
 {
 	#define DataHandlerType NCsData::NManager::NHandler::TData
-	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
 	typedef NCsBeam::NData::IData DataType;
 	typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
 	
-	DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = BeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = CsBeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 	
 	#undef DataHandlerType
 
@@ -149,11 +148,10 @@ namespace NCsBeam
 					CS_IS_PTR_NULL_RET_NULL(Object)
 
 					#define DataHandlerType NCsData::NManager::NHandler::TData
-					typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
 					typedef NCsBeam::NData::IData DataType;
 					typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
 
-					DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = BeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+					DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = CsBeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 				
 					#undef DataHandlerType
 

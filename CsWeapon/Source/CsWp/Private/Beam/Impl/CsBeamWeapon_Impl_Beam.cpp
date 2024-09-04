@@ -101,9 +101,7 @@ namespace NCsWeapon
 
 				FImpl::~FImpl()
 				{
-					typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
-
-					if (UCsManager_Beam* Manager_Beam = BeamManagerLibrary::GetSafe(Outer))
+					if (UCsManager_Beam* Manager_Beam = CsBeamManagerLibrary::GetSafe(Outer))
 					{
 						for (ICsBeam* Beam : Beams)
 						{
@@ -427,10 +425,9 @@ namespace NCsWeapon
 						const FVector3f Direction = GetDirection(Location);
 					}
 
-					typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
 					typedef NCsBeam::NPayload::FImpl PayloadType;
 
-					UCsManager_Beam* Manager_Beam = BeamManagerLibrary::GetChecked(Context, Outer);
+					UCsManager_Beam* Manager_Beam = CsBeamManagerLibrary::GetChecked(Context, Outer);
 
 					const FECsBeam& Type = GetBeamType->GetBeamType();
 					PayloadType* Payload	 = Manager_Beam->AllocatePayload<PayloadType>(Context, Type);

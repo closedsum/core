@@ -209,3 +209,5 @@ namespace NCsBeam
 		};
 	}
 }
+
+using CsBeamManagerLibrary = NCsBeam::NManager::FLibrary;

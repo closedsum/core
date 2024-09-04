@@ -8,6 +8,8 @@
 // Beam
 #include "Managers/Beam/Handler/CsManager_Beam_DataHandler.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Data_Beam)
+
 // Cached
 #pragma region
 

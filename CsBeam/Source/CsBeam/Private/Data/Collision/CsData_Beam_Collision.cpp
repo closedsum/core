@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Collision/CsData_Beam_Collision.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Beam_Collision)
+
 const FName NCsBeam::NData::NCollision::ICollision::Name = FName("NCsBeam::NData::NCollision::ICollision");
 
 const FName ICsData_Beam_Collision::Name = FName("ICsData_Beam_Collision");

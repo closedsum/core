@@ -10,6 +10,8 @@
 // Beam
 #include "Managers/Beam/Handler/CsManager_Beam_DataHandler.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Beam_VisualStaticMeshImplSlice)
+
 #define SliceType NCsBeam::NData::NVisual::NStaticMesh::FImplSlice
 
 SliceType* FCsData_Beam_VisualStaticMeshImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)

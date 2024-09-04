@@ -9,6 +9,8 @@
 // Trace
 #include "Managers/Trace/CsTraceRequest.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsBeam_CollisionShape)
+
 // BeamCollisionShapeLength
 #pragma region
 

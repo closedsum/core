@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsGetSettingsManagerBeamPoolParams.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetSettingsManagerBeamPoolParams)
+
 UCsGetSettingsManagerBeamPoolParams::UCsGetSettingsManagerBeamPoolParams(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

@@ -14,6 +14,8 @@
 // Engine
 #include "Engine/DataTable.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Beam_VisualImpactImplSlice)
+
 #define SliceType NCsBeam::NData::NVisual::NImpact::FImplSlice
 
 SliceType* FCsData_Beam_VisualImpactImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)

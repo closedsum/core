@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Shape/CsData_Beam_ShapeLine.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Beam_ShapeLine)
+
 const FName NCsBeam::NData::NShape::ILine::Name = FName("NCsBeam::NData::NShape::ILine");
 
 const FName ICsData_Beam_ShapeLine::Name = FName("ICsData_Beam_ShapeLine");

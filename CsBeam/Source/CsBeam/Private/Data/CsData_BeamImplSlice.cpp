@@ -11,6 +11,8 @@
 // Beam
 #include "Managers/Beam/Handler/CsManager_Beam_DataHandler.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_BeamImplSlice)
+
 #define SliceType NCsBeam::NData::FImplSlice
 
 SliceType* FCsData_BeamImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)

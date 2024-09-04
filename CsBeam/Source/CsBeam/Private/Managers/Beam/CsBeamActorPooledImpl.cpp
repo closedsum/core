@@ -63,6 +63,8 @@
 // Physics
 #include "PhysicalMaterials/PhysicalMaterial.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsBeamActorPooledImpl)
+
 //#define CS_COLLISION_PROJECTILE	ECC_GameTraceChannel2
 
 // Cached

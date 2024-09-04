@@ -10,6 +10,8 @@
 #include "Utility/CsBeamPopulateEnumMapFromSettings.h"
 #include "Utility/CsBeamLog.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Beam)
+
 // Beam
 #pragma region
 

@@ -10,6 +10,8 @@
 // Beam
 #include "Payload/CsPayload_BeamImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Beam)
+
 // Cached
 #pragma region
 

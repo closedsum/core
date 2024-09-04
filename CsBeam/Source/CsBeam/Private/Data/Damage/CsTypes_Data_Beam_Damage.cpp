@@ -6,6 +6,8 @@
 #include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"
 #include "Managers/Damage/Data/Shape/Sphere/CsData_DamageSphereImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Data_Beam_Damage)
+
 // FCsBeamData_DamagePoint
 #pragma region
 

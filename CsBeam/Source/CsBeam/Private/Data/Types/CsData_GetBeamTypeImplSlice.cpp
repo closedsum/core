@@ -6,6 +6,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_GetBeamTypeImplSlice)
+
 #define SliceType NCsBeam::NData::NType::FImplSlice
 
 void FCsData_GetBeamTypeImplSlice::CopyToSlice(SliceType* Slice)

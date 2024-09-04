@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Shape/CsData_Beam_Shape.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Beam_Shape)
+
 const FName NCsBeam::NData::NShape::IShape::Name = FName("NCsBeam::NData::NShape::IShape");
 
 const FName ICsData_Beam_Shape::Name = FName("ICsData_Beam_Shape");

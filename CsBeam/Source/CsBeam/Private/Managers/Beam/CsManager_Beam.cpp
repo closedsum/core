@@ -46,6 +46,8 @@
 #include "Managers/Beam/CsGetManagerBeam.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Beam)
+
 // Cached
 #pragma region
 

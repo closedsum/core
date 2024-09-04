@@ -17,7 +17,7 @@
 #include "Library/CsLibrary_World.h"
 #include "Game/CsLibrary_GameState.h"
 // Managers
-#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
 #endif // #if WITH_EDITOR
 
 namespace NCsStaticMeshActor

@@ -37,7 +37,7 @@
 
 #if WITH_EDITOR
 // Singleton
-#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
 #include "Singleton/CsManager_Singleton.h"
 #include "Managers/Damage/CsGetManagerDamage.h"
 #endif // #if WITH_EDITOR

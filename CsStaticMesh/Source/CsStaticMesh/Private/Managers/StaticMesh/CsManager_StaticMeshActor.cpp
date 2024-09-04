@@ -24,7 +24,7 @@
 // Library
 #include "Managers/StaticMesh/CsLibrary_Manager_StaticMeshActor.h"
 // Singleton
-#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
 #include "Singleton/CsManager_Singleton.h"
 #include "Managers/StaticMesh/CsGetManagerStaticMeshActor.h"
 #endif // #if WITH_EDITOR

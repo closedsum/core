@@ -16,7 +16,7 @@
 #include "Game/CsLibrary_GameState.h"
 #include "Library/CsLibrary_World.h"
 // Managers
-#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
 #endif // #if WITH_EDITOR
 
 namespace NCsWeapon

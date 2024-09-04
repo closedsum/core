@@ -11,7 +11,7 @@
 #include "Game/CsLibrary_GameState.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
-#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
 #include "Managers/StaticMesh/Instanced/CsManager_InstancedStaticMeshComponent.h"
 
 namespace NCsStaticMesh

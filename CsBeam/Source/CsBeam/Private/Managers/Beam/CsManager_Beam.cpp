@@ -41,7 +41,7 @@
 // Library
 #include "Managers/Beam/CsLibrary_Manager_Beam.h"
 // Singleton
-#include "Managers/Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
 #include "Singleton/CsManager_Singleton.h"
 #include "Managers/Beam/CsGetManagerBeam.h"
 #endif // #if WITH_EDITOR

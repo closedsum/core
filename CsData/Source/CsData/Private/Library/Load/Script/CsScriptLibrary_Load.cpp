@@ -25,6 +25,8 @@ namespace NCsScriptLibraryLoad
 	}
 }
 
+void(*UCsScriptLibrary_Load::Log)(const FString&) = &NCsData::FLog::Warning;
+
 UCsScriptLibrary_Load::UCsScriptLibrary_Load(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -33,17 +35,14 @@ UCsScriptLibrary_Load::UCsScriptLibrary_Load(const FObjectInitializer& ObjectIni
 #define USING_NS_CACHED using namespace NCsScriptLibraryLoad::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryLoad::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define LogWarning void(*Log)(const FString&) = &NCsData::FLog::Warning
-#define LoadLibrary UCsLibrary_Load
 
 bool UCsScriptLibrary_Load::LoadObject(const FString& Context, UObject* Object, const int32& LoadFlags, const int32& LoadCodes)
 {
 	CONDITIONAL_SET_CTXT(LoadObject);
 
-	LogWarning;
 	CS_IS_PTR_NULL2(Object)
 
-	LoadLibrary::LoadStruct(Object, Object->GetClass(), LoadFlags, LoadCodes);
+	CsLoadLibrary::LoadStruct(Object, Object->GetClass(), LoadFlags, LoadCodes);
 	return true;
 }
 
@@ -51,25 +50,19 @@ UObject* UCsScriptLibrary_Load::LoadSoftClassPtr(const FString& Context, const T
 {
 	CONDITIONAL_SET_CTXT(LoadSoftClassPtr);
 
-	LogWarning;
 	// TODO: Add CS_IS_SOFT_CLASS_PTR_VALID_RET_NULL2
 	CS_IS_SOFT_CLASS_PTR_VALID_RET_NULL(SoftClass, UObject)
 
-	return LoadLibrary::LoadSoftClassPtrChecked(Context, SoftClass, LoadFlags, LoadCodes);
+	return CsLoadLibrary::LoadSoftClassPtrChecked(Context, SoftClass, LoadFlags, LoadCodes);
 }
 
 bool UCsScriptLibrary_Load::UnloadObject(const FString& Context, UObject* Object)
 {
 	CONDITIONAL_SET_CTXT(LoadObject);
 
-	LogWarning;
-	CS_IS_PTR_NULL2(Object)
-
-	LoadLibrary::UnloadStruct(Object, Object->GetClass());
+	CsLoadLibrary::UnloadStruct(Object, Object->GetClass());
 	return true;
 }
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef LogWarning
-#undef LoadLibrary

@@ -235,3 +235,5 @@ namespace NCsAnimMontage
 	#undef LogLevel
 	};
 }
+
+using CsAnimMontageLibrary = NCsAnimMontage::FLibrary;

@@ -21,13 +21,19 @@ namespace NCsScriptLibraryGameStateImpl
 	{
 		namespace Str
 		{
+			// ICsGameState_Startup
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameStateImpl, IsStartupComplete);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameStateImpl, IsStartupCompleteChecked);
+			// ICsGameState_Transition
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameStateImpl, HasFinishedTransitionOut);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameStateImpl, TransitionOut);
 		}
 	}
 }
 
 #pragma endregion Cached
+
+void(*UCsScriptLibrary_GameStateImpl::LogError)(const FString&) = &FCsLog::Error;
 
 UCsScriptLibrary_GameStateImpl::UCsScriptLibrary_GameStateImpl(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -38,7 +44,6 @@ UCsScriptLibrary_GameStateImpl::UCsScriptLibrary_GameStateImpl(const FObjectInit
 #define USING_NS_CACHED using namespace NCsScriptLibraryGameStateImpl::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryGameStateImpl::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define LogError &FCsLog::Error
 
 // ICsGameState_Startup
 #pragma region
@@ -60,7 +65,25 @@ bool CLASS_TYPE::IsStartupCompleteChecked(const FString& Context, const UObject*
 
 #pragma endregion ICsGameState_Startup
 
+// ICsGameState_Transition
+#pragma region
+
+bool CLASS_TYPE::HasFinishedTransitionOut(const FString& Context, const UObject* WorldContextObject)
+{
+	CONDITIONAL_SET_CTXT(HasFinishedTransitionOut);
+
+	return CsGameStateImplLibrary::SafeHasFinishedTransitionOut(Context, WorldContextObject);
+}
+
+bool CLASS_TYPE::TransitionOut(const FString& Context, const UObject* WorldContextObject)
+{
+	CONDITIONAL_SET_CTXT(TransitionOut);
+
+	return CsGameStateImplLibrary::SafeTransitionOut(Context, WorldContextObject);
+}
+
+#pragma endregion ICsGameState_Transition
+
 #undef CLASS_TYPE
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef LogError

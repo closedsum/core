@@ -6,6 +6,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Spawner)
+
 // FCsSettings_Manager_Spawner_Modifier
 #pragma region
 

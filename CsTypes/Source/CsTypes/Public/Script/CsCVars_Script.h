@@ -64,6 +64,7 @@ namespace NCsCVarToggle
 
 #define CS_SCRIPT_LIBRARY_CHECKED_3(__Fn) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__Fn##Checked(Ctxt); \
 	} \
 	else \
@@ -72,6 +73,7 @@ namespace NCsCVarToggle
 	}
 #define CS_SCRIPT_LIBRARY_CHECKED_4(__Fn, __P2) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__Fn##Checked(Ctxt, __P2); \
 	} \
 	else \
@@ -80,6 +82,7 @@ namespace NCsCVarToggle
 	}
 #define CS_SCRIPT_LIBRARY_CHECKED_5(__Fn, __P2, __P3) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__Fn##Checked(Ctxt, __P2, __P3); \
 	} \
 	else \
@@ -88,6 +91,7 @@ namespace NCsCVarToggle
 	}
 #define CS_SCRIPT_LIBRARY_CHECKED_6(__Fn, __P2, __P3, __P4) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__Fn##Checked(Ctxt, __P2, __P3, __P4); \
 	} \
 	else \
@@ -96,6 +100,7 @@ namespace NCsCVarToggle
 	}
 #define CS_SCRIPT_LIBRARY_CHECKED_7(__Fn, __P2, __P3, __P4, __P5) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__Fn##Checked(Ctxt, __P2, __P3, __P4, __P5); \
 	} \
 	else \
@@ -104,6 +109,7 @@ namespace NCsCVarToggle
 	}
 #define CS_SCRIPT_LIBRARY_CHECKED_8(__Fn, __P2, __P3, __P4, __P5, __P6) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__Fn##Checked(Ctxt, __P2, __P3, __P4, __P5, __P6); \
 	} \
 	else \
@@ -120,6 +126,7 @@ namespace NCsCVarToggle
 
 #define CS_SCRIPT_LIBRARY_CUSTOM_CHECKED_3(__FnChecked, __SafeFn) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__FnChecked(Ctxt); \
 	} \
 	else \
@@ -128,6 +135,7 @@ namespace NCsCVarToggle
 	}
 #define CS_SCRIPT_LIBRARY_CUSTOM_CHECKED_4(__FnChecked, __SafeFn, __P2) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__FnChecked(Ctxt, __P2); \
 	} \
 	else \
@@ -136,6 +144,7 @@ namespace NCsCVarToggle
 	}
 #define CS_SCRIPT_LIBRARY_CUSTOM_CHECKED_5(__FnChecked, __SafeFn, __P2, __P3) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__FnChecked(Ctxt, __P2, __P3); \
 	} \
 	else \
@@ -144,6 +153,7 @@ namespace NCsCVarToggle
 	}
 #define CS_SCRIPT_LIBRARY_CUSTOM_CHECKED_6(__FnChecked, __SafeFn, __P2, __P3, __P4) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__FnChecked(Ctxt, __P2, __P3, __P4); \
 	} \
 	else \
@@ -152,6 +162,7 @@ namespace NCsCVarToggle
 	}
 #define CS_SCRIPT_LIBRARY_CUSTOM_CHECKED_7(__FnChecked, __SafeFn, __P2, __P3, __P4, __P5) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__FnChecked(Ctxt, __P2, __P3, __P4, __P5); \
 	} \
 	else \
@@ -160,6 +171,7 @@ namespace NCsCVarToggle
 	}
 #define CS_SCRIPT_LIBRARY_CUSTOM_CHECKED_8(__FnChecked, __SafeFn, __P2, __P3, __P4, __P5, __P6) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
+		OutSuccess = true; \
 		NativeLibrary::__FnChecked(Ctxt, __P2, __P3, __P4, __P5, __P6); \
 	} \
 	else \

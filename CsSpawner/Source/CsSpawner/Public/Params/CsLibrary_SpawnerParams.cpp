@@ -61,7 +61,7 @@ namespace NCsSpawner
 			return true;
 		}
 		
-		bool FLibrary::IsValid(const FString& Context, const ParamsType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::IsValid(const FString& Context, const ParamsType* Params, void(*Log)(const FString&) /*=&NCsSpawner::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(Params)
 

@@ -6,7 +6,7 @@
 // Interfaces
 //#include "ICsMenu.h"
 // Types
-#include "ConsoleCommand/CsTypes_ConsoleCommand.h"
+#include "CsTypes_ConsoleCommand.h"
 
 #include "CsWidget_ConsoleCommand.generated.h"
 

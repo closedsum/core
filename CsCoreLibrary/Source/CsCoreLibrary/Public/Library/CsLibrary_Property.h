@@ -43,6 +43,9 @@ namespace NCsProperty
 
 	struct CSCORELIBRARY_API FLibrary
 	{
+	#define USING_NS_CACHED using namespace NCsProperty::NLibrary::NCached;
+	#define SET_CONTEXT(__FunctionName) using namespace NCsProperty::NLibrary::NCached; \
+		const FString& Context = Str::__FunctionName
 	#define LogLevel void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
 
 	public:
@@ -1758,29 +1761,41 @@ namespace NCsProperty
 		* Get the UObject value of type: T for the Property with name: PropertyName from StructValue.
 		*
 		* @param Context		The calling context.
-		* @param StructValue
-		* @param Struct
-		* @param PropertyName
-		* @param Log
+		* @param StructValue	Pointer an object that is recognized by Unreal's reflection.
+		* @param Struct			The Unreal Class or Struct associated with StructValue.
+		* @param PropertyName	The Member Name of the Property.
+		* @param Log			(optional)
+		* @param OutSuccess		(out) Whether this process executed successfully or not.
 		* return				UObject.
 		*/
-		static UObject* GetObjectPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, LogLevel);
+		static UObject* GetObjectPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, bool& OutSuccess, LogLevel);
+		FORCEINLINE static UObject* GetObjectPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, LogLevel)
+		{
+			bool OutSuccess = false;
+			return GetObjectPropertyValue(Context, StructValue, Struct, PropertyName, OutSuccess, Log);
+		}
 
 		/**
 		* Get the UObject value of type: T for the Property with name: PropertyName from StructValue.
 		*
-		* @param StructValue
-		* @param Struct
-		* @param PropertyName
+		* @param StructValue	Pointer an object that is recognized by Unreal's reflection.
+		* @param Struct			The Unreal Class or Struct associated with StructValue.
+		* @param PropertyName	The Member Name of the Property.
+		* @param OutSuccess		(out) Whether this process executed successfully or not.
 		* return				UObject.
 		*/
+		FORCEINLINE static UObject* GetObjectPropertyValue(void* StructValue, UStruct* const& Struct, const FName& PropertyName, bool& OutSuccess)
+		{
+			SET_CONTEXT(GetObjectPropertyValue);
+
+			return GetObjectPropertyValue(Context, StructValue, Struct, PropertyName, OutSuccess, nullptr);
+		}
 		FORCEINLINE static UObject* GetObjectPropertyValue(void* StructValue, UStruct* const& Struct, const FName& PropertyName)
 		{
-			using namespace NCsProperty::NLibrary::NCached;
+			SET_CONTEXT(GetObjectPropertyValue);
 
-			const FString& Context = Str::GetObjectPropertyValue;
-
-			return GetObjectPropertyValue(Context, StructValue, Struct, PropertyName, nullptr);
+			bool OutSuccess = false;
+			return GetObjectPropertyValue(Context, StructValue, Struct, PropertyName, OutSuccess, nullptr);
 		}
 
 		/**
@@ -2528,6 +2543,8 @@ namespace NCsProperty
 
 	#endif // #if WITH_EDITOR
 
+	#undef USING_NS_CACHED
+	#undef SET_CONTEXT
 	#undef LogLevel
 	};
 }

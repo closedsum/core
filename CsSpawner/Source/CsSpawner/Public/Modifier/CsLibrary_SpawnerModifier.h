@@ -8,7 +8,7 @@
 #include "Modifier/CsSpawnerModifier.h"
 #include "Modifier/CsAllocated_SpawnerModifier.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsSpawnerLog.h"
 
 namespace NCsSpawner
 {
@@ -21,11 +21,13 @@ namespace NCsSpawner
 		*/
 		struct CSSPAWNER_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
 		{
+		#define LogLevel void(*Log)(const FString&) = &NCsSpawner::FLog::Warning
+
 		public:
 
 			static bool IsValidChecked(const FString& Context, const ModifierType* Modifier);
 
-			static bool IsValid(const FString& Context, const ModifierType* Modifier, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool IsValid(const FString& Context, const ModifierType* Modifier, LogLevel);
 
 		#define AllocatedModifierType NCsSpawner::NModifier::FAllocated
 
@@ -36,8 +38,12 @@ namespace NCsSpawner
 			static float ModifyFloatChecked(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsSpawnerModifier& Type, const float& Value);
 
 		#undef AllocatedModifierType
+
+		#undef LogLevel
 		};
 
 	#undef ModifierType
 	}
 }
+
+using CsSpawnerModifierLibrary = NCsSpawner::NModifier::FLibrary;

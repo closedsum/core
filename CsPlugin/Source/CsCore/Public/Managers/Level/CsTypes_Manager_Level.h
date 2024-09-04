@@ -57,12 +57,36 @@ namespace NCsLevel
 				{
 				}
 
-				static FParams Make(const FCsManagerLevel_ChangeMapParams& Params)
+				FParams(FParams& B)
+				{
+					Copy(B);
+				}
+
+				FParams(const FParams& B)
+				{
+					Copy(B);
+				}
+
+				FORCEINLINE void Copy(const FParams& B)
+				{
+					Map					     = B.Map;
+					TransitionMap			 = B.TransitionMap;
+					bTransitionAsDestination = B.bTransitionAsDestination;
+				}
+
+				FORCEINLINE void Copy(FParams& B)
+				{
+					Map					     = B.Map;
+					TransitionMap			 = B.TransitionMap;
+					bTransitionAsDestination = B.bTransitionAsDestination;
+				}
+
+				FORCEINLINE static FParams Make(const FCsManagerLevel_ChangeMapParams& B)
 				{
 					FParams P;
-					P.Map					   = Params.Map;
-					P.TransitionMap			   = Params.TransitionMap;
-					P.bTransitionAsDestination = Params.bTransitionAsDestination;
+					P.Map					   = B.Map;
+					P.TransitionMap			   = B.TransitionMap;
+					P.bTransitionAsDestination = B.bTransitionAsDestination;
 					return P;
 				}
 

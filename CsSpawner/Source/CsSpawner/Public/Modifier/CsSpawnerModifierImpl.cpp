@@ -11,6 +11,8 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSpawnerModifierImpl)
+
 // FCsSpawnerModifier_Int
 #pragma region
 

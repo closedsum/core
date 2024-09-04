@@ -335,3 +335,5 @@ namespace NCsFade
 		};
 	}
 }
+
+using CsFadeManagerLibrary = NCsFade::NManager::FLibrary;

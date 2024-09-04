@@ -25,8 +25,7 @@ public class CsSeq : ModuleRules
                     "CsStructOps",
                     "CsValid",
                     "CsTypes",
-                    "CsCoreLibrary",
-                    "CsCore"
+                    "CsCoreLibrary"
                 }
             );
 

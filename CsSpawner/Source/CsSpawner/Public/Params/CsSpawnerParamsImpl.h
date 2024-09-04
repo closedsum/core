@@ -47,7 +47,7 @@ public:
 #undef ParamsType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
@@ -124,7 +124,7 @@ namespace NCsSpawner
 
 			bool IsValidChecked(const FString& Context) const;
 			static bool IsValidChecked(const FString& Context, ParamsType* Params);
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 
 		#undef CountParamsType
 		#undef FrequencyParamsType

@@ -31,3 +31,5 @@ namespace NCsGameMode
 		};
 	}
 }
+
+using CsGameModeImplLibrary = NCsGameMode::NImpl::FLibrary;

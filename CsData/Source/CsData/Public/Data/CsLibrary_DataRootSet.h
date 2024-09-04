@@ -330,3 +330,5 @@ namespace NCsDataRootSet
 	#undef MemberType
 	};
 }
+
+using CsDataRootSetLibrary = NCsDataRootSet::FLibrary;

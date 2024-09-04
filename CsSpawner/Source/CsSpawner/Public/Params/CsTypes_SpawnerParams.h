@@ -6,7 +6,7 @@
 #include "CsMacro_Proxy.h"
 #include "Types/Enum/CsEnumMap.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsSpawnerLog.h"
 
 #include "CsTypes_SpawnerParams.generated.h"
 
@@ -46,7 +46,7 @@ public:
 #undef ParamsType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 };
 
 namespace NCsSpawner
@@ -85,7 +85,7 @@ namespace NCsSpawner
 			}
 
 			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 		};
 	}
 }
@@ -269,7 +269,7 @@ public:
 #undef ParamsType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 
 	float CalculateTotalTime() const;
 
@@ -354,7 +354,7 @@ namespace NCsSpawner
 			}
 
 			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 
 			float CalculateTotalTime() const;
 

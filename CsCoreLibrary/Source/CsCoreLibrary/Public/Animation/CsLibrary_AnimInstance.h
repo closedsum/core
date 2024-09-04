@@ -98,3 +98,5 @@ namespace NCsAnimInstance
 	#undef LogLevel
 	};
 }
+
+using CsAnimInstanceLibrary = NCsAnimInstance::FLibrary;

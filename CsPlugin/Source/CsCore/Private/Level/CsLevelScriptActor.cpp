@@ -215,7 +215,7 @@ void ACsLevelScriptActor::PopulatePayload(ULevel* Level)
 
 	// Get DataTables
 	TMap<FName, UDataTable*> OutDataTableMap;
-	UCsLibrary_Load::GetDataTables(Level, OutDataTableMap);
+	CsLoadLibrary::GetDataTables(Level, OutDataTableMap);
 
 	if (CS_CVAR_LOG_IS_SHOWING(LogLevelPayloadPopulate))
 	{
@@ -352,7 +352,7 @@ void ACsLevelScriptActor::PopulatePayloadCombined()
 
 		UCsDataSettings* Settings = GetMutableDefault<UCsDataSettings>();
 
-		UCsLibrary_Load::LoadStruct(Settings, UCsDataSettings::StaticClass(), NCsLoadFlags::All, NCsLoadCodes::None);
+		CsLoadLibrary::LoadStruct(Settings, UCsDataSettings::StaticClass(), NCsLoadFlags::All, NCsLoadCodes::None);
 		
 		// DataRootSet
 		if (UObject* Object = Settings->DataRootSet.LoadSynchronous())

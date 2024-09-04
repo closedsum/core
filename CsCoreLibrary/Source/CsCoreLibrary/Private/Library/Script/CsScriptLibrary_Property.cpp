@@ -42,6 +42,8 @@ namespace NCsScriptLibraryProperty
 
 #pragma endregion Cached
 
+void(*UCsScriptLibrary_Property::Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning;
+
 UCsScriptLibrary_Property::UCsScriptLibrary_Property(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -50,7 +52,6 @@ UCsScriptLibrary_Property::UCsScriptLibrary_Property(const FObjectInitializer& O
 #define USING_NS_CACHED using namespace NCsScriptLibraryProperty::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryProperty::NCached; \
 	const FString& Ctxt = Str::__FunctionName
-#define LogWarning void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning;
 
 // const FString& Ctxt = Context.IsEmpty() ? NCsScriptLibraryProperty::NCached::Str::__FunctionName : Context
 // Get
@@ -60,8 +61,6 @@ bool UCsScriptLibrary_Property::GetBoolByPath(const FString& Context, UObject* O
 {
 	CONDITIONAL_SET_CTXT(GetBoolByPath);
 
-	LogWarning
-
 	CS_IS_PENDING_KILL2(Object)
 	return CsPropertyLibrary::GetBoolPropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
 }
@@ -69,8 +68,6 @@ bool UCsScriptLibrary_Property::GetBoolByPath(const FString& Context, UObject* O
 int32 UCsScriptLibrary_Property::GetInt(const FString& Context, UObject* Object, const FName& PropertyName, bool& OutSuccess)
 {
 	CONDITIONAL_SET_CTXT(GetInt);
-
-	LogWarning
 
 	CS_IS_PENDING_KILL_RET_VALUE2(Object, 0)
 	return CsPropertyLibrary::GetIntPropertyValue(Ctxt, Object, Object->GetClass(), PropertyName, OutSuccess);
@@ -80,8 +77,6 @@ int32 UCsScriptLibrary_Property::GetIntByPath(const FString& Context, UObject* O
 {
 	CONDITIONAL_SET_CTXT(GetIntByPath);
 
-	LogWarning
-
 	CS_IS_PENDING_KILL_RET_VALUE2(Object, 0)
 	return CsPropertyLibrary::GetIntPropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
 }
@@ -89,8 +84,6 @@ int32 UCsScriptLibrary_Property::GetIntByPath(const FString& Context, UObject* O
 float UCsScriptLibrary_Property::GetFloatByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
 {
 	CONDITIONAL_SET_CTXT(GetFloatByPath);
-
-	LogWarning
 
 	CS_IS_PENDING_KILL_RET_VALUE2(Object, 0.0f)
 	return CsPropertyLibrary::GetFloatPropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
@@ -100,8 +93,6 @@ float UCsScriptLibrary_Property::GetFloatOrDoubleByPath(const FString& Context, 
 {
 	CONDITIONAL_SET_CTXT(GetFloatOrDoubleByPath);
 
-	LogWarning
-
 	CS_IS_PENDING_KILL_RET_VALUE2(Object, 0.0f)
 	return CsPropertyLibrary::GetFloatOrDoublePropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
 }
@@ -109,8 +100,6 @@ float UCsScriptLibrary_Property::GetFloatOrDoubleByPath(const FString& Context, 
 FName UCsScriptLibrary_Property::GetNameByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
 {
 	CONDITIONAL_SET_CTXT(GetNameByPath);
-
-	LogWarning
 
 	CS_IS_PENDING_KILL_RET_VALUE2(Object, NAME_None)
 	return CsPropertyLibrary::GetNamePropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
@@ -120,8 +109,6 @@ FString UCsScriptLibrary_Property::GetStringByPath(const FString& Context, UObje
 {
 	CONDITIONAL_SET_CTXT(GetNameByPath);
 
-	LogWarning
-
 	CS_IS_PENDING_KILL_RET_VALUE2(Object, FString())
 	return CsPropertyLibrary::GetStringPropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
 }
@@ -129,8 +116,6 @@ FString UCsScriptLibrary_Property::GetStringByPath(const FString& Context, UObje
 FVector UCsScriptLibrary_Property::GetVectorByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
 {
 	CONDITIONAL_SET_CTXT(GetVectorByPath);
-
-	LogWarning
 
 	CS_IS_PENDING_KILL_RET_VALUE2(Object, FVector::ZeroVector)
 	return CsPropertyLibrary::GetVectorPropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
@@ -140,8 +125,6 @@ FRotator UCsScriptLibrary_Property::GetRotatorByPath(const FString& Context, UOb
 {
 	CONDITIONAL_SET_CTXT(GetRotatorByPath);
 
-	LogWarning
-
 	CS_IS_PENDING_KILL_RET_VALUE2(Object, FRotator::ZeroRotator)
 	return CsPropertyLibrary::GetRotatorPropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
 }
@@ -149,8 +132,6 @@ FRotator UCsScriptLibrary_Property::GetRotatorByPath(const FString& Context, UOb
 FString UCsScriptLibrary_Property::GetSoftObjectPtrAsStringByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
 {
 	CONDITIONAL_SET_CTXT(GetSoftObjectPtrAsStringByPath);
-
-	LogWarning
 
 	CS_IS_PENDING_KILL_RET_VALUE2(Object, FString())
 
@@ -165,8 +146,6 @@ UClass* UCsScriptLibrary_Property::GetClassByPath(const FString& Context, UObjec
 {
 	CONDITIONAL_SET_CTXT(GetClassByPath);
 
-	LogWarning
-
 	CS_IS_PENDING_KILL_RET_NULL2(Object)
 	return CsPropertyLibrary::GetClassPropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
 }
@@ -180,8 +159,6 @@ bool UCsScriptLibrary_Property::SetBool(const FString& Context, UObject* Object,
 {
 	CONDITIONAL_SET_CTXT(SetBool);
 
-	LogWarning
-
 	CS_IS_PENDING_KILL2(Object)
 	return CsPropertyLibrary::SetBoolPropertyByName(Ctxt, Object, Object->GetClass(), PropertyName, Value);
 }
@@ -189,8 +166,6 @@ bool UCsScriptLibrary_Property::SetBool(const FString& Context, UObject* Object,
 bool UCsScriptLibrary_Property::SetInt(const FString& Context, UObject* Object, const FName& PropertyName, int32 Value)
 {
 	CONDITIONAL_SET_CTXT(SetInt);
-
-	LogWarning
 
 	CS_IS_PENDING_KILL2(Object)
 	return CsPropertyLibrary::SetIntPropertyByName(Ctxt, Object, Object->GetClass(), PropertyName, Value);
@@ -200,8 +175,6 @@ bool UCsScriptLibrary_Property::SetFloat(const FString& Context, UObject* Object
 {
 	CONDITIONAL_SET_CTXT(SetFloat);
 
-	LogWarning
-
 	CS_IS_PENDING_KILL2(Object)
 	return CsPropertyLibrary::SetFloatPropertyByName(Ctxt, Object, Object->GetClass(), PropertyName, Value);
 }
@@ -210,4 +183,3 @@ bool UCsScriptLibrary_Property::SetFloat(const FString& Context, UObject* Object
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef LogWarning

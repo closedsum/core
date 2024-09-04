@@ -1130,11 +1130,11 @@ namespace NCsWidget
 			return CsPropertyLibrary::GetObjectPropertyValueChecked<UButton>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
-		UButton* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
+		UButton* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, bool& OutSuccess, LogLevel)
 		{
 			CS_IS_PTR_NULL_RET_NULL(Widget)
 
-			return CsPropertyLibrary::GetObjectPropertyValue<UButton>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+			return CsPropertyLibrary::GetObjectPropertyValue<UButton>(Context, Widget, Widget->GetClass(), PropertyName, OutSuccess, Log);
 		}
 
 		UButton* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)

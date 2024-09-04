@@ -3,15 +3,27 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "CsMacro_Namespace.h"
+#include "Managers/Level/CsTypes_Manager_Level.h"
 
 #include "CsScriptLibrary_Manager_Level.generated.h"
 
 class UCsManager_Level;
 
+// NCsLevel::NManager::FLibrary
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsLevel, NManager, FLibrary)
+
 UCLASS()
 class CSCORE_API UCsScriptLibrary_Manager_Level : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	typedef NCsLevel::NManager::FLibrary NativeLibrary;
+
+	static void(*LogError)(const FString&);
 
 // Get
 #pragma region
@@ -39,4 +51,16 @@ public:
 	static UCsManager_Level* GetChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
 
 #pragma endregion Get
+
+// Change Map
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Manager|Level", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static bool HasChangeMapCompleted(const FString& Context, const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Level", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Params"))
+	static bool ChangeMap(const FString& Context, const UObject* WorldContextObject, const FCsManagerLevel_ChangeMapParams& Params);
+
+#pragma endregion Change Map
 };

@@ -109,12 +109,9 @@ DataType* FCsData_StatusEffectPtr::GetChecked(const FString& Context) const
 	const FSoftObjectPath& Path = Data.ToSoftObjectPath();
 
 	checkf(Path.IsValid(), TEXT("%s: Data is NULL. No Path set."), *Context);
-
 	checkf(Data_Internal, TEXT("%s: Data has NOT been loaded @ %s."), *Context, *(Path.ToString()));
 
-	typedef NCsData::FLibrary DataLibrary;
-
-	return DataLibrary::GetChecked<DataType>(Context, Data_Internal);
+	return CsDataLibrary::GetChecked<DataType>(Context, Data_Internal);
 }
 
 DataType* FCsData_StatusEffectPtr::GetSafe(const FString& Context) const
@@ -132,10 +129,7 @@ DataType* FCsData_StatusEffectPtr::GetSafe(const FString& Context) const
 		UE_LOG(LogCsSe, Warning, TEXT("%s: Data has NOT been loaded @ %s."), *Context, *(Path.ToString()));
 		return nullptr;
 	}
-
-	typedef NCsData::FLibrary DataLibrary;
-
-	return DataLibrary::GetSafe<DataType>(Context, Data_Internal);
+	return CsDataLibrary::GetSafe<DataType>(Context, Data_Internal);
 }
 
 DataType* FCsData_StatusEffectPtr::SafeLoad(const FString& Context, void(*Log)(const FString&) /*=&NCsStatusEffect::FLog::Warning*/)
@@ -171,10 +165,7 @@ DataType* FCsData_StatusEffectPtr::SafeLoad(const FString& Context, void(*Log)(c
 			return nullptr;
 		}
 	}
-
-	typedef NCsData::FLibrary DataLibrary;
-
-	return DataLibrary::SafeLoad<DataType>(Context, Data_Internal, Log);
+	return CsDataLibrary::SafeLoad<DataType>(Context, Data_Internal, Log);
 }
 
 DataType* FCsData_StatusEffectPtr::SafeLoad()

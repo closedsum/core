@@ -23,11 +23,17 @@ public class CsUI : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsScopedTimer",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore",
+                    "CsConsoleCommand",
+                    "CsTime",
+                    "CsData",
                     "CsUICore",
-                    "CsPhysics" // TODO: Eventually remove dependency
+                    "CsPhysics", // TODO: Eventually remove dependency
+                    "CsInput",
+                    "CsCore"
 ,                }
             );
 

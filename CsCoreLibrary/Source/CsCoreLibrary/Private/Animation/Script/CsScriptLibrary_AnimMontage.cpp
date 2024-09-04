@@ -40,7 +40,6 @@ UCsScriptLibrary_AnimMontage::UCsScriptLibrary_AnimMontage(const FObjectInitiali
 #define USING_NS_CACHED using namespace NCsScriptLibraryAnimMontage::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryAnimMontage::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define AnimMontageLibrary NCsAnimMontage::FLibrary
 
 // Load
 #pragma region
@@ -49,14 +48,14 @@ UAnimMontage* UCsScriptLibrary_AnimMontage::LoadBySoftObjectPath(const FString& 
 {
 	CONDITIONAL_SET_CTXT(LoadBySoftObjectPath);
 
-	return AnimMontageLibrary::SafeLoad(Context, Path);
+	return CsAnimMontageLibrary::SafeLoad(Context, Path);
 }
 
 UAnimMontage* UCsScriptLibrary_AnimMontage::LoadByStringPath(const FString& Context, const FString& Path)
 {
 	CONDITIONAL_SET_CTXT(LoadByStringPath);
 
-	return AnimMontageLibrary::SafeLoad(Ctxt, Path);
+	return CsAnimMontageLibrary::SafeLoad(Ctxt, Path);
 }
 
 #pragma endregion Load
@@ -68,7 +67,7 @@ UAnimMontage* UCsScriptLibrary_AnimMontage::GetByPath(const FString& Context, UO
 {
 	CONDITIONAL_SET_CTXT(GetByPath);
 
-	return AnimMontageLibrary::GetSafe(Ctxt, Object, Path, OutSuccess);
+	return CsAnimMontageLibrary::GetSafe(Ctxt, Object, Path, OutSuccess);
 }
 
 #pragma endregion Get
@@ -80,11 +79,10 @@ float UCsScriptLibrary_AnimMontage::PlayByPath(const FString& Context, UPrimitiv
 {
 	CONDITIONAL_SET_CTXT(PlayByPath);
 
-	return AnimMontageLibrary::SafePlay(Ctxt, Component, Params);
+	return CsAnimMontageLibrary::SafePlay(Ctxt, Component, Params);
 }
 
 #pragma endregion Play
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef AnimMontageLibrary

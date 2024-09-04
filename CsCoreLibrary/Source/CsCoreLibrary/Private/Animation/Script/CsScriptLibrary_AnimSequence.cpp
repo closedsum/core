@@ -43,7 +43,6 @@ UCsScriptLibrary_AnimSequence::UCsScriptLibrary_AnimSequence(const FObjectInitia
 #define USING_NS_CACHED using namespace NCsScriptLibraryAnimSequence::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryAnimSequence::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define AnimSequenceLibrary NCsAnimSequence::FLibrary
 
 // Load
 #pragma region
@@ -52,14 +51,14 @@ UAnimSequence* UCsScriptLibrary_AnimSequence::LoadBySoftObjectPath(const FString
 {
 	CONDITIONAL_SET_CTXT(LoadBySoftObjectPath);
 
-	return AnimSequenceLibrary::SafeLoad(Context, Path);
+	return CsAnimSequenceLibrary::SafeLoad(Context, Path);
 }
 
 UAnimSequence* UCsScriptLibrary_AnimSequence::LoadByStringPath(const FString& Context, const FString& Path)
 {
 	CONDITIONAL_SET_CTXT(LoadByStringPath);
 
-	return AnimSequenceLibrary::SafeLoad(Ctxt, Path);
+	return CsAnimSequenceLibrary::SafeLoad(Ctxt, Path);
 }
 
 #pragma endregion Load
@@ -71,7 +70,7 @@ UAnimSequence* UCsScriptLibrary_AnimSequence::GetByPath(const FString& Context, 
 {
 	CONDITIONAL_SET_CTXT(GetByPath);
 
-	return AnimSequenceLibrary::GetSafe(Context, Object, Path, OutSuccess);
+	return CsAnimSequenceLibrary::GetSafe(Context, Object, Path, OutSuccess);
 }
 
 #pragma endregion Get
@@ -90,4 +89,3 @@ bool UCsScriptLibrary_AnimSequence::SetProperty(const FString& Context, UObject*
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef AnimSequenceLibrary

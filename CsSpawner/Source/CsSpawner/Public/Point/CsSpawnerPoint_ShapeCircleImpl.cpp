@@ -2,8 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Point/CsSpawnerPoint_ShapeCircleImpl.h"
-#include "CsSpawner.h"
-
 // Types
 #include "CsMacro_Misc.h"
 // Library
@@ -19,6 +17,7 @@
 #include "Params/Shape/CsSpawnerParams_ShapeCircle.h"
 // Actor
 #include "GameFramework/Actor.h"
+
 
 namespace NCsSpawner
 {
@@ -221,10 +220,8 @@ namespace NCsSpawner
 
 				FTransform3f FImpl::GetCenterTransform() const
 				{
-					typedef NCsMath::FLibrary MathLibrary;
-
 					if (CenterAsActor)
-						return MathLibrary::Convert(CenterAsActor->GetActorTransform());
+						return CsMathLibrary::Convert(CenterAsActor->GetActorTransform());
 					return CenterAsTransform;
 				}
 
@@ -315,13 +312,12 @@ namespace NCsSpawner
 					const FString& Context = Str::GetCenterLocation;
 
 					typedef NCsSpawner::NShape::ECenter CenterType;
-					typedef NCsMath::FLibrary MathLibrary;
 
 					const CenterType& Center = ShapeParams->GetCenterType();
 					// Self (Spawner)
 					if (Center == CenterType::Self)
 					{
-						return MathLibrary::Convert(SpawnerAsActor->GetActorLocation());
+						return CsMathLibrary::Convert(SpawnerAsActor->GetActorLocation());
 					}
 					// Transform
 					else
@@ -333,7 +329,7 @@ namespace NCsSpawner
 					else
 					if (Center == CenterType::Actor)
 					{
-						return MathLibrary::Convert(CenterAsActor->GetActorLocation());
+						return CsMathLibrary::Convert(CenterAsActor->GetActorLocation());
 					}
 					// Custom - NOTE: Assume Custom serves as an additional filter versus using Transform
 					else

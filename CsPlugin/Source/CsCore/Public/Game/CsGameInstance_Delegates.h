@@ -18,6 +18,8 @@ struct CSCORE_API FCsGameInstance_Delegates_STUB
 // Transition
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsGameInstance_Transition_OnFinish);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsGameInstance_TransitionOut_OnStart);
+// Shutdown
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsGameInstance_OnPreShutdown);
 // Exit
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsGameInstance_OnQueueExitGame);
 
@@ -29,5 +31,6 @@ namespace NCsGameInstance
 		DECLARE_MULTICAST_DELEGATE(FOut_OnStart);
 	}
 
+	DECLARE_MULTICAST_DELEGATE(FOnPreShutdown);
 	DECLARE_MULTICAST_DELEGATE(FOnQueueExitGame);
 }

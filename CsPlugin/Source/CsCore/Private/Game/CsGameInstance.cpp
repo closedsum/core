@@ -141,6 +141,9 @@ void UCsGameInstance::Init()
 
 void UCsGameInstance::Shutdown()
 {
+	OnPreShutdown_Event.Broadcast();
+	OnPreShutdown_ScriptEvent.Broadcast();
+
 	Super::Shutdown();
 
 	// Unregister ticker delegate

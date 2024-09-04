@@ -8,7 +8,7 @@
 #include "CsMacro_Misc.h"
 // Library
 #include "Coordinators/ConsoleCommand/CsLibrary_Coordinator_ConsoleCommand.h"
-#include "ConsoleCommand/CsLibrary_ConsoleCommand.h"
+#include "CsLibrary_ConsoleCommand.h"
 // Coordinator
 #include "Coordinators/ConsoleCommand/CsCoordinator_ConsoleCommand.h"
 

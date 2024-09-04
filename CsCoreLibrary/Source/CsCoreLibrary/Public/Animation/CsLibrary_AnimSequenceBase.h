@@ -35,3 +35,5 @@ namespace NCsAnimSequenceBase
 		};
 	}
 }
+
+using CsAnimSequenceBaseLibrary = NCsAnimSequenceBase::FLibrary;

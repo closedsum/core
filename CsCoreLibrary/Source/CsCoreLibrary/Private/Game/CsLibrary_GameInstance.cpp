@@ -11,6 +11,8 @@
 #include "Engine/GameInstance.h"
 // World
 #include "Engine/World.h"
+// Engine
+#include "Engine/Engine.h"
 
 namespace NCsGameInstance
 {
@@ -36,14 +38,14 @@ namespace NCsGameInstance
 
 	FString FLibrary::PrintObjectAndClass(const UGameInstance* Object)
 	{
-		if (!Object)
+		if (!IsValid(Object))
 			return FString::Printf(TEXT("INVALID"));
 		return FString::Printf(TEXT("Object: %s with Class: %s"), *(Object->GetName()), *(Object->GetClass()->GetName()));
 	}
 
 	FString FLibrary::PrintNameAndClass(const UGameInstance* Object)
 	{
-		if (!Object)
+		if (!IsValid(Object))
 			return FString::Printf(TEXT("INVALID"));
 		return FString::Printf(TEXT("%s with Class: %s"), *(Object->GetName()), *(Object->GetClass()->GetName()));
 	}
@@ -57,17 +59,17 @@ namespace NCsGameInstance
 
 		UWorld* World = ContextObject->GetWorld();
 
-		if (World)
+		if (IsValid(World))
 		{
 			UGameInstance* GameInstance = World->GetGameInstance();
 
-			checkf(World, TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
+			checkf(IsValid(GameInstance), TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName()));
 			return GameInstance;
 		}
 		
 		UGameInstance* GameInstance = const_cast<UGameInstance*>(Cast<UGameInstance>(ContextObject));
 
-		checkf(GameInstance, TEXT("%s: ContextObject: %s does NOT contain a reference to a World or is a reference to GameInstance."), *Context, *(ContextObject->GetName()));
+		checkf(IsValid(GameInstance), TEXT("%s: ContextObject: %s does NOT contain a reference to a World or is a reference to GameInstance."), *Context, *(ContextObject->GetName()));
 		return GameInstance;
 	}
 
@@ -77,11 +79,11 @@ namespace NCsGameInstance
 
 		UWorld* World = ContextObject->GetWorld();
 
-		if (World)
+		if (IsValid(World))
 		{
 			UGameInstance* GameInstance = World->GetGameInstance();
 
-			if (!GameInstance)
+			if (!IsValid(GameInstance))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GameInstance from World: %s."), *Context, *(World->GetName())));
 				return nullptr;
@@ -91,9 +93,10 @@ namespace NCsGameInstance
 
 		UGameInstance* GameInstance = const_cast<UGameInstance*>(Cast<UGameInstance>(ContextObject));
 
-		if (!GameInstance)
+		if (!IsValid(GameInstance))
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ContextObject: %s does NOT contain to a World or is a reference to GameInstance."), *Context, *(ContextObject->GetName())));
+			return nullptr;
 		}
 		return GameInstance;
 	}
@@ -160,7 +163,7 @@ namespace NCsGameInstance
 		{
 			UEngine* Engine = GameInstance->GetEngine();
 
-			if (!Engine)
+			if (!IsValid(Engine))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GameInstance does NOT have reference to Engine."), *Context));
 				return nullptr;

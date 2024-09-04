@@ -45,10 +45,6 @@
     {
       "Name": "CsCoreLibrary",
       "Enabled": true
-    },
-    {
-      "Name": "CsPlugin",
-      "Enabled": true
     }
   ]
 }

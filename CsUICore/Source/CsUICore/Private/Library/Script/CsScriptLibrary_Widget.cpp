@@ -45,6 +45,9 @@ namespace NCsScriptLibraryWidget
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetTextBlock);
 			// Button
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetButton);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetButtonChecked);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetButtonByString);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetButtonByStringChecked);
 			// Image
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetImage);
 			// ProgressBar
@@ -237,6 +240,40 @@ UButton* UCsScriptLibrary_Widget::GetButton(const FString& Context, UUserWidget*
 	CONDITIONAL_SET_CTXT(GetButton);
 
 	return CSWidgetButtonLibrary::GetSafe(Ctxt, Widget, PropertyName);
+}
+
+UButton* UCsScriptLibrary_Widget::GetButtonChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName, bool& OutSuccess)
+{
+	CONDITIONAL_SET_CTXT(GetButtonChecked);
+
+	OutSuccess = true;
+	return CS_SCRIPT_GET_CHECKED(CSWidgetButtonLibrary::GetChecked(Context, Widget, PropertyName), CSWidgetButtonLibrary::GetSafe(Ctxt, Widget, PropertyName, OutSuccess, LogError));
+}
+
+UButton* UCsScriptLibrary_Widget::GetButtonByString(const FString& Context, UUserWidget* Widget, const FString& PropertyName)
+{
+	CONDITIONAL_SET_CTXT(GetButtonByString);
+
+#if WITH_EDITOR
+	return CSWidgetButtonLibrary::GetSafe(Ctxt, Widget, PropertyName);
+#else
+	checkf(0, TEXT("%s: Call to EDITOR ONLY Function: UCsScriptLibrary_Widget::GetButtonByString."), *Ctxt);
+	return nullptr;
+#endif // #if WITH_EDITOR
+}
+
+UButton* UCsScriptLibrary_Widget::GetButtonByStringChecked(const FString& Context, UUserWidget* Widget, const FString& PropertyName, bool& OutSuccess)
+{
+	CONDITIONAL_SET_CTXT(GetButtonByStringChecked);
+
+#if WITH_EDITOR
+	OutSuccess = true;
+	return CS_SCRIPT_GET_CHECKED(CSWidgetButtonLibrary::GetChecked(Context, Widget, PropertyName), CSWidgetButtonLibrary::GetSafe(Ctxt, Widget, PropertyName, OutSuccess, LogError));
+#else
+	OutSuccess = false;
+	checkf(0, TEXT("%s: Call to EDITOR ONLY Function: UCsScriptLibrary_Widget::GetButtonByStringChecked."), *Ctxt);
+	return nullptr;
+#endif // #if WITH_EDITOR
 }
 
 #pragma endregion Button

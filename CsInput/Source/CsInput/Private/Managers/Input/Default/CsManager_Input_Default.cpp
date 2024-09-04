@@ -2433,7 +2433,7 @@ void UCsManager_Input_Default::SaveInputProfile()
 
 	JsonWriter->WriteObjectStart();
 
-	//UCsLibrary_Load::WriteStructToJson(JsonWriter, (void*)(&InputProfile), FCsInputProfile::StaticStruct(), nullptr);
+	//CsLoadLibrary::WriteStructToJson(JsonWriter, (void*)(&InputProfile), FCsInputProfile::StaticStruct(), nullptr);
 
 	JsonWriter->WriteObjectEnd();
 
@@ -2520,7 +2520,7 @@ void UCsManager_Input_Default::LoadInputProfile()
 
 		if (FJsonSerializer::Deserialize(JsonReader, JsonParsed) && JsonParsed.IsValid())
 		{
-			//UCsLibrary_Load::ReadStructFromJson(JsonParsed, &InputProfile, FCsInputProfile::StaticStruct(), nullptr);
+			//CsLoadLibrary::ReadStructFromJson(JsonParsed, &InputProfile, FCsInputProfile::StaticStruct(), nullptr);
 
 			// Update Action and Key members
 

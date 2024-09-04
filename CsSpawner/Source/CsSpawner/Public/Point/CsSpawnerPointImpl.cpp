@@ -32,10 +32,8 @@ namespace NCsSpawner
 
 		FTransform3f FImpl::GetCenterTransform() const
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
 			if (CenterAsActor)
-				return MathLibrary::Convert(CenterAsActor->GetActorTransform());
+				return CsMathLibrary::Convert(CenterAsActor->GetActorTransform());
 			return CenterAsTransform;
 		}
 

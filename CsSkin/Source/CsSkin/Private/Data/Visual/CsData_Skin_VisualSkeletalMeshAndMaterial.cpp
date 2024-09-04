@@ -106,7 +106,7 @@ bool UCsData_Skin_VisualSkeletalMeshAndMaterial::IsValid(const int32& LoadFlags)
 
 void UCsData_Skin_VisualSkeletalMeshAndMaterial::Load(const int32& LoadFlags)
 {
-	UCsLibrary_Load::LoadStruct(this, GetClass(), LoadFlags, NCsLoadCodes::All);
+	CsLoadLibrary::LoadStruct(this, GetClass(), LoadFlags, NCsLoadCodes::All);
 
 	Init();
 

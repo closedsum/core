@@ -43,7 +43,6 @@ namespace NCsCharacter
 	#define SET_CONTEXT(__FunctionName) using namespace NCsCharacter::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define AnimMontageLibrary NCsAnimMontage::FLibrary
 
 	// Get
 	#pragma region
@@ -422,7 +421,7 @@ namespace NCsCharacter
 
 		CS_IS_PENDING_KILL_CHECKED(Mesh)
 
-		return AnimMontageLibrary::PlayChecked(Context, Mesh, Params);
+		return CsAnimMontageLibrary::PlayChecked(Context, Mesh, Params);
 	}
 
 	float FLibrary::SafePlay(const FString& Context, const ACharacter* Character, const ParamsType& Params, bool& OutSuccess, LogWarning)
@@ -435,7 +434,7 @@ namespace NCsCharacter
 
 		CS_IS_PENDING_KILL_RET_VALUE(Mesh, -1.0f)
 
-		return AnimMontageLibrary::SafePlay(Context, Mesh, Params, OutSuccess, Log);
+		return CsAnimMontageLibrary::SafePlay(Context, Mesh, Params, OutSuccess, Log);
 	}
 
 	float FLibrary::SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogWarning)
@@ -448,7 +447,7 @@ namespace NCsCharacter
 
 		CS_IS_PENDING_KILL_RET_VALUE(Mesh, -1.0f)
 
-		return AnimMontageLibrary::SafePlay(Context, Mesh, Params, OutSuccess, Log);
+		return CsAnimMontageLibrary::SafePlay(Context, Mesh, Params, OutSuccess, Log);
 	}
 
 	#undef ParamsType
@@ -458,5 +457,4 @@ namespace NCsCharacter
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
 	#undef LogWarning
-	#undef AnimMontageLibrary
 }

@@ -23,10 +23,12 @@
 #include "Modifier/CsSpawnerModifierImpl.h"
 
 #if WITH_EDITOR
-#include "Managers/Singleton/CsGetManagerSingleton.h"
-#include "Managers/Singleton/CsManager_Singleton.h"
+#include "Singleton/CsGetManagerSingleton.h"
+#include "Singleton/CsManager_Singleton.h"
 #include "Managers/Spawner/CsGetManagerSpawner.h"
 #endif // #if WITH_EDITOR
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Spawner)
 
 // Cached
 #pragma region

@@ -295,6 +295,11 @@ namespace NCsLevel
 				return OutSuccess;
 			}
 
+			FORCEINLINE static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const FCsManagerLevel_ChangeMapParams& Params, LogLevel)
+			{
+				return SafeChangeMap(Context, ContextObject, ParamsType::Make(Params), Log);
+			}
+
 		#undef ParamsType
 
 		#define OnChangeMapStartEventType NCsLevel::NManager::FChangeMap_OnStart
@@ -355,3 +360,5 @@ namespace NCsLevel
 		};
 	}
 }
+
+using CsLevelManagerLibrary = NCsLevel::NManager::FLibrary;

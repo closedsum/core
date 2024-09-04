@@ -36,8 +36,6 @@ public class CsSeqEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
-                    "CsCore",
-                    "CsEditor",
                     "CsSeq"
                 }
             );

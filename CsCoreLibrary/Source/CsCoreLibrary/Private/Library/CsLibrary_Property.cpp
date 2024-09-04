@@ -1034,7 +1034,6 @@ namespace NCsProperty
 
 		if (!StructProperty)
 			return nullptr;
-
 		return StructProperty->ContainerPtrToValuePtr<uint8>(StructValue);
 	}
 	
@@ -1309,8 +1308,7 @@ namespace NCsProperty
 
 		if (!StructValue)
 		{
-			if (Log)
-				Log(FString::Printf(TEXT("%s: StructValue is NULL."), *Context));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: StructValue is NULL."), *Context));
 			return nullptr;
 		}
 
@@ -1318,8 +1316,7 @@ namespace NCsProperty
 
 		if (!ValuePtr)
 		{
-			if (Log)
-				Log(FString::Printf(TEXT("%s: Failed to get Value Ptr to member from %s.%s."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Value Ptr to member from %s.%s."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
 			return nullptr;
 		}
 		return ValuePtr;
@@ -1353,8 +1350,10 @@ namespace NCsProperty
 		return Value;
 	}
 
-	UObject* FLibrary::GetObjectPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, LogLevel)
+	UObject* FLibrary::GetObjectPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, bool& OutSuccess, LogLevel)
 	{
+		OutSuccess = false;
+
 		CS_IS_PTR_NULL_RET_NULL(StructValue)
 
 		FObjectProperty* ObjectProperty = FindPropertyByName<FObjectProperty>(Context, Struct, PropertyName, Log);
@@ -1368,6 +1367,7 @@ namespace NCsProperty
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
 		}
+		OutSuccess = true;
 		return Value;
 	}
 

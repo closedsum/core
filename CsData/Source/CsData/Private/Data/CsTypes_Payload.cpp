@@ -207,7 +207,7 @@ void FCsPayload_DataTable::Populate()
 	//	const FString OuterName		  = FString::Printf(TEXT("%s.%s"), *DataTableName, *RowNameAsString);
 
 	//	Result.Reset();
-	//	UCsLibrary_Load::GetObjectPaths(RowPtr, Struct, Result);
+	//	CsLoadLibrary::GetObjectPaths(RowPtr, Struct, Result);
 
 	//	const int32 Count = Result.Paths.Num();
 

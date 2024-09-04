@@ -759,32 +759,71 @@ namespace NCsWidget
 		public:
 
 			/**
-			* Get a Button with PropertyName from Widget.
+			* Get the Button associated named: PropertyName on Widget
+			*  NOTE: Button should be a Class Variable named: PropertyName
 			*
 			* @param Context		The calling context.
-			* @param Widget
-			* @param PropertyName	Name of the property.
-			* return				Button.
+			* @param Widget			The UserWidget to get the Button from.
+			* @param PropertyName	The name of the Button.
+			* return				Button with name: PropertyName on Widget.
 			*/
 			static UButton* GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+		#if WITH_EDITOR
+			FORCEINLINE static UButton* GetChecked(const FString& Context, UUserWidget* Widget, const FString& PropertyName)
+			{
+				return GetChecked(Context, Widget, FName(*PropertyName));
+			}
+		#endif // #if WITH_EDITOR
 
 			/**
-			* Safely get a Button with PropertyName from Widget.
+			* Safely get the Button associated named: PropertyName on Widget
+			*  NOTE: Button should be a Class Variable named: PropertyName
 			*
 			* @param Context		The calling context.
-			* @param Widget
-			* @param PropertyName	Name of the property.
-			* @param Log
-			* return				Button.
+			* @param Widget			The UserWidget to get the Button from.
+			* @param PropertyName	The name of the Button.
+			* @param Log			(optional)
+			* @param OutSuccess		(out) Whether this process executed successfully or not.
+			* return				Button with name: PropertyName on Widget.
 			*/
-			static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel);
+			static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, bool& OutSuccess, LogLevel);
+			FORCEINLINE static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
+			{
+				bool OutSuccess = false;
+				return GetSafe(Context, Widget, PropertyName, OutSuccess, Log);
+			}
+
+		#if WITH_EDITOR
+			/**
+			* EDITOR ONLY
+			* Safely get the Button associated named: PropertyName on Widget
+			*  NOTE: Button should be a Class Variable named: PropertyName
+			*
+			* @param Context		The calling context.
+			* @param Widget			The UserWidget to get the Button from.
+			* @param PropertyName	The name of the Button.
+			* @param Log			(optional)
+			* @param OutSuccess		(out) Whether this process executed successfully or not.
+			* return				Button with name: PropertyName on Widget.
+			*/
+			FORCEINLINE static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FString& PropertyName, bool& OutSuccess, LogLevel)
+			{
+				return GetSafe(Context, Widget, FName(*PropertyName), OutSuccess, Log);
+			}
+			FORCEINLINE static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FString& PropertyName, LogLevel)
+			{
+				bool OutSuccess = false;
+				return GetSafe(Context, Widget, PropertyName, OutSuccess, Log);
+			}
+		#endif // #if WITH_EDITOR
 
 			/**
-			* Safely get a Button with PropertyName from Widget.
+			* Safely get the Button associated named: PropertyName on Widget
+			*  NOTE: Button should be a Class Variable named: PropertyName
 			*
-			* @param Widget
-			* @param PropertyName	Name of the property.
-			* return				Button.
+			* @param Widget			The UserWidget to get the Button from.
+			* @param PropertyName	The name of the Button.
+			* return				Button with name: PropertyName on Widget.
 			*/
 			static UButton* GetSafe(UUserWidget* Widget, const FName& PropertyName);
 

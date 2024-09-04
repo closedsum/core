@@ -20,11 +20,13 @@ public class CsSe : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore",
+                    "CsData",
                     "CsDmg",
-                    "CsFX"
+                    "CsFX",
+                    "CsCore"
                 }
             );
 

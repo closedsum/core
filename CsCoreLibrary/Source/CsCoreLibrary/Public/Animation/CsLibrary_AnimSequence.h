@@ -64,3 +64,5 @@ namespace NCsAnimSequence
 	#undef LogLevel
 	};
 }
+
+using CsAnimSequenceLibrary = NCsAnimSequence::FLibrary;

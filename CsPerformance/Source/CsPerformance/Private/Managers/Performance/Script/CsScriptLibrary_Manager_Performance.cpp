@@ -30,6 +30,8 @@ namespace NCsScriptLibraryManagerPerformance
 
 #pragma endregion Cached
 
+void(*UCsScriptLibrary_Manager_Performance::LogError)(const FString&) = &NCsPerformance::FLog::Error;
+
 UCsScriptLibrary_Manager_Performance::UCsScriptLibrary_Manager_Performance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -38,8 +40,6 @@ UCsScriptLibrary_Manager_Performance::UCsScriptLibrary_Manager_Performance(const
 #define USING_NS_CACHED using namespace NCsScriptLibraryManagerPerformance::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerPerformance::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define LogError &NCsPerformance::FLog::Error
-#define PerformanceManagerLibrary NCsPerformance::NManager::FLibrary
 
 // Get
 #pragma region
@@ -48,19 +48,18 @@ UCsManager_Performance* UCsScriptLibrary_Manager_Performance::Get(const FString&
 {
 	CONDITIONAL_SET_CTXT(Get);
 
-	return PerformanceManagerLibrary::GetSafe(Ctxt, WorldContextObject);
+	return CsPerformanceManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 }
 
 UCsManager_Performance* UCsScriptLibrary_Manager_Performance::GetChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
 {
 	CONDITIONAL_SET_CTXT(GetChecked);
 
-	return CS_SCRIPT_GET_CHECKED(PerformanceManagerLibrary::GetChecked(Ctxt, WorldContextObject), PerformanceManagerLibrary::GetSafe(Ctxt, WorldContextObject, OutSuccess, LogError));
+	OutSuccess = true;
+	return CS_SCRIPT_LIBRARY_GET_CUSTOM_CHECKED_4(GetChecked, GetSafe, WorldContextObject);
 }
 
 #pragma endregion Get
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef LogError
-#undef PerformanceManagerLibrary

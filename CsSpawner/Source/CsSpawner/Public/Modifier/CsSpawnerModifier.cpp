@@ -2,6 +2,5 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Modifier/CsSpawnerModifier.h"
-#include "CsSpawner.h"
 
 const FName NCsSpawner::NModifier::IModifier::Name = FName("NSpawner::NModifier::IModifier");

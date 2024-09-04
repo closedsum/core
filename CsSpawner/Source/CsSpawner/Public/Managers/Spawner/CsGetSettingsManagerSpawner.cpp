@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Spawner/CsGetSettingsManagerSpawner.h"
-#include "CsSpawner.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetSettingsManagerSpawner)
 
 UCsGetSettingsManagerSpawner::UCsGetSettingsManagerSpawner(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

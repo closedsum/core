@@ -8,6 +8,8 @@
 // Library
 #include "LevelSequence/CsLibrary_LevelSequence.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_LevelSequencePlayer)
+
 // Cached
 #pragma region
 

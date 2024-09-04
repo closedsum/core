@@ -2,6 +2,5 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Params/CsSpawnerParams.h"
-#include "CsSpawner.h"
 
 const FName NCsSpawner::NParams::IParams::Name = FName("NCsSpawner::NParams::IParams");

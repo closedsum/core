@@ -711,7 +711,7 @@ ICsData* UCsManager_Data::LoadData(const FName& EntryName)
 	
 		checkf(Entry->Name == EntryName, TEXT("%s: Mismatch between Entry->Name != EntryName (%s != %s)."), *Context, *(Entry->Name.ToString()), *(EntryName.ToString()));
 
-		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_Data::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+		CsLoadLibrary::LoadStruct(Entry, FCsDataEntry_Data::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
 		UObject* O	  = Entry->GetChecked(Context);
 		ICsData* Data = Entry->GetInterfaceChecked<ICsData>(Context);
@@ -742,7 +742,7 @@ ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 
 		checkf(Entry->Data.ToSoftObjectPath() == Path, TEXT("%s: Mismatch between Entry's Path != Path (%s != %s)."), *Context, *(Entry->Data.ToSoftObjectPath().ToString()), *(Path.ToString()));
 
-		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_Data::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+		CsLoadLibrary::LoadStruct(Entry, FCsDataEntry_Data::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
 		UObject* O	  = Entry->GetChecked(Context);
 		ICsData* Data = Entry->GetInterfaceChecked<ICsData>(Context);
@@ -778,7 +778,7 @@ UObject* UCsManager_Data::LoadScriptData(const FName& EntryName)
 	
 		checkf(Entry->Name == EntryName, TEXT("%s: Mismatch between Entry->Name != EntryName (%s != %s)."), *Context, *(Entry->Name.ToString()), *(EntryName.ToString()));
 
-		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_ScriptData::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+		CsLoadLibrary::LoadStruct(Entry, FCsDataEntry_ScriptData::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
 		UObject* O = Entry->GetChecked(Context);
 
@@ -808,7 +808,7 @@ UObject* UCsManager_Data::LoadScriptData(const FSoftObjectPath& Path)
 
 		checkf(Entry->Data.ToSoftObjectPath() == Path, TEXT("%s: Mismatch between Entry's Path != Path (%s != %s)."), *Context, *(Entry->Data.ToSoftObjectPath().ToString()), *(Path.ToString()));
 
-		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_ScriptData::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+		CsLoadLibrary::LoadStruct(Entry, FCsDataEntry_ScriptData::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
 		UObject* O = Entry->GetChecked(Context);
 
@@ -843,7 +843,7 @@ UDataTable* UCsManager_Data::LoadDataTable(const FName& EntryName)
 
 		checkf(Entry->Name == EntryName, TEXT("%s: Mismatch between Entry->Name != EntryName (%s != %s)."), *Context, *(Entry->Name.ToString()), *(EntryName.ToString()));
 
-		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+		CsLoadLibrary::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
 		UDataTable* DataTable = Entry->GetChecked(Context);
 
@@ -871,7 +871,7 @@ UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 
 		checkf(Entry->DataTable.ToSoftObjectPath() == Path, TEXT("%s: Mismatch between Entry's Path != Path (%s != %s)."), *Context, *(Entry->DataTable.ToSoftObjectPath().ToString()), *(Path.ToString()));
 
-		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+		CsLoadLibrary::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
 		UDataTable* DataTable = Entry->GetChecked(Context);
 
@@ -911,7 +911,7 @@ uint8* UCsManager_Data::LoadDataTableRow(const FName& EntryName, const FName& Ro
 
 		if (uint8* RowPtr = DT->FindRowUnchecked(RowName))
 		{
-			UCsLibrary_Load::LoadStruct(RowPtr, Struct, NCsLoadFlags::All, NCsLoadCodes::None);
+			CsLoadLibrary::LoadStruct(RowPtr, Struct, NCsLoadFlags::All, NCsLoadCodes::None);
 			UpdateDataTableRowMap(EntryName, RowName, RowPtr);
 
 			return RowPtr;
@@ -997,7 +997,7 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 
 				if (uint8* RowPtr = DT->FindRowUnchecked(RowName))
 				{
-					UCsLibrary_Load::LoadStruct(RowPtr, Struct, NCsLoadFlags::All, NCsLoadCodes::None);
+					CsLoadLibrary::LoadStruct(RowPtr, Struct, NCsLoadFlags::All, NCsLoadCodes::None);
 
 					UpdateDataTableRowMap(EntryName, RowName, RowPtr);
 				}

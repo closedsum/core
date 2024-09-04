@@ -162,6 +162,8 @@ namespace NCsEnum
 	}
 }
 
+using CsEnumStructPopulateLibrary = NCsEnum::NStruct::NPopulate::FLibrary;
+
 namespace NCsEnum
 {
 	namespace NStruct
@@ -181,3 +183,5 @@ namespace NCsEnum
 		}
 	}
 }
+
+using CsEnumStructLayoutLibrary = NCsEnum::NStruct::NLayout::FLibrary;

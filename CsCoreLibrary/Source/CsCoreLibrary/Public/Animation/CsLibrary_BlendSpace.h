@@ -122,3 +122,5 @@ namespace NCsBlendSpace
 		};
 	}
 }
+
+using NCsBlendSpaceLibrary = NCsBlendSpace::FLibrary;

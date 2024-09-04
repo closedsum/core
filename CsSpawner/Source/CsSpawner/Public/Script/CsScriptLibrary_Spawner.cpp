@@ -9,11 +9,13 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsSpawnerLog.h"
 // Spawner
 #include "CsSpawnerImpl.h"
 #include "Point/CsSpawnerPointImpl.h"
 #include "Point/CsSpawnerPoint_ShapeCircleImpl.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Spawner)
 
 namespace NCsScriptLibrarySpawner
 {
@@ -140,7 +142,7 @@ bool UCsScriptLibrary_Spawner::PointImpl_SetCenterAsActor(const FString& Context
 	if (!Impl)
 		return false;
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	void(*Log)(const FString&) = &NCsSpawner::FLog::Warning;
 
 	CS_IS_PTR_NULL(Center)
 

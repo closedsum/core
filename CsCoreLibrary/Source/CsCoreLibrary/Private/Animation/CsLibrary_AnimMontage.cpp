@@ -16,7 +16,6 @@
 namespace NCsAnimMontage
 {
 	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define AnimInstanceLibrary NCsAnimInstance::FLibrary
 
 	// Load
 	#pragma region
@@ -63,7 +62,7 @@ namespace NCsAnimMontage
 
 	bool FLibrary::IsPlayingChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim)
 	{
-		UAnimInstance* AnimInstance = AnimInstanceLibrary::GetChecked(Context, Component);
+		UAnimInstance* AnimInstance = CsAnimInstanceLibrary::GetChecked(Context, Component);
 
 		CS_IS_PENDING_KILL_CHECKED(Anim)
 
@@ -75,7 +74,7 @@ namespace NCsAnimMontage
 	bool FLibrary::SafeIsPlaying(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim, bool& OutSuccess, LogLevel)
 	{
 		OutSuccess					= false;
-		UAnimInstance* AnimInstance = AnimInstanceLibrary::GetSafe(Context, Component, OutSuccess, Log);
+		UAnimInstance* AnimInstance = CsAnimInstanceLibrary::GetSafe(Context, Component, OutSuccess, Log);
 
 		if (!AnimInstance)
 			return false;
@@ -93,7 +92,7 @@ namespace NCsAnimMontage
 
 	float FLibrary::PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim, const float& PlayRate /*=1.0f*/, const float& TimeToStartMontageAt /*=0.0f*/)
 	{
-		return AnimInstanceLibrary::GetChecked(Context, Component)->Montage_Play(Anim, PlayRate, EMontagePlayReturnType::Duration, TimeToStartMontageAt);
+		return CsAnimInstanceLibrary::GetChecked(Context, Component)->Montage_Play(Anim, PlayRate, EMontagePlayReturnType::Duration, TimeToStartMontageAt);
 	}
 
 	float FLibrary::PlayChecked(const FString& Context, UPrimitiveComponent* Component, const ParamsType& Params)
@@ -105,7 +104,7 @@ namespace NCsAnimMontage
 			checkf(!IsPlayingChecked(Context, Component, Params.GetAnim()), TEXT("%s: Anim: %s is ALREADY playing."), *Context, *(Params.GetAnim()->GetName()));
 		}
 
-		UAnimInstance* AnimInstance = AnimInstanceLibrary::GetChecked(Context, Component);
+		UAnimInstance* AnimInstance = CsAnimInstanceLibrary::GetChecked(Context, Component);
 
 		if (Params.GetbBlendIn())
 			return AnimInstance->Montage_PlayWithBlendIn(Params.GetAnim(), Params.GetBlendIn(), Params.GetPlayRate(), EMontagePlayReturnType::Duration, Params.GetTimeToStartAt(), Params.GetbStopAll());
@@ -124,7 +123,7 @@ namespace NCsAnimMontage
 				return -1.0f;
 		}
 
-		UAnimInstance* AnimInstance = AnimInstanceLibrary::GetSafe(Context, Component, OutSuccess, Log);
+		UAnimInstance* AnimInstance = CsAnimInstanceLibrary::GetSafe(Context, Component, OutSuccess, Log);
 
 		if (!AnimInstance)
 			return -1.0f;
@@ -148,7 +147,7 @@ namespace NCsAnimMontage
 				return -1.0f;
 		}
 
-		UAnimInstance* AnimInstance = AnimInstanceLibrary::GetSafe(Context, Component, OutSuccess, Log);
+		UAnimInstance* AnimInstance = CsAnimInstanceLibrary::GetSafe(Context, Component, OutSuccess, Log);
 
 		if (!AnimInstance)
 			return -1.0f;
@@ -172,7 +171,7 @@ namespace NCsAnimMontage
 	void FLibrary::PauseChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim)
 	{
 		check(IsPlayingChecked(Context, Component, Anim));
-		AnimInstanceLibrary::GetChecked(Context, Component)->Montage_Pause(Anim);
+		CsAnimInstanceLibrary::GetChecked(Context, Component)->Montage_Pause(Anim);
 	}
 
 	#pragma endregion Pause
@@ -194,7 +193,7 @@ namespace NCsAnimMontage
 		// Time
 		if (Params.GetPositionType() == NCsAnimMontage::ESetPosition::Time)
 		{
-			AnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), Params.GetNewPosition());
+			CsAnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), Params.GetNewPosition());
 			return Params.GetNewPosition();
 		}
 		// Percent
@@ -202,7 +201,7 @@ namespace NCsAnimMontage
 		{
 			const float NewPosition = GetPositionByPercentChecked(Context, Params.GetAnim(), Params.GetNewPositionAsPercent());
 
-			AnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), NewPosition);
+			CsAnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), NewPosition);
 			return NewPosition;
 		}
 		checkf(0, TEXT("%s: PositionType: %s is NOT Supported."), *Context, NCsAnimMontage::EMSetPosition::Get().ToChar(Params.GetPositionType()));
@@ -221,7 +220,7 @@ namespace NCsAnimMontage
 		// Time
 		if (Params.GetPositionType() == NCsAnimMontage::ESetPosition::Time)
 		{
-			AnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), Params.GetNewPosition());
+			CsAnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), Params.GetNewPosition());
 			return Params.GetNewPosition();
 		}
 		// Percent
@@ -229,7 +228,7 @@ namespace NCsAnimMontage
 		{
 			const float NewPosition = GetPositionByPercentChecked(Context, Params.GetAnim(), Params.GetNewPositionAsPercent());
 
-			AnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), NewPosition);
+			CsAnimInstanceLibrary::GetChecked(Context, Component)->Montage_SetPosition(Params.GetAnim(), NewPosition);
 			return NewPosition;
 		}
 		checkf(0, TEXT("%s: PositionType: %s is NOT Supported."), *Context, NCsAnimMontage::EMSetPosition::Get().ToChar(Params.GetPositionType()));
@@ -241,5 +240,4 @@ namespace NCsAnimMontage
 	#pragma endregion SetPosition
 
 	#undef LogLevel
-	#undef AnimInstanceLibrary
 }

@@ -41,7 +41,6 @@ UCsScriptLibrary_BlendSpace::UCsScriptLibrary_BlendSpace(const FObjectInitialize
 #define USING_NS_CACHED using namespace NCsScriptLibraryBlendSpace::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryBlendSpace::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define BlendSpaceLibrary NCsBlendSpace::FLibrary
 #define BlendSpace1DLibrary NCsBlendSpace::N1D::FLibrary
 
 // Load
@@ -51,14 +50,14 @@ UBlendSpace* UCsScriptLibrary_BlendSpace::LoadBySoftObjectPath(const FString& Co
 {
 	CONDITIONAL_SET_CTXT(LoadBySoftObjectPath);
 
-	return BlendSpaceLibrary::SafeLoad(Context, Path);
+	return NCsBlendSpaceLibrary::SafeLoad(Context, Path);
 }
 
 UBlendSpace* UCsScriptLibrary_BlendSpace::LoadByStringPath(const FString& Context, const FString& Path)
 {
 	CONDITIONAL_SET_CTXT(LoadByStringPath);
 
-	return BlendSpaceLibrary::SafeLoad(Ctxt, Path);
+	return NCsBlendSpaceLibrary::SafeLoad(Ctxt, Path);
 }
 
 UBlendSpace1D* UCsScriptLibrary_BlendSpace::Load1DBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path)
@@ -85,7 +84,7 @@ UBlendSpace* UCsScriptLibrary_BlendSpace::GetByPath(const FString& Context, UObj
 {
 	CONDITIONAL_SET_CTXT(GetByPath);
 
-	return BlendSpaceLibrary::GetSafe(Context, Object, Path, OutSuccess);
+	return NCsBlendSpaceLibrary::GetSafe(Context, Object, Path, OutSuccess);
 }
 
 UBlendSpace1D* UCsScriptLibrary_BlendSpace::Get1DByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
@@ -99,5 +98,4 @@ UBlendSpace1D* UCsScriptLibrary_BlendSpace::Get1DByPath(const FString& Context, 
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef BlendSpaceLibrary
 #undef BlendSpace1DLibrary

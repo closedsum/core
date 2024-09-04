@@ -80,12 +80,40 @@ namespace NCsGameState
 			return Interface->HasFinishedTransitionOut();
 		}
 
+		bool FLibrary::SafeHasFinishedTransitionOut(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogLevel)
+		{
+			OutSuccess = false;
+
+			if (AGameStateBase* GameState = CsGameStateLibrary::GetSafe(Context, WorldContext, Log))
+			{
+				if (ICsGameState_Transition* Interface = CS_INTERFACE_CAST(GameState, AGameStateBase, ICsGameState_Transition))
+				{
+					OutSuccess = true;
+					return Interface->HasFinishedTransitionOut();
+				}
+			}
+			return false;
+		}
+
 		void FLibrary::TransitionOutChecked(const FString& Context, const UObject* WorldContext)
 		{
 			AGameStateBase* GameState		   = CsGameStateLibrary::GetChecked(Context, WorldContext);
 			ICsGameState_Transition* Interface = CS_INTERFACE_CAST_CHECKED(GameState, AGameStateBase, ICsGameState_Transition);
 
 			Interface->TransitionOut();
+		}
+
+		bool FLibrary::SafeTransitionOut(const FString& Context, const UObject* WorldContext, LogLevel)
+		{
+			if (AGameStateBase* GameState = CsGameStateLibrary::GetSafe(Context, WorldContext, Log))
+			{
+				if (ICsGameState_Transition* Interface = CS_INTERFACE_CAST(GameState, AGameStateBase, ICsGameState_Transition))
+				{
+					Interface->TransitionOut();
+					return true;
+				}
+			}
+			return false;
 		}
 
 		#pragma endregion ICsGameState_Transition

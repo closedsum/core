@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Params/Point/CsTypes_SpawnerParams_Point.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_SpawnerParams_Point)
+
 // SpawnerPointSelection
 #pragma region
 

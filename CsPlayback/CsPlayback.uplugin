@@ -51,11 +51,19 @@
       "Enabled": true
     },
     {
-      "Name": "CsPlugin",
+      "Name": "CsConsoleCommand",
       "Enabled": true
     },
     {
       "Name": "CsThread",
+      "Enabled": true
+    },
+    {
+      "Name": "CsInput",
+      "Enabled": true
+    },
+    {
+      "Name": "CsPlugin",
       "Enabled": true
     }
   ]

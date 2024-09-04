@@ -143,3 +143,6 @@ namespace NCsSpawner
 		}
 	}
 }
+
+using CsSpawnerManagerLibrary = NCsSpawner::NManager::FLibrary;
+using CsSpawnerManagerModifierLibrary = NCsSpawner::NManager::NModifier::FLibrary;

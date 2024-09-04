@@ -21,7 +21,8 @@ class ULevel;
 class ACsLevelScriptActor;
 
 UCLASS(config = Game)
-class CSCORE_API UCsGameInstance : public UGameInstance, public ICsGetManagerSingleton
+class CSCORE_API UCsGameInstance : public UGameInstance, 
+								   public ICsGetManagerSingleton
 {
 	GENERATED_UCLASS_BODY()
 
@@ -45,6 +46,26 @@ protected:
 	virtual void OnStart() override;
 
 #pragma endregion UGameInstance Interface
+
+// Shutdown
+#pragma region
+
+#define OnPreShutdownEventType NCsGameInstance::FOnPreShutdown
+
+protected:
+
+	OnPreShutdownEventType OnPreShutdown_Event;
+
+public:
+
+	FORCEINLINE OnPreShutdownEventType& GetOnPreShutdown_Event() { return OnPreShutdown_Event; }
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
+	FCsGameInstance_OnPreShutdown OnPreShutdown_ScriptEvent;
+
+#undef OnPreShutdownEventType
+
+#pragma endregion Shutdown
 
 // FExec Interface
 #pragma region

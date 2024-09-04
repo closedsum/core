@@ -3,15 +3,26 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "CsMacro_Namespace.h"
 
 #include "CsScriptLibrary_Manager_Fade.generated.h"
 
 class UCsManager_Fade;
 
+// NCsFade::NManager::FLibrary
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFade, NManager, FLibrary)
+
 UCLASS()
 class CSFADE_API UCsScriptLibrary_Manager_Fade : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	typedef NCsFade::NManager::FLibrary NativeLibrary;
+
+	static void(*LogError)(const FString&);
 
 // Get
 #pragma region

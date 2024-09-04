@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Modifier/CsLibrary_SpawnerModifier.h"
-#include "CsSpawner.h"
 
 // Library
 #include "CsLibrary_Modifier.h"
@@ -18,6 +17,7 @@ namespace NCsSpawner
 {
 	namespace NModifier
 	{
+		#define LogLevel void(*Log)(const FString&) /*=&NCsSpawner::FLog::Warning*/
 		#define ModifierType NCsSpawner::NModifier::IModifier
 
 		bool FLibrary::IsValidChecked(const FString& Context, const ModifierType* Modifier)
@@ -27,7 +27,7 @@ namespace NCsSpawner
 			return Valid->IsValidChecked(Context);
 		}
 
-		bool FLibrary::IsValid(const FString& Context, const ModifierType* Modifier, void(*Log)(const FString&) /*=&FCLog::Warning*/)
+		bool FLibrary::IsValid(const FString& Context, const ModifierType* Modifier, LogLevel)
 		{
 			const ICsIsValid* Valid = GetInterfaceChecked<ICsIsValid>(Context, Modifier);
 
@@ -158,5 +158,6 @@ namespace NCsSpawner
 
 		#undef AllocatedModifierType
 		#undef ModifierType
+		#undef LogLevel
 	}
 }

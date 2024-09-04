@@ -89,3 +89,5 @@ namespace NCsSkeleton
 	#undef LogLevel
 	};
 }
+
+using NCsSkeletonLibrary = NCsSkeleton::FLibrary;

@@ -43,11 +43,19 @@
       "Enabled": true
     },
     {
+      "Name": "CsManager",
+      "Enabled": true
+    },
+    {
       "Name": "CsTypes",
       "Enabled": true
     },
     {
       "Name": "CsCoreLibrary",
+      "Enabled": true
+    },
+    {
+      "Name": "CsData",
       "Enabled": true
     },
     {

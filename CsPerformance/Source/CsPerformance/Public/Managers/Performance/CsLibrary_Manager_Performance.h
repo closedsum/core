@@ -141,3 +141,5 @@ namespace NCsPerformance
 		};
 	}
 }
+
+using CsPerformanceManagerLibrary = NCsPerformance::NManager::FLibrary;

@@ -40,7 +40,6 @@ ACsLevel_Streaming_EventHandler::ACsLevel_Streaming_EventHandler(const FObjectIn
 #define USING_NS_CACHED using namespace NCsLevelStreamingEventHandler::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsLevelStreamingEventHandler::NCached; \
 	const FString& Context = Str::__FunctionName
-#define LevelManagerLibrary NCsLevel::NManager::FLibrary
 
 ULevelStreaming* ACsLevel_Streaming_EventHandler::GetLevel() const
 {
@@ -53,7 +52,7 @@ void ACsLevel_Streaming_EventHandler::OnLevelLoaded()
 
 	if (ULevelStreaming* L = GetLevel())
 	{
-		LevelManagerLibrary::BroadcastChecked_Level_Streaming_OnLoaded(Context, this, L);
+		CsLevelManagerLibrary::BroadcastChecked_Level_Streaming_OnLoaded(Context, this, L);
 	}
 }
 
@@ -63,7 +62,7 @@ void ACsLevel_Streaming_EventHandler::OnLevelUnloaded()
 
 	if (ULevelStreaming* L = GetLevel())
 	{
-		LevelManagerLibrary::BroadcastChecked_Level_Streaming_OnUnloaded(Context, this, L);
+		CsLevelManagerLibrary::BroadcastChecked_Level_Streaming_OnUnloaded(Context, this, L);
 	}
 }
 
@@ -73,7 +72,7 @@ void ACsLevel_Streaming_EventHandler::OnLevelShown()
 
 	if (ULevelStreaming* L = GetLevel())
 	{
-		LevelManagerLibrary::BroadcastChecked_Level_Streaming_OnShown(Context, this, L);
+		CsLevelManagerLibrary::BroadcastChecked_Level_Streaming_OnShown(Context, this, L);
 	}
 }
 
@@ -83,10 +82,9 @@ void ACsLevel_Streaming_EventHandler::OnLevelHidden()
 
 	if (ULevelStreaming* L = GetLevel())
 	{
-		LevelManagerLibrary::BroadcastChecked_Level_Streaming_OnHidden(Context, this, L);
+		CsLevelManagerLibrary::BroadcastChecked_Level_Streaming_OnHidden(Context, this, L);
 	}
 }
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef LevelManagerLibrary

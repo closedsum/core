@@ -2,6 +2,5 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Params/Shape/CsSpawnerParams_ShapeCircle.h"
-#include "CsSpawner.h"
 
 const FName NCsSpawner::NParams::NShape::ICircle::Name = FName("NCsSpawner::NParams::NShape::ICircle");

@@ -3,15 +3,26 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "CsMacro_Namespace.h"
 
 #include "CsScriptLibrary_Manager_Performance.generated.h"
 
 class UCsManager_Performance;
 
+// NCsPerformance::NManager::FLibrary
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPerformance, NManager, FLibrary)
+
 UCLASS()
 class CSPERFORMANCE_API UCsScriptLibrary_Manager_Performance : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	typedef NCsPerformance::NManager::FLibrary NativeLibrary;
+
+	static void(*LogError)(const FString&);
 
 // Get
 #pragma region

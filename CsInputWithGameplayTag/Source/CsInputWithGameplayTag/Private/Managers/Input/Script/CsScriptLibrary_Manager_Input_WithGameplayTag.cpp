@@ -156,7 +156,6 @@ void UCsScriptLibrary_Manager_Input_WithGameplayTag::SetMappingActiveChecked(con
 {
 	CONDITIONAL_SET_CTXT(SetMappingActiveChecked);
 
-	OutSuccess = true;
 	CS_SCRIPT_LIBRARY_CHECKED_6(SetMappingActive, WorldContextObject, ControllerId, Tag)
 }
 
@@ -171,7 +170,6 @@ void UCsScriptLibrary_Manager_Input_WithGameplayTag::SetMappingInctiveChecked(co
 {
 	CONDITIONAL_SET_CTXT(SetMappingInctiveChecked);
 
-	OutSuccess = true;
 	CS_SCRIPT_LIBRARY_CHECKED_6(SetMappingInactive, WorldContextObject, ControllerId, Tag)
 }
 
@@ -186,7 +184,6 @@ void UCsScriptLibrary_Manager_Input_WithGameplayTag::BlockMappingChecked(const F
 {
 	CONDITIONAL_SET_CTXT(BlockMappingChecked);
 
-	OutSuccess = true;
 	CS_SCRIPT_LIBRARY_CHECKED_6(BlockMapping, WorldContextObject, ControllerId, Tag)
 }
 

@@ -4,6 +4,7 @@
 #pragma once
 #include "Components/ActorComponent.h"
 // Interface
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Input/CsManager_Input_WithGameplayTag.h"
 #include "Managers/Input/Event/CsManager_Input_WithGameplayTag_Event.h"
 // Types
@@ -16,6 +17,7 @@ class UCsEnhancedInputListener;
 
 UCLASS(BlueprintType, Blueprintable)
 class CSINPUTWITHGAMEPLAYTAG_API UCsManager_EnhancedInput_WithGameplayTag : public UActorComponent,
+																			public ICsShutdown,
 																			public ICsManager_Input_WithGameplayTag,
 																			public ICsManager_Input_WithGameplayTag_Event
 {
@@ -37,7 +39,27 @@ protected:
 
 	virtual void OnRegister() override;
 
+	virtual void OnUnregister() override;
+
 #pragma endregion UActorComponent Interface
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+	FORCEINLINE bool HasShutdown() const { return bShutdown; }
+
+#pragma endregion ICsShutdown
+
+// Shutdown
+#pragma region
+private:
+
+	bool bShutdown;
+
+#pragma endregion Shutdown
 
 // ICsManager_Input_WithGameplayTag
 #pragma region

@@ -6,11 +6,11 @@
 // Data
 #include "Data/CsUIGetDataRootSet.h"
 // Utility
-#include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsLibrary_EnumStruct.h"
 
 const FCsUIDataRootSet* FCsUIPopulateEnumMapFromSettings::GetDataRootSet(const FString& Context, UObject* ContextRoot)
 {
-	return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, ContextRoot);
+	return CsEnumStructPopulateLibrary::GetDataRootSet<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, ContextRoot);
 }
 
 #define PayloadType FCsUIPopulateEnumMapFromSettings::FFromDataTable::FPayload
@@ -23,7 +23,7 @@ void FCsUIPopulateEnumMapFromSettings::FromDataTable(const FString& Context, Pay
 	if (!DataRootSet)
 		return;
 
-	typedef FCsPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
+	typedef CsEnumStructPopulateLibrary::FFromDataTable::FPayload PayloadType;
 	PayloadType P;
 
 	P.ContextRoot			= Payload.ContextRoot;
@@ -35,5 +35,5 @@ void FCsUIPopulateEnumMapFromSettings::FromDataTable(const FString& Context, Pay
 	P.IsValidEnumByDisplayName = Payload.IsValidEnumByDisplayName;
 	P.Log					= Payload.Log;
 
-	FCsPopulateEnumMapFromSettings::FromDataTable(Context, P);
+	CsEnumStructPopulateLibrary::FromDataTable(Context, P);
 }

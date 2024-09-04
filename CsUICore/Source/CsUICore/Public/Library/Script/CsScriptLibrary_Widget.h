@@ -178,8 +178,55 @@ public:
 #pragma region
 public:
 
+	/**
+	* Get the Button associated named: PropertyName on Widget
+	*  NOTE: Button should be a Class Variable named: PropertyName
+	* 
+	* @param Context		The calling context.
+	* @param Widget			The UserWidget to get the Button from.
+	* @param PropertyName	The name of the Button.
+	* return				Button with name: PropertyName on Widget.
+	*/
 	UFUNCTION(BlueprintPure, Category = "CsUICore|Library|Widget|Button", meta = (AutoCreateRefTerm = "Context,PropertyName"))
 	static UButton* GetButton(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+	/**
+	* Get the Button associated named: PropertyName on Widget
+	*  NOTE: Button should be a Class Variable named: PropertyName
+	* 
+	* @param Context		The calling context.
+	* @param Widget			The UserWidget to get the Button from.
+	* @param PropertyName	The name of the Button.
+	* return				Button with name: PropertyName on Widget.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsUICore|Library|Widget|Button", meta = (DisplayName = "Get Button (Checked)", AutoCreateRefTerm = "Context,PropertyName"))
+	static UButton* GetButtonChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName, bool& OutSuccess);
+
+	/**
+	* EDITOR ONLY
+	* Get the Button associated named: PropertyName on Widget
+	*  NOTE: Button should be a Class Variable named: PropertyName
+	* 
+	* @param Context		The calling context.
+	* @param Widget			The UserWidget to get the Button from.
+	* @param PropertyName	The name of the Button.
+	* return				Button with name: PropertyName on Widget.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsUICore|Library|Widget|Button", meta = (AutoCreateRefTerm = "Context,PropertyName"))
+	static UButton* GetButtonByString(const FString& Context, UUserWidget* Widget, const FString& PropertyName);
+
+	/**
+	* EDITOR ONLY
+	* Get the Button associated named: PropertyName on Widget
+	*  NOTE: Button should be a Class Variable named: PropertyName
+	* 
+	* @param Context		The calling context.
+	* @param Widget			The UserWidget to get the Button from.
+	* @param PropertyName	The name of the Button.
+	* return				Button with name: PropertyName on Widget.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsUICore|Library|Widget|Button", meta = (DisplayName = "Get Button by String (Checked)", AutoCreateRefTerm = "Context,PropertyName"))
+	static UButton* GetButtonByStringChecked(const FString& Context, UUserWidget* Widget, const FString& PropertyName, bool& OutSuccess);
 
 #pragma endregion Button
 

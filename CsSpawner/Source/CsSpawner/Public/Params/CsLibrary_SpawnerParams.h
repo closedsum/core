@@ -35,7 +35,7 @@ namespace NCsSpawner
 			* @param Log		(optional)
 			* return
 			*/
-			static bool IsValid(const FString& Context, const ParamsType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool IsValid(const FString& Context, const ParamsType* Params, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning);
 
 			/**
 			*
@@ -50,3 +50,5 @@ namespace NCsSpawner
 	#undef ParamsType
 	}
 }
+
+using CsSpawnerParamsLibrary = NCsSpawner::NParams::FLibrary;

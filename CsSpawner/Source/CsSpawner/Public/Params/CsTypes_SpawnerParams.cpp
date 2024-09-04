@@ -2,13 +2,14 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Params/CsTypes_SpawnerParams.h"
-#include "CsSpawner.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Array.h"
 #include "Library/CsLibrary_Valid.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_SpawnerParams)
 
 // FCsSpawner_CountParams
 #pragma region
@@ -32,15 +33,13 @@ void FCsSpawner_CountParams::CopyToParamsAsValue(ParamsType* Params) const
 bool FCsSpawner_CountParams::IsValidChecked(const FString& Context) const
 {
 	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(CountPerSpawn, 1)
-
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(TimeBetweenCountPerSpawn, 0.0f)
 	return true;
 }
 
-bool FCsSpawner_CountParams::IsValid(const FString& Context, void(*Log)(const FString&) /*-FCsLog::Warning*/) const
+bool FCsSpawner_CountParams::IsValid(const FString& Context, void(*Log)(const FString&) /*NCsSpawner::FLog::Warning*/) const
 {
 	CS_IS_INT_GREATER_THAN_OR_EQUAL(CountPerSpawn, 1)
-
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(TimeBetweenCountPerSpawn, 0.0f)
 	return true;
 }
@@ -52,15 +51,13 @@ namespace NCsSpawner
 		bool FCount::IsValidChecked(const FString& Context) const
 		{
 			CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCountPerSpawn(), 1)
-
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetTimeBetweenCountPerSpawn(), 0.0f)
 			return true;
 		}
 
-		bool FCount::IsValid(const FString& Context, void(*Log)(const FString&) /*-FCsLog::Warning*/) const
+		bool FCount::IsValid(const FString& Context, void(*Log)(const FString&) /*NCsSpawner::FLog::Warning*/) const
 		{
 			CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCountPerSpawn(), 1)
-
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetTimeBetweenCountPerSpawn(), 0.0f)
 			return true;
 		}
@@ -180,13 +177,12 @@ bool FCsSpawner_FrequencyParams::IsValidChecked(const FString& Context) const
 	if (Type == ECsSpawnerFrequency::InfiniteFillToCount)
 	{
 		checkf(Interval > 0.0f, TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::InfiniteFillToCount."), *Context);
-
 		checkf(Count >= 1, TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::InfiniteFillToCount."), *Context);
 	}
 	return true;
 }
 
-bool FCsSpawner_FrequencyParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsSpawner_FrequencyParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSpawner::FLog::Warning*/) const
 {
 	// Once
 	if (Type == ECsSpawnerFrequency::Once)
@@ -378,13 +374,12 @@ namespace NCsSpawner
 			if (GetType() == FrequencyType::InfiniteFillToCount)
 			{
 				checkf(GetInterval() > 0.0f, TEXT("%s: Interval MUST be > 0.0f if Type == FrequencyType::InfiniteFillToCount."), *Context);
-
 				checkf(GetCount() >= 1, TEXT("%s: Count MUST be >= 1 if Type == FrequencyType::InfiniteFillToCount."), *Context);
 			}
 			return true;
 		}
 
-		bool FFrequency::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		bool FFrequency::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSpawner::FLog::Warning*/) const
 		{
 			typedef NCsSpawner::EFrequency FrequencyType;
 

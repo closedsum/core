@@ -5,6 +5,8 @@
 
 #include "Containers/CsInterfaceMap.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSpawnerParamsImpl)
+
 #define ParamsType NCsSpawner::NParams::FImpl
 
 ParamsType* FCsSpawnerParamsImpl::ConstructParamsImpl() const
@@ -33,7 +35,7 @@ bool FCsSpawnerParamsImpl::IsValidChecked(const FString& Context) const
 	return true;
 }
 
-bool FCsSpawnerParamsImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsSpawnerParamsImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSpawner::FLog::Warning*/) const
 {
 	if (!CountParams.IsValid(Context, Log))
 		return false;
@@ -91,7 +93,7 @@ namespace NCsSpawner
 		}
 		#undef ParamsType
 
-		bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSpawner::FLog::Warning*/) const
 		{
 			if (!CountParams.IsValid(Context, Log))
 				return false;

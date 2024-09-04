@@ -42,7 +42,8 @@ namespace NCsManagerEnhancedInputWithGameplayTag
 
 #pragma endregion Cached
 
-UCsManager_EnhancedInput_WithGameplayTag::UCsManager_EnhancedInput_WithGameplayTag()
+UCsManager_EnhancedInput_WithGameplayTag::UCsManager_EnhancedInput_WithGameplayTag() :
+	bShutdown(false)
 {
 }
 
@@ -59,11 +60,14 @@ void UCsManager_EnhancedInput_WithGameplayTag::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	for (UCsEnhancedInputListener* Listener : Listeners)
-	{
-		CsObjectLibrary::SafeMarkAsGarbage(Listener);
-	}
-	Listeners.Reset();
+	Shutdown();
+}
+
+void UCsManager_EnhancedInput_WithGameplayTag::OnUnregister()
+{
+	Shutdown();
+
+	Super::OnUnregister();
 }
 
 #pragma endregion UObject Interface
@@ -77,14 +81,38 @@ void UCsManager_EnhancedInput_WithGameplayTag::OnRegister()
 
 	//OwnerAsController = Cast<APlayerController>(GetOwner());
 
-	Init();
+	//Init();
 }
 
 #pragma endregion UActorComponent Interface
 
+// ICsShutdown
+#pragma region
+
+void UCsManager_EnhancedInput_WithGameplayTag::Shutdown()
+{
+	for (UCsEnhancedInputListener* Listener : Listeners)
+	{
+		// TODO: Add SafeRemoveFromRoot
+		if (IsValid(Listener) &&
+			Listener->IsRooted())
+		{
+			Listener->RemoveFromRoot();
+		}
+		CsObjectLibrary::SafeMarkAsGarbage(Listener);
+	}
+	Listeners.Reset();
+
+	bShutdown = true;
+}
+
+#pragma endregion ICsShutdown
+
 void UCsManager_EnhancedInput_WithGameplayTag::Init()
 {
 	SET_CONTEXT(Init);
+
+	bShutdown = false;
 
 	OwnerAsController = Cast<APlayerController>(GetOwner());
 

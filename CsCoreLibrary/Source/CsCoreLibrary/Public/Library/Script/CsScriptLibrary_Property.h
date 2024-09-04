@@ -13,6 +13,10 @@ class CSCORELIBRARY_API UCsScriptLibrary_Property : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	static void(*Log)(const FString&);
+
 // Get
 #pragma region
 public:

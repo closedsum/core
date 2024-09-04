@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "ICsSpawner.h"
-#include "CsSpawner.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(ICsSpawner)
 
 UCsSpawner::UCsSpawner(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

@@ -12,7 +12,7 @@ namespace NCsGameState
 {
 	namespace NImpl
 	{
-		class CSCORE_API FLibrary final
+		struct CSCORE_API FLibrary final
 		{
 		#define LogLevel void(*Log)(const FString&) = &FCsLog::Warning
 
@@ -66,6 +66,23 @@ namespace NCsGameState
 			static bool HasFinishedTransitionOutChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
+			* Safely, get whether the GameState has finished "Transitioning Out", which usually occurs when switching between levels.
+			*  NOTE: Assumes GameState implements the interface: ICsGameState_Transition.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param OutSuccess		(out) Whether the load was executing successfully or not.
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SafeHasFinishedTransitionOut(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogLevel);
+			FORCEINLINE static bool SafeHasFinishedTransitionOut(const FString& Context, const UObject* WorldContext, LogLevel)
+			{
+				bool OutSuccess = false;
+				return SafeHasFinishedTransitionOut(Context, WorldContext, OutSuccess, Log);
+			}
+
+			/**
 			* Begin the process of the GameState "Transitioning Out" (i.e. a Pre-Shutdown). THis is usually called before
 			*  switching to another level.
 			*  NOTE: Assumes GameState implements the interface: ICsGameState_Transition.
@@ -74,6 +91,23 @@ namespace NCsGameState
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			*/
 			static void TransitionOutChecked(const FString& Context, const UObject* WorldContext);
+
+			/**
+			* Safely, Begin the process of the GameState "Transitioning Out" (i.e. a Pre-Shutdown). THis is usually called before
+			*  switching to another level.
+			*  NOTE: Assumes GameState implements the interface: ICsGameState_Transition.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SafeTransitionOut(const FString& Context, const UObject* WorldContext, LogLevel);
+			FORCEINLINE static bool SafeTransitionOut(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogLevel)
+			{
+				OutSuccess = SafeTransitionOut(Context, WorldContext, Log);
+				return OutSuccess;
+			}
 
 		#pragma endregion ICsGameState_Transition
 

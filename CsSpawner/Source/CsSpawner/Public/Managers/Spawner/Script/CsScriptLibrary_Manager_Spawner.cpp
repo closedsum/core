@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Spawner/Script/CsScriptLibrary_Manager_Spawner.h"
-#include "CsSpawner.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "Managers/Spawner/CsLibrary_Manager_Spawner.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Spawner)
 
 // Cached
 #pragma region
@@ -30,20 +31,21 @@ UCsScriptLibrary_Manager_Spawner::UCsScriptLibrary_Manager_Spawner(const FObject
 {
 }
 
-#define SpawnerManagerLibrary NCsSpawner::NManager::FLibrary
+#define USING_NS_CACHED using namespace NCsScriptLibraryManagerSpawner::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerSpawner::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 
 // Get
 #pragma region
 
 UCsManager_Spawner* UCsScriptLibrary_Manager_Spawner::Get(const FString& Context, const UObject* WorldContextObject)
 {
-	using namespace NCsScriptLibraryManagerSpawner::NCached;
+	CONDITIONAL_SET_CTXT(Get);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::Get : Context;
-
-	return SpawnerManagerLibrary::GetSafe(Ctxt, WorldContextObject);
+	return CsSpawnerManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 }
 
 #pragma endregion Get
 
-#undef SpawnerManagerLibrary
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT

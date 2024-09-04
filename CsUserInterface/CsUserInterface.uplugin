@@ -43,6 +43,14 @@
       "Enabled": true
     },
     {
+      "Name": "CsScopedTimer",
+      "Enabled": true
+    },
+    {
+      "Name": "CsManager",
+      "Enabled": true
+    },
+    {
       "Name": "CsTypes",
       "Enabled": true
     },
@@ -51,7 +59,15 @@
       "Enabled": true
     },
     {
-      "Name": "CsPlugin",
+      "Name": "CsConsoleCommand",
+      "Enabled": true
+    },
+    {
+      "Name": "CsTime",
+      "Enabled": true
+    },
+    {
+      "Name": "CsData",
       "Enabled": true
     },
     {
@@ -60,6 +76,14 @@
     },
     {
       "Name": "CsPhysics",
+      "Enabled": true
+    },
+    {
+      "Name": "CsInput",
+      "Enabled": true
+    },
+    {
+      "Name": "CsPlugin",
       "Enabled": true
     }
   ]

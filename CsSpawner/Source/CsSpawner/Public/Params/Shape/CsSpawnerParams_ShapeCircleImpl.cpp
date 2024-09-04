@@ -10,6 +10,8 @@
 // Container
 #include "Containers/CsInterfaceMap.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSpawnerParams_ShapeCircleImpl)
+
 #define ParamsType NCsSpawner::NParams::NShape::NCircle::FImpl
 
 ParamsType* FCsSpawnerParams_ShapeCircleImpl::ConstructParamsImpl() const

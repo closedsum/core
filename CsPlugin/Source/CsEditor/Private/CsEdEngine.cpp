@@ -1315,7 +1315,7 @@ void UCsEdEngine::LoadObject(const FString& AssetPath)
 
 	if (UObject* Object = Path.TryLoad())
 	{
-		UCsLibrary_Load::LoadStruct(Object, Object->GetClass(), NCsLoadFlags::All, NCsLoadCodes::All);
+		CsLoadLibrary::LoadStruct(Object, Object->GetClass(), NCsLoadFlags::All, NCsLoadCodes::All);
 	}
 }
 

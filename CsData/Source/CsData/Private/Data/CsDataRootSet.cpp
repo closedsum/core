@@ -51,7 +51,6 @@ namespace NCsDataRootSet
 
 #pragma endregion Cached
 
-#define LoadLibrary UCsLibrary_Load
 
 #define MemberType FCsDataRootSet::EMember
 MemberType FCsDataRootSet::GetMember(const FName& MemberName)
@@ -266,7 +265,7 @@ uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const EMem
 	UDataTable* DT = GetDataTableChecked(Context, MemberType);
 
 #if WITH_EDITOR
-	LoadLibrary::LoadDataTableRowChecked(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All);
+	CsLoadLibrary::LoadDataTableRowChecked(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All);
 #endif // #if WITH_EDITOR
 
 	const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
@@ -288,7 +287,7 @@ uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const EMem
 	UDataTable* DT = GetDataTableChecked(Context, MemberType);
 
 #if WITH_EDITOR
-	LoadLibrary::LoadDataTableRowChecked(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All);
+	CsLoadLibrary::LoadDataTableRowChecked(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All);
 #endif // #if WITH_EDITOR
 
 	CS_IS_PTR_NULL_CHECKED(RowStruct)
@@ -317,7 +316,7 @@ uint8* FCsDataRootSet::GetSafeDataTableRow(const FString& Context, const EMember
 		return nullptr;
 
 #if WITH_EDITOR
-	if (!LoadLibrary::SafeLoadDataTableRow(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All, Log))
+	if (!CsLoadLibrary::SafeLoadDataTableRow(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All, Log))
 		return nullptr;
 #endif // #if WITH_EDITOR
 
@@ -340,7 +339,7 @@ uint8* FCsDataRootSet::GetSafeDataTableRow(const FString& Context, const EMember
 	UDataTable* DT = GetDataTableChecked(Context, MemberType);
 
 #if WITH_EDITOR
-	if (!LoadLibrary::SafeLoadDataTableRow(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All, Log))
+	if (!CsLoadLibrary::SafeLoadDataTableRow(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All, Log))
 		return nullptr;
 #endif // #if WITH_EDITOR
 
@@ -365,5 +364,3 @@ uint8* FCsDataRootSet::GetSafeDataTableRow(const FString& Context, const EMember
 	CS_CONDITIONAL_LOG(FString::Printf(TEXT("Failed to find Row with Name: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DT->GetName())));
 	return nullptr;
 }
-
-#undef LoadLibrary

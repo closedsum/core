@@ -11,6 +11,10 @@ class CSDATA_API UCsScriptLibrary_Load : public UObject
 { 
 	GENERATED_UCLASS_BODY() 
 
+private:
+
+	static void(*Log)(const FString&);
+
 public:
 	
 	/**

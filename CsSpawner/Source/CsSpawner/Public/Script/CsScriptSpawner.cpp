@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Script/CsScriptSpawner.h"
-#include "CsSpawner.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptSpawner)
 
 UCsScriptSpawner::UCsScriptSpawner(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

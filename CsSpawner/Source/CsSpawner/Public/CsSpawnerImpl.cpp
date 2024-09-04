@@ -22,6 +22,8 @@
 #include "Point/CsSpawnerPointImpl.h"
 #include "Params/CsSpawnerParamsImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSpawnerImpl)
+
 // Cached
 #pragma region
 
@@ -355,9 +357,7 @@ void ACsSpawnerImpl::Start()
 
 	const FString& Context = Str::Start;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler   = CsCoroutineSchedulerLibrary::GetChecked(Context, this);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	if (Scheduler->IsHandleValid(UpdateGroup, Start_Internal_Handle))
@@ -434,9 +434,7 @@ void ACsSpawnerImpl::ACsSpawnerImpl::Stop()
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler   = CsCoroutineSchedulerLibrary::GetChecked(Context, this);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	Scheduler->End(UpdateGroup, Start_Internal_Handle);
@@ -462,9 +460,7 @@ void ACsSpawnerImpl::Spawn()
 
 	const FString& Context = Str::Spawn;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler   = CsCoroutineSchedulerLibrary::GetChecked(Context, this);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	if (Scheduler->IsHandleValid(UpdateGroup, Start_Internal_Handle))
@@ -597,7 +593,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 		}
 	} while (CanSpawn);
 
-	CS_COROUTINE_WAIT_UNTIL(R, R->ElapsedTime.Time >= *TotalTime);
+	CS_COROUTINE_WAIT_UNTIL(R, R->GetElapsedTime().Time >= *TotalTime);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
@@ -636,9 +632,7 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler   = CsCoroutineSchedulerLibrary::GetChecked(Context, this);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	check(IsParamsValidImpl(Context, Params));
@@ -688,7 +682,7 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
-	ElapsedTime += R->DeltaTime;
+	ElapsedTime += R->GetDeltaTime();
 
 	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;
 	const int32& ResourceIndex = R->GetValue_Int(RESOURCE_SPAWNED_OBJECTS);
@@ -804,9 +798,7 @@ void ACsSpawnerImpl::SpawnObjects_InfiniteFillToCount()
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler   = CsCoroutineSchedulerLibrary::GetChecked(Context, this);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	check(IsParamsValidImpl(Context, Params));
@@ -853,7 +845,7 @@ char ACsSpawnerImpl::SpawnObjects_InfiniteFillToCount_Internal(FCsRoutine* R)
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
-	ElapsedTime += R->DeltaTime;
+	ElapsedTime += R->GetDeltaTime();
 
 	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;
 	const int32& ResourceIndex = R->GetValue_Int(RESOURCE_SPAWNED_OBJECTS);

@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Modifier/Types/CsTypes_SpawnerModifier.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_SpawnerModifier)
+
 // SpawnerModifier
 #pragma region
 

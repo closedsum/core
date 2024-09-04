@@ -2,6 +2,5 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Params/Shape/CsSpawnerParams_Shape.h"
-#include "CsSpawner.h"
 
 const FName NCsSpawner::NParams::NShape::IShape::Name = FName("NCsSpawner::NParams::NShape::IShape");

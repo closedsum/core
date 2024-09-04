@@ -20,7 +20,7 @@
 // Data
 #include "Data/CsWpGetDataRootSet.h"
 #include "Data/CsData_WeaponInterfaceMap.h"
-#include "Data/CsData.h"
+#include "Data/ICsData.h"
 #include "Data/CsData_WeaponImplSlice.h"
 #include "Projectile/Data/CsData_ProjectileWeaponImplSlice.h"
 #include "Projectile/Data/Sound/Fire/CsData_ProjectileWeapon_SoundFireImplSlice.h"

@@ -3,7 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Interfaces
-#include "Data/CsData.h"
+#include "Data/ICsData.h"
 #include "Managers/Damage/Data/CsData_Damage.h"
 
 struct FCsInterfaceMap;

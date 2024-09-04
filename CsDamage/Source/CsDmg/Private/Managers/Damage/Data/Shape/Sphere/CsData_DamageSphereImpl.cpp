@@ -311,7 +311,7 @@ bool UCsData_DamageSphereImpl::IsValid(const int32& LoadFlags)
 
 void UCsData_DamageSphereImpl::Load(const int32& LoadFlags)
 {
-	UCsLibrary_Load::LoadStruct(this, GetClass(), LoadFlags, NCsLoadCodes::All);
+	CsLoadLibrary::LoadStruct(this, GetClass(), LoadFlags, NCsLoadCodes::All);
 
 	Init();
 

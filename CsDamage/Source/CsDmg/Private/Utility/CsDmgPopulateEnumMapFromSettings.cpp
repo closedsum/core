@@ -6,9 +6,9 @@
 // Data
 #include "Data/CsDmgGetDataRootSet.h"
 // Utility
-#include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsLibrary_EnumStruct.h"
 
 const FCsDmgDataRootSet* FCsDmgPopulateEnumMapFromSettings::GetDataRootSet(const FString& Context, UObject* ContextRoot)
 {
-	return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsDmgDataRootSet, ICsDmgGetDataRootSet, &ICsDmgGetDataRootSet::GetCsDmgDataRootSet>(Context, ContextRoot);
+	return CsEnumStructPopulateLibrary::GetDataRootSet<FCsDmgDataRootSet, ICsDmgGetDataRootSet, &ICsDmgGetDataRootSet::GetCsDmgDataRootSet>(Context, ContextRoot);
 }

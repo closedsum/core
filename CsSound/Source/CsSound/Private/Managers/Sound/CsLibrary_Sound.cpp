@@ -217,7 +217,7 @@ namespace NCsSound
 		const float& TotalTime		  = R->GetValue_Float(TOTAL_TIME);
 
 		FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
-		ElapsedTime += R->DeltaTime;
+		ElapsedTime += R->GetDeltaTime();
 
 		CS_COROUTINE_BEGIN(R)
 
@@ -274,7 +274,7 @@ namespace NCsSound
 			}
 		} while (CanSpawn);
 
-		CS_COROUTINE_WAIT_UNTIL(R, R->ElapsedTime.Time >= TotalTime);
+		CS_COROUTINE_WAIT_UNTIL(R, R->GetElapsedTime().Time >= TotalTime);
 
 		CS_COROUTINE_END(R)
 	}

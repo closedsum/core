@@ -12,7 +12,7 @@
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
-#include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsLibrary_EnumStruct.h"
 #include "Utility/CsLog.h"
 // StaticMeshActor
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"

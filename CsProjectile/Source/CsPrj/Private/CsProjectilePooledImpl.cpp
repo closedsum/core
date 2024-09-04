@@ -1139,7 +1139,7 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 
 	CS_COROUTINE_BEGIN(R);
 
-	CS_COROUTINE_WAIT_UNTIL(R, R->ElapsedTime.Time >= Delay);
+	CS_COROUTINE_WAIT_UNTIL(R, R->GetElapsedTime().Time >= Delay);
 
 	// Movement
 	{

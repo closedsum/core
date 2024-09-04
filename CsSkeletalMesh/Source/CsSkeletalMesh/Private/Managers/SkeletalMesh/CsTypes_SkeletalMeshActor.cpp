@@ -12,7 +12,7 @@
 #include "Library/CsLibrary_Valid.h"
 #include "Material/CsLibrary_Material.h"
 // Utility
-#include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsLibrary_EnumStruct.h"
 
 // SkeletalMeshActor
 #pragma region

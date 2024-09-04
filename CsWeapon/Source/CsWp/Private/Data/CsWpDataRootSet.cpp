@@ -165,7 +165,7 @@ UDataTable* FCsWpDataRootSet::GetDataTableChecked(const FString& Context, const 
 	checkf(DT, TEXT("%s: Failed to Load DataTalbe at %s."), *Context, *(SoftObject.ToString()));
 
 #if WITH_EDITOR
-	UCsLibrary_Load::LoadDataTable(DT, NCsLoadFlags::All, NCsLoadCodes::All);
+	CsLoadLibrary::LoadDataTable(DT, NCsLoadFlags::All, NCsLoadCodes::All);
 #endif // #if WITH_EDITOR
 
 	return DT;

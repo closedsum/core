@@ -49,7 +49,7 @@ namespace NCsStaticMesh
 					}
 				}
 
-				Component->InitPerInstanceRenderData(true, &Data);
+				//Component->InitPerInstanceRenderData(true, &Data);
 				Component->MarkRenderStateDirty();
 			}
 

@@ -6,11 +6,11 @@
 // Data
 #include "Data/CsBeamGetDataRootSet.h"
 // Utility
-#include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsLibrary_EnumStruct.h"
 
 const FCsBeamDataRootSet* FCsBeamPopulateEnumMapFromSettings::GetDataRootSet(const FString& Context, UObject* ContextRoot)
 {
-	return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsBeamDataRootSet, ICsBeamGetDataRootSet, &ICsBeamGetDataRootSet::GetCsBeamDataRootSet>(Context, ContextRoot);
+	return CsEnumStructPopulateLibrary::GetDataRootSet<FCsBeamDataRootSet, ICsBeamGetDataRootSet, &ICsBeamGetDataRootSet::GetCsBeamDataRootSet>(Context, ContextRoot);
 }
 
 #define PayloadType FCsBeamPopulateEnumMapFromSettings::FFromDataTable::FPayload
@@ -23,7 +23,7 @@ void FCsBeamPopulateEnumMapFromSettings::FromDataTable(const FString& Context, P
 	if (!DataRootSet)
 		return;
 
-	typedef FCsPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
+	typedef CsEnumStructPopulateLibrary::FFromDataTable::FPayload PayloadType;
 	PayloadType P;
 
 	P.ContextRoot			= Payload.ContextRoot;
@@ -35,5 +35,5 @@ void FCsBeamPopulateEnumMapFromSettings::FromDataTable(const FString& Context, P
 	P.IsValidEnumByDisplayName = Payload.IsValidEnumByDisplayName;
 	P.Log					= Payload.Log;
 
-	FCsPopulateEnumMapFromSettings::FromDataTable(Context, P);
+	CsEnumStructPopulateLibrary::FromDataTable(Context, P);
 }

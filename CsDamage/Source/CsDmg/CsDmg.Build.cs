@@ -31,11 +31,13 @@ public class CsDmg : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore",
+                    "CsData",
                     "CsModifier",
-                    "CsPhysics"
+                    "CsPhysics",
+                    "CsCore"
                 }
             );
 

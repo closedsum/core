@@ -59,15 +59,15 @@
       "Enabled": true
     },
     {
-      "Name": "CsPlugin",
-      "Enabled": true
-    },
-    {
       "Name": "CsModifier",
       "Enabled": true
     },
     {
       "Name": "CsPhysics",
+      "Enabled": true
+    },
+    {
+      "Name": "CsPlugin",
       "Enabled": true
     }
   ]

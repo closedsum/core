@@ -438,12 +438,12 @@ namespace NCsFX
 
 				FORCEINLINE static UCsManager_FX* GetManagerChecked(const FString& Context, const UObject* WorldContext)
 				{
-					return CsFXManagerLibrary::GetChecked(Context, WorldContext);
+					return NCsFX::NManager::FLibrary::GetChecked(Context, WorldContext);
 				}
 
 				FORCEINLINE static UCsManager_FX* GetSafeManager(const FString& Context, const UObject* WorldContext, LogLevel)
 				{
-					return CsFXManagerLibrary::GetSafe(Context, WorldContext, Log);
+					return NCsFX::NManager::FLibrary::GetSafe(Context, WorldContext, Log);
 				}
 
 			#define FloatParameterType NCsFX::NParameter::NFloat::FFloatType

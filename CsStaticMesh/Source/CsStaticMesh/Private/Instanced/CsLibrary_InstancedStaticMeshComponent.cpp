@@ -118,7 +118,7 @@ namespace NCsStaticMesh
 						Data.SetInstanceCustomData(I, J, CustomDatas[(I * NumCustomDataFloats) + J]);
 					}
 				}
-				Component->PerInstanceRenderData->UpdateFromPreallocatedData(Data);
+				//Component->PerInstanceRenderData->UpdateFromPreallocatedData(Data);
 				Component->MarkRenderStateDirty();
 			}
 		}

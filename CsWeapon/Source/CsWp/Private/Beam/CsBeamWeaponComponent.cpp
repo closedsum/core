@@ -530,7 +530,7 @@ char UCsBeamWeaponComponent::Fire_Internal(FCsRoutine* R)
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
-	ElapsedTime += R->DeltaTime;
+	ElapsedTime += R->GetDeltaTime();
 	
 	CS_COROUTINE_BEGIN(R);
 
@@ -628,7 +628,7 @@ char UCsBeamWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FCsRo
 	FCsDeltaTime& ElapsedTime			   = R->GetValue_DeltaTime(CS_FIRST);
 	const FCsDeltaTime PreviousElapsedTime = ElapsedTime;
 
-	ElapsedTime += R->DeltaTime;
+	ElapsedTime += R->GetDeltaTime();
 
 	const float& TimeBetweenShots = R->GetValue_Float(CS_FIRST);
 

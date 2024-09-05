@@ -31,14 +31,19 @@ public class CsPrj : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsManager",
+                    "CsScopedTimer",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore",
+                    "CsTime",
+                    "CsCoroutine",
+                    "CsData",
                     "CsDmg",
                     "CsModifier",
                     "CsSound",
                     "CsFX",
-                    "CsPhysics"
+                    "CsPhysics",
+                    "CsCore"
                 }
             );
 

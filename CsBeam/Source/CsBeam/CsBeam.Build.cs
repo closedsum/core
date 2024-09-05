@@ -34,11 +34,14 @@ public class CsBeam : ModuleRules
                     "CsValid",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore",
+                    "CsTime",
+                    "CsCoroutine",
+                    "CsData",
                     "CsDmg",
                     "CsSound",
                     "CsFX",
-                    "CsPhysics"
+                    "CsPhysics",
+                    "CsCore",
                 }
             );
 

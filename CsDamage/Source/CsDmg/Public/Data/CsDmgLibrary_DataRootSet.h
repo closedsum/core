@@ -149,3 +149,6 @@ namespace NCsDamage
 		};
 	}
 }
+
+using CsDamageDataRootSetLibrary = NCsDamage::NDataRootSet::FLibrary;
+using CsDmgDataRootSetLibrary = NCsDamage::NDataRootSet::FLibrary;

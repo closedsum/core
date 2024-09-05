@@ -354,7 +354,7 @@ char ACsSoundPooledImpl::Stop_Internal(FCsRoutine* R)
 
 	AudioComponent->FadeOut(FadeOutTime, 0.0f);
 
-	CS_COROUTINE_WAIT_UNTIL(R, R->ElapsedTime.Time > FadeOutTime);
+	CS_COROUTINE_WAIT_UNTIL(R, R->GetElapsedTime().Time > FadeOutTime);
 
 	Stop(0.0f);
 

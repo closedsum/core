@@ -10,7 +10,7 @@
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsDmgLog.h"
-#include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsLibrary_EnumStruct.h"
 // Data
 #include "Data/CsDmgGetDataRootSet.h"
 
@@ -36,12 +36,12 @@ namespace NCsDamageData
 	{
 		using namespace NCsDamageData::NCached;
 
-		const FCsDmgDataRootSet* DataRootSet = FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsDmgDataRootSet, ICsDmgGetDataRootSet, &ICsDmgGetDataRootSet::GetCsDmgDataRootSet>(Context, ContextRoot);
+		const FCsDmgDataRootSet* DataRootSet = CsEnumStructPopulateLibrary::GetDataRootSet<FCsDmgDataRootSet, ICsDmgGetDataRootSet, &ICsDmgGetDataRootSet::GetCsDmgDataRootSet>(Context, ContextRoot);
 
 		if (!DataRootSet)
 			return;
 
-		typedef FCsPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
+		typedef CsEnumStructPopulateLibrary::FFromDataTable::FPayload PayloadType;
 
 		PayloadType Payload;
 		Payload.ContextRoot				 = ContextRoot;
@@ -53,7 +53,7 @@ namespace NCsDamageData
 		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
 		Payload.Log						 = &FCsLog::Warning;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable(Context, Payload);
+		CsEnumStructPopulateLibrary::FromDataTable(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

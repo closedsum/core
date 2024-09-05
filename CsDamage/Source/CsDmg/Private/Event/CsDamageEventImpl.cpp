@@ -106,7 +106,6 @@ namespace NCsDamage
 		bool FImpl::SetDamageChecked(const FString& Context)
 		{
 			CS_IS_PTR_NULL_CHECKED(Data)
-
 			CS_IS_PTR_NULL_CHECKED(DamageValue.GetValue())
 
 			// Shape
@@ -129,7 +128,6 @@ namespace NCsDamage
 				Damage						= DamageValuePoint->GetValue();
 				return true;
 			}
-			return false;
 		}
 
 		// ICsReset

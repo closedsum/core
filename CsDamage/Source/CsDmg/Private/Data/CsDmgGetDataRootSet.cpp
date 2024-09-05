@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/CsDmgGetDataRootSet.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsDmgGetDataRootSet)
+
 UCsDmgGetDataRootSet::UCsDmgGetDataRootSet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

@@ -73,7 +73,7 @@ void UCsAnimNotify_PlayParticleEffect::Notify(class USkeletalMeshComponent* Mesh
 	UWorld* CurrentWorld = MeshComp->GetWorld();
 
 	// TODO: need to check case of AnimInstance
-	const bool InGame = CsWorldLibrary::IsPlayInGame(CurrentWorld) || WorldLibrary::IsPlayInPIE(CurrentWorld);
+	const bool InGame = CsWorldLibrary::IsPlayInGame(CurrentWorld) || CsWorldLibrary::IsPlayInPIE(CurrentWorld);
 
 	// Use FX Manager
 	/*

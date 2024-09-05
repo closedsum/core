@@ -8,6 +8,8 @@
 // Library
 #include "Event/CsLibrary_DamageEvent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_DamageEvent)
+
 // Cached
 #pragma region
 

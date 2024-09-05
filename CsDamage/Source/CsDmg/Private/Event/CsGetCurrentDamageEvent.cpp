@@ -3,8 +3,9 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Event/CsGetCurrentDamageEvent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetCurrentDamageEvent)
+
 UCsGetCurrentDamageEvent::UCsGetCurrentDamageEvent(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-
 }

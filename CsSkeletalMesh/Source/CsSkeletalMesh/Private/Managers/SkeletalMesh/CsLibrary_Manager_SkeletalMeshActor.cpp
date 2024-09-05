@@ -169,8 +169,6 @@ namespace NCsSkeletalMeshActor
 			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, Shot);
 
 			return Manager_SkeletalMeshActor->Spawn(Shot.GetType(), Payload);
-			
-			return nullptr;
 		}
 
 		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)
@@ -220,8 +218,6 @@ namespace NCsSkeletalMeshActor
 			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, Shot);
 
 			return Manager_SkeletalMeshActor->Spawn(Shot.GetType(), Payload);
-			
-			return nullptr;
 		}
 
 		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)

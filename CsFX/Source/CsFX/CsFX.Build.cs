@@ -36,6 +36,8 @@ public class CsFX : ModuleRules
                     "CsValid",
                     "CsTypes",
                     "CsCoreLibrary",
+                    "CsTime",
+                    "CsCoroutine",
                     "CsCore"
 ,                }
             );

@@ -51,7 +51,7 @@ namespace NCsDamageData
 		Payload.CreateCustom			 = &CreateCustom;
 		Payload.IsValidEnum				 = &IsValidEnum;
 		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
-		Payload.Log						 = &FCsLog::Warning;
+		Payload.Log						 = &NCsDamage::FLog::Warning;
 
 		CsEnumStructPopulateLibrary::FromDataTable(Context, Payload);
 	}

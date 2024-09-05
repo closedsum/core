@@ -7,6 +7,8 @@
 // Settings
 #include "Settings/CsDamageSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Damage)
+
 // FCsSettings_Damage_Debug
 #pragma region
 

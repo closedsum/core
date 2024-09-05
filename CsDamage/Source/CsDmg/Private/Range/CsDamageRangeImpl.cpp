@@ -56,9 +56,7 @@ namespace NCsDamage
 
 			const FString& Context = Str::Copy;
 
-			typedef NCsDamage::NRange::FLibrary ValueLibrary;
-
-			const FImpl* FromImpl = ValueLibrary::PureStaticCastChecked<FImpl>(Context, From);
+			const FImpl* FromImpl = CsDamageRangeLibrary::PureStaticCastChecked<FImpl>(Context, From);
 
 			SetMinRange(FromImpl->GetMinRange());
 			SetMaxRange(FromImpl->GetMaxRange());

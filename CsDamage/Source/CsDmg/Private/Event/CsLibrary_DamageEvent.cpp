@@ -382,13 +382,12 @@ namespace NCsDamage
 
 			checkf(CollisionInfo.GetMethod() == CollisionMethodType::PhysicsSweep, TEXT("%s: GetMethod() is NOT CollisionMethodType::PhysicsSweep."), *Context);
 
-			typedef NCsDamage::NRange::FLibrary RangeLibrary;
 			typedef NCsDamage::NRange::IRange RangeType;
 
 			const RangeType* Range = Event->GetDamageRange();
 
 			checkf(Range, TEXT("%s: Range is NULL. No DamageRange set for Event."), *Context);
-			check(RangeLibrary::IsValidChecked(Context, Range));
+			check(CsDamageRangeLibrary::IsValidChecked(Context, Range));
 
 			const FHitResult& Hit = Event->GetHitResult();
 

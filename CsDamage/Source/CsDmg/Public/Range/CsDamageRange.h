@@ -27,3 +27,6 @@ namespace NCsDamage
 		};
 	}
 }
+
+using CsDamageRangeType = NCsDamage::NRange::IRange;
+using CsDmgRangeType = NCsDamage::NRange::IRange;

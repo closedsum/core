@@ -33,3 +33,5 @@ namespace NCsDamage
 	#undef RangeType
 	}
 }
+
+using CsDamageRangeLibrary = NCsDamage::NRange::FLibrary;

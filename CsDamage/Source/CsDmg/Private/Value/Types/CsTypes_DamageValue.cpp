@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Value/Types/CsTypes_DamageValue.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_DamageValue)
+
 namespace NCsDamageValue
 {
 	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(Point, "NCsDamage::NValue::NPoint::IPoint");

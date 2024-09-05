@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsDamageSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsDamageSettings)
+
 UCsDamageSettings::UCsDamageSettings(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
 	Damage(),

@@ -783,10 +783,8 @@ RangeResourceType* UCsManager_Damage::AllocateRange()
 
 void UCsManager_Damage::DeallocateRange(const FString& Context, RangeResourceType* Range)
 {
-	typedef NCsDamage::NRange::FLibrary RangeLibrary;
-
 	// Reset
-	ICsReset* IReset = RangeLibrary::GetInterfaceChecked<ICsReset>(Context, Range->Get());
+	ICsReset* IReset = CsDamageRangeLibrary::GetInterfaceChecked<ICsReset>(Context, Range->Get());
 	IReset->Reset();
 
 	Manager_Range.Deallocate(Range);

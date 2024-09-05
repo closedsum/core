@@ -260,9 +260,7 @@ namespace NCsDamage
 			RangeResourceType* Container = Manager_Damage->AllocateRange();
 			RangeType* Copy				 = Container->Get();
 
-			typedef NCsDamage::NRange::FLibrary RangeLibrary;
-
-			bool Success = RangeLibrary::CopyChecked(Context, Range, Copy);
+			bool Success = CsDamageRangeLibrary::CopyChecked(Context, Range, Copy);
 
 			checkf(Success, TEXT("%s: Failed to create copy of Range."), *Context);
 

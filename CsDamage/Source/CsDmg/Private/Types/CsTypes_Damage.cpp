@@ -6,6 +6,8 @@
 // Curve
 #include "Curves/CurveFloat.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Damage)
+
 // DamageType
 #pragma region
 

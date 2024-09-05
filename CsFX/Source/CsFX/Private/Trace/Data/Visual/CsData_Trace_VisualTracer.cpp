@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Trace/Data/Visual/CsData_Trace_VisualTracer.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Trace_VisualTracer)
+
 const FName NCsTrace::NData::NVisual::NTracer::ITracer::Name = FName("NCsTrace::NData::NVisual::NTracer::ITracer");
 
 const FName ICsData_Trace_VisualTracer::Name = FName("ICsData_Trace_VisualTracer");

@@ -6,6 +6,8 @@
 // Types
 #include "CsMacro_Misc.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsFXSettings)
+
 // Cached
 #pragma region
 

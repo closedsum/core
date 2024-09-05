@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Trace/Data/Visual/CsTypes_Trace_Visual.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Trace_Visual)
+
 // TraceVisualAttach
 #pragma region
 

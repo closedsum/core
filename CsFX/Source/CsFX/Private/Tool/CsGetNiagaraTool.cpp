@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Tool/CsGetNiagaraTool.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetNiagaraTool)
+
 UCsGetNiagaraTool::UCsGetNiagaraTool(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

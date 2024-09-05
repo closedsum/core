@@ -674,7 +674,7 @@ char ACsBeamActorPooledImpl::FCollisionImpl::Emit_Internal(FCsRoutine* R)
 	int32& CurrentPassCount = R->GetValue_Int(CURRENT_PASS_COUNT);
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
-	ElapsedTime += R->DeltaTime;
+	ElapsedTime += R->GetDeltaTime();
 
 	typedef NCsBeam::NCollision::EFrequency FrequencyType;
 

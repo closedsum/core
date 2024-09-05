@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Trace/Data/Visual/CsData_Trace_VisualTrail.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Trace_VisualTrail)
+
 const FName NCsTrace::NData::NVisual::NTrail::ITrail::Name = FName("NCsTrace::NData::NVisual::NTrail::ITrail");
 
 const FName ICsData_Trace_VisualTrail::Name = FName("ICsData_Trace_VisualTrail");

@@ -31,8 +31,11 @@ public class CsSkeletalMesh : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsManager",
+                    "CsScopedTimer",
                     "CsTypes",
                     "CsCoreLibrary",
+                    "CsTime",
                     "CsCore"
                 }
             );

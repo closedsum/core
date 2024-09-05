@@ -795,7 +795,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	{
 		typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh VisualDataType;
 
-		if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+		if (VisualDataType* VisualData = CsPrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
 		{
 			// TODO: Allocate Static Mesh Actor and get Static Mesh Component
 
@@ -862,7 +862,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		{
 			typedef NCsProjectile::NData::NVisual::NTrail::ITrail VisualDataType;
 
-			if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+			if (VisualDataType* VisualData = CsPrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
 			{
 				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
@@ -895,7 +895,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
 
-		if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+		if (CollisionDataType* CollisionData = CsPrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
 			const FCsCollisionPreset& CollisionPreset = CollisionData->GetCollisionPreset();
 

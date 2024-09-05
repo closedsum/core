@@ -32,6 +32,8 @@ public class CsBeam : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsManager",
+                    "CsScopedTimer",
                     "CsTypes",
                     "CsCoreLibrary",
                     "CsTime",

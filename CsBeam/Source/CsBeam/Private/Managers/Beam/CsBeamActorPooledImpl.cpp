@@ -845,7 +845,6 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 
 		if (ImpactVisualDataType* ImpactVisualData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 		{
-			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
 			PayloadImplType Payload;
@@ -857,7 +856,7 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 			Transform.SetLocation(CollisionLibrary::GetLocation(Hit));
 			Transform.SetRotation(CollisionLibrary::GetImpactQuat(Hit));
 
-			FXManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactFX, Transform);
+			CsFXManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactFX, Transform);
 		}
 	}
 	// ImpactSoundDataType (NCsBeam::NData::NSound::NImpact::IImpact)

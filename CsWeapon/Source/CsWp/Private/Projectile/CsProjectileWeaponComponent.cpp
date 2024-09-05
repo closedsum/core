@@ -1266,9 +1266,7 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 InCurrentProjectile
 				UNiagaraSystem* FXAsset = FX.GetChecked(Context);
 
 				// Get Manager
-				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-				UCsManager_FX* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
+				UCsManager_FX* Manager_FX = CsFXManagerLibrary::GetChecked(Context, Outer);
 				// Allocate payload
 				typedef NCsFX::NPayload::IPayload PayloadType;
 
@@ -1298,9 +1296,7 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 InCurrentProjectile
 					UNiagaraSystem* FXAsset = FX.GetChecked(Context);
 
 					// Get Manager
-					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-					UCsManager_FX* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
+					UCsManager_FX* Manager_FX = CsFXManagerLibrary::GetChecked(Context, Outer);
 					// Allocate payload
 					typedef NCsFX::NPayload::IPayload PayloadType;
 

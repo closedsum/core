@@ -37,6 +37,8 @@ namespace NCsFX
 			}
 		}
 
+		#define LogLevel void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/
+
 		// Print
 		#pragma region
 
@@ -66,7 +68,7 @@ namespace NCsFX
 			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
 			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
@@ -107,7 +109,7 @@ namespace NCsFX
 			return Manager_FX;
 		}
 
-		UCsManager_FX* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &NCsFX::FLog::Warning*/)
+		UCsManager_FX* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -157,7 +159,7 @@ namespace NCsFX
 			// Find
 		#pragma region
 		
-		const FCsFXActorPooled* FLibrary::FindSafeObject(const FString& Context, const UObject* WorldContext, const FECsFX& Type, const int32& Index, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
+		const FCsFXActorPooled* FLibrary::FindSafeObject(const FString& Context, const UObject* WorldContext, const FECsFX& Type, const int32& Index, LogLevel)
 		{
 			if (UCsManager_FX* Manager_FX = GetSafe(Context, WorldContext, Log))
 			{
@@ -417,7 +419,7 @@ namespace NCsFX
 			return GetChecked(Context, WorldContext)->Spawn(FX.Type, Payload);
 		}
 
-		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -478,7 +480,7 @@ namespace NCsFX
 			return GetChecked(Context, WorldContext)->Spawn(FX.Type, Payload);
 		}
 
-		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -503,8 +505,12 @@ namespace NCsFX
 
 		#pragma endregion Spawn
 
+		#undef LogLevel
+
 		namespace NParameter
 		{
+			#define LogLevel void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/
+
 			#define FloatParameterType NCsFX::NParameter::NFloat::FFloatType
 			FloatParameterType* FLibrary::AllocateFloatChecked(const FString& Context, const UObject* WorldContext)
 			{
@@ -550,7 +556,7 @@ namespace NCsFX
 				}
 			}
 
-			bool FLibrary::SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<ParameterType*>& Values, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
+			bool FLibrary::SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<ParameterType*>& Values, LogLevel)
 			{
 				CS_IS_TARRAY_ANY_NULL(Values, ParameterType)
 
@@ -594,7 +600,7 @@ namespace NCsFX
 				}
 			}
 
-			bool FLibrary::SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<ScaledParameterType*>& Values, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
+			bool FLibrary::SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<ScaledParameterType*>& Values, LogLevel)
 			{
 				CS_IS_TARRAY_ANY_NULL(Values, ScaledParameterType)
 
@@ -638,7 +644,7 @@ namespace NCsFX
 				}
 			}
 
-			bool FLibrary::SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<SkeletalMeshParameterType*>& Values, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
+			bool FLibrary::SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<SkeletalMeshParameterType*>& Values, LogLevel)
 			{
 				CS_IS_TARRAY_ANY_NULL(Values, SkeletalMeshParameterType)
 
@@ -657,6 +663,8 @@ namespace NCsFX
 			}
 
 			#undef SkeletalMeshParameterType
+
+			#undef LogLevel
 		}
 	}
 }

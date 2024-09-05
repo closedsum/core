@@ -18,6 +18,8 @@
 // Manager
 //#include "Managers/FX/CsManager_FX.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsAnimNotify_PlayParticleEffect)
+
 /////////////////////////////////////////////////////
 // UAnimNotify_PlayParticleEffect
 

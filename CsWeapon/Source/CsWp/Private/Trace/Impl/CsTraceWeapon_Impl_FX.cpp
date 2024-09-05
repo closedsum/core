@@ -110,9 +110,7 @@ namespace NCsWeapon
 						const FCsFX& FX = Params->GetFX();
 
 						// Spawn
-						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-						FXManagerLibrary::SpawnChecked(Context, Outer, &PooledPayload, FX);
+						CsFXManagerLibrary::SpawnChecked(Context, Outer, &PooledPayload, FX);
 					}
 				}
 
@@ -220,12 +218,10 @@ namespace NCsWeapon
 						}
 
 						// Allocate Payload
-						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 						typedef NCsFX::NPayload::FImpl PayloadImplType;
 
-						PayloadImplType* Payload = FXManagerLibrary::AllocatePayloadImplChecked(Context, Outer, &PooledPayload, FX, Transform);
-
-						UCsManager_FX* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
+						PayloadImplType* Payload  = CsFXManagerLibrary::AllocatePayloadImplChecked(Context, Outer, &PooledPayload, FX, Transform);
+						UCsManager_FX* Manager_FX = CsFXManagerLibrary::GetChecked(Context, Outer);
 
 						// Get and Set any Niagara Parameters
 						typedef NCsFX::NParameter::NVector::FVectorType ParameterVectorType;
@@ -267,9 +263,7 @@ namespace NCsWeapon
 						Transform.SetRotation(MathLibrary::Convert(Hit.ImpactNormal.Rotation().Quaternion()));
 
 						// Spawn FX
-						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-						FXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);
+						CsFXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);
 					}
 				}
 

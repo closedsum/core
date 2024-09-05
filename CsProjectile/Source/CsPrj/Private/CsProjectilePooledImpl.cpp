@@ -865,7 +865,6 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 			if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
 			{
-				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
 				PayloadImplType PayloadImpl;
@@ -882,7 +881,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 				const FCsFX& FX = TrailInfo.GetFX();
 
-				TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::SpawnChecked(Context, GetWorldContext(), &PayloadImpl, FX));
+				TrailFXPooled = const_cast<FCsFXActorPooled*>(CsFXManagerLibrary::SpawnChecked(Context, GetWorldContext(), &PayloadImpl, FX));
 			}
 		}
 	}
@@ -2017,7 +2016,6 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 
 				if (FXInfo.GetbFX())
 				{
-					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 					typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
 					PayloadImplType Payload;
@@ -2064,7 +2062,7 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 						Transform.SetScale3D(MaxRange * FVector3f::OneVector);
 					}
 
-					FXManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, FXInfo.GetFX(), Transform);
+					CsFXManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, FXInfo.GetFX(), Transform);
 				}
 			}
 		}
@@ -2082,9 +2080,7 @@ void ACsProjectilePooledImpl::SetTrailFXPooled(const FString& Context, const FEC
 
 	CS_IS_INT_GREATER_THAN_OR_EQUAL_EXIT(Index, 0)
 
-	typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-	TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::FindSafeObject(Context, GetWorldContext(), FX, Index, Log));
+	TrailFXPooled = const_cast<FCsFXActorPooled*>(CsFXManagerLibrary::FindSafeObject(Context, GetWorldContext(), FX, Index, Log));
 }
 
 #pragma endregion FX

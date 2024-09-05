@@ -12,6 +12,8 @@
 // FX
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_FX)
+
 // Cached
 #pragma region
 
@@ -43,9 +45,7 @@ UObject* UCsScriptLibrary_Manager_FX::FindObject(const FString& Context, UObject
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::FindObject : Context;
 
-	typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-	UObject* ContextRoot = FXManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
+	UObject* ContextRoot = CsFXManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
 
 #if WITH_EDITOR
 	if (!ContextRoot)
@@ -83,14 +83,12 @@ int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldC
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Spawn : Context;
 
-	typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
 	// Check Payload is Valid
 	if (!Payload.IsValid(Ctxt))
 		return INDEX_NONE;
 
 	// Try to allocate a native payload
-	UObject* ContextRoot = FXManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
+	UObject* ContextRoot = CsFXManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
 
 #if WITH_EDITOR
 	if (!ContextRoot)

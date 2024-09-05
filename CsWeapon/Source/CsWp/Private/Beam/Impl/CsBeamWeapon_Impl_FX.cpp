@@ -101,9 +101,7 @@ namespace NCsWeapon
 						const FCsFX& FX = Params->GetFX();
 
 						// Spawn
-						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-						FXManagerLibrary::SpawnChecked(Context, Outer, &PooledPayload, FX);
+						CsFXManagerLibrary::SpawnChecked(Context, Outer, &PooledPayload, FX);
 					}
 				}
 
@@ -133,9 +131,7 @@ namespace NCsWeapon
 						Transform.SetRotation(MathLibrary::Convert(Hit.ImpactNormal.Rotation().Quaternion()));
 
 						// Spawn FX
-						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-						FXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);
+						CsFXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);
 					}
 				}
 

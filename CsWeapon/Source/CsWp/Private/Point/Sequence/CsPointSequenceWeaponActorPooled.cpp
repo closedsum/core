@@ -1119,9 +1119,7 @@ void ACsPointSequenceWeaponActorPooled::FFXImpl::Play()
 			UNiagaraSystem* FXAsset = FX.GetChecked(Context);
 
 			// Get Manager
-			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-			UCsManager_FX* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
+			UCsManager_FX* Manager_FX = CsFXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 			// Allocate payload
 			typedef NCsFX::NPayload::IPayload PayloadType;
 

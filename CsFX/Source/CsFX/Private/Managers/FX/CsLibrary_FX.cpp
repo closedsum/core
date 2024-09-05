@@ -1323,14 +1323,12 @@ namespace NCsFX
 	{
 		// Check to get Context Root for Manager_FX
 		{
-			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+			UObject* ContextRoot = CsFXManagerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
 
-			UObject* ContextRoot = FXManagerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
-
-#if WITH_EDITOR
+		#if WITH_EDITOR
 			if (!ContextRoot)
 				return FCsRoutineHandle::Invalid;
-#endif // #if WITH_EDITOR
+		#endif // #if WITH_EDITOR
 		}
 
 		// Check Params are Valid.
@@ -1361,10 +1359,10 @@ namespace NCsFX
 
 			UObject* ContextRoot = CoroutineSchedulerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
 
-#if WITH_EDITOR
+		#if WITH_EDITOR
 			if (!ContextRoot)
 				return FCsRoutineHandle::Invalid;
-#endif // #if WITH_EDITOR
+		#endif // #if WITH_EDITOR
 		}
 
 		return SpawnChecked(Context, WorldContext, Params);
@@ -1443,7 +1441,6 @@ namespace NCsFX
 
 				// Spawn FX
 				{
-					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 					typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
 					UObject* Owner = R->GetOwnerAsObject();
@@ -1452,7 +1449,7 @@ namespace NCsFX
 					Payload.Instigator = Owner;
 					Payload.Parent	   = Params->GetActor();
 
-					FXManagerLibrary::SpawnChecked(Context, R->GetOwnerAsObject(), &Payload, Params->FX);
+					CsFXManagerLibrary::SpawnChecked(Context, R->GetOwnerAsObject(), &Payload, Params->FX);
 				}
 
 				++SpawnCount;

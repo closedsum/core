@@ -33,9 +33,8 @@ void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject*
 	Payload->TransformRules				= FX.TransformRules;
 	Payload->Transform					= FX.Transform;
 
-	typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
-	UObject* ContextRoot			= FXManagerLibrary::GetContextRootChecked(Context, WorldContext);
+	UObject* ContextRoot	  = CsFXManagerLibrary::GetContextRootChecked(Context, WorldContext);
 	UCsManager_FX* Manager_FX = UCsManager_FX::Get(ContextRoot);
 
 	// Int

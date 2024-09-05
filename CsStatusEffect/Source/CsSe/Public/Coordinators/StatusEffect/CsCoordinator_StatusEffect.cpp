@@ -679,9 +679,7 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Conte
 		DmgProcessPayload.Direction  = ProcessPayload.Direction;
 		DmgProcessPayload.HitResult  = ProcessPayload.HitResult;
 
-		typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
-
-		DmgModifierLibrary::CopyChecked(Context, ProcessPayload.Modifiers, DmgProcessPayload.Modifiers);
+		CsDamageModifierLibrary::CopyChecked(Context, ProcessPayload.Modifiers, DmgProcessPayload.Modifiers);
 
 		DmgEventResourceType* DmgEventResource = DamageManagerLibrary::CreateEventChecked(Context, MyRoot, GetDamageDataTypeData, DmgProcessPayload);
 
@@ -784,9 +782,7 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateEvent_NoData(const FString
 		DmgProcessPayload.Direction  = ProcessPayload.Direction;
 		DmgProcessPayload.HitResult  = ProcessPayload.HitResult;
 
-		typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
-
-		DmgModifierLibrary::CopyChecked(Context, ProcessPayload.Modifiers, DmgProcessPayload.Modifiers);
+		CsDamageModifierLibrary::CopyChecked(Context, ProcessPayload.Modifiers, DmgProcessPayload.Modifiers);
 
 		DmgEventResourceType* DmgEventResource = DamageManagerLibrary::CreateEventChecked(Context, MyRoot, GetDamageDataTypeData, DmgProcessPayload);
 

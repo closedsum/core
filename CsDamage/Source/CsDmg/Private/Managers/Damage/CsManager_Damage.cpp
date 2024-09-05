@@ -42,6 +42,8 @@
 #include "Managers/Damage/CsGetManagerDamage.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Damage)
+
 // Cached
 #pragma region
 
@@ -482,15 +484,14 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	RangeType* Range = EventImpl->DamageRange.GetRange();
 
 	// Apply Modifiers
-	typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
 
 	if (Range)
 	{
-		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, Type, DamageValue, Range);
+		CsDamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, Type, DamageValue, Range);
 	}
 	else
 	{
-		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, Type, DamageValue);
+		CsDamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, Type, DamageValue);
 	}
 
 	EventImpl->Type = Type;
@@ -545,20 +546,18 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	ValueType* DamageValue = EventImpl->DamageValue.GetValue();
 
 	// Copy Range this can changed with modifiers
-	typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
-
 	if (ProcessPayload.HasSetRange())
 	{
 		EventImpl->DamageRange.CopyFrom(Context, MyRoot, ProcessPayload.GetRange());
 
 		RangeType* DamageRange = EventImpl->DamageRange.GetRange();
 
-		DamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, ProcessPayload.Type, DamageValue, DamageRange);
+		CsDamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, ProcessPayload.Type, DamageValue, DamageRange);
 	}
 	else
 	{
 		EventImpl->DamageRange.SafeCopyFrom(Context, MyRoot, ProcessPayload.Data, nullptr);
-		DamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, ProcessPayload.Type, DamageValue, EventImpl->ModifierMask);
+		CsDamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, ProcessPayload.Type, DamageValue, EventImpl->ModifierMask);
 	}
 
 	EventImpl->Type = ProcessPayload.Type;
@@ -892,13 +891,10 @@ ModifierResourceType* UCsManager_Damage::AllocateModifier(const FECsDamageModifi
 void UCsManager_Damage::DeallocateModifier(const FString& Context, const FECsDamageModifier& Type, ModifierResourceType* Modifier)
 {
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, Type);
-
 	CS_IS_PTR_NULL_CHECKED(Modifier)
 
-	typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
-
 	// Reset
-	ICsReset* IReset = ModifierLibrary::GetInterfaceChecked<ICsReset>(Context, Modifier->Get());
+	ICsReset* IReset = CsDamageModifierLibrary::GetInterfaceChecked<ICsReset>(Context, Modifier->Get());
 	IReset->Reset();
 
 	GetManagerModifier(Type).Deallocate(Modifier);
@@ -906,9 +902,7 @@ void UCsManager_Damage::DeallocateModifier(const FString& Context, const FECsDam
 
 const FECsDamageModifier& UCsManager_Damage::GetModifierType(const FString& Context, const ModifierType* Modifier)
 {
-	typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
-
-	const ICsGetDamageModifierType* GetDamageModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetDamageModifierType>(Context, Modifier);
+	const ICsGetDamageModifierType* GetDamageModifierType = CsDamageModifierLibrary::GetInterfaceChecked<ICsGetDamageModifierType>(Context, Modifier);
 	const FECsDamageModifier& Type						  = GetDamageModifierType->GetDamageModifierType();
 
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, Type);

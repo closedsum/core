@@ -590,16 +590,13 @@ namespace NCsDamage
 
 				UCsManager_Damage* Manager_Damage = DamageManagerLibrary::GetChecked(Context, WorldContext);
 
-				typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
-
-				const FECsDamageModifier& Type  = DamageModifierLibrary::GetTypeChecked(Context, Modifier);
+				const FECsDamageModifier& Type  = CsDamageModifierLibrary::GetTypeChecked(Context, Modifier);
 				ModifierResourceType* Container = Manager_Damage->AllocateModifier(Type);
 				ModifierType* Copy				= Container->Get();
 
-				typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
 				typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
 
-				CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+				CopyType* ICopy = CsDamageModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
 				ICopy->Copy(Modifier);
 
@@ -648,16 +645,13 @@ namespace NCsDamage
 
 				UCsManager_Damage* Manager_Damage = DamageManagerLibrary::GetChecked(Context, WorldContext);
 
-				typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
-
-				OutType				= DmgModifierLibrary::GetTypeChecked(Context, Modifier);
+				OutType				= CsDamageModifierLibrary::GetTypeChecked(Context, Modifier);
 				OutContainer		= Manager_Damage->AllocateModifier(OutType);
 				ModifierType* Copy	= OutContainer->Get();
 
-				typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
 				typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
 
-				CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+				CopyType* ICopy = CsDamageModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
 				ICopy->Copy(Modifier);
 			}

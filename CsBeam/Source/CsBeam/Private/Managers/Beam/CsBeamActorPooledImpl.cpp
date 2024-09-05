@@ -894,9 +894,7 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 			// Apply Modifiers
 			DamageImpl.SetValue(DamageData->GetDamageData());
 
-			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
-
-			DamageModifierLibrary::ModifyChecked(Context, DamageImpl.Modifiers, DamageData->GetDamageData(), DamageImpl.GetValue());
+			CsDamageModifierLibrary::ModifyChecked(Context, DamageImpl.Modifiers, DamageData->GetDamageData(), DamageImpl.GetValue());
 
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 

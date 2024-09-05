@@ -11,6 +11,8 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsDamageModifierImpl)
+
 // FCsDamageModifier_Int
 #pragma region
 
@@ -159,9 +161,7 @@ namespace NCsDamage
 
 			const FString& Context = Str::Copy;
 
-			typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
-
-			const FInt* FromImpl = DmgModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
+			const FInt* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
 
 			SetType(FromImpl->GetType());
 			SetValue(FromImpl->GetValue());
@@ -324,9 +324,7 @@ namespace NCsDamage
 
 			const FString& Context = Str::Copy;
 
-			typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
-
-			const FFloat* FromImpl = DmgModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
+			const FFloat* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
 
 			SetType(FromImpl->GetType());
 			SetValue(FromImpl->GetValue());
@@ -503,9 +501,7 @@ namespace NCsDamage
 
 				const FString& Context = Str::Copy;
 
-				typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
-
-				const FRange* FromImpl = DmgModifierLibrary::PureStaticCastChecked<FRange>(Context, From);
+				const FRange* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FRange>(Context, From);
 
 				SetType(FromImpl->GetType());
 				SetMin(FromImpl->GetMin());
@@ -640,9 +636,7 @@ namespace NCsDamage
 
 			const FString& Context = Str::Copy;
 
-			typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
-
-			const FToggle* FromImpl = DmgModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
+			const FToggle* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
 
 			SetType(FromImpl->GetType());
 			SetbEnable(FromImpl->GetbEnable());

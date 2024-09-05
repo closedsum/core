@@ -172,3 +172,6 @@ namespace NCsDamage
 	#undef ModifierType
 	}
 }
+
+using CsDamageModifierLibrary = NCsDamage::NModifier::FLibrary;
+using CsDmgModifierLibrary = NCsDamage::NModifier::FLibrary;

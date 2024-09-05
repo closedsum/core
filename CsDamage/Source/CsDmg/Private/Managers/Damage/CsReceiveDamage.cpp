@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Damage/CsReceiveDamage.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsReceiveDamage)
+
 UCsReceiveDamage::UCsReceiveDamage(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

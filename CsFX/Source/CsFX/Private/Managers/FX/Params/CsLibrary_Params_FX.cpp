@@ -27,6 +27,7 @@ namespace NCsFX
 			}
 		}
 
+		#define LogLevel void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/
 		#define ParameterType NCsFX::NParameter::IParameter
 
 		bool FLibrary::IsValidChecked(const FString& Context, const ParameterType* Parameter)
@@ -41,7 +42,7 @@ namespace NCsFX
 			return true;
 		}
 
-		bool FLibrary::IsValid(const FString& Context, const ParameterType* Parameter, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::IsValid(const FString& Context, const ParameterType* Parameter, LogLevel)
 		{
 			// Check Parameter is Valid
 			CS_IS_PTR_NULL(Parameter)
@@ -64,7 +65,7 @@ namespace NCsFX
 			return *(int32*)(Parameter->GetValuePtr());
 		}
 
-		bool FLibrary::GetSafeInt(const FString& Context, const ParameterType* Parameter, int32& OutValue, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		bool FLibrary::GetSafeInt(const FString& Context, const ParameterType* Parameter, int32& OutValue, LogLevel)
 		{
 			CS_IS_PTR_NULL(Parameter)
 
@@ -131,6 +132,7 @@ namespace NCsFX
 
 		#pragma endregion Vector
 
+		#undef LogLevel
 		#undef ParameterType
 	}
 }

@@ -31,6 +31,7 @@ namespace NCsFX
 		*/
 		struct CSFX_API FLibrary
 		{
+		#define LogLevel void(*Log)(const FString&) = &NCsFX::FLog::Warning
 		#define ParameterType NCsFX::NParameter::IParameter
 
 		public:
@@ -49,7 +50,7 @@ namespace NCsFX
 			* @param Context	The calling context.
 			* @param Parameter
 			*/
-			static bool IsValid(const FString& Context, const ParameterType* Parameter, void(*Log)(const FString&) = &NCsFX::FLog::Warning);
+			static bool IsValid(const FString& Context, const ParameterType* Parameter, LogLevel);
 
 		// Int
 		#pragma region
@@ -86,7 +87,7 @@ namespace NCsFX
 			* @param Log
 			* return			Int value.
 			*/
-			static bool GetSafeInt(const FString& Context, const ParameterType* Parameter, int32& OutValue, void(*Log)(const FString&) = &NCsFX::FLog::Warning);
+			static bool GetSafeInt(const FString& Context, const ParameterType* Parameter, int32& OutValue, LogLevel);
 
 			/**
 			* Safely get a value of type: Int from Parameter implementing the interface:
@@ -204,7 +205,10 @@ namespace NCsFX
 
 		#pragma endregion Vector
 
+		#undef LogLevel
 		#undef ParameterType
 		};
 	}
 }
+
+using CsFXParameterLibrary = NCsFX::NParameter::FLibrary;

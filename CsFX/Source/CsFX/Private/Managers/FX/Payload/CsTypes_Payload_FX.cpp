@@ -12,6 +12,8 @@
 // FX
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Payload_FX)
+
 #define PayloadType NCsFX::NPayload::FImpl
 void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadType* Payload) const
 {

@@ -13,6 +13,8 @@
 #include "Library/CsLibrary_World.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsNiagaraActor)
+
 ACsNiagaraActor::ACsNiagaraActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

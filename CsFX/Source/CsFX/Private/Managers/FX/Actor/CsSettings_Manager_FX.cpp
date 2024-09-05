@@ -6,6 +6,8 @@
 // Settings
 #include "Settings/CsFXSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_FX)
+
 // FCsSettings_Manager_FX
 #pragma region
 
@@ -14,7 +16,6 @@ const FCsSettings_Manager_FX& FCsSettings_Manager_FX::GetChecked(const FString& 
 	UCsFXSettings* Settings = GetMutableDefault<UCsFXSettings>();
 
 	checkf(Settings, TEXT("%s: Failed to get settings of type: UCsFXSettings."), *Context);
-
 	return Settings->Manager_FX;
 }
 

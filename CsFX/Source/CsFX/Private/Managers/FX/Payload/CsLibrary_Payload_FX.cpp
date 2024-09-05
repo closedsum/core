@@ -73,11 +73,9 @@ namespace NCsFX
 
 			if (Parameters.Num() > CS_EMPTY)
 			{
-				typedef NCsFX::NParameter::FLibrary ParameterLibrary;
-
 				for (ParameterType* Param : Parameters)
 				{
-					check(ParameterLibrary::IsValidChecked(Context, Param));
+					check(CsFXParameterLibrary::IsValidChecked(Context, Param));
 				}
 			}
 			return true;
@@ -141,11 +139,9 @@ namespace NCsFX
 
 			if (Parameters.Num() > CS_EMPTY)
 			{
-				typedef NCsFX::NParameter::FLibrary ParameterLibrary;
-
 				for (ParameterType* Param : Parameters)
 				{
-					if (!ParameterLibrary::IsValid(Context, Param, Log))
+					if (!CsFXParameterLibrary::IsValid(Context, Param, Log))
 						return false;
 				}
 			}

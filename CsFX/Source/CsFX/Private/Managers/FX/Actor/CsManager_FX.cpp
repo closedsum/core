@@ -29,6 +29,8 @@
 #include "Managers/FX/Actor/CsGetManagerFX.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_FX)
+
 // Cached
 #pragma region
 

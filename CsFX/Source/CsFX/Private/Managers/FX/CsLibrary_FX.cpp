@@ -209,9 +209,7 @@ namespace NCsFX
 		// Check System is Valid
 		CS_IS_PENDING_KILL_CHECKED(System)
 		// Check Parameter is Valid
-		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
-
-		check(ParameterLibrary::IsValidChecked(Context, Parameter));
+		check(CsFXParameterLibrary::IsValidChecked(Context, Parameter));
 
 		const FName& Name = Parameter->GetName();
 
@@ -245,9 +243,7 @@ namespace NCsFX
 		// Check System is Valid
 		CS_IS_PENDING_KILL(System)
 		// Check Parameter is Valid
-		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
-
-		if (!ParameterLibrary::IsValid(Context, Parameter, Log))
+		if (!CsFXParameterLibrary::IsValid(Context, Parameter, Log))
 			return false;
 
 		const FName& Name = Parameter->GetName();
@@ -305,21 +301,20 @@ namespace NCsFX
 		check(HasParameterChecked(Context, System, Parameter));
 
 		typedef NCsFX::NParameter::EValue ParameterValueType;
-		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
 		typedef NCsMath::FLibrary MathLibrary;
 
 		const ParameterValueType& ValueType = Parameter->GetValueType();
 
 		// Int
 		if (ValueType == ParameterValueType::Int)
-			Component->SetVariableInt(Parameter->GetName(), ParameterLibrary::GetIntChecked(Context, Parameter));
+			Component->SetVariableInt(Parameter->GetName(), CsFXParameterLibrary::GetIntChecked(Context, Parameter));
 		// Float
 		if (ValueType == ParameterValueType::Float)
-			Component->SetVariableFloat(Parameter->GetName(), ParameterLibrary::GetFloatChecked(Context, Parameter));
+			Component->SetVariableFloat(Parameter->GetName(), CsFXParameterLibrary::GetFloatChecked(Context, Parameter));
 		// Vector
 		else
 		if (ValueType == ParameterValueType::Vector)
-			Component->SetVariableVec3(Parameter->GetName(), MathLibrary::Convert(ParameterLibrary::GetVectorChecked(Context, Parameter)));
+			Component->SetVariableVec3(Parameter->GetName(), MathLibrary::Convert(CsFXParameterLibrary::GetVectorChecked(Context, Parameter)));
 	}
 
 	void FLibrary::SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ScaledParameterType* ScaledParameter, const float& Scale)
@@ -329,11 +324,9 @@ namespace NCsFX
 		UNiagaraSystem* System = Component->GetAsset();
 
 		checkf(System, TEXT("%s: Asset on Component: %s is NULL."), *Context, *(Component->GetName()));
-
 		check(HasParameterChecked(Context, System, ScaledParameter));
 
 		typedef NCsFX::NParameter::EValue ParameterValueType;
-		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
 
 		const ParameterType* Parameter		= ScaledParameter->GetParameter();
 		const ParameterValueType& ValueType = Parameter->GetValueType();
@@ -345,7 +338,7 @@ namespace NCsFX
 
 			if (ScaledParameter->ShouldSetValue())
 			{
-				Value = ParameterLibrary::GetIntChecked(Context, Parameter);
+				Value = CsFXParameterLibrary::GetIntChecked(Context, Parameter);
 			}
 			else
 			{
@@ -366,7 +359,7 @@ namespace NCsFX
 
 			if (ScaledParameter->ShouldSetValue())
 			{
-				Value = ParameterLibrary::GetFloatChecked(Context, Parameter);
+				Value = CsFXParameterLibrary::GetFloatChecked(Context, Parameter);
 			}
 			else
 			{
@@ -387,7 +380,7 @@ namespace NCsFX
 
 			if (ScaledParameter->ShouldSetValue())
 			{
-				Value = ParameterLibrary::GetVectorChecked(Context, Parameter);
+				Value = CsFXParameterLibrary::GetVectorChecked(Context, Parameter);
 			}
 			else
 			{
@@ -427,9 +420,7 @@ namespace NCsFX
 		CS_IS_PTR_NULL_CHECKED(System)
 
 		// Check Parameter is Valid
-		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
-
-		check(ParameterLibrary::IsValidChecked(Context, Parameter));
+		check(CsFXParameterLibrary::IsValidChecked(Context, Parameter));
 
 		const FNiagaraSystemCompiledData& CompiledData = System->GetSystemCompiledData();
 

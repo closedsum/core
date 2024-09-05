@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsFXActorPooled)
+
 UCsFXActorPooled::UCsFXActorPooled(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

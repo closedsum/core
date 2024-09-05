@@ -34,6 +34,8 @@
 #include "Game/CsLibrary_GameInstanceImpl.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsFXActorPooledImpl)
+
 // Cached
 #pragma region
 

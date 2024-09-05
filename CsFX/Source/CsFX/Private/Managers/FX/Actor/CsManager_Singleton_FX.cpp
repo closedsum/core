@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/FX/Actor/CsManager_Singleton_FX.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Singleton_FX)
+
 UCsManager_Singleton_FX::UCsManager_Singleton_FX(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
 	Manager_FX(nullptr)

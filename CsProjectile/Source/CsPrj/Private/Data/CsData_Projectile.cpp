@@ -1,6 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsData_Projectile.h"
-#include "CsPrj.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Projectile)
 
 const FName NCsProjectile::NData::IData::Name = FName("NCsProjectile::NData::IData");
 

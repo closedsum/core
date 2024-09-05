@@ -1,11 +1,12 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/Script/CsScriptLibrary_Data_Projectile.h"
-#include "CsPrj.h"
 
 // Data
 #include "Data/CsData_ProjectileImplSlice.h"
 // Projectile
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Data_Projectile)
 
 // Cached
 #pragma region

@@ -4,6 +4,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_GetProjectileTypeImplSlice)
+
 #define SliceType NCsProjectile::NData::NType::FImplSlice
 
 void FCsData_GetProjectileTypeImplSlice::CopyToSlice(SliceType* Slice)

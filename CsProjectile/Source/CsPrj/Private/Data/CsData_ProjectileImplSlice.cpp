@@ -9,6 +9,8 @@
 // Projectile
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_ProjectileImplSlice)
+
 #define SliceType NCsProjectile::NData::FImplSlice
 
 SliceType* FCsData_ProjectileImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)

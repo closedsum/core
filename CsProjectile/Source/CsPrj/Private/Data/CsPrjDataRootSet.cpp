@@ -18,6 +18,8 @@
 #include "Library/Load/CsLibrary_Load.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPrjDataRootSet)
+
 // Cached
 #pragma region
 

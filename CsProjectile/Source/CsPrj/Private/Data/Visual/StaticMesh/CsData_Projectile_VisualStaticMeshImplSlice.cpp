@@ -8,6 +8,8 @@
 // Projectile
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Projectile_VisualStaticMeshImplSlice)
+
 #define SliceType NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice
 
 SliceType* FCsData_Projectile_VisualStaticMeshImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)

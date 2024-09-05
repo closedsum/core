@@ -374,9 +374,7 @@ namespace NCsProjectile
 					}
 					else
 					{
-						typedef NCsProjectile::NData::FLibrary DataLibrary;
-
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get UObject for %s associated with Type: %s"), *Context, *DataLibrary::PrintDataAndClass(Data), Type.ToChar()));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get UObject for %s associated with Type: %s"), *Context, *CsPrjDataLibrary::PrintDataAndClass(Data), Type.ToChar()));
 					}
 				}
 				else

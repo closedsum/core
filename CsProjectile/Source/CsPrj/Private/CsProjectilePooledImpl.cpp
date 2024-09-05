@@ -761,11 +761,10 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	}
 
 	// Launch Params
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 	typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
 	typedef NCsProjectile::NLaunch::FParams LaunchParamsType;
 
-	LaunchDataType* LaunchData			 = PrjDataLibrary::GetSafeInterfaceChecked<LaunchDataType>(Context, Data);
+	LaunchDataType* LaunchData			 = CsPrjDataLibrary::GetSafeInterfaceChecked<LaunchDataType>(Context, Data);
 	const LaunchParamsType* LaunchParams = LaunchData ? &(LaunchData->GetLaunchParams()) : nullptr;
 
 	const bool ShouldDelayLaunch = LaunchParams ? LaunchParams->GetDelay() > 0.0f : false;
@@ -1088,11 +1087,10 @@ void ACsProjectilePooledImpl::Launch_Delayed(const FLaunch_Delayed_Payload& Payl
 
 	#undef COROUTINE
 
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 	typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
 	typedef NCsProjectile::NLaunch::FParams LaunchParamsType;
 
-	LaunchDataType* LaunchData			 = PrjDataLibrary::GetSafeInterfaceChecked<LaunchDataType>(Context, Data);
+	LaunchDataType* LaunchData			 = CsPrjDataLibrary::GetSafeInterfaceChecked<LaunchDataType>(Context, Data);
 	const LaunchParamsType& LaunchParams = LaunchData->GetLaunchParams();
 
 	// Delay
@@ -1145,10 +1143,9 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 
 		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
-		typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
 
-		if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+		if (CollisionDataType* CollisionData = CsPrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
 			const FCsCollisionPreset& CollisionPreset = CollisionData->GetCollisionPreset();
 
@@ -1267,7 +1264,6 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 	UPhysicalMaterial* PhysMaterial = HitResult.PhysMaterial.IsValid() ? HitResult.PhysMaterial.Get() : nullptr;
 	EPhysicalSurface SurfaceType	= PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 	typedef NCsMath::FLibrary MathLibrary;
 
 	// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
@@ -1276,7 +1272,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 	{
 		typedef NCsProjectile::NData::NSound::NImpact::IImpact ImpactSoundDataType;
 
-		if (ImpactSoundDataType* ImpactSoundData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
+		if (ImpactSoundDataType* ImpactSoundData = CsPrjDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
 		{
 			typedef NCsProjectile::NImpact::NSound::FInfo ImpactSoundInfoType;
 
@@ -1304,7 +1300,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 	{
 		typedef NCsProjectile::NData::NDamage::IDamage PrjDamageDataType;
 
-		if (PrjDamageDataType* PrjDamageData = PrjDataLibrary::GetSafeInterfaceChecked<PrjDamageDataType>(Context, Data))
+		if (PrjDamageDataType* PrjDamageData = CsPrjDataLibrary::GetSafeInterfaceChecked<PrjDamageDataType>(Context, Data))
 		{
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 			typedef NCsDamage::NData::IData DamageDataType;
@@ -1358,7 +1354,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 	{
 		typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
 
-		if (GetDamageDataTypeDataType* GetDamageDataType = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
+		if (GetDamageDataTypeDataType* GetDamageDataType = CsPrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
 		{
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 			typedef NCsDamage::NData::IData DamageDataType;
@@ -1412,7 +1408,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 	{
 		typedef NCsData::IGetDamageDataTypes GetDamageDataTypeDataTypes;
 
-		if (GetDamageDataTypeDataTypes* GetDamageDataTypes = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataTypes>(Context, Data))
+		if (GetDamageDataTypeDataTypes* GetDamageDataTypes = CsPrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataTypes>(Context, Data))
 		{
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 			typedef NCsDamage::NData::IData DamageDataType;
@@ -1464,7 +1460,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
 
-	if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+	if (CollisionDataType* CollisionData = CsPrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 	{
 		if (CollisionData->IgnoreHitObjectAfterHit())
 		{
@@ -1571,10 +1567,9 @@ void ACsProjectilePooledImpl::AllocateVariables(const PayloadType* Payload)
 	VariablesPayload.Location	= Payload->GetLocation();
 	VariablesPayload.Direction  = Payload->GetDirection();
 
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
 
-	if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+	if (CollisionDataType* CollisionData = CsPrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 	{
 		VariablesPayload.CollisionRadius	 = CollisionData->GetCollisionRadius();
 		VariablesPayload.CollisionHalfHeight = CollisionData->GetCollisionRadius();
@@ -1711,10 +1706,9 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 	if (!TargetPayload->HasTarget())
 		return;
 
-	typedef NCsProjectile::NData::FLibrary DataLibrary;
 	typedef NCsProjectile::NData::NTracking::ITracking TrackingDataType;
 
-	TrackingData = DataLibrary::GetSafeInterfaceChecked<TrackingDataType>(Context, Outer->GetData());
+	TrackingData = CsPrjDataLibrary::GetSafeInterfaceChecked<TrackingDataType>(Context, Outer->GetData());
 
 	if (TrackingData &&
 		TrackingData->ShouldUseTracking())
@@ -2000,13 +1994,11 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 		UPhysicalMaterial* PhysMaterial = HitResult.PhysMaterial.IsValid() ? HitResult.PhysMaterial.Get() : nullptr;
 		EPhysicalSurface SurfaceType	= PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 
-		typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
-
 		// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
 		{
 			typedef NCsProjectile::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
 
-			if (ImpactVisualDataType* ImpactVisualData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
+			if (ImpactVisualDataType* ImpactVisualData = CsPrjDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 			{	
 				typedef NCsProjectile::NImpact::NVisual::FInfo ImpactVisualInfoType;
 				typedef NCsProjectile::NImpact::NVisual::NFX::FInfo ImpactFXInfoType;
@@ -2211,7 +2203,6 @@ void ACsProjectilePooledImpl::FDamageImpl::Reset()
 #define RangeType NCsDamage::NRange::IRange
 const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& Context)
 {
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 	typedef NCsDamage::NData::FLibrary DmgDataLibrary;
 	typedef NCsDamage::NData::IData DmgDataType;
 	typedef NCsDamage::NData::NShape::IShape DmgShapeDataType;
@@ -2223,7 +2214,7 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 	{
 		typedef NCsProjectile::NData::NDamage::IDamage PrjDmgDataType;
 
-		if (const PrjDmgDataType* PrjDmgData = PrjDataLibrary::GetSafeInterfaceChecked<PrjDmgDataType>(Context, Data))
+		if (const PrjDmgDataType* PrjDmgData = CsPrjDataLibrary::GetSafeInterfaceChecked<PrjDmgDataType>(Context, Data))
 		{
 			const DmgDataType* DmgData = PrjDmgData->GetDamageData();
 
@@ -2237,7 +2228,7 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 	{
 		typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
 
-		if (const GetDamageDataTypeDataType* GetDamageDataType = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
+		if (const GetDamageDataTypeDataType* GetDamageDataType = CsPrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
 		{
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
@@ -2253,7 +2244,7 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 	{
 		typedef NCsData::IGetDamageDataTypes GetDamageDataTypeDataTypes;
 
-		if (const GetDamageDataTypeDataTypes* GetDamageDataTypes = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataTypes>(Context, Data))
+		if (const GetDamageDataTypeDataTypes* GetDamageDataTypes = CsPrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataTypes>(Context, Data))
 		{
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
@@ -2272,7 +2263,7 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 			DamageDatas.Reset(DamageDatas.Max());
 		}
 	}
-	checkf(0, TEXT("%s: Failed to get Damage Data from %s"), *Context, *PrjDataLibrary::PrintDataAndClass(Data));
+	checkf(0, TEXT("%s: Failed to get Damage Data from %s"), *Context, *CsPrjDataLibrary::PrintDataAndClass(Data));
 	return nullptr;
 }
 #undef RangeType

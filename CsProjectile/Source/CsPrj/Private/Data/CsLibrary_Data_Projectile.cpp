@@ -16,6 +16,7 @@ namespace NCsProjectile
 {
 	namespace NData
 	{
+		#define LogLevel void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/
 		#define DataType NCsProjectile::NData::IData
 
 		FString FLibrary::PrintObjectAndClass(const DataType* Data)
@@ -103,7 +104,7 @@ namespace NCsProjectile
 			return true;
 		}
 
-		bool FLibrary::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		bool FLibrary::IsValid(const FString& Context, const DataType* Data, LogLevel)
 		{
 			CS_IS_PTR_NULL(Data)
 
@@ -171,6 +172,7 @@ namespace NCsProjectile
 			return true;
 		}
 
+		#undef LogLevel
 		#undef DataType
 	}
 }

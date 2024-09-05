@@ -1013,12 +1013,11 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		// Get collision information related to the projectile to be used in the trace.
 
 		typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-		typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 		typedef NCsProjectile::NData::IData PrjDataType;
 		typedef NCsProjectile::NData::NCollision::ICollision PrjCollisionDataType;
 
 		PrjDataType* PrjData				   = PrjManagerLibrary::GetChecked(Context, Outer)->GetDataChecked(Context, Outer->GetProjectileType());
-		PrjCollisionDataType* PrjCollisionData = PrjDataLibrary::GetInterfaceChecked<PrjCollisionDataType>(Context, PrjData);
+		PrjCollisionDataType* PrjCollisionData = CsPrjDataLibrary::GetInterfaceChecked<PrjCollisionDataType>(Context, PrjData);
 
 		const FCsCollisionPreset& CollisionPreset		 = PrjCollisionData->GetCollisionPreset();
 		const TEnumAsByte<ECollisionChannel>& ObjectType = CollisionPreset.ObjectType;

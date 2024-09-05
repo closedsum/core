@@ -1316,17 +1316,13 @@ void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
 
 bool UCsManager_Projectile::IsValidChecked(const FString& Context, const DataType* Data) const
 {
-	typedef NCsProjectile::NData::FLibrary DataLibrary;
-
-	check(DataLibrary::IsValidChecked(Context, Data));	
+	check(CsPrjDataLibrary::IsValidChecked(Context, Data));	
 	return true;
 }
 
 bool UCsManager_Projectile::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 {
-	typedef NCsProjectile::NData::FLibrary DataLibrary;
-
-	if (!DataLibrary::IsValid(Context, Data, Log))
+	if (!CsPrjDataLibrary::IsValid(Context, Data, Log))
 		return false;
 	return true;
 }

@@ -15,6 +15,8 @@ namespace NCsProjectile
 
 		struct CSPRJ_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
 		{
+		#define LogLevel void(*Log)(const FString&) = &NCsProjectile::FLog::Warning
+
 		public:
 
 			/**
@@ -52,9 +54,14 @@ namespace NCsProjectile
 			* @param Log		(optional)
 			* return
 			*/
-			static bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+			static bool IsValid(const FString& Context, const DataType* Data, LogLevel);
+		
+		#undef LogLevel
 		};
 
 	#undef DataType
 	}
 }
+
+using CsProjectileDataLibrary = NCsProjectile::NData::FLibrary;
+using CsPrjDataLibrary = NCsProjectile::NData::FLibrary;

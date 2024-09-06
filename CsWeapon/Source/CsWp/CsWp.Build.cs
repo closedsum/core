@@ -38,6 +38,7 @@ public class CsWp : ModuleRules
                     "CsCoreLibrary",
                     "CsTime",
                     "CsCoroutine",
+                    "CsData",
                     "CsModifier",
                     "CsSkin",
                     "CsPrj",

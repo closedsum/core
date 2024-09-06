@@ -590,3 +590,6 @@ namespace NCsDamage
 		}
 	}
 }
+
+using CsDamageManagerLibrary = NCsDamage::NManager::FLibrary;
+using CsDmgManagerLibrary = NCsDamage::NManager::FLibrary;

@@ -122,3 +122,6 @@ namespace NCsDamage
 	#undef EventType
 	}
 }
+
+using CsDamageEventLibrary = NCsDamage::NEvent::FLibrary;
+using CsDmgEventLibrary = NCsDamage::NEvent::FLibrary;

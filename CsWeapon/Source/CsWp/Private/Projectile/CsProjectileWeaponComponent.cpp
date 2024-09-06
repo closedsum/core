@@ -761,8 +761,6 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 
 	const LaunchLocationType& LocationType = LaunchParams->GetLocationType();
 
-	typedef NCsMath::FLibrary MathLibrary;
-
 	// Owner
 	if (LocationType == LaunchLocationType::Owner)
 	{
@@ -772,10 +770,10 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 
 		// Actor
 		if (AActor* Actor = Cast<AActor>(TheOwner))
-			return MathLibrary::Convert(Actor->GetActorLocation());
+			return CsMathLibrary::Convert(Actor->GetActorLocation());
 		// Component
 		if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
-			return MathLibrary::Convert(Component->GetComponentLocation());
+			return CsMathLibrary::Convert(Component->GetComponentLocation());
 
 		checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(Outer->PrintNameClassAndOwner()));
 	}
@@ -789,7 +787,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 	{
 		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
 
-		return MathLibrary::Convert(LaunchComponentTransform->GetComponentLocation());
+		return CsMathLibrary::Convert(LaunchComponentTransform->GetComponentLocation());
 	}
 	return FVector3f::ZeroVector;
 }
@@ -838,8 +836,6 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	const int32& DirectionRules				  = LaunchParams->GetDirectionRules();
 
 	checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in LaunchParams for Data."), *Context);
-
-	typedef NCsMath::FLibrary MathLibrary;
 
 	// Owner
 	if (DirectionType == LaunchDirectionType::Owner)
@@ -928,7 +924,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		{
 			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
 
-			Start = MathLibrary::Convert(LaunchComponentTransform->GetComponentLocation());
+			Start = CsMathLibrary::Convert(LaunchComponentTransform->GetComponentLocation());
 		}
 		// Camera
 		else

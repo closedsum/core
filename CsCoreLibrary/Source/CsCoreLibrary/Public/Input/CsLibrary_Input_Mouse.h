@@ -288,3 +288,5 @@ namespace NCsInput
 		};
 	}
 }
+
+using CsMouseInputLibrary = NCsInput::NMouse::FLibrary;

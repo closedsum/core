@@ -490,9 +490,7 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 		// NO Parent, set the Actor Transform
 		else
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			SetActorTransform(MathLibrary::Convert(Transform));
+			SetActorTransform(CsMathLibrary::Convert(Transform));
 		}
 	}
 
@@ -1405,8 +1403,6 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 	const FRotator3f& LocationOffsetSpaceOffset			 = LaunchParams->GetLocationOffsetSpaceOffset();
 	const FVector3f& LocationOffset						 = LaunchParams->GetLocationOffset();
 
-	typedef NCsMath::FLibrary MathLibrary;
-
 	// Determine Offset
 	FVector3f Offset = LocationOffset * NCsRotationRules::GetDirection(FVector3f::OneVector, InvLocationOffsetSpaceRules);
 	{
@@ -1454,11 +1450,11 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 
 				const FRotator3f RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
 
-				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
 				
 				FVector3f Right, Up;
-				MathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
+				CsMathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
 
 				Offset += LocationOffset.X * Dir + LocationOffset.Y * Right + LocationOffset.Z * Up;
 			}
@@ -1484,11 +1480,11 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 
 			const FRotator3f RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
 
-			Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+			Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 			Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
 
 			FVector3f Right, Up;
-			MathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
+			CsMathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
 
 			Offset += LocationOffset.X * Dir + LocationOffset.Y * Right + LocationOffset.Z * Up;
 		}
@@ -1505,11 +1501,11 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 
 				const FRotator3f RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
 
-				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
 
 				FVector3f Right, Up;
-				MathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
+				CsMathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
 
 				Offset += LocationOffset.X * Dir + LocationOffset.Y * Right + LocationOffset.Z * Up;
 			}
@@ -1540,13 +1536,13 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 		// Actor
 		if (AActor* Actor = Cast<AActor>(TheOwner))
 		{
-			Location = MathLibrary::Convert(Actor->GetActorLocation()) + Offset;
+			Location = CsMathLibrary::Convert(Actor->GetActorLocation()) + Offset;
 		}
 		// Component
 		else
 		if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
 		{
-			Location = MathLibrary::Convert(Component->GetComponentLocation()) + Offset;
+			Location = CsMathLibrary::Convert(Component->GetComponentLocation()) + Offset;
 		}
 		else
 		{
@@ -1564,7 +1560,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 	{
 		CS_IS_PTR_NULL_CHECKED(LaunchComponentLocation)
 
-		FVector3f Location = MathLibrary::Convert(LaunchComponentLocation->GetComponentLocation()) + Offset;
+		FVector3f Location = CsMathLibrary::Convert(LaunchComponentLocation->GetComponentLocation()) + Offset;
 
 		return GetLaunchSpreadLocation(Location, LaunchPayload);
 	}
@@ -1590,8 +1586,6 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchSpreadLocati
 	if (LaunchPayload.bSpread &&
 		LaunchPayload.Spread.HasOffset())
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
 		static const int32 AXIS_UP				 = 0;
 		static const int32 AXIS_LAUNCH_DIRECTION = 1;
 
@@ -1606,8 +1600,8 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchSpreadLocati
 		{
 			const FVector3f Direction = GetLaunchDirection();
 
-			Location += LaunchPayload.Spread.Offset.X * MathLibrary::GetRightFromNormal(Direction);
-			Location += LaunchPayload.Spread.Offset.Y * MathLibrary::GetUpFromNormal(Direction);
+			Location += LaunchPayload.Spread.Offset.X * CsMathLibrary::GetRightFromNormal(Direction);
+			Location += LaunchPayload.Spread.Offset.Y * CsMathLibrary::GetUpFromNormal(Direction);
 		}	
 	}
 	return Location;
@@ -1657,8 +1651,6 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 		return GetLaunchSpreadDirection(Dir, LaunchPayload);
 	}
 
-	typedef NCsMath::FLibrary MathLibrary;
-
 	// Owner
 	if (DirectionType == LaunchDirectionType::Owner)
 	{
@@ -1672,7 +1664,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 
 				const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
 
-				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
 				Dir = DirectionScalar * GetLaunchSpreadDirection(Dir, LaunchPayload);
 				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
@@ -1686,7 +1678,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 
 				const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
 
-				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
 				Dir = DirectionScalar * GetLaunchSpreadDirection(Dir, LaunchPayload);
 				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
@@ -1708,7 +1700,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 
 		const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
 
-		Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+		Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 		Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
 		Dir = DirectionScalar * GetLaunchSpreadDirection(Dir, LaunchPayload);
 		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
@@ -1726,7 +1718,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 
 			const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
 
-			Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+			Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 			Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
 			Dir = DirectionScalar * GetLaunchSpreadDirection(Dir, LaunchPayload);
 			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
@@ -1771,7 +1763,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 		{
 			CS_IS_PTR_NULL_CHECKED(LaunchComponentLocation)
 
-			Start = MathLibrary::Convert(LaunchComponentLocation->GetComponentLocation());
+			Start = CsMathLibrary::Convert(LaunchComponentLocation->GetComponentLocation());
 		}
 		// Camera
 		else
@@ -1815,7 +1807,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 		{
 			CS_IS_PTR_NULL_CHECKED(LaunchComponentDirection)
 
-			const FRotator3f Rotation = MathLibrary::Convert(NCsRotationRules::GetRotation(LaunchComponentDirection->GetComponentRotation(), DirectionRules));
+			const FRotator3f Rotation = CsMathLibrary::Convert(NCsRotationRules::GetRotation(LaunchComponentDirection->GetComponentRotation(), DirectionRules));
 
 			Dir = Rotation.Vector();
 		}
@@ -1894,7 +1886,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 
 		const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
 
-		LaunchDirection = LaunchDirection.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(LaunchDirection));
+		LaunchDirection = LaunchDirection.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(LaunchDirection));
 		LaunchDirection = LaunchDirection.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
 
 		// Check the direction is in FRONT of the Start. The trace could produce a result BEHIND the start
@@ -1914,7 +1906,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 		const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
 		FVector3f Direction			  = NCsRotationRules::GetDirection(CustomLaunchDirection, DirectionRules);
 
-		Direction = Direction.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Direction));
+		Direction = Direction.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Direction));
 		Direction = Direction.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
 
 		Direction = DirectionScalar * GetLaunchSpreadDirection(Direction, LaunchPayload);
@@ -1940,9 +1932,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchSpreadDirect
 		// Pitch
 		if (LaunchPayload.Spread.HasPitch())
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			Direction = MathLibrary::RotateNormalAngleRight(Direction, LaunchPayload.Spread.Pitch);
+			Direction = CsMathLibrary::RotateNormalAngleRight(Direction, LaunchPayload.Spread.Pitch);
 		}
 	}
 	return Direction;

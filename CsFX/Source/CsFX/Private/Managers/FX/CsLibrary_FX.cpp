@@ -301,7 +301,6 @@ namespace NCsFX
 		check(HasParameterChecked(Context, System, Parameter));
 
 		typedef NCsFX::NParameter::EValue ParameterValueType;
-		typedef NCsMath::FLibrary MathLibrary;
 
 		const ParameterValueType& ValueType = Parameter->GetValueType();
 
@@ -314,7 +313,7 @@ namespace NCsFX
 		// Vector
 		else
 		if (ValueType == ParameterValueType::Vector)
-			Component->SetVariableVec3(Parameter->GetName(), MathLibrary::Convert(CsFXParameterLibrary::GetVectorChecked(Context, Parameter)));
+			Component->SetVariableVec3(Parameter->GetName(), CsMathLibrary::Convert(CsFXParameterLibrary::GetVectorChecked(Context, Parameter)));
 	}
 
 	void FLibrary::SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ScaledParameterType* ScaledParameter, const float& Scale)
@@ -391,9 +390,7 @@ namespace NCsFX
 			const float Result = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
 			Value			   = ScaledParameter->GetScale() * Scale * Value;
 
-			typedef NCsMath::FLibrary MathLibrary;
-
-			Component->SetVariableVec3(Parameter->GetName(), MathLibrary::Convert(Value));
+			Component->SetVariableVec3(Parameter->GetName(), CsMathLibrary::Convert(Value));
 		}
 	}
 

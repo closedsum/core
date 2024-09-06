@@ -61,7 +61,6 @@ UCsWidgetInteractionComponent::UCsWidgetInteractionComponent(const FObjectInitia
 	const FString& Context = Str::__FunctionName
 #define GameEventCoordinatorLibrary NCsGameEvent::NCoordinator::FLibrary
 #define GameInstanceLibrary NCsGameInstance::FLibrary
-#define MathLibrary NCsMath::FLibrary
 
 // UObject Interface
 #pragma region
@@ -177,8 +176,8 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 					Request->Type			= ECsTraceType::Line;
 					Request->Method			= ECsTraceMethod::Multi;
 					Request->Query			= ECsTraceQuery::Channel;
-					Request->Start			= MathLibrary::Convert(WorldOrigin);
-					Request->End			= MathLibrary::Convert(WorldOrigin + WorldDirection * InteractionDistance);
+					Request->Start			= CsMathLibrary::Convert(WorldOrigin);
+					Request->End			= CsMathLibrary::Convert(WorldOrigin + WorldDirection * InteractionDistance);
 					Request->Channel		= TraceChannel;
 
 					Internal_ComponentsToIgnoreOnTrace.Reset(Internal_ComponentsToIgnoreOnTrace.Max());
@@ -228,4 +227,3 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 #undef SET_CONTEXT
 #undef GameEventCoordinatorLibrary
 #undef GameInstanceLibrary
-#undef MathLibrary

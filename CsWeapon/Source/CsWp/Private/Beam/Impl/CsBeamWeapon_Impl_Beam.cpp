@@ -171,14 +171,12 @@ namespace NCsWeapon
 					const FLocationInfo& LocationInfo = BeamParams->GetLocationInfo();
 					const ELocation& LocationType	  = LocationInfo.GetType();
 
-					typedef NCsMath::FLibrary MathLibrary;
-
 					// Self
 					if (LocationType == ELocation::Self)
 					{
 						CS_IS_PTR_NULL_CHECKED(RootComponent)
 
-						return MathLibrary::Convert(RootComponent->GetComponentLocation());
+						return CsMathLibrary::Convert(RootComponent->GetComponentLocation());
 					}
 					// Owner
 					if (LocationType == ELocation::Owner)
@@ -187,10 +185,10 @@ namespace NCsWeapon
 
 						// Actor
 						if (AActor* Actor = Cast<AActor>(Owner))
-							return MathLibrary::Convert(Actor->GetActorLocation());
+							return CsMathLibrary::Convert(Actor->GetActorLocation());
 						// Component
 						if (USceneComponent* OwnerAsComponent = Cast<USceneComponent>(Owner))
-							return MathLibrary::Convert(OwnerAsComponent->GetComponentLocation());
+							return CsMathLibrary::Convert(OwnerAsComponent->GetComponentLocation());
 
 						checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(PrintOuterNameClassAndOwner()));
 					}
@@ -209,7 +207,7 @@ namespace NCsWeapon
 					{
 						CS_IS_PTR_NULL_CHECKED(Component)
 
-						return MathLibrary::Convert(Component->GetComponentLocation());
+						return CsMathLibrary::Convert(Component->GetComponentLocation());
 					}
 					// Camera
 					if (LocationType == ELocation::Camera)
@@ -253,14 +251,12 @@ namespace NCsWeapon
 
 					checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in BeamParams for Data."), *Context);
 
-					typedef NCsMath::FLibrary MathLibrary;
-
 					// Self
 					if (DirectionType == EDirection::Self)
 					{
 						CS_IS_PTR_NULL_CHECKED(RootComponent)
 
-						return NCsRotationRules::GetRotation(MathLibrary::Convert(RootComponent->GetComponentRotation()), DirectionRules).Vector();
+						return NCsRotationRules::GetRotation(CsMathLibrary::Convert(RootComponent->GetComponentRotation()), DirectionRules).Vector();
 					}
 					// Owner
 					if (DirectionType == EDirection::Owner)
@@ -328,7 +324,7 @@ namespace NCsWeapon
 
 							if (Hit.bBlockingHit)
 							{
-								return (MathLibrary::Convert(Hit.ImpactPoint) - Start).GetSafeNormal();
+								return (CsMathLibrary::Convert(Hit.ImpactPoint) - Start).GetSafeNormal();
 							}
 							else
 							{

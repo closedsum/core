@@ -150,11 +150,9 @@ namespace NCsDamage
 					{
 						if (GetInterpolationMethod() == ECsInterpolatingMethod::Easing)
 						{
-							typedef NCsMath::FLibrary MathLibrary;
-
 							const float Distance = (Point - Origin).Size();
 							const float Alpha1	 = (Distance - MinRange) / (MaxRange - MinRange);
-							const float Alpha2   = MathLibrary::Ease(GetEasingType(), Alpha1, 0.0f, 1.0f, 1.0f);
+							const float Alpha2   = CsMathLibrary::Ease(GetEasingType(), Alpha1, 0.0f, 1.0f, 1.0f);
 
 							return FMath::Lerp(MinValue, MaxValue, Alpha2);
 						}

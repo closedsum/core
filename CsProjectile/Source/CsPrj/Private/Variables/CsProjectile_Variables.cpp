@@ -358,8 +358,6 @@ namespace NCsProjectile
 					++ActiveCount;
 				}
 			}
-			
-			typedef NCsMath::FLibrary MathLibrary;
 
 			// FManager::FMovementInfos = Outer->MovementInfos
 			TArray<FVector3f>& _Directions = Outer->MovementInfos.Directions;
@@ -408,7 +406,7 @@ namespace NCsProjectile
 
 						Destinations[ID] += Offsets[ID];
 						NewDirection      = (Destinations[ID] - _Locations[ID]).GetSafeNormal();
-						_Directions[ID]   = MathLibrary::VInterpNormalRotationTo(_Directions[ID], NewDirection, DeltaTime.Time, RotationRates[ID]);
+						_Directions[ID]   = CsMathLibrary::VInterpNormalRotationTo(_Directions[ID], NewDirection, DeltaTime.Time, RotationRates[ID]);
 					}
 				}
 			}

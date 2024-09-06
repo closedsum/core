@@ -1095,12 +1095,11 @@ void UCsManager_UserWidget::FSetPositionInViewports::Update(const FCsDeltaTime& 
 
 	// SetPositionInViewport
 	// NOTE: FUTURE: MAYBE: This can be batched?
-	typedef NCsMath::FLibrary MathLibrary;
 
 	for (int32 I = 0; I < AllocatedCount; ++I)
 	{
 		const int32& ID = AllocatedIDs[I];
 
-		UserWidgets[ID]->SetPositionInViewport(MathLibrary::Convert(ScreenPositions[ID]));
+		UserWidgets[ID]->SetPositionInViewport(CsMathLibrary::Convert(ScreenPositions[ID]));
 	}
 }

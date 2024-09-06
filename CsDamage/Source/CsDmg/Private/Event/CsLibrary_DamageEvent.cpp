@@ -136,7 +136,6 @@ namespace NCsDamage
 
 			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
-			typedef NCsMath::FLibrary MathLibrary;
 
 			// Shape
 			if (const ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
@@ -153,7 +152,7 @@ namespace NCsDamage
 				if (const ConeDataType* ConeData = DamageDataLibrary::GetSafeInterfaceChecked<ConeDataType>(Context, Data))
 				{
 					FTransform3f Transform = FTransform3f::Identity;
-					Transform.SetTranslation(MathLibrary::Convert(Event->GetHitResult().ImpactPoint));
+					Transform.SetTranslation(CsMathLibrary::Convert(Event->GetHitResult().ImpactPoint));
 					Transform.SetRotation(Event->GetDamageDirection().ToOrientationQuat());
 
 					Debug.Pie.Draw(Event->GetInstigator(), FMath::RadiansToDegrees(FMath::Acos(ConeData->GetMinDot())), Transform, Range->GetMaxRange());
@@ -162,9 +161,9 @@ namespace NCsDamage
 				else
 				{
 					if (Debug.bSphereAsCircle)
-						Debug.Circle.Draw(Event->GetInstigator(), MathLibrary::Convert(Event->GetHitResult().ImpactPoint), Range->GetMinRange(), Range->GetMaxRange());
+						Debug.Circle.Draw(Event->GetInstigator(), CsMathLibrary::Convert(Event->GetHitResult().ImpactPoint), Range->GetMinRange(), Range->GetMaxRange());
 					else
-						Debug.Sphere.Draw(Event->GetInstigator(), MathLibrary::Convert(Event->GetHitResult().ImpactPoint), Range->GetMinRange(), Range->GetMaxRange());
+						Debug.Sphere.Draw(Event->GetInstigator(), CsMathLibrary::Convert(Event->GetHitResult().ImpactPoint), Range->GetMinRange(), Range->GetMaxRange());
 				}
 			}
 			// Point
@@ -321,11 +320,10 @@ namespace NCsDamage
 
 			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
-			typedef NCsMath::FLibrary MathLibrary;
 
 			if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 			{
-				return ShapeData->CalculateDamage(Event->GetDamageValue(), Event->GetDamageRange(), MathLibrary::Convert(Event->GetHitResult().ImpactPoint), Point);
+				return ShapeData->CalculateDamage(Event->GetDamageValue(), Event->GetDamageRange(), CsMathLibrary::Convert(Event->GetHitResult().ImpactPoint), Point);
 			}
 			return Event->GetDamage();
 		}
@@ -396,7 +394,6 @@ namespace NCsDamage
 
 			typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 			typedef NCsTrace::NRequest::FRequest RequestType;
-			typedef NCsMath::FLibrary MathLibrary;
 
 			// Max Range
 			static TArray<FHitResult> MaxRangeHits;
@@ -410,8 +407,8 @@ namespace NCsDamage
 				Request->Method = ECsTraceMethod::Multi;
 				Request->Query  = ECsTraceQuery::ObjectType;
 
-				Request->Start = MathLibrary::Convert(Hit.ImpactPoint);
-				Request->End   = MathLibrary::Convert(Hit.ImpactPoint);
+				Request->Start = CsMathLibrary::Convert(Hit.ImpactPoint);
+				Request->End   = CsMathLibrary::Convert(Hit.ImpactPoint);
 				Request->Channel = CollisionInfo.GetChannel();
 
 				Request->Shape.SetSphere(MaxRange);
@@ -454,8 +451,8 @@ namespace NCsDamage
 				Request->Method = ECsTraceMethod::Multi;
 				Request->Query  = ECsTraceQuery::ObjectType;
 
-				Request->Start = MathLibrary::Convert(Hit.ImpactPoint);
-				Request->End   = MathLibrary::Convert(Hit.ImpactPoint);
+				Request->Start = CsMathLibrary::Convert(Hit.ImpactPoint);
+				Request->End   = CsMathLibrary::Convert(Hit.ImpactPoint);
 				Request->Channel = CollisionInfo.GetChannel();
 
 				Request->Shape.SetSphere(MinRange);
@@ -511,7 +508,7 @@ namespace NCsDamage
 			{
 				FHitResult& HitA = MaxRangeHits[I];
 
-				if (!ShapeData->IsFacing(Direction, MathLibrary::Convert(Hit.Location), MathLibrary::Convert(HitA.ImpactPoint)))
+				if (!ShapeData->IsFacing(Direction, CsMathLibrary::Convert(Hit.Location), CsMathLibrary::Convert(HitA.ImpactPoint)))
 				{
 					MaxRangeHits.RemoveAt(I, 1, false);
 				}

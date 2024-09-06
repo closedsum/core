@@ -91,9 +91,7 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 		{
 			if (Sound.Bone != NAME_None)
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
-				UGameplayStatics::SpawnSoundAttached(S, MeshComp, Sound.Bone, MathLibrary::Convert(Sound.Transform.GetLocation()), EAttachLocation::KeepRelativeOffset, false, 1.0f, 1.0f);
+				UGameplayStatics::SpawnSoundAttached(S, MeshComp, Sound.Bone, CsMathLibrary::Convert(Sound.Transform.GetLocation()), EAttachLocation::KeepRelativeOffset, false, 1.0f, 1.0f);
 			}
 			else
 			{

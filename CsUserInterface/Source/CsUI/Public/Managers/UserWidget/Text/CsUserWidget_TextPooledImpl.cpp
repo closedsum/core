@@ -187,9 +187,7 @@ void UCsUserWidget_TextPooledImpl::Allocate(PayloadType* Payload)
 	// Screen
 	if (PositionType == NCsUserWidget::EPosition::Screen)
 	{
-		typedef NCsMath::FLibrary MathLibrary;
-
-		SetPositionInViewport(FVector2d(MathLibrary::Convert(WidgetPayload->GetPosition())));
+		SetPositionInViewport(FVector2d(CsMathLibrary::Convert(WidgetPayload->GetPosition())));
 	}
 	// World
 	else

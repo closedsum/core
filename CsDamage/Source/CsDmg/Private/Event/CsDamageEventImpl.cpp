@@ -111,11 +111,10 @@ namespace NCsDamage
 			// Shape
 			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
-			typedef NCsMath::FLibrary MathLibrary;
 
 			if (ShapeDataType* Shape = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 			{
-				Damage = Shape->CalculateDamage(DamageValue.GetValue(), DamageRange.GetRange(), MathLibrary::Convert(Origin.ImpactPoint), MathLibrary::Convert(HitResult.ImpactPoint));
+				Damage = Shape->CalculateDamage(DamageValue.GetValue(), DamageRange.GetRange(), CsMathLibrary::Convert(Origin.ImpactPoint), CsMathLibrary::Convert(HitResult.ImpactPoint));
 				return true;
 			}
 			// Point

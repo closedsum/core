@@ -27,7 +27,6 @@ namespace NCsInput
 				}
 			}
 
-			#define MouseLibrary NCsInput::NMouse::FLibrary
 			#define ViewportLibrary NCsViewport::NLocal::NPlayer::NPhysics::FLibrary
 
 			// Trace
@@ -39,7 +38,7 @@ namespace NCsInput
 			ResponseType* FLibrary::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/)
 			{
 				FIntPoint Position;
-				MouseLibrary::GetPositionChecked(Context, WorldContext, Position);
+				CsMouseInputLibrary::GetPositionChecked(Context, WorldContext, Position);
 
 				return ViewportLibrary::TraceChecked(Context, WorldContext, FVector2f(Position.X, Position.Y), Request, Distance);
 			}
@@ -47,7 +46,7 @@ namespace NCsInput
 			ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				FIntPoint Position;
-				if (!MouseLibrary::GetSafePosition(Context, WorldContext, Position, Log))
+				if (!CsMouseInputLibrary::GetSafePosition(Context, WorldContext, Position, Log))
 					return nullptr;
 				return ViewportLibrary::SafeTrace(Context, WorldContext, FVector2f(Position.X, Position.Y), Request, Distance, Log);
 			}
@@ -66,7 +65,6 @@ namespace NCsInput
 
 			#pragma endregion Trace
 
-			#undef MouseLibrary
 			#undef ViewportLibrary
 		}
 	}

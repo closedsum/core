@@ -210,8 +210,6 @@ void ACsWidgetActorPooledImpl::Allocate(PayloadType* Payload)
 	WidgetComponent->SetHiddenInGame(false);
 	WidgetComponent->SetComponentTickEnabled(true);
 
-	typedef NCsMath::FLibrary MathLibrary;
-
 	// If the Parent is set, attach the WidgetComponent to the Parent
 	if (UObject* Parent = Payload->GetParent())
 	{
@@ -232,7 +230,7 @@ void ACsWidgetActorPooledImpl::Allocate(PayloadType* Payload)
 		{
 			AttachToComponent(ComponentToAttachTo, WidgetActorPayload->GetAttachmentTransformRule(), WidgetActorPayload->GetBone());
 
-			const FTransform3d& Transform = MathLibrary::Convert(WidgetActorPayload->GetTransform());
+			const FTransform3d& Transform = CsMathLibrary::Convert(WidgetActorPayload->GetTransform());
 			const int32& TransformRules   = WidgetActorPayload->GetTransformRules();
 		
 			// Location | Rotation | Scale
@@ -262,13 +260,13 @@ void ACsWidgetActorPooledImpl::Allocate(PayloadType* Payload)
 		// NO Component, set the World Transform of the WidgetComponent
 		else
 		{
-			SetActorTransform(MathLibrary::Convert(WidgetActorPayload->GetTransform()));
+			SetActorTransform(CsMathLibrary::Convert(WidgetActorPayload->GetTransform()));
 		}
 	}
 	// NO Parent, set the World Transform of the WidgetComponent
 	else
 	{
-		SetActorTransform(MathLibrary::Convert(WidgetActorPayload->GetTransform()));
+		SetActorTransform(CsMathLibrary::Convert(WidgetActorPayload->GetTransform()));
 	}
 }
 

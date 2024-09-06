@@ -102,7 +102,6 @@ namespace NCsDamage
 		{
 			CS_IS_PTR_NULL(Data)
 
-			typedef NCsMath::FLibrary MathLibrary;
 			typedef NCsDamage::NData::NOrientation::IOrientation OrientationDataType;
 
 			if (const OrientationDataType* OrientationData = GetSafeInterfaceChecked<OrientationDataType>(Context, Data))
@@ -113,7 +112,7 @@ namespace NCsDamage
 				{
 					FVector3f Right = FVector3f::ZeroVector;
 					FVector3f Up    = FVector3f::UpVector;
-					MathLibrary::GetRightAndUpFromNormal(Direction, Right, Up);
+					CsMathLibrary::GetRightAndUpFromNormal(Direction, Right, Up);
 
 					Origin += Location.X * Direction + Location.Y * Right + Location.Z + Up;
 				}
@@ -122,12 +121,12 @@ namespace NCsDamage
 
 				if (Rotation.Yaw != 0.0f)
 				{
-					Direction = MathLibrary::RotateNormalWorldUp(Direction, Rotation.Yaw);
+					Direction = CsMathLibrary::RotateNormalWorldUp(Direction, Rotation.Yaw);
 				}
 
 				if (Rotation.Pitch != 0.0f)
 				{
-					Direction = MathLibrary::RotateNormalAngleRight(Direction, Rotation.Pitch);
+					Direction = CsMathLibrary::RotateNormalAngleRight(Direction, Rotation.Pitch);
 				}
 				return true;
 			}

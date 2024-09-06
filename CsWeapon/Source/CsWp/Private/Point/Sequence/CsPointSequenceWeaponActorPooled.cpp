@@ -417,9 +417,7 @@ void ACsPointSequenceWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 		// NO Parent, set the Actor Transform
 		else
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			SetActorTransform(MathLibrary::Convert(Transform));
+			SetActorTransform(CsMathLibrary::Convert(Transform));
 		}
 	}
 

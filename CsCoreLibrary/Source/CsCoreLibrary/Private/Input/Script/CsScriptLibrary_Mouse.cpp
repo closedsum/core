@@ -45,7 +45,6 @@ UCsScriptLibrary_Mouse::UCsScriptLibrary_Mouse(const FObjectInitializer& ObjectI
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryMouse::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define LogError &NCsCore::NLibrary::FLog::Error
-#define MouseLibrary NCsInput::NMouse::FLibrary
 
 // Show / Hide
 #pragma region
@@ -54,7 +53,7 @@ bool UCsScriptLibrary_Mouse::IsShowingCursor(const FString& Context, const UObje
 {
 	CONDITIONAL_SET_CTXT(IsShowingCursor);
 
-	return MouseLibrary::SafeIsShowingCursor(Ctxt, WorldContextObject);
+	return CsMouseInputLibrary::SafeIsShowingCursor(Ctxt, WorldContextObject);
 }
 
 bool UCsScriptLibrary_Mouse::IsShowingCursorChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
@@ -62,14 +61,14 @@ bool UCsScriptLibrary_Mouse::IsShowingCursorChecked(const FString& Context, cons
 	CONDITIONAL_SET_CTXT(IsShowingCursorChecked);
 
 	OutSuccess = true;
-	return CS_SCRIPT_GET_CHECKED(MouseLibrary::IsShowingCursorChecked(Ctxt, WorldContextObject), MouseLibrary::SafeIsShowingCursor(Ctxt, WorldContextObject, OutSuccess, LogError));
+	return CS_SCRIPT_GET_CHECKED(CsMouseInputLibrary::IsShowingCursorChecked(Ctxt, WorldContextObject), CsMouseInputLibrary::SafeIsShowingCursor(Ctxt, WorldContextObject, OutSuccess, LogError));
 }
 
 bool UCsScriptLibrary_Mouse::ShowCursor(const FString& Context, const UObject* WorldContextObject)
 {
 	CONDITIONAL_SET_CTXT(ShowCursor);
 
-	return MouseLibrary::SafeShowCursor(Ctxt, WorldContextObject);
+	return CsMouseInputLibrary::SafeShowCursor(Ctxt, WorldContextObject);
 }
 
 void UCsScriptLibrary_Mouse::ShowCursorChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
@@ -77,14 +76,14 @@ void UCsScriptLibrary_Mouse::ShowCursorChecked(const FString& Context, const UOb
 	CONDITIONAL_SET_CTXT(ShowCursorChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(MouseLibrary::ShowCursorChecked(Ctxt, WorldContextObject), MouseLibrary::SafeShowCursor(Ctxt, WorldContextObject, OutSuccess, LogError));
+	CS_SCRIPT_CHECKED(CsMouseInputLibrary::ShowCursorChecked(Ctxt, WorldContextObject), CsMouseInputLibrary::SafeShowCursor(Ctxt, WorldContextObject, OutSuccess, LogError));
 }
 
 bool UCsScriptLibrary_Mouse::HideCursor(const FString& Context, const UObject* WorldContextObject) 
 {
 	CONDITIONAL_SET_CTXT(HideCursor);
 
-	return MouseLibrary::SafeHideCursor(Ctxt, WorldContextObject);
+	return CsMouseInputLibrary::SafeHideCursor(Ctxt, WorldContextObject);
 }
 
 void UCsScriptLibrary_Mouse::HideCursorChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess) 
@@ -92,7 +91,7 @@ void UCsScriptLibrary_Mouse::HideCursorChecked(const FString& Context, const UOb
 	CONDITIONAL_SET_CTXT(HideCursorChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(MouseLibrary::HideCursorChecked(Ctxt, WorldContextObject), MouseLibrary::SafeHideCursor(Ctxt, WorldContextObject, OutSuccess, LogError));
+	CS_SCRIPT_CHECKED(CsMouseInputLibrary::HideCursorChecked(Ctxt, WorldContextObject), CsMouseInputLibrary::SafeHideCursor(Ctxt, WorldContextObject, OutSuccess, LogError));
 }
 
 #pragma endregion Show / Hide
@@ -104,28 +103,28 @@ bool UCsScriptLibrary_Mouse::GetPosition(const FString& Context, const UObject* 
 {
 	CONDITIONAL_SET_CTXT(GetPosition);
 
-	return MouseLibrary::GetSafePosition(Ctxt, WorldContextObject, OutPosition);
+	return CsMouseInputLibrary::GetSafePosition(Ctxt, WorldContextObject, OutPosition);
 }
 
 bool UCsScriptLibrary_Mouse::SetPosition(const FString& Context, const UObject* WorldContextObject, const int32& X, const int32& Y)
 {
 	CONDITIONAL_SET_CTXT(SetPosition);
 
-	return MouseLibrary::SetSafePosition(Ctxt, WorldContextObject, X, Y);
+	return CsMouseInputLibrary::SetSafePosition(Ctxt, WorldContextObject, X, Y);
 }
 
 bool UCsScriptLibrary_Mouse::SetCenterOfViewport(const FString& Context, const UObject* WorldContextObject)
 {
 	CONDITIONAL_SET_CTXT(SetCenterOfViewport);
 
-	return MouseLibrary::SetSafeCenterOfViewport(Ctxt, WorldContextObject);
+	return CsMouseInputLibrary::SetSafeCenterOfViewport(Ctxt, WorldContextObject);
 }
 
 bool UCsScriptLibrary_Mouse::RefreshPosition(const FString& Context, const UObject* WorldContextObject)
 {
 	CONDITIONAL_SET_CTXT(RefreshPosition);
 
-	return MouseLibrary::SafeRefreshPosition(Ctxt, WorldContextObject);
+	return CsMouseInputLibrary::SafeRefreshPosition(Ctxt, WorldContextObject);
 }
 
 void UCsScriptLibrary_Mouse::RefreshPositionChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
@@ -133,7 +132,7 @@ void UCsScriptLibrary_Mouse::RefreshPositionChecked(const FString& Context, cons
 	CONDITIONAL_SET_CTXT(RefreshPositionChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(MouseLibrary::RefreshPositionChecked(Ctxt, WorldContextObject), MouseLibrary::SafeRefreshPosition(Ctxt, WorldContextObject, OutSuccess, LogError));
+	CS_SCRIPT_CHECKED(CsMouseInputLibrary::RefreshPositionChecked(Ctxt, WorldContextObject), CsMouseInputLibrary::SafeRefreshPosition(Ctxt, WorldContextObject, OutSuccess, LogError));
 }
 
 #pragma endregion Get / Set
@@ -145,7 +144,7 @@ bool UCsScriptLibrary_Mouse::GetWorldIntersection(const FString& Context, const 
 {
 	CONDITIONAL_SET_CTXT(GetWorldIntersection);
 
-	return MouseLibrary::GetSafeWorldIntersection(Ctxt, WorldContextObject, Plane, OutIntersection);
+	return CsMouseInputLibrary::GetSafeWorldIntersection(Ctxt, WorldContextObject, Plane, OutIntersection);
 }
 
 #pragma endregion Trace
@@ -153,4 +152,3 @@ bool UCsScriptLibrary_Mouse::GetWorldIntersection(const FString& Context, const 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
 #undef LogError
-#undef MouseLibrary

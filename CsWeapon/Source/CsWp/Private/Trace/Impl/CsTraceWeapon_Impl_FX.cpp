@@ -170,8 +170,6 @@ namespace NCsWeapon
 						// Get FX
 						const FCsFX& FX = TracerVisualData->GetTracerFX();
 
-						typedef NCsMath::FLibrary MathLibrary;
-
 						// Set Transform based on TransformType.
 						// NOTE: This is only valid if AttachType == None.
 						FTransform3f Transform = FTransform3f::Identity;
@@ -192,10 +190,10 @@ namespace NCsWeapon
 							if (TType == TransformType::Owner)
 							{
 								if (AActor* Actor = Cast<AActor>(Owner))
-									Transform = MathLibrary::Convert(Actor->GetActorTransform());
+									Transform = CsMathLibrary::Convert(Actor->GetActorTransform());
 								else
 								if (USceneComponent* C = Cast<USceneComponent>(Owner))
-									Transform = MathLibrary::Convert(C->GetComponentTransform());
+									Transform = CsMathLibrary::Convert(C->GetComponentTransform());
 							}
 							// Component
 							else
@@ -203,7 +201,7 @@ namespace NCsWeapon
 							{
 								CS_IS_PTR_NULL_CHECKED(Component)
 
-								Transform = MathLibrary::Convert(Component->GetComponentTransform());
+								Transform = CsMathLibrary::Convert(Component->GetComponentTransform());
 							}
 							// Custom
 							else
@@ -251,16 +249,14 @@ namespace NCsWeapon
 
 					if (ImpactVisualDataType* ImpactVisualData = TraceDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 					{
-						typedef NCsMath::FLibrary MathLibrary;
-
 						// Get Physics Surface
 						EPhysicalSurface SurfaceType = NCsHitResult::GetPhysSurfaceType(Hit);
 
 						const FCsFX& FX = ImpactVisualData->GetImpactFX(SurfaceType);
 
 						FTransform3f Transform;
-						Transform.SetLocation(MathLibrary::Convert(Hit.Location));
-						Transform.SetRotation(MathLibrary::Convert(Hit.ImpactNormal.Rotation().Quaternion()));
+						Transform.SetLocation(CsMathLibrary::Convert(Hit.Location));
+						Transform.SetRotation(CsMathLibrary::Convert(Hit.ImpactNormal.Rotation().Quaternion()));
 
 						// Spawn FX
 						CsFXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);

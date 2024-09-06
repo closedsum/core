@@ -124,11 +124,9 @@ namespace NCsWeapon
 
 						const FCsFX& FX = ImpactVisualData->GetImpactFX(SurfaceType);
 
-						typedef NCsMath::FLibrary MathLibrary;
-
 						FTransform3f Transform;
-						Transform.SetLocation(MathLibrary::Convert(Hit.Location));
-						Transform.SetRotation(MathLibrary::Convert(Hit.ImpactNormal.Rotation().Quaternion()));
+						Transform.SetLocation(CsMathLibrary::Convert(Hit.Location));
+						Transform.SetRotation(CsMathLibrary::Convert(Hit.ImpactNormal.Rotation().Quaternion()));
 
 						// Spawn FX
 						CsFXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);

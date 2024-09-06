@@ -444,8 +444,6 @@ using namespace NCsBeamActorPooledImpl::NCached;
 
 	PooledPayloadType* PooledPayload = BeamPayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
 
-	typedef NCsMath::FLibrary MathLibrary;
-
 	// Handle Orientation
 	{
 		// Check Parent is set
@@ -470,7 +468,7 @@ using namespace NCsBeamActorPooledImpl::NCached;
 			const FVector3d Scale = GetActorScale3D();
 
 			MeshComponent->AttachToComponent(Parent, Rule.ToRule(), Bone);
-			MeshComponent->SetWorldScale3D(Scale * MathLibrary::Convert(Payload->GetScale()));
+			MeshComponent->SetWorldScale3D(Scale * CsMathLibrary::Convert(Payload->GetScale()));
 		}
 		// Teleport / Set Orientation
 		else
@@ -478,10 +476,10 @@ using namespace NCsBeamActorPooledImpl::NCached;
 			const FVector3f& Direction = Payload->GetDirection();
 			FRotator3f Rotation		   = Direction.Rotation();
 
-			TeleportTo(MathLibrary::Convert(Payload->GetLocation()), MathLibrary::Convert(Rotation), false, true);
+			TeleportTo(CsMathLibrary::Convert(Payload->GetLocation()), CsMathLibrary::Convert(Rotation), false, true);
 
 			const FVector3d Scale = GetActorScale3D();
-			SetActorScale3D(Scale * MathLibrary::Convert(Payload->GetScale()));
+			SetActorScale3D(Scale * CsMathLibrary::Convert(Payload->GetScale()));
 		}
 	}
 	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
@@ -741,11 +739,9 @@ void ACsBeamActorPooledImpl::FCollisionImpl::PerformPass()
 
 	RequestType* Request = TraceManagerLibrary::AllocateRequestChecked(Context, Outer);
 
-	typedef NCsMath::FLibrary MathLibrary;
-
-	Request->Start = MathLibrary::Convert(Outer->GetActorLocation());
+	Request->Start = CsMathLibrary::Convert(Outer->GetActorLocation());
 	
-	const FVector3f Dir = MathLibrary::Convert(Outer->GetActorRotation().Vector());
+	const FVector3f Dir = CsMathLibrary::Convert(Outer->GetActorRotation().Vector());
 	FVector3f Scale	    = FVector3f::OneVector;
 
 	if (UObject* MyOwner = Outer->GetCache()->GetOwner())
@@ -836,7 +832,6 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 	EPhysicalSurface SurfaceType	= NCsHitResult::GetPhysSurfaceType(Hit);
 
 	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-	typedef NCsMath::FLibrary MathLibrary;
 	typedef NCsCollision::FLibrary CollisionLibrary;
 
 	// ImpactVisualDataType (NCsBeam::NData::NVisual::NImpact::IImpact)

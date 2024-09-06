@@ -383,8 +383,6 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	SetActorHiddenInGame(false);
 	SetActorTickEnabled(true);
 
-	typedef NCsMath::FLibrary MathLibrary;
-
 	// TODO: May need to streamline this logic slightly
 	
 	// TODO: Set Skin
@@ -418,7 +416,7 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 		// NO Parent, set the Actor Transform
 		else
 		{
-			SetActorTransform(MathLibrary::Convert(Transform));
+			SetActorTransform(CsMathLibrary::Convert(Transform));
 		}
 	}
 

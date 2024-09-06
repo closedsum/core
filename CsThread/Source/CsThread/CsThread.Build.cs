@@ -31,9 +31,10 @@ public class CsThread : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore"
+                    "CsTime"
 ,                }
             );
 

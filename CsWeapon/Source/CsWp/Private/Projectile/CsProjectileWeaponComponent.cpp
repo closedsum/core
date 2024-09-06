@@ -648,7 +648,7 @@ char UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal
 	FCsDeltaTime& ElapsedTime			   = R->GetValue_DeltaTime(CS_FIRST);
 	const FCsDeltaTime PreviousElapsedTime = ElapsedTime;
 
-	ElapsedTime += R->DeltaTime;
+	ElapsedTime += R->GetDeltaTime();
 
 	static const int32 TIME_BETWEEN_SHOTS = 0;
 	const float& Captured_TimeBetweenShots = R->GetValue_Float(TIME_BETWEEN_SHOTS);

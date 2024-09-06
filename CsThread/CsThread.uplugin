@@ -55,7 +55,7 @@
       "Enabled": true
     },
     {
-      "Name": "CsPlugin",
+      "Name": "CsTime",
       "Enabled": true
     }
   ]

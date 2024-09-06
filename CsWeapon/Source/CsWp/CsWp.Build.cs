@@ -34,14 +34,16 @@ public class CsWp : ModuleRules
                     "CsValid",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore",
+                    "CsTime",
+                    "CsCoroutine",
                     "CsModifier",
                     "CsSkin",
                     "CsPrj",
                     "CsBeam",
                     "CsSound",
                     "CsFX",
-                    "CsPhysics"
+                    "CsPhysics",
+                    "CsCore"
                 }
             );
 

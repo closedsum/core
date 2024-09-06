@@ -16,14 +16,12 @@
 #define PayloadType NCsProjectile::NPayload::IPayload
 void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const
 {
-	typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
-
-	if (PayloadLibrary::HasUniqueBasedSlices(Context, Payload))
+	if (CsPrjPayloadLibrary::HasUniqueBasedSlices(Context, Payload))
 	{
 		typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
 		typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadSliceType;
 
-		PooledPayloadSliceType* PooledPayloadSlice = PayloadLibrary::StaticCastChecked<PooledPayloadSliceType, PooledPayloadType>(Context, Payload);
+		PooledPayloadSliceType* PooledPayloadSlice = CsPrjPayloadLibrary::StaticCastChecked<PooledPayloadSliceType, PooledPayloadType>(Context, Payload);
 		PooledPayloadSlice->Instigator = Instigator;
 		PooledPayloadSlice->Owner		= Owner;
 		PooledPayloadSlice->Parent		= Parent;
@@ -32,7 +30,7 @@ void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, 
 
 		typedef NCsProjectile::NPayload::FImplSlice PayloadSliceType;
 
-		PayloadSliceType* PayloadSlice = PayloadLibrary::StaticCastChecked<PayloadSliceType, PayloadType>(Context, Payload);
+		PayloadSliceType* PayloadSlice = CsPrjPayloadLibrary::StaticCastChecked<PayloadSliceType, PayloadType>(Context, Payload);
 
 		PayloadSlice->Type		= Type;
 		PayloadSlice->Generation = Generation;
@@ -43,7 +41,7 @@ void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, 
 	{
 		typedef NCsProjectile::NPayload::FImpl PayloadImplType;
 
-		PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+		PayloadImplType* PayloadImpl = CsPrjPayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 		PayloadImpl->Instigator = Instigator;
 		PayloadImpl->Owner		= Owner;
 		PayloadImpl->Parent		= Parent;

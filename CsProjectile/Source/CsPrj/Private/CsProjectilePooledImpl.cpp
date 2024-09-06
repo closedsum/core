@@ -751,10 +751,9 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	// Set Additional Datas
 	{
 		// Damage
-		typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
 		typedef NCsProjectile::NPayload::NDamage::IDamage DmgPayloadType;
 
-		if (const DmgPayloadType* DmgPayload = PayloadLibrary::GetSafeInterfaceChecked<DmgPayloadType>(Context, Payload))
+		if (const DmgPayloadType* DmgPayload = CsPrjPayloadLibrary::GetSafeInterfaceChecked<DmgPayloadType>(Context, Payload))
 		{
 			DamageImpl.DataTypes.Append(DmgPayload->GetDamageDataTypes());
 		}
@@ -901,10 +900,9 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 			if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
 			{
-				typedef NCsProjectile::NPayload::FLibrary ProjectilePayloadLibrary;
 				typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
 
-				PooledPayloadType* PooledPayload = ProjectilePayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
+				PooledPayloadType* PooledPayload = CsPrjPayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
 
 				// Instigator
 				if (AActor* Actor = Cast<AActor>(PooledPayload->GetInstigator()))
@@ -930,7 +928,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 				typedef NCsProjectile::NPayload::NCollision::ICollision CollisionPayloadType;
 
-				CollisionPayloadType* CollisionPayload = ProjectilePayloadLibrary::GetInterfaceChecked<CollisionPayloadType>(Context, Payload);
+				CollisionPayloadType* CollisionPayload = CsPrjPayloadLibrary::GetInterfaceChecked<CollisionPayloadType>(Context, Payload);
 
 				for (AActor* Actor : CollisionPayload->GetIgnoreActorsOnHit())
 				{
@@ -1032,13 +1030,11 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 
 	const FString& Context = Str::OnLaunch_SetModifiers;
 
-	typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
-
 	// ModifierPayloadType (NCsProjectile::NPayload::NModifier::IModifier)
 	{
 		typedef NCsProjectile::NPayload::NModifier::IModifier ModifierPayloadType;
 
-		if (const ModifierPayloadType* ModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModifierPayloadType>(Context, Payload))
+		if (const ModifierPayloadType* ModifierPayload = CsPrjPayloadLibrary::GetSafeInterfaceChecked<ModifierPayloadType>(Context, Payload))
 		{
 			typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
@@ -1049,7 +1045,7 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 	{
 		typedef NCsProjectile::NPayload::NModifier::NDamage::IDamage DmgModifierPayloadType;
 
-		if (const DmgModifierPayloadType* DmgModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<DmgModifierPayloadType>(Context, Payload))
+		if (const DmgModifierPayloadType* DmgModifierPayload = CsPrjPayloadLibrary::GetSafeInterfaceChecked<DmgModifierPayloadType>(Context, Payload))
 		{
 			typedef NCsDamage::NManager::NModifier::FLibrary DmgModifierLibrary;
 
@@ -1698,10 +1694,9 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 
 	const FString& Context = Str::Init;
 
-	typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
 	typedef NCsProjectile::NPayload::NTarget::ITarget TargetPayloadType;
 
-	TargetPayloadType* TargetPayload = PayloadLibrary::GetInterfaceChecked<TargetPayloadType>(Context, Payload);
+	TargetPayloadType* TargetPayload = CsPrjPayloadLibrary::GetInterfaceChecked<TargetPayloadType>(Context, Payload);
 
 	if (!TargetPayload->HasTarget())
 		return;

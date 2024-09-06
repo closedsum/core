@@ -686,14 +686,12 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 {
 	bool Result = true;
 
-	typedef NCsProjectile::NPayload::FLibrary PrjPayloadLibrary;
-
 	// PooledObject
 	{
 		typedef NCsPooledObject::NPayload::FImplSlice SliceType;
 		typedef NCsPooledObject::NPayload::IPayload SliceInterfaceType;
 
-		SliceType* Slice = PrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
+		SliceType* Slice = CsPrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
 		Slice->Instigator = Outer;
 		Slice->Owner	  = Outer->GetMyOwner();
 	}
@@ -702,7 +700,7 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 		typedef NCsProjectile::NPayload::FImplSlice SliceType;
 		typedef NCsProjectile::NPayload::IPayload SliceInterfaceType;
 
-		SliceType* Slice = PrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
+		SliceType* Slice = CsPrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
 		Slice->Type		 = Outer->GetProjectileType();
 		Slice->Location  = GetLaunchLocation();
 		Slice->Direction = GetLaunchDirection();
@@ -712,7 +710,7 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 		typedef NCsProjectile::NPayload::NModifier::FImplSlice SliceType;
 		typedef NCsProjectile::NPayload::NModifier::IModifier SliceInterfaceType;
 
-		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		if (SliceType* Slice = CsPrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
 			typedef NCsProjectile::NModifier::IModifier PrjModifierType;
 
@@ -729,7 +727,7 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 
 bool UCsProjectileWeaponComponent::FProjectileImpl::CopyPayload(const FString& Context, const ProjectilePayloadType* From, ProjectilePayloadType* To)
 {
-	return NCsProjectile::NPayload::FLibrary::CopyChecked(Context, From, To);
+	return CsPrjPayloadLibrary::CopyChecked(Context, From, To);
 }
 
 #undef ProjectilePayloadType

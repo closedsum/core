@@ -1321,14 +1321,12 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 {
 	bool Result = true;
 
-	typedef NCsProjectile::NPayload::FLibrary PrjPayloadLibrary;
-
 	// PooledObject
 	{
 		typedef NCsPooledObject::NPayload::FImplSlice SliceType;
 		typedef NCsPooledObject::NPayload::IPayload SliceInterfaceType;
 
-		SliceType* Slice = PrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
+		SliceType* Slice = CsPrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
 		Slice->Instigator = Outer->GetMyOwner();
 		Slice->Owner	  = Outer;
 	}
@@ -1337,7 +1335,7 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 		typedef NCsProjectile::NPayload::FImplSlice SliceType;
 		typedef NCsProjectile::NPayload::IPayload SliceInterfaceType;
 
-		SliceType* Slice = PrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
+		SliceType* Slice = CsPrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
 		Slice->Type		 = Outer->GetProjectileType();
 		Slice->Location  = GetLaunchLocation(LaunchPayload);
 		Slice->Direction = GetLaunchDirection(LaunchPayload);
@@ -1347,7 +1345,7 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 		typedef NCsProjectile::NPayload::NModifier::FImplSlice SliceType;
 		typedef NCsProjectile::NPayload::NModifier::IModifier SliceInterfaceType;
 
-		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		if (SliceType* Slice = CsPrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
 			typedef NCsProjectile::NModifier::IModifier PrjModifierType;
 
@@ -1362,7 +1360,7 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 		typedef NCsProjectile::NPayload::NTarget::FImplSlice SliceType;
 		typedef NCsProjectile::NPayload::NTarget::ITarget SliceInterfaceType;
 
-		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		if (SliceType* Slice = CsPrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
 			Slice->bTarget	= bTarget;
 			Slice->Component = TargetComponent;

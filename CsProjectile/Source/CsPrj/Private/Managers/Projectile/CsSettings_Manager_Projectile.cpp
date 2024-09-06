@@ -6,6 +6,8 @@
 // Settings
 #include "Settings/CsProjectileSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Projectile)
+
 // FCsSettings_Manager_Projectile_PoolParams
 #pragma region
 

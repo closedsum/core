@@ -12,6 +12,8 @@
 #include "Payload/CsPayload_ProjectileImpl.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Projectile)
+
 // Cached
 #pragma region
 
@@ -216,7 +218,6 @@ UObject* UCsScriptLibrary_Manager_Projectile::Spawn(const FString& Context, cons
 	if (!Manager_Projectile)
 		return nullptr;
 
-	typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
 	typedef NCsProjectile::NPayload::IPayload PayloadType;
 	typedef NCsProjectile::NPayload::FImpl PayloadImplType;
 	typedef NCsProjectile::NPayload::FImplSlice PayloadSliceType;

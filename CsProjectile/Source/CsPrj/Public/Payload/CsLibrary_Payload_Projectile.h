@@ -48,3 +48,6 @@ namespace NCsProjectile
 	#undef PayloadType
 	}
 }
+
+using CsProjectilePayloadLibrary = NCsProjectile::NPayload::FLibrary;
+using CsPrjPayloadLibrary = NCsProjectile::NPayload::FLibrary;

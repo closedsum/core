@@ -1,5 +1,4 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
-
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "CsPrj.h"
 
@@ -63,6 +62,8 @@
 #include "Singleton/CsManager_Singleton.h"
 #include "Managers/Projectile/CsGetManagerProjectile.h"
 #endif // #if WITH_EDITOR
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Projectile)
 
 // Cached
 #pragma region

@@ -198,16 +198,12 @@ namespace NCsWeapon
 					// Bone
 					if (LocationType == ELocation::Bone)
 					{
-						typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-						return SkeletalMeshLibrary::GetBoneLocationChecked(Context, SkeletalMeshComponent, LocationInfo.GetBoneOrSocket());
+						return CsSkeletalMeshLibrary::GetBoneLocation3fChecked(Context, SkeletalMeshComponent, LocationInfo.GetBoneOrSocket());
 					}
 					// Socket
 					if (LocationType == ELocation::Socket)
 					{
-						typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-						return SkeletalMeshLibrary::GetSocketLocationChecked(Context, SkeletalMeshComponent, LocationInfo.GetBoneOrSocket());
+						return CsSkeletalMeshLibrary::GetSocketLocation3fChecked(Context, SkeletalMeshComponent, LocationInfo.GetBoneOrSocket());
 					}
 					// Component
 					if (LocationType == ELocation::Component)
@@ -295,16 +291,12 @@ namespace NCsWeapon
 					// Bone
 					if (DirectionType == EDirection::Bone)
 					{
-						typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-						return SkeletalMeshLibrary::GetBoneNormalChecked(Context, SkeletalMeshComponent, DirectionInfo.GetBoneOrSocket(), DirectionRules);
+						return CsSkeletalMeshLibrary::GetBoneNormal3fChecked(Context, SkeletalMeshComponent, DirectionInfo.GetBoneOrSocket(), DirectionRules);
 					}
 					// Socket
 					if (DirectionType == EDirection::Socket)
 					{
-						typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-						return SkeletalMeshLibrary::GetSocketNormalChecked(Context, SkeletalMeshComponent, DirectionInfo.GetBoneOrSocket(), DirectionRules);
+						return CsSkeletalMeshLibrary::GetSocketNormal3fChecked(Context, SkeletalMeshComponent, DirectionInfo.GetBoneOrSocket(), DirectionRules);
 					}
 					// Component
 					if (DirectionType == EDirection::Component)

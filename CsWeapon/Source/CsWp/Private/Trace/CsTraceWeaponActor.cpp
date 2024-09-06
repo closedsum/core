@@ -517,7 +517,7 @@ char ACsTraceWeaponActor::Fire_Internal(FCsRoutine* R)
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
-	ElapsedTime += R->DeltaTime;
+	ElapsedTime += R->GetDeltaTime();
 	
 	CS_COROUTINE_BEGIN(R);
 
@@ -601,7 +601,7 @@ char ACsTraceWeaponActor::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FCsRouti
 	FCsDeltaTime& ElapsedTime			   = R->GetValue_DeltaTime(CS_FIRST);
 	const FCsDeltaTime PreviousElapsedTime = ElapsedTime;
 
-	ElapsedTime += R->DeltaTime;
+	ElapsedTime += R->GetDeltaTime();
 
 	const float& TimeBetweenShots = R->GetValue_Float(CS_FIRST);
 

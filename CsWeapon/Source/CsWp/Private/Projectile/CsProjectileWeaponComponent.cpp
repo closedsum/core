@@ -563,7 +563,7 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
-	ElapsedTime += R->DeltaTime;
+	ElapsedTime += R->GetDeltaTime();
 	
 	CS_COROUTINE_BEGIN(R);
 

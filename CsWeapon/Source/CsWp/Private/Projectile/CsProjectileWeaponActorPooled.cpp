@@ -1855,11 +1855,10 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 
 		// Get collision information related to the projectile to be used in the trace.
 
-		typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 		typedef NCsProjectile::NData::IData PrjDataType;
 		typedef NCsProjectile::NData::NCollision::ICollision PrjCollisionDataType;
 
-		PrjDataType* PrjData				   = PrjManagerLibrary::GetChecked(Context, Outer->GetWorldContext())->GetDataChecked(Context, Outer->GetProjectileType());
+		PrjDataType* PrjData				   = CsPrjManagerLibrary::GetChecked(Context, Outer->GetWorldContext())->GetDataChecked(Context, Outer->GetProjectileType());
 		PrjCollisionDataType* PrjCollisionData = CsPrjDataLibrary::GetInterfaceChecked<PrjCollisionDataType>(Context, PrjData);
 
 		const FCsCollisionPreset& CollisionPreset		 = PrjCollisionData->GetCollisionPreset();
@@ -1978,10 +1977,9 @@ void ACsProjectileWeaponActorPooled::FProjectileImpl::Launch(const LaunchPayload
 
 	const FString& Context = Str::Launch;
 
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 	typedef NCsProjectile::NPayload::IPayload PayloadType;
 
-	UCsManager_Projectile* Manager_Projectile = PrjManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
+	UCsManager_Projectile* Manager_Projectile = CsPrjManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 
 	// Get Payload
 	const FECsProjectile& PrjType = Outer->GetProjectileType();

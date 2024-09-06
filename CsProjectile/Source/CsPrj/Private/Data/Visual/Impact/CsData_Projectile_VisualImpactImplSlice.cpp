@@ -45,11 +45,10 @@ SliceType* FCsData_Projectile_VisualImpactImplSlice::AddSafeSliceAsValue(const F
 SliceType* FCsData_Projectile_VisualImpactImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCLog::Warning*/) const
 {
 	#define DataHandlerType NCsData::NManager::NHandler::TData
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 	typedef NCsProjectile::NData::IData DataType;
 	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
 	
-	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = CsPrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 	
 	#undef DataHandlerType
 
@@ -179,11 +178,10 @@ namespace NCsProjectile
 					CS_IS_PTR_NULL_RET_NULL(Object)
 
 					#define DataHandlerType NCsData::NManager::NHandler::TData
-					typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 					typedef NCsProjectile::NData::IData DataType;
 					typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
 
-					DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+					DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = CsPrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 				
 					#undef DataHandlerType
 

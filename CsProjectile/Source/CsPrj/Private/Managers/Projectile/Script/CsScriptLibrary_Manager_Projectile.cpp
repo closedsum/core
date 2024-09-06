@@ -56,9 +56,7 @@ UCsManager_Projectile* UCsScriptLibrary_Manager_Projectile::Get(const FString& C
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Get : Context;
 
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	return PrjManagerLibrary::GetSafe(Ctxt, WorldContextObject);
+	return CsPrjManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 }
 
 #pragma endregion Get
@@ -72,9 +70,7 @@ bool UCsScriptLibrary_Manager_Projectile::GetTypeToSetAsArray(const FString& Con
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetTypeToSetAsArray : Context;
 
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	UCsManager_Projectile* Manager_Projectile = PrjManagerLibrary::GetSafe(Context, WorldContextObject);
+	UCsManager_Projectile* Manager_Projectile = CsPrjManagerLibrary::GetSafe(Context, WorldContextObject);
 
 	if (!Manager_Projectile)
 		return false;
@@ -96,9 +92,7 @@ void UCsScriptLibrary_Manager_Projectile::SetTypeMapKeyValue(const FString& Cont
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetTypeMapKeyValue : Context;
 
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	PrjManagerLibrary::SafeSetAndAddTypeMapKeyValue(Context, WorldContextObject, Key, Value);
+	CsPrjManagerLibrary::SafeSetAndAddTypeMapKeyValue(Context, WorldContextObject, Key, Value);
 }
 
 bool UCsScriptLibrary_Manager_Projectile::AddPoolParams(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type, const FCsSettings_Manager_Projectile_PoolParams& PoolParams)
@@ -107,9 +101,7 @@ bool UCsScriptLibrary_Manager_Projectile::AddPoolParams(const FString& Context, 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddPoolParams : Context;
 
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	return PrjManagerLibrary::SafeAddPoolParams(Ctxt, WorldContextObject, Type, PoolParams);
+	return CsPrjManagerLibrary::SafeAddPoolParams(Ctxt, WorldContextObject, Type, PoolParams);
 }
 
 #pragma endregion Settings
@@ -123,9 +115,7 @@ bool UCsScriptLibrary_Manager_Projectile::QueueDeallocateAll(const FString& Cont
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::QueueDeallocateAll : Context;
 
-	typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
-
-	return ProjectileManagerLibrary::SafeQueueDeallocateAll(Ctxt, WorldContextObject);
+	return CsPrjManagerLibrary::SafeQueueDeallocateAll(Ctxt, WorldContextObject);
 }
 
 #pragma endregion Allocate / Deallocate
@@ -139,9 +129,7 @@ UObject* UCsScriptLibrary_Manager_Projectile::FindObject(const FString& Context,
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::FindObject : Context;
 
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	UObject* ContextRoot = PrjManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
+	UObject* ContextRoot = CsPrjManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
 
 #if WITH_EDITOR
 	if (!ContextRoot)
@@ -177,9 +165,7 @@ bool UCsScriptLibrary_Manager_Projectile::HasPool(const FString& Context, const 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::HasPool : Context;
 
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	return PrjManagerLibrary::SafeHasPool(Ctxt, WorldContextObject, Type);
+	return CsPrjManagerLibrary::SafeHasPool(Ctxt, WorldContextObject, Type);
 }
 
 bool UCsScriptLibrary_Manager_Projectile::GetPool(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type, TArray<UObject*>& OutPool)
@@ -188,9 +174,7 @@ bool UCsScriptLibrary_Manager_Projectile::GetPool(const FString& Context, const 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetPool : Context;
 
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	return PrjManagerLibrary::GetSafePool(Ctxt, WorldContextObject, Type, OutPool);
+	return CsPrjManagerLibrary::GetSafePool(Ctxt, WorldContextObject, Type, OutPool);
 }
 
 #pragma endregion Pool
@@ -204,8 +188,6 @@ UObject* UCsScriptLibrary_Manager_Projectile::Spawn(const FString& Context, cons
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Spawn : Context;
 
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
 	OutIndex = INDEX_NONE;
 
 	// Check Payload is Valid
@@ -213,7 +195,7 @@ UObject* UCsScriptLibrary_Manager_Projectile::Spawn(const FString& Context, cons
 		return nullptr;
 
 	// Try to allocate a native payload
-	UCsManager_Projectile* Manager_Projectile = PrjManagerLibrary::GetSafe(Ctxt, WorldContextObject);
+	UCsManager_Projectile* Manager_Projectile = CsPrjManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
 	if (!Manager_Projectile)
 		return nullptr;

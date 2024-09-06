@@ -552,3 +552,6 @@ namespace NCsProjectile
 		}
 	}
 }
+
+using CsProjectileManagerLibrary = NCsProjectile::NManager::FLibrary;
+using CsPrjManagerLibrary = NCsProjectile::NManager::FLibrary;

@@ -485,10 +485,8 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 	{
 		Type = InType;
 
-		typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
 		// Get Data associated with Type
-		Data = PrjManagerLibrary::GetDataChecked(Context, GetWorldContext(), Type);
+		Data = CsPrjManagerLibrary::GetDataChecked(Context, GetWorldContext(), Type);
 	}
 }
 
@@ -582,9 +580,7 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 
 	// Get Data associated with Type
 	// TODO: FUTURE: Add to list of preserved changes
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	Data = PrjManagerLibrary::GetDataChecked(Context, GetWorldContext(), Type);
+	Data = CsPrjManagerLibrary::GetDataChecked(Context, GetWorldContext(), Type);
 	// TODO: Redundant
 	CS_EDITOR_EXPR(IsValidChecked_Data(Context));
 

@@ -29,7 +29,6 @@ namespace NCsProjectile
 		#define USING_NS_CACHED using namespace NCsProjectile::NModifier::NAllocated::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsProjectile::NModifier::NAllocated::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define PrjManagerLibrary NCsProjectile::NManager::FLibrary
 		#define PrjModifierLibrary NCsProjectile::NManager::NModifier::FLibrary
 
 		FAllocated::~FAllocated()
@@ -45,7 +44,7 @@ namespace NCsProjectile
 
 			CS_IS_PTR_NULL_CHECKED(From)
 
-			Root	  = PrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
+			Root	  = CsPrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
 			Container = PrjModifierLibrary::CreateCopyOfChecked(Context, WorldContext, From);
 			Modifier  = Container->Get();
 			Type	  = PrjModifierLibrary::GetTypeChecked(Context, WorldContext, Modifier);
@@ -109,7 +108,6 @@ namespace NCsProjectile
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef PrjManagerLibrary
 		#undef PrjModifierLibrary
 	}
 }

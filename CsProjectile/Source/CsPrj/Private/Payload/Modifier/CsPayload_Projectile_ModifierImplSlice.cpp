@@ -36,7 +36,6 @@ namespace NCsProjectile
 			#define USING_NS_CACHED using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define PrjManagerLibrary NCsProjectile::NManager::FLibrary
 			#define PrjModifierLibrary NCsProjectile::NManager::NModifier::FLibrary
 
 			FImplSlice::FImplSlice() :
@@ -90,7 +89,7 @@ namespace NCsProjectile
 				{
 					AllocatedModifierType& Allocated = Modifiers_Internal.AddDefaulted_GetRef();
 
-					Allocated.Root = PrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
+					Allocated.Root = CsPrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
 
 					PrjModifierLibrary::CreateCopyOfChecked(Context, WorldContext, Modifier, Allocated.Container, Allocated.Type);
 					
@@ -118,7 +117,7 @@ namespace NCsProjectile
 					ModifierType* Modifier			 = FromModifiers[I];
 					AllocatedModifierType& Allocated = Modifiers_Internal.AddDefaulted_GetRef();
 
-					Allocated.Root = PrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
+					Allocated.Root = CsPrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
 
 					PrjModifierLibrary::CreateCopyOfChecked(Context, WorldContext, Modifier, Allocated.Container, Allocated.Type);
 					
@@ -177,7 +176,6 @@ namespace NCsProjectile
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef PrjManagerLibrary
 		#undef PrjModifierLibrary
 	}
 }

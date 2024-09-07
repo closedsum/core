@@ -40,7 +40,7 @@ void FCsReceiveDamage::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsReceiveDamage:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsReceiveDamage."), *(Object->GetName()));
+				checkf(false, TEXT("FCsReceiveDamage:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsReceiveDamage."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 	}

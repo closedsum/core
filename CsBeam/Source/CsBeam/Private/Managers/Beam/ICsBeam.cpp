@@ -38,7 +38,7 @@ void FCsBeam::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsBeam:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsBeam."), *(Object->GetName()));
+				checkf(false, TEXT("FCsBeam:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsBeam."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 	}

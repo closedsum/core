@@ -54,7 +54,7 @@ void FCsBeamPooled::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsBeamPooled:SetObject: Object: %s with Class; %s does NOT implement the interface: ICsBeam."), *(Object->GetName()));
+				checkf(false, TEXT("FCsBeamPooled:SetObject: Object: %s with Class; %s does NOT implement the interface: ICsBeam."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 	}

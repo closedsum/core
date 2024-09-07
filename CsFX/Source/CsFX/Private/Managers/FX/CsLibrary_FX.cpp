@@ -104,7 +104,7 @@ namespace NCsFX
 	bool FLibrary::IsValidUserVariableNameChecked(const FString& Context, const FName& Name)
 	{
 		CS_IS_NAME_NONE_CHECKED(Name)
-		checkf(Name.ToString().StartsWith(TEXT("User.")), TEXT("%s: %s does NOT start with 'User.'"), *Context);
+		checkf(Name.ToString().StartsWith(TEXT("User.")), TEXT("%s: %s does NOT start with 'User.'"), *Context, *(Name.ToString()));
 		return true;
 	}
 

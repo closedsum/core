@@ -73,9 +73,7 @@ namespace NCsActor
 			if (!Cast<ICsScriptableActor>(A) &&
 				!A->GetClass()->ImplementsInterface(UCsScriptableActor::StaticClass()))
 			{
-				typedef NCsActor::FLibrary ActorLibrary;
-
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsScriptableActor."), *Context, *ActorLibrary::PrintActorAndClass(A)));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsScriptableActor."), *Context, *CsActorLibrary::PrintActorAndClass(A)));
 				return false;
 			}
 			return true;
@@ -97,9 +95,7 @@ namespace NCsActor
 				return true;
 			}
 
-			typedef NCsActor::FLibrary ActorLibrary;
-
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsScriptableActor."), *Context, *ActorLibrary::PrintActorAndClass(A)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsScriptableActor."), *Context, *CsActorLibrary::PrintActorAndClass(A)));
 			return false;
 		}
 

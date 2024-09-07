@@ -84,3 +84,5 @@ namespace NCsEnum
 		}
 	};
 }
+
+using CsEnumLibrary = NCsEnum::FLibrary;

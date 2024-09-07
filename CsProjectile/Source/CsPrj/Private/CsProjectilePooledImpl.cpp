@@ -387,11 +387,9 @@ void ACsProjectilePooledImpl::OutsideWorldBounds()
 void ACsProjectilePooledImpl::OnTick_HandleCVars(const float& DeltaSeconds)
 {
 #if WITH_EDITOR
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	const FCsSettings_Projectile_Debug& Debug = FCsSettings_Projectile_Debug::Get();
 	
-	Debug.Collision.Draw(this, ActorLibrary::GetLocationChecked(this), CollisionComponent->GetScaledSphereRadius());
+	Debug.Collision.Draw(this, CsActorLibrary::GetLocationChecked(this), CollisionComponent->GetScaledSphereRadius());
 #endif // #if WITH_EDITOR
 }
 

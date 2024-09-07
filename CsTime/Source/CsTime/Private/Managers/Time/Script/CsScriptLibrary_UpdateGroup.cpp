@@ -38,9 +38,7 @@ FECsUpdateGroup UCsScriptLibrary_UpdateGroup::Get(const FString& Name)
 
 	const FString& Context = Str::Get;
 
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::GetSafe<EMCsUpdateGroup, FECsUpdateGroup>(Context, Str::FECsUpdateGroup, Name);
+	return CsEnumLibrary::GetSafe<EMCsUpdateGroup, FECsUpdateGroup>(Context, Str::FECsUpdateGroup, Name);
 }
 
 FECsUpdateGroup UCsScriptLibrary_UpdateGroup::GetByIndex(const int32& Index)
@@ -49,9 +47,7 @@ FECsUpdateGroup UCsScriptLibrary_UpdateGroup::GetByIndex(const int32& Index)
 
 	const FString& Context = Str::GetByIndex;
 
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::GetSafeByIndex<EMCsUpdateGroup, FECsUpdateGroup>(Context, Str::FECsUpdateGroup, Index);
+	return CsEnumLibrary::GetSafeByIndex<EMCsUpdateGroup, FECsUpdateGroup>(Context, Str::FECsUpdateGroup, Index);
 }
 
 FString UCsScriptLibrary_UpdateGroup::ToString(const FECsUpdateGroup& Enum)
@@ -66,9 +62,7 @@ uint8 UCsScriptLibrary_UpdateGroup::GetCount()
 
 void UCsScriptLibrary_UpdateGroup::GetAll(TArray<FECsUpdateGroup>& OutTypes)
 {
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	EnumLibrary::GetAll<EMCsUpdateGroup, FECsUpdateGroup>(OutTypes);
+	CsEnumLibrary::GetAll<EMCsUpdateGroup, FECsUpdateGroup>(OutTypes);
 }
 
 FECsUpdateGroup UCsScriptLibrary_UpdateGroup::GetMax()

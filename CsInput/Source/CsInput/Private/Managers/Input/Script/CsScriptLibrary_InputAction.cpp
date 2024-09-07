@@ -46,9 +46,7 @@ EnumType UCsScriptLibrary_InputAction::Create(const FString& Name, const FString
 
 	const FString& Context = Str::Create;
 
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
+	return CsEnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
 }
 
 EnumType UCsScriptLibrary_InputAction::Get(const FString& Name)
@@ -57,9 +55,7 @@ EnumType UCsScriptLibrary_InputAction::Get(const FString& Name)
 
 	const FString& Context = Str::Get;
 
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
+	return CsEnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
 EnumType UCsScriptLibrary_InputAction::GetByIndex(const int32& Index)
@@ -68,9 +64,7 @@ EnumType UCsScriptLibrary_InputAction::GetByIndex(const int32& Index)
 
 	const FString& Context = Str::GetByIndex;
 
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
+	return CsEnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
 
 FString UCsScriptLibrary_InputAction::ToString(const EnumType& Enum)
@@ -85,9 +79,7 @@ uint8 UCsScriptLibrary_InputAction::GetCount()
 
 void UCsScriptLibrary_InputAction::GetAll(TArray<EnumType>& OutTypes)
 {
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
+	CsEnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
 EnumType UCsScriptLibrary_InputAction::GetMAX()

@@ -36,7 +36,6 @@ UCsScriptLibrary_GameEvent::UCsScriptLibrary_GameEvent(const FObjectInitializer&
 #define SET_CONTEXT(__FunctionName) using namespace NCsScriptLibraryGameEvent::NCached; \
 	const FString& Context = Str::__FunctionName
 #define CLASS_TYPE UCsScriptLibrary_GameEvent
-#define EnumLibrary NCsEnum::FLibrary
 #define EnumMapType EMCsGameEvent
 #define EnumType FECsGameEvent
 
@@ -49,21 +48,21 @@ EnumType CLASS_TYPE::Create(const FString& Name, const FString& DisplayName)
 {
 	SET_CONTEXT(Create);
 
-	return EnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
+	return CsEnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
 }
 
 EnumType CLASS_TYPE::Get(const FString& Name)
 {
 	SET_CONTEXT(Get);
 
-	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
+	return CsEnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
 EnumType CLASS_TYPE::GetByIndex(const int32& Index)
 {
 	SET_CONTEXT(GetByIndex);
 
-	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
+	return CsEnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
 
 FString CLASS_TYPE::ToString(const EnumType& Enum)
@@ -78,7 +77,7 @@ uint8 CLASS_TYPE::GetCount()
 
 void CLASS_TYPE::GetAll(TArray<EnumType>& OutTypes)
 {
-	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
+	CsEnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
 EnumType CLASS_TYPE::GetMAX()
@@ -109,6 +108,5 @@ bool CLASS_TYPE::IsValidByName(const FString& Name)
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
 #undef CLASS_TYPE
-#undef EnumLibrary
 #undef EnumMapType
 #undef EnumType

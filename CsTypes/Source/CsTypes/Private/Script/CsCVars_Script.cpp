@@ -3,6 +3,35 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Script/CsCVars_Script.h"
 
+// Script
+#pragma region
+
+TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions(
+	TEXT("log.override.functions"),
+	0,
+	TEXT("Log Override Functions used by Script."),
+	ECVF_SetByConsole
+);
+
+#pragma endregion Script
+
+// CVarLog
+#pragma region
+
+namespace NCsCVarLog
+{
+	// Script
+	CSTYPES_API CS_CREATE_ENUM_STRUCT(LogOverrideFunctions);
+
+	namespace Map
+	{
+		// Script
+		CSTYPES_API CS_ADD_TO_CVAR_MAP(LogOverrideFunctions, CsCVarLogOverrideFunctions);
+	}
+}
+
+#pragma endregion CVarLog
+
 TAutoConsoleVariable<bool> CsCVarEnableScriptChecked(
 	TEXT("enable.script.checked"),
 	0,

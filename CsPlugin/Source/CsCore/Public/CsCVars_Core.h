@@ -53,12 +53,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsS
 
 #pragma endregion AI
 
-// Script
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions;
-
-#pragma endregion Script
 
 // Inventory
 #pragma region

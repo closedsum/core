@@ -4,6 +4,27 @@
 #pragma once
 #include "CsCVars.h"
 
+// Script
+#pragma region
+
+extern CSTYPES_API TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions;
+
+#pragma endregion Script
+
+namespace NCsCVarLog
+{
+	// Script
+	extern CSTYPES_API const Type LogOverrideFunctions;
+
+	namespace Map
+	{
+		typedef FCsCVarLogMap CVarMapType;
+
+		// Script
+		extern CSTYPES_API CS_DECLARE_ADD_TO_CVAR_MAP(LogOverrideFunctions);
+	}
+}
+
 extern CSTYPES_API TAutoConsoleVariable<bool> CsCVarEnableScriptChecked;
 
 // CVarToggle

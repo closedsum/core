@@ -64,7 +64,7 @@ UObject* UCsScriptLibrary_Manager_SkeletalMeshActor::FindObject(const FString& C
 	{
 		return SkeletalMeshPooled->GetSafeObject();
 	}
-	UE_LOG(LogCsSkeletalMesh, Warning, TEXT("%s, Failed to Find Object of Type: %s at Index: %d."), Type.ToChar(), Index);
+	UE_LOG(LogCsSkeletalMesh, Warning, TEXT("%s, Failed to Find Object of Type: %s at Index: %d."), *Context, Type.ToChar(), Index);
 	return nullptr;
 }
 

@@ -785,7 +785,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 	// Component
 	if (LocationType == LaunchLocationType::Component)
 	{
-		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
+		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."), *Context);
 
 		return CsMathLibrary::Convert(LaunchComponentTransform->GetComponentLocation());
 	}
@@ -867,7 +867,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	// Component
 	if (DirectionType == LaunchDirectionType::Component)
 	{
-		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
+		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."), *Context);
 		
 		const FRotator3f Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
 		const FVector3f Dir		  = Rotation.Vector();
@@ -922,7 +922,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		else
 		if (TraceStart == LaunchTraceStartType::Component)
 		{
-			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
+			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."), *Context);
 
 			Start = CsMathLibrary::Convert(LaunchComponentTransform->GetComponentLocation());
 		}
@@ -966,7 +966,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		else
 		if (TraceDirection == LaunchTraceDirectionType::Component)
 		{
-			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
+			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."), *Context);
 
 			const FRotator3f Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
 
@@ -1375,7 +1375,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProj
 	// Custom
 	else
 	{
-		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."));
+		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."), *Context);
 	}
 }
 
@@ -1433,7 +1433,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProj
 	// Custom
 	else
 	{
-		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."));
+		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."), *Context);
 	}
 }
 

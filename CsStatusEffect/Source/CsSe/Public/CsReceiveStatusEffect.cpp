@@ -40,7 +40,7 @@ void FCsReceiveStatusEffect::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsReceiveStatusEffect:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsReceiveStatusEffect."), *(Object->GetName()));
+				checkf(false, TEXT("FCsReceiveStatusEffect:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsReceiveStatusEffect."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 	}

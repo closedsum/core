@@ -2259,7 +2259,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(const int32 CurrentProj
 	// Custom
 	else
 	{
-		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."));
+		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."), *Context);
 	}
 }
 
@@ -2319,7 +2319,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(const int32 CurrentProj
 	// Custom
 	else
 	{
-		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."));
+		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."), *Context);
 	}
 }
 

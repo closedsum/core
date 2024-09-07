@@ -50,7 +50,7 @@ void FCsTraceWeapon::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsTraceWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsWeapon."), *(Object->GetName()));
+				checkf(false, TEXT("FCsTraceWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsWeapon."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 		// ICsTraceWeapon
@@ -68,7 +68,7 @@ void FCsTraceWeapon::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsTraceWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsTraceWeapon."), *(Object->GetName()));
+				checkf(false, TEXT("FCsTraceWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsTraceWeapon."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 		// ICsUpdate

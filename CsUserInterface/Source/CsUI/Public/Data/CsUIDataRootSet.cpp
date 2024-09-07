@@ -168,7 +168,7 @@ UDataTable* FCsUIDataRootSet::GetSafeDataTable(const FString& Context, const UOb
 
 	#undef CS_TEMP_GET_SAFE_DATA_TABLE
 
-	UE_LOG(LogCsUI, Warning, TEXT("%s: Failed to get DataTable for MemberType."));
+	UE_LOG(LogCsUI, Warning, TEXT("%s: Failed to get DataTable for MemberType."), *Context);
 	return nullptr;
 }
 

@@ -53,7 +53,7 @@ void FCsWeaponPooled::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsWeaponPooled:SetObject: Object: %s with Class; %s does NOT implement the interface: ICsWeapon."), *(Object->GetName()));
+				checkf(false, TEXT("FCsWeaponPooled:SetObject: Object: %s with Class; %s does NOT implement the interface: ICsWeapon."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 	}

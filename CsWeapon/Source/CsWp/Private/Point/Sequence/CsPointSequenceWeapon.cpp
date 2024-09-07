@@ -54,7 +54,7 @@ void FCsPointSequenceWeapon::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsProjectileWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsWeapon."), *(Object->GetName()));
+				checkf(false, TEXT("FCsProjectileWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsWeapon."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 		// ICsPointSequenceWeapon
@@ -72,7 +72,7 @@ void FCsPointSequenceWeapon::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsPointSequenceWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsPointSequenceWeapon."), *(Object->GetName()));
+				checkf(false, TEXT("FCsPointSequenceWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsPointSequenceWeapon."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 		// ICsUpdate

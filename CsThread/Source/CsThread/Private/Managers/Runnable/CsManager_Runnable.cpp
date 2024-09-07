@@ -209,7 +209,7 @@ UCsManager_Runnable::UCsManager_Runnable(const FObjectInitializer& ObjectInitial
 		if (UCsManager_Runnable* Manager = GetSafe(ContextRoot))
 			return Manager;
 
-		UE_LOG(LogCsThread, Warning, TEXT("%s: Failed to Manager Item of type UCsManager_Runnable from ContextRoot: %s."), *(ContextRoot->GetName()));
+		UE_LOG(LogCsThread, Warning, TEXT("%s: Failed to Manager Item of type UCsManager_Runnable from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
 	}
 	return nullptr;
 }

@@ -53,7 +53,7 @@ void FCsProjectilePooled::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsProjectilePooled:SetObject: Object: %s with Class; %s does NOT implement the interface: ICsProjectile."), *(Object->GetName()));
+				checkf(false, TEXT("FCsProjectilePooled:SetObject: Object: %s with Class; %s does NOT implement the interface: ICsProjectile."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 	}

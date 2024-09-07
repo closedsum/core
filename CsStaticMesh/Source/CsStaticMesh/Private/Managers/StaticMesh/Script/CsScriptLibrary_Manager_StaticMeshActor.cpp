@@ -67,7 +67,7 @@ UObject* UCsScriptLibrary_Manager_StaticMeshActor::FindObject(const FString& Con
 	{
 		return StaticMeshPooled->GetSafeObject();
 	}
-	UE_LOG(LogCsStaticMesh, Warning, TEXT("%s, Failed to Find Object of Type: %s at Index: %d."), Type.ToChar(), Index);
+	UE_LOG(LogCsStaticMesh, Warning, TEXT("%s, Failed to Find Object of Type: %s at Index: %d."), *Context, Type.ToChar(), Index);
 	return nullptr;
 }
 

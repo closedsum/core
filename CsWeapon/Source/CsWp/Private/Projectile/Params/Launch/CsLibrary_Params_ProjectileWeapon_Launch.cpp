@@ -28,7 +28,7 @@ namespace NCsWeapon
 					CS_IS_ENUM_VALID_CHECKED(LocationMapType, Params->GetLocationType())
 					CS_IS_ENUM_VALID_CHECKED(DirectionMapType, Params->GetDirectionType())
 
-					checkf(Params->GetDirectionRules() != NCsRotationRules::None, TEXT("%s: No DirectionRules set in Param for %s."), *Context);
+					checkf(Params->GetDirectionRules() != NCsRotationRules::None, TEXT("%s: No DirectionRules set in Param."), *Context);
 					return true;
 				}
 

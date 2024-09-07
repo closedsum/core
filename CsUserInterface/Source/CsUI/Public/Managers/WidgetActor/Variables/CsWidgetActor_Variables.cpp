@@ -166,7 +166,7 @@ namespace NCsWidgetActor
 			const int32 ID = Vars->GetID();
 
 			check(Manager_ID.IsAllocatedChecked(Context, ID));
-			checkf(Vars == GetVariablesPtr(ID), TEXT("%s: ID: %s is NOT correct for Vars."), *Context, ID);
+			checkf(Vars == GetVariablesPtr(ID), TEXT("%s: ID: %d is NOT correct for Vars."), *Context, ID);
 
 			Reset(ID);
 		}

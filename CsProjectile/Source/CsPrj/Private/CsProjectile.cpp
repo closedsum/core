@@ -35,7 +35,7 @@ void FCsProjectile::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsProjectile:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsProjectile."), *(Object->GetName()));
+				checkf(false, TEXT("FCsProjectile:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsProjectile."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 	}

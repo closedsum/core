@@ -703,7 +703,7 @@ bool ACsPointWeaponActorPooled::CanFire() const
 		// Pass_Ammo
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Ammo (%s): %s || %s"), ToChar(Pass_Ammo), ToChar(PointWeaponData->HasInfiniteAmmo()), ToChar(CurrentAmmo > 0));
 		// Pass_Destination
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Destination (%s)"));
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Destination (%s)"), ToChar(Pass_Ammo));
 
 		// Result
 		UE_LOG(LogCsWp, Warning, TEXT(" Result (%s): %s && (%s || %s) && %s %% %s"), ToChar(Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo), ToChar(Pass_Time), ToChar(Pass_Fire), ToChar(Pass_FireOnRelease), ToChar(Pass_Ammo), ToChar(Pass_Destination));
@@ -1187,7 +1187,7 @@ void ACsPointWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, FXDa
 	// Custom
 	else
 	{
-		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."));
+		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."), *Context);
 	}
 }
 

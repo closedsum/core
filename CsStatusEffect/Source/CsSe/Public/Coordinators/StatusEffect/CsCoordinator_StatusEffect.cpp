@@ -566,7 +566,7 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateCopyOfEvent(const FString&
 {
 	const FECsStatusEffectEvent& Type = GetEventType(Context, Event);
 
-	checkf(EMCsStatusEffectEvent::Get().IsValidEnum(Type), TEXT("%s: EventType: %s is NOT Valid."), Type.ToChar());
+	checkf(EMCsStatusEffectEvent::Get().IsValidEnum(Type), TEXT("%s: EventType: %s is NOT Valid."), *Context, Type.ToChar());
 
 	EventResourceType* Container = AllocateEvent(Type);
 	EventType* Copy				 = Container->Get();

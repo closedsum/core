@@ -148,7 +148,7 @@ namespace NCsSkeletalMeshActor
 				// Check DeallocateMethod is Valid
 				typedef NCsSkeletalMeshActor::EDeallocateMethod DeallocateMethodType;
 
-				checkf(GetDeallocateMethod() != DeallocateMethodType::EDeallocateMethod_MAX, TEXT("%s: DeallocateMethod: DeallocateMethodType::EDeallocateMethod_MAX is NOT Valid."));
+				checkf(GetDeallocateMethod() != DeallocateMethodType::EDeallocateMethod_MAX, TEXT("%s: DeallocateMethod: DeallocateMethodType::EDeallocateMethod_MAX is NOT Valid."), *Context);
 
 				// Check LifeTime is Valid
 				if (GetDeallocateMethod() == DeallocateMethodType::LifeTime)
@@ -297,7 +297,7 @@ namespace NCsSkeletalMeshActor
 				// Check DeallocateMethod is Valid
 				typedef NCsSkeletalMeshActor::EDeallocateMethod DeallocateMethodType;
 
-				checkf(GetDeallocateMethod() != DeallocateMethodType::EDeallocateMethod_MAX, TEXT("%s: DeallocateMethod: DeallocateMethodType::EDeallocateMethod_MAX is NOT Valid."));
+				checkf(GetDeallocateMethod() != DeallocateMethodType::EDeallocateMethod_MAX, TEXT("%s: DeallocateMethod: DeallocateMethodType::EDeallocateMethod_MAX is NOT Valid."), *Context);
 
 				// Check LifeTime is Valid
 				if (GetDeallocateMethod() == DeallocateMethodType::LifeTime)

@@ -50,7 +50,7 @@ void FCsBeamWeapon::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsBeamWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsWeapon."), *(Object->GetName()));
+				checkf(false, TEXT("FCsBeamWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsWeapon."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 		// ICsBeamWeapon
@@ -68,7 +68,7 @@ void FCsBeamWeapon::SetObject(UObject* InObject)
 			}
 			else
 			{
-				checkf(false, TEXT("FCsBeamWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsBeamWeapon."), *(Object->GetName()));
+				checkf(false, TEXT("FCsBeamWeapon:SetObject: Object: %s with Class: %s does NOT implement the interface: ICsBeamWeapon."), *(Object->GetName()), *(Object->GetClass()->GetName()));
 			}
 		}
 		// ICsUpdate

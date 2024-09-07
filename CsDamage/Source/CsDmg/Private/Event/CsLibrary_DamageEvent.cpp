@@ -228,9 +228,7 @@ namespace NCsDamage
 
 			if (!Event)
 			{
-				typedef NCsObject::FLibrary ObjectLibrary;
-
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Current Damage Event from %s."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Current Damage Event from %s."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
 			}
 			return Event;
 		}

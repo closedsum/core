@@ -8,7 +8,7 @@
 #include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_String.h"
-#include "ConsoleCommand/CsLibrary_ConsoleCommand.h"
+#include "CsLibrary_ConsoleCommand.h"
 #include "Library/CsLibrary_Valid.h"
 #include "Managers/Playback/CsLibrary_Manager_Playback.h"
 // Utility

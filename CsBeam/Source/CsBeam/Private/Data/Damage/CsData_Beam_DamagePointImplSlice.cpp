@@ -154,9 +154,7 @@ namespace NCsBeam
 					{
 						if (Log)
 						{
-							typedef NCsObject::FLibrary ObjectLibrary;
-
-							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: DamageDataType (NCsBeam::NData::NDamage::IDamage)."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
+							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: DamageDataType (NCsBeam::NData::NDamage::IDamage)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Beam_DamagePointImplSlice with name: DamagePointSlice."), *Context));
 							Log(FString::Printf(TEXT("%s: - OR"), *Context));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_DamagePoint with name: DamagePoint."), *Context));

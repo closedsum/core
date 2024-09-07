@@ -64,16 +64,12 @@ namespace NCsSound
 
 	USoundBase* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&NCsSound::FLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
-		return ObjectLibrary::SafeLoad<USoundBase>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<USoundBase>(Context, Path, Log);
 	}
 
 	USoundBase* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&NCsSound::FLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
-		return ObjectLibrary::SafeLoad<USoundBase>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<USoundBase>(Context, Path, Log);
 	}
 
 	#pragma endregion Load

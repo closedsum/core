@@ -6,6 +6,7 @@
 
 // CVar
 #include "CsCVars_Spawner.h"
+#include "Script/CsCVars_Script.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
@@ -493,7 +494,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
-	ElapsedTime += R->DeltaTime;
+	ElapsedTime += R->GetDeltaTime();
 
 	static const int32 CAN_SPAWN = 0;
 	bool& CanSpawn = R->GetValue_Flag(CAN_SPAWN);
@@ -620,7 +621,7 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 		
 		if (Index == FROM_SPAWN)
 		{
-			UE_LOG(LogCsSpawner, Warning, TEXT("%s (%s): Spawning Objects"));
+			UE_LOG(LogCsSpawner, Warning, TEXT("%s (%s): Spawning Objects"), *Context, *(GetName()));
 		}
 		else
 		{

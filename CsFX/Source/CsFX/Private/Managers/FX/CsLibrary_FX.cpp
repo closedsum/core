@@ -71,16 +71,12 @@ namespace NCsFX
 
 	UNiagaraSystem* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
-		return ObjectLibrary::SafeLoad<UNiagaraSystem>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UNiagaraSystem>(Context, Path, Log);
 	}
 
 	UNiagaraSystem* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
-		return ObjectLibrary::SafeLoad<UNiagaraSystem>(Context, Path, Log);
+		return CsObjectLibrary::SafeLoad<UNiagaraSystem>(Context, Path, Log);
 	}
 
 	#pragma endregion Load

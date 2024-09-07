@@ -190,9 +190,7 @@ namespace NCsProjectile
 				{
 					if (Log)
 					{
-						typedef NCsObject::FLibrary ObjectLibrary;
-
-						Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CollisionDataType (NCsProjectile::NData::NCollision::ICollision)."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
+						Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CollisionDataType (NCsProjectile::NData::NCollision::ICollision)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Projectile_CollisionImplSlice with name: CollisionSlice."), *Context));
 						Log(FString::Printf(TEXT("%s: - OR"), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset."), *Context));
@@ -208,9 +206,7 @@ namespace NCsProjectile
 			bool FImplSlice::IsValidChecked(const FString& Context) const
 			{
 				check(GetCollisionPreset().IsValidChecked(Context));
-
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetCollisionRadius(), 0.0f)
-
 				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetHitCount(), 0)
 
 				const int32 Count = GetIgnoreHitObjectClasses().Num();

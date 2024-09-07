@@ -35,8 +35,9 @@ public class CsPlayback : ModuleRules
                     "CsValid",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore",
-                    "CsThread"
+                    "CsThread",
+                    "CsInput",
+                    "CsCore"
                 }
             );
 

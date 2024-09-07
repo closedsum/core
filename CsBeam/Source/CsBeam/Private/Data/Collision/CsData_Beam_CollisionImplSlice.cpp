@@ -198,9 +198,7 @@ namespace NCsBeam
 				{
 					if (Log)
 					{
-						typedef NCsObject::FLibrary ObjectLibrary;
-
-						Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CollisionDataType (NCsBeam::NData::NCollision::ICollision)."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
+						Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CollisionDataType (NCsBeam::NData::NCollision::ICollision)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Beam_CollisionImplSlice with name: CollisionSlice."), *Context));
 						Log(FString::Printf(TEXT("%s: - OR"), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset."), *Context));
@@ -217,13 +215,9 @@ namespace NCsBeam
 			bool FImplSlice::IsValidChecked(const FString& Context) const
 			{
 				CS_IS_VALID_CHECKED(GetCollisionPreset());
-
 				check(GetCollisionShape()->IsValidChecked(Context));
-
 				CS_IS_VALID_CHECKED(GetCollisionFrequencyParams());
-
 				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCollisionCount(), 0)
-
 				CS_IS_TARRAY_ANY_NULL_CHECKED(GetIgnoreCollidingObjectClasses(), UObject)
 
 				return true;

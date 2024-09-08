@@ -449,13 +449,12 @@ EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, 
 
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult,  const TArray<ModifierType*>& Modifiers)
 {
-	typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 	typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
 	CS_IS_PTR_NULL_CHECKED(Data)
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 
-	if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+	if (ShapeDataType* ShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 		return CreateEvent(Context, Data->GetValue(), ShapeData->GetRange(), Data, Type, Instigator, Causer, HitResult, Modifiers);
 	return CreateEvent(Context, Data->GetValue(), Data, Type, Instigator, Causer, HitResult, Modifiers);
 }
@@ -613,17 +612,16 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 	checkf(Data, TEXT("%s: Data is NULL. No Damage Data found for Event."), *Context);
 
 	// Shape
-	typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 	typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
-	if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+	if (ShapeDataType* ShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 	{
 		// Collision
 		typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
 		typedef NCsDamage::NCollision::FInfo CollisionInfoType;
 		typedef NCsDamage::NCollision::EMethod CollisionMethodType;
 
-		if (CollisionDataType* CollisionData = DamageDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+		if (CollisionDataType* CollisionData = CsDamageDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
 			const CollisionInfoType& CollisionInfo	   = CollisionData->GetCollisionInfo();
 			const CollisionMethodType& CollisionMethod = CollisionInfo.GetMethod();
@@ -989,17 +987,13 @@ DataType* UCsManager_Damage::GetSafeData(const FString& Context, const EnumType&
 
 bool UCsManager_Damage::IsValidChecked(const FString& Context, const DataType* Data) const
 {
-	typedef NCsDamage::NData::FLibrary DataLibrary;
-
-	check(DataLibrary::IsValidChecked(Context, Data));
+	check(CsDamageDataLibrary::IsValidChecked(Context, Data));
 	return true;
 }
 
 bool UCsManager_Damage::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 {
-	typedef NCsDamage::NData::FLibrary DataLibrary;
-
-	if (!DataLibrary::IsValid(Context, Data, Log))
+	if (!CsDamageDataLibrary::IsValid(Context, Data, Log))
 		return false;
 	return true;
 }

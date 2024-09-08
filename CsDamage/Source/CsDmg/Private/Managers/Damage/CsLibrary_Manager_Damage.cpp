@@ -173,13 +173,12 @@ namespace NCsDamage
 			ProcessPayloadPtr->Type  = GetDamageDataType->GetDamageDataType();
 			ProcessPayloadPtr->Data	 = Data;
 
-			typedef NCsDamage::NData::FLibrary DataLibrary;
 			typedef NCsDamage::NValue::IValue ValueType;
 			typedef NCsDamage::NRange::IRange RangeType;
 
 			ProcessPayloadPtr->Value = const_cast<ValueType*>(Data->GetValue());
 
-			if (const RangeType* Range = DataLibrary::GetSafeRange(Context, Data, nullptr))
+			if (const RangeType* Range = CsDamageDataLibrary::GetSafeRange(Context, Data, nullptr))
 			{
 				ProcessPayloadPtr->SetRange(const_cast<RangeType*>(Range));
 			}
@@ -394,9 +393,7 @@ namespace NCsDamage
 					}
 					else
 					{
-						typedef NCsDamage::NData::FLibrary DataLibrary;
-
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get UObject for %s associated with Name: %s"), *Context, *DataLibrary::PrintDataAndClass(Data), Type.ToChar()));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get UObject for %s associated with Name: %s"), *Context, *CsDamageDataLibrary::PrintDataAndClass(Data), Type.ToChar()));
 					}
 				}
 				else
@@ -420,9 +417,7 @@ namespace NCsDamage
 					}
 					else
 					{
-						typedef NCsDamage::NData::FLibrary DataLibrary;
-
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get UObject for %s associated with Name: %s"), *Context, *DataLibrary::PrintDataAndClass(Data), *(Name.ToString())));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get UObject for %s associated with Name: %s"), *Context, *CsDamageDataLibrary::PrintDataAndClass(Data), *(Name.ToString())));
 					}
 				}
 				else
@@ -484,9 +479,7 @@ namespace NCsDamage
 
 			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
 			{
-				typedef NCsDamage::NData::FLibrary DamageDataLibrary;
-
-				if (!DamageDataLibrary::IsValid(Context, Data))
+				if (!CsDamageDataLibrary::IsValid(Context, Data))
 					return false;
 
 				CS_IS_TARRAY_ANY_NULL(Modifiers, ModifierType)
@@ -503,9 +496,7 @@ namespace NCsDamage
 			{
 				DataType* Data = Manager_Damage->GetSafeData(Context, DataName, Log);
 
-				typedef NCsDamage::NData::FLibrary DamageDataLibrary;
-
-				if (!DamageDataLibrary::IsValid(Context, Data))
+				if (!CsDamageDataLibrary::IsValid(Context, Data))
 					return false;
 
 				const FECsDamageData& Type = EMCsDamageData::Get().GetEnum(DataName);

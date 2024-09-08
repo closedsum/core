@@ -60,10 +60,9 @@ namespace NCsDamage
 			CS_IS_PTR_NULL_CHECKED(InRoot)
 			CS_IS_PTR_NULL_EXIT(Data)
 
-			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
-			const ShapeDataType* From = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data);
+			const ShapeDataType* From = CsDamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data);
 
 			if (!From)
 			{

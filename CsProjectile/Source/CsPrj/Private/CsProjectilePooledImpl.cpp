@@ -2173,7 +2173,6 @@ void ACsProjectilePooledImpl::FDamageImpl::Reset()
 #define RangeType NCsDamage::NRange::IRange
 const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& Context)
 {
-	typedef NCsDamage::NData::FLibrary DmgDataLibrary;
 	typedef NCsDamage::NData::IData DmgDataType;
 	typedef NCsDamage::NData::NShape::IShape DmgShapeDataType;
 
@@ -2188,7 +2187,7 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 		{
 			const DmgDataType* DmgData = PrjDmgData->GetDamageData();
 
-			if (const DmgShapeDataType* DmgShapeData = DmgDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
+			if (const DmgShapeDataType* DmgShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
 			{
 				return DmgShapeData->GetRange();
 			}
@@ -2204,7 +2203,7 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 
 			const DmgDataType* DmgData = DamageManagerLibrary::GetDataChecked(Context, GetWorldContext(), GetDamageDataType);
 
-			if (const DmgShapeDataType* DmgShapeData = DmgDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
+			if (const DmgShapeDataType* DmgShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
 			{
 				return DmgShapeData->GetRange();
 			}
@@ -2224,7 +2223,7 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 
 			for (const DmgDataType* DmgData : DamageDatas)
 			{
-				if (const DmgShapeDataType* DmgShapeData = DmgDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
+				if (const DmgShapeDataType* DmgShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
 				{
 					DamageDatas.Reset(DamageDatas.Max());
 					return DmgShapeData->GetRange();

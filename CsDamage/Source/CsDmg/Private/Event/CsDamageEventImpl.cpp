@@ -109,10 +109,9 @@ namespace NCsDamage
 			CS_IS_PTR_NULL_CHECKED(DamageValue.GetValue())
 
 			// Shape
-			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
-			if (ShapeDataType* Shape = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+			if (ShapeDataType* Shape = CsDamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 			{
 				Damage = Shape->CalculateDamage(DamageValue.GetValue(), DamageRange.GetRange(), CsMathLibrary::Convert(Origin.ImpactPoint), CsMathLibrary::Convert(HitResult.ImpactPoint));
 				return true;

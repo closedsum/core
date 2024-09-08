@@ -58,13 +58,12 @@ namespace NCsDamage
 			UE_LOG(LogCsDmg, Warning, TEXT("%s:"), *Context);
 			UE_LOG(LogCsDmg, Warning, TEXT("- Damage Event"));
 
-			typedef NCsDamage::NData::FLibrary DataLibrary;
 			typedef NCsDamage::NData::IData DataType;
 
 			DataType* Data = Event->GetData();
 
 			// Data
-			UE_LOG(LogCsDmg, Warning, TEXT("-- %s"), *DataLibrary::PrintDataAndClass(Data));
+			UE_LOG(LogCsDmg, Warning, TEXT("-- %s"), *CsDamageDataLibrary::PrintDataAndClass(Data));
 
 			// Damage
 			{
@@ -134,22 +133,21 @@ namespace NCsDamage
 
 			const FCsSettings_Damage_Debug& Debug = FCsSettings_Damage_Debug::Get();
 
-			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
 			// Shape
-			if (const ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+			if (const ShapeDataType* ShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 			{
 				typedef NCsDamage::NRange::IRange RangeType;
 
 				const RangeType* Range = ShapeData->GetRange();
 
-				checkf(Range, TEXT("%s: Failed to get Range from %s."), *Context, *DamageDataLibrary::PrintDataAndClass(Data));
+				checkf(Range, TEXT("%s: Failed to get Range from %s."), *Context, *CsDamageDataLibrary::PrintDataAndClass(Data));
 
 				// Cone
 				typedef NCsDamage::NData::NShape::NCone::ICone ConeDataType;
 
-				if (const ConeDataType* ConeData = DamageDataLibrary::GetSafeInterfaceChecked<ConeDataType>(Context, Data))
+				if (const ConeDataType* ConeData = CsDamageDataLibrary::GetSafeInterfaceChecked<ConeDataType>(Context, Data))
 				{
 					FTransform3f Transform = FTransform3f::Identity;
 					Transform.SetTranslation(CsMathLibrary::Convert(Event->GetHitResult().ImpactPoint));
@@ -316,10 +314,9 @@ namespace NCsDamage
 
 			checkf(Data, TEXT("%s: Event->GetData() is NULL."), *Context);
 
-			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
-			if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+			if (ShapeDataType* ShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 			{
 				return ShapeData->CalculateDamage(Event->GetDamageValue(), Event->GetDamageRange(), CsMathLibrary::Convert(Event->GetHitResult().ImpactPoint), Point);
 			}
@@ -364,12 +361,11 @@ namespace NCsDamage
 
 			checkf(Data, TEXT("%s: Data is NULL. No Damage Data found for Event."), *Context);
 
-			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 			typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
 
-			ShapeDataType* ShapeData		 = DamageDataLibrary::GetInterfaceChecked<ShapeDataType>(Context, Data);
-			CollisionDataType* CollisionData = DamageDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data);
+			ShapeDataType* ShapeData		 = CsDamageDataLibrary::GetInterfaceChecked<ShapeDataType>(Context, Data);
+			CollisionDataType* CollisionData = CsDamageDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data);
 
 			typedef NCsDamage::NCollision::FInfo CollisionInfoType;
 			typedef NCsDamage::NCollision::EMethod CollisionMethodType;

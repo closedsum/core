@@ -17,6 +17,7 @@ namespace NCsDamage
 {
 	namespace NData
 	{
+		#define LogLevel void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/
 		#define DataType NCsDamage::NData::IData
 
 		FString FLibrary::PrintDataAndClass(const DataType* Data)
@@ -43,7 +44,7 @@ namespace NCsDamage
 			return true;
 		}
 
-		bool FLibrary::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::IsValid(const FString& Context, const DataType* Data, LogLevel)
 		{
 			CS_IS_PTR_NULL(Data)
 			CS_IS_PTR_NULL(Data->GetValue())
@@ -79,7 +80,7 @@ namespace NCsDamage
 			return nullptr;
 		}
 
-		const RangeType* FLibrary::GetSafeRange(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const RangeType* FLibrary::GetSafeRange(const FString& Context, const DataType* Data, LogLevel)
 		{
 			CS_IS_PTR_NULL_RET_NULL(Data)
 
@@ -98,7 +99,7 @@ namespace NCsDamage
 
 		#undef RangeType
 
-		bool FLibrary::SafeApplyOrientation(const FString& Context, const DataType* Data, FVector3f& Origin, FVector3f& Direction, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeApplyOrientation(const FString& Context, const DataType* Data, FVector3f& Origin, FVector3f& Direction, LogLevel)
 		{
 			CS_IS_PTR_NULL(Data)
 
@@ -134,6 +135,7 @@ namespace NCsDamage
 			return false;
 		}
 
+		#undef LogLevel
 		#undef DataType
 	}
 }

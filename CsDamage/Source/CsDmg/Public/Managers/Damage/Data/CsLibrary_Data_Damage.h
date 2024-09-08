@@ -7,7 +7,7 @@
 // Damage
 #include "Managers/Damage/Data/CsData_Damage.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsDmgLog.h"
 
 // NCsDamage::NRange::IRange
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
@@ -23,13 +23,15 @@ namespace NCsDamage
 		*/
 		struct CSDMG_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
 		{
+		#define LogLevel void(*Log)(const FString&) = &NCsDamage::FLog::Warning
+
 		public:
 
 			static FString PrintDataAndClass(const DataType* Data);
 			
 			static bool IsValidChecked(const FString& Context, const DataType* Data);
 
-			static bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool IsValid(const FString& Context, const DataType* Data, LogLevel);
 
 		#define RangeType NCsDamage::NRange::IRange
 
@@ -42,7 +44,7 @@ namespace NCsDamage
 			*/
 			static const RangeType* GetRangeChecked(const FString& Context, const DataType* Data);
 
-			static const RangeType* GetSafeRange(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const RangeType* GetSafeRange(const FString& Context, const DataType* Data, LogLevel);
 
 		#undef RangeType
 
@@ -57,9 +59,13 @@ namespace NCsDamage
 			* @param Log		(optional)
 			* return
 			*/
-			static bool SafeApplyOrientation(const FString& Context, const DataType* Data, FVector3f& Origin, FVector3f& Direction, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeApplyOrientation(const FString& Context, const DataType* Data, FVector3f& Origin, FVector3f& Direction, LogLevel);
+
+		#undef LogLevel
 		};
 
 	#undef DataType
 	}
 }
+
+using CsDamageDataLibrary = NCsDamage::NData::FLibrary;

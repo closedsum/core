@@ -25,14 +25,13 @@ namespace NCsDamage
 				Type = InType;
 
 				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-				typedef NCsDamage::NData::FLibrary DataLibrary;
 				typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 				typedef NCsDamage::NValue::IValue ValueType;
 
 				Data  = DamageManagerLibrary::GetDataChecked(Context, WorldContext, Type);
 				Value = const_cast<ValueType*>(Data->GetValue());
 
-				if (ShapeDataType* ShapeData = DataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+				if (ShapeDataType* ShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 				{
 					typedef NCsDamage::NRange::IRange RangeType;
 

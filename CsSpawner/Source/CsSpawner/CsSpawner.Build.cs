@@ -20,10 +20,13 @@ public class CsSpawner : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
-                    "CsCore",
-                    "CsModifier"
+                    "CsTime",
+                    "CsCoroutine",
+                    "CsModifier",
+                    "CsCore"
                 }
             );
 

@@ -791,7 +791,7 @@ void ACsSpawnerImpl::SpawnObjects_InfiniteFillToCount()
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
-		UE_LOG(LogCsSpawner, Warning, TEXT("%s (%s): Spawning Objects"));
+		UE_LOG(LogCsSpawner, Warning, TEXT("%s (%s): Spawning Objects"), *Context, *(GetName()));
 
 		LogCountParams();
 	}

@@ -4,6 +4,7 @@
 #pragma once
 // Types
 #include "Managers/Time/CsManager_Time_Delegates.h"
+#include "Managers/Time/CsUpdateGroup.h"
 // Log
 #include "Utility/CsTimeLog.h"
 
@@ -418,17 +419,27 @@ namespace NCsTime
 		#pragma region
 		public:
 
+		#define OnPauseEventType NCsTime::NManager::FOnPause
+
+			static OnPauseEventType& GetChecked_OnPause_Event(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
+
+		#undef OnPauseEventType
+
 		#define OnUpdateEventType NCsTime::NManager::FOnUpdate
+		#define OnUpdateType FCsUpdateGroup::FOnUpdate
 		#define OnSetScaledDeltaTimeEventType NCsTime::NManager::FOnSetScaledDeltaTime
 		#define OnResetScaledDeltaTimeEventType NCsTime::NManager::FOnResetScaledDeltaTime
 
 			static OnUpdateEventType& GetChecked_OnUpdate_Event(const FString& Context, const UObject* ContextObject);
+
+			static OnUpdateType& GetChecked_OnUpdate_Event(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
 
 			static OnSetScaledDeltaTimeEventType& GetChecked_OnSetScaledDeltaTime_Event(const FString& Context, const UObject* ContextObject);
 
 			static OnResetScaledDeltaTimeEventType& GetChecked_OnResetScaledDeltaTime_Event(const FString& Context, const UObject* ContextObject);
 
 		#undef OnUpdateEventType
+		#undef OnUpdateType
 		#undef OnSetScaledDeltaTimeEventType
 		#undef OnResetScaledDeltaTimeEventType
 

@@ -88,6 +88,16 @@ namespace NCsTime
 
 			#pragma endregion Time
 
+			// Input
+			#pragma region
+
+			void FLibrary::SetupInputListenerChecked(const FString& Context, const UObject* ContextObject)
+			{
+				GetChecked(Context, ContextObject)->SetupInputListener();
+			}
+
+			#pragma endregion Input
+
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
 			#undef LogLevel

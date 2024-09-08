@@ -33,8 +33,12 @@ public class CsPlayback : ModuleRules
                     "CsContainer",
                     "CsEnum",
                     "CsValid",
+                    "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
+                    "CsConsoleCommand",
+                    "CsTime",
+                    "CsCoroutine",
                     "CsThread",
                     "CsInput",
                     "CsCore"

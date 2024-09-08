@@ -295,13 +295,28 @@ namespace NCsTime
 		// Events
 		#pragma region
 
+		#define OnPauseEventType NCsTime::NManager::FOnPause
+
+		OnPauseEventType& FLibrary::GetChecked_OnPause_Event(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
+		{
+			return GetChecked(Context, ContextObject)->GetOnPause_Event(Group);
+		}
+
+		#undef OnPauseEventType
+
 		#define OnUpdateEventType NCsTime::NManager::FOnUpdate
+		#define OnUpdateType FCsUpdateGroup::FOnUpdate
 		#define OnSetScaledDeltaTimeEventType NCsTime::NManager::FOnSetScaledDeltaTime
 		#define OnResetScaledDeltaTimeEventType NCsTime::NManager::FOnResetScaledDeltaTime
 
 		OnUpdateEventType& FLibrary::GetChecked_OnUpdate_Event(const FString& Context, const UObject* ContextObject)
 		{
 			return GetChecked(Context, ContextObject)->GetOnUpdate_Event();
+		}
+
+		OnUpdateType& FLibrary::GetChecked_OnUpdate_Event(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
+		{
+			return GetChecked(Context, ContextObject)->GetOnUpdate_Event(Group);
 		}
 
 		OnSetScaledDeltaTimeEventType& FLibrary::GetChecked_OnSetScaledDeltaTime_Event(const FString& Context, const UObject* ContextObject)
@@ -315,6 +330,7 @@ namespace NCsTime
 		}
 
 		#undef OnUpdateEventType
+		#undef OnUpdateType
 		#undef OnSetScaledDeltaTimeEventType
 		#undef OnResetScaledDeltaTimeEventType
 

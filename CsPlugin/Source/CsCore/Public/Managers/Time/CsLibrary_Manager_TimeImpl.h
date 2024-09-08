@@ -76,8 +76,26 @@ namespace NCsTime
 
 			#pragma endregion Time
 
+			// Input
+			#pragma region
+			public:
+
+				/**
+				* 
+				*
+				* @param Context		The calling context.
+				* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+				*						or
+				*						A reference to the GameInstance.
+				*/
+				static void SetupInputListenerChecked(const FString& Context, const UObject* ContextObject);
+
+			#pragma endregion Input
+
 			#undef LogLevel
 			};
 		}
 	}
 }
+
+using CsTimeManagerImplLibrary = NCsTime::NManager::NImpl::FLibrary;

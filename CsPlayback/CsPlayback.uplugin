@@ -43,6 +43,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsManager",
+      "Enabled": true
+    },
+    {
       "Name": "CsTypes",
       "Enabled": true
     },
@@ -52,6 +56,14 @@
     },
     {
       "Name": "CsConsoleCommand",
+      "Enabled": true
+    },
+    {
+      "Name": "CsTime",
+      "Enabled": true
+    },
+    {
+      "Name": "CsCoroutine",
       "Enabled": true
     },
     {

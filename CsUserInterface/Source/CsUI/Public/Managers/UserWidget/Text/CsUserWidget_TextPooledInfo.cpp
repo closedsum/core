@@ -281,11 +281,10 @@ namespace NCsUserWidget
 			{
 				check(IsValidChecked(Context));
 
-				typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
 				typedef NCsUserWidget::NPayload::FLibrary PayloadLibrary;
 				typedef NCsUserWidget::NPayload::IPayload PayloadType;
 
-				PayloadType* Payload = UserWidgetManagerLibrary::AllocatePayloadChecked(Context, WorldContext, GetType());
+				PayloadType* Payload = CsWidgetManagerLibrary::AllocatePayloadChecked(Context, WorldContext, GetType());
 
 				// Pooled
 				typedef NCsPooledObject::NPayload::IPayload PoolePayloadType;
@@ -355,7 +354,7 @@ namespace NCsUserWidget
 				TextSlice->OutlineSettings.Copy(GetOutlineSettings());
 				TextSlice->ShadowSettings.Copy(GetShadowSettings());
 
-				return UserWidgetManagerLibrary::SpawnChecked(Context, WorldContext, GetType(), Payload);
+				return CsWidgetManagerLibrary::SpawnChecked(Context, WorldContext, GetType(), Payload);
 			}
 
 			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FString& Value, const FVector3f& Location) const

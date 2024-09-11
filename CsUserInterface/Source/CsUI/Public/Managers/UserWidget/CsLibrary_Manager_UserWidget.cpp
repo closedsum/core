@@ -128,23 +128,17 @@ namespace NCsUserWidget
 		{
 			int32 FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, UUserWidget* Widget)
 			{
-				typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
-
-				return UserWidgetManagerLibrary::GetChecked(Context, WorldContext)->SetPositionInViewports.Allocate(Widget);
+				return CsWidgetManagerLibrary::GetChecked(Context, WorldContext)->SetPositionInViewports.Allocate(Widget);
 			}
 
 			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, const int32& ID)
 			{
-				typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
-
-				UserWidgetManagerLibrary::GetChecked(Context, WorldContext)->SetPositionInViewports.Deallocate(ID);
+				CsWidgetManagerLibrary::GetChecked(Context, WorldContext)->SetPositionInViewports.Deallocate(ID);
 			}
 
 			void FLibrary::UpdateWorldPositionAndOffsetChecked(const FString& Context, const UObject* WorldContext, const int32& ID, const FVector3f& WorldPosition, const FVector2f& Offset)
 			{
-				typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
-
-				UserWidgetManagerLibrary::GetChecked(Context, WorldContext)->SetPositionInViewports.UpdateWorldPositionAndOffset(ID, WorldPosition, Offset);
+				CsWidgetManagerLibrary::GetChecked(Context, WorldContext)->SetPositionInViewports.UpdateWorldPositionAndOffset(ID, WorldPosition, Offset);
 			}
 		}
 	}

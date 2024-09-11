@@ -192,3 +192,5 @@ namespace NCsUserWidget
 		}
 	}
 }
+
+using CsWidgetManagerLibrary = NCsUserWidget::NManager::FLibrary;

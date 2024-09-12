@@ -37,6 +37,8 @@
 #include "Managers/UserWidget/CsGetManagerUserWidget.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_UserWidget)
+
 // Cached
 #pragma region
 

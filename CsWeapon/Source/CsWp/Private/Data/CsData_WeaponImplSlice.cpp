@@ -8,6 +8,8 @@
 // Projectile
 #include "Managers/Weapon/Handler/CsManager_Weapon_DataHandler.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_WeaponImplSlice)
+
 #define SliceType NCsWeapon::NData::FImplSlice
 
 SliceType* FCsData_WeaponImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)

@@ -29,6 +29,8 @@
 #include "Managers/WidgetActor/CsGetManagerWidgetActor.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_WidgetActor)
+
 // Cached
 #pragma region
 

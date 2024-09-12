@@ -1,8 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
 #include "UObject/Interface.h"
 #include "Containers/CsGetInterfaceMap.h"
+
 #include "CsData_Weapon.generated.h"
 
 namespace NCsWeapon

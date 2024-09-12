@@ -42,6 +42,8 @@
 // Game
 #include "GameFramework/GameStateBase.h" // TODO: Move usage through library
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTraceWeaponActor)
+
 // Cached 
 #pragma region
 

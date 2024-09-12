@@ -14,6 +14,8 @@
 #include "Managers/UserWidget/Payload/CsPayload_UserWidgetImplSlice.h"
 #include "Managers/UserWidget/Payload/Text/CsPayload_UserWidget_TextImplSlice.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidget_TextPooledInfo)
+
 #define InfoType NCsUserWidget::NPooled::NText::FInfo
 
 void FCsUserWidget_TextPooledInfo::CopyToInfo(InfoType* Info)

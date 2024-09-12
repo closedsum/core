@@ -1,7 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
 #include "UObject/Interface.h"
+
 #include "CsGetManagerWeapon.generated.h"
 
 class UCsManager_Weapon;

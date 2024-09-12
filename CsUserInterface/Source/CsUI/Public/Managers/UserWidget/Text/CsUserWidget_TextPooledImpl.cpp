@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/Text/CsUserWidget_TextPooledImpl.h"
-#include "CsUI.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -27,6 +26,8 @@
 #include "Managers/UserWidget/Payload/Text/CsPayload_UserWidget_Text.h"
 // Component
 #include "Components/TextBlock.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidget_TextPooledImpl)
 
 // Cached
 #pragma region

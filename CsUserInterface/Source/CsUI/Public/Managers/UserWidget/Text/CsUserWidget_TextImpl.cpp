@@ -2,12 +2,13 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/Text/CsUserWidget_TextImpl.h"
-#include "CsUI.h"
 
 // UI
 #include "Engine/Font.h"
 // Component
 #include "Components/TextBlock.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidget_TextImpl)
 
 UCsUserWidget_TextImpl::UCsUserWidget_TextImpl(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer),

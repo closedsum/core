@@ -1,5 +1,4 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
-
 #include "Managers/Weapon/CsManager_Weapon.h"
 #include "CsWp.h"
 
@@ -51,6 +50,8 @@
 #include "Singleton/CsManager_Singleton.h"
 #include "Managers/Weapon/CsGetManagerWeapon.h"
 #endif // #if WITH_EDITOR
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Weapon)
 
 // Cached
 #pragma region

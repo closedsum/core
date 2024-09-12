@@ -35,6 +35,8 @@
 #include "Beam/Impl/CsBeamWeapon_Impl_FX.h"
 #include "Beam/Impl/CsBeamWeapon_Impl_Sound.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsBeamWeaponComponent)
+
 // Cached 
 #pragma region
 

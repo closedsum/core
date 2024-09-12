@@ -10,6 +10,8 @@
 // Params
 #include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTraceImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_ProjectileWeaponImplSlice)
+
 #define SliceType NCsWeapon::NProjectile::NData::FImplSlice
 
 SliceType* FCsData_ProjectileWeaponImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)

@@ -6,6 +6,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidget_TextInfo)
+
 #define InfoType NCsUserWidget::NText::FInfo
 
 void FCsUserWidget_TextInfo::CopyToInfo(InfoType* Info)

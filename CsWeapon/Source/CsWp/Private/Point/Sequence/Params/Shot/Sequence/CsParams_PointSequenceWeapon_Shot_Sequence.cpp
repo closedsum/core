@@ -4,6 +4,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsParams_PointSequenceWeapon_Shot_Sequence)
+
 // FCsPointSequenceWeapon_Shot_SequenceParams
 #pragma region
 

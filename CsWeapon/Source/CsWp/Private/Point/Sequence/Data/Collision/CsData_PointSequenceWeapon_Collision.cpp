@@ -1,6 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Point/Sequence/Data/Collision/CsData_PointSequenceWeapon_Collision.h"
-#include "CsWp.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_PointSequenceWeapon_Collision)
 
 const FName NCsWeapon::NPoint::NSequence::NData::NCollision::ICollision::Name = FName("NCsWeapon::NPoint::NSequence::NData::NCollision::ICollision");
 

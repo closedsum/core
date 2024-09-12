@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/StaticMesh/Instanced/CsGetManagerInstancedStaticMeshComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetManagerInstancedStaticMeshComponent)
+
 UCsGetManagerInstancedStaticMeshComponent::UCsGetManagerInstancedStaticMeshComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

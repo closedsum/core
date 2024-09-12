@@ -2,9 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Interface.h"
 #include "Containers/CsGetInterfaceMap.h"
+
 #include "CsData_SkeletalMeshActor.generated.h"
 
 UINTERFACE(BlueprintType)

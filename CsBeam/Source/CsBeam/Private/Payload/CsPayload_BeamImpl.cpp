@@ -8,6 +8,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPayload_BeamImpl)
+
 // FCsPayload_Beam
 #pragma region
 

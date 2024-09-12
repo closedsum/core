@@ -8,6 +8,8 @@
 // Settings
 #include "Settings/CsStaticMeshSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_InstancedStaticMeshComponent)
+
 // FCsSettings_Manager_InstancedStaticMeshComponent
 #pragma region
 

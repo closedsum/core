@@ -10,6 +10,8 @@
 // Projectile
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPayload_ProjectileImpl)
+
 // FCsPayload_Projectile
 #pragma region
 

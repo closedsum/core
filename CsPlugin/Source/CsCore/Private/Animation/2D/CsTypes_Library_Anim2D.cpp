@@ -12,6 +12,8 @@
 // Component
 #include "Components/PrimitiveComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Library_Anim2D)
+
 // FCsAnim2DTextureFlipbook_Params
 #pragma region
 

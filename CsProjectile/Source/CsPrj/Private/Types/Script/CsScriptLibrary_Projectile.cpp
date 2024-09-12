@@ -1,9 +1,10 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Script/CsScriptLibrary_Projectile.h"
-#include "CsPrj.h"
 
 // Library
 #include "Library/CsLibrary_Enum.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Projectile)
 
 // Cached
 #pragma region
@@ -41,9 +42,7 @@ EnumType UCsScriptLibrary_Projectile::Create(const FString& Name, const FString&
 
 	const FString& Context = Str::Create;
 
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
+	return CsEnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
 }
 
 EnumType UCsScriptLibrary_Projectile::Get(const FString& Name)
@@ -52,9 +51,7 @@ EnumType UCsScriptLibrary_Projectile::Get(const FString& Name)
 
 	const FString& Context = Str::Get;
 
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
+	return CsEnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
 EnumType UCsScriptLibrary_Projectile::GetByIndex(const int32& Index)
@@ -63,9 +60,7 @@ EnumType UCsScriptLibrary_Projectile::GetByIndex(const int32& Index)
 
 	const FString& Context = Str::GetByIndex;
 
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
+	return CsEnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
 
 FString UCsScriptLibrary_Projectile::ToString(const EnumType& Enum)
@@ -80,9 +75,7 @@ uint8 UCsScriptLibrary_Projectile::GetCount()
 
 void UCsScriptLibrary_Projectile::GetAll(TArray<EnumType>& OutTypes)
 {
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
+	CsEnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
 EnumType UCsScriptLibrary_Projectile::GetMax()

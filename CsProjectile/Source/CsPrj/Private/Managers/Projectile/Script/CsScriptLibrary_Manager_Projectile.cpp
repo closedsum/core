@@ -1,5 +1,4 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
-
 #include "Managers/Projectile/Script/CsScriptLibrary_Manager_Projectile.h"
 #include "CsPrj.h"
 

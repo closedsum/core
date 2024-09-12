@@ -19,6 +19,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSkeletalMeshAttachment)
+
 #define AttachmentType NCsSkeletalMesh::NAttachment::FAttachment
 
 void FCsSkeletalMeshAttachment::CopyToAttachment(AttachmentType* Attachment)

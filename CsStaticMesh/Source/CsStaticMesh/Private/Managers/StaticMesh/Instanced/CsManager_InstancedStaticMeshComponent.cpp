@@ -22,6 +22,8 @@
 // World
 #include "Engine/World.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_InstancedStaticMeshComponent)
+
 // Cached
 #pragma region
 

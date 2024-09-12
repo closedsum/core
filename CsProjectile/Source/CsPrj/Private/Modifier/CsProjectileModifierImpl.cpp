@@ -9,6 +9,8 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsProjectileModifierImpl)
+
 // FCsProjectileModifier_Int
 #pragma region
 

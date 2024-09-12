@@ -6,6 +6,8 @@
 // Actor
 #include "GameFramework/Actor.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsProjectileMovementComponent)
+
 UCsProjectileMovementComponent::UCsProjectileMovementComponent(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
 	MovementType(ECsProjectileMovement::Simulated),

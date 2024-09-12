@@ -5,6 +5,8 @@
 #include "Managers/FX/CsLibrary_FX.h"
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Projectile_Visual_Trail)
+
 // FCsProjectile_Visual_TrailInfo
 #pragma region
 

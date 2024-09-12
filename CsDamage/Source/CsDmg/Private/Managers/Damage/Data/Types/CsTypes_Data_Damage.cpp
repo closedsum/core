@@ -14,6 +14,8 @@
 // Data
 #include "Data/CsDmgGetDataRootSet.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Data_Damage)
+
 // DamageData
 #pragma region
 

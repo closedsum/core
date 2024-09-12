@@ -1,6 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Payload/CsTypes_Payload_Projectile.h"
-#include "CsPrj.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Payload_Projectile)
 
 // NCsProjectilePayload
 #pragma region

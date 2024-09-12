@@ -1,9 +1,9 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Types/CsTypes_Projectile.h"
 
 #include "CsProjectileMovementComponent.generated.h"
-#pragma once
 
 UCLASS()
 class CSPRJ_API UCsProjectileMovementComponent : public UProjectileMovementComponent

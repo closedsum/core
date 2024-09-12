@@ -12,6 +12,8 @@
 // Damage
 #include "Managers/Damage/Handler/CsManager_Damage_DataHandler.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_DamagePointImplSlice)
+
 #define SliceType NCsDamage::NData::NPoint::FImplSlice
 
 SliceType* FCsData_DamagePointImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)

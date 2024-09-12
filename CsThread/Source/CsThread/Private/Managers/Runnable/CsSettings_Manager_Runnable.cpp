@@ -6,6 +6,8 @@
 // Settings
 #include "Settings/CsThreadSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Runnable)
+
 // FCsSettings_Manager_Runnable
 #pragma region
 

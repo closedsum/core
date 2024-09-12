@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Sound/CsTypes_Library_Sound.h"
-#include "CsSound.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Library_Sound)
 
 // SoundSpawnFrequency
 #pragma region

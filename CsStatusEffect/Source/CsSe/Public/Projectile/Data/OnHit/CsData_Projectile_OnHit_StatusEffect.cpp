@@ -1,6 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Projectile/Data/OnHit/CsData_Projectile_OnHit_StatusEffect.h"
-#include "CsSe.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Projectile_OnHit_StatusEffect)
 
 const FName NCsProjectile::NData::NOnHit::NStatusEffect::IStatusEffect::Name = FName("NCsProjectile::NData::NOnHit::NStatusEffect::IStatusEffect");
 

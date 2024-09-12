@@ -1,11 +1,12 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Trigger/CsTypes_StatusEffect_Trigger.h"
-#include "CsSe.h"
 
 // Types
 #include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_StatusEffect_Trigger)
 
 // StatusEffectTriggerCondition
 #pragma region
@@ -147,7 +148,6 @@ bool FCsStatusEffect_TriggerFrequencyParams::IsValidChecked(const FString& Conte
 	if (Type == ECsStatusEffectTriggerFrequency::Count)
 	{
 		checkf(Count >= 1, TEXT("%s: Count MUST be >= 1 if Type == ECsStatusEffectTriggerFrequency::Count."), *Context);
-
 		checkf(Interval >= 0.0f, TEXT("%s: Interval MUST be >= 0.0f if Type == ECsStatusEffectTriggerFrequency::Count."), *Context);
 	}
 	// Time
@@ -155,7 +155,6 @@ bool FCsStatusEffect_TriggerFrequencyParams::IsValidChecked(const FString& Conte
 	if (Type == ECsStatusEffectTriggerFrequency::Time)
 	{
 		checkf(Count >= 1, TEXT("%s: Count MUST be >= 1 if Type == ECsStatusEffectTriggerFrequency::Time."), *Context);
-
 		checkf(Interval >= 0.0f, TEXT("%s: Interval MUST be >= 0.0f if Type == ECsStatusEffectTriggerFrequency::Time."), *Context);
 	}
 	// Infinite
@@ -250,7 +249,6 @@ namespace NCsStatusEffect
 				if (GetType() == FrequencyType::Time)
 				{
 					checkf(GetCount() >= 1, TEXT("%s: GetCount() MUST be >= 1 if GetType() == FrequencyType::Time."), *Context);
-
 					checkf(GetInterval() >= 0.0f, TEXT("%s: GetInterval() MUST be >= 0.0f if GetType() == FrequencyType::Time."), *Context);
 				}
 				// Infinite
@@ -268,7 +266,6 @@ namespace NCsStatusEffect
 				typedef NCsStatusEffect::NTrigger::EFrequency FrequencyType;
 
 				CS_IS_ENUM_VALID(FrequencyMapType, FrequencyType, GetType())
-
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Delay, 0.0f)
 
 				// Once

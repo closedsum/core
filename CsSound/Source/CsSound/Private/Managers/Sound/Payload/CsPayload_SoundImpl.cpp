@@ -8,6 +8,8 @@
 // Container
 #include "Containers/CsInterfaceMap.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPayload_SoundImpl)
+
 #define PayloadType NCsSound::NPayload::FImpl
 void FCsPayload_Sound::CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadType* Payload) const
 {

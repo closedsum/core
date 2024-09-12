@@ -13,6 +13,8 @@
 // Sound
 #include "Sound/SoundBase.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_SoundPooled)
+
 // Sound
 #pragma region
 

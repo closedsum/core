@@ -11,6 +11,8 @@
 // Settings
 #include "Settings/CsSoundSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Sound)
+
 // FCsSettings_Manager_Sound
 #pragma region
 

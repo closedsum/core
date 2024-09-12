@@ -7,6 +7,8 @@
 // Engine
 #include "CsEdEngine.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_EdEngine)
+
 // Cached
 #pragma region
 

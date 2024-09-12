@@ -2,13 +2,14 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Sound/Script/CsScriptLibrary_Manager_Sound.h"
-#include "CsSound.h"
 
 // Library
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 // Managers
 #include "Managers/Sound/CsManager_Sound.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Sound)
 
 // Cached
 #pragma region

@@ -13,6 +13,8 @@
 // StatusEffect
 #include "CsStatusEffect.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_StatusEffect)
+
 // Cached
 #pragma region
 

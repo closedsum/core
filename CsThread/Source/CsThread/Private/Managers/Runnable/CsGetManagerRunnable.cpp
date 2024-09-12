@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Runnable/CsGetManagerRunnable.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsGetManagerRunnable)
+
 UCsGetManagerRunnable::UCsGetManagerRunnable(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

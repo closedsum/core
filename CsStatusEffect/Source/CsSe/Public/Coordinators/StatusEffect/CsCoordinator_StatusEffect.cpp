@@ -49,6 +49,8 @@
 #include "Coordinators/StatusEffect/CsGetCoordinatorStatusEffect.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsCoordinator_StatusEffect)
+
 // Cached
 #pragma region
 

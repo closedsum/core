@@ -26,6 +26,8 @@
 #include "Managers/Runnable/CsGetManagerRunnable.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Runnable)
+
 // static initializations
 UCsManager_Runnable* UCsManager_Runnable::s_Instance;
 bool UCsManager_Runnable::s_bShutdown = false;

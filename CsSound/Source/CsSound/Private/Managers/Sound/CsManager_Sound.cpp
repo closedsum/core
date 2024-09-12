@@ -35,6 +35,8 @@
 #include "Managers/Sound/CsGetManagerSound.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_Sound)
+
 // Cached
 #pragma region
 

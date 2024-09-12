@@ -16,6 +16,8 @@
 #include "Value/Point/CsDamageValuePointImpl.h"
 #include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_DamagePointImpl)
+
 // FCsData_DamagePoint
 #pragma region
 

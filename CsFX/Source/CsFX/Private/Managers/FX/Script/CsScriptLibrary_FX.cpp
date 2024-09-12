@@ -10,6 +10,8 @@
 #include "Managers/FX/CsLibrary_FX.h"
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_FX)
+
 // Cached
 #pragma region
 

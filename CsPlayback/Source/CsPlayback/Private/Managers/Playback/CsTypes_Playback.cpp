@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Playback/CsTypes_Playback.h"
-#include "CsPlayback.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Playback)
 
 // NCsPlayback::EState
 #pragma region

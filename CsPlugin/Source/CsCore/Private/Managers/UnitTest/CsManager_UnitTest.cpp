@@ -3,8 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UnitTest/CsManager_UnitTest.h"
 #include "CsCore.h"
-#include "CsCVars_Core.h"
 
+#include "CsCVars_Core.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Managers
@@ -20,6 +20,8 @@
 #include "Singleton/CsManager_Singleton.h"
 #include "Managers/Time/CsGetManagerTime.h"
 #endif // #if WITH_EDITOR
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_UnitTest)
 
 // static initializations
 UCsManager_UnitTest* UCsManager_UnitTest::s_Instance;

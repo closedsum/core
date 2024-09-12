@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/CsUserWidgetPooledImpl.h"
-#include "CsUI.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -18,6 +17,8 @@
 #include "Managers/UserWidget/Cache/CsCache_UserWidgetImpl.h"
 #include "Managers/UserWidget/Payload/CsPayload_UserWidgetImpl.h"
 #include "Blueprint/UserWidget.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidgetPooledImpl)
 
 // Cached
 #pragma region

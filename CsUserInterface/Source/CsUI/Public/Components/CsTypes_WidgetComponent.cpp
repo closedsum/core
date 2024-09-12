@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Components/CsTypes_WidgetComponent.h"
-#include "CsUI.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -12,6 +11,8 @@
 #include "Components/SceneComponent.h"
 // Engine
 #include "GameFramework/Actor.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_WidgetComponent)
 
 // FCsWidgetComponent_CameraInfo
 #pragma region

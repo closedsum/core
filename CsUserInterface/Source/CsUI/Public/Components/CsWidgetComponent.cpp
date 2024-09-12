@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Components/CsWidgetComponent.h"
-#include "CsUI.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsWidgetComponent)
 
 UCsWidgetComponent::UCsWidgetComponent(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer)

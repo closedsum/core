@@ -3,8 +3,10 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/StaticMesh/CsStaticMeshActor.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsStaticMeshActor)
+
+const FName ICsStaticMeshActor::Name = FName("ICsStaticMeshActor");
+
 UCsStaticMeshActor::UCsStaticMeshActor(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
-
-const FName ICsStaticMeshActor::Name = FName("ICsStaticMeshActor");

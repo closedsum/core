@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Popup/CsPopup.h"
-#include "CsUI.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPopup)
 
 UCsPopup::UCsPopup(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

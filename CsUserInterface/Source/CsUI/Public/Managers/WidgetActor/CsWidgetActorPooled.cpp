@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/WidgetActor/CsWidgetActorPooled.h"
-#include "CsCore.h"
 
 // Widget
 #include "Managers/WidgetActor/CsWidgetActor.h"

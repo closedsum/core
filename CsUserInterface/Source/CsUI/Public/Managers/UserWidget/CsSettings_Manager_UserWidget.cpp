@@ -8,6 +8,8 @@
 // Settings
 #include "Settings/CsUserInterfaceSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_UserWidget)
+
 bool FCsSettings_Manager_UserWidget_PoolParams::IsValidChecked(const FString& Context) const
 {
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUserWidgetPooledClass, Class)

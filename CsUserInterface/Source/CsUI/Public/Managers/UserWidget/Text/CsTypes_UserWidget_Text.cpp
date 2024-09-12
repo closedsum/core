@@ -6,6 +6,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_UserWidget_Text)
+
 // FCsUserWidget_Text_OutlineSettings
 #pragma region
 

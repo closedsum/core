@@ -14,6 +14,8 @@
 // SkeletalMesh
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_StaticMeshActor)
+
 // Cached
 #pragma region
 
@@ -40,7 +42,6 @@ UCsScriptLibrary_Manager_StaticMeshActor::UCsScriptLibrary_Manager_StaticMeshAct
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerStaticMeshActor::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define LogWarning void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning;
-#define StaticMeshManagerLibrary NCsStaticMeshActor::NManager::FLibrary
 
 // Pool
 #pragma region
@@ -51,7 +52,7 @@ UObject* UCsScriptLibrary_Manager_StaticMeshActor::FindObject(const FString& Con
 
 	LogWarning
 
-	UCsManager_StaticMeshActor* Manager_StaticMesh = StaticMeshManagerLibrary::GetSafe(Ctxt, WorldContextObject);
+	UCsManager_StaticMeshActor* Manager_StaticMesh = CsStaticMeshManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
 	if (!Manager_StaticMesh)
 		return nullptr;
@@ -82,7 +83,7 @@ int32 UCsScriptLibrary_Manager_StaticMeshActor::Spawn(const FString& Context, co
 		return INDEX_NONE;
 
 	// Try to allocate a native payload
-	UCsManager_StaticMeshActor* Manager_StaticMesh = StaticMeshManagerLibrary::GetSafe(Ctxt, WorldContextObject);
+	UCsManager_StaticMeshActor* Manager_StaticMesh = CsStaticMeshManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
 	if (!Manager_StaticMesh)
 		return INDEX_NONE;
@@ -103,4 +104,3 @@ int32 UCsScriptLibrary_Manager_StaticMeshActor::Spawn(const FString& Context, co
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
 #undef LogWarning
-#undef StaticMeshManagerLibrary

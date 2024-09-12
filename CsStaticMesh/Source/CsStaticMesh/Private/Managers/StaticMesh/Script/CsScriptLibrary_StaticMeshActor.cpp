@@ -6,6 +6,8 @@
 // Library
 #include "Library/CsLibrary_Enum.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_StaticMeshActor)
+
 // Cached
 #pragma region
 
@@ -35,7 +37,6 @@ UCsScriptLibrary_StaticMeshActor::UCsScriptLibrary_StaticMeshActor(const FObject
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryStaticMeshActor::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define CLASS_TYPE UCsScriptLibrary_StaticMeshActor
-#define EnumLibrary NCsEnum::FLibrary
 #define EnumMapType EMCsStaticMeshActor
 #define EnumType FECsStaticMeshActor
 
@@ -46,14 +47,14 @@ EnumType CLASS_TYPE::Get(const FString& Name)
 {
 	SET_CONTEXT(Get);
 
-	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
+	return CsEnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
 EnumType CLASS_TYPE::GetByIndex(const int32& Index)
 {
 	SET_CONTEXT(GetByIndex);
 
-	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
+	return CsEnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
 
 FString CLASS_TYPE::ToString(const EnumType& Enum)
@@ -68,7 +69,7 @@ uint8 CLASS_TYPE::GetCount()
 
 void CLASS_TYPE::GetAll(TArray<EnumType>& OutTypes)
 {
-	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
+	CsEnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
 EnumType CLASS_TYPE::GetMax()
@@ -87,6 +88,5 @@ bool CLASS_TYPE::EqualEqual(const EnumType& A, const EnumType& B)
 #undef SET_CONTEXT
 #undef CONDITIONAL_SET_CTXT
 #undef CLASS_TYPE
-#undef EnumLibrary
 #undef EnumMapType
 #undef EnumType

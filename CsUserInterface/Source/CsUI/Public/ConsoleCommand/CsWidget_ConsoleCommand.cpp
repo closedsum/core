@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "ConsoleCommand/CsWidget_ConsoleCommand.h"
-#include "CsUI.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -18,6 +17,8 @@
 #include "Components/EditableTextBox.h"
 #include "Components/ComboBoxString.h"
 #include "Components/SpinBox.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsWidget_ConsoleCommand)
 
 // Cached
 #pragma region

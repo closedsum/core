@@ -6,6 +6,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidget_ImageInfo)
+
 #define InfoType NCsUserWidget::NImage::FInfo
 
 void FCsUserWidget_ImageInfo::CopyToInfo(InfoType* Info)

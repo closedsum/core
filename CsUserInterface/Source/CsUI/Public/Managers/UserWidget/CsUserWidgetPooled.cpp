@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/CsUserWidgetPooled.h"
-#include "CsUI.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidgetPooled)
 
 UCsUserWidgetPooled::UCsUserWidgetPooled(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

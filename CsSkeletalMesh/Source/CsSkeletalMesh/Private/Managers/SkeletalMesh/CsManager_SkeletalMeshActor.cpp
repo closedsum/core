@@ -31,6 +31,8 @@
 #include "Managers/SkeletalMesh/CsGetManagerSkeletalMeshActor.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsManager_SkeletalMeshActor)
+
 // Cached
 #pragma region
 

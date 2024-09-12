@@ -11,6 +11,8 @@
 // SkeletalMeshActor
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Payload_SkeletalMeshActor)
+
 // FCsPayload_SkeletalMesh_AnimSequence_OneShot
 #pragma region
 

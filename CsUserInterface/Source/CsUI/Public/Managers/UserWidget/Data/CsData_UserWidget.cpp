@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/Data/CsData_UserWidget.h"
-#include "CsUI.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_UserWidget)
 
 const FName NCsUserWidget::NData::IData::Name = FName("NCsUserWidget::NData::IData");
 

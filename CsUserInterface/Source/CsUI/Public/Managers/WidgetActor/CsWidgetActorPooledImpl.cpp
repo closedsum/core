@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/WidgetActor/CsWidgetActorPooledImpl.h"
-#include "CsCore.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -29,6 +28,8 @@
 #include "GameFramework/GameStateBase.h"
 // World
 #include "Engine/World.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsWidgetActorPooledImpl)
 
 // Cached
 #pragma region

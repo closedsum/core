@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/Payload/CsTypes_Payload_UserWidget.h"
-#include "CsUI.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Payload_UserWidget)
 
 // UserWidgetPayload
 #pragma region

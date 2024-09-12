@@ -25,6 +25,8 @@
 // Input
 #include "InputCoreTypes.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsWidgetInteractionComponent)
+
 // Cached
 #pragma region
 

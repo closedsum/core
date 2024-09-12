@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
-#include "CsUI.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -13,6 +12,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsUIPopulateEnumMapFromSettings.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_WidgetActor)
 
 // WidgetActor
 #pragma region

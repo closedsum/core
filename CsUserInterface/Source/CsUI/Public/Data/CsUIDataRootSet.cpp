@@ -11,6 +11,8 @@
 	// Common
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUIDataRootSet)
+
 // Cached
 #pragma region
 

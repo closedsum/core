@@ -14,6 +14,8 @@
 // SkeletalMesh
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_SkeletalMeshActor)
+
 // Cached
 #pragma region
 

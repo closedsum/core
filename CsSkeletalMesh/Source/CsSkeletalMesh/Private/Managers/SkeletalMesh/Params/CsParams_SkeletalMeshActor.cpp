@@ -13,7 +13,8 @@
 #include "Animation/AnimBlueprintGeneratedClass.h"
 #include "Animation/AnimSequence.h"
 #include "Animation/AnimMontage.h"
-// Material
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsParams_SkeletalMeshActor)
 
 namespace NCsSkeletalMeshActor
 {

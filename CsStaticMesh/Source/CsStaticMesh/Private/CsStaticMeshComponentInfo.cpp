@@ -12,6 +12,8 @@
 // Component
 #include "Components/StaticMeshComponent.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsStaticMeshComponentInfo)
+
 #define InfoType NCsStaticMesh::NComponent::FInfo
 
 void FCsStaticMeshComponentInfo::CopyToInfo(InfoType* Info)

@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/WidgetActor/Data/CsData_WidgetActor.h"
-#include "CsUI.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_WidgetActor)
 
 const FName NCsWidgetActor::NData::IData::Name = FName("NCsWidgetActor::NData::IData");
 

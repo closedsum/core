@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Coroutine/CsRoutine.h"
+
 #include "CsManager_UnitTest.generated.h"
 
 class ICsGetManagerUnitTest;

@@ -2,10 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/ProgressBar/CsUserWidget_ProgressBarImpl.h"
-#include "CsUI.h"
 
 // Component
 #include "Components/ProgressBar.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidget_ProgressBarImpl)
 
 UCsUserWidget_ProgressBarImpl::UCsUserWidget_ProgressBarImpl(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer),

@@ -14,6 +14,9 @@
 // Utility
 #include "Utility/CsLibrary_EnumStruct.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_SkeletalMeshActor)
+
+
 // SkeletalMeshActor
 #pragma region
 

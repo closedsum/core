@@ -17,6 +17,8 @@
 // StaticMeshActor
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_StaticMeshActor)
+
 // StaticMeshActor
 #pragma region
 

@@ -218,3 +218,5 @@ namespace NCsStaticMeshActor
 		};
 	}
 }
+
+using CsStaticMeshManagerLibrary = NCsStaticMeshActor::NManager::FLibrary;

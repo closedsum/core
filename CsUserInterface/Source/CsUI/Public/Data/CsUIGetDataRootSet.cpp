@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/CsUIGetDataRootSet.h"
-#include "CsUI.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsUIGetDataRootSet)
 
 UCsUIGetDataRootSet::UCsUIGetDataRootSet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

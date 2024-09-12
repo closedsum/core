@@ -14,6 +14,8 @@
 #include "Utility/CsPrjPopulateEnumMapFromSettings.h"
 #include "Utility/CsPrjLog.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Projectile)
+
 // ProjectileRelevance
 #pragma region
 

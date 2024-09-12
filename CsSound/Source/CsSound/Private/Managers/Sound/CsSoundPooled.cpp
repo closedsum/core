@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Sound/CsSoundPooled.h"
-#include "CsSound.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSoundPooled)
 
 UCsSoundPooled::UCsSoundPooled(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

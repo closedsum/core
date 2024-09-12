@@ -13,6 +13,8 @@
 #include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsVertexAnimProfile)
+
 // FCsVertexAnim_SequenceData
 #pragma region
 

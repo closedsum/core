@@ -10,6 +10,8 @@
 // Actor
 #include "GameFramework/Actor.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Library_FX)
+
 // FXSpawnFrequency
 #pragma region
 

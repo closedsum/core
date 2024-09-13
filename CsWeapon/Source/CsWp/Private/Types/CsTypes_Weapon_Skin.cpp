@@ -12,6 +12,8 @@
 // Utility
 #include "Utility/CsWpPopulateEnumMapFromSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Weapon_Skin)
+
 // WeaponSkin
 #pragma region
 

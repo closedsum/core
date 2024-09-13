@@ -1,8 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/FX/CsTypes_FX.h"
 
 #include "CsTypes_Params_BeamWeapon_VisualFire.generated.h"
-#pragma once
 
 // BeamWeaponVisualFireAttach
 #pragma region

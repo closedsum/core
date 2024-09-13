@@ -1,6 +1,5 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Point/Data/CsLibrary_Data_PointWeapon.h"
-#include "CsWp.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"

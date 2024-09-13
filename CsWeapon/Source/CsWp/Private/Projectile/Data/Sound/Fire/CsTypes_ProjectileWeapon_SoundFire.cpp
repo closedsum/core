@@ -3,6 +3,8 @@
 
 #include "Projectile/Data/Sound/Fire/CsParams_ProjectileWeapon_SoundFire.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_ProjectileWeapon_SoundFire)
+
 // ProjectileWeaponFireSoundAttach
 #pragma region
 

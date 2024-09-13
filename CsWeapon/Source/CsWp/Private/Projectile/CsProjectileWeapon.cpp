@@ -1,6 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Projectile/CsProjectileWeapon.h"
-#include "CsWp.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsProjectileWeapon)
 
 // Weapon
 #include "CsWeapon.h"

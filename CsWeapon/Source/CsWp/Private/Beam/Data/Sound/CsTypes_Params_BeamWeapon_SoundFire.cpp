@@ -3,6 +3,8 @@
 
 #include "Beam/Data/Sound/CsParams_BeamWeapon_SoundFire.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Params_BeamWeapon_SoundFire)
+
 // BeamWeaponSoundFireAttach
 #pragma region
 

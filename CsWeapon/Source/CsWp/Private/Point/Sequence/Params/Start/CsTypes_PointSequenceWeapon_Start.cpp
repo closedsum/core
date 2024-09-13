@@ -4,6 +4,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_PointSequenceWeapon_Start)
+
 // PointSequenceWeaponStart
 #pragma region
 

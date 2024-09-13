@@ -6,6 +6,8 @@
 // Data
 #include "Beam/Data/Visual/CsParams_BeamWeapon_VisualFire.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Params_BeamWeapon_VisualFire)
+
 // BeamWeaponVisualFireAttach
 #pragma region
 

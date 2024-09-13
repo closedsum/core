@@ -7,6 +7,8 @@
 // Settings
 #include "Settings/CsWeaponSettings.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Manager_Weapon)
+
 // FCsSettings_Manager_Weapon_PoolParams
 #pragma region
 

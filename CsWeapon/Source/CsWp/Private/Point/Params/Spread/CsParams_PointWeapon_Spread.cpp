@@ -6,6 +6,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsParams_PointWeapon_Spread)
+
 // FCsPointWeapon_Spread_ShapeParams
 #pragma region
 

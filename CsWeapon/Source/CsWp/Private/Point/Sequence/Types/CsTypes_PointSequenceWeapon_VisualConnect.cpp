@@ -4,6 +4,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_PointSequenceWeapon_VisualConnect)
+
 // FCsPointSequenceWeapon_Visaul_Connect_FX_EndInfo
 #pragma region
 

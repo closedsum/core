@@ -1,6 +1,5 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/Script/CsScriptLibrary_Data_Weapon.h"
-#include "CsWp.h"
 
 // Library
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
@@ -14,6 +13,8 @@
 #include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTraceImpl.h"
 // Log
 #include "Utility/CsWpLog.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Data_Weapon)
 
 // Cached
 #pragma region

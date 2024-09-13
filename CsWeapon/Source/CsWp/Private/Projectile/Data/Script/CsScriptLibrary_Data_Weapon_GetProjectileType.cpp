@@ -13,6 +13,8 @@
 // Log
 #include "Utility/CsWpLog.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Data_Weapon_GetProjectileType)
+
 // Cached
 #pragma region
 

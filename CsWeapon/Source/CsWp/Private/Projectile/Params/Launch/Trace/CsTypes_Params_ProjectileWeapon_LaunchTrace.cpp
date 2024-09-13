@@ -12,6 +12,8 @@
 // Params
 #include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTraceImpl.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Params_ProjectileWeapon_LaunchTrace)
+
 // ProjectileWeaponLaunchTraceStart
 #pragma region
 

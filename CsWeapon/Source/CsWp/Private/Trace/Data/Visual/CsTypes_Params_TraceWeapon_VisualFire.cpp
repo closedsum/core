@@ -3,6 +3,8 @@
 
 #include "Trace/Data/Visual/CsParams_TraceWeapon_VisualFire.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Params_TraceWeapon_VisualFire)
+
 // TraceWeaponVisualFireAttach
 #pragma region
 

@@ -8,6 +8,8 @@
 // Params
 #include "Trace/Data/Params/CsParams_TraceWeapon_TraceShape.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Params_TraceWeapon_Trace)
+
 // TraceWeaponTraceLocation
 #pragma region
 

@@ -7,6 +7,8 @@
 #include "Library/CsLibrary_Array.h"
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_PointWeapon_Spread)
+
 // PointWeaponSpreadShape
 #pragma region
 

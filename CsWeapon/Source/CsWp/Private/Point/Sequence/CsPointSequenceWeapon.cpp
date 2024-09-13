@@ -1,11 +1,12 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Point/Sequence/CsPointSequenceWeapon.h"
-#include "CsWp.h"
 
 // Weapon
 #include "CsWeapon.h"
 // Update
 #include "Managers/Time/CsUpdate.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsPointSequenceWeapon)
 
 UCsPointSequenceWeapon::UCsPointSequenceWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

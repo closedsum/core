@@ -1,6 +1,5 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Weapon.h"
-#include "CsWp.h"
 
 // Types
 #include "CsMacro_Misc.h"
@@ -16,6 +15,8 @@
 #include "Types/CsGetWeaponTypes.h"
 // Level
 #include "Engine/LevelScriptActor.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Weapon)
 
 // Weapon
 #pragma region

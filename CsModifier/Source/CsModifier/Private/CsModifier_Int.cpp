@@ -3,4 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "CsModifier_Int.h"
 
-const FName NCsModifier::NInt::IInt::Name = FName("NCsModifier::NInt::IInt");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsModifier::NInt::IInt);

@@ -118,3 +118,5 @@ namespace NCsModifier
 	#pragma endregion Float Range
 	};
 }
+
+using CsModifierLibrary = NCsModifier::FLibrary;

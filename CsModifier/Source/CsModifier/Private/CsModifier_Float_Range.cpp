@@ -3,4 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "CsModifier_Float_Range.h"
 
-const FName NCsModifier::NFloat::NRange::IRange::Name = FName("NCsModifier::NFloat::NRange::IRange");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsModifier::NFloat::NRange::IRange);

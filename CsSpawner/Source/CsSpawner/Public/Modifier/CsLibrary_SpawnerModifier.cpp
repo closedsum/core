@@ -140,16 +140,13 @@ namespace NCsSpawner
 			}
 
 			// NOTE: For now ignore order
-
-			typedef NCsModifier::FLibrary ModifierLibrary;
-
+			
 			// PercentAddFirst || PercentSubtractFirst
-			Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
+			Result = CsModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
 			// "The Rest"
-			Result = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, Result);
+			Result = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, Result);
 			// PercentAddLast || PercentSubtractLast
-			Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
-
+			Result = CsModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
 			return Result;
 		}
 

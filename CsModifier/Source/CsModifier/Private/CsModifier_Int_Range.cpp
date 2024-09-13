@@ -3,4 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "CsModifier_Int_Range.h"
 
-const FName NCsModifier::NInt::NRange::IRange::Name = FName("NCsModifier::NInt::NRange::IRange");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsModifier::NInt::NRange::IRange);

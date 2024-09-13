@@ -168,15 +168,12 @@ namespace NCsProjectile
 
 				// NOTE: For now ignore order
 
-				typedef NCsModifier::FLibrary ModifierLibrary;
-
 				// PercentAddFirst || PercentSubtractFirst
-				Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
+				Result = CsModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
 				// "The Rest"
-				Result = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, Result);
+				Result = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, Result);
 				// PercentAddLast || PercentSubtractLast
-				Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
-
+				Result = CsModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
 				return Result;
 			}
 		}
@@ -229,25 +226,20 @@ namespace NCsProjectile
 
 			// NOTE: For now ignore order
 
-			typedef NCsModifier::FLibrary ModifierLibrary;
-
 			// PercentAddFirst || PercentSubtractFirst
-			Result = ModifierLibrary::ModifyFloatPercentChecked(Context, FirstModifiers, Result);
+			Result = CsModifierLibrary::ModifyFloatPercentChecked(Context, FirstModifiers, Result);
 			// "The Rest"
-			Result = ModifierLibrary::ModifyFloatChecked(Context, Modifiers, Result);
+			Result = CsModifierLibrary::ModifyFloatChecked(Context, Modifiers, Result);
 			// PercentAddLast || PercentSubtractLast
-			Result = ModifierLibrary::ModifyFloatPercentChecked(Context, LastModifiers, Result);
-
+			Result = CsModifierLibrary::ModifyFloatPercentChecked(Context, LastModifiers, Result);
 			return Result;
 		}
 
 		float FLibrary::ModifyFloatChecked(const FString& Context, const ModifierType* Modifier, const float& Value)
 		{
-			typedef NCsModifier::FLibrary ModifierLibrary;
-
 			const CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
-			return ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Value);
+			return CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Value);
 		}
 
 		#undef AllocatedModifierType

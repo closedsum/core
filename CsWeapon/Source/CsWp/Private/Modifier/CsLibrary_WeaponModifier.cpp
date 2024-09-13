@@ -201,15 +201,12 @@ namespace NCsWeapon
 
 				// NOTE: For now ignore order
 
-				typedef NCsModifier::FLibrary ModifierLibrary;
-
 				// PercentAddFirst || PercentSubtractFirst
-				Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
+				Result = CsModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
 				// "The Rest"
-				Result = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, Result);
+				Result = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, Result);
 				// PercentAddLast || PercentSubtractLast
-				Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
-
+				Result = CsModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
 				return Result;
 			}
 		}
@@ -262,15 +259,12 @@ namespace NCsWeapon
 
 			// NOTE: For now ignore order
 
-			typedef NCsModifier::FLibrary ModifierLibrary;
-
 			// PercentAddFirst || PercentSubtractFirst
-			Result = ModifierLibrary::ModifyFloatPercentChecked(Context, FirstModifiers, Result);
+			Result = CsModifierLibrary::ModifyFloatPercentChecked(Context, FirstModifiers, Result);
 			// "The Rest"
-			Result = ModifierLibrary::ModifyFloatChecked(Context, Modifiers, Result);
+			Result = CsModifierLibrary::ModifyFloatChecked(Context, Modifiers, Result);
 			// PercentAddLast || PercentSubtractLast
-			Result = ModifierLibrary::ModifyFloatPercentChecked(Context, LastModifiers, Result);
-
+			Result = CsModifierLibrary::ModifyFloatPercentChecked(Context, LastModifiers, Result);
 			return Result;
 		}
 
@@ -327,15 +321,12 @@ namespace NCsWeapon
 
 				// NOTE: For now ignore order
 
-				typedef NCsModifier::FLibrary ModifierLibrary;
-
 				// PercentAddFirst || PercentSubtractFirst
-				Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
+				Result = CsModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
 				// "The Rest"
-				Result = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, TempModifiers, Result);
+				Result = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, TempModifiers, Result);
 				// PercentAddLast || PercentSubtractLast
-				Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
-
+				Result = CsModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
 				return Result;
 			}
 		}
@@ -388,15 +379,12 @@ namespace NCsWeapon
 
 			// NOTE: For now ignore order
 
-			typedef NCsModifier::FLibrary ModifierLibrary;
-
 			// PercentAddFirst || PercentSubtractFirst
-			Result = ModifierLibrary::ModifyFloatPercentChecked(Context, FirstModifiers, Result);
+			Result = CsModifierLibrary::ModifyFloatPercentChecked(Context, FirstModifiers, Result);
 			// "The Rest"
-			Result = ModifierLibrary::ModifyFloatChecked(Context, TempModifiers, Result);
+			Result = CsModifierLibrary::ModifyFloatChecked(Context, TempModifiers, Result);
 			// PercentAddLast || PercentSubtractLast
-			Result = ModifierLibrary::ModifyFloatPercentChecked(Context, LastModifiers, Result);
-
+			Result = CsModifierLibrary::ModifyFloatPercentChecked(Context, LastModifiers, Result);
 			return Result;
 		}
 
@@ -458,15 +446,12 @@ namespace NCsWeapon
 
 				// NOTE: For now ignore order
 
-				typedef NCsModifier::FLibrary ModifierLibrary;
-
 				// PercentAddFirst || PercentSubtractFirst
-				Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
+				Result = CsModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
 				// "The Rest"
-				Result = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, TempModifiers, Result);
+				Result = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, TempModifiers, Result);
 				// PercentAddLast || PercentSubtractLast
-				Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
-
+				Result = CsModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
 				return Result;
 			}
 		}
@@ -524,15 +509,12 @@ namespace NCsWeapon
 
 			// NOTE: For now ignore order
 
-			typedef NCsModifier::FLibrary ModifierLibrary;
-
 			// PercentAddFirst || PercentSubtractFirst
-			Result = ModifierLibrary::ModifyFloatPercentChecked(Context, FirstModifiers, Result);
+			Result = CsModifierLibrary::ModifyFloatPercentChecked(Context, FirstModifiers, Result);
 			// "The Rest"
-			Result = ModifierLibrary::ModifyFloatChecked(Context, TempModifiers, Result);
+			Result = CsModifierLibrary::ModifyFloatChecked(Context, TempModifiers, Result);
 			// PercentAddLast || PercentSubtractLast
-			Result = ModifierLibrary::ModifyFloatPercentChecked(Context, LastModifiers, Result);
-
+			Result = CsModifierLibrary::ModifyFloatPercentChecked(Context, LastModifiers, Result);
 			return Result;
 		}
 
@@ -542,8 +524,6 @@ namespace NCsWeapon
 		{
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponModifier, Type)
 
-			typedef NCsModifier::NToggle::IToggle ToggleModifierType;
-
 			for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 			{
 				ModifierType* Modifier							= AllocatedModifier.Get();
@@ -552,7 +532,7 @@ namespace NCsWeapon
 
 				if (WeaponModifierType == NCsWeaponModifier::PrjWp_UseSpreadParams)
 				{
-					ToggleModifierType* ToggleModifier = GetInterfaceChecked<ToggleModifierType>(Context, Modifier);
+					CsToggleModifierType* ToggleModifier = GetInterfaceChecked<CsToggleModifierType>(Context, Modifier);
 
 					if (ToggleModifier->IsEnabled())
 						return true;
@@ -565,8 +545,6 @@ namespace NCsWeapon
 		{
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponModifier, Type)
 
-			typedef NCsModifier::NToggle::IToggle ToggleModifierType;
-
 			for (ModifierType* Modifier : Modifiers)
 			{
 				ICsGetWeaponModifierType* GetWeaponModifierType = GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
@@ -574,7 +552,7 @@ namespace NCsWeapon
 
 				if (WeaponModifierType == NCsWeaponModifier::PrjWp_UseSpreadParams)
 				{
-					ToggleModifierType* ToggleModifier = GetInterfaceChecked<ToggleModifierType>(Context, Modifier);
+					CsToggleModifierType* ToggleModifier = GetInterfaceChecked<CsToggleModifierType>(Context, Modifier);
 
 					if (ToggleModifier->IsEnabled())
 						return true;

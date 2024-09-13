@@ -90,13 +90,11 @@ namespace NCsDamage
 
 		void FLibrary::CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<ModifierType*>& To)
 		{
-			typedef NCsModifier::FLibrary ModifierLibrary;
-
 			To.Reset(FMath::Max(To.Max(), From.Num()));
 
 			for (CsModifierType* B : From)
 			{
-				if (ModifierType* Modifier = ModifierLibrary::GetSafeInterfaceChecked<ModifierType>(Context, B))
+				if (ModifierType* Modifier = CsModifierLibrary::GetSafeInterfaceChecked<ModifierType>(Context, B))
 				{
 					To.Add(Modifier);
 				}
@@ -184,7 +182,6 @@ namespace NCsDamage
 			if (!CanModify)
 				return;
 
-			typedef NCsModifier::FLibrary ModifierLibrary;
 			typedef NCsDamage::NValue::FLibrary ValueLibrary;
 
 			// Point
@@ -201,7 +198,7 @@ namespace NCsDamage
 					// Float
 					const CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
-					V = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, V);
+					V = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, V);
 				}
 				return;
 			}
@@ -221,8 +218,8 @@ namespace NCsDamage
 					// Float
 					if (const CsFloatModifierType* FloatModifier = GetSafeInterfaceChecked<CsFloatModifierType>(Context, Modifier))
 					{
-						Min = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
-						Max = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
+						Min = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
+						Max = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
 						return;
 					}
 				}
@@ -236,8 +233,8 @@ namespace NCsDamage
 					// Float Range
 					if (const CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
 					{
-						Min = ModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
-						Max = ModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
+						Min = CsModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
+						Max = CsModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
 						return;
 					}
 				}
@@ -276,7 +273,6 @@ namespace NCsDamage
 				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 				CS_IS_PTR_NULL_CHECKED(Value)
 
-				typedef NCsModifier::FLibrary ModifierLibrary;
 				typedef NCsDamage::NValue::FLibrary ValueLibrary;
 
 				// Value
@@ -370,7 +366,7 @@ namespace NCsDamage
 				//  Assume Default Chance starts at 0.0f
 				//  Assume Chance is in the range [0.0f, 1.0f]
 				float CriticalChance = 0.0f;
-				CriticalChance		 = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalChance_FloatModifiers, CriticalChance);
+				CriticalChance		 = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalChance_FloatModifiers, CriticalChance);
 
 				// TODO: Need somewhere to take Random Seem
 	
@@ -380,12 +376,12 @@ namespace NCsDamage
 
 				if (CriticalChance >= FMath::FRandRange(0.0f, 1.0f))
 				{
-					CriticalStrike = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, CriticalStrike);
+					CriticalStrike = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, CriticalStrike);
 				}
 
 				if (ValuePoint)
 				{
-					*ValuePoint_Value  = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
+					*ValuePoint_Value  = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
 					*ValuePoint_Value *= CriticalStrike;
 
 					if (!ValuePoint_FloatModifiers.IsEmpty())
@@ -411,11 +407,11 @@ namespace NCsDamage
 
 					checkf((A == 0 && B == 0) || (A > 0 && B == 0) || (A == 0 && B > 0), TEXT("%s: Value currently can NOT be modified with a mix of Float and Float Range Modifiers."), *Context);
 
-					*ValueRange_ValueMin = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMin);
-					*ValueRange_ValueMax = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMax);
+					*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMin);
+					*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMax);
 
-					*ValueRange_ValueMin = ModifierLibrary::ModifyFloatMinAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
-					*ValueRange_ValueMax = ModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
+					*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatMinAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
+					*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
 
 					*ValueRange_ValueMin *= CriticalStrike;
 					*ValueRange_ValueMax *= CriticalStrike;
@@ -465,7 +461,6 @@ namespace NCsDamage
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 			CS_IS_PTR_NULL_CHECKED(Value)
 
-			typedef NCsModifier::FLibrary ModifierLibrary;
 			typedef NCsDamage::NValue::FLibrary ValueLibrary;
 
 			for (ModifierResourceType* M : Modifiers)
@@ -493,7 +488,7 @@ namespace NCsDamage
 
 						float& V = *(const_cast<float*>(&(Point->GetValue())));
 
-						V = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, V);
+						V = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, V);
 					}
 				}
 
@@ -513,8 +508,8 @@ namespace NCsDamage
 						// Float
 						if (CsFloatModifierType* FloatModifier = GetSafeInterfaceChecked<CsFloatModifierType>(Context, Modifier))
 						{
-							Min = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
-							Max = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
+							Min = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
+							Max = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
 						}
 					}
 					// Range
@@ -527,8 +522,8 @@ namespace NCsDamage
 						// Float Range
 						if (CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
 						{
-							Min = ModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
-							Max = ModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
+							Min = CsModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
+							Max = CsModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
 						}
 					}
 
@@ -573,7 +568,6 @@ namespace NCsDamage
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 			CS_IS_PTR_NULL_CHECKED(Value)
 
-			typedef NCsModifier::FLibrary ModifierLibrary;
 			typedef NCsDamage::NValue::FLibrary ValueLibrary;
 			typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
@@ -683,7 +677,7 @@ namespace NCsDamage
 			//  Assume Default Chance starts at 0.0f
 			//  Assume Chance is in the range [0.0f, 1.0f]
 			float CriticalChance = 0.0f;
-			CriticalChance		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalChance_FloatModifiers, CriticalChance);
+			CriticalChance		 = CsModifierLibrary::ModifyFloatChecked(Context, CriticalChance_FloatModifiers, CriticalChance);
 
 			// TODO: Need somewhere to take Random Seem
 	
@@ -693,12 +687,12 @@ namespace NCsDamage
 
 			if (CriticalChance >= FMath::FRandRange(0.0f, 1.0f))
 			{
-				CriticalStrike = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, CriticalStrike);
+				CriticalStrike = CsModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, CriticalStrike);
 			}
 
 			if (ValuePoint)
 			{
-				*ValuePoint_Value  = ModifierLibrary::ModifyFloatChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
+				*ValuePoint_Value  = CsModifierLibrary::ModifyFloatChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
 				*ValuePoint_Value *= CriticalStrike;
 
 				if (!ValuePoint_FloatModifiers.IsEmpty())
@@ -724,11 +718,11 @@ namespace NCsDamage
 
 				checkf((A == 0 && B == 0) || (A > 0 && B == 0) || (A == 0 && B > 0), TEXT("%s: Value currently can NOT be modified with a mix of Float and Float Range Modifiers."), *Context);
 
-				*ValueRange_ValueMin = ModifierLibrary::ModifyFloatChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMin);
-				*ValueRange_ValueMax = ModifierLibrary::ModifyFloatChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMax);
+				*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMin);
+				*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMax);
 
-				*ValueRange_ValueMin = ModifierLibrary::ModifyFloatMinChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
-				*ValueRange_ValueMax = ModifierLibrary::ModifyFloatMaxChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
+				*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatMinChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
+				*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatMaxChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
 
 				*ValueRange_ValueMin *= CriticalStrike;
 				*ValueRange_ValueMax *= CriticalStrike;
@@ -770,7 +764,6 @@ namespace NCsDamage
 			{
 				CS_IS_PTR_NULL_CHECKED(Range)
 
-				typedef NCsModifier::FLibrary ModifierLibrary;
 				typedef NCsDamage::NValue::FLibrary ValueLibrary;
 
 				// Range
@@ -801,8 +794,8 @@ namespace NCsDamage
 					}
 				}
 
-				Max = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, FloatModifiers, Max);
-				Max = ModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, FloatRangeModifiers, Max);
+				Max = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, FloatModifiers, Max);
+				Max = CsModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, FloatRangeModifiers, Max);
 				return Max;
 			}
 		}
@@ -811,7 +804,6 @@ namespace NCsDamage
 		{
 			CS_IS_PTR_NULL_CHECKED(Range)
 
-			typedef NCsModifier::FLibrary ModifierLibrary;
 			typedef NCsDamage::NValue::FLibrary ValueLibrary;
 
 			// Range
@@ -842,8 +834,8 @@ namespace NCsDamage
 				}
 			}
 
-			Max = ModifierLibrary::ModifyFloatChecked(Context, FloatModifiers, Max);
-			Max = ModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifiers, Max);
+			Max = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifiers, Max);
+			Max = CsModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifiers, Max);
 			return Max;
 		}
 

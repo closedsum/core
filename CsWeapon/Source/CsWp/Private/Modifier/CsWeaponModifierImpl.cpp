@@ -86,13 +86,11 @@ namespace NCsWeapon
 			
 			InterfaceMap->SetRoot<FInt>(this);
 
-			typedef NCsModifier::IModifier ModifierType;
-			typedef NCsModifier::NInt::IInt IntModifierType;
 			typedef NCsWeapon::NModifier::IModifier WeaponModifierType;
 			typedef NCsWeapon::NModifier::NCopy::ICopy CopyType;
 
-			InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-			InterfaceMap->Add<IntModifierType>(static_cast<IntModifierType*>(this));
+			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
+			InterfaceMap->Add<CsIntModifierType>(static_cast<CsIntModifierType*>(this));
 			InterfaceMap->Add<WeaponModifierType>(static_cast<WeaponModifierType*>(this));
 			InterfaceMap->Add<ICsGetWeaponModifierType>(static_cast<ICsGetWeaponModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
@@ -242,13 +240,11 @@ namespace NCsWeapon
 
 			InterfaceMap->SetRoot<FFloat>(this);
 
-			typedef NCsModifier::IModifier ModifierType;
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
 			typedef NCsWeapon::NModifier::IModifier WeaponModifierType;
 			typedef NCsWeapon::NModifier::NCopy::ICopy CopyType;
 
-			InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-			InterfaceMap->Add<FloatModifierType>(static_cast<FloatModifierType*>(this));
+			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
+			InterfaceMap->Add<CsFloatModifierType>(static_cast<CsFloatModifierType*>(this));
 			InterfaceMap->Add<WeaponModifierType>(static_cast<WeaponModifierType*>(this));
 			InterfaceMap->Add<ICsGetWeaponModifierType>(static_cast<ICsGetWeaponModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
@@ -381,13 +377,11 @@ namespace NCsWeapon
 
 			InterfaceMap->SetRoot<FToggle>(this);
 
-			typedef NCsModifier::IModifier ModifierType;
-			typedef NCsModifier::NToggle::IToggle ToggleModifierType;
 			typedef NCsWeapon::NModifier::IModifier WeaponModifierType;
 			typedef NCsWeapon::NModifier::NCopy::ICopy CopyType;
 
-			InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-			InterfaceMap->Add<ToggleModifierType>(static_cast<ToggleModifierType*>(this));
+			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
+			InterfaceMap->Add<CsToggleModifierType>(static_cast<CsToggleModifierType*>(this));
 			InterfaceMap->Add<WeaponModifierType>(static_cast<WeaponModifierType*>(this));
 			InterfaceMap->Add<ICsGetWeaponModifierType>(static_cast<ICsGetWeaponModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));

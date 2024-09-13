@@ -81,8 +81,6 @@ namespace NCsDamage
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define IntModifierType NCsModifier::NInt::IInt
 	#define DmgModifierType NCsDamage::NModifier::IModifier
 	#define CopyType NCsDamage::NModifier::NCopy::ICopy
 
@@ -90,8 +88,8 @@ namespace NCsDamage
 		* Describes how to modify any int properties on a Damage.
 		*  Damage is an object that implements the interface: ICsDamage.
 		*/
-		struct CSDMG_API FInt : public ModifierType,
-								public IntModifierType,
+		struct CSDMG_API FInt : public CsModifierType,
+								public CsIntModifierType,
 								public DmgModifierType,
 								public ICsGetDamageModifierType,
 								public ICsIsValid,
@@ -130,7 +128,7 @@ namespace NCsDamage
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// IntModifierType (NCsModifier::NInt::IInt)
+		// CsIntModifierType (NCsModifier::NInt::IInt)
 		#pragma region
 		public:
 
@@ -139,7 +137,7 @@ namespace NCsDamage
 				return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
 			}
 
-		#pragma endregion IntModifierType (NCsModifier::NInt::IInt)
+		#pragma endregion CsIntModifierType (NCsModifier::NInt::IInt)
 
 		// ICsGetDamageModifierType
 		#pragma region
@@ -190,8 +188,6 @@ namespace NCsDamage
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef IntModifierType
 	#undef DmgModifierType
 	#undef CopyType
 	}
@@ -256,8 +252,6 @@ namespace NCsDamage
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define FloatModifierType NCsModifier::NFloat::IFloat
 	#define DmgModifierType NCsDamage::NModifier::IModifier
 	#define CopyType NCsDamage::NModifier::NCopy::ICopy
 
@@ -265,8 +259,8 @@ namespace NCsDamage
 		* Describes how to modify any float properties on a Damage.
 		*  Damage is an object that implements the interface: ICsDamage.
 		*/
-		struct CSDMG_API FFloat : public ModifierType,
-								  public FloatModifierType,
+		struct CSDMG_API FFloat : public CsModifierType,
+								  public CsFloatModifierType,
 								  public DmgModifierType,
 								  public ICsGetDamageModifierType,
 								  public ICsIsValid,
@@ -305,7 +299,7 @@ namespace NCsDamage
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// FloatModifierType (NCsModifier::NFloat::IFloat)
+		// CsFloatModifierType (NCsModifier::NFloat::IFloat)
 		#pragma region
 		public:
 
@@ -316,7 +310,7 @@ namespace NCsDamage
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
-		#pragma endregion FloatModifierType (NCsModifier::NFloat::IFloat)
+		#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
 
 		// ICsGetDamageModifierType
 		#pragma region
@@ -366,8 +360,6 @@ namespace NCsDamage
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef FloatModifierType
 	#undef DmgModifierType
 	#undef CopyType
 	}
@@ -444,8 +436,6 @@ namespace NCsDamage
 	{
 		namespace NFloat
 		{
-		#define ModifierType NCsModifier::IModifier
-		#define FloatRangeModifierType NCsModifier::NFloat::NRange::IRange
 		#define DmgModifierType NCsDamage::NModifier::IModifier
 		#define CopyType NCsDamage::NModifier::NCopy::ICopy
 
@@ -453,8 +443,8 @@ namespace NCsDamage
 			* Describes how to modify any float properties on a Damage.
 			*  Damage is an object that implements the interface: ICsDamage.
 			*/
-			struct CSDMG_API FRange : public ModifierType,
-									  public FloatRangeModifierType,
+			struct CSDMG_API FRange : public CsModifierType,
+									  public CsFloatRangeModifierType,
 									  public DmgModifierType,
 									  public ICsGetDamageModifierType,
 									  public ICsIsValid,
@@ -495,7 +485,7 @@ namespace NCsDamage
 
 			#pragma endregion ICsGetInterfaceMap
 
-			// FloatModifierType (NCsModifier::NFloat::IFloat)
+			// CsFloatModifierType (NCsModifier::NFloat::IFloat)
 			#pragma region
 			public:
 
@@ -513,7 +503,7 @@ namespace NCsDamage
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxApplication, ApplicationType)
 
-			#pragma endregion FloatModifierType (NCsModifier::NFloat::IFloat)
+			#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
 
 			// ICsGetDamageModifierType
 			#pragma region
@@ -566,8 +556,6 @@ namespace NCsDamage
 			#undef ApplicationType
 			};
 
-		#undef ModifierType
-		#undef FloatRangeModifierType
 		#undef DmgModifierType
 		#undef CopyType
 		}
@@ -628,8 +616,6 @@ namespace NCsDamage
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define ToggleModifierType NCsModifier::NToggle::IToggle
 	#define DmgModifierType NCsDamage::NModifier::IModifier
 	#define CopyType NCsDamage::NModifier::NCopy::ICopy
 
@@ -637,8 +623,8 @@ namespace NCsDamage
 		* Describes whether to toggle any properties on a Damage.
 		*  Damage is an object that implements the interface: ICsDamage.
 		*/
-		struct CSDMG_API FToggle : public ModifierType,
-								   public ToggleModifierType,
+		struct CSDMG_API FToggle : public CsModifierType,
+								   public CsToggleModifierType,
 								   public DmgModifierType,
 								   public ICsGetDamageModifierType,
 								   public ICsIsValid,
@@ -676,13 +662,13 @@ namespace NCsDamage
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// ToggleModifierType (NCsModifier::NToggle::IToggle)
+		// CsToggleModifierType (NCsModifier::NToggle::IToggle)
 		#pragma region
 		public:
 
 			FORCEINLINE bool IsEnabled() const { return GetbEnable(); }
 
-		#pragma endregion ToggleModifierType (NCsModifier::NToggle::IToggle)
+		#pragma endregion CsToggleModifierType (NCsModifier::NToggle::IToggle)
 
 		// ICsGetDamageModifierType
 		#pragma region
@@ -731,8 +717,6 @@ namespace NCsDamage
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef ToggleModifierType
 	#undef DmgModifierType
 	#undef CopyType
 	}

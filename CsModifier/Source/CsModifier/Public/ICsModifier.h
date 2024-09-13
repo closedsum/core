@@ -21,3 +21,5 @@ namespace NCsModifier
 		virtual ~IModifier(){}
 	};
 }
+
+using CsModifierType = NCsModifier::IModifier;

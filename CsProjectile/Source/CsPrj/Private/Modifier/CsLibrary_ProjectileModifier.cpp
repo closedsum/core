@@ -89,7 +89,6 @@ namespace NCsProjectile
 			int32 Result = Value;
 
 			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-			typedef NCsModifier::NInt::IInt IntModifierType;
 
 			for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 			{
@@ -99,8 +98,8 @@ namespace NCsProjectile
 
 				if (PrjModifierType == Type)
 				{
-					IntModifierType* IntModifier = GetInterfaceChecked<IntModifierType>(Context, Modifier);
-					Result						 = IntModifier->Modify(Value);
+					CsIntModifierType* IntModifier = GetInterfaceChecked<CsIntModifierType>(Context, Modifier);
+					Result						   = IntModifier->Modify(Value);
 				}
 			}
 			return Result;
@@ -127,12 +126,10 @@ namespace NCsProjectile
 
 				float Result = Value;
 
-				typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
 				// TODO: FUTURE: Use a tiny / small array on the stack
-				static TArray<FloatModifierType*> FirstModifiers;
-				static TArray<FloatModifierType*> Modifiers;
-				static TArray<FloatModifierType*> LastModifiers;
+				static TArray<CsFloatModifierType*> FirstModifiers;
+				static TArray<CsFloatModifierType*> Modifiers;
+				static TArray<CsFloatModifierType*> LastModifiers;
 
 				for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 				{
@@ -142,7 +139,7 @@ namespace NCsProjectile
 
 					if (PrjModifierType == Type)
 					{
-						FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+						CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 						typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
@@ -191,11 +188,9 @@ namespace NCsProjectile
 
 			float Result = Value;
 
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-			TArray<FloatModifierType*, TFixedAllocator<64>> FirstModifiers;
-			TArray<FloatModifierType*, TFixedAllocator<64>> Modifiers;
-			TArray<FloatModifierType*, TFixedAllocator<64>> LastModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> FirstModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> Modifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> LastModifiers;
 
 			for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 			{
@@ -205,7 +200,7 @@ namespace NCsProjectile
 
 				if (PrjModifierType == Type)
 				{
-					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+					CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 					typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
@@ -249,9 +244,8 @@ namespace NCsProjectile
 		float FLibrary::ModifyFloatChecked(const FString& Context, const ModifierType* Modifier, const float& Value)
 		{
 			typedef NCsModifier::FLibrary ModifierLibrary;
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
-			const FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+			const CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 			return ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Value);
 		}

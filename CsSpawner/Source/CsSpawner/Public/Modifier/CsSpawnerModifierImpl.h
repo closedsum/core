@@ -72,13 +72,11 @@ namespace NCsSpawner
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define IntModifierType NCsModifier::NInt::IInt
 	#define SpawnerModifierType NCsSpawner::NModifier::IModifier
 	#define CopyType NCsSpawner::NModifier::NCopy::ICopy
 
-		struct CSSPAWNER_API FInt : public ModifierType,
-								    public IntModifierType,
+		struct CSSPAWNER_API FInt : public CsModifierType,
+								    public CsIntModifierType,
 									public SpawnerModifierType,
 									public ICsGetSpawnerModifierType,
 									public ICsIsValid,
@@ -116,7 +114,7 @@ namespace NCsSpawner
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// IntModifierType (NCsModifier::NInt::IInt)
+		// CsIntModifierType (NCsModifier::NInt::IInt)
 		#pragma region
 		public:
 
@@ -125,7 +123,7 @@ namespace NCsSpawner
 				return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
 			}
 
-		#pragma endregion IntModifierType (NCsModifier::NInt::IInt)
+		#pragma endregion CsIntModifierType (NCsModifier::NInt::IInt)
 
 		// ICsGetSpawnerModifierType
 		#pragma region
@@ -174,8 +172,6 @@ namespace NCsSpawner
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef IntModifierType
 	#undef SpawnerModifierType
 	#undef CopyType
 	}
@@ -234,13 +230,11 @@ namespace NCsSpawner
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define FloatModifierType NCsModifier::NFloat::IFloat
 	#define SpawnerModifierType NCsSpawner::NModifier::IModifier
 	#define CopyType NCsSpawner::NModifier::NCopy::ICopy
 
-		struct CSSPAWNER_API FFloat : public ModifierType,
-									  public FloatModifierType,
+		struct CSSPAWNER_API FFloat : public CsModifierType,
+									  public CsFloatModifierType,
 									  public SpawnerModifierType,
 									  public ICsGetSpawnerModifierType,
 									  public ICsIsValid,
@@ -278,7 +272,7 @@ namespace NCsSpawner
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// FloatModifierType (NCsModifier::NFloat::IFloat)
+		// CsFloatModifierType (NCsModifier::NFloat::IFloat)
 		#pragma region
 		public:
 
@@ -289,7 +283,7 @@ namespace NCsSpawner
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
-		#pragma endregion FloatModifierType (NCsModifier::NFloat::IFloat)
+		#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
 
 		// ICsGetSpawnerModifierType
 		#pragma region
@@ -337,8 +331,6 @@ namespace NCsSpawner
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef FloatModifierType
 	#undef SpawnerModifierType
 	#undef CopyType
 	}
@@ -392,13 +384,11 @@ namespace NCsSpawner
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define ToggleModifierType NCsModifier::NToggle::IToggle
 	#define SpawnerModifierType NCsSpawner::NModifier::IModifier
 	#define CopyType NCsSpawner::NModifier::NCopy::ICopy
 
-		struct CSSPAWNER_API FToggle : public ModifierType,
-									   public ToggleModifierType,
+		struct CSSPAWNER_API FToggle : public CsModifierType,
+									   public CsToggleModifierType,
 									   public SpawnerModifierType,
 									   public ICsGetSpawnerModifierType,
 									   public ICsIsValid,
@@ -435,13 +425,13 @@ namespace NCsSpawner
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// ToggleModifierType (NCsModifier::NToggle::IToggle)
+		// CsToggleModifierType (NCsModifier::NToggle::IToggle)
 		#pragma region
 		public:
 
 			FORCEINLINE bool IsEnabled() const { return GetbEnable(); }
 
-		#pragma endregion ToggleModifierType (NCsModifier::NToggle::IToggle)
+		#pragma endregion CsToggleModifierType (NCsModifier::NToggle::IToggle)
 
 		// ICsGetSpawnerModifierType
 		#pragma region
@@ -488,8 +478,6 @@ namespace NCsSpawner
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef ToggleModifierType
 	#undef SpawnerModifierType
 	#undef CopyType
 	}

@@ -20,81 +20,101 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsModifier, NFloat, NRange, IRange)
 
 namespace NCsModifier
 {
-#define ModifierType NCsModifier::IModifier
-
 	/**
-	* Library for interface: ModifierType (NCsModifier::IModifier)
+	* Library for interface: CsModifierType (NCsModifier::IModifier)
 	*/
-	struct CSMODIFIER_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
+	struct CSMODIFIER_API FLibrary final : public NCsInterfaceMap::TLibrary<CsModifierType>
 	{
 	public:
 
-		static void CopyChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierType*>& To);
+		static void CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<CsModifierType*>& To);
 
-	#define IntModifierType NCsModifier::NInt::IInt
+	// Int
+	#pragma region
+	public:
 
-		static int32 ModifyIntChecked(const FString& Context, const IntModifierType* Modifier, const int32& Value);
+	#define CsIntModifierType NCsModifier::NInt::IInt
 
-		static int32 ModifyIntChecked(const FString& Context, const TArray<IntModifierType*>& Modifiers, const int32& Value);
+		static int32 ModifyIntChecked(const FString& Context, const CsIntModifierType* Modifier, const int32& Value);
 
-	#undef IntModifierType
+		static int32 ModifyIntChecked(const FString& Context, const TArray<CsIntModifierType*>& Modifiers, const int32& Value);
 
-	#define IntRangeModifierType NCsModifier::NInt::NRange::IRange
+	#undef CsIntModifierType
 
-		static int32 ModifyIntMinChecked(const FString& Context, const IntRangeModifierType* Modifier, const int32& Value);
+	#pragma endregion Int
 
-		static int32 ModifyIntMinChecked(const FString& Context, const TArray<IntRangeModifierType*>& Modifiers, const int32& Value);
+	// Int Range
+	#pragma region
+	public:
 
-		static int32 ModifyIntMaxChecked(const FString& Context, const IntRangeModifierType* Modifier, const int32& Value);
+	#define CsIntRangeModifierType NCsModifier::NInt::NRange::IRange
 
-		static int32 ModifyIntMaxChecked(const FString& Context, const TArray<IntRangeModifierType*>& Modifiers, const int32& Value);
+		static int32 ModifyIntMinChecked(const FString& Context, const CsIntRangeModifierType* Modifier, const int32& Value);
 
-	#undef IntRangeModifierType
+		static int32 ModifyIntMinChecked(const FString& Context, const TArray<CsIntRangeModifierType*>& Modifiers, const int32& Value);
 
-	#define FloatModifierType NCsModifier::NFloat::IFloat
+		static int32 ModifyIntMaxChecked(const FString& Context, const CsIntRangeModifierType* Modifier, const int32& Value);
 
-		static float ModifyFloatChecked(const FString& Context, const FloatModifierType* Modifier, const float& Value);
+		static int32 ModifyIntMaxChecked(const FString& Context, const TArray<CsIntRangeModifierType*>& Modifiers, const int32& Value);
 
-		static float ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*>& Modifiers, const float& Value);
+	#undef CsIntRangeModifierType
 
-		static float ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+	#pragma endregion Int Range
 
-		static float ModifyFloatAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value);
+	// Float
+	#pragma region
+	public:
 
-		static float ModifyFloatPercentChecked(const FString& Context, const TArray<FloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+	#define CsFloatModifierType NCsModifier::NFloat::IFloat
 
-		static float ModifyFloatPercentAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value);
+		static float ModifyFloatChecked(const FString& Context, const CsFloatModifierType* Modifier, const float& Value);
 
-	#undef FloatModifierType
+		static float ModifyFloatChecked(const FString& Context, const TArray<CsFloatModifierType*>& Modifiers, const float& Value);
 
-	#define FloatRangeModifierType NCsModifier::NFloat::NRange::IRange
+		static float ModifyFloatChecked(const FString& Context, const TArray<CsFloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
 
-		static float ModifyFloatMinChecked(const FString& Context, const FloatRangeModifierType* Modifier, const float& Value);
+		static float ModifyFloatAndEmptyChecked(const FString& Context, TArray<CsFloatModifierType*>& Modifiers, const float& Value);
 
-		static float ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*>& Modifiers, const float& Value);
+		static float ModifyFloatPercentChecked(const FString& Context, const TArray<CsFloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
 
-		static float ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+		static float ModifyFloatPercentAndEmptyChecked(const FString& Context, TArray<CsFloatModifierType*>& Modifiers, const float& Value);
 
-		static float ModifyFloatMinAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value);
+	#undef CsFloatModifierType
 
-		static float ModifyFloatMinPercentChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+	#pragma endregion Float
 
-		static float ModifyFloatMinPercentAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value);
+	// Float Range
+	#pragma region
+	public:
 
-		static float ModifyFloatMaxChecked(const FString& Context, const FloatRangeModifierType* Modifier, const float& Value);
+	#define CsFloatRangeModifierType NCsModifier::NFloat::NRange::IRange
 
-		static float ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*>& Modifiers, const float& Value);
+		static float ModifyFloatMinChecked(const FString& Context, const CsFloatRangeModifierType* Modifier, const float& Value);
 
-		static float ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+		static float ModifyFloatMinChecked(const FString& Context, const TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value);
 
-		static float ModifyFloatMaxAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value);
+		static float ModifyFloatMinChecked(const FString& Context, const TArray<CsFloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
 
-		static float ModifyFloatMaxPercentChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+		static float ModifyFloatMinAndEmptyChecked(const FString& Context, TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value);
 
-		static float ModifyFloatMaxPercentAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value);
+		static float ModifyFloatMinPercentChecked(const FString& Context, const TArray<CsFloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
 
-	#undef FloatRangeModifierType
+		static float ModifyFloatMinPercentAndEmptyChecked(const FString& Context, TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value);
+
+		static float ModifyFloatMaxChecked(const FString& Context, const CsFloatRangeModifierType* Modifier, const float& Value);
+
+		static float ModifyFloatMaxChecked(const FString& Context, const TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value);
+
+		static float ModifyFloatMaxChecked(const FString& Context, const TArray<CsFloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+
+		static float ModifyFloatMaxAndEmptyChecked(const FString& Context, TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value);
+
+		static float ModifyFloatMaxPercentChecked(const FString& Context, const TArray<CsFloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+
+		static float ModifyFloatMaxPercentAndEmptyChecked(const FString& Context, TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value);
+
+	#undef CsFloatRangeModifierType
+
+	#pragma endregion Float Range
 	};
-
-#undef ModifierType
 }

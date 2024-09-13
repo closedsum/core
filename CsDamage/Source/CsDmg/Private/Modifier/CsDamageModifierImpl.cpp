@@ -93,13 +93,11 @@ namespace NCsDamage
 			
 			InterfaceMap->SetRoot<FInt>(this);
 
-			typedef NCsModifier::IModifier ModifierType;
-			typedef NCsModifier::NInt::IInt IntModifierType;
 			typedef NCsDamage::NModifier::IModifier DmgModifierType;
 			typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
 
-			InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-			InterfaceMap->Add<IntModifierType>(static_cast<IntModifierType*>(this));
+			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
+			InterfaceMap->Add<CsIntModifierType>(static_cast<CsIntModifierType*>(this));
 			InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
 			InterfaceMap->Add<ICsGetDamageModifierType>(static_cast<ICsGetDamageModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
@@ -255,13 +253,11 @@ namespace NCsDamage
 
 			InterfaceMap->SetRoot<FFloat>(this);
 
-			typedef NCsModifier::IModifier ModifierType;
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
 			typedef NCsDamage::NModifier::IModifier DmgModifierType;
 			typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
 
-			InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-			InterfaceMap->Add<FloatModifierType>(static_cast<FloatModifierType*>(this));
+			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
+			InterfaceMap->Add<CsFloatModifierType>(static_cast<CsFloatModifierType*>(this));
 			InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
 			InterfaceMap->Add<ICsGetDamageModifierType>(static_cast<ICsGetDamageModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
@@ -428,13 +424,11 @@ namespace NCsDamage
 
 				InterfaceMap->SetRoot<FRange>(this);
 
-				typedef NCsModifier::IModifier ModifierType;
-				typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
 				typedef NCsDamage::NModifier::IModifier DmgModifierType;
 				typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
 
-				InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-				InterfaceMap->Add<FloatRangeModifierType>(static_cast<FloatRangeModifierType*>(this));
+				InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
+				InterfaceMap->Add<CsFloatRangeModifierType>(static_cast<CsFloatRangeModifierType*>(this));
 				InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
 				InterfaceMap->Add<ICsGetDamageModifierType>(static_cast<ICsGetDamageModifierType*>(this));
 				InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
@@ -581,13 +575,11 @@ namespace NCsDamage
 
 			InterfaceMap->SetRoot<FToggle>(this);
 
-			typedef NCsModifier::IModifier ModifierType;
-			typedef NCsModifier::NToggle::IToggle ToggleModifierType;
 			typedef NCsDamage::NModifier::IModifier DmgModifierType;
 			typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
 
-			InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-			InterfaceMap->Add<ToggleModifierType>(static_cast<ToggleModifierType*>(this));
+			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
+			InterfaceMap->Add<CsToggleModifierType>(static_cast<CsToggleModifierType*>(this));
 			InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
 			InterfaceMap->Add<ICsGetDamageModifierType>(static_cast<ICsGetDamageModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));

@@ -31,3 +31,5 @@ namespace NCsModifier
 		};
 	}
 }
+
+using CsIntModifierType = NCsModifier::NInt::IInt;

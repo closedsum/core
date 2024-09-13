@@ -22,7 +22,7 @@ namespace NCsStatusEffect
 			public:
 
 			#define DataType NCsStatusEffect::NData::IData
-			#define ModifierType NCsModifier::IModifier
+			#define CsModifierType NCsModifier::IModifier
 
 			public:
 
@@ -42,7 +42,7 @@ namespace NCsStatusEffect
 
 				FHitResult HitResult;
 
-				TArray<ModifierType*> Modifiers;
+				TArray<CsModifierType*> Modifiers;
 
 				FPayload() :
 					Type(),
@@ -69,7 +69,7 @@ namespace NCsStatusEffect
 				}
 
 			#undef DataType
-			#undef ModifierType
+			#undef CsModifierType
 			};
 		}
 	}

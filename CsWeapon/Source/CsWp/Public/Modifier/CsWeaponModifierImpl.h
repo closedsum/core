@@ -70,13 +70,11 @@ namespace NCsWeapon
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define IntModifierType NCsModifier::NInt::IInt
 	#define WeaponModifierType NCsWeapon::NModifier::IModifier
 	#define CopyType NCsWeapon::NModifier::NCopy::ICopy
 
-		struct CSWP_API FInt : public ModifierType,
-								public IntModifierType,
+		struct CSWP_API FInt : public CsModifierType,
+								public CsIntModifierType,
 								public WeaponModifierType,
 								public ICsGetWeaponModifierType,
 								public ICsIsValid,
@@ -114,7 +112,7 @@ namespace NCsWeapon
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// IntModifierType (NCsModifier::NInt::IInt)
+		// CsIntModifierType (NCsModifier::NInt::IInt)
 		#pragma region
 		public:
 
@@ -123,7 +121,7 @@ namespace NCsWeapon
 				return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
 			}
 
-		#pragma endregion IntModifierType (NCsModifier::NInt::IInt)
+		#pragma endregion CsIntModifierType (NCsModifier::NInt::IInt)
 
 		// ICsGetWeaponModifierType
 		#pragma region
@@ -172,8 +170,6 @@ namespace NCsWeapon
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef IntModifierType
 	#undef WeaponModifierType
 	#undef CopyType
 	}
@@ -232,13 +228,11 @@ namespace NCsWeapon
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define FloatModifierType NCsModifier::NFloat::IFloat
 	#define WeaponModifierType NCsWeapon::NModifier::IModifier
 	#define CopyType NCsWeapon::NModifier::NCopy::ICopy
 
-		struct CSWP_API FFloat : public ModifierType,
-								  public FloatModifierType,
+		struct CSWP_API FFloat : public CsModifierType,
+								  public CsFloatModifierType,
 								  public WeaponModifierType,
 								  public ICsGetWeaponModifierType,
 								  public ICsIsValid,
@@ -276,7 +270,7 @@ namespace NCsWeapon
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// FloatModifierType (NCsModifier::NFloat::IFloat)
+		// CsFloatModifierType (NCsModifier::NFloat::IFloat)
 		#pragma region
 		public:
 
@@ -287,7 +281,7 @@ namespace NCsWeapon
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
-		#pragma endregion FloatModifierType (NCsModifier::NFloat::IFloat)
+		#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
 
 		// ICsGetWeaponModifierType
 		#pragma region
@@ -335,8 +329,6 @@ namespace NCsWeapon
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef FloatModifierType
 	#undef WeaponModifierType
 	#undef CopyType
 	}
@@ -390,13 +382,11 @@ namespace NCsWeapon
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define ToggleModifierType NCsModifier::NToggle::IToggle
 	#define WeaponModifierType NCsWeapon::NModifier::IModifier
 	#define CopyType NCsWeapon::NModifier::NCopy::ICopy
 
-		struct CSWP_API FToggle : public ModifierType,
-								  public ToggleModifierType,
+		struct CSWP_API FToggle : public CsModifierType,
+								  public CsToggleModifierType,
 								  public WeaponModifierType,
 								  public ICsGetWeaponModifierType,
 								  public ICsIsValid,
@@ -433,13 +423,13 @@ namespace NCsWeapon
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// ToggleModifierType (NCsModifier::NToggle::IToggle)
+		// CsToggleModifierType (NCsModifier::NToggle::IToggle)
 		#pragma region
 		public:
 
 			FORCEINLINE bool IsEnabled() const { return GetbEnable(); }
 
-		#pragma endregion ToggleModifierType (NCsModifier::NToggle::IToggle)
+		#pragma endregion CsToggleModifierType (NCsModifier::NToggle::IToggle)
 
 		// ICsGetWeaponModifierType
 		#pragma region
@@ -486,8 +476,6 @@ namespace NCsWeapon
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef ToggleModifierType
 	#undef WeaponModifierType
 	#undef CopyType
 	}

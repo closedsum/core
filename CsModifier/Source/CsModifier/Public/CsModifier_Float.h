@@ -39,3 +39,5 @@ namespace NCsModifier
 		};
 	}
 }
+
+using CsFloatModifierType = NCsModifier::NFloat::IFloat;

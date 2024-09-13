@@ -41,3 +41,5 @@ namespace NCsModifier
 		}
 	}
 }
+
+using CsIntRangeModifierType = NCsModifier::NInt::NRange::IRange;

@@ -36,7 +36,7 @@ namespace NCsDamage
 	#define RangeType NCsDamage::NRange::IRange
 	#define ModifierResourceType NCsDamage::NModifier::FResource
 	#define AllocatedModifierType NCsDamage::NModifier::FAllocated
-	#define BaseModifierType NCsModifier::IModifier
+	#define CsModifierType NCsModifier::IModifier
 
 	public:
 
@@ -90,7 +90,7 @@ namespace NCsDamage
 		* @param From		What to copy.
 		* @param To			What to copy to.
 		*/
-		static void CopyChecked(const FString& Context, const TArray<BaseModifierType*>& From, TArray<ModifierType*>& To);
+		static void CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<ModifierType*>& To);
 
 	#pragma endregion Copy
 
@@ -100,7 +100,7 @@ namespace NCsDamage
 
 		static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
 
-		static void AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<BaseModifierType*>& To);
+		static void AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<CsModifierType*>& To);
 
 	#pragma endregion Add
 
@@ -166,7 +166,7 @@ namespace NCsDamage
 	#undef RangeType
 	#undef ModifierResourceType
 	#undef AllocatedModifierType
-	#undef BaseModifierType
+	#undef CsModifierType
 	};
 
 	#undef ModifierType

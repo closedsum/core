@@ -88,13 +88,11 @@ namespace NCsSpawner
 			
 			InterfaceMap->SetRoot<FInt>(this);
 
-			typedef NCsModifier::IModifier ModifierType;
-			typedef NCsModifier::NInt::IInt IntModifierType;
 			typedef NCsSpawner::NModifier::IModifier SpawnerModifierType;
 			typedef NCsSpawner::NModifier::NCopy::ICopy CopyType;
 
-			InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-			InterfaceMap->Add<IntModifierType>(static_cast<IntModifierType*>(this));
+			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
+			InterfaceMap->Add<CsIntModifierType>(static_cast<CsIntModifierType*>(this));
 			InterfaceMap->Add<SpawnerModifierType>(static_cast<SpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsGetSpawnerModifierType>(static_cast<ICsGetSpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
@@ -244,13 +242,11 @@ namespace NCsSpawner
 
 			InterfaceMap->SetRoot<FFloat>(this);
 
-			typedef NCsModifier::IModifier ModifierType;
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
 			typedef NCsSpawner::NModifier::IModifier SpawnerModifierType;
 			typedef NCsSpawner::NModifier::NCopy::ICopy CopyType;
 
-			InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-			InterfaceMap->Add<FloatModifierType>(static_cast<FloatModifierType*>(this));
+			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
+			InterfaceMap->Add<CsFloatModifierType>(static_cast<CsFloatModifierType*>(this));
 			InterfaceMap->Add<SpawnerModifierType>(static_cast<SpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsGetSpawnerModifierType>(static_cast<ICsGetSpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
@@ -383,13 +379,11 @@ namespace NCsSpawner
 
 			InterfaceMap->SetRoot<FToggle>(this);
 
-			typedef NCsModifier::IModifier ModifierType;
-			typedef NCsModifier::NToggle::IToggle ToggleModifierType;
 			typedef NCsSpawner::NModifier::IModifier SpawnerModifierType;
 			typedef NCsSpawner::NModifier::NCopy::ICopy CopyType;
 
-			InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-			InterfaceMap->Add<ToggleModifierType>(static_cast<ToggleModifierType*>(this));
+			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
+			InterfaceMap->Add<CsToggleModifierType>(static_cast<CsToggleModifierType*>(this));
 			InterfaceMap->Add<SpawnerModifierType>(static_cast<SpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsGetSpawnerModifierType>(static_cast<ICsGetSpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));

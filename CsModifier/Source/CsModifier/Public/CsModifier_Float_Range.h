@@ -51,3 +51,5 @@ namespace NCsModifier
 		}
 	}
 }
+
+using CsFloatRangeModifierType = NCsModifier::NFloat::NRange::IRange;

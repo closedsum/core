@@ -15,107 +15,99 @@
 
 namespace NCsModifier
 {
-	#define ModifierType NCsModifier::IModifier
+	#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
 
-	void FLibrary::CopyChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierType*>& To)
+	void FLibrary::CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<CsModifierType*>& To)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(From, CsModifierType)
 
 		To.Reset(FMath::Max(To.Max(), From.Num()));
 
-		for (ModifierType* Modifier : From)
+		for (CsModifierType* Modifier : From)
 		{
 			To.Add(Modifier);
 		}
 	}
 
-	#define IntModifierType NCsModifier::NInt::IInt
+	// Int
+	#pragma region
 
-	int32 FLibrary::ModifyIntChecked(const FString& Context, const IntModifierType* Modifier, const int32& Value)
+	int32 FLibrary::ModifyIntChecked(const FString& Context, const CsIntModifierType* Modifier, const int32& Value)
 	{
 		CS_IS_PTR_NULL_CHECKED(Modifier)
-
-		int32 Result = Modifier->Modify(Value);
-
-		return Result;
+		return Modifier->Modify(Value);
 	}
 
-	int32 FLibrary::ModifyIntChecked(const FString& Context, const TArray<IntModifierType*>& Modifiers, const int32& Value)
+	int32 FLibrary::ModifyIntChecked(const FString& Context, const TArray<CsIntModifierType*>& Modifiers, const int32& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, IntModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsIntModifierType)
 
 		int32 Result = Value;
 
 		// NOTE: For now ignore order
 
-		for (const IntModifierType* Modifier : Modifiers)
+		for (const CsIntModifierType* Modifier : Modifiers)
 		{
 			Result = Modifier->Modify(Result);
 		}
 		return Result;
 	}
 
-	#undef IntModifierType
+	#pragma endregion Int
 
-	#define IntRangeModifierType NCsModifier::NInt::NRange::IRange
+	// Int Range
+	#pragma region
 
-	int32 FLibrary::ModifyIntMinChecked(const FString& Context, const IntRangeModifierType* Modifier, const int32& Value)
+	int32 FLibrary::ModifyIntMinChecked(const FString& Context, const CsIntRangeModifierType* Modifier, const int32& Value)
 	{
 		CS_IS_PTR_NULL_CHECKED(Modifier)
-
-		int32 Result = Modifier->ModifyMin(Value);
-
-		return Result;
+		return Modifier->ModifyMin(Value);
 	}
 
-	int32 FLibrary::ModifyIntMinChecked(const FString& Context, const TArray<IntRangeModifierType*>& Modifiers, const int32& Value)
+	int32 FLibrary::ModifyIntMinChecked(const FString& Context, const TArray<CsIntRangeModifierType*>& Modifiers, const int32& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, IntRangeModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsIntRangeModifierType)
 
 		int32 Result = Value;
 
 		// NOTE: For now ignore order
 
-		for (const IntRangeModifierType* Modifier : Modifiers)
+		for (const CsIntRangeModifierType* Modifier : Modifiers)
 		{
 			Result = Modifier->ModifyMin(Result);
 		}
 		return Result;
 	}
 
-	int32 FLibrary::ModifyIntMaxChecked(const FString& Context, const IntRangeModifierType* Modifier, const int32& Value)
+	int32 FLibrary::ModifyIntMaxChecked(const FString& Context, const CsIntRangeModifierType* Modifier, const int32& Value)
 	{
 		CS_IS_PTR_NULL_CHECKED(Modifier)
-
-		int32 Result = Modifier->ModifyMax(Value);
-
-		return Result;
+		return Modifier->ModifyMax(Value);
 	}
 
-	int32 FLibrary::ModifyIntMaxChecked(const FString& Context, const TArray<IntRangeModifierType*>& Modifiers, const int32& Value)
+	int32 FLibrary::ModifyIntMaxChecked(const FString& Context, const TArray<CsIntRangeModifierType*>& Modifiers, const int32& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, IntRangeModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsIntRangeModifierType)
 
 		int32 Result = Value;
 
 		// NOTE: For now ignore order
 
-		for (const IntRangeModifierType* Modifier : Modifiers)
+		for (const CsIntRangeModifierType* Modifier : Modifiers)
 		{
 			Result = Modifier->ModifyMax(Result);
 		}
 		return Result;
 	}
 
-	#undef IntRangeModifierType
+	#pragma endregion Int Rnage
 
-	#define FloatModifierType NCsModifier::NFloat::IFloat
+	// Float
+	#pragma region
 
-	float FLibrary::ModifyFloatChecked(const FString& Context, const FloatModifierType* Modifier, const float& Value)
+	float FLibrary::ModifyFloatChecked(const FString& Context, const CsFloatModifierType* Modifier, const float& Value)
 	{
 		CS_IS_PTR_NULL_CHECKED(Modifier)
-
-		typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 		const ApplicationType& Application = Modifier->GetApplication();
 
@@ -148,21 +140,19 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatChecked(const FString& Context, const TArray<CsFloatModifierType*>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsFloatModifierType)
 
 		float Result = Value;
 
 		// TODO: FUTURE: Use a tiny / small array on the stack
-		static TArray<FloatModifierType*> FirstModifiers;
-		static TArray<FloatModifierType*> OtherModifiers;
-		static TArray<FloatModifierType*> LastModifiers;
+		static TArray<CsFloatModifierType*> FirstModifiers;
+		static TArray<CsFloatModifierType*> OtherModifiers;
+		static TArray<CsFloatModifierType*> LastModifiers;
 
-		for (FloatModifierType* Modifier : Modifiers)
+		for (CsFloatModifierType* Modifier : Modifiers)
 		{
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
 			const ApplicationType& Application = Modifier->GetApplication();
 
 			// PercentAddFirst || PercentSubtractFirst
@@ -197,21 +187,19 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatChecked(const FString& Context, const TArray<CsFloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
 	{
 		// TODO:
 		//CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
 
 		float Result = Value;
 
-		TArray<FloatModifierType*, TFixedAllocator<64>> FirstModifiers;
-		TArray<FloatModifierType*, TFixedAllocator<64>> OtherModifiers;
-		TArray<FloatModifierType*, TFixedAllocator<64>> LastModifiers;
+		TArray<CsFloatModifierType*, TFixedAllocator<64>> FirstModifiers;
+		TArray<CsFloatModifierType*, TFixedAllocator<64>> OtherModifiers;
+		TArray<CsFloatModifierType*, TFixedAllocator<64>> LastModifiers;
 
-		for (FloatModifierType* Modifier : Modifiers)
+		for (CsFloatModifierType* Modifier : Modifiers)
 		{
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
 			const ApplicationType& Application = Modifier->GetApplication();
 
 			// PercentAddFirst || PercentSubtractFirst
@@ -239,7 +227,7 @@ namespace NCsModifier
 		// PercentAddFirst || PercentSubtractFirst
 		Result = ModifyFloatPercentChecked(Context, FirstModifiers, Result);
 		// "The Rest"
-		for (const FloatModifierType* FloatModifier : OtherModifiers)
+		for (const CsFloatModifierType* FloatModifier : OtherModifiers)
 		{
 			Result = FloatModifier->Modify(Value);
 		}
@@ -248,9 +236,9 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatAndEmptyChecked(const FString& Context, TArray<CsFloatModifierType*>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsFloatModifierType)
 
 		float Result = Value;
 
@@ -258,7 +246,7 @@ namespace NCsModifier
 
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			const FloatModifierType* FloatModifier = Modifiers[I];
+			const CsFloatModifierType* FloatModifier = Modifiers[I];
 
 			Result = FloatModifier->Modify(Value);
 
@@ -267,7 +255,7 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatPercentChecked(const FString& Context, const TArray<FloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatPercentChecked(const FString& Context, const TArray<CsFloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
 	{
 		// TODO:
 		// CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
@@ -277,7 +265,7 @@ namespace NCsModifier
 
 		const int32 Count = Modifiers.Num();
 
-		for (const FloatModifierType* Modifier : Modifiers)
+		for (const CsFloatModifierType* Modifier : Modifiers)
 		{
 			Percent = Modifier->Modify(Percent);
 		}
@@ -286,9 +274,9 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatPercentAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatPercentAndEmptyChecked(const FString& Context, TArray<CsFloatModifierType*>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsFloatModifierType)
 
 		float Result  = Value;
 		float Percent = 1.0f;
@@ -297,7 +285,7 @@ namespace NCsModifier
 
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			const FloatModifierType* Modifier = Modifiers[I];
+			const CsFloatModifierType* Modifier = Modifiers[I];
 
 			Percent = Modifier->Modify(Percent);
 
@@ -308,15 +296,14 @@ namespace NCsModifier
 		return Result;
 	}
 
-	#undef FloatModifierType
+	#pragma endregion Float
 
-	#define FloatRangeModifierType NCsModifier::NFloat::NRange::IRange
+	// Float Range
+	#pragma region
 
-	float FLibrary::ModifyFloatMinChecked(const FString& Context, const FloatRangeModifierType* Modifier, const float& Value)
+	float FLibrary::ModifyFloatMinChecked(const FString& Context, const CsFloatRangeModifierType* Modifier, const float& Value)
 	{
 		CS_IS_PTR_NULL_CHECKED(Modifier)
-
-		typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 		const ApplicationType& Application = Modifier->GetMinApplication();
 
@@ -349,21 +336,19 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMinChecked(const FString& Context, const TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsFloatRangeModifierType)
 
 		float Result = Value;
 
 		// TODO: FUTURE: Use a tiny / small array on the stack
-		static TArray<FloatRangeModifierType*> FirstModifiers;
-		static TArray<FloatRangeModifierType*> OtherModifiers;
-		static TArray<FloatRangeModifierType*> LastModifiers;
+		static TArray<CsFloatRangeModifierType*> FirstModifiers;
+		static TArray<CsFloatRangeModifierType*> OtherModifiers;
+		static TArray<CsFloatRangeModifierType*> LastModifiers;
 
-		for (FloatRangeModifierType* Modifier : Modifiers)
+		for (CsFloatRangeModifierType* Modifier : Modifiers)
 		{
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
 			const ApplicationType& Application = Modifier->GetMinApplication();
 
 			// PercentAddFirst || PercentSubtractFirst
@@ -396,7 +381,7 @@ namespace NCsModifier
 
 			for (int32 I = Count - 1; I >= 0; --I)
 			{
-				const FloatRangeModifierType* FloatModifier = FirstModifiers[I];
+				const CsFloatRangeModifierType* FloatModifier = FirstModifiers[I];
 					
 				Percent = FloatModifier->ModifyMin(Percent);
 					
@@ -411,7 +396,7 @@ namespace NCsModifier
 
 			for (int32 I = Count - 1; I >= 0; --I)
 			{
-				const FloatRangeModifierType* FloatModifier = OtherModifiers[I];
+				const CsFloatRangeModifierType* FloatModifier = OtherModifiers[I];
 
 				Result = FloatModifier->ModifyMin(Result);
 
@@ -426,7 +411,7 @@ namespace NCsModifier
 
 			for (int32 I = Count - 1; I >= 0; --I)
 			{
-				const FloatRangeModifierType* FloatModifier = LastModifiers[I];
+				const CsFloatRangeModifierType* FloatModifier = LastModifiers[I];
 
 				Percent = FloatModifier->ModifyMin(Percent);
 
@@ -438,20 +423,18 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMinChecked(const FString& Context, const TArray<CsFloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType, 64)
+		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, CsFloatRangeModifierType, 64)
 
 		float Result = Value;
 
-		TArray<FloatRangeModifierType*, TFixedAllocator<64>> FirstModifiers;
-		TArray<FloatRangeModifierType*, TFixedAllocator<64>> OtherModifiers;
-		TArray<FloatRangeModifierType*, TFixedAllocator<64>> LastModifiers;
+		TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> FirstModifiers;
+		TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> OtherModifiers;
+		TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> LastModifiers;
 
-		for (FloatRangeModifierType* Modifier : Modifiers)
+		for (CsFloatRangeModifierType* Modifier : Modifiers)
 		{
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
 			const ApplicationType& Application = Modifier->GetMinApplication();
 
 			// PercentAddFirst || PercentSubtractFirst
@@ -479,7 +462,7 @@ namespace NCsModifier
 		// PercentAddFirst || PercentSubtractFirst
 		Result = ModifyFloatMinPercentChecked(Context, FirstModifiers, Result);
 		// "The Rest"
-		for (const FloatRangeModifierType* FloatModifier : OtherModifiers)
+		for (const CsFloatRangeModifierType* FloatModifier : OtherModifiers)
 		{
 			Result = FloatModifier->ModifyMin(Result);
 		}
@@ -488,9 +471,9 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMinAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMinAndEmptyChecked(const FString& Context, TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsFloatRangeModifierType)
 
 		float Result = Value;
 
@@ -498,7 +481,7 @@ namespace NCsModifier
 
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			const FloatRangeModifierType* FloatModifier = Modifiers[I];
+			const CsFloatRangeModifierType* FloatModifier = Modifiers[I];
 
 			Result = FloatModifier->ModifyMin(Value);
 
@@ -507,16 +490,16 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMinPercentChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMinPercentChecked(const FString& Context, const TArray<CsFloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType, 64)
+		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, CsFloatRangeModifierType, 64)
 
 		float Result = Value;
 		float Percent = 1.0f;
 
 		const int32 Count = Modifiers.Num();
 
-		for (const FloatRangeModifierType* Modifier : Modifiers)
+		for (const CsFloatRangeModifierType* Modifier : Modifiers)
 		{
 			Percent = Modifier->ModifyMin(Percent);
 		}
@@ -525,9 +508,9 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMinPercentAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMinPercentAndEmptyChecked(const FString& Context, TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsFloatRangeModifierType)
 
 		float Result = Value;
 		float Percent = 1.0f;
@@ -536,7 +519,7 @@ namespace NCsModifier
 
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			const FloatRangeModifierType* FloatModifier = Modifiers[I];
+			const CsFloatRangeModifierType* FloatModifier = Modifiers[I];
 
 			Percent = FloatModifier->ModifyMin(Percent);
 
@@ -547,11 +530,9 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const FloatRangeModifierType* Modifier, const float& Value)
+	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const CsFloatRangeModifierType* Modifier, const float& Value)
 	{
 		CS_IS_PTR_NULL_CHECKED(Modifier)
-
-		typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 		const ApplicationType& Application = Modifier->GetMaxApplication();
 
@@ -584,21 +565,19 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsFloatRangeModifierType)
 
 		float Result = Value;
 
 		// TODO: FUTURE: Use a tiny / small array on the stack
-		static TArray<FloatRangeModifierType*> FirstModifiers;
-		static TArray<FloatRangeModifierType*> OtherModifiers;
-		static TArray<FloatRangeModifierType*> LastModifiers;
+		static TArray<CsFloatRangeModifierType*> FirstModifiers;
+		static TArray<CsFloatRangeModifierType*> OtherModifiers;
+		static TArray<CsFloatRangeModifierType*> LastModifiers;
 
-		for (FloatRangeModifierType* Modifier : Modifiers)
+		for (CsFloatRangeModifierType* Modifier : Modifiers)
 		{
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
 			const ApplicationType& Application = Modifier->GetMaxApplication();
 
 			// PercentAddFirst || PercentSubtractFirst
@@ -631,7 +610,7 @@ namespace NCsModifier
 
 			for (int32 I = Count - 1; I >= 0; --I)
 			{
-				const FloatRangeModifierType* FloatModifier = FirstModifiers[I];
+				const CsFloatRangeModifierType* FloatModifier = FirstModifiers[I];
 					
 				Percent = FloatModifier->ModifyMax(Percent);
 					
@@ -646,7 +625,7 @@ namespace NCsModifier
 
 			for (int32 I = Count - 1; I >= 0; --I)
 			{
-				const FloatRangeModifierType* FloatModifier = OtherModifiers[I];
+				const CsFloatRangeModifierType* FloatModifier = OtherModifiers[I];
 
 				Result = FloatModifier->ModifyMax(Result);
 
@@ -661,7 +640,7 @@ namespace NCsModifier
 
 			for (int32 I = Count - 1; I >= 0; --I)
 			{
-				const FloatRangeModifierType* FloatModifier = LastModifiers[I];
+				const CsFloatRangeModifierType* FloatModifier = LastModifiers[I];
 
 				Percent = FloatModifier->ModifyMax(Percent);
 
@@ -673,20 +652,18 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const TArray<CsFloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType, 64)
+		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, CsFloatRangeModifierType, 64)
 
 		float Result = Value;
 
-		TArray<FloatRangeModifierType*, TFixedAllocator<64>> FirstModifiers;
-		TArray<FloatRangeModifierType*, TFixedAllocator<64>> OtherModifiers;
-		TArray<FloatRangeModifierType*, TFixedAllocator<64>> LastModifiers;
+		TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> FirstModifiers;
+		TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> OtherModifiers;
+		TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> LastModifiers;
 
-		for (FloatRangeModifierType* Modifier : Modifiers)
+		for (CsFloatRangeModifierType* Modifier : Modifiers)
 		{
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
 			const ApplicationType& Application = Modifier->GetMaxApplication();
 
 			// PercentAddFirst || PercentSubtractFirst
@@ -714,7 +691,7 @@ namespace NCsModifier
 		// PercentAddFirst || PercentSubtractFirst
 		Result = ModifyFloatMaxPercentChecked(Context, FirstModifiers, Result);
 		// "The Rest"
-		for (const FloatRangeModifierType* FloatModifier : OtherModifiers)
+		for (const CsFloatRangeModifierType* FloatModifier : OtherModifiers)
 		{
 			Result = FloatModifier->ModifyMax(Result);
 		}
@@ -723,9 +700,9 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMaxAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMaxAndEmptyChecked(const FString& Context, TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsFloatRangeModifierType)
 
 		float Result = Value;
 
@@ -733,7 +710,7 @@ namespace NCsModifier
 
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			const FloatRangeModifierType* FloatModifier = Modifiers[I];
+			const CsFloatRangeModifierType* FloatModifier = Modifiers[I];
 
 			Result = FloatModifier->ModifyMax(Value);
 
@@ -742,16 +719,16 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMaxPercentChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMaxPercentChecked(const FString& Context, const TArray<CsFloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType, 64)
+		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, CsFloatRangeModifierType, 64)
 
 		float Result = Value;
 		float Percent = 1.0f;
 
 		const int32 Count = Modifiers.Num();
 
-		for (const FloatRangeModifierType* Modifier : Modifiers)
+		for (const CsFloatRangeModifierType* Modifier : Modifiers)
 		{
 			Percent = Modifier->ModifyMax(Percent);
 		}
@@ -760,9 +737,9 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMaxPercentAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMaxPercentAndEmptyChecked(const FString& Context, TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value)
 	{
-		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsFloatRangeModifierType)
 
 		float Result = Value;
 		float Percent = 1.0f;
@@ -771,7 +748,7 @@ namespace NCsModifier
 
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			const FloatRangeModifierType* FloatModifier = Modifiers[I];
+			const CsFloatRangeModifierType* FloatModifier = Modifiers[I];
 
 			Percent = FloatModifier->ModifyMax(Percent);
 
@@ -782,7 +759,7 @@ namespace NCsModifier
 		return Result;
 	}
 
-	#undef FloatRangeModifierType
+	#pragma endregion Float Rnage
 
-	#undef ModifierType
+	#undef ApplicationType
 }

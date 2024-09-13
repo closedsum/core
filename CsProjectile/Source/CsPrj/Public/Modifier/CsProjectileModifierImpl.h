@@ -72,8 +72,6 @@ namespace NCsProjectile
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define IntModifierType NCsModifier::NInt::IInt
 	#define PrjModifierType NCsProjectile::NModifier::IModifier
 	#define CopyType NCsProjectile::NModifier::NCopy::ICopy
 
@@ -81,8 +79,8 @@ namespace NCsProjectile
 		* Describes how to modify any int properties on a Projectile.
 		*  Projectile is an object that implements the interface: ICsProjectile.
 		*/
-		struct CSPRJ_API FInt : public ModifierType,
-								public IntModifierType,
+		struct CSPRJ_API FInt : public CsModifierType,
+								public CsIntModifierType,
 								public PrjModifierType,
 								public ICsGetProjectileModifierType,
 								public ICsIsValid,
@@ -120,7 +118,7 @@ namespace NCsProjectile
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// IntModifierType (NCsModifier::NInt::IInt)
+		// CsIntModifierType (NCsModifier::NInt::IInt)
 		#pragma region
 		public:
 
@@ -129,7 +127,7 @@ namespace NCsProjectile
 				return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
 			}
 
-		#pragma endregion IntModifierType (NCsModifier::NInt::IInt)
+		#pragma endregion CsIntModifierType (NCsModifier::NInt::IInt)
 
 		// ICsGetProjectileModifierType
 		#pragma region
@@ -178,8 +176,6 @@ namespace NCsProjectile
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef IntModifierType
 	#undef PrjModifierType
 	#undef CopyType
 	}
@@ -238,8 +234,6 @@ namespace NCsProjectile
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define FloatModifierType NCsModifier::NFloat::IFloat
 	#define PrjModifierType NCsProjectile::NModifier::IModifier
 	#define CopyType NCsProjectile::NModifier::NCopy::ICopy
 
@@ -247,8 +241,8 @@ namespace NCsProjectile
 		* Describes how to modify any float properties on a Projectile.
 		*  Projectile is an object that implements the interface: ICsProjectile.
 		*/
-		struct CSPRJ_API FFloat : public ModifierType,
-								  public FloatModifierType,
+		struct CSPRJ_API FFloat : public CsModifierType,
+								  public CsFloatModifierType,
 								  public PrjModifierType,
 								  public ICsGetProjectileModifierType,
 								  public ICsIsValid,
@@ -286,7 +280,7 @@ namespace NCsProjectile
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// FloatModifierType (NCsModifier::NFloat::IFloat)
+		// CsFloatModifierType (NCsModifier::NFloat::IFloat)
 		#pragma region
 		public:
 
@@ -297,7 +291,7 @@ namespace NCsProjectile
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
-		#pragma endregion FloatModifierType (NCsModifier::NFloat::IFloat)
+		#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
 
 		// ICsGetProjectileModifierType
 		#pragma region
@@ -345,8 +339,6 @@ namespace NCsProjectile
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef FloatModifierType
 	#undef PrjModifierType
 	#undef CopyType
 	}
@@ -400,8 +392,6 @@ namespace NCsProjectile
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsModifier::IModifier
-	#define ToggleModifierType NCsModifier::NToggle::IToggle
 	#define PrjModifierType NCsProjectile::NModifier::IModifier
 	#define CopyType NCsProjectile::NModifier::NCopy::ICopy
 
@@ -409,8 +399,8 @@ namespace NCsProjectile
 		* Describes whether to toggle any properties on a Projectile.
 		*  Projectile is an object that implements the interface: ICsProjectile.
 		*/
-		struct CSPRJ_API FToggle : public ModifierType,
-								   public ToggleModifierType,
+		struct CSPRJ_API FToggle : public CsModifierType,
+								   public CsToggleModifierType,
 								   public PrjModifierType,
 								   public ICsGetProjectileModifierType,
 								   public ICsIsValid,
@@ -447,13 +437,13 @@ namespace NCsProjectile
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// ToggleModifierType (NCsModifier::NToggle::IToggle)
+		// CsToggleModifierType (NCsModifier::NToggle::IToggle)
 		#pragma region
 		public:
 
 			FORCEINLINE bool IsEnabled() const { return GetbEnable(); }
 
-		#pragma endregion ToggleModifierType (NCsModifier::NToggle::IToggle)
+		#pragma endregion CsToggleModifierType (NCsModifier::NToggle::IToggle)
 
 		// ICsGetProjectileModifierType
 		#pragma region
@@ -500,8 +490,6 @@ namespace NCsProjectile
 		#undef ApplicationType
 		};
 
-	#undef ModifierType
-	#undef ToggleModifierType
 	#undef PrjModifierType
 	#undef CopyType
 	}

@@ -77,7 +77,6 @@ namespace NCsSpawner
 			int32 Result = Value;
 
 			typedef NCsSpawner::NModifier::FLibrary ModifierLibrary;
-			typedef NCsModifier::NInt::IInt IntModifierType;
 
 			for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 			{
@@ -87,8 +86,8 @@ namespace NCsSpawner
 
 				if (SpawnerModifierType == Type)
 				{
-					IntModifierType* IntModifier = GetInterfaceChecked<IntModifierType>(Context, Modifier);
-					Result						 = IntModifier->Modify(Value);
+					CsIntModifierType* IntModifier = GetInterfaceChecked<CsIntModifierType>(Context, Modifier);
+					Result						   = IntModifier->Modify(Value);
 				}
 			}
 			return Result;
@@ -100,22 +99,20 @@ namespace NCsSpawner
 
 			float Result = Value;
 
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
 			// TODO: FUTURE: Use a tiny / small array on the stack
-			static TArray<FloatModifierType*> FirstModifiers;
-			static TArray<FloatModifierType*> Modifiers;
-			static TArray<FloatModifierType*> LastModifiers;
+			static TArray<CsFloatModifierType*> FirstModifiers;
+			static TArray<CsFloatModifierType*> Modifiers;
+			static TArray<CsFloatModifierType*> LastModifiers;
 
 			for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 			{
-				ModifierType* Modifier									   = AllocatedModifier.Get();
+				ModifierType* Modifier									= AllocatedModifier.Get();
 				const ICsGetSpawnerModifierType* GetSpawnerModifierType = GetInterfaceChecked<ICsGetSpawnerModifierType>(Context, Modifier);
-				const FECsSpawnerModifier& SpawnerModifierType		   = GetSpawnerModifierType->GetSpawnerModifierType();
+				const FECsSpawnerModifier& SpawnerModifierType		    = GetSpawnerModifierType->GetSpawnerModifierType();
 
 				if (SpawnerModifierType == Type)
 				{
-					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+					CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 					typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 

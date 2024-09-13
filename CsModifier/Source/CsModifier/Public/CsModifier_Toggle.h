@@ -31,3 +31,5 @@ namespace NCsModifier
 		};
 	}
 }
+
+using CsToggleModifierType = NCsModifier::NToggle::IToggle;

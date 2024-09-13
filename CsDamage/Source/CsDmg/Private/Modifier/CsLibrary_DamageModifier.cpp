@@ -33,7 +33,6 @@ namespace NCsDamage
 		#define RangeType NCsDamage::NRange::IRange
 		#define ModifierResourceType NCsDamage::NModifier::FResource
 		#define AllocatedModifierType NCsDamage::NModifier::FAllocated
-		#define BaseModifierType NCsModifier::IModifier
 
 		const FECsDamageModifier& FLibrary::GetTypeChecked(const FString& Context, const ModifierType* Modifier)
 		{
@@ -89,13 +88,13 @@ namespace NCsDamage
 			}
 		}
 
-		void FLibrary::CopyChecked(const FString& Context, const TArray<BaseModifierType*>& From, TArray<ModifierType*>& To)
+		void FLibrary::CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<ModifierType*>& To)
 		{
 			typedef NCsModifier::FLibrary ModifierLibrary;
 
 			To.Reset(FMath::Max(To.Max(), From.Num()));
 
-			for (BaseModifierType* B : From)
+			for (CsModifierType* B : From)
 			{
 				if (ModifierType* Modifier = ModifierLibrary::GetSafeInterfaceChecked<ModifierType>(Context, B))
 				{
@@ -143,7 +142,7 @@ namespace NCsDamage
 			}
 		}	
 
-		void FLibrary::AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<BaseModifierType*>& To)
+		void FLibrary::AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<CsModifierType*>& To)
 		{
 			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
@@ -155,7 +154,7 @@ namespace NCsDamage
 			for (int32 I = 0; I < FromSize; ++I)
 			{
 				ModifierType* F		= From[I];				
-				BaseModifierType* T = GetInterfaceChecked<BaseModifierType>(Context, F);
+				CsModifierType* T = GetInterfaceChecked<CsModifierType>(Context, F);
 
 				To[ToSize + I] = T;
 			}
@@ -200,9 +199,7 @@ namespace NCsDamage
 					float& V = *(const_cast<float*>(&(Point->GetValue())));
 
 					// Float
-					typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-					const FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+					const CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 					V = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, V);
 				}
@@ -222,9 +219,7 @@ namespace NCsDamage
 					float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
 
 					// Float
-					typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-					if (const FloatModifierType* FloatModifier = GetSafeInterfaceChecked<FloatModifierType>(Context, Modifier))
+					if (const CsFloatModifierType* FloatModifier = GetSafeInterfaceChecked<CsFloatModifierType>(Context, Modifier))
 					{
 						Min = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
 						Max = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
@@ -239,9 +234,7 @@ namespace NCsDamage
 					float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
 
 					// Float Range
-					typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
-
-					if (const FloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<FloatRangeModifierType>(Context, Modifier))
+					if (const CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
 					{
 						Min = ModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
 						Max = ModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
@@ -285,8 +278,6 @@ namespace NCsDamage
 
 				typedef NCsModifier::FLibrary ModifierLibrary;
 				typedef NCsDamage::NValue::FLibrary ValueLibrary;
-				typedef NCsModifier::NFloat::IFloat FloatModifierType;
-				typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
 
 				// Value
 			
@@ -294,7 +285,7 @@ namespace NCsDamage
 				typedef NCsDamage::NValue::NPoint::IPoint ValuePointType;
 
 				ValuePointType* ValuePoint = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, Value);
-				static TArray<FloatModifierType*> ValuePoint_FloatModifiers;
+				static TArray<CsFloatModifierType*> ValuePoint_FloatModifiers;
 				float* ValuePoint_Value = nullptr;
 
 				if (ValuePoint)
@@ -306,8 +297,8 @@ namespace NCsDamage
 				typedef NCsDamage::NValue::NRange::IRange ValueRangeType;
 
 				ValueRangeType* ValueRange = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value);
-				static TArray<FloatModifierType*> ValueRange_FloatModifiers;
-				static TArray<FloatRangeModifierType*> ValueRange_FloatRangeModifiers;
+				static TArray<CsFloatModifierType*> ValueRange_FloatModifiers;
+				static TArray<CsFloatRangeModifierType*> ValueRange_FloatRangeModifiers;
 				float* ValueRange_ValueMin = nullptr;
 				float* ValueRange_ValueMax = nullptr;
 
@@ -319,9 +310,9 @@ namespace NCsDamage
 
 
 				// Critical Chance
-				static TArray<FloatModifierType*> CriticalChance_FloatModifiers;
+				static TArray<CsFloatModifierType*> CriticalChance_FloatModifiers;
 				// Critical Strike
-				static TArray<FloatModifierType*> CriticalStrike_FloatModifiers;
+				static TArray<CsFloatModifierType*> CriticalStrike_FloatModifiers;
 
 				for (ModifierType* Modifier : Modifiers)
 				{
@@ -342,7 +333,7 @@ namespace NCsDamage
 					{
 						if (DmgModifierType == NCsDamageModifier::ValuePoint)
 						{
-							FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+							CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 							ValuePoint_FloatModifiers.Add(FloatModifier);
 						}
@@ -355,7 +346,7 @@ namespace NCsDamage
 						if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
 						{
 							// Float
-							if (FloatModifierType* FloatModifier = GetSafeInterfaceChecked<FloatModifierType>(Context, Modifier))
+							if (CsFloatModifierType* FloatModifier = GetSafeInterfaceChecked<CsFloatModifierType>(Context, Modifier))
 							{
 								ValueRange_FloatModifiers.Add(FloatModifier);
 							}
@@ -365,7 +356,7 @@ namespace NCsDamage
 						if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
 						{
 							// Float Range
-							if (FloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<FloatRangeModifierType>(Context, Modifier))
+							if (CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
 							{
 								ValueRange_FloatRangeModifiers.Add(FloatRangeModifier);
 							}
@@ -476,8 +467,6 @@ namespace NCsDamage
 
 			typedef NCsModifier::FLibrary ModifierLibrary;
 			typedef NCsDamage::NValue::FLibrary ValueLibrary;
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
-			typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
 
 			for (ModifierResourceType* M : Modifiers)
 			{
@@ -500,7 +489,7 @@ namespace NCsDamage
 
 					if (DmgModifierType == NCsDamageModifier::ValuePoint)
 					{
-						FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+						CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 						float& V = *(const_cast<float*>(&(Point->GetValue())));
 
@@ -522,7 +511,7 @@ namespace NCsDamage
 						float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
 
 						// Float
-						if (FloatModifierType* FloatModifier = GetSafeInterfaceChecked<FloatModifierType>(Context, Modifier))
+						if (CsFloatModifierType* FloatModifier = GetSafeInterfaceChecked<CsFloatModifierType>(Context, Modifier))
 						{
 							Min = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
 							Max = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
@@ -536,7 +525,7 @@ namespace NCsDamage
 						float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
 
 						// Float Range
-						if (FloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<FloatRangeModifierType>(Context, Modifier))
+						if (CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
 						{
 							Min = ModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
 							Max = ModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
@@ -587,7 +576,6 @@ namespace NCsDamage
 			typedef NCsModifier::FLibrary ModifierLibrary;
 			typedef NCsDamage::NValue::FLibrary ValueLibrary;
 			typedef NCsModifier::NFloat::IFloat FloatModifierType;
-			typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
 
 			// Value
 			
@@ -608,7 +596,7 @@ namespace NCsDamage
 
 			ValueRangeType* ValueRange = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value);
 			TArray<FloatModifierType*, TFixedAllocator<64>> ValueRange_FloatModifiers;
-			TArray<FloatRangeModifierType*, TFixedAllocator<64>> ValueRange_FloatRangeModifiers;
+			TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> ValueRange_FloatRangeModifiers;
 			float* ValueRange_ValueMin = nullptr;
 			float* ValueRange_ValueMax = nullptr;
 
@@ -666,7 +654,7 @@ namespace NCsDamage
 					if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
 					{
 						// Float Range
-						if (FloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<FloatRangeModifierType>(Context, Modifier))
+						if (CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
 						{
 							ValueRange_FloatRangeModifiers.Add(FloatRangeModifier);
 						}
@@ -784,12 +772,10 @@ namespace NCsDamage
 
 				typedef NCsModifier::FLibrary ModifierLibrary;
 				typedef NCsDamage::NValue::FLibrary ValueLibrary;
-				typedef NCsModifier::NFloat::IFloat FloatModifierType;
-				typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
 
 				// Range
-				TArray<FloatModifierType*> FloatModifiers;
-				TArray<FloatRangeModifierType*> FloatRangeModifiers;
+				TArray<CsFloatModifierType*> FloatModifiers;
+				TArray<CsFloatRangeModifierType*> FloatRangeModifiers;
 
 				float Max = Range->GetMaxRange();
 
@@ -802,14 +788,14 @@ namespace NCsDamage
 					// Range: Uniform
 					if (DmgModifierType == NCsDamageModifier::Range_Uniform)
 					{
-						FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+						CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 						FloatModifiers.Add(FloatModifier);
 					}
 					// Range: Range
 					if (DmgModifierType == NCsDamageModifier::Range_Range)
 					{
-						FloatRangeModifierType* FloatRangeModifier = GetInterfaceChecked<FloatRangeModifierType>(Context, Modifier);
+						CsFloatRangeModifierType* FloatRangeModifier = GetInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier);
 
 						FloatRangeModifiers.Add(FloatRangeModifier);
 					}
@@ -827,12 +813,10 @@ namespace NCsDamage
 
 			typedef NCsModifier::FLibrary ModifierLibrary;
 			typedef NCsDamage::NValue::FLibrary ValueLibrary;
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
-			typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
 
 			// Range
-			TArray<FloatModifierType*, TFixedAllocator<64>> FloatModifiers;
-			TArray<FloatRangeModifierType*, TFixedAllocator<64>> FloatRangeModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> FloatModifiers;
+			TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> FloatRangeModifiers;
 
 			float Max = Range->GetMaxRange();
 
@@ -845,14 +829,14 @@ namespace NCsDamage
 				// Range: Uniform
 				if (DmgModifierType == NCsDamageModifier::Range_Uniform)
 				{
-					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+					CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 					FloatModifiers.Add(FloatModifier);
 				}
 				// Range: Range
 				if (DmgModifierType == NCsDamageModifier::Range_Range)
 				{
-					FloatRangeModifierType* FloatRangeModifier = GetInterfaceChecked<FloatRangeModifierType>(Context, Modifier);
+					CsFloatRangeModifierType* FloatRangeModifier = GetInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier);
 
 					FloatRangeModifiers.Add(FloatRangeModifier);
 				}
@@ -871,6 +855,5 @@ namespace NCsDamage
 		#undef RangeType
 		#undef ModifierResourceType
 		#undef AllocatedModifierType
-		#undef BaseModifierType
 	}
 }

@@ -76,7 +76,6 @@ namespace NCsWeapon
 			int32 Result = Value;
 
 			typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-			typedef NCsModifier::NInt::IInt IntModifierType;
 
 			for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 			{
@@ -86,8 +85,8 @@ namespace NCsWeapon
 
 				if (WeaponModifierType == Type)
 				{
-					IntModifierType* IntModifier = GetInterfaceChecked<IntModifierType>(Context, Modifier);
-					Result						 = IntModifier->Modify(Result);
+					CsIntModifierType* IntModifier = GetInterfaceChecked<CsIntModifierType>(Context, Modifier);
+					Result						   = IntModifier->Modify(Result);
 				}
 			}
 			return Result;
@@ -101,7 +100,6 @@ namespace NCsWeapon
 			int32 Result = Value;
 
 			typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-			typedef NCsModifier::NInt::IInt IntModifierType;
 
 			for (ModifierType* Modifier : Modifiers)
 			{
@@ -110,8 +108,8 @@ namespace NCsWeapon
 
 				if (WeaponModifierType == Type)
 				{
-					IntModifierType* IntModifier = GetInterfaceChecked<IntModifierType>(Context, Modifier);
-					Result						 = IntModifier->Modify(Result);
+					CsIntModifierType* IntModifier = GetInterfaceChecked<CsIntModifierType>(Context, Modifier);
+					Result						   = IntModifier->Modify(Result);
 				}
 			}
 			return Result;
@@ -125,7 +123,6 @@ namespace NCsWeapon
 			int32 Result = Value;
 
 			typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-			typedef NCsModifier::NInt::IInt IntModifierType;
 
 			const int32 Count = Modifiers.Num();
 
@@ -138,8 +135,8 @@ namespace NCsWeapon
 
 				if (WeaponModifierType == Type)
 				{
-					IntModifierType* IntModifier = GetInterfaceChecked<IntModifierType>(Context, Modifier);
-					Result						 = IntModifier->Modify(Result);
+					CsIntModifierType* IntModifier = GetInterfaceChecked<CsIntModifierType>(Context, Modifier);
+					Result						   = IntModifier->Modify(Result);
 				}
 				Modifiers.RemoveAt(I, 1, false);
 			}
@@ -163,11 +160,9 @@ namespace NCsWeapon
 
 				float Result = Value;
 
-				typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-				static TArray<FloatModifierType*> FirstModifiers;
-				static TArray<FloatModifierType*> Modifiers;
-				static TArray<FloatModifierType*> LastModifiers;
+				static TArray<CsFloatModifierType*> FirstModifiers;
+				static TArray<CsFloatModifierType*> Modifiers;
+				static TArray<CsFloatModifierType*> LastModifiers;
 
 				for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 				{
@@ -177,7 +172,7 @@ namespace NCsWeapon
 
 					if (WeaponModifierType == Type)
 					{
-						FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+						CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 						typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
@@ -226,11 +221,9 @@ namespace NCsWeapon
 
 			float Result = Value;
 
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-			TArray<FloatModifierType*, TFixedAllocator<64>> FirstModifiers;
-			TArray<FloatModifierType*, TFixedAllocator<64>> Modifiers;
-			TArray<FloatModifierType*, TFixedAllocator<64>> LastModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> FirstModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> Modifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> LastModifiers;
 
 			for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 			{
@@ -240,7 +233,7 @@ namespace NCsWeapon
 
 				if (WeaponModifierType == Type)
 				{
-					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+					CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 					typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
@@ -294,11 +287,9 @@ namespace NCsWeapon
 
 				float Result = Value;
 
-				typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-				static TArray<FloatModifierType*> FirstModifiers;
-				static TArray<FloatModifierType*> TempModifiers;
-				static TArray<FloatModifierType*> LastModifiers;
+				static TArray<CsFloatModifierType*> FirstModifiers;
+				static TArray<CsFloatModifierType*> TempModifiers;
+				static TArray<CsFloatModifierType*> LastModifiers;
 
 				for (ModifierType* Modifier : Modifiers)
 				{
@@ -307,7 +298,7 @@ namespace NCsWeapon
 
 					if (WeaponModifierType == Type)
 					{
-						FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+						CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 						typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
@@ -357,11 +348,9 @@ namespace NCsWeapon
 
 			float Result = Value;
 
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-			TArray<FloatModifierType*, TFixedAllocator<64>> FirstModifiers;
-			TArray<FloatModifierType*, TFixedAllocator<64>> TempModifiers;
-			TArray<FloatModifierType*, TFixedAllocator<64>> LastModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> FirstModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> TempModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> LastModifiers;
 
 			for (ModifierType* Modifier : Modifiers)
 			{
@@ -370,7 +359,7 @@ namespace NCsWeapon
 
 				if (WeaponModifierType == Type)
 				{
-					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+					CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 					typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
@@ -424,11 +413,9 @@ namespace NCsWeapon
 
 				float Result = Value;
 
-				typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-				static TArray<FloatModifierType*> FirstModifiers;
-				static TArray<FloatModifierType*> TempModifiers;
-				static TArray<FloatModifierType*> LastModifiers;
+				static TArray<CsFloatModifierType*> FirstModifiers;
+				static TArray<CsFloatModifierType*> TempModifiers;
+				static TArray<CsFloatModifierType*> LastModifiers;
 
 				const int32 Count = Modifiers.Num();
 
@@ -441,7 +428,7 @@ namespace NCsWeapon
 
 					if (WeaponModifierType == Type)
 					{
-						FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+						CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 						typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
@@ -492,11 +479,9 @@ namespace NCsWeapon
 
 			float Result = Value;
 
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-			TArray<FloatModifierType*, TFixedAllocator<64>> FirstModifiers;
-			TArray<FloatModifierType*, TFixedAllocator<64>> TempModifiers;
-			TArray<FloatModifierType*, TFixedAllocator<64>> LastModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> FirstModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> TempModifiers;
+			TArray<CsFloatModifierType*, TFixedAllocator<64>> LastModifiers;
 
 			const int32 Count = Modifiers.Num();
 
@@ -509,7 +494,7 @@ namespace NCsWeapon
 
 				if (WeaponModifierType == Type)
 				{
-					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+					CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
 
 					typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 

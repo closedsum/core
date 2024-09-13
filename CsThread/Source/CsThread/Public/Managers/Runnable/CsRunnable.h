@@ -78,17 +78,15 @@ public:
 
 #pragma endregion Thread
 
-#define CacheType NCsRunnable::FCache
+#define CsRunnableCacheType NCsRunnable::FCache
 
 private:
 
-	CacheType* Cache;
-
+	CsRunnableCacheType* Cache;
 public:
+	FORCEINLINE CsRunnableCacheType* GetCache() const { return Cache; }
 
-	FORCEINLINE CacheType* GetCache() const { return Cache; }
-
-#undef CacheType
+#undef CsRunnableCacheType
 
 private:
 
@@ -134,18 +132,18 @@ public:
 // Task
 #pragma region
 
-#define TaskType NCsRunnable::NTask::ITask
+#define CsRunnableTaskType NCsRunnable::NTask::ITask
 
 private:
 
 	/** */
-	TaskType* Task;
+	CsRunnableTaskType* Task;
 
 public:
 
-	FORCEINLINE TaskType* GetTask() const { return Task; }
+	FORCEINLINE CsRunnableTaskType* GetTask() const { return Task; }
 
-#undef TaskType
+#undef CsRunnableTaskType
 
 private:
 

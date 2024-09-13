@@ -86,3 +86,5 @@ namespace NCsRunnable
 		}
 	};
 }
+
+using CsRunnableCacheType = NCsRunnable::FCache;

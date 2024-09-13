@@ -204,9 +204,7 @@ UCsManager_Runnable::UCsManager_Runnable(const FObjectInitializer& ObjectInitial
 
 	const FString& Context = Str::GetFromWorldContextObject;
 
-	typedef NCsRunnable::NManager::FLibrary RunnableManagerLibrary;
-
-	if (UObject* ContextRoot = RunnableManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
+	if (UObject* ContextRoot = CsRunnableManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
 	{
 		if (UCsManager_Runnable* Manager = GetSafe(ContextRoot))
 			return Manager;
@@ -269,14 +267,13 @@ void UCsManager_Runnable::Initialize()
 			Manager_TaskInfo.CreatePool(Settings.TaskPoolSize);
 
 			typedef NCsRunnable::NTask::NInfo::FResource InfoContainerType;
-			typedef NCsRunnable::NTask::NInfo::FInfo InfoType;
 
 			const TArray<InfoContainerType*>& Pool = Manager_TaskInfo.GetPool();
 
 			for (InfoContainerType* Container : Pool)
 			{
-				InfoType* R			= Container->Get();
-				const int32& Index	= R->GetIndex();
+				CsRunnableTaskInfoType* R = Container->Get();
+				const int32& Index		  = R->GetIndex();
 				R->SetIndex(Index);
 			}
 		}
@@ -344,12 +341,11 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 	// Task
 	{
 		typedef NCsRunnable::NTask::NInfo::FResource InfoContainerType;
-		typedef NCsRunnable::NTask::NInfo::FInfo InfoType;
 
 		// if Tasks Queued, process Task
 		if (TCsDoubleLinkedList<InfoContainerType*>* Current = Manager_TaskInfo.GetAllocatedHead())
 		{
-			InfoType* Info = nullptr;
+			CsRunnableTaskInfoType* Info = nullptr;
 
 			// Complete
 			if (Runnable->IsTaskComplete())
@@ -362,7 +358,7 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 				}
 
 				InfoContainerType* CurrentContainer = **Current;
-				InfoType* CurrentInfo			    = CurrentContainer->Get();
+				CsRunnableTaskInfoType* CurrentInfo	= CurrentContainer->Get();
 
 				CurrentInfo->Reset();
 				Manager_TaskInfo.DeallocateHead();
@@ -474,9 +470,7 @@ FCsRunnableHandle UCsManager_Runnable::StartTask(TaskPayloadType* Payload)
 
 	checkf(Payload, TEXT("UCsManager_Runnable::StartTask: Payload is NULL."));
 
-	typedef NCsRunnable::NTask::NInfo::FInfo InfoType;
-
-	InfoType* Info = Manager_TaskInfo.AllocateResource();
+	CsRunnableTaskInfoType* Info = Manager_TaskInfo.AllocateResource();
 
 	Info->Owner = Payload->Owner;
 	Info->Task  = Payload->Task;
@@ -493,7 +487,6 @@ bool UCsManager_Runnable::StopQueuedTask(const FCsRunnableHandle& Handle)
 		return false;
 
 	typedef NCsRunnable::NTask::NInfo::FResource InfoContainerType;
-	typedef NCsRunnable::NTask::NInfo::FInfo InfoType;
 
 	TCsDoubleLinkedList<InfoContainerType*>* Current = Manager_TaskInfo.GetAllocatedHead();
 	TCsDoubleLinkedList<InfoContainerType*>* Next	 = Current;
@@ -504,7 +497,7 @@ bool UCsManager_Runnable::StopQueuedTask(const FCsRunnableHandle& Handle)
 		InfoContainerType* Container = **Current;
 		Next						 = Current->GetNextLink();
 
-		InfoType* R = Container->Get();
+		CsRunnableTaskInfoType* R = Container->Get();
 
 		if (R->Handle == Handle)
 		{

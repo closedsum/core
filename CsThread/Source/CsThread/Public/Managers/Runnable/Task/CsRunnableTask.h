@@ -46,3 +46,5 @@ namespace NCsRunnable
 		};
 	}
 }
+
+using CsRunnableTaskType = NCsRunnable::NTask::ITask;

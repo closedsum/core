@@ -74,13 +74,13 @@ namespace NCsRunnable
 	{
 		namespace NInfo
 		{
-		#define InfoType NCsRunnable::NTask::NInfo::FInfo
+		#define CsRunnableTaskInfoType NCsRunnable::NTask::NInfo::FInfo
 
 			/**
 			* Container for holding a reference to a InfoType (NCsRunnable::NTask::NInfo::Info).
 			* This serves as an easy way for a Manager Resource to keep track of the resource.
 			*/
-			struct CSTHREAD_API FResource : public TCsResourceContainer<InfoType>
+			struct CSTHREAD_API FResource : public TCsResourceContainer<CsRunnableTaskInfoType>
 			{
 			};
 
@@ -88,11 +88,11 @@ namespace NCsRunnable
 			* A manager handling allocating and deallocating of a InfoType (NCsRunnable::NTask::NInfo::Info) and
 			* are wrapped in the container: FResource.
 			*/
-			struct CSTHREAD_API FManager : public NCsResource::NManager::NValue::TFixed<InfoType, FResource, 0>
+			struct CSTHREAD_API FManager : public NCsResource::NManager::NValue::TFixed<CsRunnableTaskInfoType, FResource, 0>
 			{
 			};
 
-		#undef InfoType
+		#undef CsRunnableTaskInfoType
 		}
 	}
 }

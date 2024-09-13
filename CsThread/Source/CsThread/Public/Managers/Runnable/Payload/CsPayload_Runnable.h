@@ -33,9 +33,9 @@ namespace NCsRunnable
 
 			EThreadPriority ThreadPriority;
 
-		#define TaskType NCsRunnable::NTask::ITask
-			TaskType* Task;
-		#undef TaskType
+		#define CsRunnableTaskType NCsRunnable::NTask::ITask
+			CsRunnableTaskType* Task;
+		#undef CsRunnableTaskType
 
 			FImpl() :
 				Index(INDEX_NONE),
@@ -70,3 +70,5 @@ namespace NCsRunnable
 		};
 	}
 }
+
+using CsRunnablePayloadImplType = NCsRunnable::NPayload::FImpl;

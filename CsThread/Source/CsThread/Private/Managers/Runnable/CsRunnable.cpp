@@ -40,9 +40,7 @@ FCsRunnable::FCsRunnable() :
 	TaskState(ETaskState::None)
 
 {
-	typedef NCsRunnable::FCache CacheType;
-
-	Cache = new CacheType();
+	Cache = new CsRunnableCacheType();
 }
 
 FCsRunnable::~FCsRunnable()

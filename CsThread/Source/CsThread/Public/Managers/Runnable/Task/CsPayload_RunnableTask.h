@@ -28,9 +28,9 @@ namespace NCsRunnable
 
 				TWeakObjectPtr<UObject> Owner;
 
-			#define TaskType NCsRunnable::NTask::ITask
-				TaskType* Task;
-			#undef TaskType
+			#define CsRunnableTaskType NCsRunnable::NTask::ITask
+				CsRunnableTaskType* Task;
+			#undef CsRunnableTaskType
 
 				FCsRunnableHandle Handle;
 
@@ -73,3 +73,5 @@ namespace NCsRunnable
 		}
 	}
 }
+
+using CsRunnableTaskPayloadImplType = NCsRunnable::NTask::NPayload::FImpl;

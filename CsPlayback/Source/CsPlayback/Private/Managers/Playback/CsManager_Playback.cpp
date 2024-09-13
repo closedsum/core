@@ -343,11 +343,9 @@ void UCsManager_Playback::CleanUp()
 	delete Manager_ConsoleCommand;
 	Manager_ConsoleCommand = nullptr;
 
-	typedef NCsRunnable::NManager::FLibrary RunnableManagerLibrary;
-
 	// If Manager_Runnable is still active, clear the Owner on Record.Runnable so the
 	// Record.Task gets freed
-	if (UCsManager_Runnable* Manager_Runnable = RunnableManagerLibrary::GetSafe(MyRoot))
+	if (UCsManager_Runnable* Manager_Runnable = CsRunnableManagerLibrary::GetSafe(MyRoot))
 	{
 		Record.Runnable->GetCache()->Owner = nullptr;
 	}

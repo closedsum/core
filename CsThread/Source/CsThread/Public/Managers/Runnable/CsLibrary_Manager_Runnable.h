@@ -120,4 +120,6 @@ namespace NCsRunnable
 		#undef LogLevel
 		};
 	}
-} 
+}
+
+using CsRunnableManagerLibrary = NCsRunnable::NManager::FLibrary;

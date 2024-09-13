@@ -188,9 +188,7 @@ private:
 
 		FCsRunnable* Runnable;
 
-	#define TaskType NCsRunnable::NTask::ITask
-
-		struct FTask : TaskType
+		struct FTask : CsRunnableTaskType
 		{
 			friend struct FRecord;
 
@@ -279,8 +277,6 @@ private:
 
 		#undef OnCompleteType
 		};
-
-	#undef TaskType
 
 		FTask* Task;
 

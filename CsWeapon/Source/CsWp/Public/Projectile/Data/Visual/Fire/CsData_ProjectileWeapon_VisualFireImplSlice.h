@@ -1,11 +1,11 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Data
 #include "Projectile/Data/Visual/Fire/CsData_ProjectileWeapon_VisualFire.h"
 // Log
 #include "Utility/CsWpLog.h"
 
 #include "CsData_ProjectileWeapon_VisualFireImplSlice.generated.h"
-#pragma once
 
 // NCsWeapon::NProjectile::NData::NVisual::NFire::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire, FImplSlice)

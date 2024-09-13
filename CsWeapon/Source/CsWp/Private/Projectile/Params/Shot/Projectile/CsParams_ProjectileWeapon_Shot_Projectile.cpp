@@ -4,6 +4,8 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsParams_ProjectileWeapon_Shot_Projectile)
+
 // FCsProjectileWeapon_Shot_ProjectileParams
 #pragma region
 

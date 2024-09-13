@@ -1,11 +1,12 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Beam/CsBeamWeapon.h"
-#include "CsWp.h"
 
 // Weapon
 #include "CsWeapon.h"
 // Update
 #include "Managers/Time/CsUpdate.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsBeamWeapon)
 
 UCsBeamWeapon::UCsBeamWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

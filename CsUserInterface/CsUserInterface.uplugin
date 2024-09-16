@@ -67,6 +67,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsPool",
+      "Enabled": true
+    },
+    {
       "Name": "CsData",
       "Enabled": true
     },
@@ -80,10 +84,6 @@
     },
     {
       "Name": "CsInput",
-      "Enabled": true
-    },
-    {
-      "Name": "CsPlugin",
       "Enabled": true
     }
   ]

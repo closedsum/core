@@ -36,8 +36,8 @@ public class CsSound : ModuleRules
                     "CsTypes",
                     "CsCoreLibrary",
                     "CsTime",
-                    "CsCoroutine",
-                    "CsCore"
+                    "CsPool",
+                    "CsCoroutine"
 ,                }
             );
 

@@ -57,7 +57,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsSound>() const { return NCsSoundSettings::NCached::Str::Sound; }
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Actor", meta = (DisplayName = "Default Value: ECsStaticMeshActor"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound", meta = (DisplayName = "Default Value: ECsSound"))
 	FECsSound Default_ECsSound;
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound")

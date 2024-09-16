@@ -8,7 +8,7 @@
 // Damage
 #include "Value/Point/CsDamageValuePointImpl.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsDmgLog.h"
 
 #include "CsData_DamagePointImpl.generated.h"
 
@@ -40,7 +40,7 @@ struct CSDMG_API FCsData_DamagePoint
 	void CopyToPointAsValue(PointType* Point) const;
 #undef PointType
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
@@ -109,7 +109,7 @@ namespace NCsDamage
 			#pragma endregion DamageDataType (NCsDamage::NData::IData)
 
 			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
 
 			#undef ValueType
 			#undef ValueImplType

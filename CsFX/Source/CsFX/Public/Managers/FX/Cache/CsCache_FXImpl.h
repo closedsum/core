@@ -56,7 +56,7 @@ namespace NCsFX
 		* another implementation
 		*/
 		struct CSFX_API FImpl final : public PooledCacheType,
-										public FXCacheType
+									  public FXCacheType
 		{
 		public:
 

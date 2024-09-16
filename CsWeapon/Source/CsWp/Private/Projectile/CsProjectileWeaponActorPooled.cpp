@@ -3,6 +3,7 @@
 
 // CVar
 #include "Projectile/CsCVars_ProjectileWeapon.h"
+#include "Script/CsCVars_Script.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types

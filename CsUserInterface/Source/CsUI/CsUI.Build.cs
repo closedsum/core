@@ -29,11 +29,11 @@ public class CsUI : ModuleRules
                     "CsCoreLibrary",
                     "CsConsoleCommand",
                     "CsTime",
+                    "CsPool",
                     "CsData",
                     "CsUICore",
                     "CsPhysics", // TODO: Eventually remove dependency
-                    "CsInput",
-                    "CsCore"
+                    "CsInput"
 ,                }
             );
 

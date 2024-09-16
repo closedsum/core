@@ -72,7 +72,6 @@ UCsScriptLibrary_Manager_Save::UCsScriptLibrary_Manager_Save(const FObjectInitia
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerSave::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define LogError &NCsPlatformServices::FLog::Error
-#define SaveManagerLibrary NCsSave::NManager::FLibrary
 
 // FileName
 #pragma region
@@ -81,7 +80,7 @@ bool UCsScriptLibrary_Manager_Save::SetCurrentSave(const FString& Context, UObje
 {
 	CONDITIONAL_SET_CTXT(SetCurrentSave);
 
-	return SaveManagerLibrary::SetSafeCurrentSave(Ctxt, WorldContextObject, Save);
+	return CsSaveManagerLibrary::SetSafeCurrentSave(Ctxt, WorldContextObject, Save);
 }
 
 void UCsScriptLibrary_Manager_Save::SetCurrentSaveChecked(const FString& Context, UObject* WorldContextObject, const ECsSave& Save, bool& OutSuccess)
@@ -89,7 +88,7 @@ void UCsScriptLibrary_Manager_Save::SetCurrentSaveChecked(const FString& Context
 	CONDITIONAL_SET_CTXT(SetCurrentSaveChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(SaveManagerLibrary::SetCurrentSaveChecked(Ctxt, WorldContextObject, Save), SaveManagerLibrary::SetSafeCurrentSave(Ctxt, WorldContextObject, Save, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsSaveManagerLibrary::SetCurrentSaveChecked(Ctxt, WorldContextObject, Save), CsSaveManagerLibrary::SetSafeCurrentSave(Ctxt, WorldContextObject, Save, OutSuccess, LogError))
 }
 
 #pragma endregion FileName
@@ -101,7 +100,7 @@ bool UCsScriptLibrary_Manager_Save::Enumerate(const FString& Context, UObject* W
 {
 	CONDITIONAL_SET_CTXT(Enumerate);
 
-	return SaveManagerLibrary::SafeEnumerate(Ctxt, WorldContextObject);
+	return CsSaveManagerLibrary::SafeEnumerate(Ctxt, WorldContextObject);
 }
 
 void UCsScriptLibrary_Manager_Save::EnumerateChecked(const FString& Context, UObject* WorldContextObject, bool& OutSuccess)
@@ -109,14 +108,14 @@ void UCsScriptLibrary_Manager_Save::EnumerateChecked(const FString& Context, UOb
 	CONDITIONAL_SET_CTXT(EnumerateChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(SaveManagerLibrary::EnumerateChecked(Ctxt, WorldContextObject), SaveManagerLibrary::SafeEnumerate(Ctxt, WorldContextObject, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsSaveManagerLibrary::EnumerateChecked(Ctxt, WorldContextObject), CsSaveManagerLibrary::SafeEnumerate(Ctxt, WorldContextObject, OutSuccess, LogError))
 }
 
 void UCsScriptLibrary_Manager_Save::BindToEvent_OnEnumerate(const FString& Context, UObject* WorldContextObject, FCsManagerSave_ScriptPassable_OnEnumerate Delegate)
 {
 	CONDITIONAL_SET_CTXT(BindToEvent_OnEnumerate);
 
-	if (UCsManager_Save* Manager = SaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
+	if (UCsManager_Save* Manager = CsSaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
 	{
 		CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(Ctxt, Manager, OnEnumerate_ScriptEvent, Delegate, LogCsPlatformServices)
 	}
@@ -131,7 +130,7 @@ bool UCsScriptLibrary_Manager_Save::Read(const FString& Context, UObject* WorldC
 {
 	CONDITIONAL_SET_CTXT(Read);
 
-	return SaveManagerLibrary::SafeRead(Ctxt, WorldContextObject, Profile, Save);
+	return CsSaveManagerLibrary::SafeRead(Ctxt, WorldContextObject, Profile, Save);
 }
 
 void UCsScriptLibrary_Manager_Save::ReadChecked(const FString& Context, UObject* WorldContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, bool& OutSuccess)
@@ -139,14 +138,14 @@ void UCsScriptLibrary_Manager_Save::ReadChecked(const FString& Context, UObject*
 	CONDITIONAL_SET_CTXT(ReadChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(SaveManagerLibrary::ReadChecked(Ctxt, WorldContextObject, Profile, Save), SaveManagerLibrary::SafeRead(Ctxt, WorldContextObject, Profile, Save, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsSaveManagerLibrary::ReadChecked(Ctxt, WorldContextObject, Profile, Save), CsSaveManagerLibrary::SafeRead(Ctxt, WorldContextObject, Profile, Save, OutSuccess, LogError))
 }
 
 void UCsScriptLibrary_Manager_Save::BindToEvent_OnRead(const FString& Context, UObject* WorldContextObject, FCsManagerSave_ScriptPassable_OnRead Delegate)
 {
 	CONDITIONAL_SET_CTXT(BindToEvent_OnRead);
 
-	if (UCsManager_Save* Manager = SaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
+	if (UCsManager_Save* Manager = CsSaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
 	{
 		CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(Ctxt, Manager, OnRead_ScriptEvent, Delegate, LogCsPlatformServices)
 	}
@@ -156,7 +155,7 @@ bool UCsScriptLibrary_Manager_Save::ReadAll(const FString& Context, UObject* Wor
 {
 	CONDITIONAL_SET_CTXT(ReadAll);
 
-	return SaveManagerLibrary::SafeReadAll(Ctxt, WorldContextObject, Profile);
+	return CsSaveManagerLibrary::SafeReadAll(Ctxt, WorldContextObject, Profile);
 }
 
 void UCsScriptLibrary_Manager_Save::ReadAllChecked(const FString& Context, UObject* WorldContextObject, const ECsPlayerProfile& Profile, bool& OutSuccess)
@@ -164,14 +163,14 @@ void UCsScriptLibrary_Manager_Save::ReadAllChecked(const FString& Context, UObje
 	CONDITIONAL_SET_CTXT(ReadAll);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(SaveManagerLibrary::ReadAllChecked(Ctxt, WorldContextObject, Profile), SaveManagerLibrary::SafeReadAll(Ctxt, WorldContextObject, Profile, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsSaveManagerLibrary::ReadAllChecked(Ctxt, WorldContextObject, Profile), CsSaveManagerLibrary::SafeReadAll(Ctxt, WorldContextObject, Profile, OutSuccess, LogError))
 }
 
 void UCsScriptLibrary_Manager_Save::BindToEvent_OnReadAll(const FString& Context, UObject* WorldContextObject, FCsManagerSave_ScriptPassable_OnReadAll Delegate)
 {
 	CONDITIONAL_SET_CTXT(BindToEvent_OnReadAll);
 
-	if (UCsManager_Save* Manager = SaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
+	if (UCsManager_Save* Manager = CsSaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
 	{
 		CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(Ctxt, Manager, OnReadAll_ScriptEvent, Delegate, LogCsPlatformServices)
 	}
@@ -186,7 +185,7 @@ bool UCsScriptLibrary_Manager_Save::Write(const FString& Context, UObject* World
 {
 	CONDITIONAL_SET_CTXT(Write);
 
-	return SaveManagerLibrary::SafeWrite(Ctxt, WorldContextObject, Profile, Save);
+	return CsSaveManagerLibrary::SafeWrite(Ctxt, WorldContextObject, Profile, Save);
 }
 
 void UCsScriptLibrary_Manager_Save::WriteChecked(const FString& Context, UObject* WorldContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, bool& OutSuccess)
@@ -194,14 +193,14 @@ void UCsScriptLibrary_Manager_Save::WriteChecked(const FString& Context, UObject
 	CONDITIONAL_SET_CTXT(WriteChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(SaveManagerLibrary::WriteChecked(Ctxt, WorldContextObject, Profile, Save), SaveManagerLibrary::SafeWrite(Ctxt, WorldContextObject, Profile, Save, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsSaveManagerLibrary::WriteChecked(Ctxt, WorldContextObject, Profile, Save), CsSaveManagerLibrary::SafeWrite(Ctxt, WorldContextObject, Profile, Save, OutSuccess, LogError))
 }
 
 void UCsScriptLibrary_Manager_Save::BindToEvent_OnWrite(const FString& Context, UObject* WorldContextObject, FCsManagerSave_ScriptPassable_OnWrite Delegate)
 {
 	CONDITIONAL_SET_CTXT(BindToEvent_OnWrite);
 
-	if (UCsManager_Save* Manager = SaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
+	if (UCsManager_Save* Manager = CsSaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
 	{
 		CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(Ctxt, Manager, OnWrite_ScriptEvent, Delegate, LogCsPlatformServices)
 	}
@@ -211,7 +210,7 @@ bool UCsScriptLibrary_Manager_Save::WriteAll(const FString& Context, UObject* Wo
 {
 	CONDITIONAL_SET_CTXT(WriteAll);
 
-	return SaveManagerLibrary::SafeWriteAll(Ctxt, WorldContextObject, Profile);
+	return CsSaveManagerLibrary::SafeWriteAll(Ctxt, WorldContextObject, Profile);
 }
 
 void UCsScriptLibrary_Manager_Save::WriteAllChecked(const FString& Context, UObject* WorldContextObject, const ECsPlayerProfile& Profile, bool& OutSuccess)
@@ -219,14 +218,14 @@ void UCsScriptLibrary_Manager_Save::WriteAllChecked(const FString& Context, UObj
 	CONDITIONAL_SET_CTXT(WriteAll);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(SaveManagerLibrary::WriteAllChecked(Ctxt, WorldContextObject, Profile), SaveManagerLibrary::SafeWriteAll(Ctxt, WorldContextObject, Profile, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsSaveManagerLibrary::WriteAllChecked(Ctxt, WorldContextObject, Profile), CsSaveManagerLibrary::SafeWriteAll(Ctxt, WorldContextObject, Profile, OutSuccess, LogError))
 }
 
 void UCsScriptLibrary_Manager_Save::BindToEvent_OnWriteAll(const FString& Context, UObject* WorldContextObject, FCsManagerSave_ScriptPassable_OnWriteAll Delegate)
 {
 	CONDITIONAL_SET_CTXT(BindToEvent_OnWriteAll);
 
-	if (UCsManager_Save* Manager = SaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
+	if (UCsManager_Save* Manager = CsSaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
 	{
 		CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(Ctxt, Manager, OnWriteAll_ScriptEvent, Delegate, LogCsPlatformServices)
 	}
@@ -241,7 +240,7 @@ bool UCsScriptLibrary_Manager_Save::Delete(const FString& Context, UObject* Worl
 {
 	CONDITIONAL_SET_CTXT(Delete);
 
-	return SaveManagerLibrary::SafeDelete(Ctxt, WorldContextObject, Profile, Save);
+	return CsSaveManagerLibrary::SafeDelete(Ctxt, WorldContextObject, Profile, Save);
 }
 
 void UCsScriptLibrary_Manager_Save::DeleteChecked(const FString& Context, UObject* WorldContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, bool& OutSuccess)
@@ -249,14 +248,14 @@ void UCsScriptLibrary_Manager_Save::DeleteChecked(const FString& Context, UObjec
 	CONDITIONAL_SET_CTXT(DeleteChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(SaveManagerLibrary::DeleteChecked(Ctxt, WorldContextObject, Profile, Save), SaveManagerLibrary::SafeDelete(Ctxt, WorldContextObject, Profile, Save, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsSaveManagerLibrary::DeleteChecked(Ctxt, WorldContextObject, Profile, Save), CsSaveManagerLibrary::SafeDelete(Ctxt, WorldContextObject, Profile, Save, OutSuccess, LogError))
 }
 
 void UCsScriptLibrary_Manager_Save::BindToEvent_OnDelete(const FString& Context, UObject* WorldContextObject, FCsManagerSave_ScriptPassable_OnDelete Delegate)
 {
 	CONDITIONAL_SET_CTXT(BindToEvent_OnDelete);
 
-	if (UCsManager_Save* Manager = SaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
+	if (UCsManager_Save* Manager = CsSaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
 	{
 		CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(Ctxt, Manager, OnDelete_ScriptEvent, Delegate, LogCsPlatformServices)
 	}
@@ -266,7 +265,7 @@ bool UCsScriptLibrary_Manager_Save::DeleteAll(const FString& Context, UObject* W
 {
 	CONDITIONAL_SET_CTXT(DeleteAll);
 
-	return SaveManagerLibrary::SafeDeleteAll(Ctxt, WorldContextObject, Profile);
+	return CsSaveManagerLibrary::SafeDeleteAll(Ctxt, WorldContextObject, Profile);
 }
 
 void UCsScriptLibrary_Manager_Save::DeleteAllChecked(const FString& Context, UObject* WorldContextObject, const ECsPlayerProfile& Profile, bool& OutSuccess)
@@ -274,14 +273,14 @@ void UCsScriptLibrary_Manager_Save::DeleteAllChecked(const FString& Context, UOb
 	CONDITIONAL_SET_CTXT(DeleteAllChecked);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(SaveManagerLibrary::DeleteAllChecked(Ctxt, WorldContextObject, Profile), SaveManagerLibrary::SafeDeleteAll(Ctxt, WorldContextObject, Profile, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsSaveManagerLibrary::DeleteAllChecked(Ctxt, WorldContextObject, Profile), CsSaveManagerLibrary::SafeDeleteAll(Ctxt, WorldContextObject, Profile, OutSuccess, LogError))
 }
 
 void UCsScriptLibrary_Manager_Save::BindToEvent_OnDeleteAll(const FString& Context, UObject* WorldContextObject, FCsManagerSave_ScriptPassable_OnDeleteAll Delegate)
 {
 	CONDITIONAL_SET_CTXT(BindToEvent_OnDeleteAll);
 
-	if (UCsManager_Save* Manager = SaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
+	if (UCsManager_Save* Manager = CsSaveManagerLibrary::GetSafe(Ctxt, WorldContextObject))
 	{
 		CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(Ctxt, Manager, OnDeleteAll_ScriptEvent, Delegate, LogCsPlatformServices)
 	}
@@ -291,7 +290,7 @@ bool UCsScriptLibrary_Manager_Save::DeleteAllContent(const FString& Context, UOb
 {
 	CONDITIONAL_SET_CTXT(DeleteAllContent);
 
-	return SaveManagerLibrary::SafeDeleteAllContent(Ctxt, WorldContextObject);
+	return CsSaveManagerLibrary::SafeDeleteAllContent(Ctxt, WorldContextObject);
 }
 
 void UCsScriptLibrary_Manager_Save::DeleteAllContentChecked(const FString& Context, UObject* WorldContextObject, bool& OutSuccess)
@@ -299,7 +298,7 @@ void UCsScriptLibrary_Manager_Save::DeleteAllContentChecked(const FString& Conte
 	CONDITIONAL_SET_CTXT(DeleteAllContent);
 
 	OutSuccess = true;
-	CS_SCRIPT_CHECKED(SaveManagerLibrary::DeleteAllContentChecked(Ctxt, WorldContextObject), SaveManagerLibrary::SafeDeleteAllContent(Ctxt, WorldContextObject, OutSuccess, LogError))
+	CS_SCRIPT_CHECKED(CsSaveManagerLibrary::DeleteAllContentChecked(Ctxt, WorldContextObject), CsSaveManagerLibrary::SafeDeleteAllContent(Ctxt, WorldContextObject, OutSuccess, LogError))
 }
 
 #pragma endregion Delete
@@ -307,4 +306,3 @@ void UCsScriptLibrary_Manager_Save::DeleteAllContentChecked(const FString& Conte
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
 #undef LogError
-#undef SaveManagerLibrary

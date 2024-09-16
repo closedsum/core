@@ -49,6 +49,7 @@ public class CsCore : ModuleRules
                     "CsCoreLibrary",
                     "CsConsoleCommand",
                     "CsTime",
+                    "CsPool",
                     "CsCoroutine",
                     "CsLoad",
                     "CsData",

@@ -87,6 +87,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsPool",
+      "Enabled": true
+    },
+    {
       "Name": "CsCoroutine",
       "Enabled": true
     },

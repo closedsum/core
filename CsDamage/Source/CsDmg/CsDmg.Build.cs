@@ -36,8 +36,7 @@ public class CsDmg : ModuleRules
                     "CsCoreLibrary",
                     "CsData",
                     "CsModifier",
-                    "CsPhysics",
-                    "CsCore"
+                    "CsPhysics"
                 }
             );
 

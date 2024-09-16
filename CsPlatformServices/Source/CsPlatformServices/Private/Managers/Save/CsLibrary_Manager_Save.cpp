@@ -31,6 +31,7 @@ namespace NCsSave
 		#define USING_NS_CACHED using namespace NCsSave::NManager::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsSave::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
+		#define LogLevel void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/
 
 		// ContextRoot
 		#pragma region
@@ -42,7 +43,7 @@ namespace NCsSave
 			return CsGameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
 			return CsGameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
@@ -112,7 +113,7 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->SetCurrentSave(Save);
 		}
 
-		bool FLibrary::SetSafeCurrentSave(const FString& Context, const UObject* ContextObject, const ECsSave& Save, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
+		bool FLibrary::SetSafeCurrentSave(const FString& Context, const UObject* ContextObject, const ECsSave& Save, LogLevel)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
@@ -134,7 +135,7 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->Enumerate();
 		}
 
-		bool FLibrary::SafeEnumerate(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
+		bool FLibrary::SafeEnumerate(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
@@ -154,7 +155,7 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->Read(Profile, Save);
 		}
 
-		bool FLibrary::SafeRead(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
+		bool FLibrary::SafeRead(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, LogLevel)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
@@ -172,7 +173,7 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->ReadAll(Profile);
 		}
 
-		bool FLibrary::SafeReadAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
+		bool FLibrary::SafeReadAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, LogLevel)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
@@ -192,7 +193,7 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->Write(Profile, Save);
 		}
 
-		bool FLibrary::SafeWrite(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
+		bool FLibrary::SafeWrite(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, LogLevel)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
@@ -210,7 +211,7 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->WriteAll(Profile);
 		}
 
-		bool FLibrary::SafeWriteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
+		bool FLibrary::SafeWriteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, LogLevel)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
@@ -232,7 +233,7 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->Delete(Profile, Save);
 		}
 
-		bool FLibrary::SafeDelete(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
+		bool FLibrary::SafeDelete(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, LogLevel)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
@@ -250,7 +251,7 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->DeleteAll(Profile);
 		}
 
-		bool FLibrary::SafeDeleteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
+		bool FLibrary::SafeDeleteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, LogLevel)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
@@ -267,7 +268,7 @@ namespace NCsSave
 			GetChecked(Context, ContextObject)->DeleteAllContent();
 		}
 
-		bool FLibrary::SafeDeleteAllContent(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/)
+		bool FLibrary::SafeDeleteAllContent(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
 			if (UCsManager_Save* Manager_Save = GetSafe(Context, ContextObject, Log))
 			{
@@ -281,5 +282,6 @@ namespace NCsSave
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
+		#undef LogLevel
 	}
 }

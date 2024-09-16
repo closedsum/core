@@ -234,8 +234,16 @@ namespace NCsFX
 					// DeathTime -> LifeTime (graceful deallocate)
 					if (ElapsedTime.Time >= DeathTime)
 					{
+						// TODO: HACK: In Editor there instances when an FX doesn't compile its Shaders until its running?
+						//			   The FX is "ready" but the instance is never created.
+					#if WITH_EDITOR
+						if (!FXLibrary::SafeHasSystemInstance(Context, FXComponent, nullptr) ||
+							FXLibrary::IsInactiveChecked(Context, FXComponent) ||
+							FXLibrary::IsCompleteChecked(Context, FXComponent))
+					#else
 						if (FXLibrary::IsInactiveChecked(Context, FXComponent) ||
 							FXLibrary::IsCompleteChecked(Context, FXComponent))
+					#endif // #if WITH_EDITOR
 						{
 							// Reset ElapsedTime
 							ElapsedTime.Reset();

@@ -197,6 +197,8 @@ namespace NCsFX
 	}
 }
 
+using CsFXDeallocateMethodType = NCsFX::EDeallocateMethod;
+
 #pragma endregion FXDeallocateMethod
 
 // FCsNiagaraSystem

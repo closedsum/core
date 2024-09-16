@@ -26,7 +26,7 @@ namespace NCsSkeletalMeshSettings
 
 #pragma endregion Cached
 
-UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Cs Skeletal mesh Settings"))
+UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Cs Skeletal Mesh Settings"))
 class CSSKELETALMESH_API UCsSkeletalMeshSettings : public UDeveloperSettings
 {
 	GENERATED_UCLASS_BODY()
@@ -53,6 +53,6 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|SkeletalMeshActor", meta = (DisplayName = "Default Value: ECsSkeletalMeshActor"))
 	FECsSkeletalMeshActor Default_ECsSkeletalMeshActor;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|NCsSkeletalMeshSettings", meta = (DisplayName = "Manager Runnable"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|SkeletalMeshActor", meta = (DisplayName = "Manager Skeletal Mesh Actor"))
 	FCsSettings_Manager_SkeletalMeshActor Manager_SkeletalMeshActor;
 };

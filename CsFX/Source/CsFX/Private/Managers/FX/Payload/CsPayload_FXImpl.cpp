@@ -77,7 +77,7 @@ namespace NCsFX
 			delete InterfaceMap;
 		}
 
-		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+		// CsPooledObjectPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 
 		void FImpl::Reset()
@@ -121,6 +121,6 @@ namespace NCsFX
 			ParameterLibrary::DeallocateChecked(Context, GetRoot(), SkeletalMeshParameters);
 		}
 
-		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+		#pragma endregion CsPooledObjectPayloadType (NCsPooledObject::NPayload::IPayload)
 	}
 }

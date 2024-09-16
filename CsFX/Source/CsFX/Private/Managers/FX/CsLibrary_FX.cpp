@@ -12,7 +12,7 @@
 	// Common
 #include "NiagaraFunctionLibrary.h"
 #include "Library/CsLibrary_World.h"
-#include "Game/CsLibrary_GameInstanceImpl.h"
+//#include "Game/CsLibrary_GameInstanceImpl.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
@@ -32,6 +32,7 @@
 #include "DataInterface/CsNiagaraDataInterfaceArrayRWImpl.h"
 #include "NiagaraDataInterfaceSkeletalMesh.h"
 #include "NiagaraDataInterfaceArrayImpl.h"
+#include "Niagara/Private/NiagaraDataInterfaceArrayImplHelpers.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraParameterCollection.h"
 #include "NiagaraSystemInstanceController.h"
@@ -623,14 +624,12 @@ namespace NCsFX
 	{
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, int32)
 
-		// TODO: FIX
-		check(0);
-		/*UNiagaraDataInterfaceArrayInt32* ArrayDI = GetArrayInt32Checked(Context, System, OverrideName);
+		UNiagaraDataInterfaceArrayInt32* ArrayDI = GetArrayInt32Checked(Context, System, OverrideName);
 
 		auto* ArrayProxy			   = static_cast<typename UNiagaraDataInterfaceArrayInt32::FProxyType*>(ArrayDI->GetProxy());
 		TConstArrayView<int32> ArrData(ArrayData);
 		ArrayProxy->SetArrayData(ArrData);
-		SetNiagaraVariantArray<int32, UNiagaraDataInterfaceArrayInt32>(System, OverrideName, ArrayDI);*/
+		SetNiagaraVariantArray<int32, UNiagaraDataInterfaceArrayInt32>(System, OverrideName, ArrayDI);
 	}
 
 	void FLibrary::SetArrayInt32Checked(const FString& Context, UNiagaraDataInterfaceArrayInt32* ArrayDI, const TArray<int32>& ArrayData, TArray<int32>& Indices)
@@ -639,11 +638,9 @@ namespace NCsFX
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, int32)
 		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 
-		// TODO: FIX
-		check(0);
-		/*auto* ArrayProxy			   = static_cast<typename UNiagaraDataInterfaceArrayInt32::FProxyType*>(ArrayDI->GetProxy());
+		auto* ArrayProxy			   = static_cast<typename UNiagaraDataInterfaceArrayInt32::FProxyType*>(ArrayDI->GetProxy());
 		TConstArrayView<int32> ArrData(ArrayData);
-		ArrayProxy->SetArrayData(ArrData);*/
+		ArrayProxy->SetArrayData(ArrData);
 	}
 
 	void FLibrary::SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData, TArray<int32>& Indices)
@@ -651,9 +648,7 @@ namespace NCsFX
 		UNiagaraDataInterfaceArrayInt32* ArrayDI = GetArrayInt32Checked(Context, System, OverrideName);
 
 		SetArrayInt32Checked(Context, ArrayDI, ArrayData, Indices);
-		// TODO: FIX
-		check(0);
-		//SetNiagaraVariantArray<int32, UNiagaraDataInterfaceArrayInt32>(System, OverrideName, ArrayDI);
+		SetNiagaraVariantArray<int32, UNiagaraDataInterfaceArrayInt32>(System, OverrideName, ArrayDI);
 	}
 
 	UNiagaraDataInterfaceArrayFloat* FLibrary::GetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName)
@@ -782,14 +777,12 @@ namespace NCsFX
 	{
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, float)
 
-		// TODO: FIX
-		check(0);
-		/*UNiagaraDataInterfaceArrayFloat* ArrayDI = GetArrayFloatChecked(Context, System, OverrideName);
+		UNiagaraDataInterfaceArrayFloat* ArrayDI = GetArrayFloatChecked(Context, System, OverrideName);
 
 		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat::FProxyType*>(ArrayDI->GetProxy());
 		TConstArrayView<float> ArrData(ArrayData);
 		ArrayProxy->SetArrayData(ArrData);
-		SetNiagaraVariantArray<float, UNiagaraDataInterfaceArrayFloat>(System, OverrideName, ArrayDI);*/
+		SetNiagaraVariantArray<float, UNiagaraDataInterfaceArrayFloat>(System, OverrideName, ArrayDI);
 	}
 
 	void FLibrary::SetArrayFloatChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat* ArrayDI, const TArray<float>& ArrayData, TArray<int32>& Indices)
@@ -798,11 +791,9 @@ namespace NCsFX
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, float)
 		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 		
-		// TODO: FIX
-		check(0);
-		/*auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat::FProxyType*>(ArrayDI->GetProxy());
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat::FProxyType*>(ArrayDI->GetProxy());
 		TConstArrayView<float> ArrData(ArrayData);
-		ArrayProxy->SetArrayData(ArrData);*/
+		ArrayProxy->SetArrayData(ArrData);
 	}
 
 	void FLibrary::SetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<float>& ArrayData, TArray<int32>& Indices)
@@ -810,9 +801,7 @@ namespace NCsFX
 		UNiagaraDataInterfaceArrayFloat* ArrayDI = GetArrayFloatChecked(Context, System, OverrideName);
 
 		SetArrayFloatChecked(Context, ArrayDI, ArrayData, Indices);
-		// TODO: FIX
-		check(0);
-		//SetNiagaraVariantArray<float, UNiagaraDataInterfaceArrayFloat>(System, OverrideName, ArrayDI);
+		SetNiagaraVariantArray<float, UNiagaraDataInterfaceArrayFloat>(System, OverrideName, ArrayDI);
 	}
 
 	#define PayloadType NCsFX::NLibrary::NSetArrayFloatChecked::FPayload
@@ -964,14 +953,12 @@ namespace NCsFX
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector3f)
 
-		// TODO: FIX
-		check(0);
-		/*UNiagaraDataInterfaceArrayFloat3* ArrayDI = GetArrayVectorChecked(Context, System, OverrideName);
+		UNiagaraDataInterfaceArrayFloat3* ArrayDI = GetArrayVectorChecked(Context, System, OverrideName);
 
 		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat3::FProxyType*>(ArrayDI->GetProxy());
 		TConstArrayView<FVector3f> ArrData(ArrayData);
 		ArrayProxy->SetArrayData(ArrData);
-		SetNiagaraVariantArray<FVector3f, UNiagaraDataInterfaceArrayFloat3>(System, OverrideName, ArrayDI);*/
+		SetNiagaraVariantArray<FVector3f, UNiagaraDataInterfaceArrayFloat3>(System, OverrideName, ArrayDI);
 	}
 
 	void FLibrary::SetArrayVectorChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat3* ArrayDI, const TArray<FVector3f>& ArrayData, TArray<int32>& Indices)
@@ -980,11 +967,9 @@ namespace NCsFX
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector3f)
 		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 		
-		// TODO: FIX
-		check(0);
-		/*auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat3::FProxyType*>(ArrayDI->GetProxy());
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat3::FProxyType*>(ArrayDI->GetProxy());
 		TConstArrayView<FVector3f> ArrData(ArrayData);
-		ArrayProxy->SetArrayData(ArrData);*/
+		ArrayProxy->SetArrayData(ArrData);
 	}
 
 	void FLibrary::SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector3f>& ArrayData, TArray<int32>& Indices)
@@ -992,9 +977,7 @@ namespace NCsFX
 		UNiagaraDataInterfaceArrayFloat3* ArrayDI = GetArrayVectorChecked(Context, System, OverrideName);
 
 		SetArrayVectorChecked(Context, ArrayDI, ArrayData, Indices);
-		// TODO: FIX
-		check(0);
-		//SetNiagaraVariantArray<FVector3f, UNiagaraDataInterfaceArrayFloat3>(System, OverrideName, ArrayDI);
+		SetNiagaraVariantArray<FVector3f, UNiagaraDataInterfaceArrayFloat3>(System, OverrideName, ArrayDI);
 	}
 
 	UNiagaraDataInterfaceArrayFloat4* FLibrary::GetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName)
@@ -1035,14 +1018,12 @@ namespace NCsFX
 	{
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector4f)
 
-		// TODO: FIX
-		check(0);
-		/*UNiagaraDataInterfaceArrayFloat4* ArrayDI = GetArrayVector4Checked(Context, System, OverrideName);
+		UNiagaraDataInterfaceArrayFloat4* ArrayDI = GetArrayVector4Checked(Context, System, OverrideName);
 	
 		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat4::FProxyType*>(ArrayDI->GetProxy());
 		TConstArrayView<FVector4f> ArrData(ArrayData);
 		ArrayProxy->SetArrayData(ArrData);
-		SetNiagaraVariantArray<FVector4f, UNiagaraDataInterfaceArrayFloat4>(System, OverrideName, ArrayDI);*/
+		SetNiagaraVariantArray<FVector4f, UNiagaraDataInterfaceArrayFloat4>(System, OverrideName, ArrayDI);
 	}
 
 	void FLibrary::SetArrayVector4Checked(const FString& Context, UNiagaraDataInterfaceArrayFloat4* ArrayDI, const TArray<FVector4f>& ArrayData, TArray<int32>& Indices)
@@ -1050,12 +1031,10 @@ namespace NCsFX
 		CS_IS_PTR_NULL_CHECKED(ArrayDI)
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector4f)
 		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
-		
-		// TODO: FIX
-		check(0);
-		/*auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat4::FProxyType*>(ArrayDI->GetProxy());
+
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat4::FProxyType*>(ArrayDI->GetProxy());
 		TConstArrayView<FVector4f> ArrData(ArrayData);
-		ArrayProxy->SetArrayData(ArrData);*/
+		ArrayProxy->SetArrayData(ArrData);
 	}
 
 	void FLibrary::SetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector4f>& ArrayData, TArray<int32>& Indices)
@@ -1063,9 +1042,7 @@ namespace NCsFX
 		UNiagaraDataInterfaceArrayFloat4* ArrayDI = GetArrayVector4Checked(Context, System, OverrideName);
 
 		SetArrayVector4Checked(Context, ArrayDI, ArrayData, Indices);
-		// TODO: FIX
-		check(0);
-		//SetNiagaraVariantArray<FVector4f, UNiagaraDataInterfaceArrayFloat4>(System, OverrideName, ArrayDI);
+		SetNiagaraVariantArray<FVector4f, UNiagaraDataInterfaceArrayFloat4>(System, OverrideName, ArrayDI);
 	}
 
 	UNiagaraDataInterfaceArrayQuat* FLibrary::GetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName)
@@ -1112,14 +1089,12 @@ namespace NCsFX
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FQuat4f)
 
-		// TODO: FIX
-		check(0);
-		/*UNiagaraDataInterfaceArrayQuat* ArrayDI = GetArrayQuatChecked(Context, System, OverrideName);
+		UNiagaraDataInterfaceArrayQuat* ArrayDI = GetArrayQuatChecked(Context, System, OverrideName);
 
 		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayQuat::FProxyType*>(ArrayDI->GetProxy());
 		TConstArrayView<FQuat4f> ArrData(ArrayData);
 		ArrayProxy->SetArrayData(ArrData);
-		SetNiagaraVariantArray<FQuat4f, UNiagaraDataInterfaceArrayQuat>(System, OverrideName, ArrayDI);*/
+		SetNiagaraVariantArray<FQuat4f, UNiagaraDataInterfaceArrayQuat>(System, OverrideName, ArrayDI);
 	}
 
 	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraDataInterfaceArrayQuat* ArrayDI, const TArray<FQuat4f>& ArrayData, TArray<int32>& Indices)
@@ -1128,11 +1103,9 @@ namespace NCsFX
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FQuat4f)
 		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 
-		// TODO: FIX
-		check(0);
-		/*auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayQuat::FProxyType*>(ArrayDI->GetProxy());
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayQuat::FProxyType*>(ArrayDI->GetProxy());
 		TConstArrayView<FQuat4f> ArrData(ArrayData);
-		ArrayProxy->SetArrayData(ArrData);*/
+		ArrayProxy->SetArrayData(ArrData);
 	}
 
 	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat4f>& ArrayData, TArray<int32>& Indices)
@@ -1140,9 +1113,7 @@ namespace NCsFX
 		UNiagaraDataInterfaceArrayQuat* ArrayDI = GetArrayQuatChecked(Context, System, OverrideName);
 
 		SetArrayQuatChecked(Context, ArrayDI, ArrayData, Indices);
-		// TODO: FIX
-		check(0);
-		//SetNiagaraVariantArray<FQuat4f, UNiagaraDataInterfaceArrayQuat>(System, OverrideName, ArrayDI);
+		SetNiagaraVariantArray<FQuat4f, UNiagaraDataInterfaceArrayQuat>(System, OverrideName, ArrayDI);
 	}
 
 	#pragma endregion Parameter
@@ -1539,13 +1510,13 @@ namespace NCsFX
 		// NOTE: FUTURE: HACK: check to deal with Mobile PIE crashes
 		else
 		{
-			typedef NCsGameInstance::NImpl::FLibrary GameInstanceImplLibrary;
+			/*typedef NCsGameInstance::NImpl::FLibrary GameInstanceImplLibrary;
 
 			if (GameInstanceImplLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
 			{
 				if (!SystemInstance)
 					return true;
-			}
+			}*/
 		}
 	#endif // #if WITH_EDITOR
 
@@ -1571,13 +1542,13 @@ namespace NCsFX
 		// NOTE: FUTURE: HACK: check to deal with Mobile PIE crashes
 		else
 		{
-			typedef NCsGameInstance::NImpl::FLibrary GameInstanceImplLibrary;
+			/*typedef NCsGameInstance::NImpl::FLibrary GameInstanceImplLibrary;
 
 			if (GameInstanceImplLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
 			{
 				if (!SystemInstance)
 					return true;
-			}
+			}*/
 		}
 	#endif // #if WITH_EDITOR
 

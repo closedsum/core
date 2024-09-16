@@ -13,7 +13,7 @@
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsLibrary_EnumStruct.h"
-#include "Utility/CsLog.h"
+#include "Utility/CsStaticMeshLog.h"
 // StaticMeshActor
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
 
@@ -48,7 +48,7 @@ namespace NCsStaticMeshActor
 		Payload.CreateCustom			 = &CreateCustom;
 		Payload.IsValidEnum				 = &IsValidEnum;
 		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
-		Payload.Log						 = &FCsLog::Warning;
+		Payload.Log						 = &NCsStaticMesh::FLog::Warning;
 
 		EnumSettingsLibrary::Populate(Context, Payload);
 	}

@@ -65,10 +65,6 @@
     {
       "Name": "CsPhysics",
       "Enabled": true
-    },
-    {
-      "Name": "CsPlugin",
-      "Enabled": true
     }
   ]
 }

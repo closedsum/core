@@ -63,7 +63,11 @@
       "Enabled": true
     },
     {
-      "Name": "CsPlugin",
+      "Name": "CsPool",
+      "Enabled": true
+    },
+    {
+      "Name": "CsData",
       "Enabled": true
     }
   ]

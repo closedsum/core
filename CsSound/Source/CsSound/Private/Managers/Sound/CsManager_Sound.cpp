@@ -50,6 +50,8 @@ namespace NCsManagerSound
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, Init);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, Spawn);
+
+			const FString None = TEXT("None");
 		}
 
 		namespace Name
@@ -820,9 +822,9 @@ void UCsManager_Sound::LogTransaction(const FString& Context, const ECsPoolTrans
 		const FString ClassName		= Object->GetObject()->GetClass()->GetName();
 		const FString ObjectName	= Object->GetObject()->GetName();
 		const UObject* ObjectOwner	= Interface->GetCache()->GetOwner();
-		const FString OwnerName		= ObjectOwner ? ObjectOwner->GetName() : NCsCached::Str::None;
+		const FString OwnerName		= ObjectOwner ? ObjectOwner->GetName() : NCsManagerSound::NCached::Str::None;
 		const UObject* Parent		= Interface->GetCache()->GetParent();
-		const FString ParentName	= Parent ? Parent->GetName() : NCsCached::Str::None;
+		const FString ParentName	= Parent ? Parent->GetName() : NCsManagerSound::NCached::Str::None;
 		const float CurrentTime		= MyRoot->GetWorld()->GetTimeSeconds();
 
 		if (ObjectOwner && Parent)

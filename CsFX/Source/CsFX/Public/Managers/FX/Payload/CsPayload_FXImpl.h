@@ -20,13 +20,10 @@ namespace NCsFX
 {
 	namespace NPayload
 	{
-	#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-	#define FXPayloadType NCsFX::NPayload::IPayload
-
 		/**
 		*/
-		struct CSFX_API FImpl final : public PooledPayloadType,
-										public FXPayloadType
+		struct CSFX_API FImpl final : public CsPooledObjectPayloadType,
+									  public CsFXPayloadType
 		{
 		public:
 
@@ -115,7 +112,7 @@ namespace NCsFX
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+		// CsPooledObjectPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 		public:
 
@@ -131,7 +128,7 @@ namespace NCsFX
 
 			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
 
-		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+		#pragma endregion CsPooledObjectPayloadType (NCsPooledObject::NPayload::IPayload)
 
 		public:
 
@@ -144,7 +141,7 @@ namespace NCsFX
 			template<typename T>
 			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
-		// FXPayloadType (NCsFX::Payload::IPayload)
+		// CsFXPayloadType (NCsFX::Payload::IPayload)
 		#pragma region
 		public:
 
@@ -165,15 +162,14 @@ namespace NCsFX
 			FORCEINLINE const TArray<ScaledParameterType*>& GetScaledParameters() const { return ScaledParameters; }
 			FORCEINLINE const TArray<SkeletalMeshParameterType*>& GetSkeletalMeshParameters() const { return SkeletalMeshParameters; }
 
-		#pragma endregion FXPayloadType (NCsFX::Payload::IPayload)
+		#pragma endregion CsFXPayloadType (NCsFX::Payload::IPayload)
 
 		#undef DeallocateMethodType
 		#undef ParameterType
 		#undef ScaledParameterType
 		#undef SkeletalMeshParameterType
 		};
-
-	#undef PooledPayloadType
-	#undef FXPayloadType
 	}
 }
+
+using CsFXPayloadImplType = NCsFX::NPayload::FImpl;

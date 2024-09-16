@@ -36,7 +36,8 @@ public class CsSkeletalMesh : ModuleRules
                     "CsTypes",
                     "CsCoreLibrary",
                     "CsTime",
-                    "CsCore"
+                    "CsPool",
+                    "CsData"
                 }
             );
 

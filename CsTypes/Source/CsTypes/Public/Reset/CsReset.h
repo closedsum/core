@@ -6,7 +6,7 @@
 
 /**
 */
-struct CSCORE_API ICsReset : public ICsGetInterfaceMap
+struct CSTYPES_API ICsReset : public ICsGetInterfaceMap
 {
 public:
 

@@ -36,14 +36,14 @@ public class CsPrj : ModuleRules
                     "CsTypes",
                     "CsCoreLibrary",
                     "CsTime",
+                    "CsPool",
                     "CsCoroutine",
                     "CsData",
                     "CsDmg",
                     "CsModifier",
                     "CsSound",
                     "CsFX",
-                    "CsPhysics",
-                    "CsCore"
+                    "CsPhysics"
                 }
             );
 

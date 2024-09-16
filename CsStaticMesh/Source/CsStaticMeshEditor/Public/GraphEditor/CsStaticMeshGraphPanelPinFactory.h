@@ -7,7 +7,7 @@
 #include "EdGraph/EdGraphSchema.h"
 #include "EdGraphSchema_K2.h"
 
-class FCsStaticMeshPanelGraphPinFactory : public FGraphPanelPinFactory
+class CSSTATICMESHEDITOR_API FCsStaticMeshPanelGraphPinFactory : public FGraphPanelPinFactory
 {
 	virtual TSharedPtr<class SGraphPin> CreatePin(class UEdGraphPin* InPin) const override;
 

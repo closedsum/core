@@ -16,7 +16,7 @@ struct CSSKELETALMESH_API FCsSettings_Manager_SkeletalMeshActor_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "/Script/CsCore.CsSkeletalMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "/Script/CsSkeletalMesh.CsSkeletalMeshActor"))
 	TSoftClassPtr<UObject> Class;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (ClampMin = "4", UIMin = "4"))

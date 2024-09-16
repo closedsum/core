@@ -16,7 +16,7 @@ struct CSFX_API FCsSettings_Manager_FX_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (MustImplement = "/Script/CsCore.CsFXActorPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (MustImplement = "/Script/CsFX.CsFXActorPooled"))
 	TSoftClassPtr<UObject> Class; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (ClampMin = "4", UIMin = "4"))

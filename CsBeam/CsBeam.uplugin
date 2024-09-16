@@ -63,6 +63,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsPool",
+      "Enabled": true
+    },
+    {
       "Name": "CsCoroutine",
       "Enabled": true
     },
@@ -84,10 +88,6 @@
     },
     {
       "Name": "CsPhysics",
-      "Enabled": true
-    },
-    {
-      "Name": "CsPlugin",
       "Enabled": true
     }
   ]

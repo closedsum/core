@@ -29,11 +29,10 @@ namespace NCsFX
 			}
 		}
 
-		#define PayloadType NCsFX::NPayload::IPayload
+		#define LogLevel void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/
 
-		bool FLibrary::IsValidChecked(const FString& Context, PayloadType* Payload)
+		bool FLibrary::IsValidChecked(const FString& Context, CsFXPayloadType* Payload)
 		{
-			// Check Payload is Valid
 			CS_IS_PTR_NULL_CHECKED(Payload)
 			// Check FX System is Valid.
 			checkf(Payload->GetFXSystem(), TEXT("%s: FX System is NULL."), *Context);
@@ -81,9 +80,8 @@ namespace NCsFX
 			return true;
 		}
 
-		bool FLibrary::IsValid(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
+		bool FLibrary::IsValid(const FString& Context, CsFXPayloadType* Payload, LogLevel)
 		{
-			// Check Payload is Valid
 			CS_IS_PTR_NULL(Payload)
 			// Check FX System is Valid.
 			if (!Payload->GetFXSystem())
@@ -149,12 +147,10 @@ namespace NCsFX
 		}
 
 		#define PayloadImplType NCsFX::NPayload::FImpl
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			CS_IS_PTR_NULL_CHECKED(Payload)
-
 			CS_IS_VALID_CHECKED(FX);
 
 			Payload->FXSystem				  = FX.GetChecked(Context);
@@ -179,7 +175,7 @@ namespace NCsFX
 			Payload->bApplyTransformScale = FX.bApplyTransformScale;
 		}
 
-		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)
 		{
 			CS_IS_PTR_NULL_EXIT(Payload)
 			CS_IS_VALID_EXIT(FX);
@@ -196,7 +192,7 @@ namespace NCsFX
 			SetSafe(Context, Payload, FX, Transform, nullptr);
 		}
 
-		void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, const FTransform3f& Transform)
+		void FLibrary::SetChecked(const FString& Context, CsFXPayloadType* Payload, const FTransform3f& Transform)
 		{
 			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
 			PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
@@ -204,13 +200,13 @@ namespace NCsFX
 			PayloadImpl->Transform = Transform;
 		}
 
-		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, CsPooledObjectPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			SetChecked(Context, Payload, FX, Transform);
 			SetChecked(Context, Payload, PooledPayload);
 		}
 
-		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/)
+		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, CsPooledObjectPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)
 		{
 			CS_IS_PTR_NULL_EXIT(Payload)
 			CS_IS_PTR_NULL_EXIT(PooledPayload)
@@ -219,7 +215,7 @@ namespace NCsFX
 			SetChecked(Context, Payload, PooledPayload, FX, Transform);
 		}
 
-		void FLibrary::SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
+		void FLibrary::SetSafe(PayloadImplType* Payload, CsPooledObjectPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			using namespace NCsFX::NPayload::NLibrary::NCached;
 
@@ -228,7 +224,7 @@ namespace NCsFX
 			SetSafe(Context, Payload, PooledPayload, FX, Transform, nullptr);
 		}
 
-		void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
+		void FLibrary::SetChecked(const FString& Context, CsFXPayloadType* Payload, CsPooledObjectPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
 			PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
@@ -236,7 +232,7 @@ namespace NCsFX
 			SetChecked(Context, PayloadImpl, PooledPayload, FX, Transform);
 		}
 
-		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload)
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, CsPooledObjectPayloadType* PooledPayload)
 		{
 			CS_IS_PTR_NULL_CHECKED(Payload)
 
@@ -249,7 +245,7 @@ namespace NCsFX
 			Payload->PreserveChangesFromDefaultMask = PooledPayload->GetPreserveChangesFromDefaultMask();
 		}
 
-		void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload)
+		void FLibrary::SetChecked(const FString& Context, CsFXPayloadType* Payload, CsPooledObjectPayloadType* PooledPayload)
 		{
 			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
 			PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
@@ -257,7 +253,7 @@ namespace NCsFX
 			SetChecked(Context, PayloadImpl, PooledPayload);
 		}
 
-		void FLibrary::ApplyAsOffsetChecked(const FString& Context, PayloadType* Payload, const FTransform3f& Transform)
+		void FLibrary::ApplyAsOffsetChecked(const FString& Context, CsFXPayloadType* Payload, const FTransform3f& Transform)
 		{
 			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
 			PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
@@ -273,8 +269,7 @@ namespace NCsFX
 		}
 
 		#undef PayloadImplType
-		#undef PooledPayloadType
 
-		#undef PayloadType
+		#undef LogLevel
 	}
 }

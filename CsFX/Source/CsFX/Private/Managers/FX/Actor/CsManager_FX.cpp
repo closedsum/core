@@ -44,6 +44,8 @@ namespace NCsManagerFX
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX, InitInternalFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX, BindToOnPause);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX, Spawn);
+
+			const FString None = TEXT("None");
 		}
 
 		namespace Name
@@ -361,7 +363,7 @@ void UCsManager_FX::SetupInternal()
 	// Delegates
 	{
 		// Log
-		Internal.Log_Impl.BindStatic(&FCsLog::Warning);
+		Internal.Log_Impl.BindStatic(&NCsFX::FLog::Warning);
 		Internal.LogTransaction_Impl.BindUObject(this, &UCsManager_FX::LogTransaction);
 		// Container
 		Internal.ConstructContainer_Impl.BindUObject(this, &UCsManager_FX::ConstructContainer);
@@ -978,9 +980,9 @@ void UCsManager_FX::LogTransaction(const FString& Context, const ECsPoolTransact
 		const FString ClassName		= Object->GetObject()->GetClass()->GetName();
 		const FString ObjectName	= Object->GetObject()->GetName();
 		const UObject* ObjectOwner	= Interface->GetCache()->GetOwner();
-		const FString OwnerName		= ObjectOwner ? ObjectOwner->GetName() : NCsCached::Str::None;
+		const FString OwnerName		= ObjectOwner ? ObjectOwner->GetName() : NCsManagerFX::NCached::Str::None;
 		const UObject* Parent		= Interface->GetCache()->GetParent();
-		const FString ParentName	= Parent ? Parent->GetName() : NCsCached::Str::None;
+		const FString ParentName	= Parent ? Parent->GetName() : NCsManagerFX::NCached::Str::None;
 		const float CurrentTime		= GetWorld()->GetTimeSeconds();
 
 		if (ObjectOwner && Parent)

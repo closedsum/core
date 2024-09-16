@@ -7,7 +7,7 @@
 #include "EdGraph/EdGraphSchema.h"
 #include "EdGraphSchema_K2.h"
 
-class FCsSoundPanelGraphPinFactory : public FGraphPanelPinFactory
+class CSSOUNDEDITOR_API FCsSoundPanelGraphPinFactory : public FGraphPanelPinFactory
 {
 	virtual TSharedPtr<class SGraphPin> CreatePin(class UEdGraphPin* InPin) const override;
 

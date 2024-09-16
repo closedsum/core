@@ -36,7 +36,8 @@ public class CsStaticMesh : ModuleRules
                     "CsTypes",
                     "CsCoreLibrary",
                     "CsTime",
-                    "CsCore"
+                    "CsPool",
+                    "CsData"
 ,                }
             );
 

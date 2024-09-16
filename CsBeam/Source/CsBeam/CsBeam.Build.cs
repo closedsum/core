@@ -37,13 +37,13 @@ public class CsBeam : ModuleRules
                     "CsTypes",
                     "CsCoreLibrary",
                     "CsTime",
+                    "CsPool",
                     "CsCoroutine",
                     "CsData",
                     "CsDmg",
                     "CsSound",
                     "CsFX",
-                    "CsPhysics",
-                    "CsCore",
+                    "CsPhysics"
                 }
             );
 

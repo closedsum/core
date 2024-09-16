@@ -23,7 +23,7 @@ struct CSSOUND_API FCsSettings_Manager_Sound_PoolParams
 public:
 
 	/** The class of the pooled Sound. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsCore.CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsSound.CsSoundPooled"))
 	TSoftClassPtr<UObject> Class; 
 	/** The maximum size of the pool. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (ClampMin = "4", UIMin = "4"))
@@ -118,13 +118,13 @@ public:
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsSoundPooled */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsCore.CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsSound.CsSoundPooled"))
 	TSoftClassPtr<UObject> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsCore.CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsSound.CsSoundPooled"))
 	TSoftClassPtr<UObject> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsCore.CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsSound.CsSoundPooled"))
 	TSoftClassPtr<UObject> ClassC;
 
 	FCsSettings_Manager_Sound_UnitTest() :

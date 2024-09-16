@@ -8,8 +8,6 @@
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsSkeletalMeshSettings.h"
-// Interface
-#include "SourceControl/Tool/CsGetSourceControlTool.h"
 
 namespace NCsSkeletalMesh
 {

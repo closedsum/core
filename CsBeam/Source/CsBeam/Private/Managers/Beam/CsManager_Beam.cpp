@@ -66,6 +66,8 @@ namespace NCsManagerBeam
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Beam, PopulateDataMapFromDataTable);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Beam, GetBeam);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Beam, GetData);
+			
+			const FString None = TEXT("None");
 		}
 
 		namespace Name
@@ -928,9 +930,9 @@ void UCsManager_Beam::LogTransaction(const FString& Context, const ECsPoolTransa
 		const FString ClassName		= Object->GetObject()->GetClass()->GetName();
 		const FString ObjectName	= Object->GetObject()->GetName();
 		const UObject* ObjectOwner	= Interface->GetCache()->GetOwner();
-		const FString OwnerName		= ObjectOwner ? ObjectOwner->GetName() : NCsCached::Str::None;
+		const FString OwnerName		= ObjectOwner ? ObjectOwner->GetName() : NCsManagerBeam::NCached::Str::None;
 		const UObject* Parent		= Interface->GetCache()->GetParent();
-		const FString ParentName	= Parent ? Parent->GetName() : NCsCached::Str::None;
+		const FString ParentName	= Parent ? Parent->GetName() : NCsManagerBeam::NCached::Str::None;
 		const float CurrentTime		= GetWorld()->GetTimeSeconds();
 
 		if (ObjectOwner && Parent)

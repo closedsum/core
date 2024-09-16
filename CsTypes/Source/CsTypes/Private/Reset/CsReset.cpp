@@ -3,4 +3,6 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Reset/CsReset.h"
 
-const FName ICsReset::Name = FName("ICsReset");
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(ICsReset);

@@ -138,7 +138,7 @@ public:
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the Sound. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "/Script.CsTypes.ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the Sound.

@@ -4,6 +4,7 @@
 
 // CVar
 #include "CsCVars_Projectile.h"
+#include "Script/CsCVars_Script.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Library

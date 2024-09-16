@@ -22,10 +22,10 @@ struct CSSOUND_API FCsSoundImpact : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	TEnumAsByte<EPhysicalSurface> Surface;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FCsSound Sound;
 
 public:

@@ -63,11 +63,11 @@
       "Enabled": true
     },
     {
-      "Name": "CsCoroutine",
+      "Name": "CsPool",
       "Enabled": true
     },
     {
-      "Name": "CsPlugin",
+      "Name": "CsCoroutine",
       "Enabled": true
     }
   ]

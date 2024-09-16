@@ -6,7 +6,7 @@
 // Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsFXLog.h"
 
 // NCsFX::NPayload::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, FImpl)
@@ -17,10 +17,10 @@ namespace NCsFX
 {
 	namespace NPayload
 	{
-		#define PayloadType NCsFX::NPayload::IPayload
-
-		struct CSFX_API FLibrary final : public NCsInterfaceMap::TLibrary<PayloadType>
+		struct CSFX_API FLibrary final : public NCsInterfaceMap::TLibrary<CsFXPayloadType>
 		{
+		#define LogLevel void(*Log)(const FString&) = &NCsFX::FLog::Warning
+
 		public:
 
 			/**
@@ -30,7 +30,7 @@ namespace NCsFX
 			* @param Payload
 			* return
 			*/
-			static bool IsValidChecked(const FString& Context, PayloadType* Payload);
+			static bool IsValidChecked(const FString& Context, CsFXPayloadType* Payload);
 
 			/**
 			* Check if the Payload is Valid.
@@ -40,10 +40,10 @@ namespace NCsFX
 			* @param Log
 			* return
 			*/
-			static bool IsValid(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) = &NCsFX::FLog::Warning);
+			static bool IsValid(const FString& Context, CsFXPayloadType* Payload, LogLevel);
 
 		#define PayloadImplType NCsFX::NPayload::FImpl
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+		#define CsPooledObjectPayloadType NCsPooledObject::NPayload::IPayload
 
 			/**
 			* Set the contents of Payload with FX.
@@ -66,7 +66,7 @@ namespace NCsFX
 			*					FX.Transform is applied as an "offset".
 			* @param Log		(optional)
 			*/
-			static void SetSafe(const FString& Conext, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, void(*Log)(const FString&) = &NCsFX::FLog::Warning);
+			static void SetSafe(const FString& Conext, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, LogLevel);
 
 			/**
 			* Safely set the contents of Payload with FX.
@@ -85,7 +85,7 @@ namespace NCsFX
 			* @param Payload
 			* @param Transform
 			*/
-			static void SetChecked(const FString& Context, PayloadType* Payload, const FTransform3f& Transform);
+			static void SetChecked(const FString& Context, CsFXPayloadType* Payload, const FTransform3f& Transform);
 
 			/**
 			* Set the contents of Payload with PooledPayload and FX.
@@ -97,7 +97,7 @@ namespace NCsFX
 			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
 			*						FX.Transform is applied as an "offset".
 			*/
-			static void SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, CsPooledObjectPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Safely set the contents of Payload with PooledPayload and FX.
@@ -110,7 +110,7 @@ namespace NCsFX
 			*						FX.Transform is applied as an "offset".
 			* @param Log			(optional)
 			*/
-			static void SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, void(*Log)(const FString&) = &NCsFX::FLog::Warning);
+			static void SetSafe(const FString& Context, PayloadImplType* Payload, CsPooledObjectPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, LogLevel);
 
 			/**
 			* Safely set the contents of Payload with PooledPayload and FX.
@@ -121,7 +121,7 @@ namespace NCsFX
 			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
 			*						FX.Transform is applied as an "offset".
 			*/
-			static void SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static void SetSafe(PayloadImplType* Payload, CsPooledObjectPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Set the contents of Payload with PooledPayload and FX.
@@ -133,7 +133,7 @@ namespace NCsFX
 			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
 			*						FX.Transform is applied as an "offset".
 			*/
-			static void SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static void SetChecked(const FString& Context, CsFXPayloadType* Payload, CsPooledObjectPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Set the contents of Payload with PooledPayload.
@@ -142,7 +142,7 @@ namespace NCsFX
 			* @param Payload
 			* @param PooledPayload
 			*/
-			static void SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload);
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, CsPooledObjectPayloadType* PooledPayload);
 
 			/**
 			* Set the contents of Payload with PooledPayload.
@@ -151,7 +151,7 @@ namespace NCsFX
 			* @param Payload
 			* @param PooledPayload
 			*/
-			static void SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload);
+			static void SetChecked(const FString& Context, CsFXPayloadType* Payload, CsPooledObjectPayloadType* PooledPayload);
 
 			/**
 			* Apply Transform as an offset to the existing Payload->GetTransform().
@@ -161,12 +161,12 @@ namespace NCsFX
 			* @param Transform	Transform to apply the sound after allocation and before playing.
 			*					Sound.Transform is applied as an "offset".
 			*/
-			static void ApplyAsOffsetChecked(const FString& Context, PayloadType* Payload, const FTransform3f& Transform);
+			static void ApplyAsOffsetChecked(const FString& Context, CsFXPayloadType* Payload, const FTransform3f& Transform);
 
-		#undef PooledPayloadType
+		#undef CsPooledObjectPayloadType
 		#undef PayloadImplType
-		};
 
-		#undef PayloadType
+		#undef LogLevel
+		};
 	}
 }

@@ -172,3 +172,5 @@ namespace NCsFX
 		};
 	}
 }
+
+using CsFXPayloadType = NCsFX::NPayload::IPayload;

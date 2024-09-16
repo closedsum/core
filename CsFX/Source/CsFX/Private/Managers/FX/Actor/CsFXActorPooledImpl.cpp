@@ -31,7 +31,7 @@
 
 #if WITH_EDITOR
 // Library
-#include "Game/CsLibrary_GameInstanceImpl.h"
+//#include "Game/CsLibrary_GameInstanceImpl.h"
 #endif // #if WITH_EDITOR
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsFXActorPooledImpl)
@@ -595,7 +595,7 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 #if WITH_EDITOR
 		// NOTE: 4.26.2. When exiting the game, need to wait for any async threads (render/gpu) to complete.
 		//				 During the game, this shouldn't be an issue since the FX should deallocate gracefully.
-		typedef NCsGameInstance::NImpl::FLibrary GameImplInstanceLibrary;
+		/*typedef NCsGameInstance::NImpl::FLibrary GameImplInstanceLibrary;
 
 		UCsManager_FX* Manager_FX = Cast<UCsManager_FX>(GetOuter());
 		UObject* OuterRoot					  = Manager_FX->GetMyRoot();
@@ -608,7 +608,7 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 			WaitForSystemComplete();
 			FX->GetNiagaraComponent()->DestroyInstance();
 		}
-		else
+		else*/
 		{
 			FX->GetNiagaraComponent()->SetAsset(nullptr);
 		}

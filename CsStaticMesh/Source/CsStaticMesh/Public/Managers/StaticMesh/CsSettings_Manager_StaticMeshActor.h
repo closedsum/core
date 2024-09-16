@@ -16,7 +16,7 @@ struct CSSTATICMESH_API FCsSettings_Manager_StaticMeshActor_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (MustImplement = "/Script/CsCore.CsStaticMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (MustImplement = "/Script/CsStaticMesh.CsStaticMeshActor"))
 	TSoftClassPtr<UObject> Class;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (ClampMin = "4", UIMin = "4"))

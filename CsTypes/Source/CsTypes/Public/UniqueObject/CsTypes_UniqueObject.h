@@ -9,7 +9,7 @@
 /**
 */
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsUniqueObjectId
+struct CSTYPES_API FCsUniqueObjectId
 {
 	GENERATED_USTRUCT_BODY()
 

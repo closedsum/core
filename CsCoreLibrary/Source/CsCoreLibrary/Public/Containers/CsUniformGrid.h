@@ -9,7 +9,7 @@ namespace NCsGrid
 {
 	namespace NUniform
 	{
-		struct CSCORE_API FHelper
+		struct CSCORELIBRARY_API FHelper
 		{
 		public:
 
@@ -44,7 +44,7 @@ namespace NCsGrid
 			}
 		};
 
-		struct CSCORE_API FGrid
+		struct CSCORELIBRARY_API FGrid
 		{
 		#define IDManagerType NCsResource::NManager::NValue::NFixed::NInt32::FManager
 		#define ResourceType NCsResource::NManager::NValue::NFixed::NInt32::FResource 

@@ -7,7 +7,7 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
+#include "Settings/CsCoreLibrarySettings.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsSettings_Container)
 
@@ -36,7 +36,7 @@ const FCsSettings_Container_UniformGrid& FCsSettings_Container_UniformGrid::Get(
 
 const FCsSettings_Container& FCsSettings_Container::Get()
 {
-	return GetMutableDefault<UCsDeveloperSettings>()->Container;
+	return GetMutableDefault<UCsCoreLibrarySettings>()->Container;
 }
 
 #pragma endregion FCsSettings_Container

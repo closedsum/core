@@ -11,7 +11,7 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSettings_Container_UniformGrid_Debug
+struct CSCORELIBRARY_API FCsSettings_Container_UniformGrid_Debug
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -38,7 +38,7 @@ public:
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSettings_Container_UniformGrid
+struct CSCORELIBRARY_API FCsSettings_Container_UniformGrid
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -61,7 +61,7 @@ public:
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSettings_Container
+struct CSCORELIBRARY_API FCsSettings_Container
 {
 	GENERATED_USTRUCT_BODY()
 

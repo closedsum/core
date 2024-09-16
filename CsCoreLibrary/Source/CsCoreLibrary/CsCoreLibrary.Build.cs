@@ -26,6 +26,7 @@ public class CsCoreLibrary : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
+                    "DeveloperSettings", // TODO: TEMP?
                     "CsMacro",
                     "CsPropertyTypes",
                     "CsEnum",

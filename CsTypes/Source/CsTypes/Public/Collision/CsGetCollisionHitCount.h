@@ -2,18 +2,17 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Interface.h"
 
 #include "CsGetCollisionHitCount.generated.h"
 
 UINTERFACE(Blueprintable)
-class CSCORE_API UCsGetCollisionHitCount : public UInterface
+class CSTYPES_API UCsGetCollisionHitCount : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class CSCORE_API ICsGetCollisionHitCount
+class CSTYPES_API ICsGetCollisionHitCount
 {
 	GENERATED_IINTERFACE_BODY()
 

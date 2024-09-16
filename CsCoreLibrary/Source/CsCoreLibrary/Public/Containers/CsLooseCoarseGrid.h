@@ -257,7 +257,7 @@ namespace NCsLooseCoarseGrid
 		int32 first_free;
 	};
 
-	struct CSCORE_API FHelper
+	struct CSCORELIBRARY_API FHelper
 	{
 	public:
 
@@ -303,7 +303,7 @@ namespace NCsLooseCoarseGrid
 		NCsLooseCoarseGrid::TSmallList<int32> elements[4];
 	};
 
-	struct CSCORE_API FElement
+	struct CSCORELIBRARY_API FElement
 	{
 	public:
 
@@ -359,7 +359,7 @@ namespace NCsLooseCoarseGrid
 
 	namespace NLoose
 	{
-		struct CSCORE_API FCell
+		struct CSCORELIBRARY_API FCell
 		{
 		public:
 
@@ -402,7 +402,7 @@ namespace NCsLooseCoarseGrid
 			}
 		};
 
-		struct CSCORE_API FGrid
+		struct CSCORELIBRARY_API FGrid
 		{
 		private:
 
@@ -458,7 +458,7 @@ namespace NCsLooseCoarseGrid
 
 	namespace NTight
 	{
-		struct CSCORE_API FCell
+		struct CSCORELIBRARY_API FCell
 		{
 		public:
 
@@ -484,7 +484,7 @@ namespace NCsLooseCoarseGrid
 			*/
 		};
 
-		struct CSCORE_API FGrid
+		struct CSCORELIBRARY_API FGrid
 		{
 		private:
 
@@ -544,7 +544,7 @@ namespace NCsLooseCoarseGrid
 	}
 
 	/** 2D grid comprised of "Tight" and "Loose" grids. */
-	struct CSCORE_API FGrid
+	struct CSCORELIBRARY_API FGrid
 	{
 	private:
 

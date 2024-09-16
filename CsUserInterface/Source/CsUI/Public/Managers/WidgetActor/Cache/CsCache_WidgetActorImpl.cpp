@@ -11,7 +11,6 @@
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // FX
 #include "Managers/WidgetActor/Payload/CsPayload_WidgetActor.h"
-#include "NiagaraComponent.h"
 // Component
 #include "Components/CsWidgetComponent.h"
 

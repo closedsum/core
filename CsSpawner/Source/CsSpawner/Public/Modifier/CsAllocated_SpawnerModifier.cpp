@@ -36,17 +36,14 @@ namespace NCsSpawner
 
 		UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-		#define ModifierType NCsSpawner::NModifier::IModifier
-		void FAllocated::Copy(UObject* InRoot, const ModifierType* From)
+		void FAllocated::Copy(UObject* InRoot, const CsSpawnerModifierType* From)
 		{
-		#undef ModifierType
 
 			using namespace NCsSpawner::NModifier::NAllocated::NCached;
 
 			const FString& Context = Str::Copy;
 
 			CS_IS_PTR_NULL_CHECKED(InRoot)
-
 			CS_IS_PTR_NULL_CHECKED(From)
 
 			typedef NCsSpawner::NManager::NModifier::FLibrary ModifierLibrary;

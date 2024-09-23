@@ -59,6 +59,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsPIE",
+      "Enabled": true
+    },
+    {
       "Name": "CsStructOps",
       "Enabled": true
     },
@@ -76,6 +80,10 @@
     },
     {
       "Name": "CsCoreLibrary",
+      "Enabled": true
+    },
+    {
+      "Name": "CsStartPlay",
       "Enabled": true
     },
     {

@@ -17,7 +17,7 @@
 #include "Modifier/Copy/CsSpawnerModifier_Copy.h"
 #include "Reset/CsReset.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsSpawnerLog.h"
 
 #include "CsSpawnerModifierImpl.generated.h"
 
@@ -56,13 +56,13 @@ public:
 	{
 	}
 
-#define ModifierType NCsSpawner::NModifier::FInt
-	void CopyToModifier(ModifierType* Modifier);
-	void CopyToModifierAsValue(ModifierType* Modifier) const;
-#undef ModifierType
+#define CsSpawnerIntModifierType NCsSpawner::NModifier::FInt
+	void CopyToModifier(CsSpawnerIntModifierType* Modifier);
+	void CopyToModifierAsValue(CsSpawnerIntModifierType* Modifier) const;
+#undef CsSpawnerIntModifierType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
@@ -72,12 +72,11 @@ namespace NCsSpawner
 {
 	namespace NModifier
 	{
-	#define SpawnerModifierType NCsSpawner::NModifier::IModifier
 	#define CopyType NCsSpawner::NModifier::NCopy::ICopy
 
 		struct CSSPAWNER_API FInt : public CsModifierType,
 								    public CsIntModifierType,
-									public SpawnerModifierType,
+									public CsSpawnerModifierType,
 									public ICsGetSpawnerModifierType,
 									public ICsIsValid,
 									public CopyType,
@@ -138,7 +137,7 @@ namespace NCsSpawner
 		public:
 
 			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 
 		#pragma endregion ICsIsValid
 
@@ -146,7 +145,7 @@ namespace NCsSpawner
 		#pragma region
 		public:
 
-			void Copy(const SpawnerModifierType* From);
+			void Copy(const CsSpawnerModifierType* From);
 
 		#pragma endregion CopyType (NCsSpawner::NModifier::NCopy::ICopy)
 
@@ -172,12 +171,13 @@ namespace NCsSpawner
 		#undef ApplicationType
 		};
 
-	#undef SpawnerModifierType
 	#undef CopyType
 	}
 }
 
-#pragma endregion FCsSpawnerModifier_Float
+using CsSpawnerIntModifierType = NCsSpawner::NModifier::FInt;
+
+#pragma endregion FCsSpawnerModifier_Int
 
 // FCsSpawnerModifier_Float
 #pragma region
@@ -214,13 +214,13 @@ public:
 	{
 	}
 
-#define ModifierType NCsSpawner::NModifier::FFloat
-	void CopyToModifier(ModifierType* Modifier);
-	void CopyToModifierAsValue(ModifierType* Modifier) const;
-#undef ModifierType
+#define CsSpawnerFloatModifierType NCsSpawner::NModifier::FFloat
+	void CopyToModifier(CsSpawnerFloatModifierType* Modifier);
+	void CopyToModifierAsValue(CsSpawnerFloatModifierType* Modifier) const;
+#undef CsSpawnerFloatModifierType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
@@ -230,12 +230,11 @@ namespace NCsSpawner
 {
 	namespace NModifier
 	{
-	#define SpawnerModifierType NCsSpawner::NModifier::IModifier
 	#define CopyType NCsSpawner::NModifier::NCopy::ICopy
 
 		struct CSSPAWNER_API FFloat : public CsModifierType,
 									  public CsFloatModifierType,
-									  public SpawnerModifierType,
+									  public CsSpawnerModifierType,
 									  public ICsGetSpawnerModifierType,
 									  public ICsIsValid,
 									  public CopyType,
@@ -298,7 +297,7 @@ namespace NCsSpawner
 		public:
 
 			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 
 		#pragma endregion ICsIsValid
 
@@ -306,7 +305,7 @@ namespace NCsSpawner
 		#pragma region
 		public:
 
-			void Copy(const SpawnerModifierType* From);
+			void Copy(const CsSpawnerModifierType* From);
 
 		#pragma endregion CopyType (NCsSpawner::NModifier::NCopy::ICopy)
 
@@ -331,10 +330,11 @@ namespace NCsSpawner
 		#undef ApplicationType
 		};
 
-	#undef SpawnerModifierType
 	#undef CopyType
 	}
 }
+
+using CsSpawnerFloatModifierType = NCsSpawner::NModifier::FFloat;
 
 #pragma endregion FCsSpawnerModifier_Float
 
@@ -374,7 +374,7 @@ public:
 #undef ModifierType
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
@@ -384,12 +384,11 @@ namespace NCsSpawner
 {
 	namespace NModifier
 	{
-	#define SpawnerModifierType NCsSpawner::NModifier::IModifier
 	#define CopyType NCsSpawner::NModifier::NCopy::ICopy
 
 		struct CSSPAWNER_API FToggle : public CsModifierType,
 									   public CsToggleModifierType,
-									   public SpawnerModifierType,
+									   public CsSpawnerModifierType,
 									   public ICsGetSpawnerModifierType,
 									   public ICsIsValid,
 									   public CopyType,
@@ -446,7 +445,7 @@ namespace NCsSpawner
 		public:
 
 			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 
 		#pragma endregion ICsIsValid
 
@@ -454,7 +453,7 @@ namespace NCsSpawner
 		#pragma region
 		public:
 
-			void Copy(const SpawnerModifierType* From);
+			void Copy(const CsSpawnerModifierType* From);
 
 		#pragma endregion CopyType (NCsSpawner::NModifier::NCopy::ICopy)
 
@@ -478,7 +477,6 @@ namespace NCsSpawner
 		#undef ApplicationType
 		};
 
-	#undef SpawnerModifierType
 	#undef CopyType
 	}
 }
@@ -517,7 +515,7 @@ struct CSSPAWNER_API FCsSpawnerModifierInfo
 	void CopyToInfoAsValue(InfoType* Info);
 #undef InfoType
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 };
 
 namespace NCsSpawner
@@ -526,22 +524,19 @@ namespace NCsSpawner
 	{
 		struct CSSPAWNER_API FInfo
 		{
-		#define IntModifierType NCsSpawner::NModifier::FInt
-		#define FloatModifierType NCsSpawner::NModifier::FFloat
 		#define ToggleModifierType NCsSpawner::NModifier::FToggle
-		#define ModifierType NCsSpawner::NModifier::IModifier
 
 		public:
 
-			TArray<IntModifierType> Ints;
+			TArray<CsSpawnerIntModifierType> Ints;
 
-			TArray<FloatModifierType> Floats;
+			TArray<CsSpawnerFloatModifierType> Floats;
 
 			TArray<ToggleModifierType> Toggles;
 
 		private:
 
-			TArray<ModifierType*> Modifiers;
+			TArray<CsSpawnerModifierType*> Modifiers;
 
 		public:
 
@@ -553,19 +548,19 @@ namespace NCsSpawner
 			{
 			}
 
-			FORCEINLINE const TArray<ModifierType*>& GetModifiers() const { return Modifiers; }
-			FORCEINLINE TArray<ModifierType*>* GetModifiersPtr() { return &Modifiers; }
+			FORCEINLINE const TArray<CsSpawnerModifierType*>& GetModifiers() const { return Modifiers; }
+			FORCEINLINE TArray<CsSpawnerModifierType*>* GetModifiersPtr() { return &Modifiers; }
 
 			FORCEINLINE void PopulateModifiers()
 			{
 				Modifiers.Reset(Ints.Num() + Floats.Num() + Toggles.Num());
 
-				for (IntModifierType& Modifier : Ints)
+				for (CsSpawnerIntModifierType& Modifier : Ints)
 				{
 					Modifiers.Add(&Modifier);
 				}
 
-				for (FloatModifierType& Modifier : Floats)
+				for (CsSpawnerFloatModifierType& Modifier : Floats)
 				{
 					Modifiers.Add(&Modifier);
 				}
@@ -577,12 +572,9 @@ namespace NCsSpawner
 			}
 
 			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSpawner::FLog::Warning) const;
 
-		#undef IntModifierType
-		#undef FloatModifierType
 		#undef ToggleModifierType
-		#undef ModifierType
 		};
 	}
 }

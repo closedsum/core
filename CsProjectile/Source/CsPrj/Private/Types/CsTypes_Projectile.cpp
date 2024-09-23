@@ -4,6 +4,8 @@
 // Types
 #include "CsMacro_Misc.h"
 // Library
+	// Data
+#include "Data/CsLibrary_Data.h"
 	// Settings
 #include "Settings/CsLibrary_ProjectileSettings.h"
 	// Common
@@ -284,6 +286,21 @@ namespace NCsProjectileData
 // FCsData_ProjectilePtr
 #pragma region
 
+namespace NCsDataProjectilePtr
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsData_ProjectilePtr, Unload);
+		}
+	}
+}
+
+#define USING_NS_CACHED using namespace NCsDataProjectilePtr::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsDataProjectilePtr::NCached; \
+	const FString& Context = Str::__FunctionName
+
 UObject* FCsData_ProjectilePtr::SafeLoad(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 {
 	const FSoftObjectPath& Path = Data.ToSoftObjectPath();
@@ -337,5 +354,26 @@ UObject* FCsData_ProjectilePtr::SafeLoadSoftClass(const FString& Context, void(*
 	}
 	return O;
 }
+
+void FCsData_ProjectilePtr::Unload()
+{
+	SET_CONTEXT(Unload);
+
+	Data.ResetWeakPtr();
+
+	if (IsValid(Data_Internal))
+	{
+		if (CsDataLibrary::SafeScriptImplements(Context, Data_Internal, nullptr))
+			CsDataLibrary::Script_UnloadChecked(Context, Data_Internal);
+		else
+			CsDataLibrary::UnloadChecked(Context, Data_Internal);
+	}
+
+	Data_Internal = nullptr;
+	Data_Class = nullptr;
+}
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
 
 #pragma endregion FCsData_ProjectilePtr

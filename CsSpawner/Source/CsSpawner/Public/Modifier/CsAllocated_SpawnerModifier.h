@@ -26,7 +26,7 @@ namespace NCsSpawner
 		{
 		public:
 
-		#define ModifierType NCsSpawner::NModifier::IModifier
+		#define CsSpawnerModifierType NCsSpawner::NModifier::IModifier
 
 			/** The Root for UCsManager_Weapon. */
 			TWeakObjectPtr<UObject> Root;
@@ -35,7 +35,7 @@ namespace NCsSpawner
 			FResource* Container;
 
 			/** Projectile Modifier */
-			ModifierType* Modifier;
+			CsSpawnerModifierType* Modifier;
 
 			/** The Type (or struct / class) of Modifier. This is used for 
 				quicker deallocation from UCsManager_Weapon. */
@@ -53,9 +53,9 @@ namespace NCsSpawner
 
 			UObject* GetRoot() const;
 
-			FORCEINLINE ModifierType* Get() const { return Modifier; }
+			FORCEINLINE CsSpawnerModifierType* Get() const { return Modifier; }
 
-			void Copy(UObject* InRoot, const ModifierType* From);
+			void Copy(UObject* InRoot, const CsSpawnerModifierType* From);
 
 			void Copy(const FAllocated&From);
 
@@ -74,7 +74,7 @@ namespace NCsSpawner
 			*/
 			void Reset();
 
-		#undef ModifierType
+		#undef CsSpawnerModifierType
 		};
 	}
 }

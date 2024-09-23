@@ -4,7 +4,7 @@
 #pragma once
 #include "GameFramework/Actor.h"
 // Interfaces
-#include "Start/CsStartPlay.h"
+#include "ICsStartPlay.h"
 #include "ICsSpawner.h"
 // Types
 #include "Coroutine/CsTypes_Coroutine.h"

@@ -4,6 +4,7 @@
 #pragma once
 // Resource
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed_Int32.h"
+#include "CoreMinimal.h"
 
 namespace NCsGrid
 {

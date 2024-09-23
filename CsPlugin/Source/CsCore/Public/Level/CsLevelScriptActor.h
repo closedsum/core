@@ -5,7 +5,7 @@
 
 #include "Engine/LevelScriptActor.h"
 // Interfaces
-#include "Start/CsStartPlay.h"
+#include "ICsStartPlay.h"
 #include "Level/CsGetLevelPayload.h"
 // Types
 #include "Data/CsTypes_Payload.h"

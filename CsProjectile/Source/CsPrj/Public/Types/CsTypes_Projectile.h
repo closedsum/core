@@ -1,13 +1,14 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
+#include "CsMacro_StructOps.h"
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
+// Data
+#include "Data/CsTableRowBase_Data.h"
 // Utility
 #include "Utility/CsPrjLog.h"
-// DataTable
-#include "Engine/DataTable.h"
 
 #include "CsTypes_Projectile.generated.h"
 
@@ -430,8 +431,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "/Script.CsPrj.CsProjectile"))
 	TSoftClassPtr<UObject> Projectile;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
-	int32 Load_Flags;
+	UPROPERTY(BlueprintReadOnly, Category = "CsPrj")
+	int32 Projectile_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsPrj")
 	UObject* Projectile_Internal;
@@ -441,7 +442,7 @@ public:
 
 	FCsProjectilePtr() :
 		Projectile(nullptr),
-		Load_Flags(0),
+		Projectile_LoadFlags(0),
 		Projectile_Internal(nullptr),
 		Projectile_Class(nullptr)
 	{
@@ -456,6 +457,15 @@ public:
 	}
 
 	FORCEINLINE UClass* GetClass() const { return Projectile_Class; }
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsProjectilePtr)
+
+	FORCEINLINE void Unload()
+	{
+		Projectile.ResetWeakPtr();
+		Projectile_Internal = nullptr;
+		Projectile_Class = nullptr;
+	}
 };
 
 #pragma endregion FCsProjectilePtr
@@ -475,8 +485,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "/Script.CsPrj.CsData_Projectile"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
-	int32 Load_Flags;
+	UPROPERTY(BlueprintReadOnly, Category = "CsPrj")
+	int32 Data_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsPrj")
 	UObject* Data_Internal;
@@ -486,7 +496,7 @@ public:
 
 	FCsData_ProjectilePtr() :
 		Data(nullptr),
-		Load_Flags(0),
+		Data_LoadFlags(0),
 		Data_Internal(nullptr),
 		Data_Class(nullptr)
 	{
@@ -502,6 +512,10 @@ public:
 	UObject* SafeLoad(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 
 	UObject* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsData_ProjectilePtr)
+
+	void Unload();
 };
 
 #pragma endregion FCsData_ProjectilePtr
@@ -512,7 +526,7 @@ public:
 /**
 */
 USTRUCT(BlueprintType)
-struct CSPRJ_API FCsProjectileClassEntry : public FTableRowBase
+struct CSPRJ_API FCsProjectileClassEntry : public FCsTableRowBase_Data
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -534,6 +548,19 @@ struct CSPRJ_API FCsProjectileClassEntry : public FTableRowBase
 		Class()
 	{
 	}
+
+// FCsTableRowBase_Data
+#pragma region
+public:
+
+	virtual void Unload() override
+	{
+		Class.Unload();
+	}
+
+#pragma endregion FCsTableRowBase_Data
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsProjectileClassEntry)
 };
 
 #pragma endregion FCsProjectileClassEntry
@@ -544,7 +571,7 @@ struct CSPRJ_API FCsProjectileClassEntry : public FTableRowBase
 /**
 */
 USTRUCT(BlueprintType)
-struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
+struct CSPRJ_API FCsProjectileEntry : public FCsTableRowBase_Data
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -572,6 +599,19 @@ struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 		Data()
 	{
 	}
+
+// FCsTableRowBase_Data
+#pragma region
+public:
+
+	virtual void Unload() override
+	{
+		Data.Unload();
+	}
+
+#pragma endregion FCsTableRowBase_Data
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsProjectileEntry)
 };
 
 #pragma endregion FCsProjectileEntry

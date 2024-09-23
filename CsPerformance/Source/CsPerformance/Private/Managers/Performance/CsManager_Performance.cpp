@@ -18,6 +18,8 @@
 #include "UI/CsPerformanceUI.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
+// Game
+#include "Engine/GameInstance.h"
 
 #if WITH_EDITOR
 #include "Singleton/CsGetManagerSingleton.h"

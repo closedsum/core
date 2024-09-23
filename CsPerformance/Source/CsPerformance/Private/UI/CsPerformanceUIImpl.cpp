@@ -15,7 +15,7 @@
 // UI
 #include "Components/TextBlock.h"
 // Render
-#include "RenderCore.h"
+#include "RenderTimer.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsPerformanceUIImpl)
 

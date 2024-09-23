@@ -3,4 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Params/CsSpawnerParams.h"
 
-const FName NCsSpawner::NParams::IParams::Name = FName("NCsSpawner::NParams::IParams");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsSpawner::NParams::IParams);

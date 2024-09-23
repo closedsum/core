@@ -30,6 +30,7 @@ public class CsDmg : ModuleRules
                     "CsMacro",
                     "CsContainer",
                     "CsEnum",
+                    "CsStructOps",
                     "CsValid",
                     "CsManager",
                     "CsTypes",

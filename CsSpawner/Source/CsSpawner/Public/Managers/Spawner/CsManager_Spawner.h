@@ -117,31 +117,26 @@ public:
 // Modifier
 #pragma region
 
-#define ModifierResourceType NCsSpawner::NModifier::FResource
-#define ModifierManagerType NCsSpawner::NModifier::FManager
-#define ModifierType NCsSpawner::NModifier::IModifier
-#define ModifierImplType NCsSpawner::NModifier::EImpl
-
 protected:
 
-	TArray<ModifierManagerType> Manager_Modifiers;
+	TArray<CsSpawnerModifierManagerType> Manager_Modifiers;
 
-	TArray<ModifierImplType> ImplTypeByModifier;
+	TArray<CsSpawnerModifierImplType> ImplTypeByModifier;
 
-	FORCEINLINE const ModifierImplType& GetModifierImplType(const FECsSpawnerModifier& Type) const
+	FORCEINLINE const CsSpawnerModifierImplType& GetModifierImplType(const FECsSpawnerModifier& Type) const
 	{
 		return ImplTypeByModifier[Type.GetValue()];
 	}
 
 	void SetupModifiers();
 
-	ModifierType* ConstructModifier(const ModifierImplType& ImplType);
+	CsSpawnerModifierType* ConstructModifier(const CsSpawnerModifierImplType& ImplType);
 
 public:
 
-	ModifierResourceType* AllocateModifier(const FECsSpawnerModifier& Type);
+	CsSpawnerModifierResourceType* AllocateModifier(const FECsSpawnerModifier& Type);
 
-	void DeallocateModifier(const FString& Context, const FECsSpawnerModifier& Type, ModifierResourceType* Modifier);
+	void DeallocateModifier(const FString& Context, const FECsSpawnerModifier& Type, CsSpawnerModifierResourceType* Modifier);
 
 	/**
 	*
@@ -150,16 +145,11 @@ public:
 	* @param Value
 	* return
 	*/
-	virtual const FECsSpawnerModifier& GetModifierType(const FString& Context, const ModifierType* Modifier);
+	virtual const FECsSpawnerModifier& GetModifierType(const FString& Context, const CsSpawnerModifierType* Modifier);
 
-	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierType* Modifier);
+	CsSpawnerModifierResourceType* CreateCopyOfModifier(const FString& Context, const CsSpawnerModifierType* Modifier);
 
-	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier);
-
-#undef ModifierResourceType
-#undef ModifierManagerType
-#undef ModifierType
-#undef ModifierImplType
+	CsSpawnerModifierResourceType* CreateCopyOfModifier(const FString& Context, const CsSpawnerModifierResourceType* Modifier);
 
 #pragma endregion Modifier
 };

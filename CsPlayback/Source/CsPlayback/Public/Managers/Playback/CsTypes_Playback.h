@@ -47,6 +47,9 @@ namespace NCsPlayback
 	}
 }
 
+using CsPlaybackStateType = NCsPlayback::EState;
+using CsPlaybackStateMapType = NCsPlayback::EMState;
+
 #pragma endregion NCsPlayback::EState
 
 // PlaybackEventRepeatedState

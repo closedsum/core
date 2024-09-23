@@ -4,6 +4,7 @@
 #pragma once
 
 class UObject;
+class FJavascriptIsolate;
 
 namespace NCsJs
 {
@@ -12,6 +13,8 @@ namespace NCsJs
 		struct CSJS_API FLibrary
 		{
 		public:
+
+			static void CreateInstance(UObject* Object);
 
 			/**
 			*/
@@ -35,3 +38,5 @@ namespace NCsJs
 		};
 	}
 }
+
+using CsJavascriptCommonLibrary = NCsJs::NCommon::FLibrary;

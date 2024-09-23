@@ -3,4 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Params/Point/Generation/CsSpawnerParams_PointGeneration.h"
 
-const FName NCsSpawner::NParams::NPoint::NGeneration::IGeneration::Name = FName("NCsSpawner::NParams::NPoint::NGeneration::IGeneration");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsSpawner::NParams::NPoint::NGeneration::IGeneration);

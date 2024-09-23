@@ -31,7 +31,6 @@ bool FCsSettings_Manager_Menu::IsValidChecked(const FString& Context) const
 	const FSoftObjectPath& SoftPath = Class.ToSoftObjectPath();
 
 	checkf(SoftPath.IsValid(), TEXT("%s: Class is NULL or does NOT point to a Valid Path."), *Context);
-
 	return true;
 }
 
@@ -42,7 +41,6 @@ UClass* FCsSettings_Manager_Menu::LoadClassChecked(const FString& Context) const
 	UClass* C = Class.LoadSynchronous();
 
 	checkf(C, TEXT("%s: Failed to load Class at Path: %s."), *Context, *(Class.ToString()));
-
 	return C;
 }
 

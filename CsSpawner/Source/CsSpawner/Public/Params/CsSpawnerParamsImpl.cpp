@@ -3,6 +3,9 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Params/CsSpawnerParamsImpl.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+// Containers
 #include "Containers/CsInterfaceMap.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsSpawnerParamsImpl)
@@ -28,21 +31,15 @@ void FCsSpawnerParamsImpl::CopyToParamsAsValue(ParamsType* Params) const
 
 bool FCsSpawnerParamsImpl::IsValidChecked(const FString& Context) const
 {
-	check(CountParams.IsValidChecked(Context));
-
-	check(FrequencyParams.IsValidChecked(Context));
-
+	CS_IS_VALID_CHECKED(CountParams);
+	CS_IS_VALID_CHECKED(FrequencyParams);
 	return true;
 }
 
 bool FCsSpawnerParamsImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSpawner::FLog::Warning*/) const
 {
-	if (!CountParams.IsValid(Context, Log))
-		return false;
-
-	if (!FrequencyParams.IsValid(Context, Log))
-		return false;
-
+	CS_IS_VALID(CountParams)
+	CS_IS_VALID(FrequencyParams)
 	return true;
 }
 
@@ -76,10 +73,8 @@ namespace NCsSpawner
 
 		bool FImpl::IsValidChecked(const FString& Context) const
 		{
-			check(CountParams.IsValidChecked(Context));
-
-			check(FrequencyParams.IsValidChecked(Context));
-
+			CS_IS_VALID_CHECKED(CountParams);
+			CS_IS_VALID_CHECKED(FrequencyParams);
 			return true;
 		}
 
@@ -95,12 +90,8 @@ namespace NCsSpawner
 
 		bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSpawner::FLog::Warning*/) const
 		{
-			if (!CountParams.IsValid(Context, Log))
-				return false;
-
-			if (!FrequencyParams.IsValid(Context, Log))
-				return false;
-
+			CS_IS_VALID(CountParams)
+			CS_IS_VALID(FrequencyParams)
 			return true;
 		}
 	}

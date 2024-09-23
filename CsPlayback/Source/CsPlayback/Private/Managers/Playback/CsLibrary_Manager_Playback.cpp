@@ -29,6 +29,11 @@ namespace NCsPlayback
 			}
 		}
 
+		#define USING_NS_CACHED using namespace NCsPlayback::NManager::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsPlayback::NManager::NLibrary::NCached; \
+			const FString& Context = Str::__FunctionName
+		#define LogLevel void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/
+
 		// ContextRoot
 		#pragma region
 
@@ -36,23 +41,17 @@ namespace NCsPlayback
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-			return GameInstanceLibrary::GetChecked(Context, ContextObject);
+			return CsGameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
+			return CsGameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
 		{
-			using namespace NCsPlayback::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeContextRoot;
+			SET_CONTEXT(GetSafeContextRoot);
 
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
@@ -73,7 +72,7 @@ namespace NCsPlayback
 			return Manager_Playback;
 		}
 
-		UCsManager_Playback* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+		UCsManager_Playback* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -96,39 +95,38 @@ namespace NCsPlayback
 		// State
 		#pragma region
 
-		#define StateType NCsPlayback::EState
-
-		void FLibrary::SetPlaybackStateChecked(const FString& Context, const UObject* ContextObject, const StateType& State)
+		void FLibrary::SetPlaybackStateChecked(const FString& Context, const UObject* ContextObject, const CsPlaybackStateType& State)
 		{
 			GetChecked(Context, ContextObject)->SetPlaybackState(State);
 		}
 
-		const StateType& FLibrary::GetPlaybackStateChecked(const FString& Context, const UObject* ContextObject)
+		const CsPlaybackStateType& FLibrary::GetPlaybackStateChecked(const FString& Context, const UObject* ContextObject)
 		{
 			return GetChecked(Context, ContextObject)->GetPlaybackState();
 		}
 
-		#undef StateType
-
 		#pragma endregion State
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef LogLevel
+
 
 		namespace NPlayback
 		{
-			void FLibrary::SafePlayLatest(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+			#define LogLevel void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/
+			
+			void FLibrary::SafePlayLatest(const FString& Context, const UObject* ContextObject, LogLevel)
 			{
-				typedef NCsPlayback::NManager::FLibrary PlaybackManagerLibrary;
-
-				if (UCsManager_Playback* Manager_Playback = PlaybackManagerLibrary::GetSafe(Context, ContextObject, Log))
+				if (UCsManager_Playback* Manager_Playback = CsPlaybackManagerLibrary::GetSafe(Context, ContextObject, Log))
 				{
 					Manager_Playback->Playback.SafePlayLatest(Context, Log);
 				}
 			}
 
-			bool FLibrary::IsSafeSustainedGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEvent& Event, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
+			bool FLibrary::IsSafeSustainedGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEvent& Event, LogLevel)
 			{
-				typedef NCsPlayback::NManager::FLibrary PlaybackManagerLibrary;
-
-				if (UCsManager_Playback* Manager_Playback = PlaybackManagerLibrary::GetSafe(Context, ContextObject, Log))
+				if (UCsManager_Playback* Manager_Playback = CsPlaybackManagerLibrary::GetSafe(Context, ContextObject, Log))
 				{
 					CS_IS_ENUM_STRUCT_VALID(EMCsGameEvent, FECsGameEvent, Event)
 
@@ -136,6 +134,8 @@ namespace NCsPlayback
 				}
 				return false;
 			}
+
+			#undef LogLevel
 		}
 	}
 }

@@ -124,21 +124,21 @@ namespace NCsSpawner
 			{
 			public:
 
-			#define ModifierResourceType NCsSpawner::NModifier::FResource
-			#define ModifierType NCsSpawner::NModifier::IModifier
+			#define CsSpawnerModifierResourceType NCsSpawner::NModifier::FResource
+			#define CsSpawnerModifierType NCsSpawner::NModifier::IModifier
 
-				static ModifierResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsSpawnerModifier& Type);
+				static CsSpawnerModifierResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsSpawnerModifier& Type);
 
-				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsSpawnerModifier& Type, ModifierResourceType* Modifier);
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsSpawnerModifier& Type, CsSpawnerModifierResourceType* Modifier);
 
-				static const FECsSpawnerModifier& GetTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
+				static const FECsSpawnerModifier& GetTypeChecked(const FString& Context, const UObject* WorldContext, const CsSpawnerModifierType* Modifier);
 
-				static ModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
+				static CsSpawnerModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const CsSpawnerModifierType* Modifier);
 
-				static ModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier);
+				static CsSpawnerModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const CsSpawnerModifierResourceType* Modifier);
 
-			#undef ModifierResourceType
-			#undef ModifierType
+			#undef CsSpawnerModifierResourceType
+			#undef CsSpawnerModifierType
 			};
 		}
 	}

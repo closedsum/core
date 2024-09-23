@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Menu/Script/CsScriptLibrary_Menu.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Enum.h"
 
@@ -18,9 +20,10 @@ namespace NCsScriptLibraryMenu
 		namespace Str
 		{
 			const FString FECsMenu = TEXT("FECsMenu");
-			const FString Create = TEXT("Create");
-			const FString Get = TEXT("Get");
-			const FString GetByIndex = TEXT("GetByIndex");
+
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Menu, Create);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Menu, Get);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Menu, GetByIndex);
 		}
 	}
 }
@@ -32,6 +35,10 @@ UCsScriptLibrary_Menu::UCsScriptLibrary_Menu(const FObjectInitializer& ObjectIni
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryMenu::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsScriptLibraryMenu::NCached; \
+	const FString& Context = Str::__FunctionName
+
 // Enum
 #pragma region
 
@@ -40,35 +47,23 @@ UCsScriptLibrary_Menu::UCsScriptLibrary_Menu(const FObjectInitializer& ObjectIni
 
 EnumType UCsScriptLibrary_Menu::Create(const FString& Name, const FString& DisplayName)
 {
-	using namespace NCsScriptLibraryMenu::NCached;
+	SET_CONTEXT(Create);
 
-	const FString& Context = Str::Create;
-
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
+	return CsEnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
 }
 
 EnumType UCsScriptLibrary_Menu::Get(const FString& Name)
 {
-	using namespace NCsScriptLibraryMenu::NCached;
+	SET_CONTEXT(Get);
 
-	const FString& Context = Str::Get;
-
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
+	return CsEnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
 EnumType UCsScriptLibrary_Menu::GetByIndex(const int32& Index)
 {
-	using namespace NCsScriptLibraryMenu::NCached;
+	SET_CONTEXT(GetByIndex);
 
-	const FString& Context = Str::GetByIndex;
-
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
+	return CsEnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
 
 FString UCsScriptLibrary_Menu::ToString(const EnumType& Enum)
@@ -83,9 +78,7 @@ uint8 UCsScriptLibrary_Menu::GetCount()
 
 void UCsScriptLibrary_Menu::GetAll(TArray<EnumType>& OutTypes)
 {
-	typedef NCsEnum::FLibrary EnumLibrary;
-
-	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
+	CsEnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
 EnumType UCsScriptLibrary_Menu::GetMax()
@@ -107,3 +100,6 @@ bool UCsScriptLibrary_Menu::NotEqual(const EnumType& A, const EnumType& B)
 #undef EnumType
 
 #pragma endregion Enum
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT

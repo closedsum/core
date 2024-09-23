@@ -22,8 +22,9 @@ namespace NCsScriptLibraryFX
 		namespace Str
 		{
 			const FString FECsFX = TEXT("FECsFX");
-			const FString Get = TEXT("Get");
-			const FString GetByIndex = TEXT("GetByIndex");
+
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, Get);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, GetByIndex);
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, LoadByStringPath);
@@ -47,27 +48,25 @@ UCsScriptLibrary_FX::UCsScriptLibrary_FX(const FObjectInitializer& ObjectInitial
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define SET_CONTEXT(__FunctionName) using namespace NCsScriptLibraryFX::NCached; \
 			const FString& Context = Str::__FunctionName
-#define FXLibrary NCsFX::FLibrary
 
 // Enum
 #pragma region
 
 #define EnumMapType EMCsFX
 #define EnumType FECsFX
-#define EnumLibrary NCsEnum::FLibrary
 
 EnumType UCsScriptLibrary_FX::Get(const FString& Name)
 {
 	SET_CONTEXT(Get);
 
-	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
+	return CsEnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
 EnumType UCsScriptLibrary_FX::GetByIndex(const int32& Index)
 {
 	SET_CONTEXT(GetByIndex);
 
-	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
+	return CsEnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
 
 FString UCsScriptLibrary_FX::ToString(const EnumType& Enum)
@@ -82,7 +81,7 @@ uint8 UCsScriptLibrary_FX::GetCount()
 
 void UCsScriptLibrary_FX::GetAll(TArray<EnumType>& OutTypes)
 {
-	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
+	CsEnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
 EnumType UCsScriptLibrary_FX::GetMax()
@@ -97,18 +96,17 @@ bool UCsScriptLibrary_FX::EqualEqual(const EnumType& A, const EnumType& B)
 
 #undef EnumMapType
 #undef EnumType
-#undef EnumLibrary
 
 #pragma endregion Enum
 
 UNiagaraSystem* UCsScriptLibrary_FX::LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path)
 {
-	return FXLibrary::SafeLoad(Context, Path);
+	return CsFXLibrary::SafeLoad(Context, Path);
 }
 
 UNiagaraSystem* UCsScriptLibrary_FX::LoadByStringPath(const FString& Context, const FString& Path)
 {
-	return FXLibrary::SafeLoad(Context, Path);
+	return CsFXLibrary::SafeLoad(Context, Path);
 }
 
 FCsRoutineHandle UCsScriptLibrary_FX::Spawn(const FString& Context, UObject* WorldContextObject, const FCsFX_Spawn_Params& Params)
@@ -122,19 +120,19 @@ FCsRoutineHandle UCsScriptLibrary_FX::Spawn(const FString& Context, UObject* Wor
 	typedef NCsFX::NSpawn::NParams::FResource ParamsResourceType;
 	typedef NCsFX::NSpawn::NParams::FParams ParamsType;
 
-	ParamsResourceType* ParmsContainer = FXLibrary::Get().AllocateSpawnParams();
+	ParamsResourceType* ParmsContainer = CsFXLibrary::Get().AllocateSpawnParams();
 	ParamsType* Parms				   = ParmsContainer->Get();
 
 	Params.CopyToParamsAsValue(Parms);
 
-	return FXLibrary::SafeSpawn(Ctxt, WorldContextObject, ParmsContainer);
+	return CsFXLibrary::SafeSpawn(Ctxt, WorldContextObject, ParmsContainer);
 }
 
 FCsRoutineHandle UCsScriptLibrary_FX::Spawn_GameState_OnceWithDelay(const FString& Context, UObject* WorldContextObject, const FCsFX& FX, const float& Delay)
 {
 	CONDITIONAL_SET_CTXT(Spawn_GameState_OnceWithDelay);
 
-	return FXLibrary::SafeSpawn_GameState_OnceWithDelay(Ctxt, WorldContextObject, FX, Delay);
+	return CsFXLibrary::SafeSpawn_GameState_OnceWithDelay(Ctxt, WorldContextObject, FX, Delay);
 }
 
 bool UCsScriptLibrary_FX::DataInterface_SkeletalMesh_SetComponent(const FString& Context, TArray<FCsFX_Parameters_DataInterface_SkeletalMesh>& Params, const int32& Index, USkeletalMeshComponent* Component)
@@ -190,4 +188,3 @@ bool UCsScriptLibrary_FX::DataInterface_SkeletalMesh_ClearComponent(const FStrin
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
 #undef SET_CONTEXT
-#undef FXLibrary

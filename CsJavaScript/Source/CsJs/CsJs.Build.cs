@@ -1,6 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
+using System.IO;
 using UnrealBuildTool;
 
 public class CsJs : ModuleRules
@@ -22,14 +23,14 @@ public class CsJs : ModuleRules
                     "CsMacro",
                     "CsContainer",
                     "CsValid",
+                    "CsPIE",
                     "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
                     "CsTime",
                     "CsCoroutine",
                     "CsData",
-                    "CsInput",
-                    "CsCore"
+                    "CsInput"
                 }
             );
 
@@ -43,6 +44,15 @@ public class CsJs : ModuleRules
             }
         );
         */
+
+        //string engine_path = Path.GetFullPath(Target.);
+        //string v8_source_path = engine_path + "Plugins/FX/Niagara/Source/";
+
+        //PrivateIncludePaths.AddRange(
+        //    new string[] {
+        //                niagara_source_path + "Niagara/Private",
+        //    }
+        //);
 
         if (Target.Type == TargetType.Editor)
         {

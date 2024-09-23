@@ -43,17 +43,18 @@ public class CsEditor : ModuleRules
                     "SourceControl",
                     "Niagara", // TODO: move associated to plugin
                     "NiagaraEditor", // TODO: Move associated code to plugin
+                    "CsPIE",
                     "CsEnum",
                     "CsEnumEditor",
                     "CsContainer",
                     "CsManager",
-                    "CsTypes",
-                    "CsCoreLibrary",
+                    "CsTypes",           
                     "CsTime",
                     "CsCoroutine",
                     "CsData",
                     "CsInput",
-                    "CsCore"
+                    "CsCore",
+                    "CsCoreLibrary",
                 }
             );
         }

@@ -38,6 +38,7 @@ public class CsInput : ModuleRules
                     "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
+                    "CsConsoleCommand",
                     "CsData"
                 }
             );

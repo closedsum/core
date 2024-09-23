@@ -34,6 +34,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsPIE",
+      "Enabled": true
+    },
+    {
       "Name": "CsManager",
       "Enabled": true
     },
@@ -59,10 +63,6 @@
     },
     {
       "Name": "CsInput",
-      "Enabled": true
-    },
-    {
-      "Name": "CsPlugin",
       "Enabled": true
     },
     {

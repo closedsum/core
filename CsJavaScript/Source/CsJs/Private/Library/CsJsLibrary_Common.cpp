@@ -8,9 +8,14 @@
 #include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
+// Interface
+#include "Instance/CsGetJavascriptInstance.h"
+#include "Isolate/CsGetJavascriptIsolate.h"
 // Javascript
+#include "JavascriptInstance.h"
 #include "JavascriptIsolate.h"
 #include "JavascriptContext.h"
+//#include "V8/Private/JavascriptIsolate_Private.h"
 
 namespace NCsJs
 {
@@ -22,6 +27,7 @@ namespace NCsJs
 			{
 				namespace Str
 				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, CreateInstance);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, SetupIsolateAndContext);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, ExposeObject);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, ClearObject);
@@ -34,19 +40,19 @@ namespace NCsJs
 			}
 		}
 
-		void FLibrary::SetupIsolateAndContext(UObject* Owner, UObject*& JavascriptIsolate, UObject*& JavascriptContext, const bool& IsEditor)
+		#define USING_NS_CACHED using namespace NCsJs::NCommon::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsJs::NCommon::NLibrary::NCached; \
+			const FString& Context = Str::__FunctionName
+
+		void FLibrary::CreateInstance(UObject* Object)
 		{
-			using namespace NCsJs::NCommon::NLibrary::NCached;
+			SET_CONTEXT(CreateInstance);
 
-			const FString& Context = Str::SetupIsolateAndContext;
+			ICsGetJavascriptInstance* GetJavascriptInstance = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsGetJavascriptInstance);
 
-			CS_IS_PENDING_KILL_CHECKED(Owner)
-
-			auto Isolate = NewObject<UJavascriptIsolate>();
-			// TODO: bIsEditor. Probably need to set to true if we want to interact with AnimInstance in Editor.
-			
-			TMap<FString, FString> Features;
-			Features = UJavascriptIsolate::DefaultIsolateFeatures();
+			FJSInstanceOptions Options;
+			TMap<FString, FString>& Features = Options.Features.FeatureMap;
+			Features						 = UJavascriptIsolate::DefaultIsolateFeatures();
 
 			// Add default context feature exposures
 			Features.Add(TEXT("Root"), TEXT("default"));
@@ -54,7 +60,24 @@ namespace NCsJs
 			Features.Add(TEXT("Engine"), TEXT("default"));
 			Features.Add(TEXT("Context"), TEXT("default"));
 
-			Isolate->Init(IsEditor, Features);
+			FJSInstanceContextSettings ContextSettings;
+
+			GetJavascriptInstance->GetJavascriptInstance() = MakeShareable(new FJavascriptInstance(Options, ContextSettings));
+		}
+
+		void FLibrary::SetupIsolateAndContext(UObject* Owner, UObject*& JavascriptIsolate, UObject*& JavascriptContext, const bool& IsEditor)
+		{
+			SET_CONTEXT(SetupIsolateAndContext);
+
+			CS_IS_PENDING_KILL_CHECKED(Owner)
+
+			auto Isolate = NewObject<UJavascriptIsolate>();
+			
+			// TODO: bIsEditor. Probably need to set to true if we want to interact with AnimInstance in Editor.
+
+			ICsGetJavascriptIsolate* GetJavascriptIsolate = CS_INTERFACE_CAST_CHECKED(Owner, UObject, ICsGetJavascriptIsolate);
+
+			Isolate->Init(GetJavascriptIsolate->GetSharedJavascriptIsolate());
 			auto ContextObject = Isolate->CreateContext();
 
 			JavascriptIsolate = Isolate;
@@ -65,9 +88,7 @@ namespace NCsJs
 
 		void FLibrary::ExposeObject(UObject*& JavascriptContext, const FString& Name, UObject* Object)
 		{
-			using namespace NCsJs::NCommon::NLibrary::NCached;
-
-			const FString& Context = Str::ExposeObject;
+			SET_CONTEXT(ExposeObject);
 
 			CS_IS_PENDING_KILL_CHECKED(JavascriptContext)
 			CS_IS_STRING_EMPTY_CHECKED(Name)
@@ -78,9 +99,7 @@ namespace NCsJs
 
 		void FLibrary::ClearObject(UObject*& JavascriptContext, const FString& Name)
 		{
-			using namespace NCsJs::NCommon::NLibrary::NCached;
-
-			const FString& Context = Str::ClearObject;
+			SET_CONTEXT(ClearObject);
 
 			CS_IS_PENDING_KILL_CHECKED(JavascriptContext)
 			CS_IS_STRING_EMPTY_CHECKED(Name)
@@ -103,9 +122,7 @@ namespace NCsJs
 
 		void FLibrary::RunFile(UObject*& JavascriptContext, const FString& FileName)
 		{
-			using namespace NCsJs::NCommon::NLibrary::NCached;
-
-			const FString& Context = Str::RunFile;
+			SET_CONTEXT(RunFile);
 
 			CS_IS_PENDING_KILL_CHECKED(JavascriptContext)
 			CS_IS_STRING_EMPTY_CHECKED(FileName)
@@ -134,5 +151,8 @@ namespace NCsJs
 				UE_LOG(LogCsJs, Warning, TEXT("NCsJs::NCommon::FLibrary::RunFile: Failed to Run File: %s. Error: %s."), *FileName, *Error);
 			}
 		}
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
 	}
 }

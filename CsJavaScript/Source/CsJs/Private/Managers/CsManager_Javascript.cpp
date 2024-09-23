@@ -30,7 +30,9 @@
 #include "GameFramework/Pawn.h"
 // Settings
 #include "Settings/CsJsSettings.h"
-
+// Javascript
+#include "JavascriptInstance.h"
+// Engine
 #include "Engine/World.h"
 #include "Engine/Engine.h"
 
@@ -124,7 +126,16 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 #define USING_NS_CACHED using namespace NCsManagerJavascript::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerJavascript::NCached; \
 	const FString& Context = Str::__FunctionName
-#define JavascriptCommonLibrary NCsJs::NCommon::FLibrary
+
+// ICsGetJavascriptIsolate
+#pragma region
+
+TSharedPtr<FJavascriptIsolate> UCsManager_Javascript::GetSharedJavascriptIsolate()
+{
+	return JavascriptInstance->GetSharedIsolate();
+}
+
+#pragma endregion ICsGetJavascriptIsolate
 
 // Singleton
 #pragma region
@@ -308,6 +319,7 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 
 void UCsManager_Javascript::Initialize()
 {
+	CsJavascriptCommonLibrary::CreateInstance(this);
 	/*
 	if (Cast<UGameInstance>(MyRoot))
 	{
@@ -341,7 +353,7 @@ void UCsManager_Javascript::SetMyRoot(UObject* InRoot)
 void UCsManager_Javascript::CreateEntryPoint()
 {
 	// Setup Isolate and Context
-	JavascriptCommonLibrary::SetupIsolateAndContext(this, EntryPoint.Isolate, EntryPoint.Context, false);
+	CsJavascriptCommonLibrary::SetupIsolateAndContext(this, EntryPoint.Isolate, EntryPoint.Context, false);
 }
 
 void UCsManager_Javascript::SetupEntryPoint(UGameInstance* InGameInstance /*=nullptr*/)
@@ -387,50 +399,50 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 	EntryPoint.ExposedObjectNames.Add(TEXT("Root"));
 
 	// Engine
-	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GEngine"), GEngine);
+	CsJavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GEngine"), GEngine);
 	EntryPoint.ExposedObjectNames.Add(TEXT("GEngine"));
 	 
 	// GameInstance
-	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GameInstance"), GameInstance);
+	CsJavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GameInstance"), GameInstance);
 	EntryPoint.ExposedObjectNames.Add(TEXT("GameInstance"));
 
 	// Manager_Time
-	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
+	CsJavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
 	EntryPoint.ExposedObjectNames.Add(TEXT("Manager_Time"));
 
 	// Coordinator_GameEvent
-	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
+	CsJavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
 	EntryPoint.ExposedObjectNames.Add(TEXT("Coordinator_GameEvent"));
 
 	// World
 	CS_COROUTINE_WAIT_UNTIL(R, World);
 
-	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("World"), World);
+	CsJavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("World"), World);
 	EntryPoint.ExposedObjectNames.Add(TEXT("World"));
 	EntryPoint.ExposedObjectNames.Add(TEXT("GWorld"));
 
 	// Game State
 	CS_COROUTINE_WAIT_UNTIL(R, GameState);
 
-	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GameState"), GameState);
+	CsJavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GameState"), GameState);
 	EntryPoint.ExposedObjectNames.Add(TEXT("GameState"));
 
 	// Player Controller
 	CS_COROUTINE_WAIT_UNTIL(R, PlayerController);
 
-	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("PlayerController"), PlayerController);
+	CsJavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("PlayerController"), PlayerController);
 	EntryPoint.ExposedObjectNames.Add(TEXT("PlayerController"));
 
 	// Player State
 	CS_COROUTINE_WAIT_UNTIL(R, PlayerState);
 
-	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("PlayerState"), PlayerState);
+	CsJavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("PlayerState"), PlayerState);
 	EntryPoint.ExposedObjectNames.Add(TEXT("PlayerState"));
 
 	// Player Pawn
 	CS_COROUTINE_WAIT_UNTIL(R, PlayerPawn);
 
-	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("PlayerPawn"), PlayerPawn);
+	CsJavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("PlayerPawn"), PlayerPawn);
 	EntryPoint.ExposedObjectNames.Add(TEXT("PlayerPawn"));
 
 	// Additional Setup
@@ -500,7 +512,7 @@ void UCsManager_Javascript::RunEntryPoint()
 
 	checkf(!FileName.IsEmpty(), TEXT("UCsManager_Javascript::RunEntryPoint: FileName is Empty."));
 
-	JavascriptCommonLibrary::RunFile(EntryPoint.Context, FileName);
+	CsJavascriptCommonLibrary::RunFile(EntryPoint.Context, FileName);
 }
 
 void UCsManager_Javascript::ShutdownEntryPoint()
@@ -609,44 +621,44 @@ char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
 				ScriptObject.ExposedObjectNames.Add(TEXT("Root"));
 
 				// Engine
-				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
+				CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
 				ScriptObject.ExposedObjectNames.Add(TEXT("GEngine"));
 	 
 				// GameInstance
-				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameInstance"), GameInstance);
+				CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameInstance"), GameInstance);
 				ScriptObject.ExposedObjectNames.Add(TEXT("GameInstance"));
 
 				// Manager_Time
-				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
+				CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
 				ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Time"));
 
 				// Coordinator_GameEvent
-				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
+				CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
 				ScriptObject.ExposedObjectNames.Add(TEXT("Coordinator_GameEvent"));
 
 				// World
-				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), World);
+				CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), World);
 				ScriptObject.ExposedObjectNames.Add(TEXT("World"));
 				ScriptObject.ExposedObjectNames.Add(TEXT("GWorld"));
 
 				// Game State
-				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameState"), GameState);
+				CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameState"), GameState);
 				ScriptObject.ExposedObjectNames.Add(TEXT("GameState"));
 
 				// Manager_Javascript
-				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), this);
+				CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), this);
 				ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
 
 				// Player Controller
-				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerController"), PlayerController);
+				CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerController"), PlayerController);
 				ScriptObject.ExposedObjectNames.Add(TEXT("PlayerController"));
 
 				// Player State
-				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerState"), PlayerState);
+				CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerState"), PlayerState);
 				ScriptObject.ExposedObjectNames.Add(TEXT("PlayerState"));
 
 				// Player Pawn
-				//JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerPawn"), PlayerPawn);
+				//CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerPawn"), PlayerPawn);
 				//ScriptObject.ExposedObjectNames.Add(TEXT("PlayerPawn"));
 
 				// Additional Setup
@@ -734,7 +746,7 @@ void UCsManager_Javascript::RunScripts()
 
 			ScriptObject.Path = FileName;
 
-			JavascriptCommonLibrary::RunFile(ScriptObject.Context, FileName);
+			CsJavascriptCommonLibrary::RunFile(ScriptObject.Context, FileName);
 		}
 		++CurrentScriptIndex;
 	}
@@ -781,40 +793,40 @@ void UCsManager_Javascript::ReloadScript(const int32& Index)
 	ScriptObject.ExposedObjectNames.Add(TEXT("Root"));
 
 	// Engine
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
 	ScriptObject.ExposedObjectNames.Add(TEXT("GEngine"));
 	 
 	// GameInstance
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameInstance"), GameInstance);
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameInstance"), GameInstance);
 	ScriptObject.ExposedObjectNames.Add(TEXT("GameInstance"));
 
 	// Manager_Time
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
 	ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Time"));
 
 	// Coordinator_GameEvent
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
 	ScriptObject.ExposedObjectNames.Add(TEXT("Coordinator_GameEvent"));
 
 	// World
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), World);
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), World);
 	ScriptObject.ExposedObjectNames.Add(TEXT("World"));
 	ScriptObject.ExposedObjectNames.Add(TEXT("GWorld"));
 
 	// Game State
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameState"), GameState);
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameState"), GameState);
 	ScriptObject.ExposedObjectNames.Add(TEXT("GameState"));
 
 	// Manager_Javascript
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), this);
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), this);
 	ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
 
 	// Player Controller
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerController"), PlayerController);
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerController"), PlayerController);
 	ScriptObject.ExposedObjectNames.Add(TEXT("PlayerController"));
 
 	// Player State
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerState"), PlayerState);
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerState"), PlayerState);
 	ScriptObject.ExposedObjectNames.Add(TEXT("PlayerState"));
 
 	// Player Pawn
@@ -827,7 +839,7 @@ void UCsManager_Javascript::ReloadScript(const int32& Index)
 
 	const FString& FileName	= FileInfo.Entry;
 
-	JavascriptCommonLibrary::RunFile(ScriptObject.Context, FileName);
+	CsJavascriptCommonLibrary::RunFile(ScriptObject.Context, FileName);
 }
 
 void UCsManager_Javascript::DeactivateScripts(const bool& bForce /*=false*/)
@@ -977,31 +989,31 @@ FGuid UCsManager_Javascript::FEditorScriptImpl::CreateAndRun(UObject* Owner, con
 		ScriptObject.ExposedObjectNames.Add(TEXT("Root"));
 
 		// Script Outer | Owner
-		JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("ScriptOuter"), Owner);
+		CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("ScriptOuter"), Owner);
 		ScriptObject.ExposedObjectNames.Add(TEXT("ScriptOuter"));
 
 		// Engine
-		JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
+		CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
 		ScriptObject.ExposedObjectNames.Add(TEXT("GEngine"));
 
 		// Manager_Time
-		JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GEngine));
+		CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GEngine));
 		ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Time"));
 
 		// World
-		JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), Owner->GetWorld());
+		CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), Owner->GetWorld());
 		ScriptObject.ExposedObjectNames.Add(TEXT("World"));
 		ScriptObject.ExposedObjectNames.Add(TEXT("GWorld"));
 
 		// Manager_Javascript
-		JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), Outer);
+		CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), Outer);
 		ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
 	}
 
 	Outer->CurrentEditorScriptIndex = GetObjects().Num() - 1;
 	Outer->CurrentEditorScriptId    = ScriptObject.Id;
 
-	JavascriptCommonLibrary::RunFile(ScriptObject.Context, Path);
+	CsJavascriptCommonLibrary::RunFile(ScriptObject.Context, Path);
 
 	return ScriptId;
 }
@@ -1029,27 +1041,27 @@ void UCsManager_Javascript::FEditorScriptImpl::Reload(const FGuid& Id, const FSt
 	ScriptObject.ExposedObjectNames.Add(TEXT("Root"));
 
 	// Script Outer | Owner
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("ScriptOuter"), Owner);
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("ScriptOuter"), Owner);
 	ScriptObject.ExposedObjectNames.Add(TEXT("ScriptOuter"));
 
 	// Engine
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
 	ScriptObject.ExposedObjectNames.Add(TEXT("GEngine"));
 
 	// Manager_Time
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GEngine));
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GEngine));
 	ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Time"));
 
 	// World
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), Owner->GetWorld());
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), Owner->GetWorld());
 	ScriptObject.ExposedObjectNames.Add(TEXT("World"));
 	ScriptObject.ExposedObjectNames.Add(TEXT("GWorld"));
 
 	// Manager_Javascript
-	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), Outer);
+	CsJavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), Outer);
 	ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
 
-	JavascriptCommonLibrary::RunFile(ScriptObject.Context, Path);
+	CsJavascriptCommonLibrary::RunFile(ScriptObject.Context, Path);
 }
 
 bool UCsManager_Javascript::FEditorScriptImpl::Shutdown(UObject* Owner)
@@ -1098,7 +1110,7 @@ void UCsManager_Javascript::FEditorScriptImpl::Shutdown()
 
 bool UCsManager_Javascript::EditorScript_Shutdown_ByOwner(const FString& Context, UObject* Owner)
 {
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	void(*Log)(const FString&) = &NCsJs::FLog::Warning;
 
 	CS_IS_PENDING_KILL(Owner)
 
@@ -1155,4 +1167,3 @@ void UCsManager_Javascript::OnAnyKey_Pressed(const FKey& Key)
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef JavascriptCommonLibrary

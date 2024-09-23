@@ -221,7 +221,6 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	// TODO: Change for Parameters
 
 	// Set Parameters
-	typedef NCsFX::FLibrary FXLibrary;
 	typedef NCsFX::NParameter::IParameter ParameterType;
 	typedef NCsFX::NParameter::NScaled::IScaled ScaledParameterType;
 	typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType SkeletalMeshParameterType;
@@ -231,7 +230,7 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	for (const ParameterType* Param : Parameters)
 	{
-		FXLibrary::SetParameterChecked(Context, FXComponent, Param);
+		CsFXLibrary::SetParameterChecked(Context, FXComponent, Param);
 	}
 		// Scaled
 	const TArray<ScaledParameterType*>& ScaledParameters = FXPayload->GetScaledParameters();
@@ -240,7 +239,7 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	for (const ScaledParameterType* Param : ScaledParameters)
 	{
-		FXLibrary::SetParameterChecked(Context, FXComponent, Param, Scale);
+		CsFXLibrary::SetParameterChecked(Context, FXComponent, Param, Scale);
 	}
 		// Data Interface
 
@@ -249,7 +248,7 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	for (const SkeletalMeshParameterType* Param : SkeletalMeshParameters)
 	{
-		FXLibrary::SetParameterChecked(Context, FXComponent, Param);
+		CsFXLibrary::SetParameterChecked(Context, FXComponent, Param);
 	}
 
 	FX->SetActorTickEnabled(true);
@@ -574,7 +573,6 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 {
 	SET_CONTEXT(Handle_ClearFXSystem);
 
-	typedef NCsFX::FLibrary FXLibrary;
 	typedef NCsFX::NPayload::EChange ChangeType;
 	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
 
@@ -637,9 +635,7 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 	UCsManager_FX* Manager_FX		= Cast<UCsManager_FX>(GetOuter());
 	const bool IsBeginningShutdown	= Manager_FX->IsBeginningShutdown();
 
-	typedef NCsFX::FLibrary FXLibrary;
-
-	FNiagaraSystemInstance* System = FXLibrary::GetSafeSystemInstance(Context, FX->GetNiagaraComponent(), nullptr);
+	FNiagaraSystemInstance* System = CsFXLibrary::GetSafeSystemInstance(Context, FX->GetNiagaraComponent(), nullptr);
 
 	bool WaitForSystem = false;
 	
@@ -681,7 +677,7 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 		System->WaitForConcurrentTickDoNotFinalize(false);
 	}
 
-	TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = FXLibrary::GetSafeSystemSimulation(Context, FX->GetNiagaraComponent(), nullptr);
+	TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = CsFXLibrary::GetSafeSystemSimulation(Context, FX->GetNiagaraComponent(), nullptr);
 
 #if WITH_EDITOR
 	/*

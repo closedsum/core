@@ -506,3 +506,5 @@ namespace NCsFX
 	#pragma endregion System
 	};
 }
+
+using CsFXLibrary = NCsFX::FLibrary;

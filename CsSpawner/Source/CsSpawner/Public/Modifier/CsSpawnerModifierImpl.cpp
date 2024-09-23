@@ -5,6 +5,7 @@
 
 // Types
 #include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Modifier/CsLibrary_SpawnerModifier.h"
 #include "Library/CsLibrary_Valid.h"
@@ -16,9 +17,7 @@
 // FCsSpawnerModifier_Int
 #pragma region
 
-#define ModifierType NCsSpawner::NModifier::FInt
-
-void FCsSpawnerModifier_Int::CopyToModifier(ModifierType* Modifier)
+void FCsSpawnerModifier_Int::CopyToModifier(CsSpawnerIntModifierType* Modifier)
 {
 	Modifier->SetType(&Type);
 	Modifier->SetValue(&Value);
@@ -28,7 +27,7 @@ void FCsSpawnerModifier_Int::CopyToModifier(ModifierType* Modifier)
 	Modifier->SetApplication((ApplicationType*)(&Application));
 }
 
-void FCsSpawnerModifier_Int::CopyToModifierAsValue(ModifierType* Modifier) const
+void FCsSpawnerModifier_Int::CopyToModifierAsValue(CsSpawnerIntModifierType* Modifier) const
 {
 	Modifier->SetType(Type);
 	Modifier->SetValue(Value);
@@ -37,8 +36,6 @@ void FCsSpawnerModifier_Int::CopyToModifierAsValue(ModifierType* Modifier) const
 
 	Modifier->SetApplication((ApplicationType)Application);
 }
-
-#undef ModifierType
 
 bool FCsSpawnerModifier_Int::IsValidChecked(const FString& Context) const
 {
@@ -88,12 +85,11 @@ namespace NCsSpawner
 			
 			InterfaceMap->SetRoot<FInt>(this);
 
-			typedef NCsSpawner::NModifier::IModifier SpawnerModifierType;
 			typedef NCsSpawner::NModifier::NCopy::ICopy CopyType;
 
 			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
 			InterfaceMap->Add<CsIntModifierType>(static_cast<CsIntModifierType*>(this));
-			InterfaceMap->Add<SpawnerModifierType>(static_cast<SpawnerModifierType*>(this));
+			InterfaceMap->Add<CsSpawnerModifierType>(static_cast<CsSpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsGetSpawnerModifierType>(static_cast<ICsGetSpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
 			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
@@ -143,18 +139,13 @@ namespace NCsSpawner
 		// CopyType (NCsSpawner::NModifier::NCopy::ICopy)
 		#pragma region
 
-		#define SpawnerModifierType NCsSpawner::NModifier::IModifier
-		void FInt::Copy(const SpawnerModifierType* From)
+		void FInt::Copy(const CsSpawnerModifierType* From)
 		{
-		#undef SpawnerModifierType
-
 			using namespace NCsSpawner::NModifier::NInt::NCached;
 
 			const FString& Context = Str::Copy;
 
-			typedef NCsSpawner::NModifier::FLibrary SpawnerModifierLibrary;
-
-			const FInt* FromImpl = SpawnerModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
+			const FInt* FromImpl = CsSpawnerModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
 
 			SetType(FromImpl->GetType());
 			SetValue(FromImpl->GetValue());
@@ -170,9 +161,7 @@ namespace NCsSpawner
 // FCsSpawnerModifier_Float
 #pragma region
 
-#define ModifierType NCsSpawner::NModifier::FFloat
-
-void FCsSpawnerModifier_Float::CopyToModifier(ModifierType* Modifier)
+void FCsSpawnerModifier_Float::CopyToModifier(CsSpawnerFloatModifierType* Modifier)
 {
 	Modifier->SetType(&Type);
 	Modifier->SetValue(&Value);
@@ -182,7 +171,7 @@ void FCsSpawnerModifier_Float::CopyToModifier(ModifierType* Modifier)
 	Modifier->SetApplication((ApplicationType*)(&Application));
 }
 
-void FCsSpawnerModifier_Float::CopyToModifierAsValue(ModifierType* Modifier) const
+void FCsSpawnerModifier_Float::CopyToModifierAsValue(CsSpawnerFloatModifierType* Modifier) const
 {
 	Modifier->SetType(Type);
 	Modifier->SetValue(Value);
@@ -191,8 +180,6 @@ void FCsSpawnerModifier_Float::CopyToModifierAsValue(ModifierType* Modifier) con
 
 	Modifier->SetApplication((ApplicationType)Application);
 }
-
-#undef ModifierType
 
 bool FCsSpawnerModifier_Float::IsValidChecked(const FString& Context) const
 {
@@ -242,12 +229,11 @@ namespace NCsSpawner
 
 			InterfaceMap->SetRoot<FFloat>(this);
 
-			typedef NCsSpawner::NModifier::IModifier SpawnerModifierType;
 			typedef NCsSpawner::NModifier::NCopy::ICopy CopyType;
 
 			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
 			InterfaceMap->Add<CsFloatModifierType>(static_cast<CsFloatModifierType*>(this));
-			InterfaceMap->Add<SpawnerModifierType>(static_cast<SpawnerModifierType*>(this));
+			InterfaceMap->Add<CsSpawnerModifierType>(static_cast<CsSpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsGetSpawnerModifierType>(static_cast<ICsGetSpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
 			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
@@ -297,18 +283,13 @@ namespace NCsSpawner
 		// CopyType (NCsSpawner::NModifier::NCopy::ICopy)
 		#pragma region
 
-		#define SpawnerModifierType NCsSpawner::NModifier::IModifier
-		void FFloat::Copy(const SpawnerModifierType* From)
+		void FFloat::Copy(const CsSpawnerModifierType* From)
 		{
-		#undef SpawnerModifierType
-
 			using namespace NCsSpawner::NModifier::NFloat::NCached;
 
 			const FString& Context = Str::Copy;
 
-			typedef NCsSpawner::NModifier::FLibrary SpawnerModifierLibrary;
-
-			const FFloat* FromImpl = SpawnerModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
+			const FFloat* FromImpl = CsSpawnerModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
 
 			SetType(FromImpl->GetType());
 			SetValue(FromImpl->GetValue());
@@ -379,12 +360,11 @@ namespace NCsSpawner
 
 			InterfaceMap->SetRoot<FToggle>(this);
 
-			typedef NCsSpawner::NModifier::IModifier SpawnerModifierType;
 			typedef NCsSpawner::NModifier::NCopy::ICopy CopyType;
 
 			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
 			InterfaceMap->Add<CsToggleModifierType>(static_cast<CsToggleModifierType*>(this));
-			InterfaceMap->Add<SpawnerModifierType>(static_cast<SpawnerModifierType*>(this));
+			InterfaceMap->Add<CsSpawnerModifierType>(static_cast<CsSpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsGetSpawnerModifierType>(static_cast<ICsGetSpawnerModifierType*>(this));
 			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
 			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
@@ -420,18 +400,13 @@ namespace NCsSpawner
 		// CopyType (NCsSpawner::NModifier::NCopy::ICopy)
 		#pragma region
 
-		#define SpawnerModifierType NCsSpawner::NModifier::IModifier
-		void FToggle::Copy(const SpawnerModifierType* From)
+		void FToggle::Copy(const CsSpawnerModifierType* From)
 		{
-		#undef SpawnerModifierType
-
 			using namespace NCsSpawner::NModifier::NFloat::NCached;
 
 			const FString& Context = Str::Copy;
 
-			typedef NCsSpawner::NModifier::FLibrary SpawnerModifierLibrary;
-
-			const FToggle* FromImpl = SpawnerModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
+			const FToggle* FromImpl = CsSpawnerModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
 
 			SetType(FromImpl->GetType());
 			SetbEnable(FromImpl->GetbEnable());
@@ -451,23 +426,19 @@ namespace NCsSpawner
 void FCsSpawnerModifierInfo::CopyToInfo(InfoType* Info)
 {
 	// Ints
-	typedef NCsSpawner::NModifier::FInt IntModifierType;
-
 	Info->Ints.Reset(Ints.Num());
 
 	for (FCsSpawnerModifier_Int& From : Ints)
 	{
-		IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+		CsSpawnerIntModifierType& To = Info->Ints.AddDefaulted_GetRef();
 		From.CopyToModifier(&To);
 	}
 	// Floats
-	typedef NCsSpawner::NModifier::FFloat FloatModifierType;
-
 	Info->Floats.Reset(Floats.Num());
 
 	for (FCsSpawnerModifier_Float& From : Floats)
 	{
-		FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+		CsSpawnerFloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
 		From.CopyToModifier(&To);
 	}
 	// Toggles
@@ -486,23 +457,19 @@ void FCsSpawnerModifierInfo::CopyToInfo(InfoType* Info)
 void FCsSpawnerModifierInfo::CopyToInfoAsValue(InfoType* Info)
 {
 	// Ints
-	typedef NCsSpawner::NModifier::FInt IntModifierType;
-
 	Info->Ints.Reset(Ints.Num());
 
 	for (const FCsSpawnerModifier_Int& From : Ints)
 	{
-		IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+		CsSpawnerIntModifierType& To = Info->Ints.AddDefaulted_GetRef();
 		From.CopyToModifierAsValue(&To);
 	}
 	// Floats
-	typedef NCsSpawner::NModifier::FFloat FloatModifierType;
-
 	Info->Floats.Reset(Floats.Num());
 
 	for (const FCsSpawnerModifier_Float& From : Floats)
 	{
-		FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+		CsSpawnerFloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
 		From.CopyToModifierAsValue(&To);
 	}
 	// Toggles
@@ -543,16 +510,12 @@ namespace NCsSpawner
 	{
 		bool FInfo::IsValidChecked(const FString& Context) const
 		{
-			typedef NCsSpawner::NModifier::FInt IntModifierType;
-
-			for (const IntModifierType& Modifier : Ints)
+			for (const CsSpawnerIntModifierType& Modifier : Ints)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
 
-			typedef NCsSpawner::NModifier::FFloat FloatModifierType;
-
-			for (const FloatModifierType& Modifier : Floats)
+			for (const CsSpawnerFloatModifierType& Modifier : Floats)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
@@ -564,27 +527,21 @@ namespace NCsSpawner
 				CS_IS_VALID_CHECKED(Modifier);
 			}
 
-			typedef NCsSpawner::NModifier::IModifier ModifierType;
-
 			const int32 Total = Ints.Num() + Floats.Num() + Toggles.Num();
 
-			CS_IS_TARRAY_SIZE_CHECKED(Modifiers, ModifierType*, Total)
-			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+			CS_IS_TARRAY_SIZE_CHECKED(Modifiers, CsSpawnerModifierType*, Total)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsSpawnerModifierType)
 			return true;
 		}
 
 		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 		{
-			typedef NCsSpawner::NModifier::FInt IntModifierType;
-
-			for (const IntModifierType& Modifier : Ints)
+			for (const CsSpawnerIntModifierType& Modifier : Ints)
 			{
 				CS_IS_VALID(Modifier)
 			}
 
-			typedef NCsSpawner::NModifier::FFloat FloatModifierType;
-
-			for (const FloatModifierType& Modifier : Floats)
+			for (const CsSpawnerFloatModifierType& Modifier : Floats)
 			{
 				CS_IS_VALID(Modifier)
 			}
@@ -596,12 +553,10 @@ namespace NCsSpawner
 				CS_IS_VALID(Modifier)
 			}
 
-			typedef NCsSpawner::NModifier::IModifier ModifierType;
-
 			const int32 Total = Ints.Num() + Floats.Num() + Toggles.Num();
 
-			CS_IS_TARRAY_SIZE(Modifiers, ModifierType*, Total)
-			CS_IS_TARRAY_ANY_NULL(Modifiers, ModifierType)
+			CS_IS_TARRAY_SIZE(Modifiers, CsSpawnerModifierType*, Total)
+			CS_IS_TARRAY_ANY_NULL(Modifiers, CsSpawnerModifierType)
 			return true;
 		}
 	}

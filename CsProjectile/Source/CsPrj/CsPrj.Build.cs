@@ -30,6 +30,7 @@ public class CsPrj : ModuleRules
                     "CsMacro",
                     "CsContainer",
                     "CsEnum",
+                    "CsStructOps",
                     "CsValid",
                     "CsManager",
                     "CsScopedTimer",

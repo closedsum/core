@@ -94,18 +94,6 @@ TAutoConsoleVariable<int32> CsCVarLogInteractiveAIPawnPhysicsStateChange(
 
 #pragma endregion AI
 
-// Script
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions(
-	TEXT("log.override.functions"),
-	0,
-	TEXT("Log Override Functions used by Script."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion Script
-
 // Inventory
 #pragma region
 
@@ -182,8 +170,6 @@ namespace NCsCVarLog
 	CSCORE_API CS_CREATE_ENUM_STRUCT(LogGameStateOnBoard);
 	// Json
 	CSCORE_API CS_CREATE_ENUM_STRUCT(LogJsonDataFilenames);
-	// Script
-	CSCORE_API CS_CREATE_ENUM_STRUCT(LogOverrideFunctions);
 	// FX
 	CSCORE_API CS_CREATE_ENUM_STRUCT(LogManagerFxTransactions);
 	// Runnable
@@ -197,8 +183,6 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
-		// Script
-		CSCORE_API CS_ADD_TO_CVAR_MAP(LogOverrideFunctions, CsCVarLogOverrideFunctions);
 		// Managers
 
 			// Data

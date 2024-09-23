@@ -25,3 +25,5 @@ namespace NCsSpawner
 		};
 	}
 }
+
+using CsSpawnerModifierType = NCsSpawner::NModifier::IModifier;

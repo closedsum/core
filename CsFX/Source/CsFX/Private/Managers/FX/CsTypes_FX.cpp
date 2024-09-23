@@ -677,23 +677,22 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 	}
 
 	// Character Parameters are Valid.
-	typedef NCsFX::FLibrary FXLibrary;
 	typedef NCsFX::NParameter::EValue ParameterValueType;
 
 		// Int
 	for (const FCsFXParameterInt& Param : IntParameters)
 	{
-		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Int));
+		check(CsFXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Int));
 	}
 		// Float
 	for (const FCsFXParameterFloat& Param : FloatParameters)
 	{
-		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Float));
+		check(CsFXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Float));
 	}
 		// Vector
 	for (const FCsFXParameterVector& Param : VectorParameters)
 	{
-		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Vector));
+		check(CsFXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Vector));
 	}
 
 		// Scaled
@@ -701,17 +700,17 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 			// Int
 	for (const FCsFX_Parameter_Scaled_Int& Param : ScaledParameters.Ints)
 	{
-		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Int));
+		check(CsFXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Int));
 	}
 			// Float
 	for (const FCsFX_Parameter_Scaled_Float& Param : ScaledParameters.Floats)
 	{
-		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Float));
+		check(CsFXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Float));
 	}
 			// Vector
 	for (const FCsFX_Parameter_Scaled_Vector& Param : ScaledParameters.Vectors)
 	{
-		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Vector));
+		check(CsFXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Vector));
 	}
 	CS_IS_VALID_CHECKED(DataInterfaceParameters);
 	return true;
@@ -752,25 +751,24 @@ bool FCsFX::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX
 		return false;
 	}
 	// Character Parameters are Valid.
-	typedef NCsFX::FLibrary FXLibrary;
 	typedef NCsFX::NParameter::EValue ParameterValueType;
 
 	// Int
 	for (const FCsFXParameterInt& Param : IntParameters)
 	{
-		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Int, Log))
+		if (!CsFXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Int, Log))
 			return false;
 	}
 	// Float
 	for (const FCsFXParameterFloat& Param : FloatParameters)
 	{
-		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Float, Log))
+		if (!CsFXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Float, Log))
 			return false;
 	}
 	// Vector
 	for (const FCsFXParameterVector& Param : VectorParameters)
 	{
-		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Vector, Log))
+		if (!CsFXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Vector, Log))
 			return false;
 	}
 	
@@ -779,19 +777,19 @@ bool FCsFX::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX
 			// Int
 	for (const FCsFX_Parameter_Scaled_Int& Param : ScaledParameters.Ints)
 	{
-		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Int, Log))
+		if (!CsFXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Int, Log))
 			return false;
 	}
 			// Float
 	for (const FCsFX_Parameter_Scaled_Float& Param : ScaledParameters.Floats)
 	{
-		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Float, Log))
+		if (!CsFXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Float, Log))
 			return false;
 	}
 			// Vector
 	for (const FCsFX_Parameter_Scaled_Vector& Param : ScaledParameters.Vectors)
 	{
-		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Vector, Log))
+		if (!CsFXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Vector, Log))
 			return false;
 	}
 	CS_IS_VALID(DataInterfaceParameters)

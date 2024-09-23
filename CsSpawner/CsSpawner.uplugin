@@ -50,7 +50,15 @@
 			"Enabled": true
 		},
 		{
+			"Name": "CsStartPlay",
+			"Enabled": true
+		},
+		{
 			"Name": "CsTime",
+			"Enabled": true
+		},
+		{
+			"Name": "CsPool",
 			"Enabled": true
 		},
 		{
@@ -59,10 +67,6 @@
 		},
 		{
 			"Name": "CsModifier",
-			"Enabled": true
-		},
-		{
-			"Name": "CsPlugin",
 			"Enabled": true
 		}
 	]

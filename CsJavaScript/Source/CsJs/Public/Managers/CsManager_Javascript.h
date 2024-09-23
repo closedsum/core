@@ -3,6 +3,9 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
+// Interface
+#include "Instance/CsGetJavascriptInstance.h"
+#include "Isolate/CsGetJavascriptIsolate.h"
 // Types
 #include "CsTypes_Javascript.h"
 #include "EntryPoint/CsTypes_ScriptEntryPointInfo.h"
@@ -10,7 +13,7 @@
 // Managers
 #include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsJsLog.h"
 
 #include "CsManager_Javascript.generated.h"
 
@@ -50,14 +53,43 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerJavascript_EditorScript_On
 
 #pragma endregion Delegates
 
+class FJavascriptInstance;
+class FJavascriptIsolate;
+
 class ICsGetManagerJavascript;
 struct FCsRoutine;
 class UGameInstance;
 
 UCLASS()
-class CSJS_API UCsManager_Javascript : public UObject
+class CSJS_API UCsManager_Javascript : public UObject,
+									   public ICsGetJavascriptInstance,
+									   public ICsGetJavascriptIsolate
 {
 	GENERATED_UCLASS_BODY()
+
+// ICsGetJavascriptInstance
+#pragma region
+public:
+
+	FORCEINLINE TSharedPtr<FJavascriptInstance>& GetJavascriptInstance() { return JavascriptInstance; }
+
+#pragma endregion ICsGetJavascriptInstance
+
+// GetJavascriptInstance
+#pragma region
+private:
+
+	TSharedPtr<FJavascriptInstance> JavascriptInstance;
+	
+#pragma endregion GetJavascriptInstance
+
+// ICsGetJavascriptIsolate
+#pragma region
+public:
+
+	TSharedPtr<FJavascriptIsolate> GetSharedJavascriptIsolate();
+
+#pragma endregion ICsGetJavascriptIsolate
 
 // Singleton
 #pragma region
@@ -100,15 +132,15 @@ protected:
 
 	static ICsGetManagerJavascript* Get_GetManagerJavascript(UObject* InRoot);
 
-	static ICsGetManagerJavascript* GetSafe_GetManagerJavascript(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+	static ICsGetManagerJavascript* GetSafe_GetManagerJavascript(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsJs::FLog::Warning);
 	static ICsGetManagerJavascript* GetSafe_GetManagerJavascript(UObject* Object);
 
 public:
 
-	static UCsManager_Javascript* GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+	static UCsManager_Javascript* GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsJs::FLog::Warning);
 	static UCsManager_Javascript* GetSafe(UObject* Object);
 
-	static UCsManager_Javascript* GetFromWorldContextObject(const FString& Context, const UObject* WorldContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+	static UCsManager_Javascript* GetFromWorldContextObject(const FString& Context, const UObject* WorldContextObject, void(*Log)(const FString&) = &NCsJs::FLog::Warning);
 	static UCsManager_Javascript* GetFromWorldContextObject(const UObject* WorldContextObject);
 
 #endif // #if WITH_EDITOR

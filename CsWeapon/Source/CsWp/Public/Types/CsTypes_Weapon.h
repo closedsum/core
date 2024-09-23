@@ -1,12 +1,13 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
+#include "CsMacro_StructOps.h"
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 // Log
 #include "Utility/CsWpLog.h"
-// Engine
-#include "Engine/DataTable.h"
+// Data
+#include "Data/CsTableRowBase_Data.h"
 
 #include "CsTypes_Weapon.generated.h"
 
@@ -391,8 +392,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp", meta = (MustImplement = "/Script.CsWp.CsWeapon"))
 	TSoftClassPtr<UObject> Weapon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp")
-	int32 Load_Flags;
+	UPROPERTY(BlueprintReadOnly, Category = "CsWp")
+	int32 Weapon_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsWp")
 	UObject* Weapon_Internal;
@@ -402,7 +403,7 @@ public:
 
 	FCsWeaponPtr() :
 		Weapon(nullptr),
-		Load_Flags(0),
+		Weapon_LoadFlags(0),
 		Weapon_Internal(nullptr),
 		Weapon_Class(nullptr)
 	{
@@ -411,6 +412,15 @@ public:
 	FORCEINLINE UObject* Get() const { return Weapon_Internal; }
 
 	FORCEINLINE UClass* GetClass() const { return Weapon_Class; }
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsWeaponPtr)
+
+	FORCEINLINE void Unload()
+	{
+		Weapon.ResetWeakPtr();
+		Weapon_Internal = nullptr;
+		Weapon_Class = nullptr;
+	}
 };
 
 #pragma endregion FCsWeaponPtr
@@ -430,8 +440,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp", meta = (MustImplement = "/Script.CsWp.CsData_Weapon"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp")
-	int32 Load_Flags;
+	UPROPERTY(BlueprintReadOnly, Category = "CsWp")
+	int32 Data_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsWp")
 	UObject* Data_Internal;
@@ -441,7 +451,7 @@ public:
 
 	FCsData_WeaponPtr() :
 		Data(nullptr),
-		Load_Flags(0),
+		Data_LoadFlags(0),
 		Data_Internal(nullptr),
 		Data_Class(nullptr)
 	{
@@ -457,6 +467,10 @@ public:
 	UObject* SafeLoad(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 
 	UObject* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsData_WeaponPtr)
+
+	void Unload();
 };
 
 #pragma endregion FCsData_WeaponPtr
@@ -465,7 +479,7 @@ public:
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSWP_API FCsWeaponClassEntry : public FTableRowBase
+struct CSWP_API FCsWeaponClassEntry : public FCsTableRowBase_Data
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -487,6 +501,19 @@ struct CSWP_API FCsWeaponClassEntry : public FTableRowBase
 		Class()
 	{
 	}
+
+	// FCsTableRowBase_Data
+#pragma region
+public:
+
+	virtual void Unload() override
+	{
+		Class.Unload();
+	}
+
+#pragma endregion FCsTableRowBase_Data
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsWeaponClassEntry)
 };
 
 #pragma endregion FCsWeaponClassEntry
@@ -495,7 +522,7 @@ struct CSWP_API FCsWeaponClassEntry : public FTableRowBase
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSWP_API FCsWeaponEntry : public FTableRowBase
+struct CSWP_API FCsWeaponEntry : public FCsTableRowBase_Data
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -523,6 +550,19 @@ struct CSWP_API FCsWeaponEntry : public FTableRowBase
 		Data()
 	{
 	}
+
+	// FCsTableRowBase_Data
+#pragma region
+public:
+
+	virtual void Unload() override
+	{
+		Data.Unload();
+	}
+
+#pragma endregion FCsTableRowBase_Data
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsWeaponEntry)
 };
 
 #pragma endregion FCsWeaponEntry

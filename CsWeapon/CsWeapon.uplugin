@@ -39,6 +39,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsStructOps",
+      "Enabled": true
+    },
+    {
       "Name": "CsValid",
       "Enabled": true
     },
@@ -60,6 +64,10 @@
     },
     {
       "Name": "CsTime",
+      "Enabled": true
+    },
+    {
+      "Name": "CsPool",
       "Enabled": true
     },
     {

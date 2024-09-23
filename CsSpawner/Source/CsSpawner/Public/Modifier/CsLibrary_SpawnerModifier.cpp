@@ -18,16 +18,15 @@ namespace NCsSpawner
 	namespace NModifier
 	{
 		#define LogLevel void(*Log)(const FString&) /*=&NCsSpawner::FLog::Warning*/
-		#define ModifierType NCsSpawner::NModifier::IModifier
 
-		bool FLibrary::IsValidChecked(const FString& Context, const ModifierType* Modifier)
+		bool FLibrary::IsValidChecked(const FString& Context, const CsSpawnerModifierType* Modifier)
 		{
 			const ICsIsValid* Valid = GetInterfaceChecked<ICsIsValid>(Context, Modifier);
 
 			return Valid->IsValidChecked(Context);
 		}
 
-		bool FLibrary::IsValid(const FString& Context, const ModifierType* Modifier, LogLevel)
+		bool FLibrary::IsValid(const FString& Context, const CsSpawnerModifierType* Modifier, LogLevel)
 		{
 			const ICsIsValid* Valid = GetInterfaceChecked<ICsIsValid>(Context, Modifier);
 
@@ -36,9 +35,9 @@ namespace NCsSpawner
 
 		#define AllocatedModifierType NCsSpawner::NModifier::FAllocated
 
-		void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers)
+		void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<CsSpawnerModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers)
 		{
-			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, CsSpawnerModifierType)
 
 			const int32 CountToAdd = Modifiers.Num();
 
@@ -63,7 +62,7 @@ namespace NCsSpawner
 				}
 			}
 
-			for (ModifierType* Modifier : Modifiers)
+			for (CsSpawnerModifierType* Modifier : Modifiers)
 			{
 				AllocatedModifierType& AllocatedModifier = AllocatedModifiers.AddDefaulted_GetRef();
 				AllocatedModifier.Copy(WorldContext, Modifier);
@@ -76,13 +75,11 @@ namespace NCsSpawner
 
 			int32 Result = Value;
 
-			typedef NCsSpawner::NModifier::FLibrary ModifierLibrary;
-
 			for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 			{
-				ModifierType* Modifier									   = AllocatedModifier.Get();
+				CsSpawnerModifierType* Modifier							= AllocatedModifier.Get();
 				const ICsGetSpawnerModifierType* GetSpawnerModifierType = GetInterfaceChecked<ICsGetSpawnerModifierType>(Context, Modifier);
-				const FECsSpawnerModifier& SpawnerModifierType		   = GetSpawnerModifierType->GetSpawnerModifierType();
+				const FECsSpawnerModifier& SpawnerModifierType		    = GetSpawnerModifierType->GetSpawnerModifierType();
 
 				if (SpawnerModifierType == Type)
 				{
@@ -106,7 +103,7 @@ namespace NCsSpawner
 
 			for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 			{
-				ModifierType* Modifier									= AllocatedModifier.Get();
+				CsSpawnerModifierType* Modifier							= AllocatedModifier.Get();
 				const ICsGetSpawnerModifierType* GetSpawnerModifierType = GetInterfaceChecked<ICsGetSpawnerModifierType>(Context, Modifier);
 				const FECsSpawnerModifier& SpawnerModifierType		    = GetSpawnerModifierType->GetSpawnerModifierType();
 
@@ -151,7 +148,6 @@ namespace NCsSpawner
 		}
 
 		#undef AllocatedModifierType
-		#undef ModifierType
 		#undef LogLevel
 	}
 }

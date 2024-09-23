@@ -13,17 +13,15 @@
 // FCsJavascriptFileObjects
 #pragma region
 
-#define JavascriptCommonLibrary NCsJs::NCommon::FLibrary
-
 void FCsJavascriptFileObjects::Init(UObject* Owner)
 {
-	JavascriptCommonLibrary::SetupIsolateAndContext(Owner, Isolate, Context, false);
+	CsJavascriptCommonLibrary::SetupIsolateAndContext(Owner, Isolate, Context, false);
 
 	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
 
 	Path = Settings.EmptyPath;
 
-	JavascriptCommonLibrary::RunFile(Context, Path);
+	CsJavascriptCommonLibrary::RunFile(Context, Path);
 }
 
 void FCsJavascriptFileObjects::Deactivate(UObject* Owner)
@@ -35,7 +33,7 @@ void FCsJavascriptFileObjects::Deactivate(UObject* Owner)
 	{
 		for (const FString& Name : ExposedObjectNames)
 		{
-			JavascriptCommonLibrary::ClearObject(Context, Name);
+			CsJavascriptCommonLibrary::ClearObject(Context, Name);
 		}
 	}
 
@@ -53,14 +51,14 @@ void FCsJavascriptFileObjects::Deactivate(UObject* Owner)
 			Context = nullptr;
 		}
 
-		JavascriptCommonLibrary::SetupIsolateAndContext(Owner, Isolate, Context, false);
+		CsJavascriptCommonLibrary::SetupIsolateAndContext(Owner, Isolate, Context, false);
 	}
 
 	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
 
 	Path = Settings.EmptyPath;
 
-	JavascriptCommonLibrary::RunFile(Context, Path);
+	CsJavascriptCommonLibrary::RunFile(Context, Path);
 }
 
 void FCsJavascriptFileObjects::Shutdown()
@@ -77,7 +75,7 @@ void FCsJavascriptFileObjects::Shutdown()
 	{
 		for (const FString& Name : ExposedObjectNames)
 		{
-			JavascriptCommonLibrary::ClearObject(Context, Name);
+			CsJavascriptCommonLibrary::ClearObject(Context, Name);
 		}
 
 		Context->MarkAsGarbage();
@@ -85,7 +83,5 @@ void FCsJavascriptFileObjects::Shutdown()
 	}
 	ExposedObjectNames.Reset(ExposedObjectNames.Max());
 }
-
-#undef JavascriptCommonLibrary
 
 #pragma endregion FCsJavascriptFileObjects

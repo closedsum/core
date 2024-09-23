@@ -151,7 +151,6 @@ bool FCsSpawner_FrequencyParams::IsValidChecked(const FString& Context) const
 	if (Type == ECsSpawnerFrequency::Count)
 	{
 		checkf(Count >= 1, TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::Count."), *Context);
-
 		checkf(Interval >= 0.0f, TEXT("%s: Interval MUST be >= 0.0f if Type == ECsSpawnerFrequency::Count."), *Context);
 	}
 	// TimeCount
@@ -348,7 +347,6 @@ namespace NCsSpawner
 			if (GetType() == FrequencyType::Count)
 			{
 				checkf(GetCount() >= 1, TEXT("%s: GetCount() MUST be >= 1 if GetType() == FrequencyType::Count."), *Context);
-
 				checkf(GetInterval() >= 0.0f, TEXT("%s: etInterval() MUST be >= 0.0f if Type == ECsSpawnerFrequency::Count."), *Context);
 			}
 			// TimeCount

@@ -238,3 +238,5 @@ namespace NCsMenu
 		};
 	}
 }
+
+using CsMenuManagerLibrary = NCsMenu::NManager::FLibrary;

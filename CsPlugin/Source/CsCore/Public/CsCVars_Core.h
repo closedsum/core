@@ -91,8 +91,6 @@ namespace NCsCVarLog
 	extern CSCORE_API const Type LogGameStateOnBoard;
 	// Json
 	extern CSCORE_API const Type LogJsonDataFilenames;
-	// Script
-	extern CSCORE_API const Type LogOverrideFunctions;
 	// FX
 	extern CSCORE_API const Type LogManagerFxTransactions;
 	// Runnable
@@ -108,8 +106,6 @@ namespace NCsCVarLog
 	{
 		typedef FCsCVarLogMap CVarMapType;
 
-		// Script
-		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogOverrideFunctions);
 		// Managers
 
 			// Task

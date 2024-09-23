@@ -57,6 +57,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "CsConsoleCommand",
+			"Enabled": true
+		},
+		{
 			"Name": "CsData",
 			"Enabled": true
 		},

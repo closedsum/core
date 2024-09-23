@@ -23,10 +23,11 @@ public class CsSpawner : ModuleRules
                     "CsManager",
                     "CsTypes",
                     "CsCoreLibrary",
+                    "CsStartPlay",
                     "CsTime",
+                    "CsPool",
                     "CsCoroutine",
-                    "CsModifier",
-                    "CsCore"
+                    "CsModifier"
                 }
             );
 

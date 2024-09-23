@@ -18,6 +18,7 @@ public class CsPerformance : ModuleRules
                     "Engine",
                     "AssetRegistry",
                     "DeveloperSettings",
+                    "RenderCore",
                     "CsMacro",
                     "CsContainer",
                     "CsValid",
@@ -38,7 +39,6 @@ public class CsPerformance : ModuleRules
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
-                    "RenderCore",
                     "SlateCore"
                 }
             );

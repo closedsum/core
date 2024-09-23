@@ -21,15 +21,15 @@ namespace NCsSpawner
 
 				static const FName Name;
 
-			#define ModifierType NCsSpawner::NModifier::IModifier
+			#define CsSpawnerModifierType NCsSpawner::NModifier::IModifier
 
 			public:
 
 				virtual ~ICopy() {}
 
-				virtual void Copy(const ModifierType* From) = 0;
+				virtual void Copy(const CsSpawnerModifierType* From) = 0;
 
-			#undef ModifierType 
+			#undef CsSpawnerModifierType 
 			};
 		}
 	}

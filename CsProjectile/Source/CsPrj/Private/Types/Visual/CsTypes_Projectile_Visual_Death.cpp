@@ -30,9 +30,7 @@ void FCsProjectile_Visual_Death_FX_ScaleInfo::CopyToInfoAsValue(InfoType* Info) 
 
 bool FCsProjectile_Visual_Death_FX_ScaleInfo::IsValidChecked(const FString& Context) const
 {
-	typedef NCsFX::FLibrary FXLibrary;
-
-	check(FXLibrary::IsValidUserVariableNameChecked(Context, ParameterName));
+	check(CsFXLibrary::IsValidUserVariableNameChecked(Context, ParameterName));
 
 	if (bCollisionRadius)
 	{
@@ -43,9 +41,7 @@ bool FCsProjectile_Visual_Death_FX_ScaleInfo::IsValidChecked(const FString& Cont
 
 bool FCsProjectile_Visual_Death_FX_ScaleInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
-	typedef NCsFX::FLibrary FXLibrary;
-
-	if (!FXLibrary::IsValidUserVariableName(Context, ParameterName, Log))
+	if (!CsFXLibrary::IsValidUserVariableName(Context, ParameterName, Log))
 		return false;
 
 	if (bCollisionRadius)
@@ -67,9 +63,7 @@ namespace NCsProjectile
 				{
 					bool FInfo::IsValidChecked(const FString& Context) const
 					{
-						typedef NCsFX::FLibrary FXLibrary;
-
-						check(FXLibrary::IsValidUserVariableNameChecked(Context, GetParameterName()));
+						check(CsFXLibrary::IsValidUserVariableNameChecked(Context, GetParameterName()));
 
 						if (GetbCollisionRadius())
 						{
@@ -80,9 +74,7 @@ namespace NCsProjectile
 
 					bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 					{
-						typedef NCsFX::FLibrary FXLibrary;
-
-						if (!FXLibrary::IsValidUserVariableNameChecked(Context, GetParameterName()))
+						if (!CsFXLibrary::IsValidUserVariableNameChecked(Context, GetParameterName()))
 							return false;
 
 						if (GetbCollisionRadius())
@@ -118,17 +110,13 @@ void FCsProjectile_Visual_Death_FX_SpeedInfo::CopyToInfoAsValue(InfoType* Info) 
 
 bool FCsProjectile_Visual_Death_FX_SpeedInfo::IsValidChecked(const FString& Context) const
 {
-	typedef NCsFX::FLibrary FXLibrary;
-
-	check(FXLibrary::IsValidUserVariableNameChecked(Context, ParameterName));
+	check(CsFXLibrary::IsValidUserVariableNameChecked(Context, ParameterName));
 	return true;
 }
 
 bool FCsProjectile_Visual_Death_FX_SpeedInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
-	typedef NCsFX::FLibrary FXLibrary;
-
-	if (!FXLibrary::IsValidUserVariableName(Context, ParameterName, Log))
+	if (!CsFXLibrary::IsValidUserVariableName(Context, ParameterName, Log))
 		return false;
 	return true;
 }
@@ -145,17 +133,13 @@ namespace NCsProjectile
 				{
 					bool FInfo::IsValidChecked(const FString& Context) const
 					{
-						typedef NCsFX::FLibrary FXLibrary;
-
-						check(FXLibrary::IsValidUserVariableNameChecked(Context, GetParameterName()));
+						check(CsFXLibrary::IsValidUserVariableNameChecked(Context, GetParameterName()));
 						return true;
 					}
 
 					bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 					{
-						typedef NCsFX::FLibrary FXLibrary;
-
-						if (!FXLibrary::IsValidUserVariableNameChecked(Context, GetParameterName()))
+						if (!CsFXLibrary::IsValidUserVariableNameChecked(Context, GetParameterName()))
 							return false;
 						return true;
 					}

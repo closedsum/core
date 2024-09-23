@@ -40,8 +40,7 @@ public class CsPlayback : ModuleRules
                     "CsTime",
                     "CsCoroutine",
                     "CsThread",
-                    "CsInput",
-                    "CsCore"
+                    "CsInput"
                 }
             );
 

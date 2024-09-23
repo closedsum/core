@@ -61,6 +61,8 @@ namespace NCsSpawner
 	}
 }
 
+using CsSpawnerModifierImplType = NCsSpawner::NModifier::EImpl;
+
 #pragma endregion SpawnerModifierImpl
 
 // SpawnerModifier_Int

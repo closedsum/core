@@ -14,24 +14,22 @@ namespace NCsSpawner
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsSpawner::NModifier::IModifier
-
 		/**
 		* Library for interface: ModifierType (NCsSpawner::NModifier::IModifier)
 		*/
-		struct CSSPAWNER_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
+		struct CSSPAWNER_API FLibrary final : public NCsInterfaceMap::TLibrary<CsSpawnerModifierType>
 		{
 		#define LogLevel void(*Log)(const FString&) = &NCsSpawner::FLog::Warning
 
 		public:
 
-			static bool IsValidChecked(const FString& Context, const ModifierType* Modifier);
+			static bool IsValidChecked(const FString& Context, const CsSpawnerModifierType* Modifier);
 
-			static bool IsValid(const FString& Context, const ModifierType* Modifier, LogLevel);
+			static bool IsValid(const FString& Context, const CsSpawnerModifierType* Modifier, LogLevel);
 
 		#define AllocatedModifierType NCsSpawner::NModifier::FAllocated
 
-			static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers);
+			static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<CsSpawnerModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers);
 
 			static int32 ModifyIntChecked(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsSpawnerModifier& Type, const int32& Value);
 
@@ -41,8 +39,6 @@ namespace NCsSpawner
 
 		#undef LogLevel
 		};
-
-	#undef ModifierType
 	}
 }
 

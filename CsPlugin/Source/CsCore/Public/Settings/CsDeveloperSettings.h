@@ -17,8 +17,6 @@
 #include "Managers/Input/CsSettings_Input.h"
 #include "Managers/Input/Enhanced/CsSettings_Input_Enhanced.h"
 #include "Managers/Input/CsSettings_Manager_Input.h"
-// Game Event
-#include "Coordinators/GameEvent/CsSettings_Coordinator_GameEvent.h"
 // Level
 #include "Managers/Level/CsSettings_Manager_Level.h"
 // Anim
@@ -123,15 +121,6 @@ public:
 #pragma endregion Unit Test
 
 #pragma endregion Input
-
-// Game Event
-#pragma region
-public:
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Game Event", meta = (DisplayName = "Coordinator Game Event"))
-	FCsSettings_Coordinator_GameEvent Coordinator_GameEvent;
-
-#pragma endregion Game Event
 
 // Level
 #pragma region

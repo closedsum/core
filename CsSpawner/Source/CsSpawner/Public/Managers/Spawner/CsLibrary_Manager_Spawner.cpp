@@ -93,36 +93,30 @@ namespace NCsSpawner
 
 		namespace NModifier
 		{
-			#define ModifierResourceType NCsSpawner::NModifier::FResource
-			#define ModifierType NCsSpawner::NModifier::IModifier
-		
-			ModifierResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsSpawnerModifier& Type)
+			CsSpawnerModifierResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsSpawnerModifier& Type)
 			{
 				return CsSpawnerManagerLibrary::GetChecked(Context, WorldContext)->AllocateModifier(Type);
 			}
 
-			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsSpawnerModifier& Type, ModifierResourceType* Modifier)
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsSpawnerModifier& Type, CsSpawnerModifierResourceType* Modifier)
 			{
 				CsSpawnerManagerLibrary::GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
 			}
 
-			const FECsSpawnerModifier& FLibrary::GetTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+			const FECsSpawnerModifier& FLibrary::GetTypeChecked(const FString& Context, const UObject* WorldContext, const CsSpawnerModifierType* Modifier)
 			{
 				return CsSpawnerManagerLibrary::GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
 			}
 
-			ModifierResourceType* FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+			CsSpawnerModifierResourceType* FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const CsSpawnerModifierType* Modifier)
 			{
 				return CsSpawnerManagerLibrary::GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
 			}
 
-			ModifierResourceType* FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier)
+			CsSpawnerModifierResourceType* FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const CsSpawnerModifierResourceType* Modifier)
 			{
 				return CsSpawnerManagerLibrary::GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
 			}
-
-			#undef ModifierResourceType
-			#undef ModifierType
 		}
 	}
 }

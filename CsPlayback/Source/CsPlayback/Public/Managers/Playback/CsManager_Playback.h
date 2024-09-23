@@ -71,10 +71,6 @@ protected:
 
 	static UCsManager_Playback* GetSafe(UObject* Object);
 
-public:
-
-	static UCsManager_Playback* GetFromWorldContextObject(UObject* WorldContextObject);
-
 #endif // #if WITH_EDITOR
 
 protected:
@@ -128,18 +124,14 @@ private:
 // State
 #pragma region
 
-#define StateType NCsPlayback::EState
-
 private:
 
-	StateType PlaybackState;
+	CsPlaybackStateType PlaybackState;
 
 public:
 
-	void SetPlaybackState(const StateType& NewState);
-	FORCEINLINE const StateType& GetPlaybackState() const { return PlaybackState; }
-
-#undef StateType
+	void SetPlaybackState(const CsPlaybackStateType& NewState);
+	FORCEINLINE const CsPlaybackStateType& GetPlaybackState() const { return PlaybackState; }
 
 #pragma endregion State
 

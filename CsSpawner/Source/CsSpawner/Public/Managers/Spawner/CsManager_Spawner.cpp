@@ -209,17 +209,13 @@ void UCsManager_Spawner::Initialize()
 
 void UCsManager_Spawner::CleanUp()
 {
-	typedef NCsSpawner::NModifier::FManager ModifierManagerType;
-	typedef NCsSpawner::NModifier::FResource ModifierResourceType;
-	typedef NCsSpawner::NModifier::IModifier ModifierType;
-
-	for (ModifierManagerType& ModifierManager : Manager_Modifiers)
+	for (CsSpawnerModifierManagerType& ModifierManager : Manager_Modifiers)
 	{
-		const TArray<ModifierResourceType*>& Containers = ModifierManager.GetPool();
+		const TArray<CsSpawnerModifierResourceType*>& Containers = ModifierManager.GetPool();
 
-		for (ModifierResourceType* Container : Containers)
+		for (CsSpawnerModifierResourceType* Container : Containers)
 		{
-			ModifierType* M = Container->Get();
+			CsSpawnerModifierType* M = Container->Get();
 			delete M;
 			Container->Set(nullptr);
 		}
@@ -244,51 +240,44 @@ void UCsManager_Spawner::SetMyRoot(UObject* InRoot)
 // Modifier
 #pragma region
 
-#define ModifierResourceType NCsSpawner::NModifier::FResource
-#define ModifierType NCsSpawner::NModifier::IModifier
-
 void UCsManager_Spawner::SetupModifiers()
 {
-	typedef NCsSpawner::NModifier::EImpl ModifierImplType;
-
-	Manager_Modifiers.Reset((uint8)ModifierImplType::EImpl_MAX);
-	Manager_Modifiers.AddDefaulted((uint8)ModifierImplType::EImpl_MAX);
-
-	typedef NCsSpawner::NModifier::FManager ModifierManagerType;
+	Manager_Modifiers.Reset((uint8)CsSpawnerModifierImplType::EImpl_MAX);
+	Manager_Modifiers.AddDefaulted((uint8)CsSpawnerModifierImplType::EImpl_MAX);
 
 	const int32& PoolSize = 256;//Settings.Modifier.PoolSize;
 
 	// Int
 	{
-		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Int];
+		CsSpawnerModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)CsSpawnerModifierImplType::Int];
 
 		ModifierManager.CreatePool(PoolSize);
 
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			ModifierManager.Add(ConstructModifier(ModifierImplType::Int));
+			ModifierManager.Add(ConstructModifier(CsSpawnerModifierImplType::Int));
 		}
 	}
 	// Float
 	{
-		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Float];
+		CsSpawnerModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)CsSpawnerModifierImplType::Float];
 
 		ModifierManager.CreatePool(PoolSize);
 
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			ModifierManager.Add(ConstructModifier(ModifierImplType::Float));
+			ModifierManager.Add(ConstructModifier(CsSpawnerModifierImplType::Float));
 		}
 	}
 	// Toggle
 	{
-		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Toggle];
+		CsSpawnerModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)CsSpawnerModifierImplType::Toggle];
 
 		ModifierManager.CreatePool(PoolSize);
 
 		for (int32 I = 0; I < PoolSize; ++I)
 		{
-			ModifierManager.Add(ConstructModifier(ModifierImplType::Toggle));
+			ModifierManager.Add(ConstructModifier(CsSpawnerModifierImplType::Toggle));
 		}
 	}
 
@@ -296,89 +285,79 @@ void UCsManager_Spawner::SetupModifiers()
 	ImplTypeByModifier.AddDefaulted(EMCsSpawnerModifier::Get().Num());
 
 	// Movement
-	ImplTypeByModifier[NCsSpawnerModifier::MovementSpeed.GetValue()]				  = ModifierImplType::Float;
-	ImplTypeByModifier[NCsSpawnerModifier::SteeringSeparateForcePriority.GetValue()] = ModifierImplType::Int;
-	ImplTypeByModifier[NCsSpawnerModifier::SteeringSeparateForceRadius.GetValue()]	  = ModifierImplType::Float;
+	ImplTypeByModifier[NCsSpawnerModifier::MovementSpeed.GetValue()]				  = CsSpawnerModifierImplType::Float;
+	ImplTypeByModifier[NCsSpawnerModifier::SteeringSeparateForcePriority.GetValue()]  = CsSpawnerModifierImplType::Int;
+	ImplTypeByModifier[NCsSpawnerModifier::SteeringSeparateForceRadius.GetValue()]	  = CsSpawnerModifierImplType::Float;
 	// Collision
-	ImplTypeByModifier[NCsSpawnerModifier::CollisionRadius.GetValue()]  = ModifierImplType::Float;
-	ImplTypeByModifier[NCsSpawnerModifier::KnockbackEnabled.GetValue()] = ModifierImplType::Toggle;
+	ImplTypeByModifier[NCsSpawnerModifier::CollisionRadius.GetValue()]  = CsSpawnerModifierImplType::Float;
+	ImplTypeByModifier[NCsSpawnerModifier::KnockbackEnabled.GetValue()] = CsSpawnerModifierImplType::Toggle;
 	// Attack
-	ImplTypeByModifier[NCsSpawnerModifier::AttackSpeed.GetValue()] = ModifierImplType::Float;
+	ImplTypeByModifier[NCsSpawnerModifier::AttackSpeed.GetValue()] = CsSpawnerModifierImplType::Float;
 }
 
-#define ModifierImplType NCsSpawner::NModifier::EImpl
-ModifierType* UCsManager_Spawner::ConstructModifier(const ModifierImplType& ImplType)
+CsSpawnerModifierType* UCsManager_Spawner::ConstructModifier(const CsSpawnerModifierImplType& ImplType)
 {
 	// Int
-	if (ImplType == ModifierImplType::Int)
+	if (ImplType == CsSpawnerModifierImplType::Int)
 		return new NCsSpawner::NModifier::FInt();
 	// Float
-	if (ImplType == ModifierImplType::Float)
+	if (ImplType == CsSpawnerModifierImplType::Float)
 		return new NCsSpawner::NModifier::FFloat();
 	// Toggle
-	if (ImplType == ModifierImplType::Toggle)
+	if (ImplType == CsSpawnerModifierImplType::Toggle)
 		return new NCsSpawner::NModifier::FToggle();
 	check(0);
 	return nullptr;
 }
-#undef ModifierImplType
 
-ModifierResourceType* UCsManager_Spawner::AllocateModifier(const FECsSpawnerModifier& Type)
+CsSpawnerModifierResourceType* UCsManager_Spawner::AllocateModifier(const FECsSpawnerModifier& Type)
 {
 	checkf(EMCsSpawnerModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Spawner::AllocateModifier: Type: %s is NOT Valid."), Type.ToChar());
 
 	return Manager_Modifiers[(uint8)GetModifierImplType(Type)].Allocate();
 }
 
-void UCsManager_Spawner::DeallocateModifier(const FString& Context, const FECsSpawnerModifier& Type, ModifierResourceType* Modifier)
+void UCsManager_Spawner::DeallocateModifier(const FString& Context, const FECsSpawnerModifier& Type, CsSpawnerModifierResourceType* Modifier)
 {
 	checkf(EMCsSpawnerModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Spawner::DeallocateModifier: Type: %s is NOT Valid."), Type.ToChar());
 
 	CS_IS_PTR_NULL_CHECKED(Modifier)
 
-	typedef NCsSpawner::NModifier::FLibrary ModifierLibrary;
-
 	// Reset
-	if (ICsReset* IReset = ModifierLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Modifier->Get()))
+	if (ICsReset* IReset = CsSpawnerModifierLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Modifier->Get()))
 		IReset->Reset();
 
 	Manager_Modifiers[(uint8)GetModifierImplType(Type)].Deallocate(Modifier);
 }
 
-const FECsSpawnerModifier& UCsManager_Spawner::GetModifierType(const FString& Context, const ModifierType* Modifier)
+const FECsSpawnerModifier& UCsManager_Spawner::GetModifierType(const FString& Context, const CsSpawnerModifierType* Modifier)
 {
-	typedef NCsSpawner::NModifier::FLibrary ModifierLibrary;
-
-	const ICsGetSpawnerModifierType* GetSpawnerModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetSpawnerModifierType>(Context, Modifier);
-	const FECsSpawnerModifier& Type					       = GetSpawnerModifierType->GetSpawnerModifierType();
+	const ICsGetSpawnerModifierType* GetSpawnerModifierType = CsSpawnerModifierLibrary::GetInterfaceChecked<ICsGetSpawnerModifierType>(Context, Modifier);
+	const FECsSpawnerModifier& Type					        = GetSpawnerModifierType->GetSpawnerModifierType();
 
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsSpawnerModifier, Type);
 
 	return Type;
 }
 
-ModifierResourceType* UCsManager_Spawner::CreateCopyOfModifier(const FString& Context, const ModifierType* Modifier)
+CsSpawnerModifierResourceType* UCsManager_Spawner::CreateCopyOfModifier(const FString& Context, const CsSpawnerModifierType* Modifier)
 {
-	const FECsSpawnerModifier& Type = GetModifierType(Context, Modifier);
-	ModifierResourceType* Container	 = AllocateModifier(Type);
-	ModifierType* Copy				 = Container->Get();
+	const FECsSpawnerModifier& Type			 = GetModifierType(Context, Modifier);
+	CsSpawnerModifierResourceType* Container = AllocateModifier(Type);
+	CsSpawnerModifierType* Copy				 = Container->Get();
 
-	typedef NCsSpawner::NModifier::FLibrary SpawnerModifierLibrary;
 	typedef NCsSpawner::NModifier::NCopy::ICopy CopyType;
 
-	CopyType* ICopy = SpawnerModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+	CopyType* ICopy = CsSpawnerModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
 	ICopy->Copy(Modifier);
 
 	return Container;
 }
 
-ModifierResourceType* UCsManager_Spawner::CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier)
+CsSpawnerModifierResourceType* UCsManager_Spawner::CreateCopyOfModifier(const FString& Context, const CsSpawnerModifierResourceType* Modifier)
 {
 	return CreateCopyOfModifier(Context, Modifier->Get());
 }
-
-#undef ModifierResourceType
-#undef ModifierType
 
 #pragma endregion Modifier

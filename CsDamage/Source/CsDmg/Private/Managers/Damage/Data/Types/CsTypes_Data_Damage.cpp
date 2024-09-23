@@ -123,12 +123,10 @@ void FCsData_DamagePtr::Unload()
 
 	if (IsValid(Data_Internal))
 	{
-		typedef NCsData::FLibrary DataLibrary;
-
-		if (DataLibrary::SafeScriptImplements(Context, Data_Internal, nullptr))
-			DataLibrary::Script_UnloadChecked(Context, Data_Internal);
+		if (CsDataLibrary::SafeScriptImplements(Context, Data_Internal, nullptr))
+			CsDataLibrary::Script_UnloadChecked(Context, Data_Internal);
 		else
-			DataLibrary::UnloadChecked(Context, Data_Internal);
+			CsDataLibrary::UnloadChecked(Context, Data_Internal);
 	}
 
 	Data_Internal = nullptr;

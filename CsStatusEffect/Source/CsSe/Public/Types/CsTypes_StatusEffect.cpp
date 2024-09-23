@@ -98,9 +98,14 @@ namespace NCDataStatusEffectPtr
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsData_StatusEffectPtr, SafeLoad);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsData_StatusEffectPtr, Unload);
 		}
 	}
 }
+
+#define USING_NS_CACHED using namespace NCDataStatusEffectPtr::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCDataStatusEffectPtr::NCached; \
+	const FString& Context = Str::__FunctionName
 
 #define DataType NCsStatusEffect::NData::IData
 
@@ -197,5 +202,26 @@ UObject* FCsData_StatusEffectPtr::SafeLoadSoftClass(const FString& Context, void
 	}
 	return O;
 }
+
+void FCsData_StatusEffectPtr::Unload()
+{
+	SET_CONTEXT(Unload);
+
+	Data.ResetWeakPtr();
+
+	if (IsValid(Data_Internal))
+	{
+		if (CsDataLibrary::SafeScriptImplements(Context, Data_Internal, nullptr))
+			CsDataLibrary::Script_UnloadChecked(Context, Data_Internal);
+		else
+			CsDataLibrary::UnloadChecked(Context, Data_Internal);
+	}
+
+	Data_Internal = nullptr;
+	Data_Class = nullptr;
+}
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
 
 #pragma endregion FCsData_StatusEffectPtr

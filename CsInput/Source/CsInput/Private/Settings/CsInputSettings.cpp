@@ -37,7 +37,8 @@ UCsInputSettings::UCsInputSettings(const FObjectInitializer& ObjectInitializer) 
 	InputSystem(ECsInputSystem::Default),
 	Input(),
 	EnhancedInput(),
-	Manager_Input()
+	Manager_Input(),
+	Coordinator_GameEvent()
 {
 }
 

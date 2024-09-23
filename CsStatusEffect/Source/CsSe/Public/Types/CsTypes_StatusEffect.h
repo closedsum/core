@@ -1,12 +1,13 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "CsMacro_Namespace.h"
+#include "CsMacro_StructOps.h"
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
+// Data
+#include "Data/CsTableRowBase_Data.h"
 // Log
 #include "Utility/CsSeLog.h"
-// Engine
-#include "Engine/DataTable.h"
 
 #include "CsTypes_StatusEffect.generated.h"
 
@@ -156,7 +157,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsSe.CsData_StatusEffect"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	int32 Data_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly)
@@ -190,6 +191,10 @@ public:
 #undef DataType
 
 	UObject* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsData_StatusEffectPtr)
+
+	void Unload();
 };
 
 #pragma endregion FCsData_StatusEffectPtr
@@ -198,7 +203,7 @@ public:
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSSE_API FCsStatusEffectEntry : public FTableRowBase
+struct CSSE_API FCsStatusEffectEntry : public FCsTableRowBase_Data
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -220,6 +225,19 @@ struct CSSE_API FCsStatusEffectEntry : public FTableRowBase
 		Data()
 	{
 	}
+
+// FCsTableRowBase_Data
+#pragma region
+public:
+
+	virtual void Unload() override
+	{
+		Data.Unload();
+	}
+
+#pragma endregion FCsTableRowBase_Data
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsStatusEffectEntry)
 };
 
 #pragma endregion FCsStatusEffectEntry

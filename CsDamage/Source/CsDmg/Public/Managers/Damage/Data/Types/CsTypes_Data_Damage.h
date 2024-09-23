@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_StructOps.h"
 #include "Types/CsTypes_Damage.h"
 // Data
 #include "Data/CsTableRowBase_Data.h"
@@ -112,6 +113,8 @@ public:
 
 	UObject* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsData_DamagePtr)
+
 	void Unload();
 };
 
@@ -156,6 +159,8 @@ public:
 	}
 
 #pragma endregion FCsTableRowBase_Data
+
+	CS_STRUCT_OPS_DATA_UNLOAD(FCsDamageDataEntry)
 };
 
 #pragma endregion FCsDamageDataEntry

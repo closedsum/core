@@ -193,8 +193,6 @@ namespace NCsFX
 		{
 			SET_CONTEXT(Update);
 
-			typedef NCsFX::FLibrary FXLibrary;
-
 			// Complete
 			if (DeallocateMethod == DeallocateMethodType::Complete)
 			{
@@ -216,8 +214,8 @@ namespace NCsFX
 					// This is to hopefully prevent the GameThread from stalling when
 					// Deactivating the System.
 					else
-					if (FXLibrary::IsReadyToRunChecked(Context, FXComponent) &&
-						FXLibrary::IsCompleteChecked(Context, FXComponent))
+					if (CsFXLibrary::IsReadyToRunChecked(Context, FXComponent) &&
+						CsFXLibrary::IsCompleteChecked(Context, FXComponent))
 					{
 						// Reset ElapsedTime
 						ElapsedTime.Reset();
@@ -237,12 +235,12 @@ namespace NCsFX
 						// TODO: HACK: In Editor there instances when an FX doesn't compile its Shaders until its running?
 						//			   The FX is "ready" but the instance is never created.
 					#if WITH_EDITOR
-						if (!FXLibrary::SafeHasSystemInstance(Context, FXComponent, nullptr) ||
-							FXLibrary::IsInactiveChecked(Context, FXComponent) ||
-							FXLibrary::IsCompleteChecked(Context, FXComponent))
+						if (!CsFXLibrary::SafeHasSystemInstance(Context, FXComponent, nullptr) ||
+							CsFXLibrary::IsInactiveChecked(Context, FXComponent) ||
+							CsFXLibrary::IsCompleteChecked(Context, FXComponent))
 					#else
-						if (FXLibrary::IsInactiveChecked(Context, FXComponent) ||
-							FXLibrary::IsCompleteChecked(Context, FXComponent))
+						if (CsFXLibrary::IsInactiveChecked(Context, FXComponent) ||
+							CsFXLibrary::IsCompleteChecked(Context, FXComponent))
 					#endif // #if WITH_EDITOR
 						{
 							// Reset ElapsedTime
@@ -302,10 +300,10 @@ namespace NCsFX
 					// TODO: HACK: In Editor there instances when an FX doesn't compile its Shaders until its running?
 					//			   The FX is "ready" but the instance is never created.
 				#if WITH_EDITOR
-					if (!FXLibrary::SafeHasSystemInstance(Context, FXComponent, nullptr) ||
-						FXLibrary::IsCompleteChecked(Context, FXComponent))
+					if (!CsFXLibrary::SafeHasSystemInstance(Context, FXComponent, nullptr) ||
+						CsFXLibrary::IsCompleteChecked(Context, FXComponent))
 				#else
-					if (FXLibrary::IsCompleteChecked(Context, FXComponent))
+					if (CsFXLibrary::IsCompleteChecked(Context, FXComponent))
 				#endif // #if WITH_EDITOR
 					{
 						// Reset ElapsedTime

@@ -4,10 +4,12 @@
 // Types
 #include "CsMacro_Misc.h"
 // Library
+	// Data
+#include "Data/CsLibrary_Data.h"
+#include "Level/CsLibrary_LevelData.h"
 	// Settings
 #include "Settings/CsLibrary_WeaponSettings.h"
 	// Common
-#include "Level/CsLibrary_LevelImpl.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsWpPopulateEnumMapFromSettings.h"
@@ -97,9 +99,7 @@ namespace NCsWeapon
 
 	void GetSafeFromLevel(const FString& Context, const UObject* WorldContext, TSet<FECsWeapon>& OutWeaponTypes, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 	{
-		typedef NCsLevel::NPersistent::NImpl::FLibrary LevelImplLibrary;
-
-		ICsGetWeaponTypes* GetWeaponTypes = LevelImplLibrary::GetSafeSetupData<ICsGetWeaponTypes>(Context, WorldContext, Log);
+		ICsGetWeaponTypes* GetWeaponTypes = CsLevelDataLibrary::GetSafeSetupData<ICsGetWeaponTypes>(Context, WorldContext, Log);
 
 		if (!GetWeaponTypes)
 			return;
@@ -251,6 +251,21 @@ namespace NCsWeaponData
 // FCsData_WeaponPtr
 #pragma region
 
+namespace NCsDataWeaponPtr
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsData_WeaponPtr, Unload);
+		}
+	}
+}
+
+#define USING_NS_CACHED using namespace NCsDataWeaponPtr::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsDataWeaponPtr::NCached; \
+	const FString& Context = Str::__FunctionName
+
 UObject* FCsData_WeaponPtr::SafeLoad(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 {
 	const FSoftObjectPath& Path = Data.ToSoftObjectPath();
@@ -301,8 +316,30 @@ UObject* FCsData_WeaponPtr::SafeLoadSoftClass(const FString& Context, void(*Log)
 	if (!O)
 	{
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Data at Path: %s."), *Context, *(Path.ToString())))
+		return nullptr;
 	}
 	return O;
 }
+
+void FCsData_WeaponPtr::Unload()
+{
+	SET_CONTEXT(Unload);
+
+	Data.ResetWeakPtr();
+
+	if (IsValid(Data_Internal))
+	{
+		if (CsDataLibrary::SafeScriptImplements(Context, Data_Internal, nullptr))
+			CsDataLibrary::Script_UnloadChecked(Context, Data_Internal);
+		else
+			CsDataLibrary::UnloadChecked(Context, Data_Internal);
+	}
+
+	Data_Internal = nullptr;
+	Data_Class = nullptr;
+}
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
 
 #pragma endregion FCsData_WeaponPtr

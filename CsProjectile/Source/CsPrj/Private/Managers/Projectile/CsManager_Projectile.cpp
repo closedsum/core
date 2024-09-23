@@ -16,12 +16,11 @@
 	// Common
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Property.h"
-#include "Level/CsLibrary_LevelImpl.h"
+#include "Level/CsLibrary_LevelData.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsPrjLog.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
 #include "Settings/CsProjectileSettings.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
@@ -562,10 +561,7 @@ void UCsManager_Projectile::SetupInternal()
 #endif // #if WITH_EDITOR
 	// If any settings have been set for Manager_Projectile, apply them
 	{
-
-		typedef NCsLevel::NPersistent::NImpl::FLibrary LevelImplLibrary;
-
-		ICsGetSettingsManagerProjectile* GetPoolParams = LevelImplLibrary::GetSetupDataChecked<ICsGetSettingsManagerProjectile>(Context, MyRoot);
+		ICsGetSettingsManagerProjectile* GetPoolParams = CsLevelDataLibrary::GetSetupDataChecked<ICsGetSettingsManagerProjectile>(Context, MyRoot);
 
 		Settings = GetPoolParams->GetSettingsManagerProjectile();
 
@@ -606,7 +602,7 @@ void UCsManager_Projectile::SetupInternal()
 				const FECsUpdateGroup& Group						  = Pair.Key;
 				const FCsSettings_Manager_Projectile_TypeArray& Array = Pair.Value;
 
-				checkf(Array.Types.Num() > CS_EMPTY, TEXT("%s: No Types added for UCsDeveloperSettings.Manager_Projectile.TypesByUpdateGroupMap[%s]."), *Context, Group.ToChar());
+				checkf(Array.Types.Num() > CS_EMPTY, TEXT("%s: No Types added for UCsProjectileSettings.Manager_Projectile.TypesByUpdateGroupMap[%s]."), *Context, Group.ToChar());
 
 				TypesByUpdateGroup[Group.GetValue()].Append(Array.Types);
 

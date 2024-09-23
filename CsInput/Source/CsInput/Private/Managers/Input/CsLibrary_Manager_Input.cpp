@@ -410,7 +410,7 @@ namespace NCsInput
 			#define USING_NS_CACHED using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
+			#define LogLevel void(*Log)(const FString&) /*=&NCsInput::FLog::Warning*/
 
 			// Set
 			#pragma region

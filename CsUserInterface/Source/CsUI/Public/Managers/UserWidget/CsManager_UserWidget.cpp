@@ -9,7 +9,7 @@
 // Library
 #include "Data/CsUILibrary_DataRootSet.h"
 #include "Game/CsLibrary_GameInstance.h"
-#include "Level/CsLibrary_LevelImpl.h"
+#include "Level/CsLibrary_LevelData.h"
 #include "Library/CsLibrary_Viewport.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
@@ -379,11 +379,11 @@ void UCsManager_UserWidget::SetupInternal()
 
 		checkf(ModuleSettings, TEXT("UCsManager_UserWidget::SetupInternal: Failed to get settings of type: UCsUserInterfaceSettings."));
 
+		// TODO: FIX
+
 		if (ModuleSettings->bManagerUserWidgetFromLevel)
 		{
-			typedef NCsLevel::NPersistent::NImpl::FLibrary LevelImplLibrary;
-
-			ICsGetSettingsManagerUserWidget* GetSettingsManagerUserWidget = LevelImplLibrary::GetSetupDataChecked<ICsGetSettingsManagerUserWidget>(Context, MyRoot);
+			ICsGetSettingsManagerUserWidget* GetSettingsManagerUserWidget = CsLevelDataLibrary::GetSetupDataChecked<ICsGetSettingsManagerUserWidget>(Context, MyRoot);
 
 			Settings = GetSettingsManagerUserWidget->GetSettingsManagerUserWidget();
 		}

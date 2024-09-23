@@ -4,7 +4,7 @@
 #ifndef __CSPERFORMANCE_H__
 #define __CSPERFORMANCE_H__
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCsPerformance, Log, All);
 

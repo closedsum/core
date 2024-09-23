@@ -35,25 +35,25 @@ namespace NCsScriptLibraryScriptableActor
 
 #pragma endregion Cached
 
-#define ActorLibrary NCsActor::NScriptable::FLibrary
-
 UCsScriptLibrary_ScriptableActor::UCsScriptLibrary_ScriptableActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
+
+#define USING_NS_CACHED using namespace NCsScriptLibraryScriptableActor::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryScriptableActor::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 
 // Interface
 #pragma region
 
 bool UCsScriptLibrary_ScriptableActor::GetScriptableActorInfo(const FString& Context, const AActor* Actor, FCsScriptableActorInfo& OutInfo)
 {
-	using namespace NCsScriptLibraryScriptableActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetScriptableActorInfo : Context;
+	CONDITIONAL_SET_CTXT(GetScriptableActorInfo);
 
 	bool IsScript = false;
 
-	if (!ActorLibrary::SafeImplements(Ctxt, Actor, IsScript))
+	if (!CsScriptableActorLibrary::SafeImplements(Ctxt, Actor, IsScript))
 		return false;
 
 	if (IsScript)
@@ -76,49 +76,40 @@ bool UCsScriptLibrary_ScriptableActor::GetScriptableActorInfo(const FString& Con
 
 bool UCsScriptLibrary_ScriptableActor::GetAll(const FString& Context, const UObject* WorldContextObject, TArray<AActor*>& OutActors)
 {
-	using namespace NCsScriptLibraryScriptableActor::NCached;
+	CONDITIONAL_SET_CTXT(GetAll);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetAll : Context;
-
-	return ActorLibrary::GetSafe(Ctxt, WorldContextObject, OutActors);
+	return CsScriptableActorLibrary::GetSafe(Ctxt, WorldContextObject, OutActors);
 }
 
 AActor* UCsScriptLibrary_ScriptableActor::GetByTag(const FString& Context, UObject* WorldContextObject, const FName& Tag)
 {
-	using namespace NCsScriptLibraryScriptableActor::NCached;
+	CONDITIONAL_SET_CTXT(GetByTag);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetByTag : Context;
-
-	return ActorLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
+	return CsScriptableActorLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
 }
 
 bool UCsScriptLibrary_ScriptableActor::GetAnyByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags, TArray<AActor*>& OutActors)
 {
-	using namespace NCsScriptLibraryScriptableActor::NCached;
+	CONDITIONAL_SET_CTXT(GetAnyByTags);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetAnyByTags : Context;
-
-	return ActorLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutActors);
+	return CsScriptableActorLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutActors);
 }
 
 AActor* UCsScriptLibrary_ScriptableActor::GetByName(const FString& Context, UObject* WorldContextObject, const FName& Name)
 {
-	using namespace NCsScriptLibraryScriptableActor::NCached;
+	CONDITIONAL_SET_CTXT(GetByName);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetByName : Context;
-
-	return ActorLibrary::GetSafeByName(Ctxt, WorldContextObject, Name);
+	return CsScriptableActorLibrary::GetSafeByName(Ctxt, WorldContextObject, Name);
 }
 
 AActor* UCsScriptLibrary_ScriptableActor::GetByLabel(const FString& Context, UObject* WorldContextObject, const FString& Label)
 {
-	using namespace NCsScriptLibraryScriptableActor::NCached;
+	CONDITIONAL_SET_CTXT(GetByLabel);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetByLabel : Context;
-
-	return ActorLibrary::GetSafeByLabel(Ctxt, WorldContextObject, Label);
+	return CsScriptableActorLibrary::GetSafeByLabel(Ctxt, WorldContextObject, Label);
 }
 
 #pragma endregion Get
 
-#undef ActorLibrary
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT

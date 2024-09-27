@@ -82,7 +82,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_Material(const FString& Co
 		return false;
 	}
 
-	// Check for properties matching interface: MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+	// Check for properties matching interface: CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 	bool Success = false;
 
 	// Try FCsData_Skin_VisualMaterialImplSlice
@@ -107,7 +107,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_Material(const FString& Co
 		}
 	}
 
-	UE_LOG(LogCsSkin, Warning, TEXT("%s: Failed to find any properties from %s for interface: MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *Ctxt, *(CsObjectLibrary::PrintObjectAndClass(Object)));
+	UE_LOG(LogCsSkin, Warning, TEXT("%s: Failed to find any properties from %s for interface: CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *Ctxt, *(CsObjectLibrary::PrintObjectAndClass(Object)));
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualMaterialImplSlice with name: VisualMaterialSlice."), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - OR"), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialInterface with name: Materials."), *Ctxt);
@@ -138,7 +138,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMesh(const FString& 
 		return false;
 	}
 
-	// Check for properties matching interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+	// Check for properties matching interface: CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 	bool Success = false;
 
 	// Try FCsData_Skin_VisualStaticMeshImplSlice
@@ -167,7 +167,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMesh(const FString& 
 		}
 	}
 
-	UE_LOG(LogCsSkin, Warning, TEXT("%s: Failed to find any properties from %s for interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)."), *Ctxt, *(CsObjectLibrary::PrintObjectAndClass(Object)));
+	UE_LOG(LogCsSkin, Warning, TEXT("%s: Failed to find any properties from %s for interface: CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)."), *Ctxt, *(CsObjectLibrary::PrintObjectAndClass(Object)));
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMeshImplSlice with name: VisualStaticMeshSlice."), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - OR"), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - Failed to get struct property of type: FCsStaticMesh with name: Mesh."), *Ctxt);
@@ -198,7 +198,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMesh(const FString
 		return false;
 	}
 
-	// Check for properties matching interface: SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
+	// Check for properties matching interface: CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 	bool Success = false;
 
 	// Try FCsData_Skin_VisualSkeletalMeshImplSlice
@@ -227,7 +227,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMesh(const FString
 		}
 	}
 
-	UE_LOG(LogCsSkin, Warning, TEXT("%s: Failed to find any properties from %s for interface: SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)."), *Ctxt, *(CsObjectLibrary::PrintObjectAndClass(Object)));
+	UE_LOG(LogCsSkin, Warning, TEXT("%s: Failed to find any properties from %s for interface: CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)."), *Ctxt, *(CsObjectLibrary::PrintObjectAndClass(Object)));
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualSkeletalMeshImplSlice with name: VisualSkeletalMeshSlice."), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - OR"), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - Failed to get struct property of type: FCsSkeletalMesh with name: Mesh."), *Ctxt);
@@ -259,8 +259,8 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMeshAndMaterial(cons
 	}
 
 	// Check for properties matching interface: 
-	// - StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-	// - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+	// - CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+	// - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 	bool Success = false;
 
 	// Try FCsData_Skin_VisualStaticMeshAndMaterialImpl
@@ -293,8 +293,8 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMeshAndMaterial(cons
 	}
 
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: Failed to find any properties from %s for interface:"), *Ctxt, *(CsObjectLibrary::PrintObjectAndClass(Object)));
-	UE_LOG(LogCsSkin, Warning, TEXT("%s: - StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)."), *Ctxt);
-	UE_LOG(LogCsSkin, Warning, TEXT("%s: - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *Ctxt);
+	UE_LOG(LogCsSkin, Warning, TEXT("%s: - CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)."), *Ctxt);
+	UE_LOG(LogCsSkin, Warning, TEXT("%s: - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMeshAndMaterialImpl with name: VisualStaticMeshAndMaterialImpl."), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - OR"), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - Failed to get struct property of type: FCsStaticMesh with name: Mesh."), *Ctxt);
@@ -327,8 +327,8 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMeshAndMaterial(co
 	}
 
 	// Check for properties matching interface: 
-	// - SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
-	// - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+	// - CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
+	// - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 	bool Success = false;
 
 	// Try FCsData_Skin_VisualSkeletalMeshAndMaterialImpl
@@ -361,8 +361,8 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMeshAndMaterial(co
 	}
 
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: Failed to find any properties from %s for interface:"), *Ctxt, *(CsObjectLibrary::PrintObjectAndClass(Object)));
-	UE_LOG(LogCsSkin, Warning, TEXT("%s: - SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)."), *Ctxt);
-	UE_LOG(LogCsSkin, Warning, TEXT("%s: - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *Ctxt);
+	UE_LOG(LogCsSkin, Warning, TEXT("%s: - CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)."), *Ctxt);
+	UE_LOG(LogCsSkin, Warning, TEXT("%s: - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualSkeletalMeshAndMaterialImpl with name: VisualSkeletalMeshAndMaterialImpl."), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - OR"), *Ctxt);
 	UE_LOG(LogCsSkin, Warning, TEXT("%s: - Failed to get struct property of type: FCsSkeletalMesh with name: Mesh."), *Ctxt);

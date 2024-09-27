@@ -112,3 +112,5 @@ namespace NCsJs
 		};
 	}
 }
+
+using CsJavascriptManagerLibrary = NCsJs::NManager::FLibrary;

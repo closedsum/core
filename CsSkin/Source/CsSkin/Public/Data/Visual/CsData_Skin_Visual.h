@@ -31,6 +31,8 @@ namespace NCsSkin
 	}
 }
 
+using CsSkinDataType = NCsSkin::NData::NVisual::IVisual;
+
 UINTERFACE(BlueprintType)
 class CSSKIN_API UCsData_Skin_Visual : public UCsGetInterfaceMap
 {

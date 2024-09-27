@@ -13,7 +13,6 @@
 #include "Library/CsJsLibrary_Common.h"
 #include "Library/CsLibrary_Valid.h"
 // Coroutine
-#include "Coroutine/CsCoroutineScheduler.h"
 #include "Coroutine/CsRoutine.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
@@ -58,12 +57,15 @@ namespace NCsManagerJavascript
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, GetSafe);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, GetFromWorldContextObject);
 			// Entry Point
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, CreateEntryPoint);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, CreateEntryPoint_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupEntryPoint);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupEntryPoint_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunEntryPoint);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunEntryPoint_Internal);
 			// Scripts
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, CreateScriptObjects);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, CreateScriptObjects_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupScriptObjects);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupScriptObjects_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunScripts);
@@ -76,9 +78,11 @@ namespace NCsManagerJavascript
 		namespace Name
 		{
 			// Entry Point
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, CreateEntryPoint_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupEntryPoint_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupAndRunEntryPoint_Internal);
 			// Scripts
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, CreateScriptObjects_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupScriptObjects_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupAndRunScripts_Internal);
 		}
@@ -91,8 +95,14 @@ namespace NCsManagerJavascript
 			namespace Str
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, Init);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, Init_Internal);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, CreateAndRun);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, Reload);
+			}
+
+			namespace Name
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript::FEditorScriptImpl, Init_Internal);
 			}
 		}
 	}
@@ -106,6 +116,9 @@ bool UCsManager_Javascript::s_bShutdown = false;
 
 UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
+	// GetJavascriptInstance
+	JavascriptInstanceInfo(),
+	JavascriptInstance(nullptr),
 	// Scripts
 	ScriptObjects(),
 	ScriptInfo(),
@@ -296,9 +309,7 @@ TSharedPtr<FJavascriptIsolate> UCsManager_Javascript::GetSharedJavascriptIsolate
 
 /*static*/ UCsManager_Javascript* UCsManager_Javascript::GetFromWorldContextObject(const FString& Context, const UObject* WorldContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 {
-	typedef NCsJs::NManager::FLibrary JavascriptManagerLibrary;
-
-	if (UObject* ContextRoot = JavascriptManagerLibrary::GetSafe(Context, WorldContextObject))
+	if (UObject* ContextRoot = CsJavascriptManagerLibrary::GetSafe(Context, WorldContextObject))
 	{
 		if (UCsManager_Javascript* Manager = GetSafe(ContextRoot))
 			return Manager;
@@ -319,7 +330,7 @@ TSharedPtr<FJavascriptIsolate> UCsManager_Javascript::GetSharedJavascriptIsolate
 
 void UCsManager_Javascript::Initialize()
 {
-	CsJavascriptCommonLibrary::CreateInstance(this);
+	CsJavascriptCommonLibrary::AsyncCreateInstance(this);
 	/*
 	if (Cast<UGameInstance>(MyRoot))
 	{
@@ -352,8 +363,30 @@ void UCsManager_Javascript::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Javascript::CreateEntryPoint()
 {
+	SET_CONTEXT(CreateEntryPoint);
+
+	const FECsUpdateGroup& Group = MyRoot == GEngine ? NCsUpdateGroup::EditorEngine : NCsUpdateGroup::GameInstance;
+
+	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Javascript, CreateEntryPoint_Internal, Group, this, MyRoot);
+
+	CS_COROUTINE_START(MyRoot);
+}
+
+char UCsManager_Javascript::CreateEntryPoint_Internal(FCsRoutine* R)
+{
+	SET_CONTEXT(CreateEntryPoint_Internal);
+
+	CS_COROUTINE_BEGIN(R);
+
+	// NOTE: Currently using a SHARED Isolate from the JavascriptInstance
+	CS_COROUTINE_WAIT_UNTIL(R, JavascriptInstanceInfo.CreateInfo.IsComplete());
+
+	checkf(JavascriptInstanceInfo.CreateInfo.IsSuccessful(), TEXT("%s: Failed to Create JavascriptInstance."), *Context);
+
 	// Setup Isolate and Context
 	CsJavascriptCommonLibrary::SetupIsolateAndContext(this, EntryPoint.Isolate, EntryPoint.Context, false);
+
+	CS_COROUTINE_END(R);
 }
 
 void UCsManager_Javascript::SetupEntryPoint(UGameInstance* InGameInstance /*=nullptr*/)
@@ -362,17 +395,7 @@ void UCsManager_Javascript::SetupEntryPoint(UGameInstance* InGameInstance /*=nul
 
 	CS_IS_VALID_CHECKED(EntryPoint);
 
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
-	
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
-
-	typedef UCsManager_Javascript ClassType;
-	#define COROUTINE SetupEntryPoint_Internal
-
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, MyRoot, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
-
-	#undef COROUTINE
+	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Javascript, SetupEntryPoint_Internal, NCsUpdateGroup::GameInstance, this, MyRoot);
 
 	GameInstance = InGameInstance;
 
@@ -381,7 +404,7 @@ void UCsManager_Javascript::SetupEntryPoint(UGameInstance* InGameInstance /*=nul
 
 	bSetupEntryPointComplete = false;
 
-	CsCoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	CS_COROUTINE_START(MyRoot);
 }
 
 char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
@@ -395,6 +418,11 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 	APawn* PlayerPawn					= PlayerController ? PlayerController->GetPawn() : nullptr;
 
 	CS_COROUTINE_BEGIN(R);
+
+	// NOTE: Currently using a SHARED Isolate from the JavascriptInstance
+	CS_COROUTINE_WAIT_UNTIL(R, JavascriptInstanceInfo.CreateInfo.IsComplete());
+
+	checkf(JavascriptInstanceInfo.CreateInfo.IsSuccessful(), TEXT("%s: Failed to Create JavascriptInstance."), *Context);
 
 	EntryPoint.ExposedObjectNames.Add(TEXT("Root"));
 
@@ -529,21 +557,43 @@ void UCsManager_Javascript::CreateScriptObjects()
 {
 	SET_CONTEXT(CreateScriptObjects);
 
-	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
+	const FECsUpdateGroup& Group = MyRoot == GEngine ? NCsUpdateGroup::EditorEngine : NCsUpdateGroup::GameInstance;
 
-	const int32 Count = Settings.PoolSize;
+	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Javascript, CreateScriptObjects_Internal, Group, this, MyRoot);
 
-	ScriptObjects.Reset(Count);
+	CS_COROUTINE_START(MyRoot);
+}
 
-	// Setup Isolates and Contexts
+char UCsManager_Javascript::CreateScriptObjects_Internal(FCsRoutine* R)
+{
+	SET_CONTEXT(CreateScriptObjects_Internal);
 
-	for (int32 I = 0; I < Count; ++I)
+	CS_COROUTINE_BEGIN(R);
+
+	// NOTE: Currently using a SHARED Isolate from the JavascriptInstance
+	CS_COROUTINE_WAIT_UNTIL(R, JavascriptInstanceInfo.CreateInfo.IsComplete());
+
+	checkf(JavascriptInstanceInfo.CreateInfo.IsSuccessful(), TEXT("%s: Failed to Create JavascriptInstance."), *Context);
+
 	{
-		FCsJavascriptFileObjects& ScriptObject = ScriptObjects.AddDefaulted_GetRef();
+		const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
 
-		ScriptObject.Index = I;
-		ScriptObject.Init(this);
+		const int32 Count = Settings.PoolSize;
+
+		ScriptObjects.Reset(Count);
+
+		// Setup Isolates and Contexts
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			FCsJavascriptFileObjects& ScriptObject = ScriptObjects.AddDefaulted_GetRef();
+
+			ScriptObject.Index = I;
+			ScriptObject.Init(this);
+		}
 	}
+
+	CS_COROUTINE_END(R);
 }
 
 void UCsManager_Javascript::ConditionalCreateScriptObjects()
@@ -562,23 +612,13 @@ void UCsManager_Javascript::SetupScriptObjects(UGameInstance* InGameInstance /*=
 
 	checkf(Settings.PoolSize >= ScriptInfo.FileInfos.Num(), TEXT("%s: Pool Size (%d) of Script Objects is not large to support the number of requested files (%d) to run."), *Context, Settings.PoolSize, ScriptInfo.FileInfos.Num());
 
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
-	
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
-
-	typedef UCsManager_Javascript ClassType;
-	#define COROUTINE SetupScriptObjects_Internal
-
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, MyRoot, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
-
-	#undef COROUTINE
+	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Javascript, SetupScriptObjects_Internal, NCsUpdateGroup::GameInstance, this, MyRoot);
 
 	GameInstance = InGameInstance;
 
 	bSetupScriptObjectsComplete = false;
 
-	CsCoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	CS_COROUTINE_START(MyRoot);
 }
 
 char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
@@ -597,6 +637,11 @@ char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
 	APawn* PlayerPawn					= PlayerController ? PlayerController->GetPawn() : nullptr;
 
 	CS_COROUTINE_BEGIN(R);
+
+	// NOTE: Currently using a SHARED Isolate from the JavascriptInstance
+	CS_COROUTINE_WAIT_UNTIL(R, JavascriptInstanceInfo.CreateInfo.IsComplete());
+
+	checkf(JavascriptInstanceInfo.CreateInfo.IsSuccessful(), TEXT("%s: Failed to Create JavascriptInstance."), *Context);
 
 	// World
 	CS_COROUTINE_WAIT_UNTIL(R, World);
@@ -680,21 +725,11 @@ void UCsManager_Javascript::SetupAndRunScripts(UGameInstance* InGameInstance /*=
 {
 	SET_CONTEXT(SetupAndRunScripts);
 
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
-
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
-
-	typedef UCsManager_Javascript ClassType;
-	#define COROUTINE SetupAndRunScripts_Internal
-
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, MyRoot, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
-
-	#undef COROUTINE
+	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Javascript, SetupAndRunScripts_Internal, NCsUpdateGroup::GameInstance, this, MyRoot);
 
 	GameInstance = InGameInstance;
 
-	CsCoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	CS_COROUTINE_START(MyRoot);
 }
 
 char UCsManager_Javascript::SetupAndRunScripts_Internal(FCsRoutine* R)
@@ -885,32 +920,54 @@ void UCsManager_Javascript::ShutdownScripts()
 // Editor Scripts
 #pragma region
 
+#define USING_NS_CACHED2 using namespace NCsManagerJavascript::NEditorScriptImpl::NCached;
+#define SET_CONTEXT2(__FunctionName) using namespace NCsManagerJavascript::NEditorScriptImpl::NCached; \
+	const FString& Context = Str::__FunctionName
+
 void UCsManager_Javascript::FEditorScriptImpl::Init()
 {
-	using namespace NCsManagerJavascript::NEditorScriptImpl::NCached;
+	SET_CONTEXT2(Init);
 
-	const FString& Context = Str::Init;
+	CS_COROUTINE_SETUP_RAW(UCsManager_Javascript::FEditorScriptImpl, Init_Internal, NCsUpdateGroup::EditorEngine, this, Outer, Outer->GetMyRoot());
 
-	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
+	CS_COROUTINE_START(Outer->GetMyRoot());
+}
 
-	CS_IS_VALID_CHECKED(Settings);
+char UCsManager_Javascript::FEditorScriptImpl::Init_Internal(FCsRoutine* R)
+{
+	SET_CONTEXT2(Init_Internal);
 
-	const int32 Count = Settings.PoolSize;
+	CS_COROUTINE_BEGIN(R);
 
-	TArray<FCsJavascriptFileObjects>& Objects = GetObjects();
+	// NOTE: Currently using a SHARED Isolate from the JavascriptInstance
+	CS_COROUTINE_WAIT_UNTIL(R, Outer->GetJavascriptInstanceInfo().CreateInfo.IsComplete());
 
-	Objects.Reset(Count);
-	Manager_Objects.CreatePool(Count);
+	checkf(Outer->GetJavascriptInstanceInfo().CreateInfo.IsSuccessful(), TEXT("%s: Failed to Create JavascriptInstance."), *Context);
 
-	for (int32 I = 0; I < Count; ++I)
 	{
-		FCsJavascriptFileObjects& ScriptObject = Objects.AddDefaulted_GetRef();
+		const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
 
-		ScriptObject.Index = I;
-		ScriptObject.Init(Outer);
+		CS_IS_VALID_CHECKED(Settings);
 
-		Manager_Objects.Add(&ScriptObject);
+		const int32 Count = Settings.PoolSize;
+
+		TArray<FCsJavascriptFileObjects>& Objects = GetObjects();
+
+		Objects.Reset(Count);
+		Manager_Objects.CreatePool(Count);
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			FCsJavascriptFileObjects& ScriptObject = Objects.AddDefaulted_GetRef();
+
+			ScriptObject.Index = I;
+			ScriptObject.Init(Outer);
+
+			Manager_Objects.Add(&ScriptObject);
+		}
 	}
+
+	CS_COROUTINE_END(R);
 }
 
 void UCsManager_Javascript::FEditorScriptImpl::Validate()
@@ -954,9 +1011,7 @@ void UCsManager_Javascript::FEditorScriptImpl::Validate()
 
 FGuid UCsManager_Javascript::FEditorScriptImpl::CreateAndRun(UObject* Owner, const FString& Path)
 {
-	using namespace NCsManagerJavascript::NEditorScriptImpl::NCached;
-
-	const FString& Context = Str::CreateAndRun;
+	SET_CONTEXT2(CreateAndRun);
 
 	FGuid ScriptId;
 
@@ -1020,9 +1075,7 @@ FGuid UCsManager_Javascript::FEditorScriptImpl::CreateAndRun(UObject* Owner, con
 
 void UCsManager_Javascript::FEditorScriptImpl::Reload(const FGuid& Id, const FString& Path)
 {
-	using namespace NCsManagerJavascript::NCached;
-
-	const FString& Context = Str::ReloadScript;
+	SET_CONTEXT2(Reload);
 
 	if (!OwnerIdByIdMap.Contains(Id))
 	{
@@ -1107,6 +1160,9 @@ void UCsManager_Javascript::FEditorScriptImpl::Shutdown()
 	IdByOwnerIdMap.Reset();
 	OwnerIdByIdMap.Reset();
 }
+
+#undef USING_NS_CACHED2
+#undef SET_CONTEXT2
 
 bool UCsManager_Javascript::EditorScript_Shutdown_ByOwner(const FString& Context, UObject* Owner)
 {

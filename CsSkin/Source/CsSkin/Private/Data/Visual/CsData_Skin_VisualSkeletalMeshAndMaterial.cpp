@@ -89,9 +89,9 @@ void UCsData_Skin_VisualSkeletalMeshAndMaterial::Init()
 
 		DataProxyType* Proxy = (DataProxyType*)DataProxy;
 		Proxy->SetOuter(this);
-		// SkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
+		// CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 		Proxy->SetSkeletalMesh(Mesh.GetPtr());
-		// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+		// CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 		Proxy->SetMaterials(Materials.GetPtr());
 	}
 }

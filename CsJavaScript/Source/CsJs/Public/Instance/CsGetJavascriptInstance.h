@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Interface.h"
+// Types
+#include "Instance/CsTypes_JavascriptInstance.h"
 
 #include "CsGetJavascriptInstance.generated.h"
 
@@ -21,4 +23,6 @@ class CSJS_API ICsGetJavascriptInstance
 public:
 
 	virtual TSharedPtr<FJavascriptInstance>& GetJavascriptInstance() = 0;
+
+	virtual CsJavascriptInstanceInfo& GetJavascriptInstanceInfo() = 0;
 };

@@ -38,6 +38,8 @@ namespace NCsSkin
 	}
 }
 
+using CsOrientationSkinDataType = NCsSkin::NData::NVisual::NOrientation::IOrientation;
+
 UINTERFACE(BlueprintType)
 class CSSKIN_API UCsData_Skin_VisualOrientation : public UCsGetInterfaceMap
 {

@@ -21,7 +21,7 @@ struct FCsInterfaceMap;
 class ICsDeconstructInterfaceSliceMap;
 
 /**
-* Represents a "slice" of data, StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IMaterial).
+* Represents a "slice" of data, CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IMaterial).
 * The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 * a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 */
@@ -32,7 +32,7 @@ struct CSSKIN_API FCsData_Skin_VisualStaticMeshImplSlice
 
 public:
 
-// StaticMeshVisualDataType(NCsSkin::NData::NVisual::NStaticMesh::IMaterial)
+// CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IMaterial)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual|Static Mesh")
 	FCsStaticMesh Mesh;
@@ -71,10 +71,8 @@ namespace NCsSkin
 		{
 			namespace NStaticMesh
 			{
-			#define StaticMeshVisualDataType NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh
-
 				/**
-				* Represents a "slice" of data, StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh).
+				* Represents a "slice" of data, CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh).
 				* 
 				* If members are set via pointers to an "owning" data, then
 				* "Emulates" StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh) by mimicking 
@@ -83,7 +81,7 @@ namespace NCsSkin
 				* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 				* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 				*/
-				struct CSSKIN_API FImplSlice final : public StaticMeshVisualDataType
+				struct CSSKIN_API FImplSlice final : public CsStaticMeshSkinDataType
 				{
 				public:
 
@@ -97,7 +95,7 @@ namespace NCsSkin
 						that describe the data. */
 					FCsInterfaceMap* InterfaceMap;
 
-					// StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+					// CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 
 					CS_DECLARE_MEMBER_WITH_PROXY(StaticMesh, UStaticMesh*)
 
@@ -130,13 +128,13 @@ namespace NCsSkin
 
 				#pragma endregion ICsGetInterfaceMap
 
-				// StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+				// CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 				#pragma region
 				public:
 
 					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(StaticMesh, UStaticMesh)
 
-				#pragma endregion StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+				#pragma endregion CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 
 				public:
 
@@ -153,8 +151,6 @@ namespace NCsSkin
 					void SetChecked(const FString& Context, UStaticMeshComponent* Component) const;
 					bool SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 				};
-
-			#undef StaticMeshVisualDataType
 			}
 		}
 	}

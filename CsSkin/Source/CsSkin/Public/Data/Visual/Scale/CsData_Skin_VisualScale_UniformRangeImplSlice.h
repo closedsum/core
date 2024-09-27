@@ -20,7 +20,7 @@ struct FCsInterfaceMap;
 class ICsDeconstructInterfaceSliceMap;
 
 /**
-* Represents a "slice" of data, UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange).
+* Represents a "slice" of data, CsUniformRangeScaleSkinDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange).
 * The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 * a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 */
@@ -31,7 +31,7 @@ struct CSSKIN_API FCsData_Skin_VisualScale_UniformRangeImplSlice
 
 public:
 
-// UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
+// CsUniformRangeScaleSkinDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual|Scale", meta = (UIMin = "0.001", ClampMin = "0.001"))
 	float Min;
@@ -77,19 +77,17 @@ namespace NCsSkin
 				{
 					namespace NRange
 					{
-					#define UniformRangeScaleVisualDataType NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange
-
 						/**
-						* Represents a "slice" of data, UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange).
+						* Represents a "slice" of data, CsUniformRangeScaleSkinDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange).
 						* 
 						* If members are set via pointers to an "owning" data, then
-						* "Emulates" UniformRangeScaleVisualDataType (NNCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange) by mimicking 
+						* "Emulates" CsUniformRangeScaleSkinDataType (NNCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange) by mimicking 
 						* the interfaces and having pointers to the appropriate members.
 						*
 						* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 						* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 						*/
-						struct CSSKIN_API FImplSlice final : public UniformRangeScaleVisualDataType
+						struct CSSKIN_API FImplSlice final : public CsUniformRangeScaleSkinDataType
 						{
 						public:
 
@@ -103,7 +101,7 @@ namespace NCsSkin
 								that describe the data. */
 							FCsInterfaceMap* InterfaceMap;
 
-							// UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
+							// CsUniformRangeScaleSkinDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
 
 							CS_DECLARE_MEMBER_WITH_PROXY(MinUniformScale, float)
 							CS_DECLARE_MEMBER_WITH_PROXY(MaxUniformScale, float)
@@ -139,14 +137,14 @@ namespace NCsSkin
 
 						#pragma endregion ICsGetInterfaceMap
 
-						// UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
+						// CsUniformRangeScaleSkinDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
 						#pragma region
 						public:
 
 							CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinUniformScale, float)
 							CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxUniformScale, float)
 
-						#pragma endregion UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::IUniform)
+						#pragma endregion CsUniformRangeScaleSkinDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
 
 						public:
 
@@ -163,8 +161,6 @@ namespace NCsSkin
 							void SetChecked(const FString& Context, USceneComponent* Component) const;
 							bool SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 						};
-
-					#undef UniformRangeScaleVisualDataType
 					}
 				}
 			}

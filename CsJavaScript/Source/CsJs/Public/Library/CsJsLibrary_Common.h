@@ -14,7 +14,7 @@ namespace NCsJs
 		{
 		public:
 
-			static void CreateInstance(UObject* Object);
+			static void AsyncCreateInstance(UObject* Object);
 
 			/**
 			*/

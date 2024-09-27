@@ -45,8 +45,6 @@ namespace NCsAbility
 		namespace NComponent
 		{
 			#define LogLevel void(*Log)(const FString&) /*=&NCsGameplayAbilities::FLog::Warning*/
-			#define AbilitySystemLibrary NCsAbility::NSystem::FLibrary
-			#define GameplayAbilityLibrary NCsGameplayAbility::FLibrary
 
 			FString FLibrary::PrintOwnerWithClass(const UAbilitySystemComponent* Component)
 			{
@@ -108,7 +106,7 @@ namespace NCsAbility
 				CS_IS_VALID_CHECKED(Info);
 
 				FGameplayAbilitySpec Spec;
-				GameplayAbilityLibrary::BuildChecked(Context, Info, Spec);
+				CsGameplayAbilityLibrary::BuildChecked(Context, Info, Spec);
 
 				FGameplayAbilitySpecHandle Handle = Component->GiveAbility(Spec);
 
@@ -116,7 +114,7 @@ namespace NCsAbility
 
 				if (Info.ExecutionRequiredTags.IsValid())
 				{
-					ICsAbilitySystem_Execution* Interface = AbilitySystemLibrary::GetChecked_ICsAbilitySystem_Execution(Context, Component);
+					ICsAbilitySystem_Execution* Interface = CsAbilitySystemLibrary::GetChecked_ICsAbilitySystem_Execution(Context, Component);
 					
 					Interface->AddExecutionRequiredTags(Handle, Info.ExecutionRequiredTags);
 				}
@@ -182,7 +180,7 @@ namespace NCsAbility
 			bool FLibrary::HasChecked(const FString& Context, const UAbilitySystemComponent* Component, const FGameplayAbilitySpec* Spec)
 			{
 				CS_IS_PENDING_KILL_CHECKED(Component)
-				check(GameplayAbilityLibrary::IsValidSpecChecked(Context, Spec));
+				check(CsGameplayAbilityLibrary::IsValidSpecChecked(Context, Spec));
 
 				for (const FGameplayAbilitySpec& S : Component->GetActivatableAbilities())
 				{
@@ -234,7 +232,7 @@ namespace NCsAbility
 
 				for (const FGameplayAbilitySpec& Spec : Component->GetActivatableAbilities())
 				{
-					if (GameplayAbilityLibrary::HasAll(Context, Spec, Tags))
+					if (CsGameplayAbilityLibrary::HasAll(Context, Spec, Tags))
 						OutSpecs.Add(const_cast<FGameplayAbilitySpec*>(&Spec));
 				}
 			}
@@ -270,7 +268,7 @@ namespace NCsAbility
 
 				for (const FGameplayAbilitySpec& Spec : ActivatableAbilities)
 				{
-					if (!GameplayAbilityLibrary::IsValidSpec(Context, &Spec, Log))
+					if (!CsGameplayAbilityLibrary::IsValidSpec(Context, &Spec, Log))
 						return false;
 
 					// TODO: Make a Checked and Safe call for GetPrimaryInstance
@@ -374,8 +372,6 @@ namespace NCsAbility
 			#pragma endregion Effect
 
 			#undef LogLevel
-			#undef AbilitySystemLibrary
-			#undef GameplayAbilityLibrary
 		}
 	}
 }

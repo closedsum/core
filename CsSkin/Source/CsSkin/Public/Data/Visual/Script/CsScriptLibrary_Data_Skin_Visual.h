@@ -24,7 +24,7 @@ class CSSKIN_API UCsScriptLibrary_Data_Skin_Visual : public UObject
 public:
 
 	/**
-	* Set any material information related to the interface: MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+	* Set any material information related to the interface: CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 	* from Slice to Component (StaticMeshComponent or SkeletalMeshComponent).
 	* 
 	* @param Context			The calling context.
@@ -36,7 +36,7 @@ public:
 	static bool SetFromSlice_Material(const FString& Context, const FCsData_Skin_VisualMaterialImplSlice& Slice, UPrimitiveComponent* Component);
 
 	/**
-	* Set any material information related to the interface: MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+	* Set any material information related to the interface: CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 	* from Object to Component (StaticMeshComponent or SkeletalMeshComponent).
 	*
 	* @param Context			The calling context.
@@ -48,7 +48,7 @@ public:
 	static bool SetFromObject_Material(const FString& Context, UObject* Object, UPrimitiveComponent* Component);
 
 	/**
-	* Set any static mesh information related to the interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+	* Set any static mesh information related to the interface: CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 	* from Slice to Component (StaticMeshComponent).
 	* 
 	* @param Context			The calling context.
@@ -60,7 +60,7 @@ public:
 	static bool SetFromSlice_StaticMesh(const FString& Context, const FCsData_Skin_VisualStaticMeshImplSlice& Slice, UStaticMeshComponent* Component);
 
 	/**
-	* Set any static mesh information related to the interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+	* Set any static mesh information related to the interface: CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 	* from Object to Component (StaticMeshComponent).
 	*
 	* @param Context			The calling context.
@@ -72,7 +72,7 @@ public:
 	static bool SetFromObject_StaticMesh(const FString& Context, UObject* Object, UStaticMeshComponent* Component);
 
 	/**
-	* Set any skeletal mesh information related to the interface: SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
+	* Set any skeletal mesh information related to the interface: CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 	* from Slice to Component (SkeletalMeshComponent).
 	* 
 	* @param Context			The calling context.
@@ -84,7 +84,7 @@ public:
 	static bool SetFromSlice_SkeletalMesh(const FString& Context, const FCsData_Skin_VisualSkeletalMeshImplSlice& Slice, USkeletalMeshComponent* Component);
 
 	/**
-	* Set any skeletal mesh information related to the interface: SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
+	* Set any skeletal mesh information related to the interface: CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 	* from Object to Component (SkeletalMeshComponent).
 	*
 	* @param Context			The calling context.
@@ -97,8 +97,8 @@ public:
 
 	/**
 	* Set any static mesh and material information related to the interfaces: 
-	* - StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-	* - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+	* - CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+	* - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 	* from Slice to Component (StaticMeshComponent).
 	* 
 	* @param Context			The calling context.
@@ -111,8 +111,8 @@ public:
 
 	/**
 	* Set any static mesh and material information related to the interface: 
-	* - StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-	* - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+	* - CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+	* - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 	* from Object to Component (StaticMeshComponent).
 	*
 	* @param Context			The calling context.
@@ -125,8 +125,8 @@ public:
 
 	/**
 	* Set any skeletal mesh and material information related to the interfaces: 
-	* - SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
-	* - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+	* - CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
+	* - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 	* from Slice to Component (SkeletalMeshComponent).
 	* 
 	* @param Context			The calling context.
@@ -139,8 +139,8 @@ public:
 
 	/**
 	* Set any skeletal mesh and material information related to the interface: 
-	* - SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
-	* - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+	* - CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
+	* - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 	* from Object to Component (SkeletalMeshComponent).
 	*
 	* @param Context			The calling context.

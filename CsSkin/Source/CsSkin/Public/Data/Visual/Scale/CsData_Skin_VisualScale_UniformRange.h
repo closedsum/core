@@ -58,6 +58,8 @@ namespace NCsSkin
 	}
 }
 
+using CsUniformRangeScaleSkinDataType = NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange;
+
 UINTERFACE(BlueprintType)
 class CSSKIN_API UCsData_Skin_VisualScale_UniformRange : public UCsGetInterfaceMap
 {

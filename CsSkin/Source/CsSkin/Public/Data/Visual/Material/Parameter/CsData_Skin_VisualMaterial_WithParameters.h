@@ -46,6 +46,8 @@ namespace NCsSkin
 	}
 }
 
+using CsMaterialWithParamsSkinDataType = NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters;
+
 UINTERFACE(BlueprintType)
 class CSSKIN_API UCsData_Skin_VisualMaterial_WithParameters : public UCsGetInterfaceMap
 {

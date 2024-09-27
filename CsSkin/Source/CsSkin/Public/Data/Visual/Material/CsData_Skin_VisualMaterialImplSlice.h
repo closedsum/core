@@ -20,7 +20,7 @@ struct FCsInterfaceMap;
 class ICsDeconstructInterfaceSliceMap;
 
 /**
-* Represents a "slice" of data, MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial).
+* Represents a "slice" of data, CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial).
 * The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 * a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 */
@@ -31,7 +31,7 @@ struct CSSKIN_API FCsData_Skin_VisualMaterialImplSlice
 
 public:
 
-// MaterialVisualDataType(NCsSkin::NData::NVisual::NMaterial::IMaterial)
+// CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual|Material")
 	FCsTArrayMaterialInterface Materials;
@@ -68,19 +68,17 @@ namespace NCsSkin
 		{
 			namespace NMaterial
 			{
-			#define MaterialVisualDataType NCsSkin::NData::NVisual::NMaterial::IMaterial
-
 				/**
-				* Represents a "slice" of data, MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial).
+				* Represents a "slice" of data, CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial).
 				* 
 				* If members are set via pointers to an "owning" data, then
-				* "Emulates" MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial) by mimicking 
+				* "Emulates" CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial) by mimicking 
 				* the interfaces and having pointers to the appropriate members.
 				*
 				* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 				* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 				*/
-				struct CSSKIN_API FImplSlice final : public MaterialVisualDataType
+				struct CSSKIN_API FImplSlice final : public CsMaterialSkinDataType
 				{
 				public:
 
@@ -94,7 +92,7 @@ namespace NCsSkin
 						that describe the data. */
 					FCsInterfaceMap* InterfaceMap;
 
-					// MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+					// CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
 					CS_DECLARE_MEMBER_WITH_PROXY(Materials, TArray<UMaterialInterface*>)
 
@@ -139,13 +137,13 @@ namespace NCsSkin
 					}
 					FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Proxy = Value; }
 
-				// MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+				// CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 				#pragma region
 				public:
 
 					FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Proxy; }
 
-				#pragma endregion MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+				#pragma endregion CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
 				public:
 
@@ -162,8 +160,6 @@ namespace NCsSkin
 					void SetChecked(const FString& Context, UPrimitiveComponent* Component) const;
 					bool SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 				};
-
-			#undef MaterialVisualDataType
 			}
 		}
 	}

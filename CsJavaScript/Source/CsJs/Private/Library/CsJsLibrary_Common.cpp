@@ -27,7 +27,7 @@ namespace NCsJs
 			{
 				namespace Str
 				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, CreateInstance);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, AsyncCreateInstance);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, SetupIsolateAndContext);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, ExposeObject);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, ClearObject);
@@ -44,25 +44,74 @@ namespace NCsJs
 		#define SET_CONTEXT(__FunctionName) using namespace NCsJs::NCommon::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
 
-		void FLibrary::CreateInstance(UObject* Object)
+		void FLibrary::AsyncCreateInstance(UObject* Object)
 		{
-			SET_CONTEXT(CreateInstance);
+			SET_CONTEXT(AsyncCreateInstance);
+	
+			ICsGetJavascriptInstance* GetJavascriptInstance  = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsGetJavascriptInstance);
+			CsJavascriptInstanceInfo& JavascriptInstanceInfo = GetJavascriptInstance->GetJavascriptInstanceInfo();
 
-			ICsGetJavascriptInstance* GetJavascriptInstance = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsGetJavascriptInstance);
+			JavascriptInstanceInfo.CreateInfo.Start();
 
 			FJSInstanceOptions Options;
-			TMap<FString, FString>& Features = Options.Features.FeatureMap;
-			Features						 = UJavascriptIsolate::DefaultIsolateFeatures();
+			FJavascriptFeatures& Features	   = Options.Features;
+			TMap<FString, FString>& FeatureMap = Features.FeatureMap;
+			FeatureMap						   = UJavascriptIsolate::DefaultIsolateFeatures();
 
 			// Add default context feature exposures
-			Features.Add(TEXT("Root"), TEXT("default"));
-			Features.Add(TEXT("World"), TEXT("default"));
-			Features.Add(TEXT("Engine"), TEXT("default"));
-			Features.Add(TEXT("Context"), TEXT("default"));
+			FeatureMap.Add(TEXT("Root"), TEXT("default"));
+			FeatureMap.Add(TEXT("World"), TEXT("default"));
+			FeatureMap.Add(TEXT("Engine"), TEXT("default"));
+			FeatureMap.Add(TEXT("Context"), TEXT("default"));
 
 			FJSInstanceContextSettings ContextSettings;
 
-			GetJavascriptInstance->GetJavascriptInstance() = MakeShareable(new FJavascriptInstance(Options, ContextSettings));
+			TSharedPtr<FJavascriptInstance> NewInstance = MakeShareable(new FJavascriptInstance(Options, ContextSettings));
+
+			JavascriptInstanceInfo.CreateInfo.Complete();
+
+			JavascriptInstanceInfo.CreateInfo.bSuccess = NewInstance.IsValid();
+
+			GetJavascriptInstance->GetJavascriptInstance() = NewInstance;
+
+			/*
+			{
+				ICsGetJavascriptInstance* GetJavascriptInstance  = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsGetJavascriptInstance);
+				CsJavascriptInstanceInfo& JavascriptInstanceInfo = GetJavascriptInstance->GetJavascriptInstanceInfo();
+
+				JavascriptInstanceInfo.CreateInfo.Start();
+
+			}
+
+			// Create Instance on another Thread
+			Async(EAsyncExecution::ThreadPool, [Context, NewInstance, Object]()
+			{
+				
+				FJavascriptFeatures Features;
+				Features.FeatureMap	= UJavascriptIsolate::DefaultIsolateFeatures();
+
+				// Add default context feature exposures
+				Features.FeatureMap.Add(TEXT("Root"), TEXT("default"));
+				Features.FeatureMap.Add(TEXT("World"), TEXT("default"));
+				Features.FeatureMap.Add(TEXT("Engine"), TEXT("default"));
+				Features.FeatureMap.Add(TEXT("Context"), TEXT("default"));
+
+				NewInstance->SetAvailableFeatures(Features);
+
+				// Update on GameThread
+				Async(EAsyncExecution::TaskGraphMainThread, [Context, NewInstance, Object]()
+				{
+					ICsGetJavascriptInstance* GetJavascriptInstance  = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsGetJavascriptInstance);
+					CsJavascriptInstanceInfo& JavascriptInstanceInfo = GetJavascriptInstance->GetJavascriptInstanceInfo();
+
+					JavascriptInstanceInfo.CreateInfo.Complete();
+
+					JavascriptInstanceInfo.CreateInfo.bSuccess = NewInstance.IsValid();
+
+					GetJavascriptInstance->GetJavascriptInstance() = NewInstance;
+				});
+			});
+			*/
 		}
 
 		void FLibrary::SetupIsolateAndContext(UObject* Owner, UObject*& JavascriptIsolate, UObject*& JavascriptContext, const bool& IsEditor)

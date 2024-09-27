@@ -68,3 +68,5 @@ namespace NCsStruct
 		}
 	}
 }
+
+using CsStructOpsIsValidTool = NCsStruct::NOps::NIsValid::FTool;

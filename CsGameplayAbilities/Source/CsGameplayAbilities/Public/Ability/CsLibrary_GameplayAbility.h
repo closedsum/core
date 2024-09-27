@@ -61,3 +61,5 @@ namespace NCsGameplayAbility
 	#undef LogLevel
 	};
 }
+
+using CsGameplayAbilityLibrary = NCsGameplayAbility::FLibrary;

@@ -46,6 +46,8 @@ namespace NCsSkin
 	}
 }
 
+using CsMPCSkinDataType = NCsSkin::NData::NVisual::NMaterial::NParameter::NCollection::ICollection;
+
 UINTERFACE(BlueprintType)
 class CSSKIN_API UCsData_Skin_VisualMaterial_ParameterCollection : public UCsGetInterfaceMap
 {

@@ -15,8 +15,7 @@
 // FCsData_Skin_Visual
 #pragma region
 
-#define SkinDataType NCsSkin::NData::NVisual::IVisual
-SkinDataType* FCsData_Skin_VisualPtr::Load(const FString& Context, const int32& LoadFlags)
+CsSkinDataType* FCsData_Skin_VisualPtr::Load(const FString& Context, const int32& LoadFlags)
 {
 	TSoftClassPtr<UObject> DataSoftClass = Data;
 	const FSoftObjectPath& Path			 = DataSoftClass.ToSoftObjectPath();
@@ -39,13 +38,13 @@ SkinDataType* FCsData_Skin_VisualPtr::Load(const FString& Context, const int32& 
 
 			if (DataType* Interface = IData->_getIData())
 			{
-				if (SkinDataType* SkinData = CsDataLibrary::GetSafeInterfaceChecked<SkinDataType>(Context, Interface))
+				if (CsSkinDataType* SkinData = CsDataLibrary::GetSafeInterfaceChecked<CsSkinDataType>(Context, Interface))
 				{
 					return SkinData;
 				}
 				else
 				{
-					UE_LOG(LogCsSkin, Warning, TEXT("%s: Failed to get SkinDataType (NCsSkin::NData::NVisual::IVisual) from Data: %s."), *Context, *(DOb->GetName()));
+					UE_LOG(LogCsSkin, Warning, TEXT("%s: Failed to get CsSkinDataType (NCsSkin::NData::NVisual::IVisual) from Data: %s."), *Context, *(DOb->GetName()));
 				}
 			}
 			else
@@ -64,6 +63,5 @@ SkinDataType* FCsData_Skin_VisualPtr::Load(const FString& Context, const int32& 
 	}
 	return nullptr;
 }
-#undef SkinDataType
 
-#pragma endregion FCData_CharacterPtr
+#pragma endregion FCsData_Skin_Visual

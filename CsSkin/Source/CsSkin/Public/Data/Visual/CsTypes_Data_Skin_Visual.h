@@ -13,7 +13,7 @@
 class UObject;
 class ICsData;
 
-// NCsSkin::NData::NVisual::IVisual
+// CsSkinDataType (NCsSkin::NData::NVisual::IVisual)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSkin, NData, NVisual, IVisual)
 
 USTRUCT(BlueprintType)
@@ -23,13 +23,13 @@ struct CSSKIN_API FCsData_Skin_VisualPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual", meta = (MustImplement = "/Script/CsCore.CsData_Skin_Visual"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsSkin|Skin|Data|Visual", meta = (MustImplement = "/Script/CsSkin.CsData_Skin_Visual"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual")
+	UPROPERTY()
 	int32 Data_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual")
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsSkin|Skin|Data|Visual")
 	UObject* Data_Internal;
 
 	FCsData_Skin_VisualPtr() :
@@ -51,9 +51,9 @@ public:
 		return Data_Internal;
 	}
 
-#define SkinDataType NCsSkin::NData::NVisual::IVisual
-	SkinDataType* Load(const FString& Context, const int32& LoadFlags);
-#undef SkinDataType
+#define CsSkinDataType NCsSkin::NData::NVisual::IVisual
+	CsSkinDataType* Load(const FString& Context, const int32& LoadFlags);
+#undef CsSkinDataType
 
 private:
 

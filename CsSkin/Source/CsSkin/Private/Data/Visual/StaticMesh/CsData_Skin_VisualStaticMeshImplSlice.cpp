@@ -5,6 +5,7 @@
 
 // Types
 #include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
@@ -93,7 +94,7 @@ bool FCsData_Skin_VisualStaticMeshImplSlice::SetSafe(const FString& Context, USt
 	return true;
 }
 
-const FName NCsSkin::NData::NVisual::NStaticMesh::FImplSlice::Name = FName("NCsSkin::NData::NVisual::NStaticMesh::FImplSlice");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsSkin::NData::NVisual::NStaticMesh::FImplSlice);
 
 namespace NCsSkin
 {
@@ -133,7 +134,7 @@ namespace NCsSkin
 					CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
 					CS_IS_PTR_NULL_RET_NULL(Object)
 
-					// Check for properties matching interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+					// Check for properties matching interface: CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 					FImplSlice* Slice = nullptr;
 					bool Success	  = false;
 
@@ -181,7 +182,7 @@ namespace NCsSkin
 					{
 						if (Log)
 						{
-							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
+							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMeshImplSlice with name: VisualStaticMeshSlice."), *Context));
 							Log(FString::Printf(TEXT("%s: - OR"), *Context));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsStaticMesh with name: StaticMesh."), *Context));

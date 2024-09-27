@@ -50,6 +50,8 @@ namespace NCsSkin
 	}
 }
 
+using CsStaticMeshAttachmentSkinDataType = NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment;
+
 UINTERFACE(BlueprintType)
 class CSSKIN_API UCsData_Skin_VisualStaticMesh_Attachment : public UCsGetInterfaceMap
 {

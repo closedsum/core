@@ -27,3 +27,5 @@ namespace NCsStruct
 		}
 	}
 }
+
+using CsStructOpsIsValidLibrary = NCsStruct::NOps::NIsValid::FLibrary;

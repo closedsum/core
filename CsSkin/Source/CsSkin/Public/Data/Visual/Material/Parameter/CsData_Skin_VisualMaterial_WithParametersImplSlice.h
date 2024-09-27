@@ -17,7 +17,7 @@ struct FCsInterfaceMap;
 class ICsDeconstructInterfaceSliceMap;
 
 /**
-* Represents a "slice" of data, MaterialWithParamsVisualDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters).
+* Represents a "slice" of data, CsMaterialWithParamsSkinDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters).
 * The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 * a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 */
@@ -28,7 +28,7 @@ struct CSSKIN_API FCsData_Skin_VisualMaterial_WithParametersImplSlice
 
 public:
 
-// MaterialWithParamsVisualDataType(NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)
+// CsMaterialWithParamsSkinDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual|Material")
 	TArray<FCsMaterialInterface_WithRangeParameters> Materials;
@@ -68,19 +68,17 @@ namespace NCsSkin
 			{
 				namespace NWithParameters
 				{
-				#define MaterialWithParamsVisualDataType NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters
-
 					/**
-					* Represents a "slice" of data, MaterialWithParamsVisualDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters).
+					* Represents a "slice" of data, CsMaterialWithParamsSkinDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters).
 					* 
 					* If members are set via pointers to an "owning" data, then
-					* "Emulates" MaterialWithParamsVisualDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters) by mimicking 
+					* "Emulates" CsMaterialWithParamsSkinDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters) by mimicking 
 					* the interfaces and having pointers to the appropriate members.
 					*
 					* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 					* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 					*/
-					struct CSSKIN_API FImplSlice final : public MaterialWithParamsVisualDataType
+					struct CSSKIN_API FImplSlice final : public CsMaterialWithParamsSkinDataType
 					{
 					public:
 
@@ -96,7 +94,7 @@ namespace NCsSkin
 							that describe the data. */
 						FCsInterfaceMap* InterfaceMap;
 
-						// MaterialWithParamsVisualDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)
+						// CsMaterialWithParamsSkinDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)
 
 						CS_DECLARE_MEMBER_WITH_PROXY(Materials, TArray<MaterialType>)
 
@@ -142,13 +140,13 @@ namespace NCsSkin
 						}
 						FORCEINLINE void SetMaterials(TArray<MaterialType>* Value) { Materials_Proxy = Value; }
 
-					// MaterialWithParamsVisualDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)
+					// CsMaterialWithParamsSkinDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)
 					#pragma region
 					public:
 
 						FORCEINLINE const TArray<MaterialType>& GetMaterials() const { return *Materials_Proxy; }
 
-					#pragma endregion MaterialWithParamsVisualDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)
+					#pragma endregion CsMaterialWithParamsSkinDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)
 
 					public:
 
@@ -167,8 +165,6 @@ namespace NCsSkin
 
 					#undef MaterialType
 					};
-
-				#undef MaterialWithParamsVisualDataType
 				}
 			}
 		}

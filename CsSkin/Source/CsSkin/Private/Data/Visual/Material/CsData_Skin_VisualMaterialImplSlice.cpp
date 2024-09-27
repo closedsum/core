@@ -118,7 +118,7 @@ namespace NCsSkin
 					CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
 					CS_IS_PTR_NULL_RET_NULL(Object)
 
-					// Check for properties matching interface: MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+					// Check for properties matching interface: CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
 					FImplSlice* Slice = nullptr;
 					bool Success	  = false;
@@ -167,7 +167,7 @@ namespace NCsSkin
 					{
 						if (Log)
 						{
-							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: FCsData_Skin_VisualMaterialImplSlice (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *(CsObjectLibrary::PrintObjectAndClass(Object))));
+							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *(CsObjectLibrary::PrintObjectAndClass(Object))));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMeshImplSlice with name: VisualMaterialSlice.")));
 							Log(FString::Printf(TEXT("%s: - OR")));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialInterface with name: Materials.")));

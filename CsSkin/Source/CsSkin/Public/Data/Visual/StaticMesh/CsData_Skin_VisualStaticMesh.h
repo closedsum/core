@@ -42,6 +42,8 @@ namespace NCsSkin
 	}
 }
 
+using CsStaticMeshSkinDataType = NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh;
+
 UINTERFACE(BlueprintType)
 class CSSKIN_API UCsData_Skin_VisualStaticMesh : public UCsGetInterfaceMap
 {

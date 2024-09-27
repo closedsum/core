@@ -72,12 +72,15 @@ class CSJS_API UCsManager_Javascript : public UObject,
 public:
 
 	FORCEINLINE TSharedPtr<FJavascriptInstance>& GetJavascriptInstance() { return JavascriptInstance; }
+	FORCEINLINE CsJavascriptInstanceInfo& GetJavascriptInstanceInfo() { return JavascriptInstanceInfo; }
 
 #pragma endregion ICsGetJavascriptInstance
 
 // GetJavascriptInstance
 #pragma region
 private:
+
+	CsJavascriptInstanceInfo JavascriptInstanceInfo;
 
 	TSharedPtr<FJavascriptInstance> JavascriptInstance;
 	
@@ -201,6 +204,9 @@ public:
 	FORCEINLINE const FCsScriptEntryPointInfo& GetEntryPointInfo() const { return EntryPointInfo; }
 
 	void CreateEntryPoint();
+private:
+	char CreateEntryPoint_Internal(FCsRoutine* R);
+public:
 	void SetupEntryPoint(UGameInstance* GameInstance = nullptr);
 
 private:
@@ -255,6 +261,9 @@ public:
 	FORCEINLINE const FCsScriptInfo& GetScriptInfo() const { return ScriptInfo; }
 
 	void CreateScriptObjects();
+private:
+	char CreateScriptObjects_Internal(FCsRoutine* R);
+public:
 	void ConditionalCreateScriptObjects();
 	void SetupScriptObjects(UGameInstance* InGameInstance = nullptr);
 
@@ -382,6 +391,10 @@ public:
 		FORCEINLINE TArray<FCsJavascriptFileObjects>& GetObjects() { return Outer->GetEditorScriptObjects(); }
 
 		void Init();
+	private:
+		char Init_Internal(FCsRoutine* R);
+
+	public:
 
 		void Validate();
 

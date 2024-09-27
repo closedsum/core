@@ -84,10 +84,10 @@ namespace NCsSkin
 					Outer(nullptr),
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
-					// SkinDataType (NCsSkin::NData::NVisual::IVisual)
-					// SkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
+					// CsSkinDataType (NCsSkin::NData::NVisual::IVisual)
+					// CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(SkeletalMesh, nullptr),
-					// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+					// CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Materials)
 				{
 					InterfaceMap = new FCsInterfaceMap();
@@ -95,14 +95,11 @@ namespace NCsSkin
 					InterfaceMap->SetRoot<FImpl>(this);
 
 					typedef NCsData::IData DataType;
-					typedef NCsSkin::NData::NVisual::IVisual SkinDataType;
-					typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinDataType;
-					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinDataType;
 
 					InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
-					InterfaceMap->Add<SkinDataType>(static_cast<SkinDataType*>(this));
-					InterfaceMap->Add<SkeletalMeshSkinDataType>(static_cast<SkeletalMeshSkinDataType*>(this));
-					InterfaceMap->Add<MaterialSkinDataType>(static_cast<MaterialSkinDataType*>(this));
+					InterfaceMap->Add<CsSkinDataType>(static_cast<CsSkinDataType*>(this));
+					InterfaceMap->Add<CsSkeletalMeshSkinDataType>(static_cast<CsSkeletalMeshSkinDataType*>(this));
+					InterfaceMap->Add<CsMaterialSkinDataType>(static_cast<CsMaterialSkinDataType*>(this));
 
 					CS_CTOR_SET_MEMBER_PROXY(SkeletalMesh);
 					CS_CTOR_SET_MEMBER_PROXY(Materials);

@@ -168,3 +168,6 @@ namespace NCsAbility
 		}
 	}
 }
+
+using CsAbilitySystemLibrary = NCsAbility::NSystem::FLibrary;
+using CsASCLibrary = NCsAbility::NSystem::NComponent::FLibrary;

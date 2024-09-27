@@ -21,7 +21,7 @@ struct FCsInterfaceMap;
 class ICsDeconstructInterfaceSliceMap;
 
 /**
-* Represents a "slice" of data, SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::IMaterial).
+* Represents a "slice" of data, CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
 * The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 * a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 */
@@ -32,7 +32,7 @@ struct CSSKIN_API FCsData_Skin_VisualSkeletalMeshImplSlice
 
 public:
 
-// SkeletalMeshVisualDataType(NCsSkin::NData::NVisual::NSkeletalMesh::IMaterial)
+// CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual|Skeletal Mesh")
 	FCsSkeletalMesh Mesh;
@@ -71,19 +71,17 @@ namespace NCsSkin
 		{
 			namespace NSkeletalMesh
 			{
-			#define SkeletalMeshVisualDataType NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh
-
 				/**
-				* Represents a "slice" of data, SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
+				* Represents a "slice" of data, CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
 				* 
 				* If members are set via pointers to an "owning" data, then
-				* "Emulates" SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh) by mimicking 
+				* "Emulates" CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh) by mimicking 
 				* the interfaces and having pointers to the appropriate members.
 				*
 				* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 				* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 				*/
-				struct CSSKIN_API FImplSlice final : public SkeletalMeshVisualDataType
+				struct CSSKIN_API FImplSlice final : public CsSkeletalMeshSkinDataType
 				{
 				public:
 
@@ -97,7 +95,7 @@ namespace NCsSkin
 						that describe the data. */
 					FCsInterfaceMap* InterfaceMap;
 
-					// SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
+					// CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 
 					CS_DECLARE_MEMBER_WITH_PROXY(SkeletalMesh, USkeletalMesh*)
 
@@ -130,13 +128,13 @@ namespace NCsSkin
 
 				#pragma endregion ICsGetInterfaceMap
 
-				// SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::IStaticMesh)
+				// CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::IStaticMesh)
 				#pragma region
 				public:
 
 					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(SkeletalMesh, USkeletalMesh)
 
-				#pragma endregion SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::IStaticMesh)
+				#pragma endregion CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::IStaticMesh)
 
 				public:
 
@@ -153,8 +151,6 @@ namespace NCsSkin
 					void SetChecked(const FString& Context, USkeletalMeshComponent* Component) const;
 					bool SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 				};
-
-			#undef SkeletalMeshVisualDataType
 			}
 		}
 	}

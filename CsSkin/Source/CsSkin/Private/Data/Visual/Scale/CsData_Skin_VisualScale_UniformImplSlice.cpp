@@ -134,7 +134,7 @@ namespace NCsSkin
 						CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
 						CS_IS_PTR_NULL_RET_NULL(Object)
 
-						// Check for properties matching interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+						// Check for properties matching interface: CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 
 						FImplSlice* Slice = nullptr;
 						bool Success	  = false;

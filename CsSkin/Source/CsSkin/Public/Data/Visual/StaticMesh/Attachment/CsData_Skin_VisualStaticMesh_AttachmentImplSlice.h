@@ -21,7 +21,7 @@ struct FCsInterfaceMap;
 class ICsDeconstructInterfaceSliceMap;
 
 /**
-* Represents a "slice" of data, StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment).
+* Represents a "slice" of data, CsStaticMeshAttachmentSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment).
 * The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 * a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 */
@@ -32,7 +32,7 @@ struct CSSKIN_API FCsData_Skin_VisualStaticMesh_AttachmentImplSlice
 
 public:
 
-// StaticMeshVisualDataType(NCsSkin::NData::NVisual::NStaticMesh::IMaterial)
+// CsStaticMeshAttachmentSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IMaterial)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual|Static Mesh")
 	TArray<FCsStaticMeshAttachment> Attachments;
@@ -73,19 +73,17 @@ namespace NCsSkin
 			{
 				namespace NAttachment
 				{
-				#define StaticMeshAttachmentDataType NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment
-
 					/**
-					* Represents a "slice" of data, StaticMeshAttachmentDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment).
+					* Represents a "slice" of data, CsStaticMeshAttachmentSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment).
 					* 
 					* If members are set via pointers to an "owning" data, then
-					* "Emulates" StaticMeshAttachmentDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment) by mimicking 
+					* "Emulates" CsStaticMeshAttachmentSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment) by mimicking 
 					* the interfaces and having pointers to the appropriate members.
 					*
 					* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 					* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 					*/
-					struct CSSKIN_API FImplSlice final : public StaticMeshAttachmentDataType
+					struct CSSKIN_API FImplSlice final : public CsStaticMeshAttachmentSkinDataType
 					{
 					public:
 
@@ -101,7 +99,7 @@ namespace NCsSkin
 							that describe the data. */
 						FCsInterfaceMap* InterfaceMap;
 
-						// StaticMeshAttachmentDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
+						// CsStaticMeshAttachmentSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
 
 						CS_DECLARE_MEMBER_WITH_PROXY(StaticMeshAttachments, TArray<AttachmentType>)
 
@@ -134,13 +132,13 @@ namespace NCsSkin
 
 					#pragma endregion ICsGetInterfaceMap
 
-					// StaticMeshAttachmentDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
+					// CsStaticMeshAttachmentSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
 					#pragma region
 					public:
 
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(StaticMeshAttachments, TArray<AttachmentType>)
 
-					#pragma endregion StaticMeshAttachmentDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
+					#pragma endregion CsStaticMeshAttachmentSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
 
 					public:
 
@@ -159,8 +157,6 @@ namespace NCsSkin
 
 					#undef AttachmentType
 					};
-
-				#undef StaticMeshAttachmentDataType
 				}
 			}
 		}

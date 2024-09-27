@@ -147,7 +147,7 @@ namespace NCsSkin
 							CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
 							CS_IS_PTR_NULL_RET_NULL(Object)
 
-							// Check for properties matching interface: UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
+							// Check for properties matching interface: CsUniformRangeScaleSkinDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
 
 							FImplSlice* Slice = nullptr;
 							bool Success	  = false;
@@ -199,7 +199,7 @@ namespace NCsSkin
 							{
 								if (Log)
 								{
-									Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
+									Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CsUniformRangeScaleSkinDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
 									Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualScale_UniformRangeImplSlice with name: VisualUniformRangeScaleSlice."), *Context));
 									Log(FString::Printf(TEXT("%s: - OR"), *Context));
 									Log(FString::Printf(TEXT("%s: - Failed to get float property with name: MinUniformScale."), *Context));

@@ -18,7 +18,7 @@ struct FCsInterfaceMap;
 class ICsDeconstructInterfaceSliceMap;
 
 /**
-* Represents a "slice" of data, SkinDataType (NCsskin::NData::NVisual::IVisual).
+* Represents a "slice" of data, CsSkinDataType (NCsskin::NData::NVisual::IVisual).
 * The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 * a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 */
@@ -29,7 +29,7 @@ struct CSSKIN_API FCsData_Skin_VisualImplSlice
 
 public:
 
-// SkinDataType (NCsskin::NData::NVisual::IVisual)
+// CsSkinDataType (NCsskin::NData::NVisual::IVisual)
 
 	FCsData_Skin_VisualImplSlice()
 	{
@@ -61,13 +61,13 @@ namespace NCsSkin
 			* Represents a "slice" of data, SkinDataType (NCsskin::NData::NVisual::IVisual).
 			* 
 			* If members are set via points to an "owning" data, then
-			* "Emulates" SkinDataType (NCsskin::NData::NVisual::IVisual) by mimicking 
+			* "Emulates" CsSkinDataType (NCsSkin::NData::NVisual::IVisual) by mimicking 
 			* the interfaces and having pointers to the appropriate members. 
 			*
 			* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 			* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 			*/
-			struct CSSKIN_API FImplSlice final : public IVisual
+			struct CSSKIN_API FImplSlice final : public CsSkinDataType
 			{
 			public:
 
@@ -81,7 +81,7 @@ namespace NCsSkin
 					that describe the data. */
 				FCsInterfaceMap* InterfaceMap;
 
-				// SkinDataType (NCsskin::NData::NVisual::IVisual)
+				// CsSkinDataType (NCsskin::NData::NVisual::IVisual)
 
 			public:
 
@@ -106,11 +106,11 @@ namespace NCsSkin
 
 			#pragma endregion ICsGetInterfaceMap
 
-			// SkinDataType (NCsskin::NData::NVisual::IVisual)
+			// CsSkinDataType (NCsskin::NData::NVisual::IVisual)
 			#pragma region
 			public:
 
-			#pragma endregion SkinDataType (NCsskin::NData::NVisual::IVisual)
+			#pragma endregion CsSkinDataType (NCsskin::NData::NVisual::IVisual)
 
 			public:
 

@@ -83,6 +83,8 @@ namespace NCsSkin
 	}
 }
 
+using CsSkeletalMeshSkinDataType = NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh;
+
 UINTERFACE(BlueprintType)
 class CSSKIN_API UCsData_Skin_VisualSkeletalMesh : public UCsGetInterfaceMap
 {

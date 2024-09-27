@@ -23,9 +23,9 @@ class UStaticMeshComponent;
 /**
 * Represents an implementation of data which implement the interfaces:
 * - DataType (NCsData::IData)
-* - SkinDataType (NCsSkin::NData::NVisual::IVisual)
-* - StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-* - MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+* - CsSkinDataType (NCsSkin::NData::NVisual::IVisual)
+* - CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+* - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 * The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 * a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 */
@@ -36,12 +36,12 @@ struct CSSKIN_API FCsData_Skin_VisualStaticMeshAndMaterialImpl
 
 public:
 
-// StaticMeshVisualDataType(NCsSkin::NData::NVisual::NSkeletalMesh::IMaterial)
+// CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual")
 	FCsStaticMesh Mesh;
 
-// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+// CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual")
 	FCsTArrayMaterialInterface Materials;
@@ -78,30 +78,27 @@ namespace NCsSkin
 			namespace NStaticMeshAndMaterial
 			{
 			#define DataType NCsData::IData
-			#define SkinDataType IVisual
-			#define StaticMeshSkinDataType NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh
-			#define MaterialSkinDataType NCsSkin::NData::NVisual::NMaterial::IMaterial
 
 				/**
 				* Represents an implementation of data which implement the interfaces:
 				* - DataType (NCsData::IData)
-				* - SkinDataType (NCsSkin::NData::NVisual::IVisual)
-				* - StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-				* - MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+				* - CsSkinDataType (NCsSkin::NData::NVisual::IVisual)
+				* - CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+				* - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 				*
 				* If members are set via pointers to an "owning" data, then "Emulates":
 				* - DataType (NCsData::IData).
-				* - SkinDataType (NCsSkin::NData::NVisual::IVisual)
-				* - StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-				* - MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+				* - CsSkinDataType (NCsSkin::NData::NVisual::IVisual)
+				* - CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+				* - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 				* by mimicking the interfaces and having pointers to the appropriate members.
 				*
 				* The idea behind "emulating" another object (usually a UObject) is to keep the code a cleaner and more readable.
 				*/
 				struct CSSKIN_API FImpl : public DataType,
-										  public SkinDataType,
-										  public StaticMeshSkinDataType,
-										  public MaterialSkinDataType
+										  public CsSkinDataType,
+										  public CsStaticMeshSkinDataType,
+										  public CsMaterialSkinDataType
 				{
 				public:
 
@@ -115,13 +112,13 @@ namespace NCsSkin
 
 					FCsInterfaceMap* InterfaceMap;
 
-					// SkinDataType (NCsSkin::NData::NVisual::IVisual)
+					// CsSkinDataType (NCsSkin::NData::NVisual::IVisual)
 
-					// StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+					// CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 
 					CS_DECLARE_MEMBER_WITH_PROXY(StaticMesh, UStaticMesh*)
 
-					// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+					// CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
 					CS_DECLARE_MEMBER_WITH_PROXY(Materials, TArray<UMaterialInterface*>)
 
@@ -146,10 +143,10 @@ namespace NCsSkin
 
 					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(StaticMesh, UStaticMesh)
 
-				// StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+				// CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 				#pragma region
 
-				#pragma endregion StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+				#pragma endregion CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 
 				public:
 
@@ -165,12 +162,12 @@ namespace NCsSkin
 					}
 					FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Proxy = Value; }
 
-				// MaterialSkinDataType(NCsSkin::NData::NVisual::NMaterial::IMaterial)
+				// CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 				#pragma region
 
 					FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Proxy; }
 
-				#pragma endregion MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+				#pragma endregion CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
 				public:
 
@@ -182,9 +179,6 @@ namespace NCsSkin
 				};
 
 			#undef DataType
-			#undef SkinDataType
-			#undef StaticMeshSkinDataType
-			#undef MaterialSkinDataType
 			}
 		}
 	}

@@ -166,7 +166,7 @@ namespace NCsSkin
 
 						CS_IS_PTR_NULL_RET_NULL(Object)
 
-						// Check for properties matching interface: StaticMeshAttachmentDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
+						// Check for properties matching interface: CsStaticMeshAttachmentSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
 						FImplSlice* Slice = nullptr;
 						bool Success	  = false;
 
@@ -230,7 +230,7 @@ namespace NCsSkin
 						{
 							if (Log)
 							{
-								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
+								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CsStaticMeshAttachmentSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
 								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMesh_AttachmentImplSlice with name: VisualStaticMeshAttachmentSlice."), *Context));
 								Log(FString::Printf(TEXT("%s: - OR"), *Context));
 								Log(FString::Printf(TEXT("%s: - Failed to get array struct property of type: TArray<FCsStaticMeshAttachment> with name: StaticMeshAttachments."), *Context));

@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/CsData_Skin_VisualStaticMeshAndMaterial.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Library
@@ -14,7 +16,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualStaticMeshAndMaterial)
 
-const FName UCsData_Skin_VisualStaticMeshAndMaterial::Name = FName("UCsData_Skin_VisualStaticMeshAndMaterial");
+CS_CLASS_DEFINE_STATIC_CONST_FNAME(UCsData_Skin_VisualStaticMeshAndMaterial);
 
 UCsData_Skin_VisualStaticMeshAndMaterial::UCsData_Skin_VisualStaticMeshAndMaterial(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
@@ -83,9 +85,9 @@ void UCsData_Skin_VisualStaticMeshAndMaterial::Init()
 
 		DataProxyType* Proxy = (DataProxyType*)DataProxy;
 		Proxy->SetOuter(this);
-		// SkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
+		// CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 		Proxy->SetStaticMesh(Mesh.GetPtr());
-		// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+		// CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 		Proxy->SetMaterials(Materials.GetPtr());
 	}
 }

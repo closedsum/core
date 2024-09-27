@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/CsData_Skin_VisualStaticMeshAndMaterialImpl.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
@@ -70,7 +72,7 @@ bool FCsData_Skin_VisualStaticMeshAndMaterialImpl::SetSafe(const FString& Contex
 	return CsMaterialLibrary::SetSafe(Context, Component, Materials.Get());
 }
 
-const FName NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl::Name = FName("NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl);
 
 namespace NCsSkin
 {
@@ -84,10 +86,10 @@ namespace NCsSkin
 					Outer(nullptr),
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
-					// SkinDataType (NCsSkin::NData::NVisual::IVisual)
-					// StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+					// CsSkinDataType (NCsSkin::NData::NVisual::IVisual)
+					// CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(StaticMesh, nullptr),
-					// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+					// CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Materials)
 				{
 					InterfaceMap = new FCsInterfaceMap();
@@ -95,14 +97,11 @@ namespace NCsSkin
 					InterfaceMap->SetRoot<FImpl>(this);
 
 					typedef NCsData::IData DataType;
-					typedef NCsSkin::NData::NVisual::IVisual SkinDataType;
-					typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinDataType;
-					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinDataType;
 
 					InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
-					InterfaceMap->Add<SkinDataType>(static_cast<SkinDataType*>(this));
-					InterfaceMap->Add<StaticMeshSkinDataType>(static_cast<StaticMeshSkinDataType*>(this));
-					InterfaceMap->Add<MaterialSkinDataType>(static_cast<MaterialSkinDataType*>(this));
+					InterfaceMap->Add<CsSkinDataType>(static_cast<CsSkinDataType*>(this));
+					InterfaceMap->Add<CsStaticMeshSkinDataType>(static_cast<CsStaticMeshSkinDataType*>(this));
+					InterfaceMap->Add<CsMaterialSkinDataType>(static_cast<CsMaterialSkinDataType*>(this));
 
 					CS_CTOR_SET_MEMBER_PROXY(StaticMesh);
 					CS_CTOR_SET_MEMBER_PROXY(Materials);

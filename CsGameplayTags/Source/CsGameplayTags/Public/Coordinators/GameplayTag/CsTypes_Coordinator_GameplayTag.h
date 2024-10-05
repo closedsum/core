@@ -79,7 +79,7 @@ struct CSGAMEPLAYTAGS_API FCsGameplayTagEvent
 	FCsGameplayTagEvent() :
 		Tag(),
 		bFlag(false),
-		Value()
+		Value(0.0f)
 	{
 	}
 

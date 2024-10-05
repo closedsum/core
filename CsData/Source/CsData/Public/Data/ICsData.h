@@ -22,6 +22,8 @@ namespace NCsData
 	};
 }
 
+using CsDataType = NCsData::IData;
+
 UINTERFACE(Blueprintable)
 class CSDATA_API UCsData : public UCsGetInterfaceMap
 {

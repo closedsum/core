@@ -29,6 +29,7 @@ public class CsSeamlessTransition : ModuleRules
                     "CsMacro",
                     "CsEnum",
                     "CsValid",
+                    "CsTypes",
                     "CsCoreLibrary",
                     "CsInput"
                 }

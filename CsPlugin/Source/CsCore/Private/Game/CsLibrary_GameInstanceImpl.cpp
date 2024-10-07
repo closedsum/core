@@ -10,28 +10,12 @@
 #include "Library/CsLibrary_Valid.h"
 // Game
 #include "Game/CsGameInstance.h"
-// World
-#include "Engine/World.h"
 
 namespace NCsGameInstance
 {
 	namespace NImpl
 	{
 		#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
-
-		FString FLibrary::PrintObjectAndClass(const UGameInstance* Object)
-		{
-			if (!Object)
-				return FString::Printf(TEXT("INVALID"));
-			return FString::Printf(TEXT("Object: %s with Class: %s"), *(Object->GetName()), *(Object->GetClass()->GetName()));
-		}
-
-		FString FLibrary::PrintNameAndClass(const UGameInstance* Object)
-		{
-			if (!Object)
-				return FString::Printf(TEXT("INVALID"));
-			return FString::Printf(TEXT("%s with Class: %s"), *(Object->GetName()), *(Object->GetClass()->GetName()));
-		}
 
 		// Get
 		#pragma region
@@ -47,23 +31,6 @@ namespace NCsGameInstance
 		}
 
 		#pragma endregion Get
-
-		// Start
-		#pragma region
-
-		bool FLibrary::HasStartedFromEntryChecked(const FString& Context, const UObject* ContextObject)
-		{
-			return GetChecked(Context, ContextObject)->HasStartedFromEntry();
-		}
-
-		bool FLibrary::SafeHasStartedFromEntry(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
-		{
-			if (UCsGameInstance* GameInstance = GetSafe(Context, ContextObject, Log))
-				return GameInstance->HasStartedFromEntry();
-			return false;
-		}
-
-		#pragma endregion Start
 
 		// Editor
 		#pragma region
@@ -103,49 +70,6 @@ namespace NCsGameInstance
 		}
 
 		#pragma endregion Editor
-
-		// Transition
-		#pragma region
-	
-		bool FLibrary::HasFinishedTransitionChecked(const FString& Context, const UObject* ContextObject)
-		{
-			return GetChecked(Context, ContextObject)->HasFinishedTransition();
-		}
-
-		#pragma endregion Transition
-
-		// Events
-		#pragma region
-
-		#define OnQueueExitGameEventType NCsGameInstance::FOnQueueExitGame
-		OnQueueExitGameEventType& FLibrary::GetOnQueueExitGame_EventChecked(const FString& Context, const UObject* ContextObject)
-		{
-			return GetChecked(Context, ContextObject)->GetOnQueueExitGame_Event();
-		}
-		#undef OnQueueExitGameEventType
-
-			// Transition
-		#pragma region
-
-		#define OnStartTransitionOutEventType NCsGameInstance::NTransition::FOut_OnStart
-		#define OnFinishTransitionEventType NCsGameInstance::NTransition::FOnFinish
-
-		OnStartTransitionOutEventType& FLibrary::GetTransitionOut_OnStart_EventChecked(const FString& Context, const UObject* ContextObject)
-		{
-			return GetChecked(Context, ContextObject)->GetTransitionOut_OnStart_Event();
-		}
-
-		OnFinishTransitionEventType& FLibrary::GetTransition_OnFinish_EventChecked(const FString& Context, const UObject* ContextObject)
-		{
-			return GetChecked(Context, ContextObject)->GetTransition_OnFinish_Event();
-		}
-
-		#undef OnStartTransitionOutEventType
-		#undef OnFinishTransitionEventType
-
-		#pragma endregion Transition
-
-		#pragma endregion Events
 
 		#undef LogLevel
 	}

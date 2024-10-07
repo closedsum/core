@@ -2,7 +2,7 @@
 #include "Player/CsLibrary_PlayerTransitionCache.h"
 
 // Library
-#include "Game/CsLibrary_GameInstance_SeamlessTransition.h"
+#include "Game/SeamlessTransition/CsLibrary_GameInstance_SeamlessTransition.h"
 #include "Library/CsLibrary_Valid.h"
 // Player
 #include "Player/CsPlayerTransitionCache.h"

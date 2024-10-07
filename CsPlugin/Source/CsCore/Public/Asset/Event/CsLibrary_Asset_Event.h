@@ -62,3 +62,5 @@ namespace NCsAsset
 		};
 	}
 }
+
+using CsAssetEventLibrary = NCsAsset::NEvent::FLibrary;

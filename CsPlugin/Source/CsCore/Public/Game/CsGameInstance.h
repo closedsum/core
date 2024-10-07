@@ -5,7 +5,8 @@
 #include "Engine/GameInstance.h"
 // Types
 #include "Managers/Time/CsTypes_Time.h"
-#include "Game/CsGameInstance_Delegates.h"
+#include "Game/Transition/CsGameInstance_Transition_Delegates.h"
+#include "Game/Shutdown/CsGameInstance_Shutdown_Delegates.h"
 // Singleton
 #include "Singleton/CsGetManagerSingleton.h"
 // Containers
@@ -25,6 +26,11 @@ class CSCORE_API UCsGameInstance : public UGameInstance,
 								   public ICsGetManagerSingleton
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	typedef NCsGameInstance::NTransition::FOut_OnStart OnStartTransitionOutEventType;
+	typedef NCsGameInstance::NTransition::FOnFinish OnFinishedTransitionEventType;
 
 // UGameInstance Interface
 #pragma region
@@ -199,9 +205,6 @@ public:
 
 protected:
 
-#define OnStartTransitionOutEventType NCsGameInstance::NTransition::FOut_OnStart
-#define OnFinishedTransitionEventType NCsGameInstance::NTransition::FOnFinish
-
 	OnStartTransitionOutEventType TransitionOut_OnStart_Event;
 
 public:
@@ -221,9 +224,6 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
 	FCsGameInstance_Transition_OnFinish Transition_OnFinish_ScriptEvent;
-
-#undef OnStartTransitionOutEventType
-#undef OnFinishedTransitionEventType
 
 #pragma endregion Transition
 };

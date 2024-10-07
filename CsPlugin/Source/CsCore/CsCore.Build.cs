@@ -55,7 +55,8 @@ public class CsCore : ModuleRules
                     "CsCoroutine",
                     "CsLoad",
                     "CsData",
-                    "CsInput"
+                    "CsInput",
+                    "CsSeamlessTransition"
                 }
             );
 

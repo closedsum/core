@@ -115,6 +115,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsSeamlessTransition",
+      "Enabled": true
+    },
+    {
       "Name": "EnhancedInput",
       "Enabled": true
     },

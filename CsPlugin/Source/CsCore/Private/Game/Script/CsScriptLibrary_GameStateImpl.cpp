@@ -8,7 +8,10 @@
 // Types
 #include "CsMacro_Misc.h"
 // Library
-#include "Game/CsLibrary_GameStateImpl.h"
+#include "Game/Startup/CsLibrary_GameState_Startup.h"
+#include "Game/Transition/CsLibrary_GameState_Transition.h"
+// Utility
+#include "Utility/CsLog.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_GameStateImpl)
 
@@ -52,7 +55,7 @@ bool CLASS_TYPE::IsStartupComplete(const FString& Context, const UObject* WorldC
 {
 	CONDITIONAL_SET_CTXT(IsStartupComplete);
 
-	return CsGameStateImplLibrary::SafeIsStartupComplete(Ctxt, WorldContextObject);
+	return CsGameStateStartupLibrary::SafeIsStartupComplete(Ctxt, WorldContextObject);
 }
 
 bool CLASS_TYPE::IsStartupCompleteChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
@@ -60,7 +63,7 @@ bool CLASS_TYPE::IsStartupCompleteChecked(const FString& Context, const UObject*
 	CONDITIONAL_SET_CTXT(IsStartupCompleteChecked);
 
 	OutSuccess = true;
-	return CS_SCRIPT_GET_CHECKED(CsGameStateImplLibrary::IsStartupCompleteChecked(Ctxt, WorldContextObject), CsGameStateImplLibrary::SafeIsStartupComplete(Ctxt, WorldContextObject, OutSuccess, LogError));
+	return CS_SCRIPT_GET_CHECKED(CsGameStateStartupLibrary::IsStartupCompleteChecked(Ctxt, WorldContextObject), CsGameStateStartupLibrary::SafeIsStartupComplete(Ctxt, WorldContextObject, OutSuccess, LogError));
 }
 
 #pragma endregion ICsGameState_Startup
@@ -72,14 +75,14 @@ bool CLASS_TYPE::HasFinishedTransitionOut(const FString& Context, const UObject*
 {
 	CONDITIONAL_SET_CTXT(HasFinishedTransitionOut);
 
-	return CsGameStateImplLibrary::SafeHasFinishedTransitionOut(Context, WorldContextObject);
+	return CsGameStateTransitionLibrary::SafeHasFinishedTransitionOut(Context, WorldContextObject);
 }
 
 bool CLASS_TYPE::TransitionOut(const FString& Context, const UObject* WorldContextObject)
 {
 	CONDITIONAL_SET_CTXT(TransitionOut);
 
-	return CsGameStateImplLibrary::SafeTransitionOut(Context, WorldContextObject);
+	return CsGameStateTransitionLibrary::SafeTransitionOut(Context, WorldContextObject);
 }
 
 #pragma endregion ICsGameState_Transition

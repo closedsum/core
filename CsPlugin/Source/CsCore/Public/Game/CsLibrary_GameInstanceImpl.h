@@ -2,8 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-// Types
-#include "Game/CsGameInstance_Delegates.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -59,16 +57,6 @@ namespace NCsGameInstance
 			}
 
 		#pragma endregion Get
-
-		// Start
-		#pragma region
-		public:
-
-			static bool HasStartedFromEntryChecked(const FString& Context, const UObject* ContextObject);
-
-			static bool SafeHasStartedFromEntry(const FString& Context, const UObject* ContextObject, LogLevel);
-
-		#pragma endregion Start
 
 		// Editor
 		#pragma region
@@ -148,39 +136,6 @@ namespace NCsGameInstance
 			static bool SafeIsMobilePreviewEditor(const FString& Context, const UObject* ContextObject, LogLevel);
 
 		#pragma endregion Editor
-
-		// Transition
-		#pragma region
-		public:
-
-			static bool HasFinishedTransitionChecked(const FString& Context, const UObject* ContextObject);
-
-		#pragma endregion Transition
-
-		// Events
-		#pragma region
-		public:
-
-		#define OnQueueExitGameEventType NCsGameInstance::FOnQueueExitGame
-			static OnQueueExitGameEventType& GetOnQueueExitGame_EventChecked(const FString& Context, const UObject* ContextObject);
-		#undef OnQueueExitGameEventType
-
-			// Transition
-		#pragma region
-		public:
-
-		#define OnStartTransitionOutEventType NCsGameInstance::NTransition::FOut_OnStart
-		#define OnFinishTransitionEventType NCsGameInstance::NTransition::FOnFinish
-
-			static OnStartTransitionOutEventType& GetTransitionOut_OnStart_EventChecked(const FString& Context, const UObject* ContextObject);
-			static OnFinishTransitionEventType& GetTransition_OnFinish_EventChecked(const FString& Context, const UObject* ContextObject);
-
-		#undef OnStartTransitionOutEventType
-		#undef OnFinishTransitionEventType
-
-		#pragma endregion Transition
-
-		#pragma endregion Events
 
 		#undef LogLevel
 		};

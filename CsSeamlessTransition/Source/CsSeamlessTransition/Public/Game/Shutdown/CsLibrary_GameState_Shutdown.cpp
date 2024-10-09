@@ -50,10 +50,6 @@ namespace NCsGameState
 
 		#pragma endregion Interface
 
-		bool FLibrary::HasFinishedExitGameChecked(const FString& Context, const UObject* ContextObject)
-		{
-			return GetInterfaceChecked(Context, ContextObject)->HasFinishedExitGame();
-		}
 
 		bool FLibrary::HasFinishedExitGameChecked(const FString& Context, const UObject* WorldContext)
 		{
@@ -62,7 +58,7 @@ namespace NCsGameState
 
 		bool FLibrary::SafeHasFinishedExitGame(const FString& Context, const UObject* WorldContext, LogLevel)
 		{
-			if (ICsGameState_Shutdown* Interface = CsGameStateLibrary::GetSafeAsObject(Context, ContextObject, Log))
+			if (ICsGameState_Shutdown* Interface = GetSafeInterface(Context, WorldContext, Log))
 				return Interface->HasFinishedExitGame();
 			return false;
 		}

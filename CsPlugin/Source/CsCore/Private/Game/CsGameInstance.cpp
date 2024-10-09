@@ -63,6 +63,11 @@ namespace NCsGameInstance
 
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
+	// GameInstance_Transition_Event
+	TransitionOut_OnStart_Event(),
+	TransitionOut_OnStart_ScriptEvent(),
+	Transition_OnFinish_Event(),
+	Transition_OnFinish_ScriptEvent(),
 	// Tick
 	TickDelegate(),
 	TickDelegateHandle(),
@@ -79,9 +84,7 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) :
 	bStandaloneMobileFromEditor(false),
 	bOnStart(false),
 	// Transition
-	bFinishedTransition(false),
-	Transition_OnFinish_Event(),
-	Transition_OnFinish_ScriptEvent()
+	bFinishedTransition(false)
 {
 }
 

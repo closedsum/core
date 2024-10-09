@@ -25,9 +25,9 @@ private:
 
 public:
 
-	virtual OnPreShutdownEventType& GetOnPreShutdown_Event();
-	virtual FCsGameInstance_OnPreShutdown& GetOnPreShutdown_ScriptEvent();
+	virtual OnPreShutdownEventType& GetOnPreShutdown_Event() = 0;
+	virtual FCsGameInstance_OnPreShutdown& GetOnPreShutdown_ScriptEvent() = 0;
 
-	virtual OnQueueExitGameEventType& GetOnQueueExitGame_Event();
-	virtual FCsGameInstance_OnQueueExitGame& GetOnQueueExitGame_ScriptEvent();
+	virtual OnQueueExitGameEventType& GetOnQueueExitGame_Event() = 0;
+	virtual FCsGameInstance_OnQueueExitGame& GetOnQueueExitGame_ScriptEvent() = 0;
 };

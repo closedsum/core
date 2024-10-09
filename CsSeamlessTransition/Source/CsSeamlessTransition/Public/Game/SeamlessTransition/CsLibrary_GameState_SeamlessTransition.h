@@ -78,3 +78,5 @@ namespace NCsGameState
 		};
 	}
 }
+
+using CsGSSeamlessTransitionLibrary = NCsGameState::NSeamlessTransition::FLibrary;

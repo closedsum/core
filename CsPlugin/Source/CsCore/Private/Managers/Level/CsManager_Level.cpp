@@ -14,7 +14,7 @@
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 	// Common
-#include "Game/CsLibrary_GameInstanceImpl.h"
+#include "Game/Transition/CsLibrary_GameInstance_Transition.h"
 #include "Level/CsLibrary_Level.h"
 #include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Valid.h"
@@ -241,7 +241,7 @@ void UCsManager_Level::Initialize()
 	// Bind to Delegates
 
 	NCsWorld::FDelegates::OnPostWorldInitialization_Simple_Event.AddUObject(this, &UCsManager_Level::OnPostWorldInitialization);
-	CsGameInstanceImplLibrary::GetTransition_OnFinish_EventChecked(Context, MyRoot).AddUObject(this, &UCsManager_Level::GameInstance_Transition_OnFinish);
+	CsGameInstanceTransitionLibrary::GetTransition_OnFinish_EventChecked(Context, MyRoot).AddUObject(this, &UCsManager_Level::GameInstance_Transition_OnFinish);
 	NCsLevel::NStreaming::NDynamic::FDelegates::OnAdded_Event.AddUObject(this, &UCsManager_Level::Level_Streaming_OnAdded);
 }
 

@@ -3,12 +3,13 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Engine/GameInstance.h"
+// Interface
+#include "Singleton/CsGetManagerSingleton.h"
+#include "Game/Transition/Event/CsGameInstance_Transition_Event.h"
 // Types
 #include "Managers/Time/CsTypes_Time.h"
 #include "Game/Transition/CsGameInstance_Transition_Delegates.h"
 #include "Game/Shutdown/CsGameInstance_Shutdown_Delegates.h"
-// Singleton
-#include "Singleton/CsGetManagerSingleton.h"
 // Containers
 #include "Containers/Ticker.h"
 // Play
@@ -23,7 +24,8 @@ class ACsLevelScriptActor;
 
 UCLASS(config = Game)
 class CSCORE_API UCsGameInstance : public UGameInstance, 
-								   public ICsGetManagerSingleton
+								   public ICsGetManagerSingleton,
+								   public ICsGameInstance_Transition_Event
 {
 	GENERATED_UCLASS_BODY()
 
@@ -52,6 +54,37 @@ protected:
 	virtual void OnStart() override;
 
 #pragma endregion UGameInstance Interface
+
+// ICsGameInstance_Transition_Event
+#pragma region
+public:
+
+	FORCEINLINE OnStartTransitionOutEventType& GetTransitionOut_OnStart_Event() { return TransitionOut_OnStart_Event; }
+	FORCEINLINE OnFinishedTransitionEventType& GetTransition_OnFinish_Event() { return Transition_OnFinish_Event; }
+
+#pragma endregion ICsGameInstance_Transition_Event
+
+// GameInstance_Transition_Event
+#pragma region
+protected:
+
+	OnStartTransitionOutEventType TransitionOut_OnStart_Event;
+
+public:
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
+	FCsGameInstance_TransitionOut_OnStart TransitionOut_OnStart_ScriptEvent;
+
+protected:
+
+	OnFinishedTransitionEventType Transition_OnFinish_Event;
+
+public:
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
+	FCsGameInstance_Transition_OnFinish Transition_OnFinish_ScriptEvent;
+
+#pragma endregion GameInstance_Transition_Event
 
 // Shutdown
 #pragma region
@@ -202,28 +235,6 @@ protected:
 public:
 
 	FORCEINLINE bool HasFinishedTransition() const { return bFinishedTransition; }
-
-protected:
-
-	OnStartTransitionOutEventType TransitionOut_OnStart_Event;
-
-public:
-
-	FORCEINLINE OnStartTransitionOutEventType& GetTransitionOut_OnStart_Event() { return TransitionOut_OnStart_Event; }
-
-	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
-	FCsGameInstance_TransitionOut_OnStart TransitionOut_OnStart_ScriptEvent;
-
-protected:
-
-	OnFinishedTransitionEventType Transition_OnFinish_Event;
-
-public:
-
-	FORCEINLINE OnFinishedTransitionEventType& GetTransition_OnFinish_Event() { return Transition_OnFinish_Event; }
-
-	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
-	FCsGameInstance_Transition_OnFinish Transition_OnFinish_ScriptEvent;
 
 #pragma endregion Transition
 };

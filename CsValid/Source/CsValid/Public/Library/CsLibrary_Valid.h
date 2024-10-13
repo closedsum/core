@@ -2043,6 +2043,36 @@ namespace NCsValid
 				return Cast<ObjectType>(A.GetDefaultObject());
 			#endif // #if !UE_BUILD_SHIPPING
 			}
+
+			template<typename ObjectType>
+			FORCEINLINE static ObjectType* GetDefaultObject(const FString& Context, const TSubclassOf<ObjectType>& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A.Get())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return nullptr;
+				}
+
+				UObject* O = A.GetDefaultObject();
+
+				if (!O)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: Failed to Get DefaultObject from: %s with Class: %s."), *Context, *AName, *(A.Get()->GetName())));
+					return nullptr;
+				}
+
+				ObjectType* DOb = Cast<ObjectType>(O);
+
+				if (!DOb)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: DefaultObject: %s is NOT of type: %s."), *Context, *AName, *(ObjectType::StaticClass()->GetName())));
+					return nullptr;
+				}
+				return DOb;
+			}
 		};
 	}
 
@@ -4245,14 +4275,14 @@ namespace NCsValid
 	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str__ = #__Class; \
-		return NCsValid::NSubclassOf::FLibrary::Get<__ObjectType>(Context, __In__##__Class, __temp__str__, Log)); \
+		return NCsValid::NSubclassOf::FLibrary::Get<__ObjectType>(Context, __In__##__Class, __temp__str__, Log); \
 	}(Context, __Class, Log)
 // Assume const FString& Context has been defined
 #define CS_SUBCLASS_OF_GET_DEFAULT_OBJ(__Class, __ObjectType) \
 	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str__ = #__Class; \
-		return NCsValid::NSubclassOf::FLibrary::GetDefaultObject<__ObjectType>(Context, __In__##__Class, __temp__str__, Log)); \
+		return NCsValid::NSubclassOf::FLibrary::GetDefaultObject<__ObjectType>(Context, __In__##__Class, __temp__str__, Log); \
 	}(Context, __Class, Log)
 
 #else
@@ -4287,14 +4317,14 @@ namespace NCsValid
 	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str__; \
-		return NCsValid::NSubclassOf::FLibrary::Get<__ObjectType>(Context, __In__##__Class, __temp__str__, Log)); \
+		return NCsValid::NSubclassOf::FLibrary::Get<__ObjectType>(Context, __In__##__Class, __temp__str__, Log); \
 	}(Context, __Class, Log)
 // Assume const FString& Context has been defined
 #define CS_SUBCLASS_OF_GET_DEFAULT_OBJ(__Class, __ObjectType) \
 	[] (const FString& Context, const TSubclassOf<__ObjectType>& __In__##__Class, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str__; \
-		return NCsValid::NSubclassOf::FLibrary::GetDefaultObject<__ObjectType>(Context, __In__##__Class, __temp__str__, Log)); \
+		return NCsValid::NSubclassOf::FLibrary::GetDefaultObject<__ObjectType>(Context, __In__##__Class, __temp__str__, Log); \
 	}(Context, __Class, Log)
 
 #endif // #if !UE_BUILD_SHIPPING

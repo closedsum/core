@@ -70,6 +70,38 @@ namespace NCsEnum
 				*						TODO: Eventually change to WorldContext.
 				* return
 				*/
+				template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType&(GetDataRootSetType::*GetDataRootSetFn)() const, const UObject*(GetDataRootSetType::*GetDataRootSetAsObjectFn)() const>
+				static const DataRootSetType* GetDataRootSet(const FString& Context, UObject* ContextRoot)
+				{
+					// Get DataRootSet
+					UObject* DataRootSetImpl = GetDataRootSetImpl(Context, ContextRoot);
+
+					if (!DataRootSetImpl)
+						return nullptr;
+
+					GetDataRootSetType* GetDataRootSet = Cast<GetDataRootSetType>(DataRootSetImpl);
+
+					if (!GetDataRootSet)
+						return nullptr;
+
+					const UObject* DataRootSetAsObject = (GetDataRootSet->*GetDataRootSetAsObjectFn)();
+
+					if (!DataRootSetAsObject)
+						return nullptr;
+
+					const DataRootSetType& DataRootSet = (GetDataRootSet->*GetDataRootSetFn)();
+					return &DataRootSet;
+				}
+
+				/**
+				*
+				*
+				* @param Context		The calling context.
+				* @param ContextRoot	Context (Root) to route to the UCsManager_Data. This is
+				*						usually a reference to the GameInstance.
+				*						TODO: Eventually change to WorldContext.
+				* return
+				*/
 				template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
 				static const DataRootSetType* GetDataRootSet(const FString& Context, UObject* ContextRoot, UObject*& OutDataRootSetImpl)
 				{
@@ -85,7 +117,39 @@ namespace NCsEnum
 						return nullptr;
 
 					const DataRootSetType& DataRootSet = (GetDataRootSet->*GetDataRootSetFn)();
+					return &DataRootSet;
+				}
 
+				
+				/**
+				*
+				*
+				* @param Context		The calling context.
+				* @param ContextRoot	Context (Root) to route to the UCsManager_Data. This is
+				*						usually a reference to the GameInstance.
+				*						TODO: Eventually change to WorldContext.
+				* return
+				*/
+				template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const, const UObject*(GetDataRootSetType::*GetDataRootSetAsObjectFn)() const>
+				static const DataRootSetType* GetDataRootSet(const FString& Context, UObject* ContextRoot, UObject*& OutDataRootSetImpl)
+				{
+					// Get DataRootSet
+					OutDataRootSetImpl = GetDataRootSetImpl(Context, ContextRoot);
+
+					if (!OutDataRootSetImpl)
+						return nullptr;
+
+					GetDataRootSetType* GetDataRootSet = Cast<GetDataRootSetType>(OutDataRootSetImpl);
+
+					if (!GetDataRootSet)
+						return nullptr;
+
+					const UObject* DataRootSetAsObject = (GetDataRootSet->*GetDataRootSetAsObjectFn)();
+
+					if (!DataRootSetAsObject)
+						return nullptr;
+
+					const DataRootSetType& DataRootSet = (GetDataRootSet->*GetDataRootSetFn)();
 					return &DataRootSet;
 				}
 
@@ -132,7 +196,7 @@ namespace NCsEnum
 					};
 				};
 
-			#define PayloadType NCsEnum::NStruct::NPopulate::FLibrary::FFromDataTable::FPayload
+				using PayloadType = NCsEnum::NStruct::NPopulate::FLibrary::FFromDataTable::FPayload;
 
 				/**
 				* Populate EnumMap with values corresponding to the rows of the DataTable.
@@ -155,8 +219,6 @@ namespace NCsEnum
 				* @param Payload
 				*/
 				static void FromDataTable_RowAsName(const FString& Context, PayloadType Payload);
-
-			#undef PayloadType
 			};
 		}
 	}

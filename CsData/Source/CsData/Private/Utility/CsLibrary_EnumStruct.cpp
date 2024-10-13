@@ -72,7 +72,7 @@ namespace NCsEnum
 				return DataRootSet->GetDataTableChecked(Context, DataTableName);
 			}
 
-			#define PayloadType NCsEnum::NStruct::NPopulate::FLibrary::FFromDataTable::FPayload
+			using PayloadType = NCsEnum::NStruct::NPopulate::FLibrary::FFromDataTable::FPayload;
 
 			void FLibrary::FromDataTable(const FString& Context, PayloadType& Payload)
 			{
@@ -190,8 +190,6 @@ namespace NCsEnum
 					}
 				}
 			}
-
-			#undef PayloadType
 		}
 	}
 }

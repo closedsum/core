@@ -18,13 +18,12 @@
 
 namespace NCsDataRootSet
 {
-	#define SettingsLibrary NCsData::NSettings::FLibrary
-	#define DataManagerLibrary NCsData::NManager::FLibrary
+	using MemberType = FCsDataRootSet::EMember;
 
 	UObject* FLibrary::GetSafeImpl(const FString& Context)
 	{
 	#if WITH_EDITOR
-		return SettingsLibrary::SafeLoadDataRootSet(Context);
+		return CsDataSettingsLibrary::SafeLoadDataRootSet(Context);
 	#else
 		checkf(0, TEXT("%s: This implementation of GetSafeImpl is NOT supported outside of Editor."), *Context);
 		return nullptr;
@@ -37,7 +36,7 @@ namespace NCsDataRootSet
 		// Check WorldContext is Valid.
 		if (!WorldContext)
 		{
-			return SettingsLibrary::SafeLoadDataRootSet(Context);
+			return CsDataSettingsLibrary::SafeLoadDataRootSet(Context);
 		}
 		// Check if World from WorldContext is Valid.
 		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
@@ -47,15 +46,15 @@ namespace NCsDataRootSet
 
 		if (CsWorldLibrary::IsGameWorld(World))
 		{
-			return DataManagerLibrary::GetSafeDataRootSetImpl(Context, WorldContext);
+			return CsDataManagerLibrary::GetSafeDataRootSetImpl(Context, WorldContext);
 		}
 		// Check if Editor World
 		else
 		{
-			return SettingsLibrary::SafeLoadDataRootSet(Context);
+			return CsDataSettingsLibrary::SafeLoadDataRootSet(Context);
 		}
 	#else
-		return DataManagerLibrary::GetSafeDataRootSetImpl(Context, WorldContext);
+		return CsDataManagerLibrary::GetSafeDataRootSetImpl(Context, WorldContext);
 	#endif // #if WITH_EDITOR
 	}
 
@@ -63,7 +62,7 @@ namespace NCsDataRootSet
 	{
 		CS_IS_PTR_NULL_CHECKED(GameInstance)
 
-		return DataManagerLibrary::GetDataRootSetImplChecked(Context, GameInstance);
+		return CsDataManagerLibrary::GetDataRootSetImplChecked(Context, GameInstance);
 	}
 
 	UObject* FLibrary::GetImplChecked(const FString& Context, const UObject* WorldContext)
@@ -71,10 +70,10 @@ namespace NCsDataRootSet
 	#if WITH_EDITOR
 		if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 		{
-			return SettingsLibrary::LoadDataRootSetChecked(Context);
+			return CsDataSettingsLibrary::LoadDataRootSetChecked(Context);
 		}
 	#endif // #if WITH_EDITOR
-		return DataManagerLibrary::GetDataRootSetImplChecked(Context, WorldContext);
+		return CsDataManagerLibrary::GetDataRootSetImplChecked(Context, WorldContext);
 	}
 
 	const FCsDataRootSet* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext)
@@ -123,7 +122,7 @@ namespace NCsDataRootSet
 
 		if (CsWorldLibrary::IsGameWorld(World))
 		{
-			return DataManagerLibrary::GetSafeDataTable(Context, WorldContext, DataTableSoftObject);
+			return CsDataManagerLibrary::GetSafeDataTable(Context, WorldContext, DataTableSoftObject);
 		}
 		else
 		{
@@ -147,26 +146,24 @@ namespace NCsDataRootSet
 		}
 		return nullptr;
 	#else
-		return DataManagerLibrary::GetSafeDataTable(Context, WorldContext, DataTableSoftObject);
+		return CsDataManagerLibrary::GetSafeDataTable(Context, WorldContext, DataTableSoftObject);
 #	endif // #if WITH_EDITOR
 	}
 
 	UDataTable* FLibrary::GetDataTableChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
 	{
-		return DataManagerLibrary::GetDataTableChecked(Context, WorldContext, DataTableSoftObject);
+		return CsDataManagerLibrary::GetDataTableChecked(Context, WorldContext, DataTableSoftObject);
 	}
 
 	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const FName& RowName)
 	{
-		return DataManagerLibrary::GetDataTableRowChecked(Context, WorldContext, DataTableSoftObject, RowName);
+		return CsDataManagerLibrary::GetDataTableRowChecked(Context, WorldContext, DataTableSoftObject, RowName);
 	}
 
 	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const UScriptStruct* RowStruct, const FName& RowName)
 	{
-		return DataManagerLibrary::GetDataTableRowChecked(Context, WorldContext, DataTableSoftObject, RowStruct, RowName);
+		return CsDataManagerLibrary::GetDataTableRowChecked(Context, WorldContext, DataTableSoftObject, RowStruct, RowName);
 	}
-
-	#define MemberType FCsDataRootSet::EMember
 
 	UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const MemberType& Member)
 	{
@@ -202,9 +199,4 @@ namespace NCsDataRootSet
 
 		return DataRootSet.GetDataTableRowChecked(Context, WorldContext, Member, RowStruct, RowName);
 	}
-
-	#undef MemberType
-
-	#undef SettingsLibrary
-	#undef DataManagerLibrary
 }

@@ -25,6 +25,14 @@ class CSINPUTWITHGAMEPLAYTAG_API UCsManager_EnhancedInput_WithGameplayTag : publ
 
 	UCsManager_EnhancedInput_WithGameplayTag();
 
+private:
+
+	using OnPressedRawEventType = NCsInput::NWithGameplayTag::NManager::NEvent::NRaw::FOnPressed;
+	using OnReleasedRawEventType = NCsInput::NWithGameplayTag::NManager::NEvent::NRaw::FOnReleased;
+	using OnActionRawEventType = NCsInput::NWithGameplayTag::NManager::NEvent::NRaw::FOnAction;
+	using OnActionEventType = NCsInput::NWithGameplayTag::NManager::NEvent::FOnAction;
+	using EventType = NCsInput::NWithGameplayTag::FEvent;
+
 // UObject Interface
 #pragma region
 public:
@@ -91,11 +99,6 @@ public:
 #pragma region
 public:
 
-#define OnPressedRawEventType NCsInput::NWithGameplayTag::NManager::NRaw::FOnPressed
-#define OnReleasedRawEventType NCsInput::NWithGameplayTag::NManager::NRaw::FOnReleased
-#define OnActionRawEventType NCsInput::NWithGameplayTag::NManager::NRaw::FOnAction
-#define OnActionEventType NCsInput::NWithGameplayTag::NManager::FOnAction
-
 	FORCEINLINE OnPressedRawEventType& GetOnPressed_Raw_Event() { return OnPressed_Raw_Event; }
 	FORCEINLINE FCsManagerInputWithGameplayTag_OnPressed_Raw& GetOnPressed_Raw_ScriptEvent() { return OnPressed_Raw_ScriptEvent; }
 
@@ -108,21 +111,11 @@ public:
 	FORCEINLINE OnActionEventType& GetOnAction_Event() { return OnAction_Event; }
 	FORCEINLINE FCsManagerInputWithGameplayTag_OnAction& GetOnAction_ScriptEvent() { return OnAction_ScriptEvent; }
 
-#undef OnPressedRawEventType
-#undef OnReleasedRawEventType
-#undef OnActionRawEventType
-#undef OnActionEventType
-
 #pragma endregion ICsManager_Input_WithGameplayTag_Event
 
 // Manager_Input_WithGameplayTag_Event
 #pragma region
 public:
-
-#define OnPressedRawEventType NCsInput::NWithGameplayTag::NManager::NRaw::FOnPressed
-#define OnReleasedRawEventType NCsInput::NWithGameplayTag::NManager::NRaw::FOnReleased
-#define OnActionRawEventType NCsInput::NWithGameplayTag::NManager::NRaw::FOnAction
-#define OnActionEventType NCsInput::NWithGameplayTag::NManager::FOnAction
 
 	OnPressedRawEventType OnPressed_Raw_Event;
 
@@ -146,11 +139,6 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "CsInputWithGameplayTag|Managers|Input")
 	FCsManagerInputWithGameplayTag_OnAction2 OnAction2_ScriptEvent;
-
-#undef OnPressedRawEventType
-#undef OnReleasedRawEventType
-#undef OnActionRawEventType
-#undef OnActionEventType
 	
 #pragma endregion Manager_Input_WithGameplayTag_Event
 
@@ -264,16 +252,12 @@ private:
 #pragma region
 private:
 
-#define EventType NCsInput::NWithGameplayTag::FEvent
-
 	TArray<EventType> QueuedEvents;
 
 	// [Action Index] = Event
 	TArray<EventType> LastEvents;
 	
 	TArray<bool> ActionsProcessedThisFrame;
-
-#undef EventType
 
 #pragma endregion Input
 };

@@ -85,6 +85,8 @@ UCsFXActorPooledImpl::UCsFXActorPooledImpl(const FObjectInitializer& ObjectIniti
 #define SET_CONTEXT(__FunctionName) using namespace NCsFXActorPooledImpl::NCached; \
 	const FString& Context = Str::__FunctionName
 
+using CacheImplType = NCsFX::NCache::FImpl;
+
 // UObject Interface
 #pragma region
 
@@ -195,7 +197,6 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	SET_CONTEXT(Allocate);
 
-	typedef NCsFX::NCache::FImpl CacheImplType;
 	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 
 	CacheImpl->Allocate(Payload);
@@ -303,8 +304,6 @@ void UCsFXActorPooledImpl::Deallocate()
 
 void UCsFXActorPooledImpl::ConstructCache()
 {
-	typedef NCsFX::NCache::FImpl CacheImplType;
-
 	Cache	  = new CacheImplType();
 	CacheImpl = (CacheImplType*)Cache;
 }

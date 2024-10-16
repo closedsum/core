@@ -5,7 +5,9 @@
 #include "Engine/GameInstance.h"
 // Interface
 #include "Singleton/CsGetManagerSingleton.h"
+#include "Game/Transition/CsGameInstance_Transition.h"
 #include "Game/Transition/Event/CsGameInstance_Transition_Event.h"
+#include "Game/Shutdown/Event/CsGameInstance_Shutdown_Event.h"
 // Types
 #include "Managers/Time/CsTypes_Time.h"
 #include "Game/Transition/CsGameInstance_Transition_Delegates.h"
@@ -25,14 +27,18 @@ class ACsLevelScriptActor;
 UCLASS(config = Game)
 class CSCORE_API UCsGameInstance : public UGameInstance, 
 								   public ICsGetManagerSingleton,
-								   public ICsGameInstance_Transition_Event
+								   public ICsGameInstance_Transition,
+								   public ICsGameInstance_Transition_Event,
+								   public ICsGameInstance_Shutdown_Event
 {
 	GENERATED_UCLASS_BODY()
 
 private:
 
-	typedef NCsGameInstance::NTransition::FOut_OnStart OnStartTransitionOutEventType;
-	typedef NCsGameInstance::NTransition::FOnFinish OnFinishedTransitionEventType;
+	using OnStartTransitionOutEventType = NCsGameInstance::NTransition::FOut_OnStart;
+	using OnFinishedTransitionEventType = NCsGameInstance::NTransition::FOnFinish;
+	using OnPreShutdownEventType = NCsGameInstance::FOnPreShutdown;
+	using OnQueueExitGameEventType = NCsGameInstance::FOnQueueExitGame;
 
 // UGameInstance Interface
 #pragma region
@@ -54,6 +60,22 @@ protected:
 	virtual void OnStart() override;
 
 #pragma endregion UGameInstance Interface
+
+// ICsGameInstance_Transition
+#pragma region
+public:
+
+	FORCEINLINE bool HasFinishedTransition() const { return bFinishedTransition; }
+
+#pragma endregion ICsGameInstance_Transition
+
+// GameInstance_Transition
+#pragma region
+protected:
+
+	bool bFinishedTransition;
+
+#pragma endregion GameInstance_Transition
 
 // ICsGameInstance_Transition_Event
 #pragma region
@@ -86,25 +108,38 @@ public:
 
 #pragma endregion GameInstance_Transition_Event
 
-// Shutdown
+// ICsGameInstance_Shutdown_Event
 #pragma region
+public:
 
-#define OnPreShutdownEventType NCsGameInstance::FOnPreShutdown
+	FORCEINLINE OnPreShutdownEventType& GetOnPreShutdown_Event() { return OnPreShutdown_Event; }
+	FORCEINLINE FCsGameInstance_OnPreShutdown& GetOnPreShutdown_ScriptEvent() { return OnPreShutdown_ScriptEvent; }
+	FORCEINLINE OnQueueExitGameEventType& GetOnQueueExitGame_Event() { return OnQueueExitGame_Event; }
+	FORCEINLINE FCsGameInstance_OnQueueExitGame& GetOnQueueExitGame_ScriptEvent() { return OnQueueExitGame_ScriptEvent; }
 
+#pragma endregion ICsGameInstance_Shutdown_Event
+
+// GameInstance_Shutdown_Event
+#pragma region
 protected:
 
 	OnPreShutdownEventType OnPreShutdown_Event;
 
 public:
 
-	FORCEINLINE OnPreShutdownEventType& GetOnPreShutdown_Event() { return OnPreShutdown_Event; }
-
 	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
 	FCsGameInstance_OnPreShutdown OnPreShutdown_ScriptEvent;
 
-#undef OnPreShutdownEventType
+protected:
 
-#pragma endregion Shutdown
+	OnQueueExitGameEventType OnQueueExitGame_Event;
+
+public:
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
+	FCsGameInstance_OnQueueExitGame OnQueueExitGame_ScriptEvent;
+
+#pragma endregion GameInstance_Shutdown_Event
 
 // FExec Interface
 #pragma region
@@ -156,21 +191,6 @@ protected:
 public:
 
 	virtual void QueueExitGame();
-
-#define OnQueueExitGameEventType NCsGameInstance::FOnQueueExitGame
-
-protected:
-
-	OnQueueExitGameEventType OnQueueExitGame_Event;
-
-public:
-
-	FORCEINLINE OnQueueExitGameEventType& GetOnQueueExitGame_Event() { return OnQueueExitGame_Event; }
-
-	UPROPERTY(BlueprintAssignable, Category = "CsCore|Game Instance")
-	FCsGameInstance_OnQueueExitGame OnQueueExitGame_ScriptEvent;
-
-#undef OnQueueExitGameEventType
 
 private:
 
@@ -225,16 +245,4 @@ public:
 	FORCEINLINE bool HasOnStart() const { return bOnStart; }
 
 #pragma endregion Editor
-
-// Transition
-#pragma region
-protected:
-
-	bool bFinishedTransition;
-
-public:
-
-	FORCEINLINE bool HasFinishedTransition() const { return bFinishedTransition; }
-
-#pragma endregion Transition
 };

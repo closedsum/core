@@ -230,13 +230,28 @@ namespace NCsInput
 
 			#undef LogLevel
 			};
+		}
+	}
+}
 
+using CsInputWithGameplayTagManagerLibrary = NCsInput::NWithGameplayTag::NManager::FLibrary;
+using CsInputWithTagManagerLibrary = NCsInput::NWithGameplayTag::NManager::FLibrary;
+
+namespace NCsInput
+{
+	namespace NWithGameplayTag
+	{
+		namespace NManager
+		{	
 			namespace NFirst
 			{
 				class CSINPUTWITHGAMEPLAYTAG_API FLibrary
 				{
 				#define LogLevel void(*Log)(const FString&) = &NCsInput::NWithGameplayTag::FLog::Warning
-				#define InputManagerLibrary NCsInput::NWithGameplayTag::NManager::FLibrary
+
+				private:
+
+					using InputManagerLibrary = NCsInput::NWithGameplayTag::NManager::FLibrary;
 
 				// Get
 				#pragma region
@@ -443,13 +458,10 @@ namespace NCsInput
 				#pragma endregion Tag
 
 				#undef LogLevel
-				#undef InputManagerLibrary
 				};
 			}
 		}
 	}
 }
 
-using CsInputWithGameplayTagManagerLibrary = NCsInput::NWithGameplayTag::NManager::FLibrary;
-using CsInputWithTagManagerLibrary = NCsInput::NWithGameplayTag::NManager::FLibrary;
 using CsFirstInputWithTagManagerLibrary = NCsInput::NWithGameplayTag::NManager::NFirst::FLibrary;

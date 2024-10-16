@@ -45,9 +45,6 @@ namespace NCsFX
 
 	namespace NCache
 	{
-	#define PooledCacheType NCsPooledObject::NCache::ICache
-	#define FXCacheType NCsFX::NCache::ICache
-
 		/**
 		* Basic implementation for Cache implementing the interfaces:
 		* PooledCacheType (NCsPooledObject::NCache::ICache) and 
@@ -55,23 +52,23 @@ namespace NCsFX
 		* a bare minimum functionality. For custom functionality create
 		* another implementation
 		*/
-		struct CSFX_API FImpl final : public PooledCacheType,
-									  public FXCacheType
+		struct CSFX_API FImpl final : public CsPooledObjectCacheType,
+									  public CsFXCacheType
 		{
 		public:
 
 			static const FName Name;
 
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-		#define DeallocateMethodType NCsFX::EDeallocateMethod
-
 		private:
+
+			using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+			using DeallocateMethodType = NCsFX::EDeallocateMethod;
 
 			// ICsGetInterfaceMap
 
 			FCsInterfaceMap* InterfaceMap;
 
-			// PooledCacheType (NCsPooledObject::NCache::ICache)
+			// CsPooledObjectCacheType (NCsPooledObject::NCache::ICache)
 
 			int32 Index;
 
@@ -97,7 +94,7 @@ namespace NCsFX
 
 			FCsDeltaTime ElapsedTime;
 
-			// FXCacheType (NCsFX::NCache::ICache)
+			// CsFXCacheType (NCsFX::NCache::ICache)
 
 			UNiagaraComponent* FXComponent;
 
@@ -161,13 +158,13 @@ namespace NCsFX
 
 			FORCEINLINE void SetLifeTime(const float& InLifeTime) { LifeTime = InLifeTime; }
 
-		// FXCacheType (NCsFX::NCache::ICache)
+		// CsFXCacheType (NCsFX::NCache::ICache)
 		#pragma region
 		public:
 
 			FORCEINLINE UNiagaraComponent* GetFXComponent() const { return FXComponent; }
 
-		#pragma endregion FXCacheType (NCsFX::NCache::ICache)
+		#pragma endregion CsFXCacheType (NCsFX::NCache::ICache)
 
 		public:
 
@@ -181,12 +178,8 @@ namespace NCsFX
 			void Update(const FCsDeltaTime& DeltaTime);
 
 			//void SetData(ICsData_Projectile* InData);
-
-		#undef PooledPayloadType
-		#undef DeallocateMethodType
 		};
-
-	#undef PooledCacheType
-	#undef FXCacheType
 	}
 }
+
+using CsFXCacheImplType = NCsFX::NCache::FImpl;

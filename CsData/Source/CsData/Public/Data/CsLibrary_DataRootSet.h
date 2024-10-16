@@ -16,6 +16,10 @@ namespace NCsDataRootSet
 	*/
 	class CSDATA_API FLibrary
 	{
+	private:
+
+		using MemberType = FCsDataRootSet::EMember;
+
 	public:
 
 		/**
@@ -223,8 +227,6 @@ namespace NCsDataRootSet
 		*/
 		static uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const UScriptStruct* RowStruct, const FName& RowName);
 
-	#define MemberType FCsDataRootSet::EMember
-
 		/**
 		*
 		*
@@ -326,8 +328,6 @@ namespace NCsDataRootSet
 
 			return Row;
 		}
-
-	#undef MemberType
 	};
 }
 

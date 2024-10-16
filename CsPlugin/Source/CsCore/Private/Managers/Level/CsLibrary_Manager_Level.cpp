@@ -94,11 +94,15 @@ namespace NCsLevel
 
 		UCsManager_Level* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
+		#if WITH_EDITOR
 			UObject* ContextRoot		    = GetContextRootChecked(Context, ContextObject);
 			UCsManager_Level* Manager_Level = UCsManager_Level::Get(ContextRoot);
 
 			CS_IS_PENDING_KILL_CHECKED(Manager_Level)
 			return Manager_Level;
+		#else
+			return UCsManager_Level::Get(nullptr);
+		#endif // #if WITH_EDITOR
 		}
 
 		UCsManager_Level* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)

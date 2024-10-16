@@ -23,18 +23,22 @@ class CSSEAMLESSTRANSITION_API ICsGameInstance_SeamlessTransition
 
 private:
 
-	typedef NCsGameInstance::NTransition::FParams TransitionParamsType;
-	typedef NCsSeamlessTransition::EState StateType;
-	typedef NCsPlayer::NTransition::FCache CacheType;
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using TransitionParamsType= NCsGameInstance::NTransition::FParams;
+		using StateType = NCsSeamlessTransition::EState;
+		using CacheType = NCsPlayer::NTransition::FCache;
+	};
 
 // Transition
 public:
 
 	virtual const bool& GetHasPerformedTransition() const = 0;
 
-	virtual void PerformTransition(const TransitionParamsType& Params) = 0;
+	virtual void PerformTransition(const _::TransitionParamsType& Params) = 0;
 
-	virtual CacheType* GetPlayerTransitionCache() const = 0;
+	virtual _::CacheType* GetPlayerTransitionCache() const = 0;
 
 // Seamless Transition
 public:
@@ -43,7 +47,7 @@ public:
 
 	virtual void SeamlessTransition_EnableTransitionInProgress() = 0;
 
-	virtual const StateType& GetSeamlessTransitionState() const = 0;
+	virtual const _::StateType& GetSeamlessTransitionState() const = 0;
 
 // Player
 public:

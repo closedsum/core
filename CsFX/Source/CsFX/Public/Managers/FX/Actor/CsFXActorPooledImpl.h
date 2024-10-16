@@ -39,8 +39,8 @@ class CSFX_API UCsFXActorPooledImpl : public UObject,
 {
 	GENERATED_UCLASS_BODY()
 
-#define CacheType NCsPooledObject::NCache::ICache
-#define CacheImplType NCsFX::NCache::FImpl
+	using CacheType = NCsPooledObject::NCache::ICache;
+	using CacheImplType = NCsFX::NCache::FImpl;
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define FXPayloadType NCsFX::NPayload::IPayload
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
@@ -156,8 +156,6 @@ protected:
 
 	void LogChangeCounter();
 
-#undef CacheType
-#undef CacheImplType
 #undef PooledPayloadType
 #undef FXPayloadType
 #undef ConstructParamsType

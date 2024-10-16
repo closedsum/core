@@ -124,9 +124,14 @@ namespace NCsJs
 			
 			// TODO: bIsEditor. Probably need to set to true if we want to interact with AnimInstance in Editor.
 
-			ICsGetJavascriptIsolate* GetJavascriptIsolate = CS_INTERFACE_CAST_CHECKED(Owner, UObject, ICsGetJavascriptIsolate);
+			ICsGetJavascriptIsolate* GetJavascriptIsolate  = CS_INTERFACE_CAST_CHECKED(Owner, UObject, ICsGetJavascriptIsolate);
+			TSharedPtr<FJavascriptIsolate> SharedIsolate   = GetJavascriptIsolate->GetSharedJavascriptIsolate();
 
-			Isolate->Init(GetJavascriptIsolate->GetSharedJavascriptIsolate());
+			ICsGetJavascriptInstance* GetJavascriptInstance  = CS_INTERFACE_CAST_CHECKED(Owner, UObject, ICsGetJavascriptInstance);
+			TSharedPtr<FJavascriptInstance>& Instance		 = GetJavascriptInstance->GetJavascriptInstance();
+
+			Isolate->Init(SharedIsolate);
+			Isolate->Features  = Instance->Options.Features.FeatureMap;
 			auto ContextObject = Isolate->CreateContext();
 
 			JavascriptIsolate = Isolate;

@@ -181,6 +181,8 @@ namespace NCsGameInstance
 	}
 }
 
+using CsGameInstanceTransitionParamsType = NCsGameInstance::NTransition::FParams;
+
 #pragma endregion FCGameInstance_TransitionParams
 
 // GameInstanceTransitionUnpauseCondition

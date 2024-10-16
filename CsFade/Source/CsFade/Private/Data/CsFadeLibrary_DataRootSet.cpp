@@ -17,17 +17,17 @@ namespace NCsFade
 	{
 		const FCsFadeDataRootSet* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext)
 		{
-			return NCsDataRootSet::FLibrary::GetSafe<FCsFadeDataRootSet, ICsFadeGetDataRootSet, &ICsFadeGetDataRootSet::GetCsFadeDataRootSet>(Context, WorldContext, &NCsFade::FLog::Warning);
+			return CsDataRootSetLibrary::GetSafe<FCsFadeDataRootSet, ICsFadeGetDataRootSet, &ICsFadeGetDataRootSet::GetCsFadeDataRootSet>(Context, WorldContext, &NCsFade::FLog::Warning);
 		}
 
 		const FCsFadeDataRootSet& FLibrary::GetChecked(const FString& Context, const UGameInstance* GameInstance)
 		{
-			return NCsDataRootSet::FLibrary::GetChecked<FCsFadeDataRootSet, ICsFadeGetDataRootSet, &ICsFadeGetDataRootSet::GetCsFadeDataRootSet>(Context, GameInstance);
+			return CsDataRootSetLibrary::GetChecked<FCsFadeDataRootSet, ICsFadeGetDataRootSet, &ICsFadeGetDataRootSet::GetCsFadeDataRootSet>(Context, GameInstance);
 		}
 
 		const FCsFadeDataRootSet& FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 		{
-			return NCsDataRootSet::FLibrary::GetChecked<FCsFadeDataRootSet, ICsFadeGetDataRootSet, &ICsFadeGetDataRootSet::GetCsFadeDataRootSet>(Context, WorldContext);
+			return CsDataRootSetLibrary::GetChecked<FCsFadeDataRootSet, ICsFadeGetDataRootSet, &ICsFadeGetDataRootSet::GetCsFadeDataRootSet>(Context, WorldContext);
 		}
 
 		UClass* FLibrary::GetFadeWidgetClassChecked(const FString& Context, const UObject* WorldContext)

@@ -20,14 +20,18 @@ class CSSEAMLESSTRANSITION_API ICsGameInstance_Shutdown_Event
 
 private:
 
-	typedef NCsGameInstance::FOnPreShutdown OnPreShutdownEventType;
-	typedef NCsGameInstance::FOnQueueExitGame OnQueueExitGameEventType;
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using OnPreShutdownEventType = NCsGameInstance::FOnPreShutdown;
+		using OnQueueExitGameEventType = NCsGameInstance::FOnQueueExitGame;
+	};
 
 public:
 
-	virtual OnPreShutdownEventType& GetOnPreShutdown_Event() = 0;
+	virtual _::OnPreShutdownEventType& GetOnPreShutdown_Event() = 0;
 	virtual FCsGameInstance_OnPreShutdown& GetOnPreShutdown_ScriptEvent() = 0;
 
-	virtual OnQueueExitGameEventType& GetOnQueueExitGame_Event() = 0;
+	virtual _::OnQueueExitGameEventType& GetOnQueueExitGame_Event() = 0;
 	virtual FCsGameInstance_OnQueueExitGame& GetOnQueueExitGame_ScriptEvent() = 0;
 };

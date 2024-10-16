@@ -67,11 +67,15 @@ namespace NCsGameplayTag
 
 		UCsCoordinator_GameplayTag* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
+		#if !UE_BUILD_SHIPPING
 			UObject* ContextRoot						        = GetContextRootChecked(Context, ContextObject);
 			UCsCoordinator_GameplayTag* Coordinator_GameplayTag = UCsCoordinator_GameplayTag::Get(ContextRoot);
 
 			CS_IS_PTR_NULL_CHECKED(Coordinator_GameplayTag)
 			return Coordinator_GameplayTag;
+		#else
+			return UCsCoordinator_GameplayTag::Get(ContextRoot);
+		#endif // #if !UE_BUILD_SHIPPING
 		}
 
 		UCsCoordinator_GameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)

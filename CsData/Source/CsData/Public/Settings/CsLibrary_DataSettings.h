@@ -37,3 +37,5 @@ namespace NCsData
 		};
 	}
 }
+
+using CsDataSettingsLibrary = NCsData::NSettings::FLibrary;

@@ -150,10 +150,8 @@ UDataTable* FCsUIDataRootSet::GetSafeDataTable(const FString& Context, const UOb
 {
 	using namespace NCsUIDataRootSet::NCached;
 
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
 	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::Member) \
-		return DataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsUIDataRootSet, Member, Str::Member);
+		return CsDataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsUIDataRootSet, Member, Str::Member);
 
 	// WidgetActorClasses
 	CS_TEMP_GET_SAFE_DATA_TABLE(WidgetActorClasses)
@@ -176,27 +174,15 @@ UDataTable* FCsUIDataRootSet::GetSafeDataTable(const FString& Context, const UOb
 
 UDataTable* FCsUIDataRootSet::GetDataTableChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {
-	using namespace NCsUIDataRootSet::NCached;
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType));
+	return CsDataRootSetLibrary::GetDataTableChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType));
 }
 
 uint8* FCsUIDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const
 {
-	using namespace NCsUIDataRootSet::NCached;
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowName);
+	return CsDataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowName);
 }
 
 uint8* FCsUIDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const
 {
-	using namespace NCsUIDataRootSet::NCached;
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
+	return CsDataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
 }

@@ -17,7 +17,7 @@ struct CSGAMEPLAYTAGS_API FCsSettings_Coordinator_GameplayTag
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsGameplayTags|Coordinators|GameplayTag")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, NoClear, Category = "CsGameplayTags|Coordinators|GameplayTag")
 	TSoftClassPtr<UCsCoordinator_GameplayTag> Class;
 
 	FCsSettings_Coordinator_GameplayTag();

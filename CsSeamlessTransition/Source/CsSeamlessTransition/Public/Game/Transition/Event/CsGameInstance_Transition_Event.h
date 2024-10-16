@@ -20,11 +20,15 @@ class CSSEAMLESSTRANSITION_API ICsGameInstance_Transition_Event
 
 private:
 
-	typedef NCsGameInstance::NTransition::FOut_OnStart OnStartTransitionOutEventType;
-	typedef NCsGameInstance::NTransition::FOnFinish OnFinishTransitionEventType;
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using OnStartTransitionOutEventType = NCsGameInstance::NTransition::FOut_OnStart;
+		using OnFinishTransitionEventType = NCsGameInstance::NTransition::FOnFinish;
+	};
 
 public:
 
-	virtual OnStartTransitionOutEventType& GetTransitionOut_OnStart_Event() = 0;
-	virtual OnFinishTransitionEventType& GetTransition_OnFinish_Event() = 0;
+	virtual _::OnStartTransitionOutEventType& GetTransitionOut_OnStart_Event() = 0;
+	virtual _::OnFinishTransitionEventType& GetTransition_OnFinish_Event() = 0;
 };

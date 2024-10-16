@@ -20,17 +20,20 @@ class CSINPUTWITHGAMEPLAYTAG_API ICsCoordinator_GameplayTag_InputEvent
 
 private:
 
-	typedef NCsInput::NWithGameplayTag::FEvent EventType;
-
-	typedef TDelegate<void(const EventType&)> ActionEventDelegateType;
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using EventType = NCsInput::NWithGameplayTag::FEvent;
+		using ActionEventDelegateType = TDelegate<void(const EventType&)>;
+	};
 
 public:
 
-	virtual ActionEventDelegateType GetOnAction_ManagerInput0_Delegate() = 0;
+	virtual _::ActionEventDelegateType GetOnAction_ManagerInput0_Delegate() = 0;
 
-	virtual void OnAction_ManagerInput0(const EventType& Event) = 0;
+	virtual void OnAction_ManagerInput0(const _::EventType& Event) = 0;
 
-	virtual ActionEventDelegateType GetOnAction_ManagerInput1_Delegate() = 0;
+	virtual _::ActionEventDelegateType GetOnAction_ManagerInput1_Delegate() = 0;
 
-	virtual void OnAction_ManagerInput1(const EventType& Event) = 0;
+	virtual void OnAction_ManagerInput1(const _::EventType& Event) = 0;
 };

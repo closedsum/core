@@ -19,25 +19,29 @@ class CSINPUTWITHGAMEPLAYTAG_API ICsManager_Input_WithGameplayTag_Event
 {
 	GENERATED_IINTERFACE_BODY()
 
-#define OnPressedRawEventType NCsInput::NWithGameplayTag::NManager::NRaw::FOnPressed
-#define OnReleasedRawEventType NCsInput::NWithGameplayTag::NManager::NRaw::FOnReleased
-#define OnActionRawEventType NCsInput::NWithGameplayTag::NManager::NRaw::FOnAction
-#define OnActionEventType NCsInput::NWithGameplayTag::NManager::FOnAction
+private:
 
-	virtual OnPressedRawEventType& GetOnPressed_Raw_Event() = 0;
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using OnPressedRawEventType = NCsInput::NWithGameplayTag::NManager::NEvent::NRaw::FOnPressed;
+		using OnReleasedRawEventType = NCsInput::NWithGameplayTag::NManager::NEvent::NRaw::FOnReleased;
+		using OnActionRawEventType = NCsInput::NWithGameplayTag::NManager::NEvent::NRaw::FOnAction;
+		using OnActionEventType = NCsInput::NWithGameplayTag::NManager::NEvent::FOnAction;
+	};
+
+public:
+
+	virtual _::OnPressedRawEventType& GetOnPressed_Raw_Event() = 0;
 	virtual FCsManagerInputWithGameplayTag_OnPressed_Raw& GetOnPressed_Raw_ScriptEvent() = 0;
 
-	virtual OnReleasedRawEventType& GetOnReleased_Raw_Event() = 0;
+	virtual _::OnReleasedRawEventType& GetOnReleased_Raw_Event() = 0;
 	virtual FCsManagerInputWithGameplayTag_OnReleased_Raw& GetOnReleased_Raw_ScriptEvent() = 0;
 
-	virtual OnActionRawEventType& GetOnAction_Raw_Event() = 0;
+	virtual _::OnActionRawEventType& GetOnAction_Raw_Event() = 0;
 	virtual FCsManagerInputWithGameplayTag_OnAction_Raw& GetOnAction_Raw_ScriptEvent() = 0;
 
-	virtual OnActionEventType& GetOnAction_Event() = 0;
+	virtual _::OnActionEventType& GetOnAction_Event() = 0;
 	virtual FCsManagerInputWithGameplayTag_OnAction& GetOnAction_ScriptEvent() = 0;
 
-#undef OnPressedRawEventType
-#undef OnReleasedRawEventType
-#undef OnActionRawEventType
-#undef OnActionEventType
 };

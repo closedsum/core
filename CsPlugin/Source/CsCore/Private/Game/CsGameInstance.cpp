@@ -63,28 +63,31 @@ namespace NCsGameInstance
 
 UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
+	// GameInstance_Transition
+	bFinishedTransition(false),
 	// GameInstance_Transition_Event
 	TransitionOut_OnStart_Event(),
 	TransitionOut_OnStart_ScriptEvent(),
 	Transition_OnFinish_Event(),
 	Transition_OnFinish_ScriptEvent(),
+	// GameInstance_Shutdown_Event
+	OnPreShutdown_Event(),
+	OnPreShutdown_ScriptEvent(),
+	OnQueueExitGame_Event(),
+	OnQueueExitGame_ScriptEvent(),
 	// Tick
 	TickDelegate(),
 	TickDelegateHandle(),
 	// Start
 	bHasStartedFromEntry(false),
 	// Managers
-	OnQueueExitGame_Event(),
-	OnQueueExitGame_ScriptEvent(),
 	Manager_Singleton(nullptr),
 	// Editor
 	PlayMode(ECsPlayMode::ECsPlayMode_MAX),
 	bPIE(false),
 	bStandaloneFromEditor(false),
 	bStandaloneMobileFromEditor(false),
-	bOnStart(false),
-	// Transition
-	bFinishedTransition(false)
+	bOnStart(false)
 {
 }
 

@@ -17,17 +17,17 @@ namespace NCsUI
 	{
 		const FCsUIDataRootSet* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext)
 		{
-			return NCsDataRootSet::FLibrary::GetSafe<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, WorldContext, &NCsUI::FLog::Warning);
+			return CsDataRootSetLibrary::GetSafe<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, WorldContext, &NCsUI::FLog::Warning);
 		}
 
 		const FCsUIDataRootSet& FLibrary::GetChecked(const FString& Context, const UGameInstance* GameInstance)
 		{
-			return NCsDataRootSet::FLibrary::GetChecked<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, GameInstance);
+			return CsDataRootSetLibrary::GetChecked<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, GameInstance);
 		}
 
 		const FCsUIDataRootSet& FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 		{
-			return NCsDataRootSet::FLibrary::GetChecked<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, WorldContext);
+			return CsDataRootSetLibrary::GetChecked<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, WorldContext);
 		}
 
 		#define MemberType FCsUIDataRootSet::EMember

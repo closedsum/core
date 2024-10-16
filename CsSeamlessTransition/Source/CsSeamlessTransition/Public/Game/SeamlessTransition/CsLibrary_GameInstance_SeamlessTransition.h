@@ -18,6 +18,7 @@ namespace NCsGameInstance
 	namespace NSeamlessTransition
 	{
 		using TransitionParamsType = NCsGameInstance::NTransition::FParams;
+		using CsPlayerTransitionCacheType = NCsPlayer::NTransition::FCache;
 		using StateType = NCsSeamlessTransition::EState;
 
 		struct CSSEAMLESSTRANSITION_API FLibrary final
@@ -52,12 +53,8 @@ namespace NCsGameInstance
 				return SafePerformTransition(Context, ContextObject, TransitionParamsType::Make(Params), Log);
 			}
 
-		#define CsPlayerTransitionCacheType NCsPlayer::NTransition::FCache 
-
 			static CsPlayerTransitionCacheType* GetPlayerTransitionCacheChecked(const FString& Context, const UObject* ContextObject);
 			static CsPlayerTransitionCacheType* GetSafePlayerTransitionCache(const FString& Context, const UObject* ContextObject, LogLevel);
-
-		#undef CsPlayerTransitionCacheType
 
 		#pragma endregion Transition
 

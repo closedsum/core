@@ -25,17 +25,17 @@ namespace NCsInput
 
 				const DataRootSetType* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext)
 				{
-					return NCsDataRootSet::FLibrary::GetSafe<DataRootSetType, GetDataRootSetType, &GetDataRootSetType::GetDataRootSetFn>(Context, WorldContext, &NCsInput::NWithGameplayTag::FLog::Warning);
+					return CsDataRootSetLibrary::GetSafe<DataRootSetType, GetDataRootSetType, &GetDataRootSetType::GetDataRootSetFn>(Context, WorldContext, &NCsInput::NWithGameplayTag::FLog::Warning);
 				}
 
 				const DataRootSetType& FLibrary::GetChecked(const FString& Context, const UGameInstance* GameInstance)
 				{
-					return NCsDataRootSet::FLibrary::GetChecked<DataRootSetType, GetDataRootSetType, &GetDataRootSetType::GetDataRootSetFn>(Context, GameInstance);
+					return CsDataRootSetLibrary::GetChecked<DataRootSetType, GetDataRootSetType, &GetDataRootSetType::GetDataRootSetFn>(Context, GameInstance);
 				}
 
 				const DataRootSetType& FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 				{
-					return NCsDataRootSet::FLibrary::GetChecked<DataRootSetType, GetDataRootSetType, &GetDataRootSetType::GetDataRootSetFn>(Context, WorldContext);
+					return CsDataRootSetLibrary::GetChecked<DataRootSetType, GetDataRootSetType, &GetDataRootSetType::GetDataRootSetFn>(Context, WorldContext);
 				}
 
 				UCsData_EnhancedInput_WithGameplayTag* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext)

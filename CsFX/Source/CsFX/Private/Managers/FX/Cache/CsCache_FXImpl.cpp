@@ -50,7 +50,9 @@ namespace NCsFX
 		#define USING_NS_CACHED using namespace NCsFX::NCache::NImpl::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsFX::NCache::NImpl::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define DeallocateMethodType NCsFX::EDeallocateMethod
+
+		using DeallocateMethodType = NCsFX::EDeallocateMethod;
+		using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 
 		FImpl::FImpl() :
 			// ICsGetInterfaceMap
@@ -79,11 +81,8 @@ namespace NCsFX
 
 			InterfaceMap->SetRoot<FImpl>(this);
 
-			typedef NCsPooledObject::NCache::ICache PooledCacheType;
-			typedef NCsFX::NCache::ICache FXCacheType;
-
-			InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
-			InterfaceMap->Add<FXCacheType>(static_cast<FXCacheType*>(this));
+			InterfaceMap->Add<CsPooledObjectCacheType>(static_cast<CsPooledObjectCacheType*>(this));
+			InterfaceMap->Add<CsFXCacheType>(static_cast<CsFXCacheType*>(this));
 		}
 
 		FImpl::~FImpl()
@@ -94,14 +93,11 @@ namespace NCsFX
 		// PooledCacheType (NCsPooledObject::NCache::ICache)
 		#pragma region
 		
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 		void FImpl::Allocate(PooledPayloadType* Payload)
 		{
-		#undef PooledPayloadType
-
 			SET_CONTEXT(Allocate);
 
-			// PooledCacheType (NCsPooledObject::NCache::ICache)
+			// CsPooledObjectCacheType (NCsPooledObject::NCache::ICache)
 			bAllocated = true;
 			State	   = NCsPooledObject::EState::Active;
 			UpdateType = Payload->GetUpdateType();
@@ -110,11 +106,8 @@ namespace NCsFX
 			Parent	   = Payload->GetParent();
 			StartTime  = Payload->GetTime();
 
-			// FXCacheType (NCsFX::NCache::ICache)
-			typedef NCsFX::NPayload::IPayload FXPayloadType;
-			typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-
-			FXPayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<FXPayloadType>(Context, Payload);
+			// CsFXCacheType (NCsFX::NCache::ICache)
+			CsFXPayloadType* FXPayload = CsPooledObjectPayloadLibrary::GetInterfaceChecked<CsFXPayloadType>(Context, Payload);
 
 			DeallocateMethod = FXPayload->GetDeallocateMethod();
 			LifeTime		 = FXPayload->GetLifeTime();
@@ -324,6 +317,5 @@ namespace NCsFX
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef DeallocateMethodType
 	}
 }

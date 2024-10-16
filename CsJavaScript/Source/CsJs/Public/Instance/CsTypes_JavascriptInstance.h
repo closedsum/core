@@ -42,7 +42,7 @@ namespace NCsJs
 		public:
 
 			NCreate::FInfo CreateInfo;
-			
+
 			FInfo() :
 				CreateInfo()
 			{

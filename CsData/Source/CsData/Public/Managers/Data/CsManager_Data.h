@@ -897,14 +897,14 @@ public:
 	{
 		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
 
-	#if UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		const FCsDataEntry_Data* Entry = DataEntryMap[EntryName];
 
 		checkf(Entry, TEXT("%s: Failed find Data associated with EntryName: %s."), *Context, *(EntryName.ToString()));
 		return Entry;
 	#else
 		return DataEntryMap[EntryName];
-	#endif // #if UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 	}
 
 #pragma endregion Entry
@@ -940,15 +940,14 @@ public:
 	{
 		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
 
-	#if UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		const FCsDataEntry_Data* Entry = Data_GetEntryChecked(Context, EntryName);
 
 		checkf(Entry->Data.ToSoftObjectPath().IsValid(), TEXT("%s: Entry->Data is NOT Valid"), *Context);
-
 		return Entry->Data.ToSoftObjectPath();
 	#else
 		return Data_GetEntryChecked(Context, EntryName)->Data.ToSoftObjectPath();
-	#endif // UE_BUILD_SHIPPING
+	#endif // !UE_BUILD_SHIPPING
 	}
 
 	/**
@@ -1206,14 +1205,14 @@ public:
 	{
 		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
 
-	#if UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		const FCsDataEntry_ScriptData* Entry = ScriptDataEntryMap[EntryName];
 
 		checkf(Entry, TEXT("%s: Failed find Script Data associated with EntryName: %s."), *Context, *(EntryName.ToString()));
 		return Entry;
 	#else
 		return ScriptDataEntryMap[EntryName];
-	#endif // #if UE_BUILD_SHIPPING
+	#endif // #if !UE_BUILD_SHIPPING
 	}
 
 #pragma endregion Entry
@@ -1249,15 +1248,14 @@ public:
 	{
 		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
 
-	#if UE_BUILD_SHIPPING
+	#if !UE_BUILD_SHIPPING
 		const FCsDataEntry_ScriptData* Entry = ScriptData_GetEntryChecked(Context, EntryName);
 
 		checkf(Entry->Data.ToSoftObjectPath().IsValid(), TEXT("%s: Entry->Data is NOT Valid"), *Context);
-
 		return Entry->Data.ToSoftObjectPath();
 	#else
 		return ScriptData_GetEntryChecked(Context, EntryName)->Data.ToSoftObjectPath();
-	#endif // UE_BUILD_SHIPPING
+	#endif // !UE_BUILD_SHIPPING
 	}
 
 	/**
@@ -1659,7 +1657,6 @@ public:
 
 		checkf(DT->GetRowStruct() == RowStruct, TEXT("%s: DataTable: %s Row Struct: %s != %s."), *Context, *(DT->GetRowStruct()->GetName()), *(DT->GetRowStruct()->GetName()), *(RowStruct->GetName()));
 	#endif // #if !UE_BUILD_SHIPPING
-
 		return GetDataTableRowChecked(Context, Path, RowName);
 	}
 

@@ -35,3 +35,5 @@ namespace NCsFX
 		};
 	}
 }
+
+using CsFXCacheType = NCsFX::NCache::ICache;

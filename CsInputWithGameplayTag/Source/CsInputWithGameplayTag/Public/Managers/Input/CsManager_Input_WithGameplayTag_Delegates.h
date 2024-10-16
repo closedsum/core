@@ -31,22 +31,19 @@ namespace NCsInput
 	{
 		namespace NManager
 		{
-			namespace NRaw
+			namespace NEvent
 			{
-				#define EventType NCsInput::NWithGameplayTag::FEvent
+				using EventType = NCsInput::NWithGameplayTag::FEvent;
 
-				DECLARE_MULTICAST_DELEGATE_OneParam(FOnPressed, const EventType& /*Event*/);
-				DECLARE_MULTICAST_DELEGATE_OneParam(FOnReleased, const EventType& /*Event*/);
+				namespace NRaw
+				{
+					DECLARE_MULTICAST_DELEGATE_OneParam(FOnPressed, const EventType& /*Event*/);
+					DECLARE_MULTICAST_DELEGATE_OneParam(FOnReleased, const EventType& /*Event*/);
+					DECLARE_MULTICAST_DELEGATE_OneParam(FOnAction, const EventType& /*Event*/);
+				}
+
 				DECLARE_MULTICAST_DELEGATE_OneParam(FOnAction, const EventType& /*Event*/);
-
-				#undef EventType
 			}
-
-			#define EventType NCsInput::NWithGameplayTag::FEvent
-
-			DECLARE_MULTICAST_DELEGATE_OneParam(FOnAction, const EventType& /*Event*/);
-
-			#undef EventType
 		}
 	}
 }

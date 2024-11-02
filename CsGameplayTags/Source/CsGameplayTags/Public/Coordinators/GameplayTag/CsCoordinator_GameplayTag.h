@@ -20,6 +20,11 @@ class CSGAMEPLAYTAGS_API UCsCoordinator_GameplayTag : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	using CountContainerType = NCsGameplayTag::NCount::FContainer;
+	using OnProcessGameplayTagEventEventType = NCsGameplayTag::NCoordinator::FOnProcessGameplayTagEvent;
+
 // Singleton
 #pragma region
 public:
@@ -134,9 +139,7 @@ public:
 #pragma region
 private:
 
-#define CountContainerType NCsGameplayTag::NCount::FContainer
 	CountContainerType CountContainer;
-#undef CountContainerType
 
 public:
 
@@ -181,11 +184,11 @@ private:
 
 public:
 
-	FORCEINLINE void AddTag(const FGameplayTag& GameplayTag, const int32& Count = 1) { UpdateTagMap(GameplayTag, Count); }
-	FORCEINLINE void AddTags(const FGameplayTagContainer& GameplayTags, const int32& Count = 1) { UpdateTagMap(GameplayTags, Count); }
-	FORCEINLINE void RemoveTag(const FGameplayTag& GameplayTag, const int32& Count = 1) { UpdateTagMap(GameplayTag, -Count); }
-	FORCEINLINE void RemoveTags(const FGameplayTagContainer& GameplayTags, const int32& Count = 1) { UpdateTagMap(GameplayTags, -Count); }
-	FORCEINLINE void SetTagCount(const FGameplayTag& GameplayTag, const int32& NewCount) { SetTagMapCount(GameplayTag, NewCount); }
+	FORCEINLINE void AddTag(const FGameplayTag& GameplayTag, const int32& Count = 1)				{ UpdateTagMap(GameplayTag, Count); }
+	FORCEINLINE void AddTags(const FGameplayTagContainer& GameplayTags, const int32& Count = 1)		{ UpdateTagMap(GameplayTags, Count); }
+	FORCEINLINE void RemoveTag(const FGameplayTag& GameplayTag, const int32& Count = 1)				{ UpdateTagMap(GameplayTag, -Count); }
+	FORCEINLINE void RemoveTags(const FGameplayTagContainer& GameplayTags, const int32& Count = 1)	{ UpdateTagMap(GameplayTags, -Count); }
+	FORCEINLINE void SetTagCount(const FGameplayTag& GameplayTag, const int32& NewCount)			{ SetTagMapCount(GameplayTag, NewCount); }
 
 #pragma endregion Tag
 
@@ -198,8 +201,6 @@ public:
 
 	void ProcessGameplayTagEvent(const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Info);
 
-#define OnProcessGameplayTagEventEventType NCsGameplayTag::NCoordinator::FOnProcessGameplayTagEvent
-
 private:
 
 	TArray<OnProcessGameplayTagEventEventType> OnProcessGameplayTagEvent_Events;
@@ -210,8 +211,6 @@ public:
 	{
 		return OnProcessGameplayTagEvent_Events[Group.GetValue()];
 	}
-
-#undef OnProcessGameplayTagEventEventType
 
 	UPROPERTY(BlueprintAssignable, Category = "CsGameplayTags|Coordinators|GameplayTag")
 	FCsCoordinatorGameplayTag_OnProcessGameplayTagEvent OnProcessGameplayTagEvent_ScriptEvent;

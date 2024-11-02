@@ -218,9 +218,7 @@ UCsCoordinator_GameplayTag::UCsCoordinator_GameplayTag(const FObjectInitializer&
 {
 	SET_CONTEXT(GetFromWorldContextObject);
 
-	typedef NCsGameplayTag::NCoordinator::FLibrary GameplayTagCoordinatorLibrary;
-
-	if (UObject* ContextRoot = GameplayTagCoordinatorLibrary::GetSafeContextRoot(Context, WorldContextObject))
+	if (UObject* ContextRoot = CsGameplayTagCoordinatorLibrary::GetSafeContextRoot(Context, WorldContextObject))
 	{
 		// Game State
 		if (UCsCoordinator_GameplayTag* Coordinator = GetSafe(ContextRoot))
@@ -332,7 +330,7 @@ void UCsCoordinator_GameplayTag::UpdateTagMap_Internal(const FGameplayTagContain
 		static TArray<FGameplayTag> RemovedTags;
 		RemovedTags.Reset(FMath::Max(RemovedTags.Max(), Container.Num())); // pre-allocate max number (if all are removed)
 
-		typedef NCsGameplayTag::NCount::FOnDeferredChange OnDeferredChangeEventType;
+		using OnDeferredChangeEventType = NCsGameplayTag::NCount::FOnDeferredChange;
 
 		static TArray<OnDeferredChangeEventType> DeferredTagChangeDelegates;
 

@@ -27,6 +27,8 @@ namespace NCsScriptLibraryCoordinatorGameplayTag
 	}
 }
 
+void(*UCsScriptLibrary_Coordinator_GameplayTag::LogError)(const FString&) = &NCsGameplayTags::FLog::Error;
+
 UCsScriptLibrary_Coordinator_GameplayTag::UCsScriptLibrary_Coordinator_GameplayTag(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -35,8 +37,6 @@ UCsScriptLibrary_Coordinator_GameplayTag::UCsScriptLibrary_Coordinator_GameplayT
 #define USING_NS_CACHED using namespace NCsScriptLibraryCoordinatorGameplayTag::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryCoordinatorGameplayTag::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define LogError &NCsGameplayTags::FLog::Error
-#define GameplayTagCoordinatorLibrary NCsGameplayTag::NCoordinator::FLibrary
 
 // Get
 #pragma region
@@ -45,14 +45,14 @@ UCsCoordinator_GameplayTag* UCsScriptLibrary_Coordinator_GameplayTag::Get(const 
 {
 	CONDITIONAL_SET_CTXT(Get);
 
-	return GameplayTagCoordinatorLibrary::GetSafe(Ctxt, WorldContextObject);
+	return CsGameplayTagCoordinatorLibrary::GetSafe(Ctxt, WorldContextObject);
 }
 
 UCsCoordinator_GameplayTag* UCsScriptLibrary_Coordinator_GameplayTag::GetChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
 {
 	CONDITIONAL_SET_CTXT(GetChecked);
 
-	return CS_SCRIPT_GET_CHECKED(GameplayTagCoordinatorLibrary::GetChecked(Ctxt, WorldContextObject), GameplayTagCoordinatorLibrary::GetSafe(Ctxt, WorldContextObject, OutSuccess, LogError));
+	return CS_SCRIPT_GET_CHECKED(CsGameplayTagCoordinatorLibrary::GetChecked(Ctxt, WorldContextObject), CsGameplayTagCoordinatorLibrary::GetSafe(Ctxt, WorldContextObject, OutSuccess, LogError));
 }
 
 #pragma endregion Get
@@ -61,7 +61,7 @@ bool UCsScriptLibrary_Coordinator_GameplayTag::BroadcastGameplayTagEvent(const F
 {
 	CONDITIONAL_SET_CTXT(BroadcastGameplayTagEvent);
 
-	return GameplayTagCoordinatorLibrary::SafeBroadcastGameplayTagEvent(Ctxt, WorldContextObject, Group, Event);
+	return CsGameplayTagCoordinatorLibrary::SafeBroadcastGameplayTagEvent(Ctxt, WorldContextObject, Group, Event);
 }
 
 bool UCsScriptLibrary_Coordinator_GameplayTag::BroadcastGameplayTag_GameInstance(const FString& Context, const UObject* WorldContextObject, const FGameplayTag& Tag)
@@ -71,10 +71,8 @@ bool UCsScriptLibrary_Coordinator_GameplayTag::BroadcastGameplayTag_GameInstance
 	FCsGameplayTagEvent Event;
 	Event.Tag = Tag;
 
-	return GameplayTagCoordinatorLibrary::SafeBroadcastGameplayTagEvent(Ctxt, WorldContextObject, NCsGameplayTagCoordinatorGroup::GameInstance, Event);
+	return CsGameplayTagCoordinatorLibrary::SafeBroadcastGameplayTagEvent(Ctxt, WorldContextObject, NCsGameplayTagCoordinatorGroup::GameInstance, Event);
 }
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef LogError
-#undef GameplayTagCoordinatorLibrary

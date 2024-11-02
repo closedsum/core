@@ -17,12 +17,30 @@
 // FCsMoveByInterp_Params
 #pragma region
 
+struct FCsMoveByInterp_Params;
+
+// ParamsType (NCsMovement::NTo::NInterp::NParams::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsMovement, NTo, NInterp, NParams, FParams)
+
+namespace NCsMoveByInterp_Params
+{
+	using ParamsType = NCsMovement::NTo::NInterp::NParams::FParams;
+
+	struct CSCORELIBRARY_API FImpl
+	{
+	public:
+
+		static void CopyToParams(FCsMoveByInterp_Params* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const FCsMoveByInterp_Params* This, ParamsType* Params);
+	};
+}
+
 class AActor;
 class USceneComponent;
 class USkeletalMeshComponent;
 class UObject;
 
-// NCsMovement::NTo::NInterp::NParams::FParams
+// ParamsType (NCsMovement::NTo::NInterp::NParams::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsMovement, NTo, NInterp, NParams, FParams)
 
 USTRUCT(BlueprintType)
@@ -132,10 +150,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsMovement::NTo::NInterp::NParams::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsMovement::NTo::NInterp::NParams::FParams;
+	using _Impl = NCsMoveByInterp_Params::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params) { _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const { _Impl::CopyToParamsAsValue(this, Params); }
 
 	void ConditionalSetSafeMoveObject(const FString& Context, const UObject* WorldContext);
 
@@ -159,8 +178,8 @@ namespace NCsMovement
 			{
 				struct CSCORELIBRARY_API FParams
 				{
-				#define MoverType NCsMovement::EMover
-				#define DestinationType NCsMovement::EDestination
+					using MoverType = NCsMovement::EMover;
+					using DestinationType = NCsMovement::EDestination;
 
 				private:
 
@@ -286,9 +305,6 @@ namespace NCsMovement
 					FVector3f GetEndLocation() const;
 
 					void Reset();
-
-				#undef MoverType
-				#undef DestinationType
 				};
 
 				struct CSCORELIBRARY_API FResource : public TCsResourceContainer<FParams>
@@ -325,9 +341,27 @@ namespace NCsMovement
 // FCsSpeedInterpInfo
 #pragma region
 
+struct FCsSpeedInterpInfo;
+
+// InfoType (NCsSpeed:NInterp::FInfo)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpeed, NInterp, FInfo)
+
+namespace NCsSpeedInterpInfo
+{
+	using InfoType = NCsSpeed::NInterp::FInfo;
+
+	struct CSCORELIBRARY_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(FCsSpeedInterpInfo* This, InfoType* Info);
+		static void CopyToInfoAsValue(const FCsSpeedInterpInfo* This, InfoType* Info);
+	};
+}
+
 class UCurveFloat;
 
-// NCsSpeed:NInterp::FInfo
+// InfoType (NCsSpeed:NInterp::FInfo)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpeed, NInterp, FInfo)
 
 /**
@@ -375,25 +409,20 @@ struct CSCORELIBRARY_API FCsSpeedInterpInfo
 	{
 	}
 
-	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning) const;
-
-#define InfoType NCsSpeed::NInterp::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
-
-	FString PrintSummary(const int32& IndentSpaces = 0);
-
-private:
-
-	FORCEINLINE void __Nothing() const {}
-
-public:
-
 #if WITH_EDITOR
 	void OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName);
 #endif // #if WITH_EDITOR
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning) const;
+
+	using InfoType = NCsSpeed::NInterp::FInfo;
+	using _Impl = NCsSpeedInterpInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info) { _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const { _Impl::CopyToInfoAsValue(this, Info); }
+
+	FString PrintSummary(const int32& IndentSpaces = 0);
 };
 
 namespace NCsSpeed
@@ -402,8 +431,8 @@ namespace NCsSpeed
 	{
 		struct CSCORELIBRARY_API FInfo
 		{
-		#define MethodType NCsSpeed::NInterp::EMethod
-		#define DirectionType NCsSpeed::NInterp::EDirection
+			using MethodType = NCsSpeed::NInterp::EMethod;
+			using DirectionType = NCsSpeed::NInterp::EDirection;
 
 		private:
 
@@ -466,9 +495,6 @@ namespace NCsSpeed
 
 			bool IsValidChecked(const FString& Context) const { return true; }
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning) const { return true; }
-
-		#undef MethodType
-		#undef DirectionType
 		};
 	}
 }

@@ -90,6 +90,25 @@
 #define CS_COPY_PROXY_TO_PROXY_AS_VALUE(__Proxy, __Member) Set##__Member(__Proxy.Get##__Member())
 #define CS_COPY_CUSTOM_PROXY_TO_PROXY_PTR_AS_VALUE(__Proxy, __Member) Get##__Member##Ptr()->Copy(__Proxy.Get##__Member())
 
+// Assume there is a pointer to a member named This
+#define CS_THIS_COPY_TO_PROXY(__Proxy, __Member) __Proxy->Set##__Member(&(This->__Member))
+#define CS_THIS_COPY_TO_PROXY_AS_VALUE(__Proxy, __Member) __Proxy->Set##__Member(This->__Member)
+#define CS_THIS_COPY_PTR_TO_PROXY(__Proxy, __Member) __Proxy->Set##__Member(This->__Member.GetPtr())
+#define CS_THIS_COPY_PTR_TO_PROXY_AS_VALUE(__Proxy, __Member) __Proxy->Set##__Member(This->__Member.Get())
+#define CS_THIS_COPY_CLASS_PTR_TO_PROXY(__Proxy, __Member) __Proxy->Set##__Member(This->__Member.GetClassPtr())
+#define CS_THIS_COPY_CLASS_PTR_TO_PROXY_AS_VALUE(__Proxy, __Member) __Proxy->Set##__Member(This->__Member.GetClass())
+#define CS_THIS_COPY_INFO_TO_PROXY_PTR(__Proxy, __Member) This->__Member.CopyToInfo(__Proxy->Get##__Member##Ptr())
+#define CS_THIS_COPY_INFO_TO_PROXY_PTR_AS_VALUE(__Proxy, __Member) This->__Member.CopyToInfoAsValue(__Proxy->Get##__Member##Ptr())
+#define CS_THIS_COPY_PARAMS_TO_PROXY_PTR(__Proxy, __Member) This->__Member.CopyToParams(__Proxy->Get##__Member##Ptr())
+#define CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(__Proxy, __Member) This->__Member.CopyToParamsAsValue(__Proxy->Get##__Member##Ptr())
+#define CS_THIS_COPY_SETTINGS_TO_PROXY_PTR(__Proxy, __Member) This->__Member.CopyToSettings(__Proxy->Get##__Member##Ptr())
+#define CS_THIS_COPY_SETTINGS_TO_PROXY_PTR_AS_VALUE(__Proxy, __Member) This->__Member.CopyToSettingsAsValue(__Proxy->Get##__Member##Ptr())
+#define CS_THIS_COPY_TYPE_TO_PROXY(__Proxy, __Member, __Type) __Proxy->Set##__Member((__Type*)&(This->__Member))
+#define CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(__Proxy, __Member, __Type) __Proxy->Set##__Member((__Type)This->__Member)
+
+#define CS_THIS_COPY_PROXY_TO_PROXY_AS_VALUE(__Proxy, __Member) This->Set##__Member(__Proxy.Get##__Member())
+#define CS_THIS_COPY_CUSTOM_PROXY_TO_PROXY_PTR_AS_VALUE(__Proxy, __Member) This->Get##__Member##Ptr()->Copy(__Proxy.Get##__Member())
+
 #define CS_PROXY_STRINGIFY(x) #x
 
 #define CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(__Member) \

@@ -60,31 +60,26 @@ namespace NCsFX
 // FCsFX_Spawn_FrequencyParams
 #pragma region
 
-#define ParamsType NCsFX::NSpawn::NParams::FFrequency
-#define FrequencyType NCsFX::NSpawn::EFrequency
-
-void FCsFX_Spawn_FrequencyParams::CopyToParams(ParamsType* Params)
+namespace NCsFX_Spawn_FrequenceParams
 {
-	CS_COPY_TYPE_TO_PROXY(Params, Type, FrequencyType);
-	CS_COPY_TO_PROXY(Params, Delay);
-	CS_COPY_TO_PROXY(Params, Count);
-	CS_COPY_TO_PROXY(Params, Interval);
-	CS_COPY_TO_PROXY(Params, Time);
+	void FImpl::CopyToParams(FCsFX_Spawn_FrequencyParams* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Type, FrequencyType);
+		CS_THIS_COPY_TO_PROXY(Params, Delay);
+		CS_THIS_COPY_TO_PROXY(Params, Count);
+		CS_THIS_COPY_TO_PROXY(Params, Interval);
+		CS_THIS_COPY_TO_PROXY(Params, Time);
+	}
+
+	void FImpl::CopyToParamsAsValue(const FCsFX_Spawn_FrequencyParams* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Type, FrequencyType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Delay);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Count);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Interval);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Time);
+	}
 }
-
-void FCsFX_Spawn_FrequencyParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	CS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Type, FrequencyType);
-	CS_COPY_TO_PROXY_AS_VALUE(Params, Delay);
-	CS_COPY_TO_PROXY_AS_VALUE(Params, Count);
-	CS_COPY_TO_PROXY_AS_VALUE(Params, Interval);
-	CS_COPY_TO_PROXY_AS_VALUE(Params, Time);
-}
-
-#undef ParamsType
-#undef FrequencyType
-
-#define FrequencyType ECsFXSpawnFrequency
 
 bool FCsFX_Spawn_FrequencyParams::IsValidChecked(const FString& Context) const
 {
@@ -253,16 +248,12 @@ void FCsFX_Spawn_FrequencyParams::OnPostEditChange()
 	Update();
 }
 
-#undef FrequencyType
-
 namespace NCsFX
 {
 	namespace NSpawn
 	{
 		namespace NParams
 		{
-			#define FrequencyType NCsFX::NSpawn::EFrequency
-
 			bool FFrequency::IsValidChecked(const FString& Context) const
 			{
 				// Once
@@ -424,8 +415,6 @@ namespace NCsFX
 					}
 				}
 			}
-
-			#undef FrequencyType
 		}
 	}
 }
@@ -440,24 +429,18 @@ namespace NCsFX
 		{
 			bool FParams::IsValidChecked(const FString& Context) const
 			{
-				// Check FX is Valid.
 				CS_IS_VALID_CHECKED(FX);
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Delay, 0.0f)
-				// Check Frequency Params are Valid.
 				CS_IS_VALID_CHECKED(FrequencyParams);
-				// Check Group is Valid.
 				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
 				return true;
 			}
 
 			bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/) const
 			{
-				// Check FX is Valid.
 				CS_IS_VALID(FX)
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(Delay, 0.0f)
-				// Check Frequency Params are Valid.
 				CS_IS_VALID(FrequencyParams)
-				// Check Group is Valid.
 				CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
 				return true;
 			}
@@ -496,12 +479,9 @@ void FCsFX_Spawn_Params::CopyToParamsAsValue(ParamsType* Params) const
 
 bool FCsFX_Spawn_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/) const
 {
-	// Check FX is Valid.
 	CS_IS_VALID(FX)
 	CS_IS_FLOAT_GREATER_THAN_CHECKED(Delay, 0.0f)
-	// Check Frequency Params are Valid.
 	CS_IS_VALID(FrequencyParams)
-	// Check Group is Valid.
 	CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
 	return true;
 }

@@ -52,11 +52,28 @@ namespace NCsFX
 				return 0;
 			}
 		}
+	}
+}
 
+using CsFXParameterValueType = NCsFX::NParameter::EValue;
+using CsFXParameterValueMapType = NCsFX::NParameter::EMValue;
+
+namespace NCsFX
+{
+	namespace NParameter
+	{
 		/**
 		*/
 		struct CSFX_API IParameter
 		{
+		private:
+
+			// Allow clearer names without name collisions
+			struct _
+			{
+				using ParameterValueType = NCsFX::NParameter::EValue;
+			};
+
 		public:
 
 			virtual ~IParameter() {}
@@ -65,21 +82,34 @@ namespace NCsFX
 
 			virtual const FName& GetName() const = 0;
 
-			virtual const EValue& GetValueType() const = 0;
+			virtual const _::ParameterValueType& GetValueType() const = 0;
 
 			virtual void* GetValuePtr() const = 0;
 
 			virtual uint32 GetSizeInBytes() const = 0;
 		};
+	}
+}
 
+using CsFXParameterType = NCsFX::NParameter::IParameter;
+
+namespace NCsFX
+{
+	namespace NParameter
+	{
 		namespace NInt
 		{
+			using ParameterType = NCsFX::NParameter::IParameter;
+
 			/**
 			* Container holding information for Niagara Int Parameter
 			*/
-			struct CSFX_API FIntType : IParameter
+			struct CSFX_API FIntType : ParameterType
 			{
 			private:
+
+				using ParameterValueType = NCsFX::NParameter::EValue;
+				using ParameterValueMapType = NCsFX::NParameter::EMValue;
 
 				int32 Index;
 
@@ -87,7 +117,7 @@ namespace NCsFX
 
 			public:
 
-				EValue ValueType;
+				ParameterValueType ValueType;
 
 			private:
 
@@ -98,7 +128,7 @@ namespace NCsFX
 				FIntType() :
 					Index(INDEX_NONE),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Name, NAME_None),
-					ValueType(EValue::Int),
+					ValueType(ParameterValueType::Int),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0)
 				{
 					CS_CTOR_SET_MEMBER_PROXY(Name);
@@ -117,16 +147,16 @@ namespace NCsFX
 				FORCEINLINE void SetValue(int32* __value) { check(__value); Value_Proxy = __value; }
 				FORCEINLINE const int32& GetValue() const { return *Value_Proxy; }
 
-			// IParameter
+			// ParameterType (NCsFX::NParameter::IParameter)
 			#pragma region
 			public:
 
 				FORCEINLINE const int32& GetIndex() const { return Index; }
-				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
+				FORCEINLINE const ParameterValueType& GetValueType() const { return ValueType; }
 				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<int32*>(Value_Proxy); }
 				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(int32); }
 
-			#pragma endregion IParameter
+			#pragma endregion ParameterType (NCsFX::NParameter::IParameter)
 
 				FORCEINLINE bool IsValidChecked(const FString& Context) const
 				{
@@ -137,20 +167,33 @@ namespace NCsFX
 
 					checkf(NameAsString.StartsWith(TEXT("User.")), TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Parameter Name."), *Context, *NameAsString);
 					// Check ValueType is Valid
-					checkf(ValueType == EValue::Int, TEXT("%s: ValueType: %s is NOT Int."), *Context, EMValue::Get().ToChar(ValueType));
+					checkf(ValueType == ParameterValueType::Int, TEXT("%s: ValueType: %s is NOT Int."), *Context, ParameterValueMapType::Get().ToChar(ValueType));
 					return true;
 				}
 			};
 		}
+	}
+}
 
+using CsFXIntParameterType = NCsFX::NParameter::NInt::FIntType;
+
+namespace NCsFX
+{
+	namespace NParameter
+	{
 		namespace NFloat
 		{
+			using ParameterType = NCsFX::NParameter::IParameter;
+
 			/**
 			* Container holding information for Niagara Float Parameter
 			*/
-			struct CSFX_API FFloatType : IParameter
+			struct CSFX_API FFloatType : ParameterType
 			{
 			private:
+
+				using ParameterValueType = NCsFX::NParameter::EValue;
+				using ParameterValueMapType = NCsFX::NParameter::EMValue;
 
 				int32 Index;
 
@@ -158,7 +201,7 @@ namespace NCsFX
 
 			public:
 
-				EValue ValueType;
+				ParameterValueType ValueType;
 
 			private:
 
@@ -169,7 +212,7 @@ namespace NCsFX
 				FFloatType() :
 					Index(INDEX_NONE),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Name, NAME_None),
-					ValueType(EValue::Float),
+					ValueType(ParameterValueType::Float),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f)
 				{
 					CS_CTOR_SET_MEMBER_PROXY(Name);
@@ -188,36 +231,47 @@ namespace NCsFX
 				FORCEINLINE void SetValue(float* __value) { check(__value); Value_Proxy = __value; }
 				FORCEINLINE const float& GetValue() const { return *Value_Proxy; }
 
-			// IParameter
+			// ParameterType (NCsFX::NParameter::IParameter)
 			#pragma region
 			public:
 
 				FORCEINLINE const int32& GetIndex() const { return Index; }
-				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
+				FORCEINLINE const ParameterValueType& GetValueType() const { return ValueType; }
 				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<float*>(Value_Proxy); }
 				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(float); }
 
-			#pragma endregion IParameter
+			#pragma endregion ParameterType (NCsFX::NParameter::IParameter)
 
 				FORCEINLINE bool IsValidChecked(const FString& Context) const
 				{
 					// Check Name is Valid
 					checkf(GetName() != NAME_None, TEXT("%s: GetName(): None is NOT Valid."), *Context);
 					// Check ValueType is Valid
-					checkf(ValueType == EValue::Float, TEXT("%s: ValueType: %s is NOT Float."), *Context, EMValue::Get().ToChar(ValueType));
+					checkf(ValueType == ParameterValueType::Float, TEXT("%s: ValueType: %s is NOT Float."), *Context, ParameterValueMapType::Get().ToChar(ValueType));
 					return true;
 				}
 			};
 		}
+	}
+}
 
+namespace NCsFX
+{
+	namespace NParameter
+	{
 		namespace NVector
 		{
+			using ParameterType = NCsFX::NParameter::IParameter;
+
 			/**
 			* Container holding information for Niagara Vector Parameter
 			*/
-			struct CSFX_API FVectorType : IParameter
+			struct CSFX_API FVectorType : ParameterType
 			{
 			private:
+
+				using ParameterValueType = NCsFX::NParameter::EValue;
+				using ParameterValueMapType = NCsFX::NParameter::EMValue;
 
 				int32 Index;
 
@@ -225,7 +279,7 @@ namespace NCsFX
 
 			public:
 
-				EValue ValueType;
+				ParameterValueType ValueType;
 
 			private:
 
@@ -236,7 +290,7 @@ namespace NCsFX
 				FVectorType() :
 					Index(INDEX_NONE),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Name, NAME_None),
-					ValueType(EValue::Vector),
+					ValueType(ParameterValueType::Vector),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f)
 				{
 					CS_CTOR_SET_MEMBER_PROXY(Name);
@@ -255,23 +309,23 @@ namespace NCsFX
 				FORCEINLINE void SetValue(FVector3f* __value) { check(__value); Value_Proxy = __value; }
 				FORCEINLINE const FVector3f& GetValue() const { return *Value_Proxy; }
 
-			// IParameter
+			// ParameterType (NCsFX::NParameter::IParameter)
 			#pragma region
 			public:
 
 				FORCEINLINE const int32& GetIndex() const { return Index; }
-				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
+				FORCEINLINE const ParameterValueType& GetValueType() const { return ValueType; }
 				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<FVector3f*>(Value_Proxy); }
 				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(FVector3f); }
 
-			#pragma endregion IParameter
+			#pragma endregion ParameterType (NCsFX::NParameter::IParameter)
 
 				FORCEINLINE bool IsValidChecked(const FString& Context) const
 				{
 					// Check Name is Valid
 					checkf(GetName() != NAME_None, TEXT("%s: GetName(): None is NOT Valid."), *Context);
 					// Check ValueType is Valid
-					checkf(ValueType == EValue::Vector, TEXT("%s: ValueType: %s is NOT Vector."), *Context, EMValue::Get().ToChar(ValueType));
+					checkf(ValueType == ParameterValueType::Vector, TEXT("%s: ValueType: %s is NOT Vector."), *Context, ParameterValueMapType::Get().ToChar(ValueType));
 					return true;
 				}
 			};
@@ -287,15 +341,21 @@ namespace NCsFX
 		{
 			struct CSFX_API IScaled
 			{
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ParameterType = NCsFX::NParameter::IParameter;
+				};
+
 			public:
 
 				virtual ~IScaled() {}
 
-			#define ParameterType NCsFX::NParameter::IParameter
-
 				virtual const int32& GetIndex() const = 0;
 
-				virtual const ParameterType* GetParameter() const = 0;
+				virtual const _::ParameterType* GetParameter() const = 0;
 
 				/** 
 				* Whether Value should be used for applying any scaling or just
@@ -318,10 +378,19 @@ namespace NCsFX
 				* return
 				*/
 				virtual const float& GetScale() const = 0;
-
-			#undef ParameterType
 			};
+		}
+	}
+}
 
+using CsFXScaledParameterType = NCsFX::NParameter::NScaled::IScaled;
+
+namespace NCsFX
+{
+	namespace NParameter
+	{
+		namespace NScaled
+		{
 			namespace NInt
 			{
 				/**
@@ -329,8 +398,8 @@ namespace NCsFX
 				*/
 				struct CSFX_API FIntType : IScaled
 				{
-				#define ParameterType NCsFX::NParameter::IParameter
-				#define ParameterIntType NCsFX::NParameter::NInt::FIntType
+					using ParameterType = NCsFX::NParameter::IParameter;
+					using ParameterIntType = NCsFX::NParameter::NInt::FIntType;
 
 				private:
 
@@ -394,9 +463,6 @@ namespace NCsFX
 						check(Parameter.IsValidChecked(Context));
 						return true;
 					}
-
-				#undef ParameterType
-				#undef ParameterIntType
 				};
 			}
 
@@ -606,7 +672,7 @@ namespace NCsFX
 				*/
 				struct CSFX_API FSkeletalMeshType
 				{
-				#define MethodType NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod
+					using MethodType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod;
 
 				private:
 
@@ -641,8 +707,6 @@ namespace NCsFX
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
-
-				#undef MethodType
 				};
 			}
 		}

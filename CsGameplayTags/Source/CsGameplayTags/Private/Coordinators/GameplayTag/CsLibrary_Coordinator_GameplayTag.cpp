@@ -25,216 +25,226 @@ namespace NCsGameplayTag
 			{
 				namespace Str
 				{
-					CSGAMEPLAYTAGS_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameplayTag::NCoordinator::FLibrary, GetSafe);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameplayTag::NCoordinator::FLibrary, GetSafeContextRoot);
+					CSGAMEPLAYTAGS_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameplayTag::NCoordinator::NLibrary::FLibrary, GetSafe);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameplayTag::NCoordinator::NLibrary::FLibrary, GetSafeContextRoot);
 				}
 			}
-		}
 
-		#define USING_NS_CACHED using namespace NCsGameplayTag::NCoordinator::NLibrary::NCached;
-		#define SET_CONTEXT(__FunctionName) using namespace NCsGameplayTag::NCoordinator::NLibrary::NCached; \
-			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsGameplayTags::FLog::Warning*/
+			#define USING_NS_CACHED using namespace NCsGameplayTag::NCoordinator::NLibrary::NCached;
+			#define SET_CONTEXT(__FunctionName) using namespace NCsGameplayTag::NCoordinator::NLibrary::NCached; \
+				const FString& Context = Str::__FunctionName
+			#define LogLevel void(*Log)(const FString&) /*=&NCsGameplayTags::FLog::Warning*/
 
-		// ContextRoot
-		#pragma region
+			// ContextRoot
+			#pragma region
 
-		#if WITH_EDITOR
+			#if WITH_EDITOR
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
-		{
-			return CsGameInstanceLibrary::GetChecked(Context, ContextObject);
-		}
-
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
-		{
-			return CsGameInstanceLibrary::GetSafe(Context, ContextObject, Log);
-		}
-
-		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
-		{
-			SET_CONTEXT(GetSafeContextRoot);
-
-			return GetSafeContextRoot(Context, ContextObject, nullptr);
-		}
-
-		#endif // #if WITH_EDITOR
-
-		#pragma endregion ContextRoot
-
-		// Get
-		#pragma region
-
-		UCsCoordinator_GameplayTag* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
-		{
-		#if !UE_BUILD_SHIPPING
-			UObject* ContextRoot						        = GetContextRootChecked(Context, ContextObject);
-			UCsCoordinator_GameplayTag* Coordinator_GameplayTag = UCsCoordinator_GameplayTag::Get(ContextRoot);
-
-			CS_IS_PTR_NULL_CHECKED(Coordinator_GameplayTag)
-			return Coordinator_GameplayTag;
-		#else
-			return UCsCoordinator_GameplayTag::Get(ContextRoot);
-		#endif // #if !UE_BUILD_SHIPPING
-		}
-
-		UCsCoordinator_GameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
-		{
-			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
-
-		#if WITH_EDITOR
-			if (!ContextRoot)
-				return nullptr;
-		#endif // #if WITH_EDITOR
-
-			UCsCoordinator_GameplayTag* Coordinator_GameplayTag = UCsCoordinator_GameplayTag::Get(ContextRoot);
-
-			if (!Coordinator_GameplayTag)
+			UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Coordinator_GameplayTag."), *Context));
-				return nullptr;
-			}
-			return Coordinator_GameplayTag;
-		}
-
-		UCsCoordinator_GameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
-		{
-			OutSuccess = false;
-
-			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
-
-		#if WITH_EDITOR
-			if (!ContextRoot)
-				return nullptr;
-		#endif // #if WITH_EDITOR
-
-			UCsCoordinator_GameplayTag* Coordinator_GameplayTag = UCsCoordinator_GameplayTag::Get(ContextRoot);
-
-			if (!Coordinator_GameplayTag)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Coordinator_GameplayTag."), *Context));
-				return nullptr;
+				return CsGameInstanceLibrary::GetChecked(Context, ContextObject);
 			}
 
-			OutSuccess = true;
-			return Coordinator_GameplayTag;
-		}
+			UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
+			{
+				return CsGameInstanceLibrary::GetSafe(Context, ContextObject, Log);
+			}
 
-		#pragma endregion Get
+			UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
+			{
+				SET_CONTEXT(GetSafeContextRoot);
 
-		// Class
-		#pragma region
+				return GetSafeContextRoot(Context, ContextObject, nullptr);
+			}
+
+			#endif // #if WITH_EDITOR
+
+			#pragma endregion ContextRoot
+
+			// Get
+			#pragma region
+
+			UCsCoordinator_GameplayTag* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
+			{
+			#if !UE_BUILD_SHIPPING
+				UObject* ContextRoot						        = GetContextRootChecked(Context, ContextObject);
+				UCsCoordinator_GameplayTag* Coordinator_GameplayTag = UCsCoordinator_GameplayTag::Get(ContextRoot);
+
+				CS_IS_PTR_NULL_CHECKED(Coordinator_GameplayTag)
+				return Coordinator_GameplayTag;
+			#else
+				return UCsCoordinator_GameplayTag::Get(nullptr);
+			#endif // #if !UE_BUILD_SHIPPING
+			}
+
+			UCsCoordinator_GameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
+			{
+				UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+			#if WITH_EDITOR
+				if (!ContextRoot)
+					return nullptr;
+			#endif // #if WITH_EDITOR
+
+				UCsCoordinator_GameplayTag* Coordinator_GameplayTag = UCsCoordinator_GameplayTag::Get(ContextRoot);
+
+				if (!Coordinator_GameplayTag)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Coordinator_GameplayTag."), *Context));
+					return nullptr;
+				}
+				return Coordinator_GameplayTag;
+			}
+
+			UCsCoordinator_GameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+			{
+				OutSuccess = false;
+
+				UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+			#if WITH_EDITOR
+				if (!ContextRoot)
+					return nullptr;
+			#endif // #if WITH_EDITOR
+
+				UCsCoordinator_GameplayTag* Coordinator_GameplayTag = UCsCoordinator_GameplayTag::Get(ContextRoot);
+
+				if (!Coordinator_GameplayTag)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Coordinator_GameplayTag."), *Context));
+					return nullptr;
+				}
+
+				OutSuccess = true;
+				return Coordinator_GameplayTag;
+			}
+
+			#pragma endregion Get
+
+			// Class
+			#pragma region
 		
-		TSubclassOf<UCsCoordinator_GameplayTag> FLibrary::GetClassChecked(const FString& Context)
-		{
-			const FCsSettings_Coordinator_GameplayTag& Settings = FCsSettings_Coordinator_GameplayTag::Get();
-
-			return TSubclassOf<UCsCoordinator_GameplayTag>(Settings.LoadClassChecked(Context));
-		}
-
-		#pragma endregion Class
-
-		// StartPlay
-		#pragma region
-
-		void FLibrary::StartPlayChecked(const FString& Context, const UObject* ContextObject)
-		{
-			GetChecked(Context, ContextObject)->StartPlay();
-		}
-
-		#pragma endregion StartPlay
-
-		// Event
-		#pragma region
-
-		void FLibrary::ProcessGameplayTagEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Event)
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameplayTagCoordinatorGroup, Group)
-			CS_IS_VALID_CHECKED(Event);
-
-			// If Group == None, Process Immediately
-			if (Group == NCsGameplayTagCoordinatorGroup::None)
+			TSubclassOf<UCsCoordinator_GameplayTag> FLibrary::GetClassChecked(const FString& Context)
 			{
-				GetChecked(Context, ContextObject)->ProcessGameplayTagEvent(Group, Event);
+				const FCsSettings_Coordinator_GameplayTag& Settings = FCsSettings_Coordinator_GameplayTag::Get();
+
+				return TSubclassOf<UCsCoordinator_GameplayTag>(Settings.LoadClassChecked(Context));
 			}
-			else
+
+			#pragma endregion Class
+
+			// StartPlay
+			#pragma region
+
+			void FLibrary::StartPlayChecked(const FString& Context, const UObject* ContextObject)
 			{
-				GetChecked(Context, ContextObject)->ProcessGameplayTagEvent(Group, Event);
+				GetChecked(Context, ContextObject)->StartPlay();
 			}
-		}
 
-		bool FLibrary::SafeProcessGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Event, LogLevel)
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsGameplayTagCoordinatorGroup, FECsGameplayTagCoordinatorGroup, Group)
-			CS_IS_VALID(Event)
+			#pragma endregion StartPlay
 
-			if (UCsCoordinator_GameplayTag* Coordinator_GameplayTag = GetSafe(Context, ContextObject, Log))
-			{ 
+			// Event
+			#pragma region
+
+			OnProcessGameplayTagEventEventType& FLibrary::GetChecked_OnProcessGameplayTagEvent_Event(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group)
+			{
+				return GetChecked(Context, ContextObject)->GetOnProcessGameplayTagEvent_Event(Group);
+			}
+
+			FCsCoordinatorGameplayTag_OnProcessGameplayTagEvent& FLibrary::GetChecked_OnProcessGameplayTagEvent_ScriptEvent(const FString& Context, const UObject* ContextObject)
+			{
+				return GetChecked(Context, ContextObject)->OnProcessGameplayTagEvent_ScriptEvent;
+			}
+
+			void FLibrary::ProcessGameplayTagEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Event)
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameplayTagCoordinatorGroup, Group)
+				CS_IS_VALID_CHECKED(Event);
+
 				// If Group == None, Process Immediately
 				if (Group == NCsGameplayTagCoordinatorGroup::None)
 				{
-					Coordinator_GameplayTag->ProcessGameplayTagEvent(Group, Event);
+					GetChecked(Context, ContextObject)->ProcessGameplayTagEvent(Group, Event);
 				}
 				else
 				{
-					Coordinator_GameplayTag->ProcessGameplayTagEvent(Group, Event);
+					GetChecked(Context, ContextObject)->ProcessGameplayTagEvent(Group, Event);
 				}
-				return true;
 			}
-			return false;
-		}
 
-		void FLibrary::BroadcastGameplayTagEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const  FCsGameplayTagEvent& Event)
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameplayTagCoordinatorGroup, Group)
-			CS_IS_VALID_CHECKED(Event);
-
-			// If Group == None, Process Immediately
-			if (Group == NCsGameplayTagCoordinatorGroup::None)
+			bool FLibrary::SafeProcessGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Event, LogLevel)
 			{
-				GetChecked(Context, ContextObject)->ProcessGameplayTagEvent(Group, Event);
+				CS_IS_ENUM_STRUCT_VALID(EMCsGameplayTagCoordinatorGroup, FECsGameplayTagCoordinatorGroup, Group)
+				CS_IS_VALID(Event)
+
+				if (UCsCoordinator_GameplayTag* Coordinator_GameplayTag = GetSafe(Context, ContextObject, Log))
+				{ 
+					// If Group == None, Process Immediately
+					if (Group == NCsGameplayTagCoordinatorGroup::None)
+					{
+						Coordinator_GameplayTag->ProcessGameplayTagEvent(Group, Event);
+					}
+					else
+					{
+						Coordinator_GameplayTag->ProcessGameplayTagEvent(Group, Event);
+					}
+					return true;
+				}
+				return false;
 			}
-			else
+
+			void FLibrary::BroadcastGameplayTagEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const  FCsGameplayTagEvent& Event)
 			{
-				GetChecked(Context, ContextObject)->ProcessGameplayTagEvent(Group, Event);
-			}
-		}
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameplayTagCoordinatorGroup, Group)
+				CS_IS_VALID_CHECKED(Event);
 
-		bool FLibrary::SafeBroadcastGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const  FCsGameplayTagEvent& Event, LogLevel)
-		{
-			// Check Group is Valid.
-			CS_IS_ENUM_STRUCT_VALID(EMCsGameplayTagCoordinatorGroup, FECsGameplayTagCoordinatorGroup, Group)
-			CS_IS_VALID(Event)
-
-			if (UCsCoordinator_GameplayTag* Coordinator_GameplayTag = GetSafe(Context, ContextObject, Log))
-			{ 
 				// If Group == None, Process Immediately
 				if (Group == NCsGameplayTagCoordinatorGroup::None)
 				{
-					Coordinator_GameplayTag->ProcessGameplayTagEvent(Group, Event);
+					GetChecked(Context, ContextObject)->ProcessGameplayTagEvent(Group, Event);
 				}
 				else
 				{
-					Coordinator_GameplayTag->ProcessGameplayTagEvent(Group, Event);
+					GetChecked(Context, ContextObject)->ProcessGameplayTagEvent(Group, Event);
 				}
-				return true;
 			}
-			return false;
+
+			bool FLibrary::SafeBroadcastGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const  FCsGameplayTagEvent& Event, LogLevel)
+			{
+				// Check Group is Valid.
+				CS_IS_ENUM_STRUCT_VALID(EMCsGameplayTagCoordinatorGroup, FECsGameplayTagCoordinatorGroup, Group)
+				CS_IS_VALID(Event)
+
+				if (UCsCoordinator_GameplayTag* Coordinator_GameplayTag = GetSafe(Context, ContextObject, Log))
+				{ 
+					// If Group == None, Process Immediately
+					if (Group == NCsGameplayTagCoordinatorGroup::None)
+					{
+						Coordinator_GameplayTag->ProcessGameplayTagEvent(Group, Event);
+					}
+					else
+					{
+						Coordinator_GameplayTag->ProcessGameplayTagEvent(Group, Event);
+					}
+					return true;
+				}
+				return false;
+			}
+
+			/*#define OnProccessEventGameInfoEventType NCsGameEvent::NCoordinator::FOnProcessGameEventInfo
+			OnProccessEventGameInfoEventType& FLibrary::GetOnProcessGameEventInfo_EventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group)
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameplayTagCoordinatorGroup, Group)
+
+				return GetChecked(Context, ContextObject)->GetOnProcessGameEventInfo_Event(Group);
+			}
+			#undef OnProccessEventGameInfoEventType*/
+
+			#pragma endregion Event
+
+			#undef USING_NS_CACHED
+			#undef SET_CONTEXT
+			#undef LogLevel
 		}
-
-		/*#define OnProccessEventGameInfoEventType NCsGameEvent::NCoordinator::FOnProcessGameEventInfo
-		OnProccessEventGameInfoEventType& FLibrary::GetOnProcessGameEventInfo_EventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group)
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameplayTagCoordinatorGroup, Group)
-
-			return GetChecked(Context, ContextObject)->GetOnProcessGameEventInfo_Event(Group);
-		}
-		#undef OnProccessEventGameInfoEventType*/
-
-		#pragma endregion Event
-
-		#undef USING_NS_CACHED
-		#undef SET_CONTEXT
-		#undef LogLevel
 	}
 }

@@ -110,6 +110,20 @@ namespace NCsFX
 // FCsFX_Spawn_FrequencyParams
 #pragma region
 
+struct FCsFX_Spawn_FrequencyParams;
+
+namespace NCsFX_Spawn_FrequenceParams
+{
+	using ParamsType = NCsFX::NSpawn::NParams::FFrequency;
+	using FrequencyType = ECsFXSpawnFrequency;
+
+	struct CSFX_API FImpl
+	{
+		static void CopyToParams(FCsFX_Spawn_FrequencyParams* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const FCsFX_Spawn_FrequencyParams* This, ParamsType* Params);
+	};
+}
+
 // NCsFX::NSpawn::NParams::FFrequency
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NSpawn, NParams, FFrequency)
 
@@ -120,6 +134,10 @@ USTRUCT(BlueprintType)
 struct CSFX_API FCsFX_Spawn_FrequencyParams
 {
 	GENERATED_USTRUCT_BODY()
+
+private:
+
+	using FrequencyType = ECsFXSpawnFrequency;
 
 public:
 
@@ -175,10 +193,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsFX::NSpawn::NParams::FFrequency
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsFX::NSpawn::NParams::FFrequency;
+	using _Impl = NCsFX_Spawn_FrequenceParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params) { _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const { _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
@@ -199,7 +218,7 @@ namespace NCsFX
 		{
 			struct CSFX_API FFrequency
 			{
-			#define FrequencyType NCsFX::NSpawn::EFrequency
+				using FrequencyType = NCsFX::NSpawn::EFrequency;
 
 			private:
 
@@ -285,8 +304,6 @@ namespace NCsFX
 				void Reset();
 
 				void Update();
-
-			#undef FrequencyType
 			};
 		}
 	}
@@ -307,7 +324,7 @@ namespace NCsFX
 			{
 			public:
 		
-			#define FrequencyParamsType NCsFX::NSpawn::NParams::FFrequency
+				using FrequencyParamsType = NCsFX::NSpawn::NParams::FFrequency;
 
 				/** FX information */
 				FCsFX FX;
@@ -343,24 +360,22 @@ namespace NCsFX
 				void Update();
 
 				void Reset();
-
-			#undef FrequencyParamsType
 			};
 
 			struct CSFX_API FResource : public TCsResourceContainer<FParams>
 			{
 			};
 
-			#define CS_PARAMS_PAYLOAD_SIZE 256
+			const int32 CS_PARAMS_PAYLOAD_SIZE = 256;
 
 			struct CSFX_API FManager : public NCsResource::NManager::NValue::TFixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
 			{
 			};
-
-			#undef CS_PARAMS_PAYLOAD_SIZE
 		}
 	}
 }
+
+using CsFXSpawnParamsType = NCsFX::NSpawn::NParams::FParams;
 
 // NCsFX::NSpawn::NParams::FParams
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NSpawn, NParams, FParams)

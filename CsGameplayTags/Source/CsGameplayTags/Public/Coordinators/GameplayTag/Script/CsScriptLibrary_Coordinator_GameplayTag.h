@@ -4,16 +4,26 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Namespace.h"
 #include "Coordinators/GameplayTag/CsTypes_Coordinator_GameplayTag.h"
 
 #include "CsScriptLibrary_Coordinator_GameplayTag.generated.h"
 
 class UCsCoordinator_GameplayTag;
 
+// NCsGameplayTag::NCoordinator::NLibrary::FLibrary
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsGameplayTag, NCoordinator, NLibrary, FLibrary)
+
 UCLASS()
 class CSGAMEPLAYTAGS_API UCsScriptLibrary_Coordinator_GameplayTag : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	using NativeLibrary = NCsGameplayTag::NCoordinator::NLibrary::FLibrary;
+
+	static void(*LogError)(const FString&);
 
 // Get
 #pragma region

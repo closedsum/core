@@ -64,6 +64,9 @@ namespace NCsFX
 		{
 			namespace NSkeletalMesh
 			{
+				using MethodMapType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMMethod;
+				using MethodType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod;
+
 				bool FSkeletalMeshType::IsValidChecked(const FString& Context) const
 				{
 					CS_IS_NAME_NONE_CHECKED(GetName())
@@ -71,9 +74,6 @@ namespace NCsFX
 					const FString NameAsString = GetName().ToString();
 
 					checkf(NameAsString.StartsWith(TEXT("User.")), TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Data Interface Parameter of type: Skeletal Mesh."), *Context, *NameAsString);
-
-					typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMMethod MethodMapType;
-					typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod MethodType;
 
 					CS_IS_ENUM_VALID_CHECKED(MethodMapType, GetMethod())
 					CS_IS_PENDING_KILL_CHECKED(GetComponent())
@@ -91,9 +91,6 @@ namespace NCsFX
 						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Int Parameter Name."), *Context, *NameAsString));
 						return false;
 					}
-
-					typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMMethod MethodMapType;
-					typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod MethodType;
 
 					CS_IS_ENUM_VALID(MethodMapType, MethodType, GetMethod())
 					CS_IS_PENDING_KILL(GetComponent())

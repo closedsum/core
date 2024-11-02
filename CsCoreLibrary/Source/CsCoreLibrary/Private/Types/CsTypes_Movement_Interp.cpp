@@ -20,57 +20,53 @@
 // FCsMoveByInterp_Params
 #pragma region
 
-#define ParamsType NCsMovement::NTo::NInterp::NParams::FParams
-
-void FCsMoveByInterp_Params::CopyToParams(ParamsType* Params)
+namespace NCsMoveByInterp_Params
 {
-	typedef NCsMovement::EMover MoverType;
-	typedef NCsMovement::EDestination DestinationType;
+	using MoverType = NCsMovement::EMover;
+	using DestinationType = NCsMovement::EDestination;
 
-	Params->SetEasing(&Easing);
-	Params->SetMover((MoverType*)(&Mover));
-	Params->SetFromLocation(&FromLocation);
-	Params->SetMoveObjectName(&MoveObjectName);
-	Params->SetMoveActorLabel(&MoveActorLabel);
-	Params->SetMoveActor(MoveActor);
-	Params->SetMoveComponent(MoveComponent);
-	Params->SetDestination((DestinationType*)(&Destination));
-	Params->SetToLocation(&ToLocation);
-	Params->SetToObjectName(&ToObjectName);
-	Params->SetToActorLabel(&ToActorLabel);
-	Params->SetToBone(&ToBone);
-	Params->SetToActor(ToActor);
-	Params->SetToComponent(ToComponent);
-	Params->SetToMeshComponent(ToMeshComponent);
-	Params->SetTime(&Time);
-	Params->SetGroup(&Group);
+	void FImpl::CopyToParams(FCsMoveByInterp_Params* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, Easing);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Mover, MoverType);
+		CS_THIS_COPY_TO_PROXY(Params, FromLocation);
+		CS_THIS_COPY_TO_PROXY(Params, MoveObjectName);
+		CS_THIS_COPY_TO_PROXY(Params, MoveActorLabel);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, MoveActor);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, MoveComponent);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Destination, DestinationType);
+		CS_THIS_COPY_TO_PROXY(Params, ToLocation);
+		CS_THIS_COPY_TO_PROXY(Params, ToObjectName);
+		CS_THIS_COPY_TO_PROXY(Params, ToActorLabel);
+		CS_THIS_COPY_TO_PROXY(Params, ToBone);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ToActor);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ToComponent);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ToMeshComponent);
+		CS_THIS_COPY_TO_PROXY(Params, Time);
+		CS_THIS_COPY_TO_PROXY(Params, Group);
+	}
+
+	void FImpl::CopyToParamsAsValue(const FCsMoveByInterp_Params* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Easing);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Mover, MoverType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, FromLocation);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, MoveObjectName);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, MoveActorLabel);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, MoveActor);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, MoveComponent);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Destination, DestinationType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ToLocation);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ToObjectName);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ToActorLabel);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ToBone);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ToActor);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ToComponent);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ToMeshComponent);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Time);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Group);
+	}
 }
-
-void FCsMoveByInterp_Params::CopyToParamsAsValue(ParamsType* Params) const
-{
-	typedef NCsMovement::EMover MoverType;
-	typedef NCsMovement::EDestination DestinationType;
-
-	Params->SetEasing(Easing);
-	Params->SetMover((MoverType)Mover);
-	Params->SetFromLocation(FromLocation);
-	Params->SetMoveObjectName(MoveObjectName);
-	Params->SetMoveActorLabel(MoveActorLabel);
-	Params->SetMoveActor(MoveActor);
-	Params->SetMoveComponent(MoveComponent);
-	Params->SetDestination((DestinationType)Destination);
-	Params->SetToLocation(ToLocation);
-	Params->SetToObjectName(ToObjectName);
-	Params->SetToActorLabel(ToActorLabel);
-	Params->SetToBone(ToBone);
-	Params->SetToActor(ToActor);
-	Params->SetToComponent(ToComponent);
-	Params->SetToMeshComponent(ToMeshComponent);
-	Params->SetTime(Time);
-	Params->SetGroup(Group);
-}
-
-#undef ParamsType
 
 void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context, const UObject* WorldContext)
 {
@@ -84,7 +80,7 @@ void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context
 		}
 		else
 		{
-#if WITH_EDITOR
+		#if WITH_EDITOR
 			// Label
 			if (!MoveActorLabel.IsEmpty())
 			{
@@ -99,7 +95,7 @@ void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context
 			}
 
 			UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: Failed to set MoveActor. Label is EMPTY. Name: None is NOT Valid."), *Context);
-#else
+		#else
 			// Name
 			if (MoveObjectName != NAME_None)
 			{
@@ -108,7 +104,7 @@ void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context
 			}
 
 			UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: Failed to set MoveActor. Name: None is NOT Valid."), *Context);
-#endif // #if WITH_EDITOR
+		#endif // #if WITH_EDITOR
 		}
 	}
 	// Component
@@ -135,7 +131,7 @@ void FCsMoveByInterp_Params::ConditionalSetSafeDestinationObject(const FString& 
 		}
 		else
 		{
-#if WITH_EDITOR
+		#if WITH_EDITOR
 			// Label
 			if (!ToActorLabel.IsEmpty())
 			{
@@ -150,7 +146,7 @@ void FCsMoveByInterp_Params::ConditionalSetSafeDestinationObject(const FString& 
 			}
 
 			UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: Failed to set ToActor. Label is EMPTY. Name: None is NOT Valid."), *Context);
-#else
+		#else
 			// Name
 			if (ToObjectName != NAME_None)
 			{
@@ -159,7 +155,7 @@ void FCsMoveByInterp_Params::ConditionalSetSafeDestinationObject(const FString& 
 			}
 
 			UE_LOG(LogCsCoreLibrary, Warning, TEXT("%s: Failed to set ToActor. Name: None is NOT Valid."), *Context);
-#endif // #if WITH_EDITOR
+		#endif // #if WITH_EDITOR
 		}
 	}
 	// Component
@@ -323,8 +319,8 @@ namespace NCsMovement
 		{
 			namespace NParams
 			{
-				#define MoverType NCsMovement::EMover
-				#define DestinationType NCsMovement::EDestination
+				using MoverMapType = NCsMovement::EMMover;
+				using DestinationMapType = NCsMovement::EMDestination;
 
 				void FParams::SetMoveActor(AActor* Value) { MoveActor = Value; }
 
@@ -348,10 +344,8 @@ namespace NCsMovement
 
 				void FParams::ConditionalSetMoveObjectChecked(const FString& Context, UObject* WorldContext)
 				{
-					// Check Mover is Valid
-					typedef NCsMovement::EMMover MoverMapType;
+					CS_IS_ENUM_VALID_CHECKED(MoverMapType, GetMover())
 
-					check(MoverMapType::Get().IsValidEnumChecked(Context, GetMover()));
 					// Actor
 					if (GetMover() == MoverType::Actor)
 					{
@@ -362,7 +356,7 @@ namespace NCsMovement
 						}
 						else
 						{
-				#if WITH_EDITOR
+						#if WITH_EDITOR
 							// Label
 							if (!GetMoveActorLabel().IsEmpty())
 							{
@@ -377,7 +371,7 @@ namespace NCsMovement
 							}
 
 							checkf(0, TEXT("%s: Failed to set MoveActor. Label is EMPTY. Name: None is NOT Valid."), *Context);
-				#else
+						#else
 							// Name
 							if (GetMoveObjectName() != NAME_None)
 							{
@@ -386,7 +380,7 @@ namespace NCsMovement
 							}
 
 							checkf(0, TEXT("%s: Failed to set MoveActor. Name: None is NOT Valid."), *Context);
-				#endif // #if WITH_EDITOR
+						#endif // #if WITH_EDITOR
 						}
 					}
 					// Component
@@ -403,10 +397,8 @@ namespace NCsMovement
 
 				void FParams::ConditionalSetDestinationObjectChecked(const FString& Context, UObject* WorldContext)
 				{
-					// Check Destination is Valid
-					typedef NCsMovement::EMDestination DestinationMapType;
-
-					check(DestinationMapType::Get().IsValidEnumChecked(Context, GetDestination()));
+					CS_IS_ENUM_VALID_CHECKED(DestinationMapType, GetDestination())
+					
 					// Actor
 					if (GetDestination() == DestinationType::Actor)
 					{
@@ -417,7 +409,7 @@ namespace NCsMovement
 						}
 						else
 						{
-				#if WITH_EDITOR
+						#if WITH_EDITOR
 							// Label
 							if (!GetToActorLabel().IsEmpty())
 							{
@@ -432,7 +424,7 @@ namespace NCsMovement
 							}
 
 							checkf(0, TEXT("%s: Failed to set ToActor. Label is EMPTY. Name: None is NOT Valid."), *Context);
-				#else
+						#else
 							// Name
 							if (GetToObjectName() != NAME_None)
 							{
@@ -441,7 +433,7 @@ namespace NCsMovement
 							}
 
 							checkf(0, TEXT("%s: Failed to set ToActor. Name: None is NOT Valid."), *Context);
-				#endif // #if WITH_EDITOR
+						#endif // #if WITH_EDITOR
 						}
 					}
 					// Component
@@ -458,12 +450,8 @@ namespace NCsMovement
 
 				bool FParams::IsValidChecked(const FString& Context) const
 				{
-					// Check Easing is Valid
-					EMCsEasingType::Get().IsValidEnumChecked(Context, GetEasing());
-					// Check Mover is Valid
-					typedef NCsMovement::EMMover MoverMapType;
-
-					check(MoverMapType::Get().IsValidEnumChecked(Context, GetMover()));
+					CS_IS_ENUM_VALID_CHECKED(EMCsEasingType, GetEasing())
+					CS_IS_ENUM_VALID_CHECKED(MoverMapType, GetMover())
 					// Check Move Object is Valid
 					if (GetMover() == MoverType::Actor)
 					{
@@ -482,11 +470,9 @@ namespace NCsMovement
 						// Check GetMoveComponent() is Movable
 						checkf(GetMoveComponent()->Mobility == EComponentMobility::Movable, TEXT("%s: GetMoveComponent(): %s Mobility is NOT Movable."), *Context, *(GetMoveComponent()->GetName()));
 					}
-					// Check Destination is Valid
-					typedef NCsMovement::EMDestination DestinationMapType;
-
-					check(DestinationMapType::Get().IsValidEnumChecked(Context, GetDestination()));
 					
+					CS_IS_ENUM_VALID_CHECKED(DestinationMapType, GetDestination())
+
 					if (GetDestination() == DestinationType::Actor)
 					{
 						checkf(GetToActor(), TEXT("%s: No ToActor set."), *Context);
@@ -510,26 +496,15 @@ namespace NCsMovement
 					// Check Time is Valid
 					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetTime(), 0.0f)
 					// Check Group is Valid
-					EMCsUpdateGroup::Get().IsValidEnumChecked(Context, GetGroup());
+					CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, GetGroup())
 					return true;
 				}
 
 				bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 				{
-					// Check Easing is Valid
-					if (!EMCsEasingType::Get().IsValidEnum(GetEasing()))
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetEasing(): %s is NOT Valid."), *Context, EMCsEasingType::Get().ToChar(GetEasing())));
-						return false;
-					}
-					// Check Mover is Valid
-					typedef NCsMovement::EMMover MoverMapType;
+					CS_IS_ENUM_VALID(EMCsEasingType, ECsEasingType, GetEasing())
+					CS_IS_ENUM_VALID(MoverMapType, MoverType, GetMover())
 
-					if (!MoverMapType::Get().IsValidEnum(GetMover()))
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetMover(): %s is NOT Valid."), *Context, MoverMapType::Get().ToChar(GetMover())));
-						return false;
-					}
 					// Check Move Object is Valid
 					if (GetMover() == MoverType::Actor)
 					{
@@ -548,14 +523,8 @@ namespace NCsMovement
 							return false;
 						}
 					}
-					// Check Destination is Valid
-					typedef NCsMovement::EMDestination DestinationMapType;
 
-					if (!DestinationMapType::Get().IsValidEnum(GetDestination()))
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetDestination(): %s is NOT Valid."), *Context, DestinationMapType::Get().ToChar(GetDestination())));
-						return false;
-					}
+					CS_IS_ENUM_VALID(DestinationMapType, DestinationType, GetDestination())
 					
 					if (GetDestination() == DestinationType::Actor)
 					{
@@ -618,8 +587,6 @@ namespace NCsMovement
 					if (GetDestination() == DestinationType::Bone)
 						return CsMathLibrary::Convert(GetToMeshComponent()->GetBoneLocation(GetToBone())) + GetToLocation();
 
-					typedef NCsMovement::EMDestination DestinationMapType;
-
 					checkf(0, TEXT("NCsMovement::NTo::NInterp::NParams::FParams::GetEndLocation: GetDestination(): %s is NOT Valid."), DestinationMapType::Get().ToChar(GetDestination()));
 					return FVector3f::ZeroVector;
 				}
@@ -644,9 +611,6 @@ namespace NCsMovement
 					CS_RESET_MEMBER_WITH_PROXY(Time, 0.0f)
 					CS_RESET_MEMBER_WITH_PROXY(Group, EMCsUpdateGroup::Get().GetMAX())
 				}
-
-				#undef MoverType
-				#undef DestinationType
 			}
 		}
 	}
@@ -657,6 +621,43 @@ namespace NCsMovement
 // FCsSpeedInterpInfo
 #pragma region
 
+namespace NCsSpeedInterpInfo
+{
+	using MethodType = NCsSpeed::NInterp::EMethod;
+	using DirectionType = NCsSpeed::NInterp::EDirection;
+
+	void FImpl::CopyToInfo(FCsSpeedInterpInfo* This, InfoType* Info)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(Info, Method, MethodType);
+		CS_THIS_COPY_TYPE_TO_PROXY(Info, Direction, DirectionType);
+		CS_THIS_COPY_TO_PROXY(Info, Easing);
+		CS_THIS_COPY_TO_PROXY(Info, Curve);
+		CS_THIS_COPY_TO_PROXY(Info, Time);
+		CS_THIS_COPY_TO_PROXY(Info, Acceleration);
+	}
+
+	void FImpl::CopyToInfoAsValue(const FCsSpeedInterpInfo* This, InfoType* Info)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Info, Method, MethodType);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Info, Direction, DirectionType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Easing);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Curve);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Time);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Acceleration);
+	}
+}
+
+#if WITH_EDITOR
+
+void FCsSpeedInterpInfo::OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName)
+{
+	// Acceleration
+	if (PropertyNames.Find(TEXT("Acceleration")))
+		Acceleration.OnPostEditChange(PropertyName);
+}
+
+#endif // #if WITH_EDITOR
+
 bool FCsSpeedInterpInfo::IsValidChecked(const FString& Context) const
 {
 	return true;
@@ -666,34 +667,6 @@ bool FCsSpeedInterpInfo::IsValid(const FString& Context, void(*Log)(const FStrin
 {
 	return true;
 }
-
-#define InfoType NCsSpeed::NInterp::FInfo
-#define MethodType NCsSpeed::NInterp::EMethod
-#define DirectionType NCsSpeed::NInterp::EDirection
-
-void FCsSpeedInterpInfo::CopyToInfo(InfoType* Info)
-{
-	CS_COPY_TYPE_TO_PROXY(Info, Method, MethodType);
-	CS_COPY_TYPE_TO_PROXY(Info, Direction, DirectionType);
-	CS_COPY_TO_PROXY(Info, Easing);
-	CS_COPY_TO_PROXY(Info, Curve);
-	CS_COPY_TO_PROXY(Info, Time);
-	CS_COPY_TO_PROXY(Info, Acceleration);
-}
-
-void FCsSpeedInterpInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	CS_COPY_TYPE_TO_PROXY_AS_VALUE(Info, Method, MethodType);
-	CS_COPY_TYPE_TO_PROXY_AS_VALUE(Info, Direction, DirectionType);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, Easing);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, Curve);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, Time);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, Acceleration);
-}
-
-#undef InfoType
-#undef MethodType
-#undef DirectionType
 
 FString FCsSpeedInterpInfo::PrintSummary(const int32& IndentSpaces /*=0*/)
 {
@@ -749,17 +722,6 @@ FString FCsSpeedInterpInfo::PrintSummary(const int32& IndentSpaces /*=0*/)
 	return Summary;
 }
 
-#if WITH_EDITOR
-
-void FCsSpeedInterpInfo::OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName)
-{
-	// Acceleration
-	if (PropertyNames.Find(TEXT("Acceleration")))
-		Acceleration.OnPostEditChange(PropertyName);
-}
-
-#endif // #if WITH_EDITOR
-
 #pragma endregion FCsSpeedInterpInfo
 
 // NCsSpeed::NInterp::FInterp
@@ -781,6 +743,8 @@ namespace NCsSpeed
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSpeed::NInterp::FInterp, SetTargetSpeedAsPercent);
 			}
 		}
+
+		using InfoType = NCsSpeed::NInterp::FInfo;
 
 		void FInterp::SetMaxSpeed(const float& Speed)
 		{
@@ -831,16 +795,13 @@ namespace NCsSpeed
 			}
 		}
 
-		#define InfoType NCsSpeed::NInterp::FInfo
 		void FInterp::SetInfo(InfoType* InInfo)
 		{
-		#undef InfoType
-
 			using namespace NCached;
 
 			const FString& Context = Str::SetInfo;
 
-			checkf(InInfo, TEXT("%s: InInfo is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(InInfo);
 
 			Info = InInfo;
 

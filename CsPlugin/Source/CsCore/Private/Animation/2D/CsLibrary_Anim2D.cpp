@@ -35,6 +35,8 @@ namespace NCsAnim
 				}
 			}
 
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, FCsLog::Warning);
+
 			FLibrary::FLibrary() :
 				Manager_PlayParams()
 			{
@@ -45,7 +47,11 @@ namespace NCsAnim
 				Manager_PlayParams.Shutdown();
 			}
 
-			#define ParamsType NCsAnim::N2D::NTexture::NPlay::NParams::FParams
+			using ParamsResourceType = NCsAnim::N2D::NTexture::NPlay::NParams::FResource;
+			using ParamsType = NCsAnim::N2D::NTexture::NPlay::NParams::FParams;
+			using PlaybackType = NCsAnim::N2D::EPlayback;
+			using AnimType = NCsAnim::N2D::NTexture::NFlipbook::FFlipbook;
+			using FrameType = NCsAnim::N2D::NTexture::NFlipbook::FFrame;
 
 			const FCsRoutineHandle& FLibrary::Play(const ParamsType& Params)
 			{
@@ -54,8 +60,6 @@ namespace NCsAnim
 				const FString& Context = Str::Play;
 
 				check(Params.IsValidChecked(Context));
-
-				typedef NCsAnim::N2D::EPlayback PlaybackType;
 
 				const PlaybackType& Playback = Params.Anim.GetPlayback();
 
@@ -79,8 +83,6 @@ namespace NCsAnim
 				#undef COROUTINE
 
 				// Allocate and set params
-				typedef NCsAnim::N2D::NTexture::NPlay::NParams::FResource ParamsResourceType;
-
 				ParamsResourceType* R = Get().Manager_PlayParams.Allocate();
 				ParamsType* P		  = R->Get();
 				*P					  = Params;
@@ -115,17 +117,12 @@ namespace NCsAnim
 				return Scheduler->Start(Payload);
 			}
 
-			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, const ParamsType& Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, const ParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (!Params.IsValid(Context, Log))
 					return FCsRoutineHandle::Invalid;
-
 				return Play(Params);
 			}
-
-			#undef ParamsType
-
-			#define ParamsResourceType NCsAnim::N2D::NTexture::NPlay::NParams::FResource
 
 			const FCsRoutineHandle& FLibrary::Play(ParamsResourceType* Params)
 			{
@@ -137,7 +134,7 @@ namespace NCsAnim
 				return Handle;
 			}
 
-			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, ParamsResourceType* Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL_RET_VALUE(Params, FCsRoutineHandle::Invalid)
 
@@ -149,14 +146,9 @@ namespace NCsAnim
 				return Handle;
 			}
 
-			#undef ParamsResourceType
-
 			char FLibrary::Play_Internal(FCsRoutine* R)
 			{
 				// Cache appropriate references
-				typedef NCsAnim::N2D::NTexture::NPlay::NParams::FResource ParamsResourceType;
-				typedef NCsAnim::N2D::NTexture::NPlay::NParams::FParams ParamsType;
-
 				static const int32 RESOURCE = 0;
 				ParamsResourceType* Resource = R->GetValue_Void<ParamsResourceType>(RESOURCE);
 				ParamsType* Params			 = Resource->Get();
@@ -166,11 +158,9 @@ namespace NCsAnim
 				checkf(MID, TEXT("%s: MID is NULL."), **(R->GetName()));
 
 				// Anim
-				typedef NCsAnim::N2D::NTexture::NFlipbook::FFlipbook AnimType;
+				
 
 				const AnimType& Anim = Params->Anim;
-
-				typedef NCsAnim::N2D::EPlayback PlaybackType;
 
 				const PlaybackType& Playback = Params->Anim.GetPlayback();
 				const bool LoopingForever	 = Params->Anim.IsLoopingForever();
@@ -205,8 +195,6 @@ namespace NCsAnim
 					{
 						// Frame
 						{
-							typedef NCsAnim::N2D::NTexture::NFlipbook::FFrame FrameType;
-
 							const FrameType& Frame = Anim.Frames[FrameIndex];
 
 							MID->SetTextureParameterValue(Frame.GetParameterName(), Frame.GetTexture());
@@ -256,9 +244,6 @@ namespace NCsAnim
 
 			void FLibrary::Play_Internal_OnEnd(FCsRoutine* R)
 			{
-				typedef NCsAnim::N2D::NTexture::NPlay::NParams::FResource ParamsResourceType;
-				typedef NCsAnim::N2D::NTexture::NPlay::NParams::FParams ParamsType;
-
 				static const int32 RESOURCE = 0;
 				ParamsResourceType* Resource = R->GetValue_Void<ParamsResourceType>(RESOURCE);
 				ParamsType* Params			 = Resource->Get();
@@ -267,7 +252,13 @@ namespace NCsAnim
 				Get().Manager_PlayParams.Deallocate(Resource);
 			}
 		}
+	}
+}
 
+namespace NCsAnim
+{
+	namespace N2D
+	{
 		namespace NMaterial
 		{
 			namespace NCached
@@ -284,6 +275,8 @@ namespace NCsAnim
 				}
 			}
 
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, FCsLog::Warning);
+
 			FLibrary::FLibrary() :
 				Manager_PlayParams()
 			{
@@ -294,7 +287,11 @@ namespace NCsAnim
 				Manager_PlayParams.Shutdown();
 			}
 
-			#define ParamsType NCsAnim::N2D::NMaterial::NPlay::NParams::FParams
+			using ParamsManagerType = NCsAnim::N2D::NMaterial::NPlay::NParams::FManager;
+			using ParamsResourceType = NCsAnim::N2D::NMaterial::NPlay::NParams::FResource;
+			using PlaybackType = NCsAnim::N2D::EPlayback;
+			using AnimType = NCsAnim::N2D::NMaterial::NFlipbook::FFlipbook;
+			using FrameType = NCsAnim::N2D::NMaterial::NFlipbook::FFrame;
 
 			const FCsRoutineHandle& FLibrary::Play(const ParamsType& Params)
 			{
@@ -303,8 +300,6 @@ namespace NCsAnim
 				const FString& Context = Str::Play;
 
 				check(Params.IsValidChecked(Context));
-
-				typedef NCsAnim::N2D::EPlayback PlaybackType;
 
 				const PlaybackType& Playback = Params.Anim.GetPlayback();
 
@@ -328,8 +323,6 @@ namespace NCsAnim
 				#undef COROUTINE
 
 				// Allocate and set params
-				typedef NCsAnim::N2D::NMaterial::NPlay::NParams::FResource ParamsResourceType;
-
 				ParamsResourceType* R = Get().Manager_PlayParams.Allocate();
 				ParamsType* P		  = R->Get();
 				*P					  = Params;
@@ -361,17 +354,12 @@ namespace NCsAnim
 				return Scheduler->Start(Payload);
 			}
 
-			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, const ParamsType& Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, const ParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (!Params.IsValid(Context, Log))
 					return FCsRoutineHandle::Invalid;
-
 				return Play(Params);
 			}
-
-			#undef ParamsType
-
-			#define ParamsResourceType NCsAnim::N2D::NMaterial::NPlay::NParams::FResource
 
 			const FCsRoutineHandle& FLibrary::Play(ParamsResourceType* Params)
 			{
@@ -383,7 +371,7 @@ namespace NCsAnim
 				return Handle;
 			}
 
-			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, ParamsResourceType* Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL_RET_VALUE(Params, FCsRoutineHandle::Invalid)
 
@@ -395,8 +383,6 @@ namespace NCsAnim
 				return Handle;
 			}
 
-			#undef ParamsResourceType
-
 			char FLibrary::Play_Internal(FCsRoutine* R)
 			{
 				using namespace NCached;
@@ -404,9 +390,6 @@ namespace NCsAnim
 				const FString& Context = Str::Play_Internal;
 
 				// Cache appropriate references
-				typedef NCsAnim::N2D::NMaterial::NPlay::NParams::FResource ParamsResourceType;
-				typedef NCsAnim::N2D::NMaterial::NPlay::NParams::FParams ParamsType;
-
 				static const int32 RESOURCE = 0;
 				ParamsResourceType* Resource = R->GetValue_Void<ParamsResourceType>(RESOURCE);
 				ParamsType* Params			 = Resource->Get();
@@ -416,11 +399,7 @@ namespace NCsAnim
 				checkf(Component, TEXT("%s: Component is NULL."), **(R->GetName()));
 
 				// Anim
-				typedef NCsAnim::N2D::NMaterial::NFlipbook::FFlipbook AnimType;
-
 				const AnimType& Anim = Params->Anim;
-
-				typedef NCsAnim::N2D::EPlayback PlaybackType;
 
 				const PlaybackType& Playback = Params->Anim.GetPlayback();
 				const bool LoopingForever	 = Params->Anim.IsLoopingForever();
@@ -456,8 +435,6 @@ namespace NCsAnim
 						
 						// Frame
 						{
-							typedef NCsAnim::N2D::NMaterial::NFlipbook::FFrame FrameType;
-
 							const FrameType& Frame = Anim.Frames[FrameIndex];
 
 							CsMaterialLibrary::SetChecked(Context, Component, Frame.GetMaterial(), Frame.GetIndex());
@@ -507,9 +484,6 @@ namespace NCsAnim
 
 			void FLibrary::Play_Internal_OnEnd(FCsRoutine* R)
 			{
-				typedef NCsAnim::N2D::NMaterial::NPlay::NParams::FResource ParamsResourceType;
-				typedef NCsAnim::N2D::NMaterial::NPlay::NParams::FParams ParamsType;
-
 				static const int32 RESOURCE = 0;
 				ParamsResourceType* Resource = R->GetValue_Void<ParamsResourceType>(RESOURCE);
 				ParamsType* Params			 = Resource->Get();

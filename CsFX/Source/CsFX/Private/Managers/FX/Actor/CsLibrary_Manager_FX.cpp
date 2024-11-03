@@ -39,6 +39,11 @@ namespace NCsFX
 
 		#define LogLevel void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/
 
+		using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+		using PayloadType = NCsFX::NPayload::IPayload;
+		using PayloadImplType = NCsFX::NPayload::NImpl::FImpl;
+		using PayloadLibrary = NCsFX::NPayload::NLibrary::FLibrary;
+
 		// Print
 		#pragma region
 
@@ -175,19 +180,15 @@ namespace NCsFX
 		// Allocate / Deallocate
 		#pragma region
 		
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-
-		#define PayloadType NCsFX::NPayload::IPayload
-
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
-			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
+			// NOTE: For now only PayloadImplType (NCsFX::NPayload::FImpl) is supported
 			return AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, Transform);
 		}
 
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector3f& Location)
 		{
-			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
+			// NOTE: For now only PayloadImplType (NCsFX::NPayload::FImpl) is supported
 			FTransform3f T = FTransform3f::Identity;
 			T.SetTranslation(Location);
 			return AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, T);
@@ -195,13 +196,9 @@ namespace NCsFX
 
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
-			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
+			// NOTE: For now only PayloadImplType (NCsFX::NPayload::FImpl) is supported
 			return AllocatePayloadImplChecked(Context, WorldContext, FX, Transform);
 		}
-
-		#undef PayloadType
-
-		#define PayloadImplType NCsFX::NPayload::FImpl
 
 		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
@@ -211,8 +208,6 @@ namespace NCsFX
 			CS_IS_VALID_CHECKED(FX);
 
 			PayloadImplType* Payload = Manager_FX->AllocatePayload<PayloadImplType>(FX.Type);
-
-			typedef NCsFX::NPayload::FLibrary PayloadLibrary;
 
 			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, FX, Transform);
 
@@ -310,8 +305,6 @@ namespace NCsFX
 
 			PayloadImplType* Payload = Manager_FX->AllocatePayload<PayloadImplType>(FX.Type);
 
-			typedef NCsFX::NPayload::FLibrary PayloadLibrary;
-
 			PayloadLibrary::SetChecked(Context, Payload, FX, Transform);
 
 			// Int
@@ -393,10 +386,6 @@ namespace NCsFX
 			return Payload;
 		}
 
-		#undef PayloadImplType
-
-		#undef PooledPayloadType
-
 		void FLibrary::QueueDeallocateAllChecked(const FString& Context, const UObject* WorldContext)
 		{
 			return GetChecked(Context, WorldContext)->QueueDeallocateAll();
@@ -407,16 +396,9 @@ namespace NCsFX
 		// Spawn
 		#pragma region
 
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-
 		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
-			// Allocate Payload
-			typedef NCsFX::NPayload::FImpl PayloadImplType;
-
-			PayloadImplType* Payload = AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, Transform);
-
-			return GetChecked(Context, WorldContext)->Spawn(FX.Type, Payload);
+			return GetChecked(Context, WorldContext)->Spawn(FX.Type, AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, Transform));
 		}
 
 		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)
@@ -451,33 +433,17 @@ namespace NCsFX
 
 		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector3f& Location)
 		{
-			// Allocate Payload
-			typedef NCsFX::NPayload::FImpl PayloadImplType;
-
-			PayloadImplType* Payload = AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, Location);
-
-			return GetChecked(Context, WorldContext)->Spawn(FX.Type, Payload);
+			return GetChecked(Context, WorldContext)->Spawn(FX.Type, AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, Location));
 		}
-
-		#undef PooledPayloadType
-
-		#define PayloadType NCsFX::NPayload::IPayload
 
 		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsFX& Type, PayloadType* Payload)
 		{
 			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
 		}
 
-		#undef PayloadType
-
 		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
-			// Allocate Payload
-			typedef NCsFX::NPayload::FImpl PayloadImplType;
-
-			PayloadImplType* Payload = AllocatePayloadImplChecked(Context, WorldContext, FX, Transform);
-			
-			return GetChecked(Context, WorldContext)->Spawn(FX.Type, Payload);
+			return GetChecked(Context, WorldContext)->Spawn(FX.Type, AllocatePayloadImplChecked(Context, WorldContext, FX, Transform));
 		}
 
 		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)
@@ -511,28 +477,26 @@ namespace NCsFX
 		{
 			#define LogLevel void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/
 
-			#define FloatParameterType NCsFX::NParameter::NFloat::FFloatType
+			using ParameterType = NCsFX::NParameter::IParameter;
+			using ScaledParameterType = NCsFX::NParameter::NScaled::IScaled;
+			using FloatParameterType = NCsFX::NParameter::NFloat::FFloatType;
+			using VectorParameterType = NCsFX::NParameter::NVector::FVectorType;
+			using SkeletalMeshParameterType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType;
+
 			FloatParameterType* FLibrary::AllocateFloatChecked(const FString& Context, const UObject* WorldContext)
 			{
 				return GetManagerChecked(Context, WorldContext)->AllocateValue<FloatParameterType>();
 			}
-			#undef FloatParameterType
 
-			#define VectorParameterType NCsFX::NParameter::NVector::FVectorType
 			VectorParameterType* FLibrary::AllocateVectorChecked(const FString& Context, const UObject* WorldContext)
 			{
 				return GetManagerChecked(Context, WorldContext)->AllocateValue<VectorParameterType>();
 			}
-			#undef VectorParameterType
 
-			#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
 			SkeletalMeshParameterType* FLibrary::AllocateSkeletalMeshChecked(const FString& Context, const UObject* WorldContext)
 			{
 				return GetManagerChecked(Context, WorldContext)->AllocateValue<SkeletalMeshParameterType>();
 			}
-			#undef SkeletalMeshParameterType
-
-			#define ParameterType NCsFX::NParameter::IParameter
 
 			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, ParameterType* Value)
 			{
@@ -574,10 +538,6 @@ namespace NCsFX
 				return false;
 			}
 
-			#undef ParameterType
-
-			#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
-
 			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, ScaledParameterType* Value)
 			{
 				CS_IS_PTR_NULL_CHECKED(Value);
@@ -618,10 +578,6 @@ namespace NCsFX
 				return false;
 			}
 
-			#undef ScaledParameterType
-
-			#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
-
 			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, SkeletalMeshParameterType* Value)
 			{
 				CS_IS_PTR_NULL_CHECKED(Value);
@@ -661,8 +617,6 @@ namespace NCsFX
 				}
 				return false;
 			}
-
-			#undef SkeletalMeshParameterType
 
 			#undef LogLevel
 		}

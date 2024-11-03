@@ -14,6 +14,26 @@
 // FCsAnim2DTextureFlipbook_Params
 #pragma region
 
+struct FCsAnim2DTextureFlipbook_Params;
+
+// ParamsType (NCsAnim::N2D::NTexture::NPlay::NParams::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsAnim, N2D, NTexture, NPlay, NParams, FParams)
+
+namespace NCsAnim2DTextureFlipbook_Params
+{
+	using ThisType = FCsAnim2DTextureFlipbook_Params;
+	using ParamsType = NCsAnim::N2D::NTexture::NPlay::NParams::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSCORE_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
 // NCsAnim::N2D::NTexture::NPlay::NParams::FParams
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsAnim, N2D, NTexture, NPlay, NParams, FParams)
 
@@ -21,6 +41,12 @@ USTRUCT(BlueprintType)
 struct CSCORE_API FCsAnim2DTextureFlipbook_Params
 {
 	GENERATED_USTRUCT_BODY()
+
+private:
+
+	CS_DECLARE_STATIC_LOG_WARNING
+
+public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	UObject* ContextRoot;
@@ -50,13 +76,14 @@ struct CSCORE_API FCsAnim2DTextureFlipbook_Params
 	{
 	}
 
-#define ParamsType NCsAnim::N2D::NTexture::NPlay::NParams::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsAnim::N2D::NTexture::NPlay::NParams::FParams;
+	using _Impl = NCsAnim2DTextureFlipbook_Params::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING) const;
 };
 
 class UObject;
@@ -76,9 +103,13 @@ namespace NCsAnim
 					*/
 					struct CSCORE_API FParams
 					{
-					#define OnAbortType NCsCoroutine::FOnAbort
-					#define OnEndType NCsCoroutine::FOnEnd
-					#define AnimType NCsAnim::N2D::NTexture::NFlipbook::FFlipbook
+					private:
+
+						CS_DECLARE_STATIC_LOG_WARNING
+
+						using OnAbortType = NCsCoroutine::FOnAbort;
+						using OnEndType = NCsCoroutine::FOnEnd;
+						using AnimType = NCsAnim::N2D::NTexture::NFlipbook::FFlipbook;
 
 					public:
 
@@ -124,10 +155,6 @@ namespace NCsAnim
 							MID = nullptr;
 							Anim.Reset();
 						}
-
-					#undef OnAbortType
-					#undef OnEndType
-					#undef AnimType
 					};
 
 					struct CSCORE_API FResource : public TCsResourceContainer<FParams>

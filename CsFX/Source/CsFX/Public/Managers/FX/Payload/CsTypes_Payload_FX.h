@@ -11,8 +11,8 @@
 class UObject;
 class UNiagaraSystem;
 
-// NCsFX::NPayload::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, FImpl)
+// NCsFX::NPayload::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NPayload, NImpl, FImpl)
 
 USTRUCT(BlueprintType)
 struct CSFX_API FCsPayload_FX
@@ -39,7 +39,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload")
 	FCsTime Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsFXPayloadChange"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload", meta = (Bitmask, BitmaskEnum = "/Script.CsFX.ECsFXPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
 // FXPayloadType (NCsFX::Payload::IPayload)
@@ -57,9 +57,9 @@ public:
 	{
 	}
 
-#define PayloadType NCsFX::NPayload::FImpl
-	void CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadType* Payload) const;
-#undef PayloadType
+	using PayloadImplType = NCsFX::NPayload::NImpl::FImpl;
+
+	void CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadImplType* Payload) const;
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;

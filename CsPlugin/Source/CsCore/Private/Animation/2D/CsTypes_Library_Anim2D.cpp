@@ -17,27 +17,28 @@
 // FCsAnim2DTextureFlipbook_Params
 #pragma region
 
-#define ParamsType NCsAnim::N2D::NTexture::NPlay::NParams::FParams
-
-void FCsAnim2DTextureFlipbook_Params::CopyToParams(ParamsType* Params)
+namespace NCsAnim2DTextureFlipbook_Params
 {
-	Params->ContextRoot = ContextRoot;
-	Params->UpdateGroup = UpdateGroup;
-	Params->Owner = Owner;
-	Params->MID = MID;
-	Anim.CopyToFlipbook(Params->GetAnimPtr());
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		Params->ContextRoot = This->ContextRoot;
+		Params->UpdateGroup = This->UpdateGroup;
+		Params->Owner = This->Owner;
+		Params->MID = This->MID;
+		This->Anim.CopyToFlipbook(Params->GetAnimPtr());
+	}
+
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		Params->ContextRoot = This->ContextRoot;
+		Params->UpdateGroup = This->UpdateGroup;
+		Params->Owner = This->Owner;
+		Params->MID = This->MID;
+		This->Anim.CopyToFlipbookAsValue(Params->GetAnimPtr());
+	}	
 }
 
-void FCsAnim2DTextureFlipbook_Params::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->ContextRoot = ContextRoot;
-	Params->UpdateGroup = UpdateGroup;
-	Params->Owner = Owner;
-	Params->MID = MID;
-	Anim.CopyToFlipbookAsValue(Params->GetAnimPtr());
-}
-
-#undef ParamsType
+CS_DEFINE_STATIC_LOG_WARNING(FCsAnim2DTextureFlipbook_Params, FCsLog::Warning);
 
 bool FCsAnim2DTextureFlipbook_Params::IsValidChecked(const FString& Context) const
 {
@@ -56,7 +57,7 @@ bool FCsAnim2DTextureFlipbook_Params::IsValidChecked(const FString& Context) con
 	return true;
 }
 
-bool FCsAnim2DTextureFlipbook_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsAnim2DTextureFlipbook_Params::IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING_COMMENT) const
 {
 #if WITH_EDITOR
 	// Check Context is Valid.
@@ -88,6 +89,8 @@ namespace NCsAnim
 			{
 				namespace NParams
 				{
+					CS_DEFINE_STATIC_LOG_WARNING(FParams, FCsLog::Warning);
+
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
 					#if WITH_EDITOR
@@ -105,7 +108,7 @@ namespace NCsAnim
 						return true;
 					}
 
-					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+					bool FParams::IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING_COMMENT) const
 					{
 					#if WITH_EDITOR
 						// Check Context is Valid.

@@ -209,9 +209,28 @@ class CSFX_API UCsManager_FX : public UObject
 
 public:	
 
-#define ManagerType NCsFX::FManager 
-#define PayloadType NCsFX::NPayload::IPayload
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+using ManagerType = NCsFX::FManager;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PayloadType = NCsFX::NPayload::IPayload;
+
+using ParameterType = NCsFX::NParameter::IParameter;
+using IntParameterManagerType = NCsFX::NParameter::NInt::FManager;
+using IntParameterType = NCsFX::NParameter::NInt::FIntType;
+using FloatParameterManagerType = NCsFX::NParameter::NFloat::FManager;
+using FloatParameterType = NCsFX::NParameter::NFloat::FFloatType;
+using VectorParameterManagerType = NCsFX::NParameter::NVector::FManager;
+using VectorParameterType = NCsFX::NParameter::NVector::FVectorType;
+
+using ScaledParameterType = NCsFX::NParameter::NScaled::IScaled;
+using ScaledIntParameterManagerType = NCsFX::NParameter::NScaled::NInt::FManager;
+using ScaledIntParameterType = NCsFX::NParameter::NScaled::NInt::FIntType;
+using ScaledFloatParameterManagerType = NCsFX::NParameter::NScaled::NFloat::FManager;
+using ScaledFloatParameterType = NCsFX::NParameter::NScaled::NFloat::FFloatType;
+using ScaledVectorParameterManagerType = NCsFX::NParameter::NScaled::NVector::FManager;
+using ScaledVectorParameterType = NCsFX::NParameter::NScaled::NVector::FVectorType;
+
+using SkeletalMeshParameterManagerType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::FManager;
+using SkeletalMeshParameterType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType;
 
 // Singleton
 #pragma region
@@ -882,8 +901,6 @@ public:
 	template<typename ParameterValueType>
 	ParameterValueType* AllocateValue();
 
-#define ParameterType NCsFX::NParameter::IParameter
-
 	/**
 	*
 	*
@@ -891,85 +908,61 @@ public:
 	*/
 	void DeallocateValue(ParameterType* Value);
 
-#undef ParameterType
-
 	// Int
 #pragma region
 
-#define ParameterIntType NCsFX::NParameter::NInt::FIntType
-#define ParameterIntManagerType NCsFX::NParameter::NInt::FManager
-
 private:
 
-	ParameterIntManagerType Manager_Parameter_Int;
+	IntParameterManagerType Manager_Parameter_Int;
 
 public:
 
 	template<>
-	FORCEINLINE ParameterIntType* AllocateValue<ParameterIntType>() { return Manager_Parameter_Int.AllocateResource(); }
+	FORCEINLINE IntParameterType* AllocateValue<IntParameterType>() { return Manager_Parameter_Int.AllocateResource(); }
 
 private:
 
-	FORCEINLINE void DeallocateValue(ParameterIntType* Value) { Manager_Parameter_Int.DeallocateAt(Value, Value->GetIndex()); }
+	FORCEINLINE void DeallocateValue(IntParameterType* Value) { Manager_Parameter_Int.DeallocateAt(Value, Value->GetIndex()); }
 
-#undef ParameterIntType
-#undef ParameterIntManagerType
-
-#pragma endregion Float
+#pragma endregion Int
 
 	// Float
 #pragma region
-
-#define ParameterFloatType NCsFX::NParameter::NFloat::FFloatType
-#define ParameterFloatManagerType NCsFX::NParameter::NFloat::FManager
-
 private:
 
-	ParameterFloatManagerType Manager_Parameter_Float;
+	FloatParameterManagerType Manager_Parameter_Float;
 
 public:
 
 	template<>
-	FORCEINLINE ParameterFloatType* AllocateValue<ParameterFloatType>() { return Manager_Parameter_Float.AllocateResource(); }
+	FORCEINLINE FloatParameterType* AllocateValue<FloatParameterType>() { return Manager_Parameter_Float.AllocateResource(); }
 
 private:
 
-	FORCEINLINE void DeallocateValue(ParameterFloatType* Value) { Manager_Parameter_Float.DeallocateAt(Value, Value->GetIndex()); }
-
-#undef ParameterFloatType
-#undef ParameterFloatManagerType
+	FORCEINLINE void DeallocateValue(FloatParameterType* Value) { Manager_Parameter_Float.DeallocateAt(Value, Value->GetIndex()); }
 
 #pragma endregion Float
 
 	// Vector
 #pragma region
-
-#define ParameterVectorType NCsFX::NParameter::NVector::FVectorType
-#define ParameterVectorManagerType NCsFX::NParameter::NVector::FManager
-
 private:
 
-	ParameterVectorManagerType Manager_Parameter_Vector;
+	VectorParameterManagerType Manager_Parameter_Vector;
 
 public:
 
 	template<>
-	FORCEINLINE ParameterVectorType* AllocateValue<ParameterVectorType>() { return Manager_Parameter_Vector.AllocateResource(); }
+	FORCEINLINE VectorParameterType* AllocateValue<VectorParameterType>() { return Manager_Parameter_Vector.AllocateResource(); }
 
 private:
 
-	FORCEINLINE void DeallocateValue(ParameterVectorType* Value){ Manager_Parameter_Vector.DeallocateAt(Value, Value->GetIndex()); }
-
-#undef ParameterVectorType
-#undef ParameterVectorManagerType
+	FORCEINLINE void DeallocateValue(VectorParameterType* Value){ Manager_Parameter_Vector.DeallocateAt(Value, Value->GetIndex()); }
 
 #pragma endregion Vector
 
 	// Scaled
 #pragma region
 public:
-
-#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
 
 	/**
 	*
@@ -978,77 +971,54 @@ public:
 	*/
 	void DeallocateValue(ScaledParameterType* Value);
 
-#undef ScaledParameterType
-
 		// Int
 #pragma region
-
-#define ScaledParameterIntType NCsFX::NParameter::NScaled::NInt::FIntType
-#define ScaledParameterIntManagerType NCsFX::NParameter::NScaled::NInt::FManager
-
 private:
 
-	ScaledParameterIntManagerType Manager_Parameter_Scaled_Int;
+	ScaledIntParameterManagerType Manager_Parameter_Scaled_Int;
 
 public:
 
 	template<>
-	FORCEINLINE ScaledParameterIntType* AllocateValue<ScaledParameterIntType>() { return Manager_Parameter_Scaled_Int.AllocateResource(); }
+	FORCEINLINE ScaledIntParameterType* AllocateValue<ScaledIntParameterType>() { return Manager_Parameter_Scaled_Int.AllocateResource(); }
 
 private:
 
-	FORCEINLINE void DeallocateValue(ScaledParameterIntType* Value) { Manager_Parameter_Scaled_Int.DeallocateAt(Value, Value->GetIndex()); }
-
-#undef ScaledParameterIntType
-#undef ScaledParameterIntManagerType
+	FORCEINLINE void DeallocateValue(ScaledIntParameterType* Value) { Manager_Parameter_Scaled_Int.DeallocateAt(Value, Value->GetIndex()); }
 
 #pragma endregion Float
 
 		// Float
 #pragma region
-
-#define ScaledParameterFloatType NCsFX::NParameter::NScaled::NFloat::FFloatType
-#define ScaledParameterFloatManagerType NCsFX::NParameter::NScaled::NFloat::FManager
-
 private:
 
-	ScaledParameterFloatManagerType Manager_Parameter_Scaled_Float;
+	ScaledFloatParameterManagerType Manager_Parameter_Scaled_Float;
 
 public:
 
 	template<>
-	FORCEINLINE ScaledParameterFloatType* AllocateValue<ScaledParameterFloatType>() { return Manager_Parameter_Scaled_Float.AllocateResource(); }
+	FORCEINLINE ScaledFloatParameterType* AllocateValue<ScaledFloatParameterType>() { return Manager_Parameter_Scaled_Float.AllocateResource(); }
 
 private:
 
-	FORCEINLINE void DeallocateValue(ScaledParameterFloatType* Value) { Manager_Parameter_Scaled_Float.DeallocateAt(Value, Value->GetIndex()); }
-
-#undef ScaledParameterFloatType
-#undef ScaledParameterFloatManagerType
+	FORCEINLINE void DeallocateValue(ScaledFloatParameterType* Value) { Manager_Parameter_Scaled_Float.DeallocateAt(Value, Value->GetIndex()); }
 
 #pragma endregion Float
 
 		// Vector
 #pragma region
-
-#define ScaledParameterVectorType NCsFX::NParameter::NScaled::NVector::FVectorType
-#define ScaledParameterVectorManagerType NCsFX::NParameter::NScaled::NVector::FManager
-
 private:
 
-	ScaledParameterVectorManagerType Manager_Parameter_Scaled_Vector;
+	ScaledVectorParameterManagerType Manager_Parameter_Scaled_Vector;
 
 public:
 
 	template<>
-	FORCEINLINE ScaledParameterVectorType* AllocateValue<ScaledParameterVectorType>() { return Manager_Parameter_Scaled_Vector.AllocateResource(); }
+	FORCEINLINE ScaledVectorParameterType* AllocateValue<ScaledVectorParameterType>() { return Manager_Parameter_Scaled_Vector.AllocateResource(); }
 
 private:
 
-	FORCEINLINE void DeallocateValue(ScaledParameterVectorType* Value){ Manager_Parameter_Scaled_Vector.DeallocateAt(Value, Value->GetIndex()); }
-
-#undef ScaledParameterVectorType
-#undef ScaledParameterVectorManagerType
+	FORCEINLINE void DeallocateValue(ScaledVectorParameterType* Value){ Manager_Parameter_Scaled_Vector.DeallocateAt(Value, Value->GetIndex()); }
 
 #pragma endregion Vector
 
@@ -1059,10 +1029,6 @@ private:
 
 		// Skeletal Mesh
 #pragma region
-
-#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
-#define SkeletalMeshParameterManagerType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FManager
-
 private:
 
 	SkeletalMeshParameterManagerType Manager_Parameter_DataInterface_SkeletalMesh;
@@ -1073,16 +1039,9 @@ public:
 	FORCEINLINE SkeletalMeshParameterType* AllocateValue<SkeletalMeshParameterType>() { return Manager_Parameter_DataInterface_SkeletalMesh.AllocateResource(); }
 	FORCEINLINE void DeallocateValue(SkeletalMeshParameterType* Value) { Manager_Parameter_DataInterface_SkeletalMesh.DeallocateAt(Value, Value->GetIndex()); }
 
-#undef SkeletalMeshParameterType
-#undef SkeletalMeshParameterManagerType
-
 #pragma endregion Skeletal Mesh
 
 #pragma endregion Data Interface
 
 #pragma endregion Params
-
-#undef ManagerType
-#undef PayloadType
-#undef ConstructParamsType
 };

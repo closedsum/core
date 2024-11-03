@@ -25,7 +25,7 @@ namespace NCsMoveByInterp_Params
 	using MoverType = NCsMovement::EMover;
 	using DestinationType = NCsMovement::EDestination;
 
-	void FImpl::CopyToParams(FCsMoveByInterp_Params* This, ParamsType* Params)
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
 	{
 		CS_THIS_COPY_TO_PROXY(Params, Easing);
 		CS_THIS_COPY_TYPE_TO_PROXY(Params, Mover, MoverType);
@@ -46,7 +46,7 @@ namespace NCsMoveByInterp_Params
 		CS_THIS_COPY_TO_PROXY(Params, Group);
 	}
 
-	void FImpl::CopyToParamsAsValue(const FCsMoveByInterp_Params* This, ParamsType* Params)
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
 	{
 		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Easing);
 		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Mover, MoverType);
@@ -67,6 +67,8 @@ namespace NCsMoveByInterp_Params
 		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Group);
 	}
 }
+
+CS_DEFINE_STATIC_LOG_WARNING(FCsMoveByInterp_Params, NCsCore::NLibrary::FLog::Warning);
 
 void FCsMoveByInterp_Params::ConditionalSetSafeMoveObject(const FString& Context, const UObject* WorldContext)
 {
@@ -196,7 +198,7 @@ void FCsMoveByInterp_Params::ConditionalSetSafeDestinationObject(const FString& 
 	}
 }
 
-bool FCsMoveByInterp_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
+bool FCsMoveByInterp_Params::IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING_COMMENT) const
 {
 	// Check Easing is Valid
 	if (!EMCsEasingType::Get().IsValidEnum(Easing))
@@ -319,6 +321,8 @@ namespace NCsMovement
 		{
 			namespace NParams
 			{
+				CS_DEFINE_STATIC_LOG_WARNING(FParams, NCsCore::NLibrary::FLog::Warning);
+
 				using MoverMapType = NCsMovement::EMMover;
 				using DestinationMapType = NCsMovement::EMDestination;
 
@@ -500,7 +504,7 @@ namespace NCsMovement
 					return true;
 				}
 
-				bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
+				bool FParams::IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING_COMMENT) const
 				{
 					CS_IS_ENUM_VALID(EMCsEasingType, ECsEasingType, GetEasing())
 					CS_IS_ENUM_VALID(MoverMapType, MoverType, GetMover())

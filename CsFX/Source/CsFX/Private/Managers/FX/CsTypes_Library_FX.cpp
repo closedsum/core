@@ -12,6 +12,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Library_FX)
 
+using LogClassType = NCsFX::FLog;
+
 // FXSpawnFrequency
 #pragma region
 
@@ -62,7 +64,7 @@ namespace NCsFX
 
 namespace NCsFX_Spawn_FrequenceParams
 {
-	void FImpl::CopyToParams(FCsFX_Spawn_FrequencyParams* This, ParamsType* Params)
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
 	{
 		CS_THIS_COPY_TYPE_TO_PROXY(Params, Type, FrequencyType);
 		CS_THIS_COPY_TO_PROXY(Params, Delay);
@@ -71,7 +73,7 @@ namespace NCsFX_Spawn_FrequenceParams
 		CS_THIS_COPY_TO_PROXY(Params, Time);
 	}
 
-	void FImpl::CopyToParamsAsValue(const FCsFX_Spawn_FrequencyParams* This, ParamsType* Params)
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
 	{
 		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Type, FrequencyType);
 		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Delay);
@@ -80,6 +82,8 @@ namespace NCsFX_Spawn_FrequenceParams
 		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Time);
 	}
 }
+
+CS_DEFINE_STATIC_LOG_WARNING(FCsFX_Spawn_FrequencyParams, LogClassType::Warning);
 
 bool FCsFX_Spawn_FrequencyParams::IsValidChecked(const FString& Context) const
 {
@@ -116,7 +120,7 @@ bool FCsFX_Spawn_FrequencyParams::IsValidChecked(const FString& Context) const
 	return true;
 }
 
-bool FCsFX_Spawn_FrequencyParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/) const
+bool FCsFX_Spawn_FrequencyParams::IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING_COMMENT) const
 {
 	// Once
 	if (Type == FrequencyType::Once)
@@ -254,6 +258,8 @@ namespace NCsFX
 	{
 		namespace NParams
 		{
+			CS_DEFINE_STATIC_LOG_WARNING(FFrequency, LogClassType::Warning);
+
 			bool FFrequency::IsValidChecked(const FString& Context) const
 			{
 				// Once
@@ -289,7 +295,7 @@ namespace NCsFX
 				return true;
 			}
 
-			bool FFrequency::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/) const
+			bool FFrequency::IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING_COMMENT) const
 			{
 				// Once
 				if (GetType() == FrequencyType::Once)
@@ -464,20 +470,21 @@ namespace NCsFX
 	}
 }
 
-#define ParamsType NCsFX::NSpawn::NParams::FParams
-
-void FCsFX_Spawn_Params::CopyToParamsAsValue(ParamsType* Params) const
+namespace NCsFX_Spawn_Params
 {
-	Params->FX = FX;
-	Params->Delay = Delay;
-	Params->Actor = Actor;
-	FrequencyParams.CopyToParamsAsValue(Params->GetFrequencyParamsPtr());
-	Params->Group = Group;
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		Params->FX = This->FX;
+		Params->Delay = This->Delay;
+		Params->Actor = This->Actor;
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, FrequencyParams);
+		Params->Group = This->Group;
+	}
 }
 
-#undef ParamsType
+CS_DEFINE_STATIC_LOG_WARNING(FCsFX_Spawn_Params, LogClassType::Warning);
 
-bool FCsFX_Spawn_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/) const
+bool FCsFX_Spawn_Params::IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING_COMMENT) const
 {
 	CS_IS_VALID(FX)
 	CS_IS_FLOAT_GREATER_THAN_CHECKED(Delay, 0.0f)

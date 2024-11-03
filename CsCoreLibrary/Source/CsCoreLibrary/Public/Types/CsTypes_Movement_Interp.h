@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "CsMacro_Namespace.h"
 #include "Types/CsTypes_Interpolation.h"
 #include "Types/CsTypes_Movement.h"
@@ -24,14 +25,16 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsMovement, NTo, NInterp, NParams, FParams)
 
 namespace NCsMoveByInterp_Params
 {
+	using ThisType = FCsMoveByInterp_Params;
 	using ParamsType = NCsMovement::NTo::NInterp::NParams::FParams;
 
+	// Separate implementation to allow for clearer use of aliases
 	struct CSCORELIBRARY_API FImpl
 	{
 	public:
 
-		static void CopyToParams(FCsMoveByInterp_Params* This, ParamsType* Params);
-		static void CopyToParamsAsValue(const FCsMoveByInterp_Params* This, ParamsType* Params);
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
 	};
 }
 
@@ -47,6 +50,10 @@ USTRUCT(BlueprintType)
 struct CSCORELIBRARY_API FCsMoveByInterp_Params
 {
 	GENERATED_USTRUCT_BODY()
+
+private:
+
+	CS_DECLARE_STATIC_LOG_WARNING
 
 public:
 
@@ -153,14 +160,14 @@ public:
 	using ParamsType = NCsMovement::NTo::NInterp::NParams::FParams;
 	using _Impl = NCsMoveByInterp_Params::FImpl;
 
-	FORCEINLINE void CopyToParams(ParamsType* Params) { _Impl::CopyToParams(this, Params); }
-	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const { _Impl::CopyToParamsAsValue(this, Params); }
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	void ConditionalSetSafeMoveObject(const FString& Context, const UObject* WorldContext);
 
 	void ConditionalSetSafeDestinationObject(const FString& Context, const UObject* WorldContext);
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning) const;
+	bool IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING) const;
 };
 
 class AActor;
@@ -182,6 +189,8 @@ namespace NCsMovement
 					using DestinationType = NCsMovement::EDestination;
 
 				private:
+
+					CS_DECLARE_STATIC_LOG_WARNING
 
 					CS_DECLARE_MEMBER_WITH_PROXY(Easing, ECsEasingType)
 					CS_DECLARE_MEMBER_WITH_PROXY(Mover, MoverType)
@@ -300,7 +309,7 @@ namespace NCsMovement
 					void ConditionalSetDestinationObjectChecked(const FString& Context, UObject* WorldContext);
 
 					bool IsValidChecked(const FString& Context) const;
-					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning) const;
+					bool IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING) const;
 
 					FVector3f GetEndLocation() const;
 

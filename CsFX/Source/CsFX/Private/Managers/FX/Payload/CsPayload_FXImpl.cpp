@@ -5,12 +5,13 @@
 
 // Types
 #include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
 
-const FName NCsFX::NPayload::FImpl::Name = FName("NCsFX::NPayload::FImpl");;
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsFX::NPayload::NImpl::FImpl);
 
 namespace NCsFX
 {
@@ -25,102 +26,93 @@ namespace NCsFX
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFX::NPayload::NImpl, Reset);
 				}
 			}
-		}
 
-		#define DeallocateMethodType NCsFX::EDeallocateMethod
+			using ParameterLibrary = NCsFX::NManager::NParameter::FLibrary;
 
-		FImpl::FImpl() :
-			Root(nullptr),
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-			bAllocated(false),
-			UpdateType(NCsPooledObject::EUpdate::Manager),
-			Instigator(nullptr),
-			Owner(nullptr),
-			Parent(nullptr),
-			Time(),
-			PreserveChangesFromDefaultMask(0),
-			// FXPayloadType (NCsFX::Payload::IPayload)
-			FXSystem(nullptr),
-			DeallocateMethod(DeallocateMethodType::Complete),
-			LifeTime(0.0f),
-			DeathTime(0.0f),
-			bHideOnQueueDeallocate(false),
-			AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
-			Bone(NAME_None),
-			TransformRules(0),
-			Transform(FTransform3f::Identity),
-			bAbsoluteLocation(false),
-			bAbsoluteRotation(false),
-			bAbsoluteScale(false),
-			bApplyTransformScale(true),
-			Parameters(),
-			ScaledParameters(),
-			SkeletalMeshParameters()
-		{
-			InterfaceMap = new FCsInterfaceMap();
+			FImpl::FImpl() :
+				Root(nullptr),
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+				bAllocated(false),
+				UpdateType(NCsPooledObject::EUpdate::Manager),
+				Instigator(nullptr),
+				Owner(nullptr),
+				Parent(nullptr),
+				Time(),
+				PreserveChangesFromDefaultMask(0),
+				// FXPayloadType (NCsFX::Payload::IPayload)
+				FXSystem(nullptr),
+				DeallocateMethod(DeallocateMethodType::Complete),
+				LifeTime(0.0f),
+				DeathTime(0.0f),
+				bHideOnQueueDeallocate(false),
+				AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
+				Bone(NAME_None),
+				TransformRules(0),
+				Transform(FTransform3f::Identity),
+				bAbsoluteLocation(false),
+				bAbsoluteRotation(false),
+				bAbsoluteScale(false),
+				bApplyTransformScale(true),
+				Parameters(),
+				ScaledParameters(),
+				SkeletalMeshParameters()
+			{
+				InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRoot<FImpl>(this);
+				InterfaceMap->SetRoot<FImpl>(this);
 
-			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
-			typedef NCsFX::NPayload::IPayload FXPayloadType;
+				InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
+				InterfaceMap->Add<PayloadType>(static_cast<PayloadType*>(this));
+			}
 
-			InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
-			InterfaceMap->Add<FXPayloadType>(static_cast<FXPayloadType*>(this));
-		}
-
-		#undef DeallocateMethodType
-
-		FImpl::~FImpl()
-		{
-			delete InterfaceMap;
-		}
-
-		// CsPooledObjectPayloadType (NCsPooledObject::NPayload::IPayload)
-		#pragma region
-
-		void FImpl::Reset()
-		{
-			using namespace NCsFX::NPayload::NImpl::NCached;
-
-			const FString& Context = Str::Reset;
+			FImpl::~FImpl()
+			{
+				delete InterfaceMap;
+			}
 
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-			bAllocated = false;
-			UpdateType = NCsPooledObject::EUpdate::Manager;
-			Instigator = nullptr;
-			Owner = nullptr;
-			Parent = nullptr;
+			#pragma region
 
-			Time.Reset();
+			void FImpl::Reset()
+			{
+				using namespace NCsFX::NPayload::NImpl::NCached;
 
-			PreserveChangesFromDefaultMask = 0;
+				const FString& Context = Str::Reset;
 
-			// FXPayloadType (NCsFX::NPayload::IPayload)
-			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
+				// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+				bAllocated = false;
+				UpdateType = NCsPooledObject::EUpdate::Manager;
+				Instigator = nullptr;
+				Owner = nullptr;
+				Parent = nullptr;
 
-			FXSystem = nullptr;
-			DeallocateMethod = DeallocateMethodType::Complete;
-			LifeTime = 0.0f;
-			DeathTime = 0.0f;
-			bHideOnQueueDeallocate = false;
-			AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
-			Bone = NAME_None;
-			TransformRules = 0;
-			Transform = FTransform3f::Identity;
-			bAbsoluteLocation = false;
-			bAbsoluteRotation = false;
-			bAbsoluteScale = false;
-			bApplyTransformScale = true;
+				Time.Reset();
 
-			typedef NCsFX::NManager::NParameter::FLibrary ParameterLibrary;
+				PreserveChangesFromDefaultMask = 0;
 
-			ParameterLibrary::DeallocateChecked(Context, GetRoot(), Parameters);
-			ParameterLibrary::DeallocateChecked(Context, GetRoot(), ScaledParameters);
-			ParameterLibrary::DeallocateChecked(Context, GetRoot(), SkeletalMeshParameters);
+				// PayloadType (NCsFX::NPayload::IPayload)
+				FXSystem = nullptr;
+				DeallocateMethod = DeallocateMethodType::Complete;
+				LifeTime = 0.0f;
+				DeathTime = 0.0f;
+				bHideOnQueueDeallocate = false;
+				AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
+				Bone = NAME_None;
+				TransformRules = 0;
+				Transform = FTransform3f::Identity;
+				bAbsoluteLocation = false;
+				bAbsoluteRotation = false;
+				bAbsoluteScale = false;
+				bApplyTransformScale = true;
+
+				ParameterLibrary::DeallocateChecked(Context, GetRoot(), Parameters);
+				ParameterLibrary::DeallocateChecked(Context, GetRoot(), ScaledParameters);
+				ParameterLibrary::DeallocateChecked(Context, GetRoot(), SkeletalMeshParameters);
+			}
+
+			#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		}
-
-		#pragma endregion CsPooledObjectPayloadType (NCsPooledObject::NPayload::IPayload)
 	}
 }

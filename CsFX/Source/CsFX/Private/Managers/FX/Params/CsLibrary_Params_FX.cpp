@@ -28,27 +28,21 @@ namespace NCsFX
 		}
 
 		#define LogLevel void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/
-		#define ParameterType NCsFX::NParameter::IParameter
+		
+		using ParameterType = NCsFX::NParameter::IParameter;
 
 		bool FLibrary::IsValidChecked(const FString& Context, const ParameterType* Parameter)
 		{
-			// Check Parameter is Valid
 			CS_IS_PTR_NULL_CHECKED(Parameter)
-			// Check Name is Valid
 			CS_IS_NAME_NONE_CHECKED(Parameter->GetName())
-			// Check ValueType is Valid
-			check(EMValue::Get().IsValidEnumChecked(Context, Parameter->GetValueType()));
-
+			CS_IS_ENUM_VALID_CHECKED(EMValue, Parameter->GetValueType())
 			return true;
 		}
 
 		bool FLibrary::IsValid(const FString& Context, const ParameterType* Parameter, LogLevel)
 		{
-			// Check Parameter is Valid
 			CS_IS_PTR_NULL(Parameter)
-			// Check Name is Valid
 			CS_IS_NAME_NONE(Parameter->GetName())
-			// Check ValueType is Valid
 			CS_IS_ENUM_VALID(EMValue, EValue, Parameter->GetValueType())
 			return true;
 		}
@@ -61,7 +55,6 @@ namespace NCsFX
 			CS_IS_PTR_NULL_CHECKED(Parameter)
 
 			checkf(Parameter->GetValueType() == EValue::Int, TEXT("%s: Parameter->GetValueType(): %s != Int."), *Context, EMValue::Get().ToChar(Parameter->GetValueType()));
-
 			return *(int32*)(Parameter->GetValuePtr());
 		}
 
@@ -88,7 +81,6 @@ namespace NCsFX
 			CS_IS_PTR_NULL_CHECKED(Parameter)
 
 			checkf(Parameter->GetValueType() == EValue::Float, TEXT("%s: Parameter->GetValueType(): %s != Float."), *Context, EMValue::Get().ToChar(Parameter->GetValueType()));
-
 			return *(float*)(Parameter->GetValuePtr());
 		}
 
@@ -114,7 +106,6 @@ namespace NCsFX
 			CS_IS_PTR_NULL_CHECKED(Parameter)
 
 			checkf(Parameter->GetValueType() == EValue::Vector, TEXT("%s: Parameter->GetValueType(): %s != Vector."), *Context, EMValue::Get().ToChar(Parameter->GetValueType()));
-
 			return *(FVector3f*)(Parameter->GetValuePtr());
 		}
 
@@ -133,6 +124,5 @@ namespace NCsFX
 		#pragma endregion Vector
 
 		#undef LogLevel
-		#undef ParameterType
 	}
 }

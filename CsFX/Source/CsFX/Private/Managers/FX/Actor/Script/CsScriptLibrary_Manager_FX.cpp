@@ -36,6 +36,8 @@ UCsScriptLibrary_Manager_FX::UCsScriptLibrary_Manager_FX(const FObjectInitialize
 {
 }
 
+using PayloadImplType = NCsFX::NPayload::NImpl::FImpl;
+
 // Pool
 #pragma region
 
@@ -96,8 +98,6 @@ int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldC
 #endif // #if WITH_EDITOR
 
 	UCsManager_FX* Manager_FX = UCsManager_FX::Get(ContextRoot);
-
-	typedef NCsFX::NPayload::FImpl PayloadImplType;
 
 	const FECsFX& Type			 = Payload.FX.Type;
 	PayloadImplType* PayloadImpl = Manager_FX->AllocatePayload<PayloadImplType>(Type);

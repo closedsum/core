@@ -3,4 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/FX/Payload/CsPayload_FX.h"
 
-const FName NCsFX::NPayload::IPayload::Name = FName("NCsFX::NPayload::IPayload");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsFX::NPayload::IPayload);

@@ -115,6 +115,14 @@ UCsManager_FX::UCsManager_FX(const FObjectInitializer& ObjectInitializer)
 {
 }
 
+using ManagerParamsType = NCsFX::FManager::FParams;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PayloadType = NCsFX::NPayload::IPayload;
+using PayloadImplType = NCsFX::NPayload::NImpl::FImpl;
+using ParameterType = NCsFX::NParameter::IParameter;
+using ScaledParameterType = NCsFX::NParameter::NScaled::IScaled;
+using ParameterValueType = NCsFX::NParameter::EValue;
+
 // Singleton
 #pragma region
 
@@ -570,8 +578,6 @@ void UCsManager_FX::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsFX::FManager::FParams ManagerParamsType;
-
 		ManagerParamsType ManagerParams;
 
 		ManagerParams.Name  = TEXT("UCsManager_FX::NCsFX::FManager");
@@ -616,7 +622,6 @@ void UCsManager_FX::InitInternalFromSettings()
 	}
 }
 
-#define ManagerParamsType NCsFX::FManager::FParams
 void UCsManager_FX::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
@@ -645,7 +650,6 @@ void UCsManager_FX::InitInternal(const ManagerParamsType& Params)
 	}
 	Internal.Init(Params);
 }
-#undef ManagerParamsType
 
 void UCsManager_FX::Clear()
 {
@@ -677,10 +681,8 @@ FCsFXActorPooled* UCsManager_FX::ConstructContainer(const FECsFX& Type)
 	return new FCsFXActorPooled();
 }
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 TMulticastDelegate<void(const FCsFXActorPooled*, const ConstructParamsType&)>& UCsManager_FX::GetOnConstructObject_Event(const FECsFX& Type)
 {
-#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 
@@ -904,12 +906,8 @@ void UCsManager_FX::ConstructPayloads(const FECsFX& Type, const int32& Size)
 	Internal.ConstructPayloads(Type, Size);
 }
 
-#define PayloadType NCsFX::NPayload::IPayload
-
 PayloadType* UCsManager_FX::ConstructPayload(const FECsFX& Type)
 {
-	typedef NCsFX::NPayload::FImpl PayloadImplType;
-
 	PayloadImplType* Payload = new PayloadImplType();
 
 	Payload->SetRoot(MyRoot);
@@ -922,25 +920,18 @@ PayloadType* UCsManager_FX::AllocatePayload(const FECsFX& Type)
 	return Internal.AllocatePayload(Type);
 }
 
-#undef PayloadType
-
 #pragma endregion Payload
 
 	// Spawn
 #pragma region
 
-#define PayloadType NCsFX::NPayload::IPayload
 const FCsFXActorPooled* UCsManager_FX::Spawn(const FECsFX& Type, PayloadType* Payload)
 {
-#undef PayloadType
-
 	using namespace NCsManagerFX::NCached;
 
 	const FString& Context = Str::Spawn;
 
-	typedef NCsFX::NPayload::FLibrary FXPayloadLibrary;
-
-	check(FXPayloadLibrary::IsValidChecked(Context, Payload));
+	check(CsFXPayloadLibrary::IsValidChecked(Context, Payload));
 
 	return Internal.Spawn(Type, Payload);
 }
@@ -1046,13 +1037,9 @@ ICsData_FX* UCsManager_FX::GetData(const FName& Name)
 // Params
 #pragma region
 
-#define ParameterType NCsFX::NParameter::IParameter
 void UCsManager_FX::DeallocateValue(ParameterType* Value)
 {
-#undef ParameterType
 	checkf(Value, TEXT("UCsManager_FX::DeallocateValue: Value is NULL."));
-
-	typedef NCsFX::NParameter::EValue ParameterValueType;
 
 	const ParameterValueType& ValueType = Value->GetValueType();
 
@@ -1071,13 +1058,9 @@ void UCsManager_FX::DeallocateValue(ParameterType* Value)
 	// Scaled
 #pragma region
 
-#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
 void UCsManager_FX::DeallocateValue(ScaledParameterType* Value)
 {
-#undef ScaledParameterType
 	checkf(Value, TEXT("UCsManager_FX::DeallocateValue: Value is NULL."));
-
-	typedef NCsFX::NParameter::EValue ParameterValueType;
 
 	const ParameterValueType& ValueType = Value->GetParameter()->GetValueType();
 

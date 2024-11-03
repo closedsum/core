@@ -10,11 +10,11 @@
 
 class UNiagaraSystem;
 
-// NCsFX::NParameter::IParameter
+// ParameterType (NCsFX::NParameter::IParameter)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
-// NCsFX::NParameter::NScaled::IScaled
+// ScaledParameterType (NCsFX::NParameter::NScaled::IScaled)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
-// NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+// SkeletalMeshParameterType (NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NDataInterface, NSkeletalMesh, FSkeletalMeshType)
 
 namespace NCsFX
@@ -29,10 +29,16 @@ namespace NCsFX
 
 			static const FName Name;
 
-		#define DeallocateMethodType NCsFX::EDeallocateMethod
-		#define ParameterType NCsFX::NParameter::IParameter
-		#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
-		#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+		private:
+
+			// Allow clearer names without name collisions
+			struct _
+			{
+				using DeallocateMethodType = NCsFX::EDeallocateMethod;
+				using ParameterType = NCsFX::NParameter::IParameter;
+				using ScaledParameterType = NCsFX::NParameter::NScaled::IScaled;
+				using SkeletalMeshParameterType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType;
+			};
 
 		public:
 
@@ -51,7 +57,7 @@ namespace NCsFX
 			* 
 			* return Deallocate Method
 			*/
-			virtual const DeallocateMethodType& GetDeallocateMethod() const = 0;
+			virtual const _::DeallocateMethodType& GetDeallocateMethod() const = 0;
 
 			/**
 			* Relevant if the DeallocateMethod == DeallocateMethodType::LifeTime.
@@ -149,7 +155,7 @@ namespace NCsFX
 			* Get whether the Transform's Scale should be applied to the FX.
 			* If NOT, the object defaults to FVector3f::OneVector or just the scale of the object the FX
 			* is attached to.
-			* NOTE: Usually when scaling parameters, this should be FALSE.
+			* NOTE: Usually when scaling parameters, this should be FsALSE.
 			* 
 			* return Whether the Transform's Scale should be applied to the FX or not.
 			*/
@@ -157,18 +163,13 @@ namespace NCsFX
 
 			/**
 			*/
-			virtual const TArray<ParameterType*>& GetParameters() const = 0;
+			virtual const TArray<_::ParameterType*>& GetParameters() const = 0;
 
 			/**
 			*/
-			virtual const TArray<ScaledParameterType*>& GetScaledParameters() const = 0;
+			virtual const TArray<_::ScaledParameterType*>& GetScaledParameters() const = 0;
 
-			virtual const TArray<SkeletalMeshParameterType*>& GetSkeletalMeshParameters() const = 0;
-
-		#undef DeallocateMethodType
-		#undef ParameterType
-		#undef ScaledParameterType
-		#undef SkeletalMeshParameterType
+			virtual const TArray<_::SkeletalMeshParameterType*>& GetSkeletalMeshParameters() const = 0;
 		};
 	}
 }

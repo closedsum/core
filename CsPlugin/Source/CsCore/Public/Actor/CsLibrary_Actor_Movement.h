@@ -35,13 +35,17 @@ namespace NCsActor
 				return Instance;
 			}
 
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
+
+			using ParamsManagerType = NCsMovement::NTo::NInterp::NParams::FManager;
+			using ParamsResourceType = NCsMovement::NTo::NInterp::NParams::FResource;
+			using ParamsType = NCsMovement::NTo::NInterp::NParams::FParams;
+
 		// Interp
 		#pragma region
 		private:
-
-		#define ParamsManagerType NCsMovement::NTo::NInterp::NParams::FManager
-		#define ParamsResourceType NCsMovement::NTo::NInterp::NParams::FResource
-		#define ParamsType NCsMovement::NTo::NInterp::NParams::FParams
 
 			ParamsManagerType Manager_MoveByInterpParams;
 
@@ -72,15 +76,11 @@ namespace NCsActor
 			* @param Log
 			* return				Handle to the movement coroutine.
 			*/
-			static FCsRoutineHandle SafeMoveByInterp(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
+			static FCsRoutineHandle SafeMoveByInterp(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			static char MoveByInterp_Internal(FCsRoutine* R);
 
 			static void MoveByInterp_Internal_OnEnd(FCsRoutine* R);
-
-		#undef ParamsManagerType
-		#undef ParamsResourceType
-		#undef ParamsType
 
 		#pragma endregion Interp
 		};

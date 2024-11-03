@@ -11,7 +11,7 @@
 
 #define LOCTEXT_NAMESPACE "CsAnimBlueprintCustomization"
 
-#define CLASS_TYPE FCsAnimBlueprintCustomization
+using CLASS_TYPE = FCsAnimBlueprintCustomization;
 #define TEMP_GET_MEMBER_NAME_CHECKED GET_MEMBER_NAME_CHECKED(FCsAnimBlueprint, Blueprint)
 
 TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
@@ -51,7 +51,6 @@ void CLASS_TYPE::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPrope
 {
 }
 
-#undef CLASS_TYPE
 #undef TEMP_GET_MEMBER_NAME_CHECKED
 
 #undef LOCTEXT_NAMESPACE

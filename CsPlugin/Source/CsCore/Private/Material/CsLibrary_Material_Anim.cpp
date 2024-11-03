@@ -19,6 +19,8 @@
 // Material
 #include "Materials/MaterialInstanceDynamic.h"
 
+using LogClassType = FCsLog;
+
 namespace NCsMaterial
 {
 	namespace NMID
@@ -41,6 +43,8 @@ namespace NCsMaterial
 				}
 			}
 
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			FLibrary::FLibrary() :
 				Manager_AnimParams()
 			{
@@ -51,10 +55,9 @@ namespace NCsMaterial
 				Manager_AnimParams.Shutdown();
 			}
 
-			#define LogWarning void(*Log)(const FString&) /*=&FCsLog::Warning*/
-
-			#define ParamsResourceType NCsMaterial::NAnim::NParams::FResource
-			#define ParamsType NCsMaterial::NAnim::NParams::FParams
+			using ParamsResourceType = NCsMaterial::NAnim::NParams::FResource;
+			using ParamsType = NCsMaterial::NAnim::NParams::FParams;
+			using AnimType = NCsMaterial::NAnim::FAnim;
 
 			FCsRoutineHandle FLibrary::PlayAnimChecked(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params)
 			{
@@ -96,7 +99,7 @@ namespace NCsMaterial
 				return Scheduler->Start(Payload);
 			}
 
-			FCsRoutineHandle FLibrary::SafePlayAnim(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, LogWarning)
+			FCsRoutineHandle FLibrary::SafePlayAnim(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				// Check Params are Valid.
 				CS_IS_PTR_NULL_RET_VALUE(Params, FCsRoutineHandle::Invalid)
@@ -128,8 +131,6 @@ namespace NCsMaterial
 				return PlayAnimChecked(Context, WorldContext, Params);
 			}
 
-			#define AnimType NCsMaterial::NAnim::FAnim
-
 			FCsRoutineHandle FLibrary::PlayAnimChecked(const FString& Context, const UObject* WorldContext, const AnimType& Anim, const TArray<UMaterialInstanceDynamic*>& MIDs, UObject* Owner, const FECsUpdateGroup& Group)
 			{
 				ParamsResourceType* Resource = Get().AllocateAnimParams();
@@ -142,8 +143,6 @@ namespace NCsMaterial
 
 				return PlayAnimChecked(Context, WorldContext, Resource);
 			}
-
-			#undef AnimType
 
 			char FLibrary::PlayAnim_Internal(FCsRoutine* R)
 			{
@@ -332,11 +331,6 @@ namespace NCsMaterial
 
 				Get().Manager_AnimParams.Deallocate(Resource);
 			}
-
-			#undef ParamsResourceType
-			#undef ParamsType
-
-			#undef LogWarning
 		}
 	}
 }

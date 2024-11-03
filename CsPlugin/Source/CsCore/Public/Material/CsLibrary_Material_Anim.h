@@ -8,7 +8,6 @@
 // Log
 #include "Utility/CsLog.h"
 
-
 class UMaterialInstanceDynamic;
 struct FCsRoutine;
 class UObject;
@@ -24,8 +23,6 @@ namespace NCsMaterial
 			*/
 			struct CSCORE_API FLibrary
 			{
-			#define LogWarning void(*Log)(const FString&) = &FCsLog::Warning
-
 			private:
 				FLibrary();
 
@@ -42,9 +39,12 @@ namespace NCsMaterial
 
 			private:
 
-			#define ParamsManagerType NCsMaterial::NAnim::NParams::FManager
-			#define ParamsResourceType NCsMaterial::NAnim::NParams::FResource
-			#define ParamsType NCsMaterial::NAnim::NParams::FParams
+				CS_DECLARE_STATIC_LOG_LEVEL
+
+				using ParamsManagerType = NCsMaterial::NAnim::NParams::FManager;
+				using ParamsResourceType = NCsMaterial::NAnim::NParams::FResource;
+				using ParamsType = NCsMaterial::NAnim::NParams::FParams;
+				using AnimType = NCsMaterial::NAnim::FAnim;
 
 				ParamsManagerType Manager_AnimParams;
 
@@ -75,9 +75,7 @@ namespace NCsMaterial
 				* @param Log
 				* return				Handle to the animation coroutine.
 				*/
-				static FCsRoutineHandle SafePlayAnim(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, LogWarning);
-
-			#define AnimType NCsMaterial::NAnim::FAnim
+				static FCsRoutineHandle SafePlayAnim(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Animate any number of parameters on a MaterialInstanceDynamic with the given Anim.
@@ -92,19 +90,11 @@ namespace NCsMaterial
 				*/
 				static FCsRoutineHandle PlayAnimChecked(const FString& Context, const UObject* WorldContext, const AnimType& Anim, const TArray<UMaterialInstanceDynamic*>& MIDs, UObject* Owner, const FECsUpdateGroup& Group);
 
-			#undef AnimType
-
 			private:
 
 				static char PlayAnim_Internal(FCsRoutine* R);
 
 				static void PlayAnim_Internal_OnEnd(FCsRoutine* R);
-
-			#undef ParamsManagerType
-			#undef ParamsResourceType
-			#undef ParamsType
-
-			#undef LogWarning
 			};
 		}
 	}

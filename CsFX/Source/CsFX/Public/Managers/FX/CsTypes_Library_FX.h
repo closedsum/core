@@ -112,19 +112,24 @@ namespace NCsFX
 
 struct FCsFX_Spawn_FrequencyParams;
 
+// ParamsType (NCsFX::NSpawn::NParams::FFrequency)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NSpawn, NParams, FFrequency)
+
 namespace NCsFX_Spawn_FrequenceParams
 {
+	using ThisType = FCsFX_Spawn_FrequencyParams;
 	using ParamsType = NCsFX::NSpawn::NParams::FFrequency;
-	using FrequencyType = ECsFXSpawnFrequency;
+	using FrequencyType = NCsFX::NSpawn::EFrequency;
 
+	// Separate implementation to allow for clearer use of aliases
 	struct CSFX_API FImpl
 	{
-		static void CopyToParams(FCsFX_Spawn_FrequencyParams* This, ParamsType* Params);
-		static void CopyToParamsAsValue(const FCsFX_Spawn_FrequencyParams* This, ParamsType* Params);
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
 	};
 }
 
-// NCsFX::NSpawn::NParams::FFrequency
+// ParamsType (NCsFX::NSpawn::NParams::FFrequency)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NSpawn, NParams, FFrequency)
 
 /**
@@ -136,6 +141,8 @@ struct CSFX_API FCsFX_Spawn_FrequencyParams
 	GENERATED_USTRUCT_BODY()
 
 private:
+
+	CS_DECLARE_STATIC_LOG_WARNING
 
 	using FrequencyType = ECsFXSpawnFrequency;
 
@@ -196,11 +203,11 @@ public:
 	using ParamsType = NCsFX::NSpawn::NParams::FFrequency;
 	using _Impl = NCsFX_Spawn_FrequenceParams::FImpl;
 
-	FORCEINLINE void CopyToParams(ParamsType* Params) { _Impl::CopyToParams(this, Params); }
-	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const { _Impl::CopyToParamsAsValue(this, Params); }
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
+	bool IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING) const;
 
 	float CalculateTotalTime() const;
 
@@ -218,9 +225,11 @@ namespace NCsFX
 		{
 			struct CSFX_API FFrequency
 			{
-				using FrequencyType = NCsFX::NSpawn::EFrequency;
-
 			private:
+
+				CS_DECLARE_STATIC_LOG_WARNING
+
+				using FrequencyType = NCsFX::NSpawn::EFrequency;
 
 				/** Trigger Frequency
 					If Type == FrequencyType::Once,
@@ -297,7 +306,7 @@ namespace NCsFX
 				}
 
 				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
+				bool IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING) const;
 
 				float CalculateTotalTime() const;
 
@@ -322,9 +331,13 @@ namespace NCsFX
 			// TODO: Later make an interface?
 			struct CSFX_API FParams
 			{
-			public:
+			private:
 		
+				CS_DECLARE_STATIC_LOG_WARNING
+
 				using FrequencyParamsType = NCsFX::NSpawn::NParams::FFrequency;
+
+			public:
 
 				/** FX information */
 				FCsFX FX;
@@ -353,7 +366,7 @@ namespace NCsFX
 				FORCEINLINE FrequencyParamsType* GetFrequencyParamsPtr() { return &FrequencyParams; }
 
 				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
+				bool IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING) const;
 
 				AActor* GetActor() const;
 
@@ -377,6 +390,25 @@ namespace NCsFX
 
 using CsFXSpawnParamsType = NCsFX::NSpawn::NParams::FParams;
 
+struct FCsFX_Spawn_Params;
+
+// ParameterType (NCsFX::NSpawn::NParams::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NSpawn, NParams, FParams)
+
+namespace NCsFX_Spawn_Params
+{
+	using ThisType = FCsFX_Spawn_Params;
+	using ParamsType = NCsFX::NSpawn::NParams::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSFX_API FImpl
+	{
+	public:
+
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
 // NCsFX::NSpawn::NParams::FParams
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NSpawn, NParams, FParams)
 
@@ -384,6 +416,10 @@ USTRUCT(BlueprintType)
 struct CSFX_API FCsFX_Spawn_Params
 {
 	GENERATED_USTRUCT_BODY()
+
+private:
+
+	CS_DECLARE_STATIC_LOG_WARNING
 
 public:
 
@@ -411,11 +447,12 @@ public:
 	{
 	}
 
-#define ParamsType NCsFX::NSpawn::NParams::FParams
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsFX::NSpawn::NParams::FParams;
+	using _Impl = NCsFX_Spawn_Params::FImpl;
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const { _Impl::CopyToParamsAsValue(this, Params); }
+
+	bool IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING) const;
 	void Update();
 	//void OnPostEditChange();
 };

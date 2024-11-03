@@ -13,8 +13,8 @@ struct FCsFXActorPooled;
 
 // NCsFX::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
-// NCsFX::NPayload::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, FImpl)
+// NCsFX::NPayload::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NPayload, NImpl, FImpl)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
@@ -38,6 +38,12 @@ namespace NCsFX
 		struct CSFX_API FLibrary final
 		{
 		#define LogLevel void(*Log)(const FString&) = &NCsFX::FLog::Warning
+
+		private:
+
+			using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+			using PayloadType = NCsFX::NPayload::IPayload;
+			using PayloadImplType = NCsFX::NPayload::NImpl::FImpl;
 
 		// Print
 		#pragma region
@@ -218,10 +224,6 @@ namespace NCsFX
 		// Allocate / Deallocate
 		#pragma region
 		public:
-
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-
-		#define PayloadType NCsFX::NPayload::IPayload
 		
 			/**
 			* Allocate a Payload given the FX information
@@ -258,10 +260,6 @@ namespace NCsFX
 			*/
 			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
 
-		#undef PayloadType
-
-		#define PayloadImplType NCsFX::NPayload::FImpl
-
 			/**
 			* Allocate a Payload given the FX information
 			*
@@ -296,10 +294,6 @@ namespace NCsFX
 			* return				Payload
 			*/
 			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
-
-		#undef PayloadImplType
-
-		#undef PooledPayloadType
 
 			/**
 			*
@@ -434,6 +428,14 @@ namespace NCsFX
 			{
 			#define LogLevel void(*Log)(const FString&) = &NCsFX::FLog::Warning
 
+			private:
+
+				using ParameterType = NCsFX::NParameter::IParameter;
+				using ScaledParameterType = NCsFX::NParameter::NScaled::IScaled;
+				using FloatParameterType = NCsFX::NParameter::NFloat::FFloatType;
+				using VectorParameterType = NCsFX::NParameter::NVector::FVectorType;
+				using SkeletalMeshParameterType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType;
+
 			public:
 
 				FORCEINLINE static UCsManager_FX* GetManagerChecked(const FString& Context, const UObject* WorldContext)
@@ -446,8 +448,6 @@ namespace NCsFX
 					return NCsFX::NManager::FLibrary::GetSafe(Context, WorldContext, Log);
 				}
 
-			#define FloatParameterType NCsFX::NParameter::NFloat::FFloatType
-
 				/**
 				* Allocate a Float parameter
 				* 
@@ -455,11 +455,7 @@ namespace NCsFX
 				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 				* return				Float parameter
 				*/
-				static FloatParameterType* AllocateFloatChecked(const FString& Context, const UObject* WorldContext);
-
-			#undef FloatParameterType
-
-			#define VectorParameterType NCsFX::NParameter::NVector::FVectorType
+				static FloatParameterType* AllocateFloatChecked(const FString& Context, const UObject* WorldContext);	
 
 				/**
 				* Allocate a Vector parameter
@@ -470,10 +466,6 @@ namespace NCsFX
 				*/
 				static VectorParameterType* AllocateVectorChecked(const FString& Context, const UObject* WorldContext);
 
-			#undef VectorParameterType
-
-			#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
-
 				/**
 				* Allocate a Data Interface parameter of type: Skeletal Mesh
 				* 
@@ -482,10 +474,6 @@ namespace NCsFX
 				* return				Data Interface parameter of type: Skeletal Mesh
 				*/
 				static SkeletalMeshParameterType* AllocateSkeletalMeshChecked(const FString& Context, const UObject* WorldContext);
-
-			#undef SkeletalMeshParameterType
-
-			#define ParameterType NCsFX::NParameter::IParameter
 
 				/**
 				* Deallocate parameter Value, ParameterType (NCsFX::NParameter::IParameter).
@@ -517,10 +505,6 @@ namespace NCsFX
 				*/
 				static bool SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<ParameterType*>& Values, LogLevel);
 
-			#undef ParameterType
-
-			#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
-
 				/**
 				* Deallocate parameter Value, ScaledParameterType (NCsFX::NParameter::NScaled::IScaled).
 				*
@@ -551,10 +535,6 @@ namespace NCsFX
 				*/
 				static bool SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<ScaledParameterType*>& Values, LogLevel);
 
-			#undef ScaledParameterType
-
-			#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
-
 				/**
 				* Deallocate parameter Value, SkeletalmeshParameterType (NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType).
 				*
@@ -584,8 +564,6 @@ namespace NCsFX
 				* @param Log			(optional)
 				*/
 				static bool SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<SkeletalMeshParameterType*>& Values, LogLevel);
-
-			#undef SkeletalMeshParameterType
 
 			#undef LogLevel
 			};

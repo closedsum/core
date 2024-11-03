@@ -14,6 +14,8 @@
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 
+using LogClassType = FCsLog;
+
 namespace NCsActor
 {
 	namespace NMovement
@@ -36,6 +38,8 @@ namespace NCsActor
 			}
 		}
 
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		FLibrary::FLibrary() :
 			Manager_MoveByInterpParams()
 		{
@@ -46,13 +50,12 @@ namespace NCsActor
 			Manager_MoveByInterpParams.Shutdown();
 		}
 		
-		#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
+		using ParamsManagerType = NCsMovement::NTo::NInterp::NParams::FManager;
+		using ParamsResourceType = NCsMovement::NTo::NInterp::NParams::FResource;
+		using ParamsType = NCsMovement::NTo::NInterp::NParams::FParams;
 
 		// Interp
 		#pragma region
-
-		#define ParamsResourceType NCsMovement::NTo::NInterp::NParams::FResource
-		#define ParamsType NCsMovement::NTo::NInterp::NParams::FParams
 
 		FCsRoutineHandle FLibrary::MoveByInterpChecked(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params)
 		{
@@ -108,7 +111,7 @@ namespace NCsActor
 			return Scheduler->Start(Payload);
 		}
 
-		FCsRoutineHandle FLibrary::SafeMoveByInterp(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, LogWarning)
+		FCsRoutineHandle FLibrary::SafeMoveByInterp(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			// Check Params are Valid.
 			if (!Params)
@@ -254,13 +257,8 @@ namespace NCsActor
 			Get().Manager_MoveByInterpParams.Deallocate(Resource);
 		}
 
-		#undef ParamsResourceType
-		#undef ParamsType
-
 		#pragma endregion Interp
 
 		#pragma endregion Movement
-
-		#undef LogWarning
 	}
 }

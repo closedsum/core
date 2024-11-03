@@ -32,7 +32,8 @@ namespace NCsFX
 		struct CSFX_API FLibrary
 		{
 		#define LogLevel void(*Log)(const FString&) = &NCsFX::FLog::Warning
-		#define ParameterType NCsFX::NParameter::IParameter
+		
+			using ParameterType = NCsFX::NParameter::IParameter;
 
 		public:
 
@@ -206,7 +207,6 @@ namespace NCsFX
 		#pragma endregion Vector
 
 		#undef LogLevel
-		#undef ParameterType
 		};
 	}
 }

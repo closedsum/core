@@ -64,6 +64,8 @@ namespace NCsFX
 		{
 			namespace NSkeletalMesh
 			{
+				CS_DEFINE_STATIC_LOG_WARNING(FSkeletalMeshType, NCsFX::FLog::Warning);
+
 				using MethodMapType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMMethod;
 				using MethodType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod;
 
@@ -80,7 +82,7 @@ namespace NCsFX
 					return true;
 				}
 
-				bool FSkeletalMeshType::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FSkeletalMeshType::IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING_COMMENT) const
 				{
 					CS_IS_NAME_NONE(GetName())
 

@@ -248,21 +248,20 @@ namespace NCsFXParameterValue
 // FCsFXParameterInt
 #pragma region
 
-#define ParameterType NCsFX::NParameter::NInt::FIntType
-
-void FCsFXParameterInt::CopyToParams(ParameterType* Params)
+namespace NCsFXParameterInt
 {
-	Params->SetName(&Name);
-	Params->SetValue(&Value);
-}
+	void FImpl::CopyToParams(ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, Name);
+		CS_THIS_COPY_TO_PROXY(Params, Value);
+	}
 
-void FCsFXParameterInt::CopyToParamsAsValue(ParameterType* Params) const
-{
-	Params->SetName(Name);
-	Params->SetValue(Value);
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Name);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Value);
+	}
 }
-
-#undef ParameterType
 
 bool FCsFXParameterInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/) const
 {
@@ -287,21 +286,20 @@ bool FCsFXParameterInt::IsValid(const FString& Context, void(*Log)(const FString
 // FCsFXParameterFloat
 #pragma region
 
-#define ParameterType NCsFX::NParameter::NFloat::FFloatType
-
-void FCsFXParameterFloat::CopyToParams(ParameterType* Params)
+namespace NCsFXParameterFloat
 {
-	Params->SetName(&Name);
-	Params->SetValue(&Value);
-}
+	void FImpl::CopyToParams(ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, Name);
+		CS_THIS_COPY_TO_PROXY(Params, Value);
+	}
 
-void FCsFXParameterFloat::CopyToParamsAsValue(ParameterType* Params) const
-{
-	Params->SetName(Name);
-	Params->SetValue(Value);
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Name);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Value);
+	}
 }
-
-#undef ParameterType
 
 bool FCsFXParameterFloat::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/) const
 {
@@ -326,21 +324,20 @@ bool FCsFXParameterFloat::IsValid(const FString& Context, void(*Log)(const FStri
 // FCsFXParameterVector
 #pragma region
 
-#define ParameterType NCsFX::NParameter::NVector::FVectorType
-
-void FCsFXParameterVector::CopyToParams(ParameterType* Params)
+namespace NCsFXParameterVector
 {
-	Params->SetName(&Name);
-	Params->SetValue(&Value);
-}
+	void FImpl::CopyToParams(ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, Name);
+		CS_THIS_COPY_TO_PROXY(Params, Value);
+	}
 
-void FCsFXParameterVector::CopyToParamsAsValue(ParameterType* Params) const
-{
-	Params->SetName(Name);
-	Params->SetValue(Value);
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Name);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Value);
+	}
 }
-
-#undef ParameterType
 
 bool FCsFXParameterVector::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/) const
 {
@@ -365,27 +362,26 @@ bool FCsFXParameterVector::IsValid(const FString& Context, void(*Log)(const FStr
 // FCsFX_Parameter_Scaled_Int
 #pragma region
 
-#define ParameterType NCsFX::NParameter::NScaled::NInt::FIntType
-
-void FCsFX_Parameter_Scaled_Int::CopyToParams(ParameterType* Params)
+namespace NCsFX_Parameter_Scaled_Int
 {
-	Params->GetParameterPtr()->SetName(&Name);
-	Params->SetbValue(&bValue);
-	Params->GetParameterPtr()->SetValue(&Value);
-	Params->SetbInverse(&bInverse);
-	Params->SetScale(&Scale);
-}
+	void FImpl::CopyToParams(ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params->GetParameterPtr(), Name);
+		CS_THIS_COPY_TO_PROXY(Params, bValue);
+		CS_THIS_COPY_TO_PROXY(Params->GetParameterPtr(), Value);
+		CS_THIS_COPY_TO_PROXY(Params, bInverse);
+		CS_THIS_COPY_TO_PROXY(Params, Scale);
+	}
 
-void FCsFX_Parameter_Scaled_Int::CopyToParamsAsValue(ParameterType* Params) const
-{
-	Params->GetParameterPtr()->SetName(Name);
-	Params->SetbValue(bValue);
-	Params->GetParameterPtr()->SetValue(Value);
-	Params->SetbInverse(bInverse);
-	Params->SetScale(Scale);
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params->GetParameterPtr(), Name);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bValue);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params->GetParameterPtr(), Value);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bInverse);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Scale);
+	}
 }
-
-#undef ParameterType
 
 bool FCsFX_Parameter_Scaled_Int::IsValidChecked(const FString& Context) const
 {
@@ -416,27 +412,26 @@ bool FCsFX_Parameter_Scaled_Int::IsValid(const FString& Context, void(*Log)(cons
 // FCsFX_Parameter_Scaled_Float
 #pragma region
 
-#define ParameterType NCsFX::NParameter::NScaled::NFloat::FFloatType
-
-void FCsFX_Parameter_Scaled_Float::CopyToParams(ParameterType* Params)
+namespace NCsFX_Parameter_Scaled_Float
 {
-	Params->GetParameterPtr()->SetName(&Name);
-	Params->SetbValue(&bValue);
-	Params->GetParameterPtr()->SetValue(&Value);
-	Params->SetbInverse(&bInverse);
-	Params->SetScale(&Scale);
-}
+	void FImpl::CopyToParams(ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params->GetParameterPtr(), Name);
+		CS_THIS_COPY_TO_PROXY(Params, bValue);
+		CS_THIS_COPY_TO_PROXY(Params->GetParameterPtr(), Value);
+		CS_THIS_COPY_TO_PROXY(Params, bInverse);
+		CS_THIS_COPY_TO_PROXY(Params, Scale);
+	}
 
-void FCsFX_Parameter_Scaled_Float::CopyToParamsAsValue(ParameterType* Params) const
-{
-	Params->GetParameterPtr()->SetName(Name);
-	Params->SetbValue(bValue);
-	Params->GetParameterPtr()->SetValue(Value);
-	Params->SetbInverse(bInverse);
-	Params->SetScale(Scale);
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params->GetParameterPtr(), Name);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bValue);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params->GetParameterPtr(), Value);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bInverse);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Scale);
+	}
 }
-
-#undef ParameterType
 
 bool FCsFX_Parameter_Scaled_Float::IsValidChecked(const FString& Context) const
 {
@@ -467,27 +462,26 @@ bool FCsFX_Parameter_Scaled_Float::IsValid(const FString& Context, void(*Log)(co
 // FCsFX_Parameter_Scaled_Vector
 #pragma region
 
-#define ParameterType NCsFX::NParameter::NScaled::NVector::FVectorType
-
-void FCsFX_Parameter_Scaled_Vector::CopyToParams(ParameterType* Params)
+namespace NCsFX_Parameter_Scaled_Vector
 {
-	Params->GetParameterPtr()->SetName(&Name);
-	Params->SetbValue(&bValue);
-	Params->GetParameterPtr()->SetValue(&Value);
-	Params->SetbInverse(&bInverse);
-	Params->SetScale(&Scale);
-}
+	void FImpl::CopyToParams(ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params->GetParameterPtr(), Name);
+		CS_THIS_COPY_TO_PROXY(Params, bValue);
+		CS_THIS_COPY_TO_PROXY(Params->GetParameterPtr(), Value);
+		CS_THIS_COPY_TO_PROXY(Params, bInverse);
+		CS_THIS_COPY_TO_PROXY(Params, Scale);
+	}
 
-void FCsFX_Parameter_Scaled_Vector::CopyToParamsAsValue(ParameterType* Params) const
-{
-	Params->GetParameterPtr()->SetName(Name);
-	Params->SetbValue(bValue);
-	Params->GetParameterPtr()->SetValue(Value);
-	Params->SetbInverse(bInverse);
-	Params->SetScale(Scale);
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params->GetParameterPtr(), Name);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bValue);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params->GetParameterPtr(), Value);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bInverse);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Scale);
+	}
 }
-
-#undef ParameterType
 
 bool FCsFX_Parameter_Scaled_Vector::IsValidChecked(const FString& Context) const
 {
@@ -575,29 +569,24 @@ namespace NCsFXParameterDataInterfaceSkeletalMeshMethod
 // FCsFX_Parameters_DataInterface_SkeletalMesh
 #pragma region
 
-#define ParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
-
-void FCsFX_Parameters_DataInterface_SkeletalMesh::CopyToParams(ParameterType* Params)
+namespace NFCsFX_Parameters_DataInterface_SkeletalMesh
 {
-	Params->SetName(&Name);
+	using MethodType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod;
 
-	typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod MethodType;
+	void FImpl::CopyToParams(ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, Name);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Method, MethodType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Component);
+	}
 
-	Params->SetMethod((MethodType*)(&Method));
-	Params->SetComponent(Component);
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParameterType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Name);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Method, MethodType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Component);
+	}
 }
-
-void FCsFX_Parameters_DataInterface_SkeletalMesh::CopyToParamsAsValue(ParameterType* Params) const
-{
-	Params->SetName(Name);
-
-	typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod MethodType;
-
-	Params->SetMethod((MethodType)Method);
-	Params->SetComponent(Component);
-}
-
-#undef ParameterType
 
 bool FCsFX_Parameters_DataInterface_SkeletalMesh::IsValidChecked(const FString& Context) const
 {

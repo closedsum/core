@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "CsMacro_Log.h"
 #include "CsMacro_Proxy.h"
 #include "Types/Enum/CsEnumMap.h"
 // Log
@@ -393,13 +394,15 @@ namespace NCsFX
 		{
 			namespace NInt
 			{
+				using ScaledType = NCsFX::NParameter::NScaled::IScaled;
+
 				/**
 				* Container holding information for Niagara Int Parameter that will scale based on the FX scale.
 				*/
-				struct CSFX_API FIntType : IScaled
+				struct CSFX_API FIntType : ScaledType
 				{
 					using ParameterType = NCsFX::NParameter::IParameter;
-					using ParameterIntType = NCsFX::NParameter::NInt::FIntType;
+					using IntParameterType = NCsFX::NParameter::NInt::FIntType;
 
 				private:
 
@@ -407,7 +410,7 @@ namespace NCsFX
 
 				public:
 
-					ParameterIntType Parameter;
+					IntParameterType Parameter;
 
 				private:
 
@@ -444,7 +447,7 @@ namespace NCsFX
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInverse, bool)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Scale, float)
 
-					FORCEINLINE ParameterIntType* GetParameterPtr() { return &Parameter; }
+					FORCEINLINE IntParameterType* GetParameterPtr() { return &Parameter; }
 
 				// IScaled
 				#pragma region
@@ -465,16 +468,27 @@ namespace NCsFX
 					}
 				};
 			}
+		}
+	}
+}
 
+namespace NCsFX
+{
+	namespace NParameter
+	{
+		namespace NScaled
+		{
 			namespace NFloat
 			{
+				using ScaledType = NCsFX::NParameter::NScaled::IScaled;
+
 				/**
 				* Container holding information for Niagara Float Parameter that will scale based on the FX scale.
 				*/
-				struct CSFX_API FFloatType : IScaled
+				struct CSFX_API FFloatType : ScaledType
 				{
-				#define ParameterType NCsFX::NParameter::IParameter
-				#define ParameterFloatType NCsFX::NParameter::NFloat::FFloatType
+					using ParameterType = NCsFX::NParameter::IParameter;
+					using FloatParameterType = NCsFX::NParameter::NFloat::FFloatType;
 
 				private:
 
@@ -482,7 +496,7 @@ namespace NCsFX
 
 				public:
 
-					ParameterFloatType Parameter;
+					FloatParameterType Parameter;
 
 				private:
 
@@ -515,7 +529,7 @@ namespace NCsFX
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInverse, bool)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Scale, float)
 
-					FORCEINLINE ParameterFloatType* GetParameterPtr() { return &Parameter; }
+					FORCEINLINE FloatParameterType* GetParameterPtr() { return &Parameter; }
 
 				// IScaled
 				#pragma region
@@ -534,21 +548,29 @@ namespace NCsFX
 						check(Parameter.IsValidChecked(Context));
 						return true;
 					}
-
-				#undef ParameterType
-				#undef ParameterFloatType
 				};
 			}
+		}
+	}
+}
 
+namespace NCsFX
+{
+	namespace NParameter
+	{
+		namespace NScaled
+		{
 			namespace NVector
 			{
+				using ScaledType = NCsFX::NParameter::NScaled::IScaled;
+
 				/**
 				* Container holding information for Niagara Vector Parameter that will scale based on the FX scale.
 				*/
-				struct CSFX_API FVectorType : IScaled
+				struct CSFX_API FVectorType : ScaledType
 				{
-				#define ParameterType NCsFX::NParameter::IParameter
-				#define ParameterVectorType NCsFX::NParameter::NVector::FVectorType
+					using ParameterType = NCsFX::NParameter::IParameter;
+					using VectorParameterVectorType = NCsFX::NParameter::NVector::FVectorType;
 
 				private:
 
@@ -556,7 +578,7 @@ namespace NCsFX
 
 				public:
 
-					ParameterVectorType Parameter;
+					VectorParameterVectorType Parameter;
 
 				private:
 
@@ -589,7 +611,7 @@ namespace NCsFX
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInverse, bool)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Scale, float)
 
-					FORCEINLINE ParameterVectorType* GetParameterPtr() { return &Parameter; }
+					FORCEINLINE VectorParameterVectorType* GetParameterPtr() { return &Parameter; }
 
 				// IScaled
 				#pragma region
@@ -608,9 +630,6 @@ namespace NCsFX
 						check(Parameter.IsValidChecked(Context));
 						return true;
 					}
-
-				#undef ParameterType
-				#undef ParameterVectorType
 				};
 			}
 		}
@@ -676,6 +695,8 @@ namespace NCsFX
 
 				private:
 
+					CS_DECLARE_STATIC_LOG_WARNING
+
 					int32 Index;
 					/** Name of the Niagara Data Interface Parameter of type: Skeletal Mesh. */
 					CS_DECLARE_MEMBER_WITH_PROXY(Name, FName)
@@ -706,7 +727,7 @@ namespace NCsFX
 					FORCEINLINE USkeletalMeshComponent* GetComponent() const { return Component; }
 
 					bool IsValidChecked(const FString& Context) const;
-					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
+					bool IsValid(const FString& Context, CS_FN_PARAM_DEFAULT_LOG_WARNING) const;
 				};
 			}
 		}

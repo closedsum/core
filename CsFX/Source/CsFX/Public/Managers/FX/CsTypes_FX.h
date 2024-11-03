@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "CsMacro_Namespace.h"
 #include "CsMacro_Math.h"
 #include "Types/Enum/CsEnum_uint8.h"
@@ -58,13 +59,13 @@ struct CSFX_API FCsParticleSystem
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsFX|FX")
 	TSoftObjectPtr<UParticleSystem> Particle;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsFX|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Particle_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|FX")
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsFX|FX")
 	UParticleSystem* Particle_Internal;
 
 public:
@@ -217,15 +218,15 @@ struct CSFX_API FCsNiagaraSystem
 public:
 
 	/** Soft reference to an FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsFX|FX")
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
 	/** */
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsFX|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
 	/** Hard reference to an FX System. */
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|FX")
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsFX|FX")
 	UNiagaraSystem* FX_Internal;
 
 	FCsNiagaraSystem() :
@@ -346,15 +347,15 @@ struct CSFX_API FCsNiagaraParameterCollection
 public:
 
 	/** Soft reference to an UNiagaraParameterCollection. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsFX|FX")
 	TSoftObjectPtr<UNiagaraParameterCollection> Collection;
 
 	/** */
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsFX|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Collection_LoadFlags;
 
 	/** Hard reference to an UNiagaraParameterCollection. */
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|FX")
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsFX|FX")
 		UNiagaraParameterCollection* Collection_Internal;
 
 	FCsNiagaraParameterCollection() :
@@ -558,19 +559,19 @@ struct CSFX_API FCsFXOrientationRules
 	/** Describes how the Pitch will be oriented.
 		 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for the specified component
 			   is set to KeepWorld and bAbsoluteRotation is set to TRUE. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	ECsFXOrientationRule Pitch;
 
 	/** Describes how the Yaw will be oriented.
 		 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for the specified component
 			   is set to KeepWorld and bAbsoluteRotation is set to TRUE. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	ECsFXOrientationRule Yaw;
 
 	/** Describes how the Yaw will be oriented.
 		 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for the specified component
 			   is set to KeepWorld and bAbsoluteRotation is set to TRUE. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	ECsFXOrientationRule Roll;
 
 	FCsFXOrientationRules() :
@@ -629,7 +630,27 @@ namespace NCsFXParameterValue
 // FCsFXParameterInt
 #pragma region
 
-// NCsFX::NParameter::NInt::FIntType
+struct FCsFXParameterInt;
+
+// ParameterType (NCsFX::NParameter::NInt::FIntType)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NInt, FIntType)
+
+namespace NCsFXParameterInt
+{
+	using ThisType = FCsFXParameterInt;
+	using ParameterType = NCsFX::NParameter::NInt::FIntType;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSFX_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParameterType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParameterType* Params);
+	};
+}
+
+// ParameterType (NCsFX::NParameter::NInt::FIntType)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NInt, FIntType)
 
 USTRUCT(BlueprintType)
@@ -640,11 +661,11 @@ struct CSFX_API FCsFXParameterInt
 public:
 
 	/** Name of the Niagara Int Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FName Name;
 
 	/** Value to set for the Niagara Int Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	int32 Value;
 
 	FCsFXParameterInt() :
@@ -653,10 +674,11 @@ public:
 	{
 	}
 
-#define ParameterType NCsFX::NParameter::NInt::FIntType
-	void CopyToParams(ParameterType* Params);
-	void CopyToParamsAsValue(ParameterType* Params) const;
-#undef ParameterType
+	using ParameterType = NCsFX::NParameter::NInt::FIntType;
+	using _Impl = NCsFXParameterInt::FImpl;
+
+	FORCEINLINE void CopyToParams(ParameterType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParameterType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
@@ -671,6 +693,26 @@ public:
 // FCsFXParameterFloat
 #pragma region
 
+struct FCsFXParameterFloat;
+
+// ParameterType (NCsFX::NParameter::NFloat::FFloatType)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NFloat, FFloatType)
+
+namespace NCsFXParameterFloat
+{
+	using ThisType = FCsFXParameterFloat;
+	using ParameterType = NCsFX::NParameter::NFloat::FFloatType;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSFX_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParameterType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParameterType* Params);
+	};
+}
+
 // NCsFX::NParameter::NFloat::FFloatType
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NFloat, FFloatType)
 
@@ -682,11 +724,11 @@ struct CSFX_API FCsFXParameterFloat
 public:
 
 	/** Name of the Niagara Int Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FName Name;
 
 	/** Value to set for the Niagara Float Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	float Value;
 
 	FCsFXParameterFloat() :
@@ -695,10 +737,11 @@ public:
 	{
 	}
 
-#define ParameterType NCsFX::NParameter::NFloat::FFloatType
-	void CopyToParams(ParameterType* Params);
-	void CopyToParamsAsValue(ParameterType* Params) const;
-#undef ParameterType
+	using ParameterType = NCsFX::NParameter::NFloat::FFloatType;
+	using _Impl = NCsFXParameterFloat::FImpl;
+
+	FORCEINLINE void CopyToParams(ParameterType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParameterType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
@@ -713,6 +756,26 @@ public:
 // FCsFXParameterVector
 #pragma region
 
+struct FCsFXParameterVector;
+
+// ParameterType (NCsFX::NParameter::NVector::FVectorType)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NVector, FVectorType)
+
+namespace NCsFXParameterVector
+{
+	using ThisType = FCsFXParameterVector;
+	using ParameterType = NCsFX::NParameter::NVector::FVectorType;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSFX_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParameterType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParameterType* Params);
+	};
+}
+
 // NCsFX::NParameter::NVector::FVectorType
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NVector, FVectorType)
 
@@ -724,10 +787,10 @@ struct CSFX_API FCsFXParameterVector
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FName Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FVector3f Value;
 
 public:
@@ -738,10 +801,11 @@ public:
 	{
 	}
 
-#define ParameterType NCsFX::NParameter::NVector::FVectorType
-	void CopyToParams(ParameterType* Params);
-	void CopyToParamsAsValue(ParameterType* Params) const;
-#undef ParameterType
+	using ParameterType = NCsFX::NParameter::NVector::FVectorType;
+	using _Impl = NCsFXParameterVector::FImpl;
+
+	FORCEINLINE void CopyToParams(ParameterType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParameterType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
@@ -756,7 +820,27 @@ public:
 // FCsFX_Parameter_Scaled_Int
 #pragma region
 
-// NCsFX::NParameter::NScaled::NInt::FIntType
+struct FCsFX_Parameter_Scaled_Int;
+
+// ParameterType (NCsFX::NParameter::NScaled::NInt::FIntType)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NScaled, NInt, FIntType)
+
+namespace NCsFX_Parameter_Scaled_Int
+{
+	using ThisType = FCsFX_Parameter_Scaled_Int;
+	using ParameterType = NCsFX::NParameter::NScaled::NInt::FIntType;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSFX_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParameterType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParameterType* Params);
+	};
+}
+
+// ParameterType (NCsFX::NParameter::NScaled::NInt::FIntType)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NScaled, NInt, FIntType)
 
 USTRUCT(BlueprintType)
@@ -767,24 +851,24 @@ struct CSFX_API FCsFX_Parameter_Scaled_Int
 public:
 
 	/** Name of the Niagara Int Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FName Name;
 
 	/** Whether Value should be used for applying any scaling or just
 		use the default Value from the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_bValue"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (ScriptName = "m_bValue"))
 	bool bValue;
 
 	/** Value to set for the Niagara Int Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (ScriptName = "m_Value"))
 	int32 Value;
 
 	/** Whether to apply the FX scale inversely. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	bool bInverse;
 
 	/** Additional scale to apply to Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	float Scale;
 
 	FCsFX_Parameter_Scaled_Int() :
@@ -796,10 +880,11 @@ public:
 	{
 	}
 
-#define ParameterType NCsFX::NParameter::NScaled::NInt::FIntType
-	void CopyToParams(ParameterType* Params);
-	void CopyToParamsAsValue(ParameterType* Params) const;
-#undef ParameterType
+	using ParameterType = NCsFX::NParameter::NScaled::NInt::FIntType;
+	using _Impl = NCsFX_Parameter_Scaled_Int::FImpl;
+
+	FORCEINLINE void CopyToParams(ParameterType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParameterType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
@@ -809,6 +894,26 @@ public:
 
 // FCsFX_Parameter_Scaled_Float
 #pragma region
+
+struct FCsFX_Parameter_Scaled_Float;
+
+// ParameterType (NCsFX::NParameter::NScaled::NFloat::FFloatType)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NScaled, NFloat, FFloatType)
+
+namespace NCsFX_Parameter_Scaled_Float
+{
+	using ThisType = FCsFX_Parameter_Scaled_Float;
+	using ParameterType = NCsFX::NParameter::NScaled::NFloat::FFloatType;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSFX_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParameterType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParameterType* Params);
+	};
+}
 
 // NCsFX::NParameter::NScaled::NFloat::FFloatType
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NScaled, NFloat, FFloatType)
@@ -821,24 +926,24 @@ struct CSFX_API FCsFX_Parameter_Scaled_Float
 public:
 
 	/** Name of the Niagara Float Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FName Name;
 
 	/** Whether Value should be used for applying any scaling or just
 		use the default Value from the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_bValue"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (ScriptName = "m_bValue"))
 	bool bValue;
 
 	/** Value to set for the Niagara Float Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (ScriptName = "m_Value"))
 	float Value;
 
 	/** Whether to apply the FX scale inversely. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	bool bInverse;
 
 	/** Additional scale to apply to Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	float Scale;
 
 	FCsFX_Parameter_Scaled_Float() :
@@ -850,10 +955,11 @@ public:
 	{
 	}
 
-#define ParameterType NCsFX::NParameter::NScaled::NFloat::FFloatType
-	void CopyToParams(ParameterType* Params);
-	void CopyToParamsAsValue(ParameterType* Params) const;
-#undef ParameterType
+	using ParameterType = NCsFX::NParameter::NScaled::NFloat::FFloatType;
+	using _Impl = NCsFX_Parameter_Scaled_Float::FImpl;
+
+	FORCEINLINE void CopyToParams(ParameterType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParameterType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
@@ -863,6 +969,26 @@ public:
 
 // FCsFX_Parameter_Scaled_Vector
 #pragma region
+
+struct FCsFX_Parameter_Scaled_Vector;
+
+// ParameterType (NCsFX::NParameter::NScaled::NVector::FVectorType)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NScaled, NVector, FVectorType)
+
+namespace NCsFX_Parameter_Scaled_Vector
+{
+	using ThisType = FCsFX_Parameter_Scaled_Vector;
+	using ParameterType = NCsFX::NParameter::NScaled::NVector::FVectorType;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSFX_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParameterType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParameterType* Params);
+	};
+}
 
 // NCsFX::NParameter::NScaled::NFloat::FFloatType
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NScaled, NVector, FVectorType)
@@ -875,24 +1001,24 @@ struct CSFX_API FCsFX_Parameter_Scaled_Vector
 public:
 
 	/** Name of the Niagara Vector Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FName Name;
 
 	/** Whether Value should be used for applying any scaling or just
 		use the default Value from the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_bValue"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (ScriptName = "m_bValue"))
 	bool bValue;
 
 	/** Value to set for the Niagara Vector Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (ScriptName = "m_Value"))
 	FVector3f Value;
 
 	/** Whether to apply the FX scale inversely. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	bool bInverse;
 
 	/** Additional scale to apply to Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	float Scale;
 
 	FCsFX_Parameter_Scaled_Vector() :
@@ -904,10 +1030,11 @@ public:
 	{
 	}
 
-#define ParameterType NCsFX::NParameter::NScaled::NVector::FVectorType
-	void CopyToParams(ParameterType* Params);
-	void CopyToParamsAsValue(ParameterType* Params) const;
-#undef ParameterType
+	using ParameterType = NCsFX::NParameter::NScaled::NVector::FVectorType;
+	using _Impl = NCsFX_Parameter_Scaled_Vector::FImpl;
+
+	FORCEINLINE void CopyToParams(ParameterType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParameterType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
@@ -925,13 +1052,13 @@ struct CSFX_API FCsFX_Parameters_Scaled
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	TArray<FCsFX_Parameter_Scaled_Int> Ints;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	TArray<FCsFX_Parameter_Scaled_Float> Floats;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	TArray<FCsFX_Parameter_Scaled_Vector> Vectors;
 
 	FCsFX_Parameters_Scaled() :
@@ -998,6 +1125,26 @@ namespace NCsFXParameterDataInterfaceSkeletalMeshMethod
 // FCsFX_Parameters_DataInterface_SkeletalMesh
 #pragma region
 
+struct FCsFX_Parameters_DataInterface_SkeletalMesh;
+
+// ParameterType (NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NDataInterface, NSkeletalMesh, FSkeletalMeshType)
+
+namespace NFCsFX_Parameters_DataInterface_SkeletalMesh
+{
+	using ThisType = FCsFX_Parameters_DataInterface_SkeletalMesh;
+	using ParameterType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSFX_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParameterType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParameterType* Params);
+	};
+}
+
 class USkeletalMeshComponent;
 
 // NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
@@ -1014,17 +1161,17 @@ struct CSFX_API FCsFX_Parameters_DataInterface_SkeletalMesh
 public:
 
 	/** Name of the Niagara Data Interface Parameter of type: Skeletal Mesh. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FName Name;
 
 	/** Describes how the Skeletal Mesh Data Interface is set or passed.
 		Usually the parameter information is passed via an FX Payload. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	ECsFXParameterDataInterfaceSkeletalMeshMethod Method;
 
 	/** Component to set for the Data Interface Parameters.
 		NOTE: Only used if Method == ECsFXParameterDataInterfaceSkeletalMesh::Explicit. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	USkeletalMeshComponent* Component;
 
 	FCsFX_Parameters_DataInterface_SkeletalMesh() :
@@ -1034,10 +1181,11 @@ public:
 	{
 	}
 
-#define ParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
-	void CopyToParams(ParameterType* Params);
-	void CopyToParamsAsValue(ParameterType* Params) const;
-#undef ParameterType
+	using ParameterType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType;
+	using _Impl = NFCsFX_Parameters_DataInterface_SkeletalMesh::FImpl;
+
+	FORCEINLINE void CopyToParams(ParameterType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParameterType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsFX::FLog::Warning) const;
@@ -1055,7 +1203,7 @@ struct CSFX_API FCsFX_Parameters_DataInterface
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	TArray<FCsFX_Parameters_DataInterface_SkeletalMesh> SkeletalMeshes;
 
 	FCsFX_Parameters_DataInterface() :
@@ -1105,25 +1253,25 @@ public:
 public:
 
 	/** Soft reference to an FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
 	/** Hard reference to an FX System. */
-	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsFX|FX")
 	UNiagaraSystem* FX_Internal;
 
 	/** The FX Type. This is used to group FX into different categories 
 	    and can be used by a Manager pooling FX objects to Spawn the correct
 		FX object. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FECsFX Type;
 	
 	/** Condition to determine when to deallocate the FX object. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	ECsFXDeallocateMethod DeallocateMethod;
 
 	/** Valid if the DeallocateMethod == ECsFXDeallocateMethod::LifeTime.
@@ -1136,80 +1284,80 @@ public:
 		   LifeTime == 0.0f means the FX object will stay active forever.
 		   LifeTime > 0.0f means the FX will be deallocated after LifeTime amount of time after
 	        the FX object has been allocated. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
 	/** The time to wait after LifeTime or Complete (completion of the FX) before gracefully
 		deallocating the FX. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float DeathTime;
 
 	/** Whether to Hide the FX when FX->GetCache()->QueueDeallocate() is called.
 		The main purpose of this is for FX that should be deallocated "immediately" after
 		QueueDeallocate() is called. Normally, the FX is allowed to "complete" / deactivate
 		gracefully. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	bool bHideOnQueueDeallocate;
 
 	/** Whether the FX should attach to another object. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (InlineEditConditionToggle))
 	bool bAttach;
 
 	/** Valid if the FX is attached to a Parent object or when an FX object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the FX will NOT be attached. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (EditCondition = "bAttach"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (EditCondition = "bAttach"))
 	FCsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the FX is attached to a Parent object. 
 	    Bone or Socket to attach to. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (EditCondition = "bAttach"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (EditCondition = "bAttach"))
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the FX. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the FX.
 		If the FX is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FTransform3f Transform;
 
 	/** Describes Rules for orienting each component of Rotation (Pitch, Yaw, Roll).	
 		 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for Rotation
 			   is set to KeepWorld and bAbsoluteRotation is set to TRUE. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FCsFXOrientationRules OrientationRules;
 
 	/** Whether the Transform's Scale should be applied to the FX.
 		If NOT, the object defaults to FVector3f::OneVector or just the scale of the object the FX
 		is attached to.
 		NOTE: Usually when scaling parameters, this should be FALSE. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	bool bApplyTransformScale;
 
 // TODO: Eventually deprecate and combine into 1 struct
 
 	/** List of all Niagara Int Parameters to change on the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	TArray<FCsFXParameterInt> IntParameters;
 
 	/** List of all Niagara Float Parameters to change on the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	TArray<FCsFXParameterFloat> FloatParameters;
 
 	/** List of all Niagara Vector Parameters to change on the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	TArray<FCsFXParameterVector> VectorParameters;
 
 	/** List of all Niagara Parameters that will get scaled with the FX scale. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FCsFX_Parameters_Scaled ScaledParameters;
 
 	/** List of all Niagara Data Interface Parameters to change on the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
 	FCsFX_Parameters_DataInterface DataInterfaceParameters;
 
 public:
@@ -1278,9 +1426,9 @@ public:
 		return *this;
 	}
 
-	#define DeallocateMethodType NCsFX::EDeallocateMethod
+	using DeallocateMethodType = NCsFX::EDeallocateMethod;
+
 	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *((NCsFX::EDeallocateMethod*)(&DeallocateMethod)); }
-	#undef DeallocateMethodType
 
 	/**
 	* Get the Hard reference to the FX System.
@@ -1298,9 +1446,7 @@ public:
 	FORCEINLINE UNiagaraSystem* GetChecked(const FString& Context) const
 	{
 		checkf(FX.ToSoftObjectPath().IsValid(), TEXT("%s: FX is NULL."), *Context);
-
 		checkf(FX_Internal, TEXT("%s: FX has NOT been loaded from Path @ %s."), *Context, *(FX.ToSoftObjectPath().ToString()));
-
 		return FX_Internal;
 	}
 
@@ -1312,9 +1458,7 @@ public:
 	FORCEINLINE UNiagaraSystem* GetChecked() const
 	{
 		checkf(FX.ToSoftObjectPath().IsValid(), TEXT("FCsFX::GetChecked: FX is NULL."));
-
 		checkf(FX_Internal, TEXT("FCsFX::GetChecked: FX has NOT been loaded from Path @ %s."), *(FX.ToSoftObjectPath().ToString()));
-
 		return FX_Internal;
 	}
 

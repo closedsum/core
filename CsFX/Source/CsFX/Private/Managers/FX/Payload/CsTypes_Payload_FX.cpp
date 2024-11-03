@@ -14,18 +14,23 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Payload_FX)
 
-#define PayloadType NCsFX::NPayload::FImpl
-void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadType* Payload) const
+using PayloadImplType = NCsFX::NPayload::NImpl::FImpl;
+using IntParameterType = NCsFX::NParameter::NInt::FIntType;
+using FloatParameterType = NCsFX::NParameter::NFloat::FFloatType;
+using VectorParameterType = NCsFX::NParameter::NVector::FVectorType;
+using ScaledIntParameterType = NCsFX::NParameter::NScaled::NInt::FIntType;
+using ScaledFloatParameterType = NCsFX::NParameter::NScaled::NFloat::FFloatType;
+using ScaledVectorParameterType = NCsFX::NParameter::NScaled::NVector::FVectorType;
+using SkeletalMeshParameterType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType;
+using DeallocateMethodType = NCsFX::EDeallocateMethod;
+
+void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadImplType* Payload) const
 {
-#undef PayloadType
-	
 	Payload->Instigator = Instigator;
 	Payload->Owner		= Owner;
 	Payload->Parent		= Parent;
 	Payload->Time		= Time;
 	Payload->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
-
-	typedef NCsFX::EDeallocateMethod DeallocateMethodType;
 
 	Payload->FXSystem					= FX.GetChecked(Context);
 	Payload->DeallocateMethod			= (DeallocateMethodType)FX.DeallocateMethod;
@@ -42,34 +47,25 @@ void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject*
 	// Int
 	for (const FCsFXParameterInt& Param : FX.IntParameters)
 	{
-		typedef NCsFX::NParameter::NInt::FIntType IntParameterType;
-
 		IntParameterType* IntType = Manager_FX->AllocateValue<IntParameterType>();
 
 		Param.CopyToParamsAsValue(IntType);
-
 		Payload->Parameters.Add(IntType);
 	}
 	// Float
 	for (const FCsFXParameterFloat& Param : FX.FloatParameters)
 	{
-		typedef NCsFX::NParameter::NFloat::FFloatType FloatParameterType;
-
 		FloatParameterType* FloatType = Manager_FX->AllocateValue<FloatParameterType>();
 
 		Param.CopyToParamsAsValue(FloatType);
-
 		Payload->Parameters.Add(FloatType);
 	}
 	// Vector
 	for (const FCsFXParameterVector& Param : FX.VectorParameters)
 	{
-		typedef NCsFX::NParameter::NVector::FVectorType VectorParameterType;
-
 		VectorParameterType* VectorType = Manager_FX->AllocateValue<VectorParameterType>();
 		
 		Param.CopyToParamsAsValue(VectorType);
-
 		Payload->Parameters.Add(VectorType);
 	}
 	// Scaled
@@ -77,34 +73,25 @@ void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject*
 		// Int
 		for (const FCsFX_Parameter_Scaled_Int& Param : FX.ScaledParameters.Ints)
 		{
-			typedef NCsFX::NParameter::NScaled::NInt::FIntType IntParameterType;
-
-			IntParameterType* IntType = Manager_FX->AllocateValue<IntParameterType>();
+			ScaledIntParameterType* IntType = Manager_FX->AllocateValue<ScaledIntParameterType>();
 
 			Param.CopyToParamsAsValue(IntType);
-
 			Payload->ScaledParameters.Add(IntType);
 		}
 		// Float
 		for (const FCsFX_Parameter_Scaled_Float& Param : FX.ScaledParameters.Floats)
 		{
-			typedef NCsFX::NParameter::NScaled::NFloat::FFloatType FloatParameterType;
-
-			FloatParameterType* FloatType = Manager_FX->AllocateValue<FloatParameterType>();
+			ScaledFloatParameterType* FloatType = Manager_FX->AllocateValue<ScaledFloatParameterType>();
 
 			Param.CopyToParamsAsValue(FloatType);
-
 			Payload->ScaledParameters.Add(FloatType);
 		}
 		// Vector
 		for (const FCsFX_Parameter_Scaled_Vector& Param : FX.ScaledParameters.Vectors)
 		{
-			typedef NCsFX::NParameter::NScaled::NVector::FVectorType VectorParameterType;
-
-			VectorParameterType* VectorType = Manager_FX->AllocateValue<VectorParameterType>();
+			ScaledVectorParameterType* VectorType = Manager_FX->AllocateValue<ScaledVectorParameterType>();
 
 			Param.CopyToParamsAsValue(VectorType);
-
 			Payload->ScaledParameters.Add(VectorType);
 		}
 	}
@@ -113,12 +100,9 @@ void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject*
 		// Skeletal Mesh
 		for (const FCsFX_Parameters_DataInterface_SkeletalMesh& Param : FX.DataInterfaceParameters.SkeletalMeshes)
 		{
-			typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType SkeletalMeshParameterType;
-
 			SkeletalMeshParameterType* SkeletalMeshType = Manager_FX->AllocateValue<SkeletalMeshParameterType>();
 
 			Param.CopyToParamsAsValue(SkeletalMeshType);
-
 			Payload->SkeletalMeshParameters.Add(SkeletalMeshType);
 		}
 	}

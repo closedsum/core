@@ -6,7 +6,6 @@
 #include "Animation/2D/CsTypes_Library_Anim2D.h"
 #include "Coroutine/CsRoutineHandle.h"
 
-
 struct FCsRoutine;
 
 namespace NCsAnim
@@ -32,11 +31,15 @@ namespace NCsAnim
 				}
 
 			private:
-			#define ParamsManagerType NCsAnim::N2D::NTexture::NPlay::NParams::FManager
-			#define ParamsResourceType NCsAnim::N2D::NTexture::NPlay::NParams::FResource
-			#define ParamsType NCsAnim::N2D::NTexture::NPlay::NParams::FParams
+
+				CS_DECLARE_STATIC_LOG_LEVEL
+
+				using ParamsManagerType = NCsAnim::N2D::NTexture::NPlay::NParams::FManager;
+				using ParamsResourceType = NCsAnim::N2D::NTexture::NPlay::NParams::FResource;
+				using ParamsType = NCsAnim::N2D::NTexture::NPlay::NParams::FParams;
 
 				ParamsManagerType Manager_PlayParams;
+
 			public:
 		
 				FORCEINLINE ParamsResourceType* AllocatePlayParams() { return Manager_PlayParams.Allocate(); }
@@ -59,7 +62,7 @@ namespace NCsAnim
 				* @param Log		(optional)
 				* return			Handle
 				*/
-				static const FCsRoutineHandle& SafePlay(const FString& Context, const ParamsType& Params, void(*Log)(const FString&) = &FCsLog::Warning);
+				static const FCsRoutineHandle& SafePlay(const FString& Context, const ParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Play a Texture 2D animation with the given Params.
@@ -83,20 +86,24 @@ namespace NCsAnim
 				* @param Log		(optional)
 				* return			Handle
 				*/
-				static const FCsRoutineHandle& SafePlay(const FString& Context, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
+				static const FCsRoutineHandle& SafePlay(const FString& Context, ParamsResourceType* Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			private:
 
 				static char Play_Internal(FCsRoutine* R);
 
 				static void Play_Internal_OnEnd(FCsRoutine* R);
-
-			#undef ParamsManagerType
-			#undef ParamsResourceType
-			#undef ParamsType
 			};
 		}
+	}
+}
 
+using Cs2DTextureAnimLibrary = NCsAnim::N2D::NTexture::FLibrary;
+
+namespace NCsAnim
+{
+	namespace N2D
+	{
 		namespace NMaterial
 		{
 			struct CSCORE_API FLibrary final
@@ -116,11 +123,15 @@ namespace NCsAnim
 				}
 
 			private:
-			#define ParamsManagerType NCsAnim::N2D::NMaterial::NPlay::NParams::FManager
-			#define ParamsResourceType NCsAnim::N2D::NMaterial::NPlay::NParams::FResource
-			#define ParamsType NCsAnim::N2D::NMaterial::NPlay::NParams::FParams
+
+				CS_DECLARE_STATIC_LOG_LEVEL
+
+				using ParamsManagerType = NCsAnim::N2D::NMaterial::NPlay::NParams::FManager;
+				using ParamsResourceType = NCsAnim::N2D::NMaterial::NPlay::NParams::FResource;
+				using ParamsType = NCsAnim::N2D::NMaterial::NPlay::NParams::FParams;
 
 				ParamsManagerType Manager_PlayParams;
+
 			public:
 		
 				FORCEINLINE ParamsResourceType* AllocatePlayParams() { return Manager_PlayParams.Allocate(); }
@@ -143,7 +154,7 @@ namespace NCsAnim
 				* @param Log		(optional)
 				* return			Handle
 				*/
-				static const FCsRoutineHandle& SafePlay(const FString& Context, const ParamsType& Params, void(*Log)(const FString&) = &FCsLog::Warning);
+				static const FCsRoutineHandle& SafePlay(const FString& Context, const ParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Play a Material 2D animation with the given Params.
@@ -167,18 +178,16 @@ namespace NCsAnim
 				* @param Log		(optional)
 				* return			Handle
 				*/
-				static const FCsRoutineHandle& SafePlay(const FString& Context, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
+				static const FCsRoutineHandle& SafePlay(const FString& Context, ParamsResourceType* Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			private:
 
 				static char Play_Internal(FCsRoutine* R);
 
 				static void Play_Internal_OnEnd(FCsRoutine* R);
-
-			#undef ParamsManagerType
-			#undef ParamsResourceType
-			#undef ParamsType
 			};
 		}
 	}
 }
+
+using Cs2DMaterialAnimLibrary = NCsAnim::N2D::NMaterial::FLibrary;

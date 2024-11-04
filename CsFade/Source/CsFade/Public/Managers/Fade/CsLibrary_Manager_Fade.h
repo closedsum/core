@@ -17,7 +17,14 @@ namespace NCsFade
 	{
 		struct CSFADE_API FLibrary
 		{
-		#define LogWarning void(*Log)(const FString&) = &NCsFade::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
+
+			using OnCompleteEventType = NCsFade::NManager::NFade::FOnComplete;
+			using ParamsType = NCsFade::FParams;
+			using ClearToBlackParamsType = NCsFade::NClearToBlack::FParams;
+			using BlackToClearParamsType = NCsFade::NBlackToClear::FParams;
 
 		// ContextRoot
 		#pragma region
@@ -49,9 +56,9 @@ namespace NCsFade
 			* @param Log
 			* return				Context for UCsManager_Fade
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogWarning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogWarning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -95,7 +102,7 @@ namespace NCsFade
 			* @param Log			(optional)
 			* return				UCsManager_Fade.
 			*/
-			static UCsManager_Fade* GetSafe(const FString& Context, const UObject* ContextObject, LogWarning);
+			static UCsManager_Fade* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get the reference to UCsManager_Fade from a ContextObject.
@@ -108,7 +115,7 @@ namespace NCsFade
 			* @param Log			(optional)
 			* return				UCsManager_Fade.
 			*/
-			static UCsManager_Fade* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogWarning);
+			static UCsManager_Fade* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get the reference to UCsManager_Fade from a ContextObject.
@@ -131,10 +138,6 @@ namespace NCsFade
 		#pragma endregion Class
 
 		public:
-
-		#define ParamsType NCsFade::FParams
-		#define ClearToBlackParamsType NCsFade::NClearToBlack::FParams
-		#define BlackToClearParamsType NCsFade::NBlackToClear::FParams
 			
 			/**
 			*
@@ -183,10 +186,6 @@ namespace NCsFade
 			*/
 			static bool SafeFade(const UObject* ContextObject, const ParamsType& Params);
 
-		#undef ParamsType
-		#undef ClearToBlackParamsType
-		#undef BlackToClearParamsType
-
 			/**
 			* 
 			* 
@@ -217,8 +216,8 @@ namespace NCsFade
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeClearFade(const FString& Context, const UObject* ContextObject, LogWarning);
-			FORCEINLINE static bool SafeClearFade(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogWarning)
+			static bool SafeClearFade(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeClearFade(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeClearFade(Context, ContextObject, Log);
 				return OutSuccess;
@@ -247,8 +246,8 @@ namespace NCsFade
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeFadeBlackToBlack(const FString& Context, const UObject* ContextObject, const float& Time, LogWarning);
-			FORCEINLINE static bool SafeFadeBlackToBlack(const FString& Context, const UObject* ContextObject, const float& Time, bool& OutSuccess, LogWarning)
+			static bool SafeFadeBlackToBlack(const FString& Context, const UObject* ContextObject, const float& Time, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeFadeBlackToBlack(const FString& Context, const UObject* ContextObject, const float& Time, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeFadeBlackToBlack(Context, ContextObject, Time, Log);
 				return OutSuccess;
@@ -277,8 +276,8 @@ namespace NCsFade
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, LogWarning);
-			FORCEINLINE static bool SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, bool& OutSuccess, LogWarning)
+			static bool SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeFadeClearToBlack(Context, ContextObject, Time, Log);
 				return OutSuccess;
@@ -307,14 +306,12 @@ namespace NCsFade
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeFadeBlackToClear(const FString& Context, const UObject* ContextObject, const float& Time, LogWarning);
-			FORCEINLINE static bool SafeFadeBlackToClear(const FString& Context, const UObject* ContextObject, const float& Time, bool& OutSuccess, LogWarning)
+			static bool SafeFadeBlackToClear(const FString& Context, const UObject* ContextObject, const float& Time, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeFadeBlackToClear(const FString& Context, const UObject* ContextObject, const float& Time, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeFadeBlackToClear(Context, ContextObject, Time, Log);
 				return OutSuccess;
-			}
-
-		#define OnCompleteEventType NCsFade::NManager::NFade::FOnComplete
+			}	
 
 			static OnCompleteEventType& GetOnFadeComplete_EventChecked(const FString& Context, const UObject* ContextObject);
 
@@ -322,16 +319,12 @@ namespace NCsFade
 
 			static bool IsFadeActiveChecked(const FString& Context, const UObject* WorldContext);
 
-			static bool SafeIsFadeActive(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogWarning);
-			FORCEINLINE static bool SafeIsFadeActive(const FString& Context, const UObject* WorldContext, LogWarning)
+			static bool SafeIsFadeActive(const FString& Context, const UObject* WorldContext, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeIsFadeActive(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				bool OutSuccess = false;
 				return SafeIsFadeActive(Context, WorldContext, OutSuccess, Log);
 			}
-
-		#undef OnCompleteEventType
-
-		#undef LogWarning
 		};
 	}
 }

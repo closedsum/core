@@ -13,6 +13,12 @@ namespace NCsObject
 {
 	namespace NCreate
 	{
+		using LogClassType = FCsLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
+		using CreatedObjectsType = NCsObject::NCreate::FCreated;
+
 		// Get
 		#pragma region
 
@@ -42,7 +48,7 @@ namespace NCsObject
 			return true;
 		}
 
-		bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IMPLEMENTS_INTERFACE(Object, UObject, ICsGetCreatedObjects)
 			return true;
@@ -50,12 +56,10 @@ namespace NCsObject
 
 		#pragma endregion Implements
 
-		#define CreatedObjectsType NCsObject::NCreate::FCreated
 		CreatedObjectsType* FLibrary::GetCreatedObjectsChecked(const FString& Context)
 		{
 			return GetChecked(Context)->GetCreatedObjects();
 		}
-		#undef CreatedObjectsType
 
 		void FLibrary::AddChecked(const FString& Context, UObject* Object, UObject* Owner)
 		{

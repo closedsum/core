@@ -13,7 +13,9 @@ namespace NCsPlayer
 	{
 		namespace NCache
 		{
-			#define LogLevel void(*Log)(const FString&) /*=&NFnLive::FLog::Warning*/
+			using LogClassType = NCsSeamlessTransition::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 			using GameInstanceLibrary = NCsGameInstance::NSeamlessTransition::FLibrary;
 			using PlayerCacheType = NCsPlayer::NTransition::FCache;
@@ -25,7 +27,7 @@ namespace NCsPlayer
 				GameInstanceLibrary::GetPlayerTransitionCacheChecked(Context, WorldContext)->InputCache.Events.Add(Info);
 			}
 
-			bool FLibrary::Input_SafeAddEvent(const FString& Context, const UObject* WorldContext, const FCsGameEventInfo& Info, LogLevel)
+			bool FLibrary::Input_SafeAddEvent(const FString& Context, const UObject* WorldContext, const FCsGameEventInfo& Info, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_VALID(Info)
 
@@ -41,8 +43,6 @@ namespace NCsPlayer
 			{
 				GameInstanceLibrary::GetPlayerTransitionCacheChecked(Context, WorldContext)->Resolve(Context, WorldContext);
 			}
-
-			#undef LogLevel
 		}
 	}
 }

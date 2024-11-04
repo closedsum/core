@@ -39,6 +39,10 @@ namespace NCsScriptLibraryManagerInput
 	}
 }
 
+using LogClassType = NCsInput::FLog;
+
+CS_DEFINE_STATIC_LOG_ERROR(UCsScriptLibrary_Manager_Input, LogClassType::Error);
+
 UCsScriptLibrary_Manager_Input::UCsScriptLibrary_Manager_Input(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -48,10 +52,7 @@ UCsScriptLibrary_Manager_Input::UCsScriptLibrary_Manager_Input(const FObjectInit
 #define USING_NS_CACHED using namespace NCsScriptLibraryManagerInput::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerInput::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define LogError &NCsInput::FLog::Error
-#define InputManagerLibrary NCsInput::NManager::FLibrary
-#define FirstInputManagerLibrary NCsInput::NManager::NFirst::FLibrary
-#define InputActionMapLibrary NCsInput::NManager::NInputActionMap::FLibrary
+using InputActionMapLibrary = NCsInput::NManager::NInputActionMap::FLibrary;
 
 // Get
 #pragma region
@@ -60,14 +61,14 @@ UObject* UCsScriptLibrary_Manager_Input::Get(const FString& Context, const UObje
 {
 	CONDITIONAL_SET_CTXT(Get);
 
-	return InputManagerLibrary::GetSafeAsObject(Ctxt, WorldContextObject, ControllerId);
+	return CsInputManagerLibrary::GetSafeAsObject(Ctxt, WorldContextObject, ControllerId);
 }
 
 UObject* UCsScriptLibrary_Manager_Input::GetChecked(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, bool& OutSuccess)
 {
 	CONDITIONAL_SET_CTXT(GetChecked);
 
-	return CS_SCRIPT_GET_CHECKED(InputManagerLibrary::GetAsObjectChecked(Ctxt, WorldContextObject, ControllerId), InputManagerLibrary::GetSafeAsObject(Ctxt, WorldContextObject, ControllerId, OutSuccess, LogError));
+	return CS_SCRIPT_GET_CHECKED(CsInputManagerLibrary::GetAsObjectChecked(Ctxt, WorldContextObject, ControllerId), CsInputManagerLibrary::GetSafeAsObject(Ctxt, WorldContextObject, ControllerId, OutSuccess, LogError));
 }
 
 #pragma endregion Get
@@ -76,14 +77,14 @@ bool UCsScriptLibrary_Manager_Input::Init(const FString& Context, const UObject*
 {
 	CONDITIONAL_SET_CTXT(Init);
 
-	return InputManagerLibrary::SafeInit(Ctxt, WorldContextObject, ControllerId);
+	return CsInputManagerLibrary::SafeInit(Ctxt, WorldContextObject, ControllerId);
 }
 
 bool UCsScriptLibrary_Manager_Input::InitAll(const FString& Context, const UObject* WorldContextObject)
 {
 	CONDITIONAL_SET_CTXT(InitAll);
 
-	return InputManagerLibrary::SafeInit(Ctxt, WorldContextObject);
+	return CsInputManagerLibrary::SafeInit(Ctxt, WorldContextObject);
 }
 
 // InputActionMap
@@ -162,7 +163,7 @@ void UCsScriptLibrary_Manager_Input::BindToEvent_OnAnyKey_Pressed(const FString&
 {
 	CONDITIONAL_SET_CTXT(BindToEvent_OnAnyKey_Pressed);
 
-	if (ICsManager_Input_Event* Manager = FirstInputManagerLibrary::GetSafe_ICsManager_Input_Event(Ctxt, WorldContextObject))
+	if (ICsManager_Input_Event* Manager = CsFirstInputManagerLibrary::GetSafe_ICsManager_Input_Event(Ctxt, WorldContextObject))
 	{
 		CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(Ctxt, Manager, GetOnAnyKey_Pressed_ScriptEvent(), Delegate, LogCsInput)
 	}
@@ -172,7 +173,3 @@ void UCsScriptLibrary_Manager_Input::BindToEvent_OnAnyKey_Pressed(const FString&
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef LogError
-#undef InputManagerLibrary
-#undef FirstInputManagerLibrary
-#undef InputActionMapLibrary

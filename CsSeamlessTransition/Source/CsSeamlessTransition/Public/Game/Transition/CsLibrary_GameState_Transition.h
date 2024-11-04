@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsSeamlessTransitionLog.h"
 
@@ -15,7 +17,9 @@ namespace NCsGameState
 	{
 		class CSSEAMLESSTRANSITION_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsSeamlessTransition::FLog::Warning
+		private:
+			
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// Interface
 		#pragma region
@@ -38,8 +42,8 @@ namespace NCsGameState
 			* @param Log
 			* return				ICsGameState_Transition
 			*/
-			static ICsGameState_Transition* GetSafeInterface(const FString& Context, const UObject* WorldContext, LogLevel);
-			FORCEINLINE static ICsGameState_Transition* GetSafeInterface(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogLevel)
+			static ICsGameState_Transition* GetSafeInterface(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static ICsGameState_Transition* GetSafeInterface(const FString& Context, const UObject* WorldContext, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				ICsGameState_Transition* Interface = GetSafeInterface(Context, WorldContext, Log);
 				OutSuccess						   = Interface != nullptr;
@@ -70,8 +74,8 @@ namespace NCsGameState
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeHasFinishedTransitionOut(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogLevel);
-			FORCEINLINE static bool SafeHasFinishedTransitionOut(const FString& Context, const UObject* WorldContext, LogLevel)
+			static bool SafeHasFinishedTransitionOut(const FString& Context, const UObject* WorldContext, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeHasFinishedTransitionOut(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				bool OutSuccess = false;
 				return SafeHasFinishedTransitionOut(Context, WorldContext, OutSuccess, Log);
@@ -97,14 +101,12 @@ namespace NCsGameState
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeTransitionOut(const FString& Context, const UObject* WorldContext, LogLevel);
-			FORCEINLINE static bool SafeTransitionOut(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogLevel)
+			static bool SafeTransitionOut(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeTransitionOut(const FString& Context, const UObject* WorldContext, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeTransitionOut(Context, WorldContext, Log);
 				return OutSuccess;
 			}
-
-		#undef LogLevel
 		};
 	}
 }

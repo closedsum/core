@@ -30,11 +30,13 @@ namespace NCsBlueprint
 		}
 	}
 
+	using LogClassType = NCsCore::NLibrary::FLog;
+
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 	#define USING_NS_CACHED using namespace NCsBlueprint::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsBlueprint::NLibrary::NCached; \
 		const FString& Context = Str::__FunctionName
-	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define NO_LOG void(*Log)(const FString&) = nullptr;
 
 	// Load
 	#pragma region
@@ -44,7 +46,7 @@ namespace NCsBlueprint
 		return CsObjectLibrary::LoadChecked<UBlueprint>(Context, Path);
 	}
 
-	UBlueprint* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogWarning)
+	UBlueprint* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		return CsObjectLibrary::SafeLoad<UBlueprint>(Context, Path, Log);
 	}
@@ -54,7 +56,7 @@ namespace NCsBlueprint
 		return CsObjectLibrary::LoadChecked<UBlueprint>(Context, Path);
 	}
 
-	UBlueprint* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogWarning)
+	UBlueprint* FLibrary::SafeLoad(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		return CsObjectLibrary::SafeLoad<UBlueprint>(Context, Path, Log);
 	}
@@ -97,7 +99,7 @@ namespace NCsBlueprint
 		return (UBlueprintGeneratedClass*)(O);
 	}
 
-	UBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, const FString& Path, LogWarning)
+	UBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_STRING_EMPTY_RET_NULL(Path)
 
@@ -138,7 +140,7 @@ namespace NCsBlueprint
 		return CS_CAST_CHECKED(Class, UClass, UBlueprintGeneratedClass);
 	}
 
-	UBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, UBlueprint* Blueprint, LogWarning)
+	UBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, UBlueprint* Blueprint, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL_RET_NULL(Blueprint)
 
@@ -158,11 +160,10 @@ namespace NCsBlueprint
 	{
 		SET_CONTEXT(GetSafeClass);
 
-		NO_LOG
 		return GetSafeClass(Context, CS_CAST(Blueprint, UObject, UBlueprint), nullptr);
 	}
 
-	UObject* FLibrary::GetSafeClassDefaultObject(const FString& Context, UBlueprint* Blueprint, LogWarning)
+	UObject* FLibrary::GetSafeClassDefaultObject(const FString& Context, UBlueprint* Blueprint, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (UBlueprintGeneratedClass* BpGC = GetSafeClass(Context, Blueprint, Log))
 		{
@@ -178,7 +179,7 @@ namespace NCsBlueprint
 		return nullptr;
 	}
 
-	UObject* FLibrary::GetSafeClassDefaultObject(const FString& Context, UObject* Blueprint, LogWarning)
+	UObject* FLibrary::GetSafeClassDefaultObject(const FString& Context, UObject* Blueprint, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PTR_NULL_CHECKED(Blueprint)
 
@@ -192,7 +193,7 @@ namespace NCsBlueprint
 		return GetSafeClassDefaultObject(Context, Blueprint, nullptr);
 	}
 
-	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, const FString& Path, LogWarning)
+	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_STRING_EMPTY_RET_NULL(Path)
 
@@ -221,7 +222,7 @@ namespace NCsBlueprint
 		return DOb;
 	}
 
-	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, UBlueprint* Blueprint, LogWarning)
+	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, UBlueprint* Blueprint, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PTR_NULL_CHECKED(Blueprint)
 
@@ -234,7 +235,7 @@ namespace NCsBlueprint
 		return GetSafeDefaultObject(Context, Path, Log);
 	}
 
-	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, UObject* Blueprint, LogWarning)
+	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, UObject* Blueprint, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PTR_NULL_CHECKED(Blueprint)
 
@@ -258,7 +259,7 @@ namespace NCsBlueprint
 		return Cast<UBlueprint>(Object) != nullptr;
 	}
 
-	bool FLibrary::SafeIs(const FString& Context, const UObject* Object, LogWarning)
+	bool FLibrary::SafeIs(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Object)
 
@@ -306,6 +307,4 @@ namespace NCsBlueprint
 
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
-	#undef LogWarning
-	#undef NO_LOG
 }

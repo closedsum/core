@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsJsLog.h"
 
@@ -28,7 +30,9 @@ namespace NCsActor
 		*/
 		struct CSJS_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsJs::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// Interface
 		#pragma region
@@ -37,8 +41,8 @@ namespace NCsActor
 			static bool Implements(const AActor* A);
 			static bool Implements(const AActor* A, bool& OutIsScript);
 
-			static bool SafeImplements(const FString& Context, const AActor* A, LogLevel);
-			static bool SafeImplements(const FString& Context, const AActor* A, bool& OutIsScript, LogLevel);
+			static bool SafeImplements(const FString& Context, const AActor* A, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			static bool SafeImplements(const FString& Context, const AActor* A, bool& OutIsScript, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Interface
 
@@ -67,7 +71,7 @@ namespace NCsActor
 			* @param Log			(optional)
 			* return				Whether GetSafe was excuted successfully or not.
 			*/
-			static bool GetSafe(const FString& Context, const UObject* WorldContext, TArray<AActor*>& OutActors, LogLevel);
+			static bool GetSafe(const FString& Context, const UObject* WorldContext, TArray<AActor*>& OutActors, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get a Scriptable Actor with the given Tag (checks AActor->Tags).
@@ -109,7 +113,7 @@ namespace NCsActor
 			* @param Log
 			* return				Actor
 			*/
-			static AActor* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, LogLevel);
+			static AActor* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get a Scriptable Actor (casted to type T) with the given Tag (checks AActor->Tags)
@@ -122,7 +126,7 @@ namespace NCsActor
 			* return				Actor
 			*/
 			template<typename T>
-			FORCEINLINE static T* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, LogLevel)
+			FORCEINLINE static T* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				T* A = Cast<T>(GetSafeByTag(Context, WorldContext, Tag, Log));
 
@@ -191,7 +195,7 @@ namespace NCsActor
 			* @param Log			(optional)
 			* return				Whether any actors were found with Tags.
 			*/
-			static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors, LogLevel);
+			static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get a Scriptable Actor with the given Name.
@@ -214,7 +218,7 @@ namespace NCsActor
 			* @param Log
 			* return
 			*/
-			static AActor* GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, LogLevel);
+			static AActor* GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get a Scriptable Actor with the given Name.
@@ -253,7 +257,7 @@ namespace NCsActor
 			* @param Log
 			* return
 			*/
-			static AActor* GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, LogLevel);
+			static AActor* GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get a Scriptable Actor with the given Label.
@@ -269,8 +273,6 @@ namespace NCsActor
 			static AActor* GetSafeByLabel(const UObject* WorldContext, const FString& Label);
 
 		#pragma endregion Get
-
-		#undef LogLevel
 		};
 	}
 }

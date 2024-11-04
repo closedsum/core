@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "CsMacro_Misc.h"
 // Log
 #include "Utility/CsCoreLibraryLog.h"
@@ -19,7 +20,9 @@ namespace NCsViewport
 		{
 			class CSCORELIBRARY_API FLibrary final
 			{
-			#define LogWarning void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			public:
 
@@ -42,7 +45,7 @@ namespace NCsViewport
 				* @param Log
 				* return				Whether the projection is possible or not.
 				*/
-				static bool CanSafeProjectWorldToScreen(const FString& Context, const UObject* WorldContext, LogWarning);
+				static bool CanSafeProjectWorldToScreen(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely check whether the First Local Player's Viewport can project a world location to a screen
@@ -109,7 +112,7 @@ namespace NCsViewport
 				* @param Log
 				* return				Whether the de-projection is possible or not.
 				*/
-				static bool CanSafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, LogWarning);
+				static bool CanSafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely check whether the First Local Player's Viewport can de-project a screen position to a
@@ -143,7 +146,7 @@ namespace NCsViewport
 				* @param Log
 				* return					Whether the deproject was successful or not.
 				*/
-				static bool SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection, LogWarning);
+				static bool SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely transforms the given 2D screen space coordinate into a 3D world-space point and direction.
@@ -173,7 +176,7 @@ namespace NCsViewport
 				* @param Log
 				* return				Viewport
 				*/
-				static FSceneViewport* GetSafeViewport(const FString& Context, const UObject* WorldContext, LogWarning);
+				static FSceneViewport* GetSafeViewport(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the Viewport associated with the First Local Player.
@@ -200,7 +203,7 @@ namespace NCsViewport
 				* @param Log
 				* return				Size of the viewport.
 				*/
-				static FIntPoint GetSafeSize(const FString& Context, const UObject* WorldContext, LogWarning);
+				static FIntPoint GetSafeSize(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the current Size (GetSizeXY()) of the Viewport associated with the First Local Player.
@@ -235,7 +238,7 @@ namespace NCsViewport
 				* @param Log
 				* return					Whether the intersection exists or not.
 				*/
-				static bool GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection, LogWarning);
+				static bool GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the intersection between the de-projection of the screen position to a world ray (location and direction)
@@ -248,12 +251,15 @@ namespace NCsViewport
 				* return					Whether the intersection exists or not.
 				*/
 				static bool GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection);
-
-			#undef LogWarning
 			};
 		}
 	}
+}
 
+using CsLocalPlayerViewportLibrary = NCsViewport::NLocal::NPlayer::FLibrary;
+
+namespace NCsViewport
+{
 	namespace NGame
 	{
 		class CSCORELIBRARY_API FLibrary final
@@ -271,3 +277,5 @@ namespace NCsViewport
 		};
 	}
 }
+
+using CsGameViewportLibrary = NCsViewport::NGame::FLibrary;

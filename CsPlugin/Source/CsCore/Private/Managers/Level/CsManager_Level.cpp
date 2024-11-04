@@ -109,6 +109,8 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerLevel::NCached; \
 	const FString& Context = Str::__FunctionName
 
+using ChangeMapParamsType = NCsLevel::NManager::NChangeMap::FParams;
+
 // Singleton
 #pragma region
 
@@ -401,8 +403,6 @@ char UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine*
 // Change Map
 #pragma region
 
-#define ChangeMapParamsType NCsLevel::NManager::NChangeMap::FParams
-
 void UCsManager_Level::ChangeMap(const ChangeMapParamsType& Params)
 {
 	SET_CONTEXT(ChangeMap);
@@ -528,8 +528,6 @@ char UCsManager_Level::ChangeMap_TransitionAsDestination_Internal(FCsRoutine* R)
 
 	CS_COROUTINE_END(R);
 }
-
-#undef ChangeMapParamsType
 
 #pragma endregion Change Map
 

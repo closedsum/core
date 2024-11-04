@@ -80,6 +80,16 @@ class CSINPUT_API UCsManager_Input_Default : public UActorComponent,
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	using OnPostProcessInputEventType = NCsInput::NManager::FOnPostProcessInput;
+	using OnGameEventInfoEventType = NCsInput::NManager::FOnGameEventInfo;
+	using OnGameEventInfosEventType = NCsInput::NManager::FOnGameEventInfos;
+	using OnAnyKeyPressedEventType = NCsInput::NManager::FOnAnyKey_Pressed;
+	using OnAnyKeyReleasedEventType = NCsInput::NManager::FOnAnyKey_Released;
+	using ModeOnChangeEventType = NCsInput::NManager::NMode::FOnChange;
+
+
 // UObject Interface
 #pragma region
 public:
@@ -232,13 +242,6 @@ private:
 #pragma region
 public:
 
-#define OnPostProcessInputEventType NCsInput::NManager::FOnPostProcessInput
-#define OnGameEventInfoEventType NCsInput::NManager::FOnGameEventInfo
-#define OnGameEventInfosEventType NCsInput::NManager::FOnGameEventInfos
-#define OnAnyKeyPressedEventType NCsInput::NManager::FOnAnyKey_Pressed
-#define OnAnyKeyReleasedEventType NCsInput::NManager::FOnAnyKey_Released
-#define ModeOnChangeEventType NCsInput::NManager::NMode::FOnChange
-
 	FORCEINLINE OnPostProcessInputEventType& GetOnPostProcessInput_Event() { return OnPostProcessInput_Event; }
 	FORCEINLINE OnGameEventInfoEventType& GetOnGameEventInfo_Event() { return OnGameEventInfo_Event; }
 	FORCEINLINE OnGameEventInfosEventType& GetOnGameEventInfos_Event() { return OnGameEventInfos_Event; }
@@ -249,24 +252,11 @@ public:
 	FORCEINLINE ModeOnChangeEventType& GetActiveMode_OnChange_Event() { return ActiveMode.GetOnChange_Event();  }
 	FORCEINLINE FCsManagerInput_OnActiveMode_Change& GetActiveMode_OnChange_ScriptEvent() { return OnActiveMode_Change_ScriptEvent; }
 
-#undef OnPostProcessInputEventType
-#undef OnGameEventInfoEventType
-#undef OnGameEventInfosEventType
-#undef OnAnyKeyPressedEventType
-#undef OnAnyKeyReleasedEventType
-#undef ModeOnChangeEventType
-
 #pragma endregion ICsManager_Input_Event
 
 // Manager_Input_Event
 #pragma region
 public:
-
-#define OnPostProcessInputEventType NCsInput::NManager::FOnPostProcessInput
-#define OnGameEventInfoEventType NCsInput::NManager::FOnGameEventInfo
-#define OnGameEventInfosEventType NCsInput::NManager::FOnGameEventInfos
-#define OnAnyKeyPressedEventType NCsInput::NManager::FOnAnyKey_Pressed
-#define OnAnyKeyReleasedEventType NCsInput::NManager::FOnAnyKey_Released
 
 	OnPostProcessInputEventType OnPostProcessInput_Event;
 
@@ -286,12 +276,6 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FCsManagerInput_OnActiveMode_Change OnActiveMode_Change_ScriptEvent;
-
-#undef OnPostProcessInputEventType
-#undef OnGameEventInfoEventType
-#undef OnGameEventInfosEventType
-#undef OnAnyKeyPressedEventType
-#undef OnAnyKeyReleasedEventType
 
 #pragma endregion Manager_Input_Event
 
@@ -495,8 +479,6 @@ private:
 #pragma region
 public:
 
-#define ModeOnChangeEventType NCsInput::NManager::NMode::FOnChange
-
 	struct FMode
 	{
 		friend class UCsManager_Input_Default;
@@ -628,8 +610,6 @@ public:
 	};
 
 	FActiveMode ActiveMode;
-
-#undef ModeOnChangeEventType
 
 #pragma endregion Mode
 

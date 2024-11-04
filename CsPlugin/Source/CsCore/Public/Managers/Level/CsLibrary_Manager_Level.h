@@ -27,7 +27,17 @@ namespace NCsLevel
 
 		struct CSCORE_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &FCsLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
+
+			using ParamsType = NCsLevel::NManager::NChangeMap::FParams;
+			using OnChangeMapStartEventType = NCsLevel::NManager::FChangeMap_OnStart;
+			using OnChangeMapCompleteEventType = NCsLevel::NManager::FChangeMap_OnComplete;
+			using OnLevelLoadedEventType = NCsLevel::NManager::NLevel::NStreaming::FOnLoaded;
+			using OnLevelUnloadedEventType = NCsLevel::NManager::NLevel::NStreaming::FOnUnloaded;
+			using OnLevelShownEventType = NCsLevel::NManager::NLevel::NStreaming::FOnShown;
+			using OnLevelHiddenEventType = NCsLevel::NManager::NLevel::NStreaming::FOnHidden;
 
 		// ContextRoot
 		#pragma region
@@ -59,9 +69,9 @@ namespace NCsLevel
 			* @param Log
 			* return				Context for UCsManager_Level
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -124,7 +134,7 @@ namespace NCsLevel
 			* @param Log			(optional)
 			* return				UCsManager_Level.
 			*/
-			static UCsManager_Level* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
+			static UCsManager_Level* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get the reference to UCsManager_Level from a ContextObject.
@@ -137,7 +147,7 @@ namespace NCsLevel
 			* return				UCsManager_Level.
 			*/
 			template<typename T>
-			static T* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				UCsManager_Level* O = GetSafe(Context, ContextObject, Log);
 
@@ -165,7 +175,7 @@ namespace NCsLevel
 			* @param Log			(optional)
 			* return				UCsManager_Level.
 			*/
-			static UCsManager_Level* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel);
+			static UCsManager_Level* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get the reference to UCsManager_Level from a ContextObject.
@@ -179,7 +189,7 @@ namespace NCsLevel
 			* return				UCsManager_Level.
 			*/
 			template<typename T>
-			static T* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				UCsManager_Level* O = GetSafe(Context, ContextObject, OutSuccess, Log);
 
@@ -244,7 +254,7 @@ namespace NCsLevel
 			#endif // #if !UE_BUILD_SHIPPING
 			}
 
-			FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, LogLevel)
+			FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				return GetSafe(Context, ContextObject, Log) != nullptr;
 			}
@@ -279,49 +289,36 @@ namespace NCsLevel
 
 			static bool HasChangeMapCompletedChecked(const FString& Context, const UObject* ContextObject);
 
-			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, LogLevel);
+			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel);
+			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		#define ParamsType NCsLevel::NManager::NChangeMap::FParams
+		
 
 			static void ChangeMapChecked(const FString& Context, const UObject* ContextObject, const ParamsType& Params);
 
-			static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, LogLevel);
+			static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-			FORCEINLINE static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, bool& OutSuccess, LogLevel)
+			FORCEINLINE static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeChangeMap(Context, ContextObject, Params, Log);
 				return OutSuccess;
 			}
 
-			FORCEINLINE static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const FCsManagerLevel_ChangeMapParams& Params, LogLevel)
+			FORCEINLINE static bool SafeChangeMap(const FString& Context, const UObject* ContextObject, const FCsManagerLevel_ChangeMapParams& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				return SafeChangeMap(Context, ContextObject, ParamsType::Make(Params), Log);
 			}
 
-		#undef ParamsType
-
-		#define OnChangeMapStartEventType NCsLevel::NManager::FChangeMap_OnStart
-		#define OnChangeMapCompleteEventType NCsLevel::NManager::FChangeMap_OnComplete
-
 			static OnChangeMapStartEventType& GetChangeMap_OnStart_EventChecked(const FString& Context, const UObject* ContextObject);
 
 			static OnChangeMapCompleteEventType& GetChangeMap_OnComplete_EventChecked(const FString& Context, const UObject* ContextObject);
-
-		#undef OnChangeMapStartEventType
-		#undef OnChangeMapCompleteEventType
 
 		#pragma endregion Change Map
 
 		// Streaming
 		#pragma region
 		public:
-
-		#define OnLevelLoadedEventType NCsLevel::NManager::NLevel::NStreaming::FOnLoaded
-		#define OnLevelUnloadedEventType NCsLevel::NManager::NLevel::NStreaming::FOnUnloaded
-		#define OnLevelShownEventType NCsLevel::NManager::NLevel::NStreaming::FOnShown
-		#define OnLevelHiddenEventType NCsLevel::NManager::NLevel::NStreaming::FOnHidden
 
 			static OnLevelLoadedEventType& GetLevel_Streaming_OnLoaded_EventChecked(const FString& Context, UObject* ContextObject);
 
@@ -339,11 +336,6 @@ namespace NCsLevel
 
 			static void BroadcastChecked_Level_Streaming_OnHidden(const FString& Context, UObject* ContextObject, ULevelStreaming* Level);
 
-		#undef OnLevelLoadedEventType
-		#undef OnLevelUnloadedEventType
-		#undef OnLevelShownEventType
-		#undef OnLevelHiddenEventType
-
 		#pragma endregion Streaming
 
 		#if WITH_EDITOR
@@ -355,8 +347,6 @@ namespace NCsLevel
 			static void DestroyOtherPIEWorldChecked(const FString& Context, UObject* ContextObject, const FString& URL);
 
 		#endif // #if WITH_EDITOR
-
-		#undef LogLevel
 		};
 	}
 }

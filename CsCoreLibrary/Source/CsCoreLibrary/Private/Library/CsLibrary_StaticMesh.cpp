@@ -16,7 +16,9 @@
 
 namespace NCsStaticMesh
 {
-	#define LogWarning void(*Log)(const FString&) /*=&FCsLog::Warning*/
+	using LogClassType = NCsCore::NLibrary::FLog;
+
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 	// Load
 	#pragma region
@@ -26,7 +28,7 @@ namespace NCsStaticMesh
 		return CsObjectLibrary::LoadChecked<UStaticMesh>(Context, Path);
 	}
 
-	UStaticMesh* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	UStaticMesh* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		return CsObjectLibrary::SafeLoad<UStaticMesh>(Context, Path, Log);
 	}
@@ -36,7 +38,7 @@ namespace NCsStaticMesh
 		return CsObjectLibrary::LoadChecked<UStaticMesh>(Context, Path);
 	}
 
-	UStaticMesh* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	UStaticMesh* FLibrary::SafeLoad(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		return CsObjectLibrary::SafeLoad<UStaticMesh>(Context, Path, Log);
 	}
@@ -159,6 +161,4 @@ namespace NCsStaticMesh
 	}
 
 	#pragma endregion Destroy
-
-	#undef LogWarning
 }

@@ -25,7 +25,9 @@ namespace NCsFX
 
 			struct CSFX_API FLibrary final : public NCsInterfaceMap::TLibrary<PayloadType>
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsFX::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			public:
 
@@ -46,7 +48,7 @@ namespace NCsFX
 				* @param Log
 				* return
 				*/
-				static bool IsValid(const FString& Context, PayloadType* Payload, LogLevel);
+				static bool IsValid(const FString& Context, PayloadType* Payload, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Set the contents of Payload with FX.
@@ -69,7 +71,7 @@ namespace NCsFX
 				*					FX.Transform is applied as an "offset".
 				* @param Log		(optional)
 				*/
-				static void SetSafe(const FString& Conext, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, LogLevel);
+				static void SetSafe(const FString& Conext, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely set the contents of Payload with FX.
@@ -113,7 +115,7 @@ namespace NCsFX
 				*						FX.Transform is applied as an "offset".
 				* @param Log			(optional)
 				*/
-				static void SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, LogLevel);
+				static void SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely set the contents of Payload with PooledPayload and FX.
@@ -165,8 +167,6 @@ namespace NCsFX
 				*					Sound.Transform is applied as an "offset".
 				*/
 				static void ApplyAsOffsetChecked(const FString& Context, PayloadType* Payload, const FTransform3f& Transform);
-
-			#undef LogLevel
 			};
 		}
 	}

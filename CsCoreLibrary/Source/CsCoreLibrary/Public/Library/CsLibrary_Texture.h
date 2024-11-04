@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsCoreLibraryLog.h"
 
@@ -15,7 +17,9 @@ namespace NCsTexture
 	*/
 	class CSCORELIBRARY_API FLibrary
 	{
-	#define LogWarning void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
+	private:
+
+		CS_DECLARE_STATIC_LOG_LEVEL
 
 	// Load
 	#pragma region
@@ -38,7 +42,7 @@ namespace NCsTexture
 		* @param Log
 		* return			Texture.
 		*/
-		static UTexture* SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogWarning);
+		static UTexture* SafeLoad(const FString& Context, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Load a Texture at the given Path.
@@ -58,10 +62,8 @@ namespace NCsTexture
 		* @param Log
 		* return			Texture.
 		*/
-		static UTexture* SafeLoad(const FString& Context, const FString& Path, LogWarning);
+		static UTexture* SafeLoad(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Load
-
-	#undef LogWarning
 	};
 }

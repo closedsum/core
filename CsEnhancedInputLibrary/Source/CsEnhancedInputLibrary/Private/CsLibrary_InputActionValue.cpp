@@ -12,7 +12,9 @@ namespace NCsInput
 	{
 		namespace NInputActionValue
 		{
-			#define LogLevel void(*Log)(const FString&) /*= &NCsInput::NEnhanced:NLibrary:::FLog::Warning*/
+			using LogClassType = NCsInput::NEnhanced::NLibrary::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 			bool FLibrary::GetBoolChecked(const FString& Context, const FInputActionValue& Value)
 			{
@@ -20,7 +22,7 @@ namespace NCsInput
 				return Value.Get<bool>();
 			}
 
-			bool FLibrary::GetSafeBool(const FString& Context, const FInputActionValue& Value, bool& OutSuccess, LogLevel)
+			bool FLibrary::GetSafeBool(const FString& Context, const FInputActionValue& Value, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				OutSuccess = false;
 
@@ -40,7 +42,7 @@ namespace NCsInput
 				return Value.Get<float>();
 			}
 
-			float FLibrary::GetSafeFloat(const FString& Context, const FInputActionValue& Value, bool& OutSuccess, LogLevel)
+			float FLibrary::GetSafeFloat(const FString& Context, const FInputActionValue& Value, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				OutSuccess = false;
 
@@ -60,7 +62,7 @@ namespace NCsInput
 				return Value.Get<FVector2D>();
 			}
 
-			FVector2D FLibrary::GetSafeVector2D(const FString& Context, const FInputActionValue& Value, bool& OutSuccess, LogLevel)
+			FVector2D FLibrary::GetSafeVector2D(const FString& Context, const FInputActionValue& Value, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				OutSuccess = false;
 
@@ -80,7 +82,7 @@ namespace NCsInput
 				return Value.Get<FVector>();
 			}
 
-			FVector FLibrary::GetSafeVector(const FString& Context, const FInputActionValue& Value, bool& OutSuccess, LogLevel)
+			FVector FLibrary::GetSafeVector(const FString& Context, const FInputActionValue& Value, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				OutSuccess = false;
 
@@ -93,8 +95,6 @@ namespace NCsInput
 				OutSuccess = true;
 				return Value.Get<FVector>();
 			}
-
-			#undef LogLevel
 		}
 	}
 }

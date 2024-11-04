@@ -24,10 +24,13 @@ namespace NCsGameInstance
 			}
 		}
 
+		using LogClassType = NCsSeamlessTransition::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCGameInstance::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCGameInstance::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsSeamlessTransition::FLog::Warning*/
 
 		// Interface
 		#pragma region
@@ -39,7 +42,7 @@ namespace NCsGameInstance
 			return CS_INTERFACE_CAST_CHECKED(GameInstance, UObject, ICsGameInstance_SeamlessTransition);
 		}
 		
-		ICsGameInstance_SeamlessTransition* FLibrary::GetSafeInterface(const FString& Context, const UObject* ContextObject, LogLevel)
+		ICsGameInstance_SeamlessTransition* FLibrary::GetSafeInterface(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UObject* GameInstance = CsGameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log))
 				return CS_INTERFACE_CAST(GameInstance, UObject, ICsGameInstance_SeamlessTransition);
@@ -61,7 +64,7 @@ namespace NCsGameInstance
 			GetInterfaceChecked(Context, ContextObject)->PerformTransition(Params);
 		}
 
-		bool FLibrary::SafePerformTransition(const FString& Context, const UObject* ContextObject, const TransitionParamsType& Params, LogLevel)
+		bool FLibrary::SafePerformTransition(const FString& Context, const UObject* ContextObject, const TransitionParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (ICsGameInstance_SeamlessTransition* Interface = GetSafeInterface(Context, ContextObject))
 			{
@@ -77,7 +80,7 @@ namespace NCsGameInstance
 			return GetInterfaceChecked(Context, ContextObject)->GetPlayerTransitionCache();
 		}
 
-		CsPlayerTransitionCacheType* FLibrary::GetSafePlayerTransitionCache(const FString& Context, const UObject* ContextObject, LogLevel)
+		CsPlayerTransitionCacheType* FLibrary::GetSafePlayerTransitionCache(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (ICsGameInstance_SeamlessTransition* Interface = GetSafeInterface(Context, ContextObject, Log))
 				return Interface->GetPlayerTransitionCache();
@@ -129,7 +132,7 @@ namespace NCsGameInstance
 			return GetInterfaceChecked(Context, ContextObject)->HasPlayerPawnTraveled();
 		}
 
-		bool FLibrary::SafeHasPlayerPawnTraveled(const FString& Context, const UObject* ContextObject, LogLevel)
+		bool FLibrary::SafeHasPlayerPawnTraveled(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (ICsGameInstance_SeamlessTransition* Interface = GetSafeInterface(Context, ContextObject, Log))
 				return Interface->HasPlayerPawnTraveled();
@@ -140,6 +143,5 @@ namespace NCsGameInstance
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
 }

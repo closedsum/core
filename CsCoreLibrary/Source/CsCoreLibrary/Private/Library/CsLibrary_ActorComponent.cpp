@@ -9,9 +9,11 @@
 // Component
 #include "Components/ActorComponent.h"
 
+using LogClassType = NCsCore::NLibrary::FLog;
+
 namespace NCsActorComponent
 {
-	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 	void FLibrary::GetChecked(const FString& Context, const TSet<UActorComponent*>& Components, const TArray<FName>& Tags, TArray<UActorComponent*>& OutComponents)
 	{
@@ -29,7 +31,7 @@ namespace NCsActorComponent
 		}
 	}
 
-	bool FLibrary::GetSafe(const FString& Context, const TSet<UActorComponent*>& Components, const TArray<FName>& Tags, TArray<UActorComponent*>& OutComponents, LogWarning)
+	bool FLibrary::GetSafe(const FString& Context, const TSet<UActorComponent*>& Components, const TArray<FName>& Tags, TArray<UActorComponent*>& OutComponents, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_TSET_EMPTY(Components, UActorComponent*)
 		CS_IS_TSET_ANY_PENDING_KILL(Components, UActorComponent)
@@ -45,6 +47,4 @@ namespace NCsActorComponent
 		}
 		return !OutComponents.IsEmpty();
 	}
-
-	#undef LogWarning
 }

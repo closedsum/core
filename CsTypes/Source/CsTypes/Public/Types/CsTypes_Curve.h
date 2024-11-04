@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "CsMacro_StructOps.h"
 #include "Types/Enum/CsEnumMap.h"
 #include "Curves/RealCurve.h"

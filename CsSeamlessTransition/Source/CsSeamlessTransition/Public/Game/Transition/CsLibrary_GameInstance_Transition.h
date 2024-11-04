@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "Game/Transition/CsGameInstance_Transition_Delegates.h"
 // Log
 #include "Utility/CsSeamlessTransitionLog.h"
@@ -23,7 +24,9 @@ namespace NCsGameInstance
 
 			class CSSEAMLESSTRANSITION_API FLibrary final
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsSeamlessTransition::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			public:
 
@@ -56,8 +59,8 @@ namespace NCsGameInstance
 				* @param Log
 				* return				ICsGameInstance_Transition
 				*/
-				static ICsGameInstance_Transition* GetSafeInterface(const FString& Context, const UObject* ContextObject, LogLevel);
-				FORCEINLINE static ICsGameInstance_Transition* GetSafeInterface(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+				static ICsGameInstance_Transition* GetSafeInterface(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+				FORCEINLINE static ICsGameInstance_Transition* GetSafeInterface(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					ICsGameInstance_Transition* Interface = GetSafeInterface(Context, ContextObject, Log);
 					OutSuccess							  = Interface != nullptr;
@@ -95,8 +98,6 @@ namespace NCsGameInstance
 				static OnFinishTransitionEventType& GetTransition_OnFinish_EventChecked(const FString& Context, const UObject* ContextObject);
 
 			#pragma endregion Events
-
-			#undef LogLevel
 			};
 		}
 	}

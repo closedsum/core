@@ -26,10 +26,13 @@ namespace NCsGameState
 			}
 		}
 
+		using LogClassType = NCsSeamlessTransition::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsGameState::NShutdown::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsGameState::NShutdown::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsSeamlessTransition::FLog::Warning*/
 
 		// Interface
 		#pragma region
@@ -41,7 +44,7 @@ namespace NCsGameState
 			return CS_INTERFACE_CAST_CHECKED(GameState, UObject, ICsGameState_Shutdown);
 		}
 
-		ICsGameState_Shutdown* FLibrary::GetSafeInterface(const FString& Context, const UObject* ContextObject, LogLevel)
+		ICsGameState_Shutdown* FLibrary::GetSafeInterface(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UObject* GameState = CsGameStateLibrary::GetSafeAsObject(Context, ContextObject, Log))
 				return CS_INTERFACE_CAST(GameState, UObject, ICsGameState_Shutdown);
@@ -56,7 +59,7 @@ namespace NCsGameState
 			return GetInterfaceChecked(Context, WorldContext)->HasFinishedExitGame();
 		}
 
-		bool FLibrary::SafeHasFinishedExitGame(const FString& Context, const UObject* WorldContext, LogLevel)
+		bool FLibrary::SafeHasFinishedExitGame(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (ICsGameState_Shutdown* Interface = GetSafeInterface(Context, WorldContext, Log))
 				return Interface->HasFinishedExitGame();
@@ -72,6 +75,5 @@ namespace NCsGameState
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
 }

@@ -30,10 +30,13 @@ namespace NCsGameplayTag
 				}
 			}
 
+			using LogClassType = NCsGameplayTags::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			#define USING_NS_CACHED using namespace NCsGameplayTag::NCoordinator::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsGameplayTag::NCoordinator::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogLevel void(*Log)(const FString&) /*=&NCsGameplayTags::FLog::Warning*/
 
 			// ContextRoot
 			#pragma region
@@ -45,7 +48,7 @@ namespace NCsGameplayTag
 				return CsGameInstanceLibrary::GetChecked(Context, ContextObject);
 			}
 
-			UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
+			UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return CsGameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 			}
@@ -77,7 +80,7 @@ namespace NCsGameplayTag
 			#endif // #if !UE_BUILD_SHIPPING
 			}
 
-			UCsCoordinator_GameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
+			UCsCoordinator_GameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -96,7 +99,7 @@ namespace NCsGameplayTag
 				return Coordinator_GameplayTag;
 			}
 
-			UCsCoordinator_GameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+			UCsCoordinator_GameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				OutSuccess = false;
 
@@ -172,7 +175,7 @@ namespace NCsGameplayTag
 				}
 			}
 
-			bool FLibrary::SafeProcessGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Event, LogLevel)
+			bool FLibrary::SafeProcessGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Event, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsGameplayTagCoordinatorGroup, FECsGameplayTagCoordinatorGroup, Group)
 				CS_IS_VALID(Event)
@@ -209,7 +212,7 @@ namespace NCsGameplayTag
 				}
 			}
 
-			bool FLibrary::SafeBroadcastGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const  FCsGameplayTagEvent& Event, LogLevel)
+			bool FLibrary::SafeBroadcastGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const  FCsGameplayTagEvent& Event, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				// Check Group is Valid.
 				CS_IS_ENUM_STRUCT_VALID(EMCsGameplayTagCoordinatorGroup, FECsGameplayTagCoordinatorGroup, Group)
@@ -244,7 +247,6 @@ namespace NCsGameplayTag
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
-			#undef LogLevel
 		}
 	}
 }

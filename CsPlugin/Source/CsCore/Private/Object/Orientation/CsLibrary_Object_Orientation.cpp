@@ -12,12 +12,16 @@ namespace NCsObject
 {
 	namespace NOrientation
 	{
+		using LogClassType = FCsLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		const ICsObject_Orientation* FLibrary::GetChecked(const FString& Context, const UObject* Object)
 		{
 			return CS_CONST_INTERFACE_CAST_CHECKED(Object, UObject, ICsObject_Orientation);
 		}
 
-		const ICsObject_Orientation* FLibrary::GetSafe(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const ICsObject_Orientation* FLibrary::GetSafe(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			return CS_CONST_INTERFACE_CAST(Object, UObject, ICsObject_Orientation);
 		}
@@ -27,7 +31,7 @@ namespace NCsObject
 			return GetChecked(Context, Object)->Orientation_GetRotation3d();
 		}
 
-		FRotator3d FLibrary::Orientation_GetSafeRotation3d(const FString& Context, const UObject* Object, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		FRotator3d FLibrary::Orientation_GetSafeRotation3d(const FString& Context, const UObject* Object, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -44,7 +48,7 @@ namespace NCsObject
 			return GetChecked(Context, Object)->Orientation_GetRotation3f();
 		}
 
-		FRotator3f FLibrary::Orientation_GetSafeRotation3f(const FString& Context, const UObject* Object, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		FRotator3f FLibrary::Orientation_GetSafeRotation3f(const FString& Context, const UObject* Object, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -61,7 +65,7 @@ namespace NCsObject
 			return GetChecked(Context, Object)->Orientation_GetDirection3d();
 		}
 
-		FVector3d FLibrary::Orientation_GetSafeDirection3d(const FString& Context, const UObject* Object, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		FVector3d FLibrary::Orientation_GetSafeDirection3d(const FString& Context, const UObject* Object, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -78,7 +82,7 @@ namespace NCsObject
 			return GetChecked(Context, Object)->Orientation_GetDirection3f();
 		}
 
-		FVector3f FLibrary::Orientation_GetSafeDirection3f(const FString& Context, const UObject* Object, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		FVector3f FLibrary::Orientation_GetSafeDirection3f(const FString& Context, const UObject* Object, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -95,7 +99,7 @@ namespace NCsObject
 			return GetChecked(Context, Object)->Orientation_GetForward3d();
 		}
 
-		FVector3d FLibrary::Orientation_GetSafeForward3d(const FString& Context, const UObject* Object, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		FVector3d FLibrary::Orientation_GetSafeForward3d(const FString& Context, const UObject* Object, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -112,7 +116,7 @@ namespace NCsObject
 			return GetChecked(Context, Object)->Orientation_GetForward3f();
 		}
 
-		FVector3f FLibrary::Orientation_GetSafeForward3f(const FString& Context, const UObject* Object, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		FVector3f FLibrary::Orientation_GetSafeForward3f(const FString& Context, const UObject* Object, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -129,7 +133,7 @@ namespace NCsObject
 			return GetChecked(Context, Object)->Orientation_GetRight3d();
 		}
 
-		FVector3d FLibrary::Orientation_GetSafeRight3d(const FString& Context, const UObject* Object, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		FVector3d FLibrary::Orientation_GetSafeRight3d(const FString& Context, const UObject* Object, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -146,7 +150,7 @@ namespace NCsObject
 			return GetChecked(Context, Object)->Orientation_GetRight3f();
 		}
 
-		FVector3f FLibrary::Orientation_GetSafeRight3f(const FString& Context, const UObject* Object, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		FVector3f FLibrary::Orientation_GetSafeRight3f(const FString& Context, const UObject* Object, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 

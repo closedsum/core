@@ -28,7 +28,9 @@ namespace NCsFX
 				}
 			}
 
-			#define LogLevel void(*Log)(const FString&) /*=&NCsFX::FLog::Warning*/
+			using LogClassType = NCsFX::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 			using DeallocateMethodMapType = NCsFX::EMDeallocateMethod;
 			using DeallocateMethodType = NCsFX::EDeallocateMethod;
@@ -77,7 +79,7 @@ namespace NCsFX
 				return true;
 			}
 
-			bool FLibrary::IsValid(const FString& Context, PayloadType* Payload, LogLevel)
+			bool FLibrary::IsValid(const FString& Context, PayloadType* Payload, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL(Payload)
 				// Check FX System is Valid.
@@ -165,7 +167,7 @@ namespace NCsFX
 				Payload->bApplyTransformScale = FX.bApplyTransformScale;
 			}
 
-			void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)
+			void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL_EXIT(Payload)
 				CS_IS_VALID_EXIT(FX);
@@ -196,7 +198,7 @@ namespace NCsFX
 				SetChecked(Context, Payload, PooledPayload);
 			}
 
-			void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)
+			void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL_EXIT(Payload)
 				CS_IS_PTR_NULL_EXIT(PooledPayload)
@@ -256,8 +258,6 @@ namespace NCsFX
 				PayloadImpl->Transform.SetRotation(Transform.GetRotation() + PayloadImpl->Transform.GetRotation());
 				PayloadImpl->Transform.SetScale3D(Transform.GetScale3D() * PayloadImpl->Transform.GetScale3D());
 			}
-
-			#undef LogLevel
 		}
 	}
 }

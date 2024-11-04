@@ -14,7 +14,9 @@ namespace NCsMath
 {
 	struct CSCORELIBRARY_API FLibrary final
 	{
-	#define LogWarning void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
+	private:
+
+		CS_DECLARE_STATIC_LOG_LEVEL
 
 	// Int
 	#pragma region
@@ -34,11 +36,11 @@ namespace NCsMath
 		FORCEINLINE static bool IsIntInRangeInclusiveChecked(const FString& Context, const int32& A, const int32& B, const int32& C) { return true; }
 	#endif // #if WITH_EDITOR
 
-		static bool SafeIsIntGreaterThan(const FString& Context, const int32& A, const int32& B, LogWarning);
-		static bool SafeIsIntGreaterThanOrEqual(const FString& Context, const int32& A, const int32& B, LogWarning);
-		static bool SafeIsIntLessThan(const FString& Context, const int32& A, const int32& B, LogWarning);
-		static bool SafeIsIntLessThanOrEqual(const FString& Context, const int32& A, const int32& B, LogWarning);
-		static bool SafeIsIntInRangeInclusive(const FString& Context, const int32& A, const int32& B, const int32& C, LogWarning);
+		static bool SafeIsIntGreaterThan(const FString& Context, const int32& A, const int32& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		static bool SafeIsIntGreaterThanOrEqual(const FString& Context, const int32& A, const int32& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		static bool SafeIsIntLessThan(const FString& Context, const int32& A, const int32& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		static bool SafeIsIntLessThanOrEqual(const FString& Context, const int32& A, const int32& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		static bool SafeIsIntInRangeInclusive(const FString& Context, const int32& A, const int32& B, const int32& C, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Int
 
@@ -58,10 +60,10 @@ namespace NCsMath
 		FORCEINLINE static bool IsFloatLessThanOrEqualChecked(const FString& Context, const float& A, const float& B) { return true; }
 	#endif // #if WITH_EDITOR
 
-		static bool SafeIsFloatGreaterThan(const FString& Context, const float& A, const float& B, LogWarning);
-		static bool SafeIsFloatGreaterThanOrEqual(const FString& Context, const float& A, const float& B, LogWarning);
-		static bool SafeIsFloatLessThan(const FString& Context, const float& A, const float& B, LogWarning);
-		static bool SafeIsFloatLessThanOrEqual(const FString& Context, const float& A, const float& B, LogWarning);
+		static bool SafeIsFloatGreaterThan(const FString& Context, const float& A, const float& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		static bool SafeIsFloatGreaterThanOrEqual(const FString& Context, const float& A, const float& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		static bool SafeIsFloatLessThan(const FString& Context, const float& A, const float& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		static bool SafeIsFloatLessThanOrEqual(const FString& Context, const float& A, const float& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		FORCEINLINE static FString GetFloatAsStringWithPrecision(const float& TheFloat, const uint8& Precision)
 		{
@@ -1366,7 +1368,7 @@ namespace NCsMath
 		* @param Log			(optional)
 		* return				point on the segment defined by (StartPoint, EndPoint) that is closest to Point.
 		*/
-		static FVector3f SafeClosestPointOnSegment(const FString& Context, const FVector3f& Point, const FVector3f& StartPoint, const FVector3f& EndPoint, float& OutT, LogWarning);
+		static FVector3f SafeClosestPointOnSegment(const FString& Context, const FVector3f& Point, const FVector3f& StartPoint, const FVector3f& EndPoint, float& OutT, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Segment
 
@@ -1379,7 +1381,7 @@ namespace NCsMath
 
 		static bool IsValidChecked(const FString& Context, const FPlane4f& Plane);
 
-		static bool IsValid(const FString& Context, const FPlane4f& Plane, LogWarning);
+		static bool IsValid(const FString& Context, const FPlane4f& Plane, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Plane
 
@@ -1422,7 +1424,7 @@ namespace NCsMath
 		* @param Log
 		* return					True if the intersection test was successful.
 		*/
-		static bool SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection, LogWarning);
+		static bool SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
@@ -1464,7 +1466,7 @@ namespace NCsMath
 		* @param Log				(optional)
 		* return					True if intersection occurred
 		*/
-		static bool SafeSegmentPlaneIntersection(const FString& Context, const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersectionPoint, LogWarning);
+		static bool SafeSegmentPlaneIntersection(const FString& Context, const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersectionPoint, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
@@ -1611,8 +1613,6 @@ namespace NCsMath
 		}
 
 	#pragma endregion LinearColor
-
-	#undef LogWarning
 	};
 }
 

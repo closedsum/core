@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "CsMacro_Namespace.h"
 // Log
 #include "Utility/CsLog.h"
@@ -19,6 +20,12 @@ namespace NCsObject
 	{
 		struct CSCORE_API FLibrary
 		{
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
+
+			using CreatedObjectsType = NCsObject::NCreate::FCreated;
+
 		// Get
 		#pragma region
 		public:
@@ -48,13 +55,11 @@ namespace NCsObject
 
 			static bool ImplementsChecked(const FString& Context, const UObject* Object);
 
-			static bool SafeImplements(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeImplements(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Implements
 
 		public:
-
-		#define CreatedObjectsType NCsObject::NCreate::FCreated
 
 			/**
 			* Get Created Objects from GEngine (usually UUnrealEdEngine).
@@ -68,8 +73,8 @@ namespace NCsObject
 			static void AddChecked(const FString& Context, UObject* Object, UObject* Owner);
 
 			static void DestroyAndRemoveNullPendingKillOrOrphanedChecked(const FString& Context);
-
-		#undef CreatedObjectsType
 		};
 	}
 }
+
+using CsCreateObjectLibrary = NCsObject::NCreate::FLibrary;

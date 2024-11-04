@@ -15,7 +15,9 @@ namespace NCsGameInstance
 {
 	namespace NImpl
 	{
-		#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
+		using LogClassType = FCsLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		// Get
 		#pragma region
@@ -25,7 +27,7 @@ namespace NCsGameInstance
 			return CsGameInstanceLibrary::GetChecked<UCsGameInstance>(Context, ContextObject);
 		}
 
-		UCsGameInstance* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
+		UCsGameInstance* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			return CsGameInstanceLibrary::GetSafe<UCsGameInstance>(Context, ContextObject, Log);
 		}
@@ -60,7 +62,7 @@ namespace NCsGameInstance
 			return GetChecked(Context, ContextObject)->IsMobilePreviewEditor();
 		}
 
-		bool FLibrary::SafeIsMobilePreviewEditor(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeIsMobilePreviewEditor(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsGameInstance* GameInstance = GetSafe(Context, ContextObject, Log))
 			{
@@ -70,7 +72,5 @@ namespace NCsGameInstance
 		}
 
 		#pragma endregion Editor
-
-		#undef LogLevel
 	}
 }

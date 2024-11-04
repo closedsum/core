@@ -30,10 +30,15 @@ namespace NCsGameMode
 			}
 		}
 
+		using LogClassType = NCsSeamlessTransition::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsGameMode::NSeamlessTransition::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsGameMode::NSeamlessTransition::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsSeamlessTransition::FLog::Warning*/
+
+		using OnPostSeamlessTravelCompleteEventType = NCsGameMode::NSeamlessTravel::NPost::FOnComplete;
 
 		// Interface
 		#pragma region
@@ -93,12 +98,9 @@ namespace NCsGameMode
 		}
 
 		#pragma endregion Seamless Travel
-
-		
+	
 		// ICsGameMode_Event
 		#pragma region
-
-		#define OnPostSeamlessTravelCompleteEventType NCsGameMode::NSeamlessTravel::NPost::FOnComplete
 
 		OnPostSeamlessTravelCompleteEventType& FLibrary::GetPostSeamlessTravel_OnComplete_EventChecked(const FString& Context, const UObject* WorldContext)
 		{
@@ -108,12 +110,9 @@ namespace NCsGameMode
 			return Interface->GetPostSeamlessTravel_OnComplete_Event();
 		}
 
-		#undef OnPostSeamlessTravelCompleteEventType
-
 		#pragma endregion ICsGameMode_Event
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
 }

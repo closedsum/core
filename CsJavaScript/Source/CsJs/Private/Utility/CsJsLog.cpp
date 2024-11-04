@@ -10,4 +10,9 @@ namespace NCsJs
 	{
 		UE_LOG(LogCsJs, Warning, TEXT("%s"), *Str);
 	}
+
+	void FLog::Error(const FString& Str)
+	{
+		UE_LOG(LogCsJs, Error, TEXT("%s"), *Str);
+	}
 }

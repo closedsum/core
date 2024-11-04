@@ -5,6 +5,7 @@
 
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Log.h"
 #include "Managers/Input/CsManager_Input_Delegates.h"
 // Input
 #include "Managers/Input/Action/CsInputActionMap.h"
@@ -17,6 +18,10 @@ UCLASS()
 class CSINPUT_API UCsScriptLibrary_Manager_Input : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	CS_DECLARE_STATIC_LOG_ERROR
 
 // Get
 #pragma region

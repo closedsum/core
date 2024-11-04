@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "Managers/Time/CsTypes_Update.h"
 // Log
 #include "Utility/CsLog.h"
@@ -18,7 +19,9 @@ namespace NCsTime
 		{
 			struct CSCORE_API FLibrary final
 			{
-			#define LogLevel void(*Log)(const FString&) = &FCsLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			// Get
 			#pragma region
@@ -45,7 +48,7 @@ namespace NCsTime
 				* @param Log
 				* return				UCsManager_TimeImpl.
 				*/
-				static UCsManager_TimeImpl* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
+				static UCsManager_TimeImpl* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the reference to UCsManager_TimeImpl from a ContextObject.
@@ -91,8 +94,6 @@ namespace NCsTime
 				static void SetupInputListenerChecked(const FString& Context, const UObject* ContextObject);
 
 			#pragma endregion Input
-
-			#undef LogLevel
 			};
 		}
 	}

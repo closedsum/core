@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "Game/Shutdown/CsGameInstance_Shutdown_Delegates.h"
 // Log
 #include "Utility/CsSeamlessTransitionLog.h"
@@ -22,9 +23,9 @@ namespace NCsGameInstance
 
 			class CSSEAMLESSTRANSITION_API FLibrary final
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsSeamlessTransition::FLog::Warning
+			private:
 
-			public:
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			// Interface
 			#pragma region
@@ -57,8 +58,6 @@ namespace NCsGameInstance
 				static OnQueueExitGameEventType& GetOnQueueExitGame_EventChecked(const FString& Context, const UObject* ContextObject);
 
 			#pragma endregion Events
-
-			#undef LogLevel
 			};
 		}
 	}

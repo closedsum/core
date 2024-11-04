@@ -40,10 +40,13 @@ namespace NCsTime
 				}
 			}
 
+			using LogClassType = FCsLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			#define USING_NS_CACHED using namespace NCsTime::NManager::NImpl::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsTime::NManager::NImpl::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
 
 			// Get
 			#pragma region
@@ -57,7 +60,7 @@ namespace NCsTime
 			#endif // #if UE_BUILD_SHIPPING
 			}
 
-			UCsManager_TimeImpl* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
+			UCsManager_TimeImpl* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return CsTimeManagerLibrary::GetSafe<UCsManager_TimeImpl>(Context, ContextObject, Log);
 			}
@@ -100,7 +103,6 @@ namespace NCsTime
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
-			#undef LogLevel
 		}
 	}
 }

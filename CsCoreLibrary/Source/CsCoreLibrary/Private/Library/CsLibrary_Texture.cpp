@@ -10,7 +10,9 @@
 
 namespace NCsTexture
 {
-	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
+	using LogClassType = NCsCore::NLibrary::FLog;
+
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 	// Load
 	#pragma region
@@ -20,7 +22,7 @@ namespace NCsTexture
 		return CsObjectLibrary::LoadChecked<UTexture>(Context, Path);
 	}
 
-	UTexture* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogWarning)
+	UTexture* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		return CsObjectLibrary::SafeLoad<UTexture>(Context, Path, Log);
 	}
@@ -30,12 +32,10 @@ namespace NCsTexture
 		return CsObjectLibrary::LoadChecked<UTexture>(Context, Path);
 	}
 
-	UTexture* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogWarning)
+	UTexture* FLibrary::SafeLoad(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		return CsObjectLibrary::SafeLoad<UTexture>(Context, Path, Log);
 	}
 
 	#pragma endregion Load
-
-	#undef LogWarning
 }

@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsSeamlessTransitionLog.h"
 
@@ -11,9 +13,11 @@ namespace NCsGameState
 {
 	namespace NShutdown
 	{
-		class CSSEAMLESSTRANSITION_API FLibrary final
+		struct CSSEAMLESSTRANSITION_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsSeamlessTransition::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// Interface
 		#pragma region
@@ -36,8 +40,8 @@ namespace NCsGameState
 			* @param Log
 			* return				ICsGameState_Shutdown
 			*/
-			static ICsGameState_Shutdown* GetSafeInterface(const FString& Context, const UObject* WorldContext, LogLevel);
-			FORCEINLINE static ICsGameState_Shutdown* GetSafeInterface(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogLevel)
+			static ICsGameState_Shutdown* GetSafeInterface(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static ICsGameState_Shutdown* GetSafeInterface(const FString& Context, const UObject* WorldContext, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				ICsGameState_Shutdown* Interface = GetSafeInterface(Context, WorldContext, Log);
 				OutSuccess						 = Interface != nullptr;
@@ -71,10 +75,8 @@ namespace NCsGameState
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeHasFinishedExitGame(const FString& Context, const UObject* WorldContext, LogLevel);
+			static bool SafeHasFinishedExitGame(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 			static bool SafeHasFinishedExitGame(const UObject* WorldContext);
-
-		#undef LogLevel
 		};
 	}
 }

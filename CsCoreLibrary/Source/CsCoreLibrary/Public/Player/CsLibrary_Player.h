@@ -461,5 +461,6 @@ namespace NCsPlayer
 	}
 }
 
+using CsPlayerLibrary = NCsPlayer::FLibrary;
 using CsPCLocalLibrary = NCsPlayer::NController::NLocal::FLibrary;
 using CsPCFirstLocalLibrary = NCsPlayer::NController::NLocal::NFirst::FLibrary;

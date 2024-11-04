@@ -19,29 +19,28 @@ class CSINPUT_API ICsManager_Input_Event
 {
 	GENERATED_IINTERFACE_BODY()
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using OnPostProcessInputEventType = NCsInput::NManager::FOnPostProcessInput;
+		using OnGameEventInfoEventType = NCsInput::NManager::FOnGameEventInfo;
+		using OnGameEventInfosEventType = NCsInput::NManager::FOnGameEventInfos;
+		using OnAnyKeyPressedEventType = NCsInput::NManager::FOnAnyKey_Pressed;
+		using OnAnyKeyReleasedEventType = NCsInput::NManager::FOnAnyKey_Released;
+		using ModeOnChangeEventType = NCsInput::NManager::NMode::FOnChange;
+	};
+	
 public:
 
-#define OnPostProcessInputEventType NCsInput::NManager::FOnPostProcessInput
-#define OnGameEventInfoEventType NCsInput::NManager::FOnGameEventInfo
-#define OnGameEventInfosEventType NCsInput::NManager::FOnGameEventInfos
-#define OnAnyKeyPressedEventType NCsInput::NManager::FOnAnyKey_Pressed
-#define OnAnyKeyReleasedEventType NCsInput::NManager::FOnAnyKey_Released
-#define ModeOnChangeEventType NCsInput::NManager::NMode::FOnChange
-
-	virtual OnPostProcessInputEventType& GetOnPostProcessInput_Event() = 0;
-	virtual OnGameEventInfoEventType& GetOnGameEventInfo_Event() = 0;
-	virtual OnGameEventInfosEventType& GetOnGameEventInfos_Event() = 0;
-	virtual OnAnyKeyPressedEventType& GetOnAnyKey_Pressed_Event() = 0;
+	virtual _::OnPostProcessInputEventType& GetOnPostProcessInput_Event() = 0;
+	virtual _::OnGameEventInfoEventType& GetOnGameEventInfo_Event() = 0;
+	virtual _::OnGameEventInfosEventType& GetOnGameEventInfos_Event() = 0;
+	virtual _::OnAnyKeyPressedEventType& GetOnAnyKey_Pressed_Event() = 0;
 	virtual FCsManagerInput_OnAnyKey_Pressed& GetOnAnyKey_Pressed_ScriptEvent() = 0;
-	virtual OnAnyKeyReleasedEventType& GetOnAnyKey_Released_Event() = 0;
+	virtual _::OnAnyKeyReleasedEventType& GetOnAnyKey_Released_Event() = 0;
 	virtual FCsManagerInput_OnAnyKey_Released& GetOnAnyKey_Released_ScriptEvent() = 0;
-	virtual ModeOnChangeEventType& GetActiveMode_OnChange_Event() = 0;
+	virtual _::ModeOnChangeEventType& GetActiveMode_OnChange_Event() = 0;
 	virtual FCsManagerInput_OnActiveMode_Change& GetActiveMode_OnChange_ScriptEvent() = 0;
-
-#undef OnGameEventInfoEventType
-#undef OnGameEventInfosEventType
-#undef OnAnyKeyPressedEventType
-#undef OnAnyKeyReleasedEventType
-#undef ModeOnChangeEventType
-#undef OnPostProcessInputEventType
 };

@@ -23,7 +23,17 @@ UCLASS(transient, BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSCORE_API UCsManager_Level : public UObject
 {
 	GENERATED_UCLASS_BODY()
-public:
+
+private:
+
+	using ChangeMapParamsType = NCsLevel::NManager::NChangeMap::FParams;
+	using OnChangeMapStartEventType = NCsLevel::NManager::FChangeMap_OnStart;
+	using OnChangeMapCompleteEventType = NCsLevel::NManager::FChangeMap_OnComplete;
+	using OnLevelLoadedEventType = NCsLevel::NManager::NLevel::NStreaming::FOnLoaded;
+	using OnLevelUnloadedEventType = NCsLevel::NManager::NLevel::NStreaming::FOnUnloaded;
+	using OnLevelShownEventType = NCsLevel::NManager::NLevel::NStreaming::FOnShown;
+	using OnLevelHiddenEventType = NCsLevel::NManager::NLevel::NStreaming::FOnHidden;
+
 
 // Singleton
 #pragma region
@@ -192,7 +202,7 @@ public:
 
 	FORCEINLINE bool HasChangeMapCompleted() const { return ChangeMapInfo.IsCompleted(); }
 
-#define ChangeMapParamsType NCsLevel::NManager::NChangeMap::FParams
+
 
 	void ChangeMap(const ChangeMapParamsType& Params);
 private:
@@ -200,11 +210,6 @@ private:
 
 	void ChangeMap_TransitionAsDestination(const ChangeMapParamsType& Params);
 	char ChangeMap_TransitionAsDestination_Internal(FCsRoutine* R);
-
-#undef ChangeMapParamsType
-
-#define OnChangeMapStartEventType NCsLevel::NManager::FChangeMap_OnStart
-#define OnChangeMapCompleteEventType NCsLevel::NManager::FChangeMap_OnComplete
 
 private:
 
@@ -228,9 +233,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "CsCore|Managers|Level")
 	FCsManagerLevel_ChangeMap_OnComplete ChangeMap_OnComplete_ScriptEvent;
 
-#undef OnChangeMapStartEventType
-#undef OnChangeMapCompleteEventType
-
 #pragma endregion Change Map
 
 // Transition
@@ -248,11 +250,6 @@ private:
 	TMap<uint32, ACsLevel_Streaming_EventHandler*> StreamingEventsByIdMap;
 
 public:
-
-#define OnLevelLoadedEventType NCsLevel::NManager::NLevel::NStreaming::FOnLoaded
-#define OnLevelUnloadedEventType NCsLevel::NManager::NLevel::NStreaming::FOnUnloaded
-#define OnLevelShownEventType NCsLevel::NManager::NLevel::NStreaming::FOnShown
-#define OnLevelHiddenEventType NCsLevel::NManager::NLevel::NStreaming::FOnHidden
 
 	// OnAdded
 	
@@ -308,11 +305,6 @@ public:
 	FCsManagerLevel_LevelStreaming_OnHidden Level_Streaming_OnHidden_ScriptEvent;
 
 	void Broadcast_Level_Streaming_OnHidden(ULevelStreaming* Level);
-
-#undef OnLevelLoadedEventType
-#undef OnLevelUnloadedEventType
-#undef OnLevelShownEventType
-#undef OnLevelHiddenEventType
 
 #pragma endregion Streaming
 

@@ -33,7 +33,9 @@ namespace NCsJs
 			}
 		}
 
-		#define LogLevel void(*Log)(const FString& Context) /*=&NCsJs::FLog::Warning*/
+		using LogClassType = NCsJs::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		// ContextRoot
 		#pragma region
@@ -48,7 +50,7 @@ namespace NCsJs
 			return CsGameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			// TODO: FUTURE: Some sort of flag to properly indicate getting GEngine as ContextRoot
 			if (ContextObject == GEngine)
@@ -113,7 +115,5 @@ namespace NCsJs
 		}
 
 		#pragma endregion Get
-
-		#undef LogLevel
 	}
 }

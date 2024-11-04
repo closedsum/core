@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsSeamlessTransitionLog.h"
 
@@ -13,7 +15,9 @@ namespace NCsGameInstance
 	{
 		class CSSEAMLESSTRANSITION_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsSeamlessTransition::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// Interface
 		#pragma region
@@ -40,8 +44,8 @@ namespace NCsGameInstance
 			* @param Log
 			* return				ICsGameInstance_Startup
 			*/
-			static ICsGameInstance_Startup* GetSafeInterface(const FString& Context, const UObject* ContextObject, LogLevel);
-			FORCEINLINE static ICsGameInstance_Startup* GetSafeInterface(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+			static ICsGameInstance_Startup* GetSafeInterface(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static ICsGameInstance_Startup* GetSafeInterface(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				ICsGameInstance_Startup* Interface = GetSafeInterface(Context, ContextObject, Log);
 				OutSuccess						   = Interface != nullptr;
@@ -54,9 +58,7 @@ namespace NCsGameInstance
 
 			static bool HasStartedFromEntryChecked(const FString& Context, const UObject* ContextObject);
 
-			static bool SafeHasStartedFromEntry(const FString& Context, const UObject* ContextObject, LogLevel);
-
-		#undef LogLevel
+			static bool SafeHasStartedFromEntry(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		};
 	}
 }

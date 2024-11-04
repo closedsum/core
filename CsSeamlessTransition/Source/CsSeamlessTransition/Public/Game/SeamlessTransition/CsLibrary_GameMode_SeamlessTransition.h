@@ -1,6 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "Game/SeamlessTransition/CsGameMode_SeamlessTransition_Delegates.h"
 // Log
 #include "Utility/CsSeamlessTransitionLog.h"
@@ -15,7 +16,11 @@ namespace NCsGameMode
 	{
 		struct CSSEAMLESSTRANSITION_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsSeamlessTransition::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
+
+			using OnPostSeamlessTravelCompleteEventType = NCsGameMode::NSeamlessTravel::NPost::FOnComplete;
 
 		// Interface
 		#pragma region
@@ -71,15 +76,10 @@ namespace NCsGameMode
 		#pragma region
 		public:
 
-		#define OnPostSeamlessTravelCompleteEventType NCsGameMode::NSeamlessTravel::NPost::FOnComplete
-
 			static OnPostSeamlessTravelCompleteEventType& GetPostSeamlessTravel_OnComplete_EventChecked(const FString& Context, const UObject* WorldContext);
-
-		#undef OnPostSeamlessTravelCompleteEventType
 
 		#pragma endregion Event
 
-		#undef LogLevel
 		};
 	}
 }

@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Interface.h"
 // Types
 #include "Object/CsTypes_Object.h"
@@ -19,11 +18,15 @@ class CSCORE_API ICsGetCreatedObjects
 {
 	GENERATED_IINTERFACE_BODY()
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using CreatedObjectsType = NCsObject::NCreate::FCreated;
+	};
+
 public:
 
-#define CreatedObjectsType NCsObject::NCreate::FCreated
-
-	virtual CreatedObjectsType* GetCreatedObjects() = 0;
-
-#undef CreatedObjectsType
+	virtual _::CreatedObjectsType* GetCreatedObjects() = 0;
 };

@@ -43,24 +43,25 @@ namespace NCsViewport
 				}
 			}
 
+			using LogClassType = NCsCore::NLibrary::FLog::Warning;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 			
 			#define USING_NS_CACHED using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-			#define PlayerLibrary NCsPlayer::FLibrary
 
 			bool FLibrary::CanProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext)
 			{
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 				return true;
 			}
 
-			bool FLibrary::CanSafeProjectWorldToScreen(const FString& Context, const UObject* WorldContext, LogWarning)
+			bool FLibrary::CanSafeProjectWorldToScreen(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
 
 				if (!LocalPlayer)
 					return false;
@@ -84,7 +85,7 @@ namespace NCsViewport
 			{
 				check(CanProjectWorldToScreenChecked(Context, WorldContext));
 
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
 				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
@@ -119,7 +120,7 @@ namespace NCsViewport
 			{
 				check(CanProjectWorldToScreenChecked(Context, WorldContext));
 
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
 				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
@@ -161,7 +162,7 @@ namespace NCsViewport
 			{
 				check(CanProjectWorldToScreenChecked(Context, WorldContext));
 
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
 				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
@@ -199,15 +200,15 @@ namespace NCsViewport
 
 			bool FLibrary::CanDeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext)
 			{
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 				checkf(LocalPlayer->ViewportClient, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
 				return true;
 			}
 
-			bool FLibrary::CanSafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, LogWarning)
+			bool FLibrary::CanSafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
 
 				if (!LocalPlayer)
 					return false;
@@ -231,7 +232,7 @@ namespace NCsViewport
 			{
 				check(CanDeprojectScreenToWorldChecked(Context, WorldContext));
 
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
 				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
@@ -260,7 +261,7 @@ namespace NCsViewport
 				return false;
 			}
 
-			bool FLibrary::SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection, LogWarning)
+			bool FLibrary::SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				OutWorldPosition = FVector3f::ZeroVector;
 				OutWorldDirection = FVector3f::ZeroVector;
@@ -268,7 +269,7 @@ namespace NCsViewport
 				if (!CanSafeDeprojectScreenToWorld(Context, WorldContext, Log))
 					return false;
 
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
 
 				if (!LocalPlayer)
 					return false;
@@ -317,7 +318,7 @@ namespace NCsViewport
 
 			FSceneViewport* FLibrary::GetViewportChecked(const FString& Context, const UObject* WorldContext)
 			{
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
 				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
 
 				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
@@ -328,9 +329,9 @@ namespace NCsViewport
 				return SV;
 			}
 
-			FSceneViewport* FLibrary::GetSafeViewport(const FString& Context, const UObject* WorldContext, LogWarning)
+			FSceneViewport* FLibrary::GetSafeViewport(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				ULocalPlayer* LocalPlayer = PlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
 
 				if (!LocalPlayer)
 					return nullptr;
@@ -364,7 +365,7 @@ namespace NCsViewport
 				return GetViewportChecked(Context, WorldContext)->GetSizeXY();
 			}
 
-			FIntPoint FLibrary::GetSafeSize(const FString& Context, const UObject* WorldContext, LogWarning)
+			FIntPoint FLibrary::GetSafeSize(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				FSceneViewport* SV = GetSafeViewport(Context, WorldContext, Log);
 
@@ -394,7 +395,7 @@ namespace NCsViewport
 				return CsMathLibrary::RayPlaneIntersectionChecked(Context, Ray, Plane, T, OutIntersection);
 			}
 
-			bool FLibrary::GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection, LogWarning)
+			bool FLibrary::GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				FVector3f WorldPosition = FVector3f::ZeroVector;
 				FVector3f WorldDirection = FVector3f::ZeroVector;
@@ -421,11 +422,12 @@ namespace NCsViewport
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
-			#undef LogWarning
-			#undef PlayerLibrary
 		}
 	}
+}
 
+namespace NCsViewport
+{
 	namespace NGame
 	{
 		UGameViewportClient* FLibrary::GetClientChecked(const FString& Context, const UObject* WorldContext)

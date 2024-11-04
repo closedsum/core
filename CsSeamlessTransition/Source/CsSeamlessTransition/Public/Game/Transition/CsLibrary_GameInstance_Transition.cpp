@@ -16,7 +16,9 @@ namespace NCsGameInstance
 	{
 		namespace NLibrary
 		{
-			#define LogLevel void(*Log)(const FString&) /*=&NCsSeamlessTransition::FLog::Warning*/
+			using LogClassType = NCsSeamlessTransition::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 			// Interface
 			#pragma region
@@ -28,7 +30,7 @@ namespace NCsGameInstance
 				return CS_INTERFACE_CAST_CHECKED(GameInstance, UObject, ICsGameInstance_Transition);
 			}
 
-			ICsGameInstance_Transition* FLibrary::GetSafeInterface(const FString& Context, const UObject* ContextObject, LogLevel)
+			ICsGameInstance_Transition* FLibrary::GetSafeInterface(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UObject* GameInstance = CsGameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log))
 					return CS_INTERFACE_CAST(GameInstance, UObject, ICsGameInstance_Transition);
@@ -68,8 +70,6 @@ namespace NCsGameInstance
 			}
 
 			#pragma endregion Events
-
-			#undef LogLevel
 		}
 	}
 }

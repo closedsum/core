@@ -65,6 +65,10 @@ public:
 
 	GENERATED_BODY()
 
+private:
+
+	using CreatedObjectsType = NCsObject::NCreate::FCreated;
+
 // UEngine Interface
 #pragma region
 public:
@@ -139,11 +143,7 @@ protected:
 #pragma region
 public:
 
-#define CreatedObjectsType NCsObject::NCreate::FCreated
-
 	FORCEINLINE CreatedObjectsType* GetCreatedObjects() { return &CreatedObjects; }
-
-#undef CreatedObjectsType
 
 #pragma endregion ICsGetCreatedObjects
 
@@ -151,11 +151,7 @@ public:
 #pragma region
 public:
 
-#define CreatedObjectsType NCsObject::NCreate::FCreated
-
 	CreatedObjectsType CreatedObjects;
-
-#undef CreatedObjectsType
 
 #pragma endregion Object
 

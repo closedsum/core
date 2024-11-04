@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "UObject/SoftObjectPtr.h"
 // Log
 #include "Utility/CsCoreLibraryLog.h"
@@ -18,7 +19,9 @@ namespace NCsBlueprint
 	*/
 	class CSCORELIBRARY_API FLibrary final
 	{
-	#define LogWarning void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
+	private:
+
+		CS_DECLARE_STATIC_LOG_LEVEL
 
 	// Load
 	#pragma region
@@ -53,7 +56,7 @@ namespace NCsBlueprint
 		* @param Log		(optional)
 		* return			Blueprint.
 		*/
-		static UBlueprint* SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogWarning);
+		static UBlueprint* SafeLoad(const FString& Context, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Load a Blueprint at the given Path.
@@ -72,7 +75,7 @@ namespace NCsBlueprint
 		* @param Log		(optional)
 		* return			Blueprint.
 		*/
-		static UBlueprint* SafeLoad(const FString& Context, const FString& Path, LogWarning);
+		static UBlueprint* SafeLoad(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		static UBlueprintGeneratedClass* LoadClassChecked(const FString& Context, const TSoftObjectPtr<UBlueprint>& Blueprint);
 
@@ -84,27 +87,27 @@ namespace NCsBlueprint
 
 		static UBlueprintGeneratedClass* GetClassChecked(const FString& Context, const FString& Path);
 
-		static UBlueprintGeneratedClass* GetSafeClass(const FString& Context, const FString& Path, LogWarning);
+		static UBlueprintGeneratedClass* GetSafeClass(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		static UBlueprintGeneratedClass* GetClassChecked(const FString& Context, const TSoftObjectPtr<UBlueprint>& Blueprint);
 
 		static UBlueprintGeneratedClass* GetClassChecked(const FString& Context, UBlueprint* Blueprint);
 
-		static UBlueprintGeneratedClass* GetSafeClass(const FString& Context, UBlueprint* Blueprint, LogWarning);
+		static UBlueprintGeneratedClass* GetSafeClass(const FString& Context, UBlueprint* Blueprint, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		static UBlueprintGeneratedClass* GetSafeClass(UObject* Blueprint);
 
-		static UObject* GetSafeClassDefaultObject(const FString& Context, UBlueprint* Blueprint, LogWarning);
+		static UObject* GetSafeClassDefaultObject(const FString& Context, UBlueprint* Blueprint, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		static UObject* GetSafeClassDefaultObject(const FString& Context, UObject* Blueprint, LogWarning);
+		static UObject* GetSafeClassDefaultObject(const FString& Context, UObject* Blueprint, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		static UObject* GetSafeClassDefaultObject(UObject* Blueprint);
 
-		static UObject* GetSafeDefaultObject(const FString& Context, const FString& Path, LogWarning);
+		static UObject* GetSafeDefaultObject(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		static UObject* GetSafeDefaultObject(const FString& Context, UBlueprint* Blueprint, LogWarning);
+		static UObject* GetSafeDefaultObject(const FString& Context, UBlueprint* Blueprint, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		static UObject* GetSafeDefaultObject(const FString& Context, UObject* Blueprint, LogWarning);
+		static UObject* GetSafeDefaultObject(const FString& Context, UObject* Blueprint, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		static UObject* GetSafeDefaultObject(UObject* Blueprint);
 
@@ -115,7 +118,7 @@ namespace NCsBlueprint
 
 		static bool Is(const UObject* Object);
 
-		static bool SafeIs(const FString& Context, const UObject* Object, LogWarning);
+		static bool SafeIs(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion
 
@@ -126,8 +129,6 @@ namespace NCsBlueprint
 		static AActor* SpawnAsActorChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UBlueprint>& Blueprint);
 
 	#pragma endregion Spawn
-
-	#undef LogWarning
 	};
 }
 

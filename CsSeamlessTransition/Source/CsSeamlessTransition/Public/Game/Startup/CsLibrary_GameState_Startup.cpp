@@ -13,7 +13,9 @@ namespace NCsGameState
 {
 	namespace NStartup
 	{
-		#define LogLevel void(*Log)(const FString&) /*=&NCsSeamlessTransition::FLog::Warning*/
+		using LogClassType = NCsSeamlessTransition::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		// Interface
 		#pragma region
@@ -25,7 +27,7 @@ namespace NCsGameState
 			return CS_INTERFACE_CAST_CHECKED(GameState, UObject, ICsGameState_Startup);
 		}
 
-		ICsGameState_Startup* FLibrary::GetSafeInterface(const FString& Context, const UObject* WorldContext, LogLevel)
+		ICsGameState_Startup* FLibrary::GetSafeInterface(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UObject* GameState = CsGameStateLibrary::GetSafeAsObject(Context, WorldContext, Log))
 				return CS_INTERFACE_CAST(GameState, UObject, ICsGameState_Startup);
@@ -39,13 +41,11 @@ namespace NCsGameState
 			return GetInterfaceChecked(Context, WorldContext)->IsStartupComplete();
 		}
 
-		bool FLibrary::SafeIsStartupComplete(const FString& Context, const UObject* WorldContext, LogLevel)
+		bool FLibrary::SafeIsStartupComplete(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (ICsGameState_Startup* Interface = GetSafeInterface(Context, WorldContext, Log))
 				return Interface->IsStartupComplete();
 			return false;
 		}
-
-		#undef LogLevel
 	}
 }

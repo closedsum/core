@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "Types/Enum/CsTypes_Enum.h"
 // Log
 #include "Utility/CsEnumLog.h"
@@ -11,12 +12,14 @@ namespace NCsEnum
 {
 	struct CSENUM_API FLibrary final
 	{
-	#define LogWarning void(*Log)(const FString&) = &NCsEnum::FLog::Warning
+	private:
+
+		CS_DECLARE_STATIC_LOG_LEVEL
 
 	public:
 
 		template<typename EnumStructMap, typename EnumStruct>
-		FORCEINLINE static EnumStruct CreateSafe(const FString& Context, const FString& Name, const FString& DisplayName, LogWarning)
+		FORCEINLINE static EnumStruct CreateSafe(const FString& Context, const FString& Name, const FString& DisplayName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			if (Name.IsEmpty())
 			{
@@ -42,7 +45,7 @@ namespace NCsEnum
 		}
 
 		template<typename EnumStructMap, typename EnumStruct>
-		FORCEINLINE static EnumStruct GetSafe(const FString& Context, const FString& EnumStructName, const FString& Name, LogWarning)
+		FORCEINLINE static EnumStruct GetSafe(const FString& Context, const FString& EnumStructName, const FString& Name, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			if (EnumStructMap::Get().IsValidEnum(Name))
 				return EnumStructMap::Get()[Name];
@@ -55,7 +58,7 @@ namespace NCsEnum
 		}
 
 		template<typename EnumStructMap, typename EnumStruct>
-		FORCEINLINE static EnumStruct GetSafeByIndex(const FString& Context, const FString& EnumStructName, const int32& Index, LogWarning)
+		FORCEINLINE static EnumStruct GetSafeByIndex(const FString& Context, const FString& EnumStructName, const int32& Index, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			const int32& Count = EnumStructMap::Get().Num();
 

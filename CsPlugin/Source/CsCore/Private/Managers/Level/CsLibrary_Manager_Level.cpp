@@ -43,11 +43,22 @@ namespace NCsLevel
 				}
 			}
 		}
+		
+		using LogClassType = FCsLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		#define USING_NS_CACHED using namespace NCsLevel::NManager::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsLevel::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
+
+		using ParamsType = NCsLevel::NManager::NChangeMap::FParams;
+		using OnChangeMapStartEventType = NCsLevel::NManager::FChangeMap_OnStart;
+		using OnChangeMapCompleteEventType = NCsLevel::NManager::FChangeMap_OnComplete;
+		using OnLevelLoadedEventType = NCsLevel::NManager::NLevel::NStreaming::FOnLoaded;
+		using OnLevelUnloadedEventType = NCsLevel::NManager::NLevel::NStreaming::FOnUnloaded;
+		using OnLevelShownEventType = NCsLevel::NManager::NLevel::NStreaming::FOnShown;
+		using OnLevelHiddenEventType = NCsLevel::NManager::NLevel::NStreaming::FOnHidden;
 
 		// ContextRoot
 		#pragma region
@@ -65,7 +76,7 @@ namespace NCsLevel
 			return CsGameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
@@ -105,7 +116,7 @@ namespace NCsLevel
 		#endif // #if WITH_EDITOR
 		}
 
-		UCsManager_Level* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
+		UCsManager_Level* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -123,7 +134,7 @@ namespace NCsLevel
 			return Manager_Level;
 		}
 
-		UCsManager_Level* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+		UCsManager_Level* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -200,7 +211,7 @@ namespace NCsLevel
 			return GetChecked(Context, ContextObject)->HasChangeMapCompleted();
 		}
 
-		bool FLibrary::SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, LogLevel)
+		bool FLibrary::SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextObject, Log))
 			{
@@ -209,7 +220,7 @@ namespace NCsLevel
 			return false;
 		}
 
-		bool FLibrary::SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+		bool FLibrary::SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -221,14 +232,12 @@ namespace NCsLevel
 			return false;
 		}
 
-		#define ParamsType NCsLevel::NManager::NChangeMap::FParams
-
 		void FLibrary::ChangeMapChecked(const FString& Context, const UObject* ContextObject, const ParamsType& Params)
 		{
 			GetChecked(Context, ContextObject)->ChangeMap(Params);
 		}
 
-		bool FLibrary::SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, LogLevel)
+		bool FLibrary::SafeChangeMap(const FString& Context, const UObject* ContextObject, const ParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextObject, Log))
 			{
@@ -240,11 +249,6 @@ namespace NCsLevel
 			return false;
 		}
 
-		#undef ParamsType
-
-		#define OnChangeMapStartEventType NCsLevel::NManager::FChangeMap_OnStart
-		#define OnChangeMapCompleteEventType NCsLevel::NManager::FChangeMap_OnComplete
-
 		OnChangeMapStartEventType& FLibrary::GetChangeMap_OnStart_EventChecked(const FString& Context, const UObject* ContextObject)
 		{
 			return GetChecked(Context, ContextObject)->GetChangeMap_OnStart_Event();
@@ -255,18 +259,10 @@ namespace NCsLevel
 			return GetChecked(Context, ContextObject)->GetChangeMap_OnComplete_Event();
 		}
 
-		#undef OnChangeMapStartEventType
-		#undef OnChangeMapCompleteEventType
-
 		#pragma endregion Change Map
 
 		// Streaming
 		#pragma region
-
-		#define OnLevelLoadedEventType NCsLevel::NManager::NLevel::NStreaming::FOnLoaded
-		#define OnLevelUnloadedEventType NCsLevel::NManager::NLevel::NStreaming::FOnUnloaded
-		#define OnLevelShownEventType NCsLevel::NManager::NLevel::NStreaming::FOnShown
-		#define OnLevelHiddenEventType NCsLevel::NManager::NLevel::NStreaming::FOnHidden
 
 		OnLevelLoadedEventType& FLibrary::GetLevel_Streaming_OnLoaded_EventChecked(const FString& Context, UObject* ContextObject)
 		{
@@ -316,11 +312,6 @@ namespace NCsLevel
 			GetChecked(Context, ContextObject)->Broadcast_Level_Streaming_OnHidden(Level);
 		}
 
-		#undef OnLevelLoadedEventType
-		#undef OnLevelUnloadedEventType
-		#undef OnLevelShownEventType
-		#undef OnLevelHiddenEventType
-
 		#pragma endregion Streaming
 
 		#if WITH_EDITOR
@@ -339,6 +330,5 @@ namespace NCsLevel
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
 }

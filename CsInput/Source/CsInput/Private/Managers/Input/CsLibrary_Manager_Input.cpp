@@ -35,10 +35,20 @@ namespace NCsInput
 			}
 		}
 
+		using LogClassType = NCsInput::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsInput::NManager::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsInput::FLog::Warning*/
+
+	
+		using OnGameEventInfoEventType = NCsInput::NManager::FOnGameEventInfo;
+		using OnGameEventInfosEventType = NCsInput::NManager::FOnGameEventInfos;
+		using OnAnyKeyPressedEventType = NCsInput::NManager::FOnAnyKey_Pressed;
+		using OnAnyKeyReleasedEventType = NCsInput::NManager::FOnAnyKey_Released;
+		using ModeOnChangeEventType = NCsInput::NManager::NMode::FOnChange;
 
 		// Get
 		#pragma region
@@ -67,7 +77,7 @@ namespace NCsInput
 			return GetFirstChecked(Context, WorldContext);
 		}
 
-		ICsManager_Input* FLibrary::GetSafeFirst(const FString& Context, UWorld* World, LogLevel)
+		ICsManager_Input* FLibrary::GetSafeFirst(const FString& Context, UWorld* World, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (APlayerController* PC = CsPCFirstLocalLibrary::GetSafe(Context, World, Log))
 			{
@@ -90,7 +100,7 @@ namespace NCsInput
 			return GetSafeFirst(Context, World, nullptr);
 		}
 
-		ICsManager_Input* FLibrary::GetSafeFirst(const FString& Context, const UObject* WorldContext, LogLevel)
+		ICsManager_Input* FLibrary::GetSafeFirst(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (APlayerController* PC = CsPCFirstLocalLibrary::GetSafe(Context, WorldContext, Log))
 			{
@@ -127,7 +137,7 @@ namespace NCsInput
 			return Manager_Input;
 		}
 
-		ICsManager_Input* FLibrary::GetSafe(const FString& Context, APlayerController* PC, LogLevel)
+		ICsManager_Input* FLibrary::GetSafe(const FString& Context, APlayerController* PC, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PTR_NULL_RET_NULL(PC)
 
@@ -148,7 +158,7 @@ namespace NCsInput
 			return Manager_Input;
 		}
 
-		ICsManager_Input* FLibrary::GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, LogLevel)
+		ICsManager_Input* FLibrary::GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -196,7 +206,7 @@ namespace NCsInput
 			return GetChecked(Context, CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId));
 		}
 
-		ICsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
+		ICsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
@@ -205,7 +215,7 @@ namespace NCsInput
 			return GetSafe(Context, PC, Log);
 		}
 
-		ICsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, LogLevel)
+		ICsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, OutSuccess, Log);
 
@@ -225,7 +235,7 @@ namespace NCsInput
 		#endif // #if UE_BUILD_SHIPPING
 		}
 
-		UObject* FLibrary::GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
+		UObject* FLibrary::GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (ICsManager_Input* Manager_Input = GetSafe(Context, WorldContext, ControllerId, Log))
 			{
@@ -242,12 +252,6 @@ namespace NCsInput
 		// ICsManager_Input_Event
 		#pragma region
 
-		#define OnGameEventInfoEventType NCsInput::NManager::FOnGameEventInfo
-		#define OnGameEventInfosEventType NCsInput::NManager::FOnGameEventInfos
-		#define OnAnyKeyPressedEventType NCsInput::NManager::FOnAnyKey_Pressed
-		#define OnAnyKeyReleasedEventType NCsInput::NManager::FOnAnyKey_Released
-		#define ModeOnChangeEventType NCsInput::NManager::NMode::FOnChange
-
 		ICsManager_Input_Event* FLibrary::GetChecked_ICsManager_Input_Event(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
 			UObject* Manager_Input = GetAsObjectChecked(Context, WorldContext, ControllerId);
@@ -257,7 +261,7 @@ namespace NCsInput
 			return CS_INTERFACE_CAST_CHECKED(Manager_Input, UObject, ICsManager_Input_Event);
 		}
 
-		ICsManager_Input_Event* FLibrary::GetSafe_ICsManager_Input_Event(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
+		ICsManager_Input_Event* FLibrary::GetSafe_ICsManager_Input_Event(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UObject* Manager_Input = GetSafeAsObject(Context, WorldContext, ControllerId, Log))
 			{
@@ -306,15 +310,9 @@ namespace NCsInput
 			return GetChecked_ICsManager_Input_Event(Context, WorldContext, ControllerId)->GetActiveMode_OnChange_ScriptEvent();
 		}
 
-		#undef OnGameEventInfoEventType
-		#undef OnGameEventInfosEventType
-		#undef OnAnyKeyPressedEventType
-		#undef OnAnyKeyReleasedEventType
-		#undef ModeOnChangeEventType
-
 		#pragma endregion ICsManager_Input_Event
 
-		bool FLibrary::Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
+		bool FLibrary::Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			return GetSafe(Context, WorldContext, ControllerId, Log) != nullptr;
 		}
@@ -345,7 +343,7 @@ namespace NCsInput
 			return Count == NumLocalPlayers;
 		}
 
-		bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
+		bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (ICsManager_Input* ManagerInput = GetSafe(Context, WorldContext, ControllerId, Log))
 			{
@@ -355,7 +353,7 @@ namespace NCsInput
 			return false;
 		}
 
-		bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, LogLevel)
+		bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			TArray<APlayerController*> PlayerControllers;
 
@@ -389,8 +387,14 @@ namespace NCsInput
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 
+	}
+}
+
+namespace NCsInput
+{
+	namespace NManager
+	{
 		namespace NInputActionMap
 		{
 			namespace NLibrary
@@ -407,10 +411,13 @@ namespace NCsInput
 				}
 			}
 
+			using LogClassType = NCsInput::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			#define USING_NS_CACHED using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogLevel void(*Log)(const FString&) /*=&NCsInput::FLog::Warning*/
 
 			// Set
 			#pragma region
@@ -435,7 +442,7 @@ namespace NCsInput
 				GetFirstManagerChecked(Context, WorldContext)->SetCurrentInputActionMap(Context, Map);
 			}	
 
-			bool FLibrary::SetSafeFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, LogLevel)
+			bool FLibrary::SetSafeFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
@@ -466,7 +473,7 @@ namespace NCsInput
 				SetFirstChecked(Context, World, Map);
 			}
 
-			bool FLibrary::SetSafeFirst(const FString& Context, UWorld* World, const int32& Map, LogLevel)
+			bool FLibrary::SetSafeFirst(const FString& Context, UWorld* World, const int32& Map, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_INT_GREATER_THAN(Map, 0)
 
@@ -485,7 +492,7 @@ namespace NCsInput
 				GetManagerChecked(Context, PC)->SetCurrentInputActionMap(Context, Map);
 			}
 
-			bool FLibrary::SetSafe(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map, LogLevel)
+			bool FLibrary::SetSafe(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
@@ -529,7 +536,7 @@ namespace NCsInput
 				SetChecked(Context, PC, Map);
 			}
 
-			bool FLibrary::SetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map, LogLevel)
+			bool FLibrary::SetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
@@ -556,7 +563,7 @@ namespace NCsInput
 				ClearFirstChecked(Context, World, Map);
 			}
 
-			bool FLibrary::SafeClearFirst(const FString& Context, UWorld* World, const FECsInputActionMap& Map, LogLevel)
+			bool FLibrary::SafeClearFirst(const FString& Context, UWorld* World, const FECsInputActionMap& Map, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
@@ -580,7 +587,7 @@ namespace NCsInput
 				GetFirstManagerChecked(Context, WorldContext)->ClearCurrentInputActionMap(Context, Map);
 			}
 			
-			bool FLibrary::SafeClearFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, LogLevel)
+			bool FLibrary::SafeClearFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
@@ -605,7 +612,7 @@ namespace NCsInput
 				ClearFirstChecked(Context, World, Map);
 			}
 
-			bool FLibrary::SafeClearFirst(const FString& Context, UWorld* World, const int32& Map, LogLevel)
+			bool FLibrary::SafeClearFirst(const FString& Context, UWorld* World, const int32& Map, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_INT_GREATER_THAN(Map, 0)
 
@@ -636,7 +643,7 @@ namespace NCsInput
 				GetManagerChecked(Context, PC)->ClearCurrentInputActionMap(Context, Map);
 			}
 
-			bool FLibrary::SafeClear(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map, LogLevel)
+			bool FLibrary::SafeClear(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
@@ -656,7 +663,7 @@ namespace NCsInput
 				ClearChecked(Context, PC, Map);
 			}
 
-			bool FLibrary::SafeClear(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map, LogLevel)
+			bool FLibrary::SafeClear(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputActionMap& Map, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
@@ -709,7 +716,7 @@ namespace NCsInput
 				GetFirstManagerChecked(Context, WorldContext)->ResetCurrentInputActionMap();
 			}
 
-			bool FLibrary::SafeResetFirst(const FString& Context, const UObject* WorldContext, LogLevel)
+			bool FLibrary::SafeResetFirst(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				ICsManager_Input* Manager_Input = GetSafeFirstManager(Context, WorldContext, Log);
 
@@ -725,7 +732,7 @@ namespace NCsInput
 				GetManagerChecked(Context, PC)->ResetCurrentInputActionMap();
 			}
 
-			bool FLibrary::SafeReset(const FString& Context, APlayerController* PC, LogLevel)
+			bool FLibrary::SafeReset(const FString& Context, APlayerController* PC, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				ICsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
 
@@ -760,7 +767,7 @@ namespace NCsInput
 				}
 			}
 
-			bool FLibrary::SafeReset(const FString& Context, const UObject* WorldContext, LogLevel)
+			bool FLibrary::SafeReset(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				TArray<APlayerController*> PlayerControllers;
 
@@ -787,7 +794,7 @@ namespace NCsInput
 				ResetChecked(Context, PC);
 			}
 
-			bool FLibrary::SafeReset(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
+			bool FLibrary::SafeReset(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
@@ -798,11 +805,20 @@ namespace NCsInput
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
-			#undef LogLevel
 		}
+	}
+}
 
+namespace NCsInput
+{
+	namespace NManager
+	{
 		namespace NProfile
 		{
+			using LogClassType = NCsInput::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			void FLibrary::ResetToDefaultChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FCsInputActionMappings& Mappings, const ECsInputDevice& Device)
 			{
 				ICsManager_Input* Manager_Input			   = NCsInput::NManager::FLibrary::GetChecked(Context, WorldContext, ControllerId);

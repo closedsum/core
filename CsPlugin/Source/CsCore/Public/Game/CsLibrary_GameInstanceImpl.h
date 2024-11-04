@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -15,7 +17,9 @@ namespace NCsGameInstance
 	{
 		class CSCORE_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &FCsLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		public:
 
@@ -48,8 +52,8 @@ namespace NCsGameInstance
 			* @param Log
 			* return				GameInstance
 			*/
-			static UCsGameInstance* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
-			FORCEINLINE static UCsGameInstance* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+			static UCsGameInstance* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static UCsGameInstance* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				UCsGameInstance* GameInstance = GetSafe(Context, ContextObject, Log);
 				OutSuccess					  = GameInstance != nullptr;
@@ -133,11 +137,9 @@ namespace NCsGameInstance
 			* @param Log			(optional)
 			* return				Whether the instance running is a Mobile Preview with Editor.
 			*/
-			static bool SafeIsMobilePreviewEditor(const FString& Context, const UObject* ContextObject, LogLevel);
+			static bool SafeIsMobilePreviewEditor(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Editor
-
-		#undef LogLevel
 		};
 	}
 }

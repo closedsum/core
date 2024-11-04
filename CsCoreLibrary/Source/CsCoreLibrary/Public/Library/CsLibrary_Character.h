@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "Animation/CsTypes_AnimMontage.h"
 // Log
 #include "Utility/CsCoreLibraryLog.h"
@@ -29,10 +30,15 @@ namespace NCsCharacter
 	*/
 	struct CSCORELIBRARY_API FLibrary final
 	{
-	#define LogWarning void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
+	private:
+
+		CS_DECLARE_STATIC_LOG_LEVEL
+
 	#define USING_NS_CACHED using namespace NCsCharacter::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsCharacter::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
+
+		using ParamsType = NCsAnimMontage::NPlay::FParams;
 
 	// Get
 	#pragma region
@@ -80,8 +86,8 @@ namespace NCsCharacter
 		* @param Log
 		* return				Character
 		*/
-		static ACharacter* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, LogWarning);
-		FORCEINLINE ACharacter* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, LogWarning)
+		static ACharacter* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE ACharacter* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			ACharacter* C = GetSafeByTag(Context, WorldContext, Tag, Log);
 			OutSuccess    = C != nullptr;
@@ -99,7 +105,7 @@ namespace NCsCharacter
 		* return				Character
 		*/
 		template<typename T>
-		FORCEINLINE static T* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, LogWarning)
+		FORCEINLINE static T* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			T* A = Cast<T>(GetSafeByTag(Context, WorldContext, Tag, Log));
 
@@ -176,8 +182,8 @@ namespace NCsCharacter
 		* @param Log			(optional)
 		* return				Whether any Characters were found with Tags.
 		*/
-		static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, LogWarning);
-		FORCEINLINE static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, bool& OutSuccess, LogWarning)
+		static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			OutSuccess = GetSafeByTags(Context, WorldContext, Tags, OutCharacters, Log);
 			return OutSuccess;
@@ -192,8 +198,8 @@ namespace NCsCharacter
 		* @param Log			(optional)
 		* return				Character.
 		*/
-		static ACharacter* GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, LogWarning);
-		FORCEINLINE static ACharacter* GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, bool& OutSuccess, LogWarning)
+		static ACharacter* GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static ACharacter* GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			ACharacter* C = GetSafeByTags(Context, WorldContext, Tags, Log);
 			OutSuccess    = C != nullptr;
@@ -219,7 +225,7 @@ namespace NCsCharacter
 		* @param Log
 		* return
 		*/
-		static ACharacter* GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, LogWarning);
+		static ACharacter* GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get an Character with the given Name.
@@ -255,7 +261,7 @@ namespace NCsCharacter
 		* @param Log
 		* return
 		*/
-		static ACharacter* GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, LogWarning);
+		static ACharacter* GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get an Character with the given Label.
@@ -275,41 +281,36 @@ namespace NCsCharacter
 	#pragma region
 	public:
 
-	#define ParamsType NCsAnimMontage::NPlay::FParams
-
 		static float PlayChecked(const FString& Context, const ACharacter* Character, const ParamsType& Params);
 		FORCEINLINE static float PlayChecked(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayParams& Params)
 		{
 			return PlayChecked(Context, Character, ParamsType::Make(Params));
 		}
 
-		static float SafePlay(const FString& Context, const ACharacter* Character, const ParamsType& Params, bool& OutSuccess, LogWarning);
-		FORCEINLINE static float SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayParams& Params, bool& OutSuccess, LogWarning)
+		static float SafePlay(const FString& Context, const ACharacter* Character, const ParamsType& Params, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static float SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayParams& Params, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafePlay(Context, Character, ParamsType::Make(Params), OutSuccess, Log);
 		}
-		FORCEINLINE static float SafePlay(const FString& Context, const ACharacter* Character, const ParamsType& Params, LogWarning)
+		FORCEINLINE static float SafePlay(const FString& Context, const ACharacter* Character, const ParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			bool Success = false;
 			return SafePlay(Context, Character, Params, Success, Log);
 		}
-		FORCEINLINE static float SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayParams& Params, LogWarning)
+		FORCEINLINE static float SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayParams& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafePlay(Context, Character, ParamsType::Make(Params), Log);
 		}
 
-		static float SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogWarning);
-		FORCEINLINE static float SafePlay(const FString& Context,  const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, LogWarning)
+		static float SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static float SafePlay(const FString& Context,  const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			bool Success = false;
 			return SafePlay(Context, Character, Params, Success, Log);
 		}
 
-	#undef ParamsType
-
 	#pragma endregion Anim
 
-	#undef LogWarning
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
 	};

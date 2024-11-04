@@ -11,7 +11,9 @@
 
 namespace NCsGameplayTags
 {
-	#define LogLevel void(*Log)(const FString&) /*=&NCsGameplayTags::FLog::Warning*/
+	using LogClassType = NCsGameplayTags::FLog;
+
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 	FGameplayTag FLibrary::GetChecked(const FString& Context, const FName& Name)
 	{
@@ -29,7 +31,7 @@ namespace NCsGameplayTags
 		return GetChecked(Context, FName(*Name));
 	}
 
-	FGameplayTag FLibrary::GetSafe(const FString& Context, const FName& Name, bool& OutSuccess, LogLevel)
+	FGameplayTag FLibrary::GetSafe(const FString& Context, const FName& Name, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -41,7 +43,7 @@ namespace NCsGameplayTags
 		return Tag;
 	}
 
-	FGameplayTag FLibrary::GetSafe(const FString& Context, const FString& Name, bool& OutSuccess, LogLevel)
+	FGameplayTag FLibrary::GetSafe(const FString& Context, const FString& Name, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 

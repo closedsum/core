@@ -24,7 +24,9 @@ namespace NCsGameState
 			}
 		}
 
-		#define LogLevel void(*Log)(const FString&) /*=&NCsSeamlessTransition::FLog::Warning*/
+		using LogClassType = NCsSeamlessTransition::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		// Interface
 		#pragma region
@@ -36,7 +38,7 @@ namespace NCsGameState
 			return CS_INTERFACE_CAST_CHECKED(GameState, UObject, ICsGameState_SeamlessTransition);
 		}
 
-		ICsGameState_SeamlessTransition* FLibrary::GetSafeInterface(const FString& Context, const UObject* WorldContext, LogLevel)
+		ICsGameState_SeamlessTransition* FLibrary::GetSafeInterface(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UObject* GameState = CsGameStateLibrary::GetAsObjectChecked(Context, WorldContext))
 				return CS_INTERFACE_CAST(GameState, UObject, ICsGameState_SeamlessTransition);
@@ -57,7 +59,7 @@ namespace NCsGameState
 			return GetInterfaceChecked(Context, WorldContext) != nullptr;
 		}
 
-		bool FLibrary::CanGetSafeInterface(const FString& Context, const UObject* WorldContext, LogLevel)
+		bool FLibrary::CanGetSafeInterface(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			return GetSafeInterface(Context, WorldContext, Log) != nullptr;
 		}
@@ -78,7 +80,5 @@ namespace NCsGameState
 		{
 			return GetInterfaceChecked(Context, WorldContext)->SeamlessTransition_Transition_IsStartupComplete();
 		}
-
-		#undef LogLevel
 	}
 }

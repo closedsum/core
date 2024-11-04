@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "GameplayTagContainer.h"
 // Log
 #include "Utility/CsInputWithGameplayTagLog.h"
@@ -20,7 +21,11 @@ namespace NCsInput
 		{
 			class CSINPUTWITHGAMEPLAYTAG_API FLibrary
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsInput::NWithGameplayTag::FLog::Warning
+			private:
+
+				CS_DEFINE_STATIC_LOG_LEVEL
+
+			#define CS_FN_PARAM_DEFAULT_LOG_LEVEL void(*Log)(const FString&) = &NCsInput::NWithGameplayTag::FLog::Warning
 
 			// Get
 			#pragma region
@@ -28,9 +33,9 @@ namespace NCsInput
 
 				static ICsManager_Input_WithGameplayTag* GetChecked(const FString& Context, APlayerController* PC);
 
-				static ICsManager_Input_WithGameplayTag* GetSafe(const FString& Context, APlayerController* PC, LogLevel);
+				static ICsManager_Input_WithGameplayTag* GetSafe(const FString& Context, APlayerController* PC, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-				static ICsManager_Input_WithGameplayTag* GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, LogLevel);
+				static ICsManager_Input_WithGameplayTag* GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				static ICsManager_Input_WithGameplayTag* GetSafe(APawn* Pawn);
 
@@ -53,7 +58,7 @@ namespace NCsInput
 				* @param Log			(optional)
 				* return				Manager_Input
 				*/
-				static ICsManager_Input_WithGameplayTag* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel);
+				static ICsManager_Input_WithGameplayTag* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the Manager_Input associated with the player controller with ControllerId.
@@ -65,12 +70,12 @@ namespace NCsInput
 				* @param Log			(optional)
 				* return				Manager_Input
 				*/
-				static ICsManager_Input_WithGameplayTag* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, LogLevel);
+				static ICsManager_Input_WithGameplayTag* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				static UObject* GetAsObjectChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 
-				static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel);
-				FORCEINLINE static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, LogLevel)
+				static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+				FORCEINLINE static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					UObject* O = GetSafeAsObject(Context, WorldContext, ControllerId, Log);
 					OutSuccess = O != nullptr;
@@ -81,7 +86,7 @@ namespace NCsInput
 
 			public:
 
-				static bool Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel);
+				static bool Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				static bool HaveAllBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers);
 
@@ -95,7 +100,7 @@ namespace NCsInput
 				* @param Log			(optional)
 				* return				Whether Manager_Input->Input() was successfully called or not.
 				*/
-				static bool SafeInit(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel);
+				static bool SafeInit(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely call Manager_Input->Input() on all PlayerControllers that implement the interface: ICsGetManagerInput
@@ -105,7 +110,7 @@ namespace NCsInput
 				* @param Log			(optional)
 				* return				Whether Manager_Input->Input() was successfully called or not.
 				*/
-				static bool SafeInit(const FString& Context, const UObject* WorldContext, LogLevel);
+				static bool SafeInit(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			// Tag
 			#pragma region
@@ -117,20 +122,20 @@ namespace NCsInput
 				static bool HasMappingChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag);
 				static bool HasMappingChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag);
 
-				static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, LogLevel);
-				FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, bool& OutSuccess, LogLevel)
+				static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+				FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					OutSuccess = SafeHasMapping(Context, WorldContext, ControllerId, Tag, Log);
 					return OutSuccess;
 				}
-				static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, LogLevel);
-				FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, bool& OutSuccess, LogLevel)
+				static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+				FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					OutSuccess = SafeHasMapping(Context, WorldContext, ControllerId, Tag, Log);
 					return OutSuccess;
 				}
-				static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, LogLevel);
-				FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, bool& OutSuccess, LogLevel)
+				static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+				FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					OutSuccess = SafeHasMapping(Context, WorldContext, ControllerId, Tag, Log);
 					return OutSuccess;
@@ -142,20 +147,20 @@ namespace NCsInput
 				static void SetMappingActiveChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag);
 				static void SetMappingActiveChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag);
 
-				static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, LogLevel);		
-				FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, bool& OutSuccess, LogLevel)
+				static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);		
+				FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					OutSuccess = SafeSetMappingActive(Context, WorldContext, ControllerId, Tag, Log);
 					return OutSuccess;
 				}
-				static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, LogLevel);		
-				FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, bool& OutSuccess, LogLevel)
+				static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);		
+				FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					OutSuccess = SafeSetMappingActive(Context, WorldContext, ControllerId, Tag, Log);
 					return OutSuccess;
 				}
-				static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, LogLevel);		
-				FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, bool& OutSuccess, LogLevel)
+				static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);		
+				FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					OutSuccess = SafeSetMappingActive(Context, WorldContext, ControllerId, Tag, Log);
 					return OutSuccess;
@@ -167,20 +172,20 @@ namespace NCsInput
 				static void SetMappingInactiveChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag);
 				static void SetMappingInactiveChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag);
 
-				static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, LogLevel);
-				FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, bool& OutSuccess, LogLevel)
+				static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+				FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					OutSuccess = SafeSetMappingInactive(Context, WorldContext, ControllerId, Tag, Log);
 					return OutSuccess;
 				}
-				static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, LogLevel);
-				FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, bool& OutSuccess, LogLevel)
+				static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+				FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					OutSuccess = SafeSetMappingInactive(Context, WorldContext, ControllerId, Tag, Log);
 					return OutSuccess;
 				}
-				static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, LogLevel);
-				FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, bool& OutSuccess, LogLevel)
+				static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+				FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					OutSuccess = SafeSetMappingInactive(Context, WorldContext, ControllerId, Tag, Log);
 					return OutSuccess;
@@ -201,34 +206,32 @@ namespace NCsInput
 					SetMappingInactiveChecked(Context, WorldContext, ControllerId, Tag);
 				}
 
-				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, LogLevel)
+				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					return SafeSetMappingInactive(Context, WorldContext, ControllerId, Tag, Log);
 				}
-				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, bool& OutSuccess, LogLevel)
+				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					return SafeSetMappingInactive(Context, WorldContext, ControllerId, Tag, OutSuccess, Log);
 				}
-				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, LogLevel)
+				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					return SafeSetMappingInactive(Context, WorldContext, ControllerId, Tag, Log);
 				}
-				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, bool& OutSuccess, LogLevel)
+				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					return SafeSetMappingInactive(Context, WorldContext, ControllerId, Tag, OutSuccess, Log);
 				}
-				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, LogLevel)
+				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					return SafeSetMappingInactive(Context, WorldContext, ControllerId, Tag, Log);
 				}
-				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, bool& OutSuccess, LogLevel)
+				FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					return SafeSetMappingInactive(Context, WorldContext, ControllerId, Tag, OutSuccess, Log);
 				}
 
 			#pragma endregion Tag
-
-			#undef LogLevel
 			};
 		}
 	}
@@ -247,9 +250,9 @@ namespace NCsInput
 			{
 				class CSINPUTWITHGAMEPLAYTAG_API FLibrary
 				{
-				#define LogLevel void(*Log)(const FString&) = &NCsInput::NWithGameplayTag::FLog::Warning
-
 				private:
+
+					CS_DEFINE_STATIC_LOG_LEVEL
 
 					using InputManagerLibrary = NCsInput::NWithGameplayTag::NManager::FLibrary;
 
@@ -262,7 +265,7 @@ namespace NCsInput
 						return InputManagerLibrary::GetChecked(Context, WorldContext, 0);
 					}
 
-					FORCEINLINE static ICsManager_Input_WithGameplayTag* GetSafe(const FString& Context, const UObject* WorldContext, LogLevel)
+					FORCEINLINE static ICsManager_Input_WithGameplayTag* GetSafe(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::GetSafe(Context, WorldContext, 0, Log);
 					}
@@ -276,7 +279,7 @@ namespace NCsInput
 
 				public:
 
-					FORCEINLINE static bool Exists(const FString& Context, const UObject* WorldContext, LogLevel)
+					FORCEINLINE static bool Exists(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::Exists(Context, WorldContext, 0, Log);
 					}
@@ -300,29 +303,29 @@ namespace NCsInput
 						return InputManagerLibrary::HasMappingChecked(Context, WorldContext, 0, Tag);
 					}
 
-					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, LogLevel)
+					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::SafeHasMapping(Context, WorldContext, 0, Tag, Log);
 					}
-					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						OutSuccess = SafeHasMapping(Context, WorldContext, Tag, Log);
 						return OutSuccess;
 					}
-					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FName& Tag, LogLevel)
+					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::SafeHasMapping(Context, WorldContext, 0, Tag, Log);
 					}
-					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						OutSuccess = SafeHasMapping(Context, WorldContext, Tag, Log);
 						return OutSuccess;
 					}
-					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FString& Tag, LogLevel)
+					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::SafeHasMapping(Context, WorldContext, 0, Tag, Log);
 					}
-					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FString& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeHasMapping(const FString& Context, const UObject* WorldContext, const FString& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						OutSuccess = SafeHasMapping(Context, WorldContext, Tag, Log);
 						return OutSuccess;
@@ -343,29 +346,29 @@ namespace NCsInput
 						InputManagerLibrary::SetMappingActiveChecked(Context, WorldContext, 0, Tag);
 					}
 
-					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, LogLevel)
+					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::SafeSetMappingActive(Context, WorldContext, 0, Tag, Log);
 					}
-					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						OutSuccess = SafeSetMappingActive(Context, WorldContext, Tag, Log);
 						return OutSuccess;
 					}
-					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FName& Tag, LogLevel)
+					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::SafeSetMappingActive(Context, WorldContext, 0, Tag, Log);
 					}
-					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						OutSuccess = SafeSetMappingActive(Context, WorldContext, Tag, Log);
 						return OutSuccess;
 					}
-					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FString& Tag, LogLevel)
+					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::SafeSetMappingActive(Context, WorldContext, 0, Tag, Log);
 					}
-					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FString& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const FString& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						OutSuccess = SafeSetMappingActive(Context, WorldContext, Tag, Log);
 						return OutSuccess;
@@ -387,29 +390,29 @@ namespace NCsInput
 						InputManagerLibrary::SetMappingInactiveChecked(Context, WorldContext, 0, Tag);
 					}
 
-					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, LogLevel)
+					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::SafeSetMappingInactive(Context, WorldContext, 0, Tag, Log);
 					}
-					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						OutSuccess = SafeSetMappingInactive(Context, WorldContext, Tag, Log);
 						return OutSuccess;
 					}
-					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FName& Tag, LogLevel)
+					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::SafeSetMappingInactive(Context, WorldContext, 0, Tag, Log);
 					}
-					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						OutSuccess = SafeSetMappingInactive(Context, WorldContext, Tag, Log);
 						return OutSuccess;
 					}
-					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FString& Tag, LogLevel)
+					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return InputManagerLibrary::SafeSetMappingInactive(Context, WorldContext, 0, Tag, Log);
 					}
-					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FString& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const FString& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						OutSuccess = SafeSetMappingInactive(Context, WorldContext, Tag, Log);
 						return OutSuccess;
@@ -430,34 +433,32 @@ namespace NCsInput
 						SetMappingActiveChecked(Context, WorldContext, Tag);
 					}
 
-					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, LogLevel)
+					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return SafeSetMappingInactive(Context, WorldContext, Tag, Log);
 					}
-					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FGameplayTag& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return SafeSetMappingInactive(Context, WorldContext, Tag, OutSuccess, Log);
 					}
-					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FName& Tag, LogLevel)
+					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return SafeSetMappingInactive(Context, WorldContext, Tag, Log);
 					}
-					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return SafeSetMappingInactive(Context, WorldContext, Tag, OutSuccess, Log);
 					}
-					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FString& Tag, LogLevel)
+					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return SafeSetMappingInactive(Context, WorldContext, Tag, Log);
 					}
-					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FString& Tag, bool& OutSuccess, LogLevel)
+					FORCEINLINE static bool SafeBlockMapping(const FString& Context, const UObject* WorldContext, const FString& Tag, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 					{
 						return SafeSetMappingInactive(Context, WorldContext, Tag, OutSuccess, Log);
 					}
 
 				#pragma endregion Tag
-
-				#undef LogLevel
 				};
 			}
 		}

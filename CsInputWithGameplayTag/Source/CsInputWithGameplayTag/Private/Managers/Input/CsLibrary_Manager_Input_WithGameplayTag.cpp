@@ -37,10 +37,13 @@ namespace NCsInput
 				}
 			}
 
+			using LogClassType = NCsInput::NWithGameplayTag::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			#define USING_NS_CACHED using namespace NCsInput::NWithGameplayTag::NManager::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NWithGameplayTag::NManager::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogLevel void(*Log)(const FString&) /*=&NCsInput::NWithGameplayTag::FLog::Warning*/
 
 			// Get
 			#pragma region
@@ -57,7 +60,7 @@ namespace NCsInput
 				return Manager_Input;
 			}
 
-			ICsManager_Input_WithGameplayTag* FLibrary::GetSafe(const FString& Context, APlayerController* PC, LogLevel)
+			ICsManager_Input_WithGameplayTag* FLibrary::GetSafe(const FString& Context, APlayerController* PC, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL_RET_NULL(PC)
 
@@ -81,7 +84,7 @@ namespace NCsInput
 				return Manager_Input;
 			}
 
-			ICsManager_Input_WithGameplayTag* FLibrary::GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, LogLevel)
+			ICsManager_Input_WithGameplayTag* FLibrary::GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				OutSuccess = false;
 
@@ -126,7 +129,7 @@ namespace NCsInput
 				return GetChecked(Context, CsPCLocalLibrary::GetChecked(Context, WorldContext, ControllerId));
 			}
 
-			ICsManager_Input_WithGameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
+			ICsManager_Input_WithGameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
 
@@ -135,7 +138,7 @@ namespace NCsInput
 				return GetSafe(Context, PC, Log);
 			}
 
-			ICsManager_Input_WithGameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, LogLevel)
+			ICsManager_Input_WithGameplayTag* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, OutSuccess, Log);
 
@@ -155,7 +158,7 @@ namespace NCsInput
 			#endif // #if UE_BUILD_SHIPPING
 			}
 
-			UObject* FLibrary::GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
+			UObject* FLibrary::GetSafeAsObject(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (ICsManager_Input_WithGameplayTag* Manager_Input = GetSafe(Context, WorldContext, ControllerId, Log))
 				{
@@ -169,7 +172,7 @@ namespace NCsInput
 
 			#pragma endregion Get
 
-			bool FLibrary::Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
+			bool FLibrary::Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return GetSafe(Context, WorldContext, ControllerId, Log) != nullptr;
 			}
@@ -202,7 +205,7 @@ namespace NCsInput
 				return Count == NumLocalPlayers;
 			}
 
-			bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, const int32& ControllerId, LogLevel)
+			bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, const int32& ControllerId, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (ICsManager_Input_WithGameplayTag* ManagerInput = GetSafe(Context, WorldContext, ControllerId, Log))
 				{
@@ -212,7 +215,7 @@ namespace NCsInput
 				return false;
 			}
 
-			bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, LogLevel)
+			bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				TArray<APlayerController*> PlayerControllers;
 
@@ -266,7 +269,7 @@ namespace NCsInput
 				return HasMappingChecked(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetChecked(Context, Tag));
 			}
 
-			bool FLibrary::SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, LogLevel)
+			bool FLibrary::SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (ICsManager_Input_WithGameplayTag* Interface = GetSafe(Context, WorldContext, ControllerId))
 				{
@@ -282,12 +285,12 @@ namespace NCsInput
 				return false;
 			}
 
-			bool FLibrary::SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, LogLevel)
+			bool FLibrary::SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return SafeHasMapping(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
 			}
 
-			bool FLibrary::SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, LogLevel)
+			bool FLibrary::SafeHasMapping(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return SafeHasMapping(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
 			}
@@ -310,7 +313,7 @@ namespace NCsInput
 				SetMappingActiveChecked(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetChecked(Context, Tag));
 			}
 
-			bool FLibrary::SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, LogLevel)
+			bool FLibrary::SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (!SafeHasMapping(Context, WorldContext, ControllerId, Tag, Log))
 					return false;
@@ -318,12 +321,12 @@ namespace NCsInput
 				return true;
 			}
 
-			bool FLibrary::SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, LogLevel)
+			bool FLibrary::SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return SafeSetMappingActive(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
 			}
 
-			bool FLibrary::SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, LogLevel)
+			bool FLibrary::SafeSetMappingActive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return SafeSetMappingActive(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
 			}
@@ -346,7 +349,7 @@ namespace NCsInput
 				SetMappingInactiveChecked(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetChecked(Context, Tag));
 			}
 
-			bool FLibrary::SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, LogLevel)
+			bool FLibrary::SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FGameplayTag& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (!SafeHasMapping(Context, WorldContext, ControllerId, Tag, Log))
 					return false;
@@ -354,12 +357,12 @@ namespace NCsInput
 				return true;
 			}
 
-			bool FLibrary::SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, LogLevel)
+			bool FLibrary::SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return SafeSetMappingInactive(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
 			}
 
-			bool FLibrary::SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, LogLevel)
+			bool FLibrary::SafeSetMappingInactive(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FString& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return SafeSetMappingInactive(Context, WorldContext, ControllerId, CsGameplayTagsLibrary::GetSafe(Context, Tag, Log));
 			}
@@ -368,7 +371,6 @@ namespace NCsInput
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
-			#undef LogLevel
 		}
 	}
 }

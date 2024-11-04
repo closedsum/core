@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsJsLog.h"
 
@@ -28,7 +30,9 @@ namespace NCsCharacter
 		*/
 		struct CSJS_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsJs::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// Interface
 		#pragma region
@@ -63,7 +67,7 @@ namespace NCsCharacter
 			* @param Log			(optional)
 			* return				Whether GetSafe was excuted successfully or not.
 			*/
-			static bool GetSafe(const FString& Context, const UObject* WorldContext, TArray<ACharacter*>& OutCharacters, LogLevel);
+			static bool GetSafe(const FString& Context, const UObject* WorldContext, TArray<ACharacter*>& OutCharacters, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get a Scriptable Character with the given Tag (checks AActor->Tags).
@@ -105,7 +109,7 @@ namespace NCsCharacter
 			* @param Log
 			* return				Character
 			*/
-			static ACharacter* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, LogLevel);
+			static ACharacter* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get a Scriptable Character (casted to type T) with the given Tag (checks AActor->Tags)
@@ -118,7 +122,7 @@ namespace NCsCharacter
 			* return				Character
 			*/
 			template<typename T>
-			FORCEINLINE static T* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, LogLevel)
+			FORCEINLINE static T* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				T* A = Cast<T>(GetSafeByTag(Context, WorldContext, Tag, Log));
 
@@ -187,7 +191,7 @@ namespace NCsCharacter
 			* @param Log			(optional)
 			* return				Whether any characters were found with Tags.
 			*/
-			static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, LogLevel);
+			static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get a Scriptable Character with the given Name.
@@ -210,7 +214,7 @@ namespace NCsCharacter
 			* @param Log
 			* return
 			*/
-			static ACharacter* GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, LogLevel);
+			static ACharacter* GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get a Scriptable Character with the given Name.
@@ -249,7 +253,7 @@ namespace NCsCharacter
 			* @param Log
 			* return
 			*/
-			static ACharacter* GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, LogLevel);
+			static ACharacter* GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get a Scriptable Character with the given Label.
@@ -265,8 +269,6 @@ namespace NCsCharacter
 			static ACharacter* GetSafeByLabel(const UObject* WorldContext, const FString& Label);
 
 		#pragma endregion Get
-
-		#undef LogLevel
 		};
 	}
 }

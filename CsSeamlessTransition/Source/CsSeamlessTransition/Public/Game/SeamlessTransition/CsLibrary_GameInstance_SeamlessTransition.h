@@ -23,7 +23,9 @@ namespace NCsGameInstance
 
 		struct CSSEAMLESSTRANSITION_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsSeamlessTransition::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// Interface
 		#pragma region
@@ -31,7 +33,7 @@ namespace NCsGameInstance
 
 			static ICsGameInstance_SeamlessTransition* GetInterfaceChecked(const FString& Context, const UObject* ContextObject);
 			
-			static ICsGameInstance_SeamlessTransition* GetSafeInterface(const FString& Context, const UObject* ContextObject, LogLevel);
+			static ICsGameInstance_SeamlessTransition* GetSafeInterface(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Interface
 
@@ -47,14 +49,14 @@ namespace NCsGameInstance
 				PerformTransitionChecked(Context, ContextObject, TransitionParamsType::Make(Params));
 			}
 
-			static bool SafePerformTransition(const FString& Context, const UObject* ContextObject, const TransitionParamsType& Params, LogLevel);
-			FORCEINLINE static bool SafePerformTransition(const FString& Context, const UObject* ContextObject, const FCsGameInstance_TransitionParams& Params, LogLevel)
+			static bool SafePerformTransition(const FString& Context, const UObject* ContextObject, const TransitionParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafePerformTransition(const FString& Context, const UObject* ContextObject, const FCsGameInstance_TransitionParams& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				return SafePerformTransition(Context, ContextObject, TransitionParamsType::Make(Params), Log);
 			}
 
 			static CsPlayerTransitionCacheType* GetPlayerTransitionCacheChecked(const FString& Context, const UObject* ContextObject);
-			static CsPlayerTransitionCacheType* GetSafePlayerTransitionCache(const FString& Context, const UObject* ContextObject, LogLevel);
+			static CsPlayerTransitionCacheType* GetSafePlayerTransitionCache(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Transition
 
@@ -82,16 +84,14 @@ namespace NCsGameInstance
 
 			static bool HasPlayerPawnTraveledChecked(const FString& Context, const UObject* ContextObject);
 
-			static bool SafeHasPlayerPawnTraveled(const FString& Context, const UObject* ContextObject, LogLevel);
-			FORCEINLINE static bool SafeHasPlayerPawnTraveled(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+			static bool SafeHasPlayerPawnTraveled(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeHasPlayerPawnTraveled(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeHasPlayerPawnTraveled(Context, ContextObject);
 				return OutSuccess;
 			}
 
 		#pragma endregion Player
-
-		#undef LogLevel
 		};
 	}
 }

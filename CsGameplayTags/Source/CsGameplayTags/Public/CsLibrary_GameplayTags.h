@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "GameplayTagContainer.h"
 // Log
 #include "Utility/CsGameplayTagsLog.h"
@@ -11,7 +12,9 @@ namespace NCsGameplayTags
 {
 	struct CSGAMEPLAYTAGS_API FLibrary final
 	{
-	#define LogLevel void(*Log)(const FString&) = &NCsGameplayTags::FLog::Warning
+	private:
+
+		CS_DECLARE_STATIC_LOG_LEVEL
 
 	public:
 		
@@ -42,8 +45,8 @@ namespace NCsGameplayTags
 		* @param Log		(optional)
 		* return			GameplayTag associated with Name.
 		*/
-		static FGameplayTag GetSafe(const FString& Context, const FName& Name, bool& OutSuccess, LogLevel);
-		FORCEINLINE static FGameplayTag GetSafe(const FString& Context, const FName& Name, LogLevel)
+		static FGameplayTag GetSafe(const FString& Context, const FName& Name, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static FGameplayTag GetSafe(const FString& Context, const FName& Name, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			bool OutSuccess = false;
 			return GetSafe(Context, Name, OutSuccess, Log);
@@ -58,8 +61,8 @@ namespace NCsGameplayTags
 		* @param Log		(optional)
 		* return			GameplayTag associated with Name.
 		*/
-		static FGameplayTag GetSafe(const FString& Context, const FString& Name, bool& OutSuccess, LogLevel);
-		FORCEINLINE static FGameplayTag GetSafe(const FString& Context, const FString& Name, LogLevel)
+		static FGameplayTag GetSafe(const FString& Context, const FString& Name, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static FGameplayTag GetSafe(const FString& Context, const FString& Name, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			bool OutSuccess = false;
 			return GetSafe(Context, Name, OutSuccess, Log);
@@ -129,8 +132,6 @@ namespace NCsGameplayTags
 			GameplayTags.Reset(GameplayTags.Max());
 			ParentTags.Reset(ParentTags.Max());
 		}
-
-	#undef LogLevel
 	};
 }
 

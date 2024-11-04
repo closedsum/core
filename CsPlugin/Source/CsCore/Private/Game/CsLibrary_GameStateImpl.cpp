@@ -32,7 +32,6 @@ namespace NCsGameState
 		#define USING_NS_CACHED using namespace NCsGameState::NImpl::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsGameState::NImpl::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&FCsLog::Warning*/
 
 		FString FLibrary::PrintGameStateAndClass(AGameStateBase* GameState)
 		{
@@ -41,6 +40,5 @@ namespace NCsGameState
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
 }

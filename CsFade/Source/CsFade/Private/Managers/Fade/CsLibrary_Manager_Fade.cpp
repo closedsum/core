@@ -33,7 +33,14 @@ namespace NCsFade
 			}
 		}
 
-		#define LogWarning void(*Log)(const FString&) /*=&NCsFade::FLog::Warning*/
+		using LogClassType = NCsFade::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
+		using OnCompleteEventType = NCsFade::NManager::NFade::FOnComplete;
+		using ParamsType = NCsFade::FParams;
+		using ClearToBlackParamsType = NCsFade::NClearToBlack::FParams;
+		using BlackToClearParamsType = NCsFade::NBlackToClear::FParams;
 
 		// ContextRoot
 		#pragma region
@@ -45,7 +52,7 @@ namespace NCsFade
 			return CsGameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogWarning)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			return CsGameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
@@ -75,7 +82,7 @@ namespace NCsFade
 			return Manager_Fade;
 		}
 
-		UCsManager_Fade* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogWarning)
+		UCsManager_Fade* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -94,7 +101,7 @@ namespace NCsFade
 			return Manager_Fade;
 		}
 
-		UCsManager_Fade* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogWarning)
+		UCsManager_Fade* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -145,8 +152,6 @@ namespace NCsFade
 			GetChecked(Context, ContextObject)->CreateFadeWidget();
 		}
 
-		#define ParamsType NCsFade::FParams
-
 		void FLibrary::FadeChecked(const FString& Context, const UObject* ContextObject, const ParamsType& Params)
 		{
 			GetChecked(Context, ContextObject)->Fade(Params);
@@ -178,7 +183,7 @@ namespace NCsFade
 			GetChecked(Context, ContextObject)->ClearFade();
 		}
 
-		bool FLibrary::SafeClearFade(const FString& Context, const UObject* ContextObject, LogWarning)
+		bool FLibrary::SafeClearFade(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Fade* Manager_Fade = GetSafe(Context, ContextObject, Log))
 			{
@@ -198,7 +203,7 @@ namespace NCsFade
 			GetChecked(Context, ContextObject)->SafeFade(Params);
 		}
 
-		bool FLibrary::SafeFadeBlackToBlack(const FString& Context, const UObject* ContextObject, const float& Time, LogWarning)
+		bool FLibrary::SafeFadeBlackToBlack(const FString& Context, const UObject* ContextObject, const float& Time, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Fade* Manager_Fade = GetSafe(Context, ContextObject))
 			{
@@ -223,7 +228,7 @@ namespace NCsFade
 			GetChecked(Context, ContextObject)->SafeFade(Params);
 		}
 
-		bool FLibrary::SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, LogWarning)
+		bool FLibrary::SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Fade* Manager_Fade = GetSafe(Context, ContextObject, Log))
 			{
@@ -249,7 +254,7 @@ namespace NCsFade
 			GetChecked(Context, ContextObject)->SafeFade(Params);
 		}
 
-		bool FLibrary::SafeFadeBlackToClear(const FString& Context, const UObject* ContextObject, const float& Time, LogWarning)
+		bool FLibrary::SafeFadeBlackToClear(const FString& Context, const UObject* ContextObject, const float& Time, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Fade* Manager_Fade = GetSafe(Context, ContextObject, Log))
 			{
@@ -264,10 +269,6 @@ namespace NCsFade
 			}
 			return false;
 		}
-
-		#undef ParamsType
-
-		#define OnCompleteEventType NCsFade::NManager::NFade::FOnComplete
 
 		OnCompleteEventType& FLibrary::GetOnFadeComplete_EventChecked(const FString& Context, const UObject* ContextObject)
 		{
@@ -284,7 +285,7 @@ namespace NCsFade
 			return GetChecked(Context, WorldContext)->IsFadeActive();
 		}
 
-		bool FLibrary::SafeIsFadeActive(const FString& Context, const UObject* WorldContext, bool& OutSuccess, LogWarning)
+		bool FLibrary::SafeIsFadeActive(const FString& Context, const UObject* WorldContext, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -296,9 +297,5 @@ namespace NCsFade
 			}
 			return OutSuccess;
 		}
-
-		#undef OnCompleteEventType
-
-		#undef LogWarning
 	}
 }

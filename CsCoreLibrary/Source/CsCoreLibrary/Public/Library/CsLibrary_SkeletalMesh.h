@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsCoreLibraryLog.h"
 
@@ -18,7 +20,10 @@ namespace NCsSkeletalMesh
 	*/
 	class CSCORELIBRARY_API FLibrary
 	{
-	#define LogLevel void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning
+	private:
+
+		CS_DECLARE_STATIC_LOG_LEVEL
+		CS_DECLARE_STATIC_LOG_WARNING
 
 	// Load
 	#pragma region
@@ -41,7 +46,7 @@ namespace NCsSkeletalMesh
 		* @param Log
 		* return			SkeletalMesh.
 		*/
-		static USkeletalMesh* SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel);
+		static USkeletalMesh* SafeLoad(const FString& Context, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Load the SkeletalMesh at the given Path.
@@ -60,7 +65,7 @@ namespace NCsSkeletalMesh
 		* @param Log
 		* return			SkeletalMesh.
 		*/
-		static USkeletalMesh* SafeLoad(const FString& Context, const FString& Path, LogLevel);
+		static USkeletalMesh* SafeLoad(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Load
 
@@ -68,7 +73,7 @@ namespace NCsSkeletalMesh
 	#pragma region
 	public:
 
-		static USkeletalMesh* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel);
+		static USkeletalMesh* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Get
 
@@ -78,7 +83,7 @@ namespace NCsSkeletalMesh
 
 		static bool HasAssetChecked(const FString& Context, const USkeletalMeshComponent* Component);
 
-		static bool SafeHasAsset(const FString& Context, const USkeletalMeshComponent* Component, LogLevel);
+		static bool SafeHasAsset(const FString& Context, const USkeletalMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Asset
 	
@@ -323,7 +328,7 @@ namespace NCsSkeletalMesh
 		*
 		* return				Whether the BoneOrSocket is valid.
 		*/
-		static bool SafeIsBoneOrSocketValid(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, LogLevel);
+		static bool SafeIsBoneOrSocketValid(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Check if the Bone or Socket is valid for given Component.
@@ -348,7 +353,7 @@ namespace NCsSkeletalMesh
 		*
 		* return				Whether the BoneOrSocket is valid.
 		*/
-		static bool ConditionalSafeIsBoneOrSocketValid(const FString& Context, const USceneComponent* Component, const FName& BoneOrSocket, LogLevel);
+		static bool ConditionalSafeIsBoneOrSocketValid(const FString& Context, const USceneComponent* Component, const FName& BoneOrSocket, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get the Bone or Socket Rotation for the given Component.
@@ -372,7 +377,7 @@ namespace NCsSkeletalMesh
 		* 
 		* return				BoneOrSocket Rotation.
 		*/
-		static FRotator GetSafeBoneOrSocketRotation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel);
+		static FRotator GetSafeBoneOrSocketRotation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get the Bone or Socket Rotation for the given Component.
@@ -396,7 +401,7 @@ namespace NCsSkeletalMesh
 		*
 		* return				BoneOrSocket Rotation.
 		*/
-		static FRotator3f GetSafeBoneOrSocketRotation3f(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel);
+		static FRotator3f GetSafeBoneOrSocketRotation3f(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get the Bone or Socket direction (rotation as vector) for the given Component.
@@ -478,7 +483,7 @@ namespace NCsSkeletalMesh
 		*
 		* return				BoneOrSocket location.
 		*/
-		static FVector GetSafeBoneOrSocketLocation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel);
+		static FVector GetSafeBoneOrSocketLocation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get the Bone or Socket location for the given Component.
@@ -503,8 +508,6 @@ namespace NCsSkeletalMesh
 		* return				BoneOrSocket location.
 		*/
 		static FVector3f GetBoneOrSocketLocation3fChecked(const FString& Context, const USceneComponent* Component, const FName& BoneOrSocket);
-
-	#undef LogLevel
 	};
 }
 

@@ -19,8 +19,10 @@
 
 namespace NCsSkeletalMesh
 {
-	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-	#define LogWarning void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning;
+	using LogClassType = NCsCore::NLibrary::FLog;
+
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+	CS_DEFINE_STATIC_LOG_WARNING(FLibrary, LogClassType::Warning);
 
 	// Load
 	#pragma region
@@ -30,7 +32,7 @@ namespace NCsSkeletalMesh
 		return CsObjectLibrary::LoadChecked<USkeletalMesh>(Context, Path);
 	}
 
-	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
+	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		return CsObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
 	}
@@ -40,7 +42,7 @@ namespace NCsSkeletalMesh
 		return CsObjectLibrary::LoadChecked<USkeletalMesh>(Context, Path);
 	}
 
-	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogLevel)
+	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		return CsObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
 	}
@@ -50,7 +52,7 @@ namespace NCsSkeletalMesh
 	// Get
 	#pragma region
 
-	USkeletalMesh* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel)
+	USkeletalMesh* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		return CsPropertyLibrary::GetObjectPropertyValueByPath<USkeletalMesh>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
@@ -67,7 +69,7 @@ namespace NCsSkeletalMesh
 		return true;
 	}
 
-	bool FLibrary::SafeHasAsset(const FString& Context, const USkeletalMeshComponent* Component, LogLevel)
+	bool FLibrary::SafeHasAsset(const FString& Context, const USkeletalMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Component)
 
@@ -225,7 +227,7 @@ namespace NCsSkeletalMesh
 		return false;
 	}
 
-	bool FLibrary::SafeIsBoneOrSocketValid(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, LogLevel)
+	bool FLibrary::SafeIsBoneOrSocketValid(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Component)
 		CS_IS_NAME_NONE(BoneOrSocket)
@@ -261,7 +263,7 @@ namespace NCsSkeletalMesh
 		return true;
 	}
 
-	bool FLibrary::ConditionalSafeIsBoneOrSocketValid(const FString& Context, const USceneComponent* Component, const FName& BoneOrSocket, LogLevel)
+	bool FLibrary::ConditionalSafeIsBoneOrSocketValid(const FString& Context, const USceneComponent* Component, const FName& BoneOrSocket, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Component)
 
@@ -276,7 +278,7 @@ namespace NCsSkeletalMesh
 		return Component->GetBoneQuaternion(BoneOrSocket).Rotator();
 	}
 
-	FRotator FLibrary::GetSafeBoneOrSocketRotation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel)
+	FRotator FLibrary::GetSafeBoneOrSocketRotation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -293,7 +295,7 @@ namespace NCsSkeletalMesh
 		return CsMathLibrary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Rotator());
 	}
 
-	FRotator3f FLibrary::GetSafeBoneOrSocketRotation3f(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel)
+	FRotator3f FLibrary::GetSafeBoneOrSocketRotation3f(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -342,7 +344,7 @@ namespace NCsSkeletalMesh
 		return CsMathLibrary::Convert(Component->GetBoneLocation(BoneOrSocket));
 	}
 
-	FVector FLibrary::GetSafeBoneOrSocketLocation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, LogLevel)
+	FVector FLibrary::GetSafeBoneOrSocketLocation(const FString& Context, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -366,7 +368,4 @@ namespace NCsSkeletalMesh
 
 		return GetBoneOrSocketLocation3fChecked(Context, C, BoneOrSocket);
 	}
-
-	#undef LogLevel
-	#undef LogWarning
 }

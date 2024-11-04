@@ -35,10 +35,13 @@ namespace NCsCharacter
 			}
 		}
 
+		using LogClassType = NCsJs::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsCharacter::NScriptable::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsCharacter::NScriptable::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsJs::FLog::Warning*/
 
 		// Interface
 		#pragma region
@@ -77,7 +80,7 @@ namespace NCsCharacter
 			checkf(OutCharacters.Num() > CS_EMPTY, TEXT("%s: Failed to find any Scriptable Actors (implements the interface: ICsScriptableActor)."), *Context);
 		}
 
-		bool FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, TArray<ACharacter*>& OutCharacters, LogLevel)
+		bool FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, TArray<ACharacter*>& OutCharacters, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
 
@@ -159,7 +162,7 @@ namespace NCsCharacter
 			return nullptr;
 		}
 
-		ACharacter* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, LogLevel)
+		ACharacter* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
@@ -252,7 +255,7 @@ namespace NCsCharacter
 			checkf(OutCharacters.Num() > CS_EMPTY, TEXT("%s: Failed to find Scriptable Actors (implements the interface: ICsScriptableActor) with Tags: %s."), *Context, *(CsNameLibrary::ToString(Tags)));
 		}
 
-		bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, LogLevel)
+		bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
@@ -318,7 +321,7 @@ namespace NCsCharacter
 			return nullptr;
 		}
 
-		ACharacter* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, LogLevel)
+		ACharacter* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
@@ -381,7 +384,7 @@ namespace NCsCharacter
 		#endif // #if WITH_EDITOR
 		}
 
-		ACharacter* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, LogLevel)
+		ACharacter* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 		#if WITH_EDITOR
 			UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
@@ -424,6 +427,5 @@ namespace NCsCharacter
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
 }

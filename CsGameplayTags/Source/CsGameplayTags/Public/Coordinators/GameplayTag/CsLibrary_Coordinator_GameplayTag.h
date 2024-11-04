@@ -28,7 +28,9 @@ namespace NCsGameplayTag
 
 			struct CSGAMEPLAYTAGS_API FLibrary
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsGameplayTags::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			// ContextRoot
 			#pragma region
@@ -57,9 +59,9 @@ namespace NCsGameplayTag
 				*						the Context Root.
 				* return				Context for UCsCoordinator_GameplayTag
 				*/
-				static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel);
+				static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 			#else
-				FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel) { return nullptr; }
+				FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL) { return nullptr; }
 			#endif // #if WITH_EDITOR
 
 			#if WITH_EDITOR
@@ -120,7 +122,7 @@ namespace NCsGameplayTag
 				* @param Log			(optional)
 				* return				UCsCoordinator_GameplayTag.
 				*/
-				static UCsCoordinator_GameplayTag* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
+				static UCsCoordinator_GameplayTag* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the reference to UCsCoordinator_GameplayTag from a ContextObject.
@@ -133,7 +135,7 @@ namespace NCsGameplayTag
 				* return				UCsCoordinator_GameplayTag.
 				*/
 				template<typename T>
-				static T* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
+				static T* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					UCsCoordinator_GameplayTag* O = GetSafe(Context, ContextObject, Log);
 
@@ -161,7 +163,7 @@ namespace NCsGameplayTag
 				* @param Log			(optional)
 				* return				UCsCoordinator_GameplayTag.
 				*/
-				static UCsCoordinator_GameplayTag* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel);
+				static UCsCoordinator_GameplayTag* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the reference to UCsCoordinator_GameplayTag from a ContextObject.
@@ -175,7 +177,7 @@ namespace NCsGameplayTag
 				* return				UCsCoordinator_GameplayTag.
 				*/
 				template<typename T>
-				static T* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+				static T* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					UCsCoordinator_GameplayTag* O = GetSafe(Context, ContextObject, OutSuccess, Log);
 
@@ -243,7 +245,7 @@ namespace NCsGameplayTag
 					return GetChecked(Context, ContextObject) != nullptr;
 				}
 
-				FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, LogLevel)
+				FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					return GetSafe(Context, ContextObject, Log) != nullptr;
 				}
@@ -298,7 +300,7 @@ namespace NCsGameplayTag
 				* @param Log			(optional)
 				* return
 				*/
-				static bool SafeProcessGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Event, LogLevel);
+				static bool SafeProcessGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Event, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Broadcast a GameplayTag Event routed to the appropriated Group. 
@@ -323,15 +325,13 @@ namespace NCsGameplayTag
 				*						the GameplayTag Event.
 				* return				Whether the Event was broadcasted or not.
 				*/
-				static bool SafeBroadcastGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const  FCsGameplayTagEvent& Event, LogLevel);
+				static bool SafeBroadcastGameplayTagEvent(const FString& Context, const UObject* ContextObject, const FECsGameplayTagCoordinatorGroup& Group, const  FCsGameplayTagEvent& Event, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/*#define OnProccessEventGameInfoEventType NCsGameEvent::NCoordinator::FOnProcessGameEventInfo
 				static OnProccessEventGameInfoEventType& GetOnProcessGameEventInfo_EventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group);
 			#undef OnProccessEventGameInfoEventType*/
 
 			#pragma endregion Event
-
-			#undef LogLevel
 			};
 		}
 	}

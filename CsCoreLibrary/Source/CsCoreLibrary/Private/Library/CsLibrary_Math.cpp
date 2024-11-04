@@ -11,7 +11,9 @@
 
 namespace NCsMath
 {
-	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
+	using LogClassType = NCsCore::NLibrary::FLog;
+
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 	// Int
 	#pragma region
@@ -50,31 +52,31 @@ namespace NCsMath
 
 	#endif // #if WITH_EDITOR
 
-	bool FLibrary::SafeIsIntGreaterThan(const FString& Context, const int32& A, const int32& B, LogWarning)
+	bool FLibrary::SafeIsIntGreaterThan(const FString& Context, const int32& A, const int32& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_INT_GREATER_THAN(A, B)
 		return true;
 	}
 
-	bool FLibrary::SafeIsIntGreaterThanOrEqual(const FString& Context, const int32& A, const int32& B, LogWarning)
+	bool FLibrary::SafeIsIntGreaterThanOrEqual(const FString& Context, const int32& A, const int32& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_INT_GREATER_THAN_OR_EQUAL(A, B)
 		return true;
 	}
 
-	bool FLibrary::SafeIsIntLessThan(const FString& Context, const int32& A, const int32& B, LogWarning)
+	bool FLibrary::SafeIsIntLessThan(const FString& Context, const int32& A, const int32& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_INT_LESS_THAN(A, B)
 		return true;
 	}
 
-	bool FLibrary::SafeIsIntLessThanOrEqual(const FString& Context, const int32& A, const int32& B, LogWarning)
+	bool FLibrary::SafeIsIntLessThanOrEqual(const FString& Context, const int32& A, const int32& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_INT_LESS_THAN_OR_EQUAL(A, B)
 		return true;
 	}
 
-	bool FLibrary::SafeIsIntInRangeInclusive(const FString& Context, const int32& A, const int32& B, const int32& C, LogWarning)
+	bool FLibrary::SafeIsIntInRangeInclusive(const FString& Context, const int32& A, const int32& B, const int32& C, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_INT_IN_RANGE_INCLUSIVE(A, B, C)
 		return true;
@@ -113,25 +115,25 @@ namespace NCsMath
 
 	#endif // #if WITH_EDITOR
 
-	bool FLibrary::SafeIsFloatGreaterThan(const FString& Context, const float& A, const float& B, LogWarning)
+	bool FLibrary::SafeIsFloatGreaterThan(const FString& Context, const float& A, const float& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_FLOAT_GREATER_THAN(A, B)
 		return true;
 	}
 
-	bool FLibrary::SafeIsFloatGreaterThanOrEqual(const FString& Context, const float& A, const float& B, LogWarning)
+	bool FLibrary::SafeIsFloatGreaterThanOrEqual(const FString& Context, const float& A, const float& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(A, B)
 		return true;
 	}
 
-	bool FLibrary::SafeIsFloatLessThan(const FString& Context, const float& A, const float& B, LogWarning)
+	bool FLibrary::SafeIsFloatLessThan(const FString& Context, const float& A, const float& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_FLOAT_LESS_THAN(A, B)
 		return true;
 	}
 
-	bool FLibrary::SafeIsFloatLessThanOrEqual(const FString& Context, const float& A, const float& B, LogWarning)
+	bool FLibrary::SafeIsFloatLessThanOrEqual(const FString& Context, const float& A, const float& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_FLOAT_LESS_THAN_OR_EQUAL(A, B)
 		return true;
@@ -238,7 +240,7 @@ namespace NCsMath
 		return ClosestPointOnSegment(Point, StartPoint, EndPoint, OutT);
 	}
 
-	FVector3f FLibrary::SafeClosestPointOnSegment(const FString& Context, const FVector3f& Point, const FVector3f& StartPoint, const FVector3f& EndPoint, float& OutT, LogWarning)
+	FVector3f FLibrary::SafeClosestPointOnSegment(const FString& Context, const FVector3f& Point, const FVector3f& StartPoint, const FVector3f& EndPoint, float& OutT, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (StartPoint == EndPoint)
 		{
@@ -259,7 +261,7 @@ namespace NCsMath
 		return true;
 	}
 
-	bool FLibrary::IsValid(const FString& Context, const FPlane4f& Plane, LogWarning)
+	bool FLibrary::IsValid(const FString& Context, const FPlane4f& Plane, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		// Check Normal is Valid
 		if (!Plane.GetNormal().IsNormalized())
@@ -309,7 +311,7 @@ namespace NCsMath
 		return true;
 	}
 
-	bool FLibrary::SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection, LogWarning)
+	bool FLibrary::SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!Ray.IsValid(Context, Log))
 			return false;
@@ -341,7 +343,7 @@ namespace NCsMath
 		return SegmentPlaneIntersection(StartPoint, EndPoint, Plane, OutT, OutIntersectionPoint);
 	}
 
-	bool FLibrary::SafeSegmentPlaneIntersection(const FString& Context, const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersectionPoint, LogWarning)
+	bool FLibrary::SafeSegmentPlaneIntersection(const FString& Context, const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersectionPoint, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (StartPoint == EndPoint)
 		{
@@ -456,6 +458,4 @@ namespace NCsMath
 	}
 
 	#pragma endregion Intersection
-
-	#undef LogWarning
 }

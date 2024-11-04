@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsJsLog.h"
 
@@ -14,7 +16,9 @@ namespace NCsJs
 	{
 		struct CSJS_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString& Context) = &NCsJs::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// ContextRoot
 		#pragma region
@@ -46,9 +50,9 @@ namespace NCsJs
 			* @param Log
 			* return				Context for UCsManager_Javascript
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -94,7 +98,7 @@ namespace NCsJs
 			* @param Log
 			* return				UCsManager_Javascript.
 			*/
-			static UCsManager_Javascript* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
+			static UCsManager_Javascript* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get the reference to UCsManager_Javascript from a WorldContext.
@@ -107,8 +111,6 @@ namespace NCsJs
 			static UCsManager_Javascript* GetSafe(const UObject* ContextObject);
 
 		#pragma endregion Get
-
-		#undef LogLevel
 		};
 	}
 }

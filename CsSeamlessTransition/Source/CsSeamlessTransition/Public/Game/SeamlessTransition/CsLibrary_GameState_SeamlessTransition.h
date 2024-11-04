@@ -1,5 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsSeamlessTransitionLog.h"
 
@@ -12,7 +14,9 @@ namespace NCsGameState
 	{
 		struct CSSEAMLESSTRANSITION_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsSeamlessTransition::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// Get
 		#pragma region
@@ -35,7 +39,7 @@ namespace NCsGameState
 			* @param Log			(optional)
 			* return
 			*/
-			static ICsGameState_SeamlessTransition* GetSafeInterface(const FString& Context, const UObject* WorldContext, LogLevel);
+			static ICsGameState_SeamlessTransition* GetSafeInterface(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get Interface of type: ICsGameState_SeamlessTransition from the GameState from WorldContext.
@@ -62,7 +66,7 @@ namespace NCsGameState
 			* @param Log			(optional)
 			* return
 			*/
-			static bool CanGetSafeInterface(const FString& Context, const UObject* WorldContext, LogLevel);
+			static bool CanGetSafeInterface(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Get
 
@@ -73,8 +77,6 @@ namespace NCsGameState
 			static bool SeamlessTransition_Transition_IsTransitionOutCompleteChecked(const FString& Context, const UObject* WorldContext);
 
 			static bool SeamlessTransition_Transition_IsStartupCompleteChecked(const FString& Context, const UObject* WorldContext);
-
-		#undef LogLevel
 		};
 	}
 }

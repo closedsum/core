@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "CsMacro_Namespace.h"
 // Log
 #include "Utility/CsFXLog.h"
@@ -31,8 +32,10 @@ namespace NCsFX
 		*/
 		struct CSFX_API FLibrary
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsFX::FLog::Warning
-		
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
+
 			using ParameterType = NCsFX::NParameter::IParameter;
 
 		public:
@@ -51,7 +54,7 @@ namespace NCsFX
 			* @param Context	The calling context.
 			* @param Parameter
 			*/
-			static bool IsValid(const FString& Context, const ParameterType* Parameter, LogLevel);
+			static bool IsValid(const FString& Context, const ParameterType* Parameter, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		// Int
 		#pragma region
@@ -88,7 +91,7 @@ namespace NCsFX
 			* @param Log
 			* return			Int value.
 			*/
-			static bool GetSafeInt(const FString& Context, const ParameterType* Parameter, int32& OutValue, LogLevel);
+			static bool GetSafeInt(const FString& Context, const ParameterType* Parameter, int32& OutValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get a value of type: Int from Parameter implementing the interface:
@@ -205,8 +208,6 @@ namespace NCsFX
 			}
 
 		#pragma endregion Vector
-
-		#undef LogLevel
 		};
 	}
 }

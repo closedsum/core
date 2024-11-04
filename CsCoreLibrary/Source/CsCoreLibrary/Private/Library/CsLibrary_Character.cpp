@@ -39,10 +39,15 @@ namespace NCsCharacter
 		}
 	}
 
+	using LogClassType = NCsCore::NLibrary::FLog;
+
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 	#define USING_NS_CACHED using namespace NCsCharacter::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsCharacter::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-	#define LogWarning void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
+
+	using ParamsType = NCsAnimMontage::NPlay::FParams;
 
 	// Get
 	#pragma region
@@ -97,7 +102,7 @@ namespace NCsCharacter
 		return nullptr;
 	}
 
-	ACharacter* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, LogWarning)
+	ACharacter* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
@@ -231,7 +236,7 @@ namespace NCsCharacter
 		return C;
 	}
 
-	bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, LogWarning)
+	bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);
 
@@ -271,7 +276,7 @@ namespace NCsCharacter
 		return OutCharacters.Num() > CS_EMPTY;
 	}
 
-	ACharacter* FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, LogWarning)
+	ACharacter* FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TArray<ACharacter*> Characters;
 		if (GetSafeByTags(Context, WorldContext, Tags, Characters, Log))
@@ -310,7 +315,7 @@ namespace NCsCharacter
 		return nullptr;
 	}
 
-	ACharacter* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, LogWarning)
+	ACharacter* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
 
@@ -369,7 +374,7 @@ namespace NCsCharacter
 	#endif // #if WITH_EDITOR
 	}
 
-	ACharacter* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, LogWarning)
+	ACharacter* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 	#if WITH_EDITOR
 		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext);
@@ -411,8 +416,6 @@ namespace NCsCharacter
 	// Anim
 	#pragma region
 
-	#define ParamsType NCsAnimMontage::NPlay::FParams
-
 	float FLibrary::PlayChecked(const FString& Context, const ACharacter* Character, const ParamsType& Params)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Character)
@@ -424,7 +427,7 @@ namespace NCsCharacter
 		return CsAnimMontageLibrary::PlayChecked(Context, Mesh, Params);
 	}
 
-	float FLibrary::SafePlay(const FString& Context, const ACharacter* Character, const ParamsType& Params, bool& OutSuccess, LogWarning)
+	float FLibrary::SafePlay(const FString& Context, const ACharacter* Character, const ParamsType& Params, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -437,7 +440,7 @@ namespace NCsCharacter
 		return CsAnimMontageLibrary::SafePlay(Context, Mesh, Params, OutSuccess, Log);
 	}
 
-	float FLibrary::SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, LogWarning)
+	float FLibrary::SafePlay(const FString& Context, const ACharacter* Character, const FCsAnimMontage_PlayByPathParams& Params, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -449,12 +452,9 @@ namespace NCsCharacter
 
 		return CsAnimMontageLibrary::SafePlay(Context, Mesh, Params, OutSuccess, Log);
 	}
-
-	#undef ParamsType
 
 	#pragma endregion Anim
 
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
-	#undef LogWarning
 }

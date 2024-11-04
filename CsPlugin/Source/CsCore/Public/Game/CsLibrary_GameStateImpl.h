@@ -14,13 +14,9 @@ namespace NCsGameState
 	{
 		struct CSCORE_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &FCsLog::Warning
-
 		public:
 
 			static FString PrintGameStateAndClass(AGameStateBase* GameState);
-
-		#undef LogLevel
 		};
 	}
 }

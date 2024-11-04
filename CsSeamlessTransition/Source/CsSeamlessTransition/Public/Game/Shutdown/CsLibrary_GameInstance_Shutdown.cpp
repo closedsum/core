@@ -16,7 +16,9 @@ namespace NCsGameInstance
 	{
 		namespace NLibrary
 		{
-			#define LogLevel void(*Log)(const FString&) /*=&NCsSeamlessTransition::FLog::Warning*/
+			using LogClassType = NCsSeamlessTransition::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 			// Interface
 			#pragma region
@@ -49,8 +51,6 @@ namespace NCsGameInstance
 			}
 
 			#pragma endregion Events
-
-			#undef LogLevel
 		}
 	}
 }

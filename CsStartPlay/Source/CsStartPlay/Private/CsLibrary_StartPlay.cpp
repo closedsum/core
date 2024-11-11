@@ -11,9 +11,11 @@
 // Start
 #include "CsScriptStartPlay.h"
 
+using LogClassType = NCsStartPlay::FLog;
+
 namespace NCsStartPlay
 {
-	#define LogLevel void(*Log)(const FString&) /*=&NCsStartPlay::FLog::Warning*/
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 	bool FLibrary::ImplementsChecked(const FString& Context, const UObject* Object)
 	{
@@ -46,7 +48,7 @@ namespace NCsStartPlay
 		return true;
 	}
 
-	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, LogLevel)
+	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Object)
 
@@ -58,7 +60,7 @@ namespace NCsStartPlay
 		return true;
 	}
 
-	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, bool& OutIsScript, LogLevel)
+	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, bool& OutIsScript, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Object)
 
@@ -96,7 +98,7 @@ namespace NCsStartPlay
 		return false;
 	}
 
-	bool FLibrary::SafeHasStartedPlay(const FString& Context, const UObject* Object, LogLevel)
+	bool FLibrary::SafeHasStartedPlay(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Object)
 
@@ -131,7 +133,7 @@ namespace NCsStartPlay
 		checkf(0, TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object));
 	}
 
-	void FLibrary::SafeStartPlay(const FString& Context, UObject* Object, LogLevel)
+	void FLibrary::SafeStartPlay(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL_EXIT(Object)
 
@@ -147,6 +149,4 @@ namespace NCsStartPlay
 		}
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s %s does NOT implement the interface: ICsStartPlay."), *Context, *CsObjectLibrary::PrintObjectAndClass(Object)));
 	}
-
-	#undef LogLevel
 }

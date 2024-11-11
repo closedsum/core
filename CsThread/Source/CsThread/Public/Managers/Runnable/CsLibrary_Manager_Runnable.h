@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsThreadLog.h"
 
@@ -16,7 +18,9 @@ namespace NCsRunnable
 		*/
 		struct CSTHREAD_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsThread::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// ContextRoot
 		#pragma region
@@ -51,9 +55,9 @@ namespace NCsRunnable
 			* @param Log
 			* return				Context for UCsManager_Runnable.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, LogLevel);
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, LogLevel)
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				return nullptr;
 			}
@@ -103,7 +107,7 @@ namespace NCsRunnable
 			* @param Log
 			* return				UCsManager_Runnable.
 			*/
-			static UCsManager_Runnable* GetSafe(const FString& Context, UObject* ContextObject, LogLevel);
+			static UCsManager_Runnable* GetSafe(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get the reference to UCsManager_Runnable from a ContextObject.
@@ -116,8 +120,6 @@ namespace NCsRunnable
 			static UCsManager_Runnable* GetSafe(UObject* ContextObject);
 
 		#pragma endregion Get
-
-		#undef LogLevel
 		};
 	}
 }

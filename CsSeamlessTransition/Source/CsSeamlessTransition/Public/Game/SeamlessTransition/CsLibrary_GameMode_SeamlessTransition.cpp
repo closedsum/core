@@ -50,7 +50,7 @@ namespace NCsGameMode
 			return CS_INTERFACE_CAST_CHECKED(GameMode, AGameModeBase, ICsGameMode_SeamlessTransition);
 		}
 
-		ICsGameMode_SeamlessTransition* FLibrary::GetSafeInterface(const FString& Context, const UObject* WorldContext, LogLevel)
+		ICsGameMode_SeamlessTransition* FLibrary::GetSafeInterface(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log))
 			{
@@ -80,7 +80,7 @@ namespace NCsGameMode
 			GetInterfaceChecked(Context, WorldContext)->QueueForSeamlessTravel(Actor);
 		}
 
-		bool FLibrary::SafeQueueForSeamlessTravel(const FString& Context, const UObject* WorldContext, AActor* Actor, LogLevel)
+		bool FLibrary::SafeQueueForSeamlessTravel(const FString& Context, const UObject* WorldContext, AActor* Actor, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PENDING_KILL(Actor)
 

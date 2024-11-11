@@ -256,7 +256,7 @@ namespace NCsSkeletalMesh
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
-		LogWarning
+		void(*Log)(const FString&) = LogWarning;
 
 		if (const USkeletalMeshComponent* C = CS_CONST_CAST(Component, USceneComponent, USkeletalMeshComponent))
 			return IsBoneOrSocketValidChecked(Context, C, BoneOrSocket);

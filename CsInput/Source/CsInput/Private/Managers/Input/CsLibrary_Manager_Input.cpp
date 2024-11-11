@@ -18,6 +18,8 @@
 #include "Managers/Input/CsGetManagerInput.h"
 #include "Managers/Input/Event/CsManager_Input_Event.h"
 
+using LogClassType = NCsInput::FLog;
+
 namespace NCsInput
 {
 	namespace NManager
@@ -33,9 +35,7 @@ namespace NCsInput
 					CSINPUT_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NManager::FLibrary, GetSafe);
 				}
 			}
-		}
-
-		using LogClassType = NCsInput::FLog;
+		}	
 
 		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
@@ -395,6 +395,17 @@ namespace NCsInput
 {
 	namespace NManager
 	{
+		namespace NFirst
+		{
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+		}
+	}
+}
+
+namespace NCsInput
+{
+	namespace NManager
+	{
 		namespace NInputActionMap
 		{
 			namespace NLibrary
@@ -410,8 +421,6 @@ namespace NCsInput
 					}
 				}
 			}
-
-			using LogClassType = NCsInput::FLog;
 
 			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
@@ -815,8 +824,6 @@ namespace NCsInput
 	{
 		namespace NProfile
 		{
-			using LogClassType = NCsInput::FLog;
-
 			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 			void FLibrary::ResetToDefaultChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FCsInputActionMappings& Mappings, const ECsInputDevice& Device)

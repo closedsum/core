@@ -23,9 +23,7 @@ namespace NCsInput
 			{
 			private:
 
-				CS_DEFINE_STATIC_LOG_LEVEL
-
-			#define CS_FN_PARAM_DEFAULT_LOG_LEVEL void(*Log)(const FString&) = &NCsInput::NWithGameplayTag::FLog::Warning
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			// Get
 			#pragma region
@@ -252,7 +250,7 @@ namespace NCsInput
 				{
 				private:
 
-					CS_DEFINE_STATIC_LOG_LEVEL
+					CS_DECLARE_STATIC_LOG_LEVEL
 
 					using InputManagerLibrary = NCsInput::NWithGameplayTag::NManager::FLibrary;
 

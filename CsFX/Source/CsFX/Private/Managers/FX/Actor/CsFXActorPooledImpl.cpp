@@ -85,7 +85,13 @@ UCsFXActorPooledImpl::UCsFXActorPooledImpl(const FObjectInitializer& ObjectIniti
 #define SET_CONTEXT(__FunctionName) using namespace NCsFXActorPooledImpl::NCached; \
 	const FString& Context = Str::__FunctionName
 
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 using CacheImplType = NCsFX::NCache::FImpl;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+using PooledPayloadLibrary = NCsPooledObject::NPayload::FLibrary;
+using PayloadType = NCsFX::NPayload::IPayload;
+using ChangeType = NCsFX::NPayload::EChange;
+using ChangeCounter = NCsFX::NPayload::NChange::FCounter;
 
 // UObject Interface
 #pragma region
@@ -102,11 +108,8 @@ void UCsFXActorPooledImpl::BeginDestroy()
 // ICsOnConstructObject
 #pragma region
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 void UCsFXActorPooledImpl::OnConstructObject(const ConstructParamsType& Params)
 {
-#undef ConstructParamsType
-
 	SET_CONTEXT(OnConstructObject);
 
 	ConstructCache();
@@ -190,14 +193,9 @@ void UCsFXActorPooledImpl::Shutdown()
 // ICsPooledObject
 #pragma region
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 {
-#undef PooledPayloadType
-
 	SET_CONTEXT(Allocate);
-
-	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 
 	CacheImpl->Allocate(Payload);
 
@@ -209,10 +207,7 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	PreserveChangesToDefaultMask = Payload->GetPreserveChangesFromDefaultMask();
 
-	typedef NCsFX::NPayload::IPayload FXPayloadType;
-	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-
-	FXPayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<FXPayloadType>(Context, Payload);
+	PayloadType* FXPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	// Attach and set Transform
 	Handle_AttachAndSetTransform(Payload, FXPayload);
@@ -368,17 +363,12 @@ FString UCsFXActorPooledImpl::PrintDescription(const int32& Padding) const
 
 #pragma endregion ICsFXActorPooled
 
-#define FXPayloadType NCsFX::NPayload::IPayload
-
-void UCsFXActorPooledImpl::Handle_SetFXSystem(FXPayloadType* Payload)
+void UCsFXActorPooledImpl::Handle_SetFXSystem(PayloadType* Payload)
 {
 	CS_NON_SHIPPING_EXPR(Log_SetFXSystem(Payload));
 
 	UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
 	UNiagaraSystem* FXSystem	   = Payload->GetFXSystem();
-
-	typedef NCsFX::NPayload::EChange ChangeType;
-	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
 
 	// If ALREADY set FXSystem and the trying to the SAME FXSystem, Do Nothing
 	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::FXSystem) &&
@@ -402,7 +392,7 @@ void UCsFXActorPooledImpl::Handle_SetFXSystem(FXPayloadType* Payload)
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::FXSystem);
 }
 
-void UCsFXActorPooledImpl::Log_SetFXSystem(FXPayloadType* Payload)
+void UCsFXActorPooledImpl::Log_SetFXSystem(PayloadType* Payload)
 {
 	SET_CONTEXT(Handle_SetFXSystem);
 
@@ -411,9 +401,6 @@ void UCsFXActorPooledImpl::Log_SetFXSystem(FXPayloadType* Payload)
 	{
 		UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
 		UNiagaraSystem* FXSystem	   = Payload->GetFXSystem();
-
-		typedef NCsFX::NPayload::EChange ChangeType;
-		typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
 
 		// Check if FX System should be PRESERVED
 		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::FXSystem))
@@ -440,9 +427,7 @@ void UCsFXActorPooledImpl::Log_SetFXSystem(FXPayloadType* Payload)
 	}
 }
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-
-void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* FXPayload)
+void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, PayloadType* FXPayload)
 {
 	CS_NON_SHIPPING_EXPR(Log_AttachAndSetTransform(Payload, FXPayload));
 
@@ -470,8 +455,6 @@ void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Paylo
 
 	const int32& TransformRules = FXPayload->GetTransformRules();
 	
-	typedef NCsFX::NPayload::EChange ChangeType;
-	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
 	#define ChangeHelper NCsFX::NPayload::NChange
 
 	if (Parent)
@@ -560,20 +543,13 @@ void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Paylo
 	#undef ChangeHelper
 }
 
-void UCsFXActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* FXPayload)
+void UCsFXActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, PayloadType* FXPayload)
 {
 }
-
-#undef PooledPayloadType
-
-#undef FXPayloadType
 
 void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 {
 	SET_CONTEXT(Handle_ClearFXSystem);
-
-	typedef NCsFX::NPayload::EChange ChangeType;
-	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
 
 	// If FX System is SET and meant to be PRESERVED, Deactivate
 	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::FXSystem) &&
@@ -703,8 +679,6 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 
 void UCsFXActorPooledImpl::Handle_ClearAttachAndTransform()
 {
-	typedef NCsFX::NPayload::EChange ChangeType;
-	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
 	#define ChangeHelper NCsFX::NPayload::NChange
 	
 	const uint32 Mask = PreserveChangesToDefaultMask & ChangesToDefaultMask;

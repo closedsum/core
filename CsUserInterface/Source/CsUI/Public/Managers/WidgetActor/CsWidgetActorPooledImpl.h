@@ -14,8 +14,8 @@
 
 // NCsPooledObject::NCache::ICache
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
-// NCsWidgetActor::NCache::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWidgetActor, NCache, FImpl)
+// NCsWidgetActor::NCache::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWidgetActor, NCache, NImpl, FImpl)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
@@ -31,9 +31,9 @@ class CSUI_API ACsWidgetActorPooledImpl : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
-#define CacheType NCsPooledObject::NCache::ICache
-#define CacheImplType NCsWidgetActor::NCache::FImpl
-#define PayloadType NCsPooledObject::NPayload::IPayload
+using CacheType = NCsPooledObject::NCache::ICache;
+using CacheImplType = NCsWidgetActor::NCache::NImpl::FImpl;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 
 // UObject Interface
 #pragma region
@@ -93,7 +93,7 @@ public:
 
 	FORCEINLINE CacheType* GetCache() const { return Cache; }
 	
-	void Allocate(PayloadType* Payload);
+	void Allocate(PooledPayloadType* Payload);
 
 	void Deallocate();
 
@@ -126,8 +126,4 @@ protected:
 	UCsWidgetComponent* WidgetComponent;
 
 	FCsUserWidgetPooled* UserWidgetPooled;
-
-#undef CacheType
-#undef CacheImplType
-#undef PayloadType
 };

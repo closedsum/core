@@ -43,7 +43,7 @@ namespace NCsGameMode
 			* @param Log			(optional)
 			* return
 			*/
-			static ICsGameMode_SeamlessTransition* GetSafeInterface(const FString& Context, const UObject* WorldContext, LogLevel);
+			static ICsGameMode_SeamlessTransition* GetSafeInterface(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get the Interface: ICsGameMode_SeamlessTransition GameMode from WorldContext.
@@ -61,8 +61,8 @@ namespace NCsGameMode
 
 			static void QueueForSeamlessTravelChecked(const FString& Context, const UObject* WorldContext, AActor* Actor);
 
-			static bool SafeQueueForSeamlessTravel(const FString& Context, const UObject* WorldContext, AActor* Actor, LogLevel);
-			FORCEINLINE static bool SafeQueueForSeamlessTravel(const FString& Context, const UObject* WorldContext, AActor* Actor, bool& OutSuccess, LogLevel)
+			static bool SafeQueueForSeamlessTravel(const FString& Context, const UObject* WorldContext, AActor* Actor, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeQueueForSeamlessTravel(const FString& Context, const UObject* WorldContext, AActor* Actor, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeQueueForSeamlessTravel(Context, WorldContext, Actor, Log);
 				return OutSuccess;

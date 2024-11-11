@@ -21,6 +21,8 @@ namespace NCsRunnable
 		{
 		private:
 
+			using TaskType = NCsRunnable::NTask::ITask;
+
 			int32 Index;
 
 		public:
@@ -33,9 +35,7 @@ namespace NCsRunnable
 
 			EThreadPriority ThreadPriority;
 
-		#define CsRunnableTaskType NCsRunnable::NTask::ITask
-			CsRunnableTaskType* Task;
-		#undef CsRunnableTaskType
+			TaskType* Task;
 
 			FImpl() :
 				Index(INDEX_NONE),

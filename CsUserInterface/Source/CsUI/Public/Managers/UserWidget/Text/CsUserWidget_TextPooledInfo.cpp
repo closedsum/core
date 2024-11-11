@@ -224,16 +224,21 @@ namespace NCsUserWidget
 	{
 		namespace NText
 		{
+			using DeallocateMethodMapType = NCsUserWidget::EMDeallocateMethod ;
+
+			using PoolePayloadType = NCsPooledObject::NPayload::IPayload;
+			using PooledSliceType = NCsPooledObject::NPayload::FImplSlice;
+			using PayloadLibrary = NCsUserWidget::NPayload::FLibrary;
+			using PayloadType = NCsUserWidget::NPayload::IPayload;
+			using SliceType = NCsUserWidget::NPayload::FImplSlice;
+			using TextPayloadType = NCsUserWidget::NPayload::NText::IText;
+			using TextSliceType = NCsUserWidget::NPayload::NText::FImplSlice;
+
 			bool FInfo::IsValidChecked(const FString& Context) const
 			{
 				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUserWidgetPooled, GetType());
-
-				typedef NCsUserWidget::EMDeallocateMethod DeallocateMethodMapType;
-
 				CS_IS_ENUM_VALID_CHECKED(DeallocateMethodMapType, GetDeallocateMethod());
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetRenderScale(), 0.0f)
-
-				typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
 
 				if (GetDeallocateMethod() == DeallocateMethodType::LifeTime)
 				{
@@ -255,10 +260,6 @@ namespace NCsUserWidget
 			bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsUserWidgetPooled, FECsUserWidgetPooled, GetType())
-
-				typedef NCsUserWidget::EMDeallocateMethod DeallocateMethodMapType;
-				typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
-
 				CS_IS_ENUM_VALID(DeallocateMethodMapType, DeallocateMethodType, GetDeallocateMethod())
 				CS_IS_FLOAT_GREATER_THAN(GetRenderScale(), 0.0f)
 
@@ -283,15 +284,9 @@ namespace NCsUserWidget
 			{
 				check(IsValidChecked(Context));
 
-				typedef NCsUserWidget::NPayload::FLibrary PayloadLibrary;
-				typedef NCsUserWidget::NPayload::IPayload PayloadType;
-
 				PayloadType* Payload = CsWidgetManagerLibrary::AllocatePayloadChecked(Context, WorldContext, GetType());
 
 				// Pooled
-				typedef NCsPooledObject::NPayload::IPayload PoolePayloadType;
-				typedef NCsPooledObject::NPayload::FImplSlice PooledSliceType;
-
 				PooledSliceType* PooledSlice = PayloadLibrary::StaticCastChecked<PooledSliceType, PoolePayloadType>(Context, Payload);
 
 				PooledSlice->Instigator = Instigator;
@@ -299,8 +294,6 @@ namespace NCsUserWidget
 				PooledSlice->PreserveChangesFromDefaultMask |= (uint32)NCsUserWidget::NPayload::EChange::AddedToViewport;
 
 				// UserWidget
-				typedef NCsUserWidget::NPayload::FImplSlice SliceType;
-
 				SliceType* Slice = PayloadLibrary::StaticCastChecked<SliceType>(Context, Payload);
 
 				Slice->bAddToViewport = true;
@@ -346,9 +339,6 @@ namespace NCsUserWidget
 				//check(Result);
 
 				// UserWidget Text
-				typedef NCsUserWidget::NPayload::NText::IText TextPayloadType;
-				typedef NCsUserWidget::NPayload::NText::FImplSlice TextSliceType;
-
 				TextSliceType* TextSlice = PayloadLibrary::StaticCastChecked<TextSliceType, TextPayloadType>(Context, Payload);
 
 				TextSlice->Text = Value;

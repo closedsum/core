@@ -75,6 +75,9 @@ ACsWidgetActorPooledImpl::ACsWidgetActorPooledImpl(const FObjectInitializer& Obj
 	RootComponent = WidgetComponent;
 }
 
+using CacheImplType = NCsWidgetActor::NCache::NImpl::FImpl;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+
 // UObject Interface
 #pragma region
 
@@ -154,11 +157,8 @@ void ACsWidgetActorPooledImpl::Shutdown()
 // ICsPooledObject
 #pragma region
 
-#define PayloadType NCsPooledObject::NPayload::IPayload
-void ACsWidgetActorPooledImpl::Allocate(PayloadType* Payload)
+void ACsWidgetActorPooledImpl::Allocate(PooledPayloadType* Payload)
 {
-#undef PayloadType
-
 	using namespace NCsWidgetActorPooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
@@ -300,8 +300,6 @@ void ACsWidgetActorPooledImpl::Deallocate_Internal()
 
 void ACsWidgetActorPooledImpl::ConstructCache()
 {
-	typedef NCsWidgetActor::NCache::FImpl CacheImplType;
-
 	CacheImpl = new CacheImplType();
 	Cache	  = CacheImpl;
 }

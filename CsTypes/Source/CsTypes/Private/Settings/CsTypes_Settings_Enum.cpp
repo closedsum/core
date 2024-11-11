@@ -16,6 +16,8 @@ namespace NCsEnum
 {
 	namespace NSettings
 	{
+		using PayloadType = NCsEnum::NSettings::FLibrary::FPopulate::FPayload;
+
 		void FLibrary::PopulateArrayFromString(TArray<FCsSettings_Enum>& Enums, const FString& Str, const FString& EnumTypeName)
 		{
 			if (Str.IsEmpty())
@@ -70,11 +72,8 @@ namespace NCsEnum
 			Enums = Temp;
 		}
 
-		#define PayloadType NCsEnum::NSettings::FLibrary::FPopulate::FPayload
 		void FLibrary::Populate(const FString& Context, PayloadType& Payload)
 		{
-		#undef PayloadType
-
 			const TArray<FCsSettings_Enum>& Enums = Payload.Enums;
 			const FString& EnumSettingsPath		  = Payload.EnumSettingsPath;
 			const FString& EnumName				  = Payload.EnumName;

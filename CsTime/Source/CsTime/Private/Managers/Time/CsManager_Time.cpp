@@ -221,7 +221,6 @@ void UCsManager_Time::Start(const FECsUpdateGroup& Group)
 	UpdateGroups[Group.GetValue()].Start();
 }
 
-
 // Update
 #pragma region
 

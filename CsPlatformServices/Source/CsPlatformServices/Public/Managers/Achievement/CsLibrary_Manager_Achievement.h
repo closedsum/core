@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "Managers/Achievement/CsTypes_Achievement.h"
 // Log
 #include "Utility/CsPlatformServicesLog.h"
@@ -18,7 +19,9 @@ namespace NCsAchievement
 		*/
 		struct CSPLATFORMSERVICES_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsPlatformServices::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// ContextRoot
 		#pragma region
@@ -53,9 +56,9 @@ namespace NCsAchievement
 			* @param Log
 			* return				Context for UCsManager_Achievement.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, LogLevel);
+			static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, LogLevel)
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				return nullptr;
 			}
@@ -105,7 +108,7 @@ namespace NCsAchievement
 			* @param Log
 			* return				UCsManager_Achievement.
 			*/
-			static UCsManager_Achievement* GetSafe(const FString& Context, UObject* ContextObject, LogLevel);
+			static UCsManager_Achievement* GetSafe(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Get
 
@@ -132,7 +135,7 @@ namespace NCsAchievement
 			* @param Achievement
 			* @param Log
 			*/
-			static void SafeComplete(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, LogLevel);
+			static void SafeComplete(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			*
@@ -155,7 +158,7 @@ namespace NCsAchievement
 			* @param Log
 			* return				If the Achievement is already complete.
 			*/
-			static bool IsSafeCompleted(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, LogLevel);
+			static bool IsSafeCompleted(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			*
@@ -178,7 +181,7 @@ namespace NCsAchievement
 			* @param Log
 			* return				Number of achievements already completed.
 			*/
-			static int32 GetSafeNumCompleted(const FString& Context, UObject* ContextObject, LogLevel);
+			static int32 GetSafeNumCompleted(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Complete
 
@@ -205,7 +208,7 @@ namespace NCsAchievement
 			* @param Achievement
 			* @param Log
 			*/
-			static void SafeReset(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, const float& Percent = 0.0f, LogLevel);
+			static void SafeReset(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, const float& Percent = 0.0f, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			*
@@ -224,7 +227,7 @@ namespace NCsAchievement
 			*						A reference to the GameInstance.
 			* @param Log
 			*/
-			static void SafeResetAll(const FString& Context, UObject* ContextObject, LogLevel);
+			static void SafeResetAll(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Reset
 
@@ -255,7 +258,7 @@ namespace NCsAchievement
 			* @param Log
 			* return				Progress completed. Value range is dictated by ProgressType.
 			*/
-			static float GetSafeProgress(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, LogLevel);
+			static float GetSafeProgress(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			*
@@ -278,11 +281,9 @@ namespace NCsAchievement
 			* @param Log
 			* return				Total progress completed [0-1] as a percent.
 			*/
-			static float GetSafeTotalProgress(const FString& Context, UObject* ContextObject, LogLevel);
+			static float GetSafeTotalProgress(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Progress
-
-		#undef LogLevel
 		};
 	}
 }

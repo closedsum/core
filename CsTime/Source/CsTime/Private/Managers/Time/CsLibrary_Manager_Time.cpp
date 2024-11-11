@@ -23,6 +23,8 @@
 #include "Singleton/CsGetManagerSingleton.h"
 #endif // #if WITH_EDITOR
 
+using LogClassType = NCsTime::FLog;
+
 namespace NCsTime
 {
 	namespace NManager
@@ -39,11 +41,17 @@ namespace NCsTime
 			}
 		}
 
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		#define USING_NS_CACHED using namespace NCsTime::NManager::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsTime::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsTime::FLog::Warning*/
+
+		using OnPauseEventType = NCsTime::NManager::FOnPause;
+		using OnUpdateEventType = NCsTime::NManager::FOnUpdate;
+		using OnUpdateType = FCsUpdateGroup::FOnUpdate;
+		using OnSetScaledDeltaTimeEventType = NCsTime::NManager::FOnSetScaledDeltaTime;
+		using OnResetScaledDeltaTimeEventType = NCsTime::NManager::FOnResetScaledDeltaTime;
 
 		// ContextRoot
 		#pragma region
@@ -64,7 +72,7 @@ namespace NCsTime
 			return CsGameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
@@ -107,7 +115,7 @@ namespace NCsTime
 		#endif // #if UE_BUILD_SHIPPING
 		}
 
-		UCsManager_Time* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
+		UCsManager_Time* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -144,7 +152,7 @@ namespace NCsTime
 			GetChecked(Context, ContextObject)->Pause(Group);
 		}
 
-		bool FLibrary::SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, LogLevel)
+		bool FLibrary::SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
 
@@ -166,7 +174,7 @@ namespace NCsTime
 			GetChecked(Context, ContextObject)->Unpause(Group);
 		}
 
-		bool FLibrary::SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, LogLevel)
+		bool FLibrary::SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
 
@@ -186,7 +194,7 @@ namespace NCsTime
 		// Update
 		#pragma region
 	
-		void FLibrary::SetSafeCustomUpdate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime, const bool& ClearOnUpdate, LogLevel)
+		void FLibrary::SetSafeCustomUpdate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime, const bool& ClearOnUpdate, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsUpdateGroup, FECsUpdateGroup, Group)
 			CS_IS_FLOAT_GREATER_THAN_EXIT(DeltaTime, 0.0f)
@@ -208,7 +216,7 @@ namespace NCsTime
 			return GetChecked(Context, ContextObject)->GetTime(Group);
 		}
 
-		const FCsTime& FLibrary::GetSafeTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, LogLevel)
+		const FCsTime& FLibrary::GetSafeTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
 			{
@@ -224,7 +232,7 @@ namespace NCsTime
 			return GetChecked(Context, ContextObject)->GetTimeSinceStart(Group);
 		}
 
-		const FCsDeltaTime& FLibrary::GetSafeTimeSinceStart(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, LogLevel)
+		const FCsDeltaTime& FLibrary::GetSafeTimeSinceStart(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
 			{
@@ -248,7 +256,7 @@ namespace NCsTime
 			GetChecked(Context, ContextObject)->SetScaledDeltaTime(Group, Scale);
 		}
 
-		bool FLibrary::SetSafeScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale, LogLevel)
+		bool FLibrary::SetSafeScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
 			{
@@ -273,7 +281,7 @@ namespace NCsTime
 			GetChecked(Context, ContextObject)->ResetScaledDeltaTime(Group);
 		}
 
-		bool FLibrary::SafeResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, LogLevel)
+		bool FLibrary::SafeResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
 			{
@@ -295,19 +303,10 @@ namespace NCsTime
 		// Events
 		#pragma region
 
-		#define OnPauseEventType NCsTime::NManager::FOnPause
-
 		OnPauseEventType& FLibrary::GetChecked_OnPause_Event(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
 		{
 			return GetChecked(Context, ContextObject)->GetOnPause_Event(Group);
 		}
-
-		#undef OnPauseEventType
-
-		#define OnUpdateEventType NCsTime::NManager::FOnUpdate
-		#define OnUpdateType FCsUpdateGroup::FOnUpdate
-		#define OnSetScaledDeltaTimeEventType NCsTime::NManager::FOnSetScaledDeltaTime
-		#define OnResetScaledDeltaTimeEventType NCsTime::NManager::FOnResetScaledDeltaTime
 
 		OnUpdateEventType& FLibrary::GetChecked_OnUpdate_Event(const FString& Context, const UObject* ContextObject)
 		{
@@ -329,15 +328,9 @@ namespace NCsTime
 			return GetChecked(Context, ContextObject)->GetOnResetScaledDeltaTime_Event();
 		}
 
-		#undef OnUpdateEventType
-		#undef OnUpdateType
-		#undef OnSetScaledDeltaTimeEventType
-		#undef OnResetScaledDeltaTimeEventType
-
 		#pragma endregion Events
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
 }

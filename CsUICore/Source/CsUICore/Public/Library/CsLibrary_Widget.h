@@ -27,7 +27,9 @@ namespace NCsWidget
 {
 	struct CSUICORE_API FLibrary final
 	{
-	#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+	private:
+
+		CS_DECLARE_STATIC_LOG_LEVEL
 
 	public:
 
@@ -42,7 +44,7 @@ namespace NCsWidget
 		* @param WidgetName			(optional)
 		* @param Log				(optional)
 		*/
-		static UUserWidget* CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName = NAME_None, LogLevel);
+		static UUserWidget* CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName = NAME_None, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get the order priority this widget is rendered in. Higher values are rendered last (and so they will appear to be on top).
@@ -83,7 +85,7 @@ namespace NCsWidget
 		* @param Log		(optional)
 		* return			Class associated with the UserWidget.
 		*/
-		static UClass* SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel);
+		static UClass* SafeLoad(const FString& Context, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Load a UserWidget at the given Path.
@@ -103,7 +105,7 @@ namespace NCsWidget
 		* @param Log		(optional)
 		* return			Class associated with the UserWidget.
 		*/
-		static UClass* SafeLoad(const FString& Context, const FString& Path, LogLevel);
+		static UClass* SafeLoad(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Load
 
@@ -111,45 +113,49 @@ namespace NCsWidget
 	#pragma region
 	public:
 
-		static UUserWidget* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel);
+		static UUserWidget* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftClassPtr<UUserWidget>& OutSoftObjectPtr, bool& OutSuccess, LogLevel);
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftClassPtr<UUserWidget>& OutSoftObjectPtr, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftClassPath& OutSoftClassPath, bool& OutSuccess, LogLevel);
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftClassPath& OutSoftClassPath, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, LogLevel);
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Get
 
 	public:
 
 		static void AddToScreenChecked(const FString& Context, const UObject* WorldContext, UWidget* Widget, ULocalPlayer* Player, const int32& ZOrder);
-
-	#undef LogLevel
 	};
+}
 
+using CsWidgetLibrary = NCsWidget::FLibrary;
+
+namespace NCsWidget
+{
 	namespace NRender
 	{
 		struct CSUICORE_API FLibrary final
 		{
+		private:
 
-		#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+		CS_DECLARE_STATIC_LOG_LEVEL
 
 		public:
 
 			static bool CanEaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha);
 
-			static bool CanEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, LogLevel);
+			static bool CanEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			static float GetPercentChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha);
 
 			static void Opacity_EaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha);
 
-			static bool Opacity_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, LogLevel);
+			static bool Opacity_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			static void Scale_EaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha);
 
-			static bool Scale_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, LogLevel);
+			static bool Scale_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		// Anim
 		#pragma region
@@ -162,18 +168,23 @@ namespace NCsWidget
 		*/
 
 		#pragma endregion Anim
-
-		#undef LogLevel
 		};
 	}
+}
 
+using CsWidgetRenderLibrary = NCsWidget::NRender::FLibrary;
+
+namespace NCsWidget
+{
 	namespace NPosition
 	{
 		namespace NScreen
 		{
 			struct CSUICORE_API FLibrary final
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			public:
 
@@ -203,7 +214,7 @@ namespace NCsWidget
 				* @param Log
 				* return			Position of the Widget.
 				*/
-				static FVector2d GetSafeBySlot2d(const FString& Context, UWidget* Widget, LogLevel);
+				static FVector2d GetSafeBySlot2d(const FString& Context, UWidget* Widget, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the screen position of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -213,7 +224,7 @@ namespace NCsWidget
 				* @param Log
 				* return			Position of the Widget.
 				*/
-				static FVector2f GetSafeBySlot2f(const FString& Context, UWidget* Widget, LogLevel);
+				static FVector2f GetSafeBySlot2f(const FString& Context, UWidget* Widget, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the screen position of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -257,7 +268,7 @@ namespace NCsWidget
 				* @param Log
 				* return			Absolute position of the Widget.
 				*/
-				static FVector2d GetSafeAbsoluteByCachedGeometry2d(const FString& Context, UWidget* Widget, LogLevel);
+				static FVector2d GetSafeAbsoluteByCachedGeometry2d(const FString& Context, UWidget* Widget, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -267,7 +278,7 @@ namespace NCsWidget
 				* @param Log
 				* return			Absolute position of the Widget.
 				*/
-				static FVector2f GetSafeAbsoluteByCachedGeometry2f(const FString& Context, UWidget* Widget, LogLevel);
+				static FVector2f GetSafeAbsoluteByCachedGeometry2f(const FString& Context, UWidget* Widget, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -284,16 +295,24 @@ namespace NCsWidget
 				* return			Absolute position of the Widget.
 				*/
 				static FVector2f GetSafeAbsoluteByCachedGeometry2f(UWidget* Widget);
-
-			#undef LogLevel
 			};
 		}
+	}
+}
 
+using CsWidgetScreenPositionLibrary = NCsWidget::NPosition::NScreen::FLibrary;
+
+namespace NCsWidget
+{
+	namespace NPosition
+	{
 		namespace NViewport
 		{
 			struct CSUICORE_API FLibrary final
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			public:
 				/**
@@ -337,7 +356,7 @@ namespace NCsWidget
 				*									  this is what you would use.
 				* @param Log
 				*/
-				static void GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition, LogLevel);
+				static void GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the pixel and viewport position of the Widget by transform the absolute position:
@@ -352,7 +371,7 @@ namespace NCsWidget
 				*									  this is what you would use.
 				* @param Log
 				*/
-				static void GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition, LogLevel);
+				static void GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the viewport position of the Widget by transform the absolute position:
@@ -379,16 +398,24 @@ namespace NCsWidget
 				*									  this is what you would use.
 				*/
 				static void GetSafeByCachedGeometry(UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition);
-
-			#undef LogLevel
 			};
 		}
+	}
+}
 
+using CsWidgetViewportPositionLibrary = NCsWidget::NPosition::NViewport::FLibrary;
+
+namespace NCsWidget
+{
+	namespace NPosition
+	{
 		namespace NWorld
 		{
 			struct CSUICORE_API FLibrary final
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			public:
 
@@ -430,7 +457,7 @@ namespace NCsWidget
 				* @param Log
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, LogLevel);
+				static bool GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the world position and direction of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -444,7 +471,7 @@ namespace NCsWidget
 				* @param Log
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, LogLevel);
+				static bool GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the world position and direction of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -509,7 +536,7 @@ namespace NCsWidget
 				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, LogLevel);
+				static bool GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -522,7 +549,7 @@ namespace NCsWidget
 				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, LogLevel);
+				static bool GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -547,17 +574,24 @@ namespace NCsWidget
 				* return				Whether a valid world position and direction was found.
 				*/
 				static bool GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection);
-
-			#undef LogLevel
 			};
 		}
 	}
+}
 
+using CsWidgetWorldPositionLibrary = NCsWidget::NPosition::NWorld::FLibrary;
+
+namespace NCsWidget
+{
 	namespace NAnimation
 	{
 		struct CSUICORE_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
+
+			using ParamsType = NCsUserWidget::NAnim::NPlay::FParams;
 
 		public:
 
@@ -580,7 +614,7 @@ namespace NCsWidget
 			* @param Log		(optional)
 			* return			Widget Animation.
 			*/
-			static UWidgetAnimation* GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, LogLevel);
+			static UWidgetAnimation* GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get a Widget Animation with AnimName from Widget.
@@ -592,7 +626,7 @@ namespace NCsWidget
 			* @param Log		(optional)
 			* return			Widget Animation.
 			*/
-			static UWidgetAnimation* GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, bool& OutSuccess, LogLevel);
+			static UWidgetAnimation* GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get a Widget Animation with AnimName from Widget.
@@ -612,8 +646,6 @@ namespace NCsWidget
 			*/
 			static float GetLengthChecked(const FString& Context, const UWidgetAnimation* Animation);
 
-			#define ParamsType NCsUserWidget::NAnim::NPlay::FParams
-
 			/**
 			* Play the Widget Animation with the given Params.
 			* 
@@ -631,7 +663,7 @@ namespace NCsWidget
 			* @param Params
 			* @param Log
 			*/
-			static void SafePlay(const FString& Context, UUserWidget* Widget, const ParamsType& Params, LogLevel);
+			static void SafePlay(const FString& Context, UUserWidget* Widget, const ParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely play the Widget Animation with the given Params.
@@ -640,8 +672,6 @@ namespace NCsWidget
 			* @param Params
 			*/
 			static void SafePlay(UUserWidget* Widget, const ParamsType& Params);
-
-			#undef ParamsType
 
 			/**
 			*
@@ -660,7 +690,7 @@ namespace NCsWidget
 			* @param Params
 			* @param Log
 			*/
-			static bool SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, LogLevel);
+			static bool SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely play the Widget Animation with the given Params.
@@ -687,7 +717,7 @@ namespace NCsWidget
 			* @param Params
 			* @param Log
 			*/
-			static bool SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params, LogLevel);
+			static bool SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely play the Widget Animation with the given Params.
@@ -697,22 +727,27 @@ namespace NCsWidget
 			*/
 			static bool SafePlay(UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params);
 
-			static bool SafeHasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation, LogLevel);
-			FORCEINLINE static bool SafeHasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation, bool& OutSuccess, LogLevel)
+			static bool SafeHasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeHasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeHasFinished(Context, Widget, Animation, Log);
 				return OutSuccess;
 			}
-
-		#undef LogLevel
 		};
 	}
+}
 
+using CsWidgetAnimationLibrary = NCsWidget::NAnimation::FLibrary;
+
+namespace NCsWidget
+{
 	namespace NTextBlock
 	{
 		struct CSUICORE_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		public:
 
@@ -735,7 +770,7 @@ namespace NCsWidget
 			* @param Log
 			* return				TextBlock.
 			*/
-			static UTextBlock* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel);
+			static UTextBlock* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get a TextBlock with PropertyName from Widget.
@@ -745,16 +780,21 @@ namespace NCsWidget
 			* return				TextBlock.
 			*/
 			static UTextBlock* GetSafe(UUserWidget* Widget, const FName& PropertyName);
-
-		#undef LogLevel
 		};
 	}
+}
 
+using CsWidgetTextBlockLibrary = NCsWidget::NTextBlock::FLibrary;
+
+namespace NCsWidget
+{
 	namespace NButton
 	{
 		struct CSUICORE_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		public:
 
@@ -786,8 +826,8 @@ namespace NCsWidget
 			* @param OutSuccess		(out) Whether this process executed successfully or not.
 			* return				Button with name: PropertyName on Widget.
 			*/
-			static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, bool& OutSuccess, LogLevel);
-			FORCEINLINE static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
+			static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				bool OutSuccess = false;
 				return GetSafe(Context, Widget, PropertyName, OutSuccess, Log);
@@ -806,11 +846,11 @@ namespace NCsWidget
 			* @param OutSuccess		(out) Whether this process executed successfully or not.
 			* return				Button with name: PropertyName on Widget.
 			*/
-			FORCEINLINE static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FString& PropertyName, bool& OutSuccess, LogLevel)
+			FORCEINLINE static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FString& PropertyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				return GetSafe(Context, Widget, FName(*PropertyName), OutSuccess, Log);
 			}
-			FORCEINLINE static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FString& PropertyName, LogLevel)
+			FORCEINLINE static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FString& PropertyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				bool OutSuccess = false;
 				return GetSafe(Context, Widget, PropertyName, OutSuccess, Log);
@@ -826,16 +866,21 @@ namespace NCsWidget
 			* return				Button with name: PropertyName on Widget.
 			*/
 			static UButton* GetSafe(UUserWidget* Widget, const FName& PropertyName);
-
-		#undef LogLevel
 		};
 	}
+}
 
+using CSWidgetButtonLibrary = NCsWidget::NButton::FLibrary;
+
+namespace NCsWidget
+{
 	namespace NImage
 	{
 		struct CSUICORE_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		public:
 
@@ -858,7 +903,7 @@ namespace NCsWidget
 			* @param Log
 			* return				Image.
 			*/
-			static UImage* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel);
+			static UImage* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get a Image with PropertyName from Widget.
@@ -868,16 +913,21 @@ namespace NCsWidget
 			* return				Image.
 			*/
 			static UImage* GetSafe(UUserWidget* Widget, const FName& PropertyName);
-
-		#undef LogLevel
 		};
 	}
+}
 
+using CsWidgetImageLibrary = NCsWidget::NImage::FLibrary;
+
+namespace NCsWidget
+{
 	namespace NProgressBar
 	{
 		struct CSUICORE_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		public:
 
@@ -900,7 +950,7 @@ namespace NCsWidget
 			* @param Log
 			* return				ProgressBar.
 			*/
-			static UProgressBar* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel);
+			static UProgressBar* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get a ProgressBar with PropertyName from Widget.
@@ -910,16 +960,21 @@ namespace NCsWidget
 			* return				ProgressBar.
 			*/
 			static UProgressBar* GetSafe(UUserWidget* Widget, const FName& PropertyName);
-
-		#undef LogLevel
 		};
 	}
+}
 
+using CsWidgetProgressBarLibrary = NCsWidget::NProgressBar::FLibrary;
+
+namespace NCsWidget
+{
 	namespace NBorder
 	{
 		struct CSUICORE_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsUI::NCore::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		public:
 
@@ -942,7 +997,7 @@ namespace NCsWidget
 			* @param Log
 			* return				Border.
 			*/
-			static UBorder* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel);
+			static UBorder* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get a Border with PropertyName from Widget.
@@ -952,19 +1007,8 @@ namespace NCsWidget
 			* return				Border.
 			*/
 			static UBorder* GetSafe(UUserWidget* Widget, const FName& PropertyName);
-
-		#undef LogLevel
 		};
 	}
 }
 
-using CsWidgetLibrary = NCsWidget::FLibrary;
-using CsWidgetScreenPositionLibrary = NCsWidget::NPosition::NScreen::FLibrary;
-using CsWidgetViewportPositionLibrary = NCsWidget::NPosition::NViewport::FLibrary;
-using CsWidgetWorldPositionLibrary = NCsWidget::NPosition::NWorld::FLibrary;
 using CsWidgetBorderLibrary = NCsWidget::NBorder::FLibrary;
-using CsWidgetProgressBarLibrary = NCsWidget::NProgressBar::FLibrary;
-using CsWidgetImageLibrary = NCsWidget::NImage::FLibrary;
-using CSWidgetButtonLibrary = NCsWidget::NButton::FLibrary;
-using CsWidgetTextBlockLibrary = NCsWidget::NTextBlock::FLibrary;
-using CsWidgetAnimationLibrary = NCsWidget::NAnimation::FLibrary;

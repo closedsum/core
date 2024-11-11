@@ -14,6 +14,8 @@
 // Game
 #include "Engine/GameInstance.h"
 
+using LogClassType = NCsPlatformServices::FLog;
+
 namespace NCsAchievement
 {
 	namespace NManager
@@ -29,7 +31,7 @@ namespace NCsAchievement
 			}
 		}
 
-		#define LogLevel void(*Log)(const FString&) /*=&NCsPlatformServices::FLog::Warning*/
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		// ContextRoot
 		#pragma region
@@ -41,7 +43,7 @@ namespace NCsAchievement
 			return CsGameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, LogLevel)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			return CsGameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
@@ -71,7 +73,7 @@ namespace NCsAchievement
 			return Manager_Achievement;
 		}
 
-		UCsManager_Achievement* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		UCsManager_Achievement* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -99,7 +101,7 @@ namespace NCsAchievement
 			GetChecked(Context, ContextObject)->Complete(Achievement);
 		}
 
-		void FLibrary::SafeComplete(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, LogLevel)
+		void FLibrary::SafeComplete(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
 			{
@@ -112,7 +114,7 @@ namespace NCsAchievement
 			return GetChecked(Context, ContextObject)->IsCompleted(Achievement);
 		}
 
-		bool FLibrary::IsSafeCompleted(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, LogLevel)
+		bool FLibrary::IsSafeCompleted(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
 			{
@@ -145,7 +147,7 @@ namespace NCsAchievement
 			GetChecked(Context, ContextObject)->Reset(Achievement, Percent);
 		}
 
-		void FLibrary::SafeReset(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, const float& Percent /*=0.0f*/, LogLevel)
+		void FLibrary::SafeReset(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, const float& Percent /*=0.0f*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
 			{
@@ -181,7 +183,7 @@ namespace NCsAchievement
 			return GetChecked(Context, ContextObject)->GetProgress(Achievement);
 		}
 
-		float FLibrary::GetSafeProgress(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, LogLevel)
+		float FLibrary::GetSafeProgress(const FString& Context, UObject* ContextObject, const FECsAchievement& Achievement, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
 			{
@@ -195,7 +197,7 @@ namespace NCsAchievement
 			return GetChecked(Context, ContextObject)->GetTotalProgress();
 		}
 
-		float FLibrary::GetSafeTotalProgress(const FString& Context, UObject* ContextObject, LogLevel)
+		float FLibrary::GetSafeTotalProgress(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Achievement* Manager_Achievement = GetSafe(Context, ContextObject, Log))
 			{
@@ -205,7 +207,5 @@ namespace NCsAchievement
 		}
 
 		#pragma endregion Progress
-
-		#undef LogLevel
 	}
 }

@@ -63,6 +63,13 @@ UCsUserWidget_TextPooledImpl::UCsUserWidget_TextPooledImpl(const FObjectInitiali
 {
 }
 
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+using PooledPayloadLibrary = NCsPooledObject::NPayload::FLibrary;
+using PayloadType = NCsUserWidget::NPayload::IPayload;
+using ChangeType = NCsUserWidget::NPayload::EChange;
+using CacheImplType = NCsUserWidget::NCache::NImpl::FImpl;
+
 // UObject Interface
 #pragma region
 
@@ -78,11 +85,9 @@ void UCsUserWidget_TextPooledImpl::BeginDestroy()
 // ICsOnConstructObject
 #pragma region
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+
 void UCsUserWidget_TextPooledImpl::OnConstructObject(const ConstructParamsType& Params)
 {
-#undef ConstructParamsType
-
 	using namespace NCsUserWidgetTextPooledImpl::NCached;
 
 	const FString& Context = Str::OnConstructObject;
@@ -156,11 +161,8 @@ void UCsUserWidget_TextPooledImpl::Shutdown()
 // ICsPooledObject
 #pragma region
 
-#define PayloadType NCsPooledObject::NPayload::IPayload
-void UCsUserWidget_TextPooledImpl::Allocate(PayloadType* Payload)
+void UCsUserWidget_TextPooledImpl::Allocate(PooledPayloadType* Payload)
 {
-#undef PayloadType
-
 	using namespace NCsUserWidgetTextPooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
@@ -169,10 +171,7 @@ void UCsUserWidget_TextPooledImpl::Allocate(PayloadType* Payload)
 
 	PreserveChangesToDefaultMask = Payload->GetPreserveChangesFromDefaultMask();
 
-	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-	typedef NCsUserWidget::NPayload::IPayload WidgetPayloadType;
-
-	WidgetPayloadType* WidgetPayload = PooledPayloadLibrary::GetInterfaceChecked<WidgetPayloadType>(Context, Payload);
+	PayloadType* WidgetPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	SetVisibility(WidgetPayload->GetVisibility());
 	SetIsEnabled(true);
@@ -266,22 +265,15 @@ void UCsUserWidget_TextPooledImpl::Deallocate()
 
 void UCsUserWidget_TextPooledImpl::ConstructCache()
 {
-	typedef NCsUserWidget::NCache::FImpl CacheImplType;
-
 	CacheImpl = new CacheImplType();
 	Cache	  = CacheImpl;
 }
 
-#define UserWidgetPayloadType NCsUserWidget::NPayload::IPayload
-void UCsUserWidget_TextPooledImpl::Handle_AddToViewport(UserWidgetPayloadType* Payload)
+void UCsUserWidget_TextPooledImpl::Handle_AddToViewport(PayloadType* Payload)
 {
-#undef UserWidgetPayloadType
-
 	using namespace NCsUserWidgetTextPooledImpl::NCached;
 
 	const FString& Context = Str::Handle_AddToViewport;
-
-	typedef NCsUserWidget::NPayload::EChange ChangeType;
 
 	// If ADD to viewport, Mark the change
 	if (Payload->ShouldAddToViewport())
@@ -303,22 +295,16 @@ void UCsUserWidget_TextPooledImpl::Handle_AddToViewport(UserWidgetPayloadType* P
 			{
 				RemoveFromParent();
 
-				typedef NCsPlayer::FLibrary PlayerLibrary;
-				typedef NCsWidget::FLibrary WidgetLibrary;
+				ULocalPlayer* Player = CsPlayerLibrary::GetFirstLocalChecked(Context, GetWorldContext());
 
-				ULocalPlayer* Player = PlayerLibrary::GetFirstLocalChecked(Context, GetWorldContext());
-
-				WidgetLibrary::AddToScreenChecked(Context, GetWorldContext(), this, Player, ZOrder);
+				CsWidgetLibrary::AddToScreenChecked(Context, GetWorldContext(), this, Player, ZOrder);
 			}
 		}
 		else
 		{
-			typedef NCsPlayer::FLibrary PlayerLibrary;
-			typedef NCsWidget::FLibrary WidgetLibrary;
+			ULocalPlayer* Player = CsPlayerLibrary::GetFirstLocalChecked(Context, GetWorldContext());
 
-			ULocalPlayer* Player = PlayerLibrary::GetFirstLocalChecked(Context, GetWorldContext());
-
-			WidgetLibrary::AddToScreenChecked(Context, GetWorldContext(), this, Player, ZOrder);
+			CsWidgetLibrary::AddToScreenChecked(Context, GetWorldContext(), this, Player, ZOrder);
 		}
 
 		CurrentZOrder = ZOrder;
@@ -337,8 +323,6 @@ void UCsUserWidget_TextPooledImpl::Handle_AddToViewport(UserWidgetPayloadType* P
 
 void UCsUserWidget_TextPooledImpl::Handle_RemoveFromViewport()
 {
-	typedef NCsUserWidget::NPayload::EChange ChangeType;
-
 	const uint32 Mask = PreserveChangesToDefaultMask & ChangesToDefaultMask;
 
 	// Keep in viewport

@@ -43,6 +43,10 @@
 // World
 #include "Engine/World.h"
 
+using LogClassType = NCsUI::NCore::FLog;
+
+CS_DEFINE_STATIC_LOG_LEVEL(NCsWidget::FLibrary, LogClassType::Warning);
+
 namespace NCsWidget
 {
 	namespace NLibrary
@@ -55,8 +59,6 @@ namespace NCsWidget
 			}
 		}
 	}
-
-	#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
 
 	UUserWidget* FLibrary::CreateChecked(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName /*=NAME_None*/)
 	{
@@ -101,7 +103,7 @@ namespace NCsWidget
 		return Widget;
 	}
 
-	UUserWidget* FLibrary::CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName /*=NAME_None*/, LogLevel)
+	UUserWidget* FLibrary::CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName /*=NAME_None*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PTR_NULL_RET_NULL(Owner)
 		CS_IS_SUBCLASS_OF_NULL_RET_NULL(UserWidgetClass, UUserWidget)
@@ -198,7 +200,7 @@ namespace NCsWidget
 		return BpC->GeneratedClass;
 	}
 
-	UClass* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, LogLevel)
+	UClass* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		UObject* O = CsObjectLibrary::SafeLoad(Context, Path, Log);
 
@@ -259,7 +261,7 @@ namespace NCsWidget
 		return BpC->GeneratedClass;
 	}
 
-	UClass* FLibrary::SafeLoad(const FString& Context, const FString& Path, LogLevel)
+	UClass* FLibrary::SafeLoad(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		using namespace NCsWidget::NLibrary::NCached;
 
@@ -309,26 +311,26 @@ namespace NCsWidget
 	// Get
 	#pragma region
 	
-	UUserWidget* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, LogLevel)
+	UUserWidget* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		return CsPropertyLibrary::GetObjectPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
 
-	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftClassPtr<UUserWidget>& OutSoftClassPtr, bool& OutSuccess, LogLevel)
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftClassPtr<UUserWidget>& OutSoftClassPtr, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		FSoftObjectPtr SoftObjectPtr = CsPropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 		OutSoftClassPtr			     = SoftObjectPtr.ToSoftObjectPath();
 		return OutSuccess;
 	}
 
-	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftClassPath& OutSoftClassPath, bool& OutSuccess, LogLevel)
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftClassPath& OutSoftClassPath, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		FSoftObjectPtr SoftObjectPtr = CsPropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 		OutSoftClassPath			 = SoftObjectPtr.ToSoftObjectPath().ToString();
 		return OutSuccess;
 	}
 
-	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, LogLevel)
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		FSoftObjectPtr SoftObjectPtr = CsPropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 		OutPathAsString				 = SoftObjectPtr.ToString();
@@ -353,12 +355,13 @@ namespace NCsWidget
 
 		GVS->AddWidgetForPlayer(Widget, Player, Slot);
 	}
+}
 
-	#undef LogLevel
-
+namespace NCsWidget
+{
 	namespace NRender
 	{
-		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		bool FLibrary::CanEaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
 		{
@@ -369,7 +372,7 @@ namespace NCsWidget
 			return true;
 		}
 
-		bool FLibrary::CanEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, LogLevel)
+		bool FLibrary::CanEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PTR_NULL(Widget)
 			CS_IS_ENUM_VALID(EMCsEasingType, ECsEasingType, Easing)
@@ -391,7 +394,7 @@ namespace NCsWidget
 			Widget->SetRenderOpacity(Percent);
 		}
 
-		bool FLibrary::Opacity_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, LogLevel)
+		bool FLibrary::Opacity_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (!CanEase(Context, Widget, Easing, Start, End, Alpha, Log))
 				return false;
@@ -410,7 +413,7 @@ namespace NCsWidget
 			Widget->SetRenderScale(Scale);
 		}
 
-		bool FLibrary::Scale_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, LogLevel)
+		bool FLibrary::Scale_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (!CanEase(Context, Widget, Easing, Start, End, Alpha, Log))
 				return false;
@@ -420,8 +423,6 @@ namespace NCsWidget
 			Widget->SetRenderScale(Scale);
 			return true;
 		}
-
-		#undef LogLevel
 
 	// Anim
 	#pragma region
@@ -440,7 +441,10 @@ namespace NCsWidget
 
 	#pragma endregion Anim
 	}
+}
 
+namespace NCsWidget
+{
 	namespace NPosition
 	{
 		namespace NScreen
@@ -459,10 +463,11 @@ namespace NCsWidget
 				}
 			}
 
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			#define USING_NS_CACHED using namespace NCsWidget::NPosition::NScreen::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NPosition::NScreen::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
 
 			FVector2d FLibrary::GetBySlot2dChecked(const FString& Context, UWidget* Widget)
 			{
@@ -482,7 +487,7 @@ namespace NCsWidget
 				return CsMathLibrary::Convert(GetBySlot2dChecked(Context, Widget));
 			}
 
-			FVector2d FLibrary::GetSafeBySlot2d(const FString& Context, UWidget* Widget, LogLevel)
+			FVector2d FLibrary::GetSafeBySlot2d(const FString& Context, UWidget* Widget, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (!Widget)
 				{
@@ -512,7 +517,7 @@ namespace NCsWidget
 				return Slot->GetPosition();
 			}
 
-			FVector2f FLibrary::GetSafeBySlot2f(const FString& Context, UWidget* Widget, LogLevel)
+			FVector2f FLibrary::GetSafeBySlot2f(const FString& Context, UWidget* Widget, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return CsMathLibrary::Convert(GetSafeBySlot2d(Context, Widget, Log));
 			}
@@ -545,7 +550,7 @@ namespace NCsWidget
 				return CsMathLibrary::Convert(GetAbsoluteByCachedGeometry2dChecked(Context, Widget));
 			}
 
-			FVector2d FLibrary::GetSafeAbsoluteByCachedGeometry2d(const FString& Context, UWidget* Widget, LogLevel)
+			FVector2d FLibrary::GetSafeAbsoluteByCachedGeometry2d(const FString& Context, UWidget* Widget, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (!Widget)
 				{
@@ -567,7 +572,7 @@ namespace NCsWidget
 				return Widget->GetCachedGeometry().GetAbsolutePosition();
 			}
 
-			FVector2f FLibrary::GetSafeAbsoluteByCachedGeometry2f(const FString& Context, UWidget* Widget, LogLevel)
+			FVector2f FLibrary::GetSafeAbsoluteByCachedGeometry2f(const FString& Context, UWidget* Widget, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return CsMathLibrary::Convert(GetSafeAbsoluteByCachedGeometry2d(Context, Widget, Log));
 			}
@@ -588,9 +593,14 @@ namespace NCsWidget
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
-			#undef LogLevel
 		}
+	}
+}
 
+namespace NCsWidget
+{
+	namespace NPosition
+	{
 		namespace NViewport
 		{
 			namespace NLibrary
@@ -604,10 +614,11 @@ namespace NCsWidget
 				}
 			}
 
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			#define USING_NS_CACHED using namespace NCsWidget::NPosition::NViewport::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NPosition::NViewport::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
 
 			void FLibrary::GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition)
 			{
@@ -626,7 +637,7 @@ namespace NCsWidget
 				OutViewportPosition = CsMathLibrary::Convert(ViewportPosition);
 			}
 
-			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition, LogLevel)
+			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				const FVector2d AbsolutePosition = CsWidgetScreenPositionLibrary::GetSafeAbsoluteByCachedGeometry2d(Context, Widget, Log);
 
@@ -639,7 +650,7 @@ namespace NCsWidget
 				USlateBlueprintLibrary::AbsoluteToViewport(Widget->GetWorld(), AbsolutePosition, OutPixelPosition, OutViewportPosition);
 			}
 
-			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition, LogLevel)
+			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				FVector2d PixelPosition;
 				FVector2d ViewportPosition;
@@ -665,9 +676,14 @@ namespace NCsWidget
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
-			#undef LogLevel
 		}
+	}
+}
 
+namespace NCsWidget
+{
+	namespace NPosition
+	{
 		namespace NWorld
 		{
 			namespace NLibrary
@@ -682,10 +698,11 @@ namespace NCsWidget
 				}
 			}
 
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			#define USING_NS_CACHED using namespace NCsWidget::NPosition::NWorld::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NPosition::NWorld::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
 
 			bool FLibrary::GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection)
 			{
@@ -711,7 +728,7 @@ namespace NCsWidget
 				return Result;
 			}
 
-			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, LogLevel)
+			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				// Get PlayerController associated with ControllerId
 				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
@@ -726,7 +743,7 @@ namespace NCsWidget
 				return UGameplayStatics::DeprojectScreenToWorld(PC, ScreenPosition, OutPosition, OutDirection);
 			}
 
-			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, LogLevel)
+			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				// Deproject Screen to World
 				FVector3d Position;
@@ -779,7 +796,7 @@ namespace NCsWidget
 				return Result;
 			}
 
-			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, LogLevel)
+			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				// Get PlayerController associated with ControllerId
 				APlayerController* PC = CsPCLocalLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
@@ -797,7 +814,7 @@ namespace NCsWidget
 				return UGameplayStatics::DeprojectScreenToWorld(PC, PixelPosition, OutPosition, OutDirection);;
 			}
 
-			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, LogLevel)
+			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				// Deproject Screen to World
 				FVector3d Position;
@@ -825,10 +842,12 @@ namespace NCsWidget
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
-			#undef LogLevel
 		}
 	}
+}
 
+namespace NCsWidget
+{
 	namespace NAnimation
 	{
 		namespace NLibrary
@@ -843,10 +862,13 @@ namespace NCsWidget
 			}
 		}
 
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsWidget::NAnimation::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NAnimation::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
+
+		using ParamsType = NCsUserWidget::NAnim::NPlay::FParams;
 
 		UWidgetAnimation* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& AnimName)
 		{
@@ -855,14 +877,14 @@ namespace NCsWidget
 			return CsPropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName);
 		}
 
-		UWidgetAnimation* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, LogLevel)
+		UWidgetAnimation* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Widget)
 
 			return CsPropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName, Log);
 		}
 
-		UWidgetAnimation* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, bool& OutSuccess, LogLevel)
+		UWidgetAnimation* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -888,8 +910,6 @@ namespace NCsWidget
 			return Time;
 		}
 
-		#define ParamsType NCsUserWidget::NAnim::NPlay::FParams
-
 		void FLibrary::PlayChecked(const FString& Context, UUserWidget* Widget, const ParamsType& Params)
 		{
 			CS_IS_PENDING_KILL_CHECKED(Widget)
@@ -903,7 +923,7 @@ namespace NCsWidget
 				Widget->PlayAnimation(Animation, Params.GetStartAtTime(), Params.GetNumLoopsToPlay(), (EUMGSequencePlayMode::Type)Params.GetPlayMode(), Params.GetPlaybackSpeed());
 		}
 
-		void FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const ParamsType& Params, LogLevel)
+		void FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const ParamsType& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PENDING_KILL_EXIT(Widget)
 			CS_IS_VALID_EXIT(Params)
@@ -926,8 +946,6 @@ namespace NCsWidget
 			return SafePlay(Context, Widget, Params, nullptr);
 		}
 
-		#undef ParamsType
-
 		void FLibrary::PlayChecked(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params)
 		{
 			CS_IS_PENDING_KILL_CHECKED(Widget)
@@ -941,7 +959,7 @@ namespace NCsWidget
 				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
 		}
 
-		bool FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, LogLevel)
+		bool FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PENDING_KILL(Widget)
 			CS_IS_VALID(Params)
@@ -978,7 +996,7 @@ namespace NCsWidget
 				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
 		}
 
-		bool FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params, LogLevel)
+		bool FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PENDING_KILL(Widget)
 			CS_IS_VALID(Params)
@@ -1002,7 +1020,7 @@ namespace NCsWidget
 			return SafePlay(Context, Widget, Params, nullptr);
 		}
 
-		bool FLibrary::SafeHasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation, LogLevel)
+		bool FLibrary::SafeHasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PENDING_KILL(Widget)
 			CS_IS_PENDING_KILL(Animation)
@@ -1058,9 +1076,11 @@ namespace NCsWidget
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
+}
 
+namespace NCsWidget
+{
 	namespace NTextBlock
 	{
 		namespace NLibrary
@@ -1074,10 +1094,11 @@ namespace NCsWidget
 			}
 		}
 
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsWidget::NTextBlock::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NTextBlock::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
 
 		UTextBlock* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 		{
@@ -1086,7 +1107,7 @@ namespace NCsWidget
 			return CsPropertyLibrary::GetObjectPropertyValueChecked<UTextBlock>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
-		UTextBlock* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
+		UTextBlock* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Widget)
 
@@ -1102,9 +1123,11 @@ namespace NCsWidget
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
+}
 
+namespace NCsWidget
+{
 	namespace NButton
 	{
 		namespace NLibrary
@@ -1118,10 +1141,11 @@ namespace NCsWidget
 			}
 		}
 
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsWidget::NButton::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NButton::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
 
 		UButton* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 		{
@@ -1130,7 +1154,7 @@ namespace NCsWidget
 			return CsPropertyLibrary::GetObjectPropertyValueChecked<UButton>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
-		UButton* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, bool& OutSuccess, LogLevel)
+		UButton* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PTR_NULL_RET_NULL(Widget)
 
@@ -1146,9 +1170,11 @@ namespace NCsWidget
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
+}
 
+namespace NCsWidget
+{
 	namespace NImage
 	{
 		namespace NLibrary
@@ -1162,10 +1188,11 @@ namespace NCsWidget
 			}
 		}
 
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsWidget::NImage::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NImage::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
 
 		UImage* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 		{
@@ -1174,7 +1201,7 @@ namespace NCsWidget
 			return CsPropertyLibrary::GetObjectPropertyValueChecked<UImage>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
-		UImage* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
+		UImage* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PTR_NULL_RET_NULL(Widget)
 
@@ -1190,9 +1217,11 @@ namespace NCsWidget
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
+}
 
+namespace NCsWidget
+{
 	namespace NProgressBar
 	{
 		namespace NLibrary
@@ -1206,10 +1235,11 @@ namespace NCsWidget
 			}
 		}
 
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsWidget::NProgressBar::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NProgressBar::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
 
 		UProgressBar* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 		{
@@ -1218,7 +1248,7 @@ namespace NCsWidget
 			return CsPropertyLibrary::GetObjectPropertyValueChecked<UProgressBar>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
-		UProgressBar* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
+		UProgressBar* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Widget)
 
@@ -1234,9 +1264,11 @@ namespace NCsWidget
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
+}
 
+namespace NCsWidget
+{
 	namespace NBorder
 	{
 		namespace NLibrary
@@ -1250,10 +1282,11 @@ namespace NCsWidget
 			}
 		}
 
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsWidget::NBorder::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsWidget::NBorder::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsUI::NCore::FLog::Warning*/
 
 		UBorder* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 		{
@@ -1262,7 +1295,7 @@ namespace NCsWidget
 			return CsPropertyLibrary::GetObjectPropertyValueChecked<UBorder>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
 
-		UBorder* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, LogLevel)
+		UBorder* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PTR_NULL_RET_NULL(Widget)
 
@@ -1278,6 +1311,5 @@ namespace NCsWidget
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
 	}
 }

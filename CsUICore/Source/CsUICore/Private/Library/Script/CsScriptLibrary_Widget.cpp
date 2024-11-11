@@ -119,23 +119,19 @@ bool UCsScriptLibrary_Widget::GetSoftClassAsStringByPath(const FString& Context,
 // Render
 #pragma region
 
-#define WidgetRenderLibrary NCsWidget::NRender::FLibrary
-
 bool UCsScriptLibrary_Widget::Render_Opacity_Ease(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
 {
 	CONDITIONAL_SET_CTXT(Render_Opacity_Ease);
 
-	return WidgetRenderLibrary::Opacity_SafeEase(Ctxt, Widget, Easing, Start, End, Alpha);
+	return CsWidgetRenderLibrary::Opacity_SafeEase(Ctxt, Widget, Easing, Start, End, Alpha);
 }
 
 bool UCsScriptLibrary_Widget::Render_Scale_Ease(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
 {
 	CONDITIONAL_SET_CTXT(Render_Scale_Ease);
 
-	return WidgetRenderLibrary::Scale_SafeEase(Ctxt, Widget, Easing, Start, End, Alpha);
+	return CsWidgetRenderLibrary::Scale_SafeEase(Ctxt, Widget, Easing, Start, End, Alpha);
 }
-
-#undef WidgetRenderLibrary
 
 #pragma endregion Render
 

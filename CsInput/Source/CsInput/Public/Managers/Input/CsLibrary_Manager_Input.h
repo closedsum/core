@@ -212,7 +212,6 @@ namespace NCsInput
 					return CsInputManagerLibrary::Exists(Context, WorldContext, CS_FIRST, Log);
 				}
 
-
 			// ICsManager_Input_Event
 			#pragma region
 			public:
@@ -306,7 +305,7 @@ namespace NCsInput
 
 				FORCEINLINE static ICsManager_Input* GetSafeFirstManager(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
-					return InputManagerLibrary::GetSafeFirst(Context, WorldContext, Log);
+					return CsInputManagerLibrary::GetSafeFirst(Context, WorldContext, Log);
 				}
 
 				FORCEINLINE static ICsManager_Input* GetManagerChecked(const FString& Context, APlayerController* PC)

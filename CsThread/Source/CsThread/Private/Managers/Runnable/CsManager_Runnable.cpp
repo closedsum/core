@@ -54,6 +54,13 @@ UCsManager_Runnable::UCsManager_Runnable(const FObjectInitializer& ObjectInitial
 {
 }
 
+
+using ContainerType = NCsRunnable::FResource;
+using PayloadType = NCsRunnable::NPayload::FImpl;
+using TaskPayloadType = NCsRunnable::NTask::NPayload::FImpl;
+using TaskInfoContainerType = NCsRunnable::NTask::NInfo::FResource;
+using TaskInfoType = NCsRunnable::NTask::NInfo::FInfo;
+
 // Singleton
 #pragma region
 
@@ -228,8 +235,6 @@ void UCsManager_Runnable::Initialize()
 
 			Manager_Internal.CreatePool(Settings.RunnablePoolSize);
 
-			typedef NCsRunnable::FResource ContainerType;
-
 			const TArray<ContainerType*>& Pool = Manager_Internal.GetPool();
 
 			for (ContainerType* Container : Pool)
@@ -245,8 +250,7 @@ void UCsManager_Runnable::Initialize()
 
 			Manager_Payload.CreatePool(Settings.RunnablePayloadSize);
 
-			typedef NCsRunnable::NPayload::FResource PayloadContainerType;
-			typedef NCsRunnable::NPayload::FImpl PayloadType;
+			typedef NCsRunnable::NPayload::NImpl::FResource PayloadContainerType;
 
 			const TArray<PayloadContainerType*>& Pool = Manager_Payload.GetPool();
 
@@ -266,14 +270,12 @@ void UCsManager_Runnable::Initialize()
 
 			Manager_TaskInfo.CreatePool(Settings.TaskPoolSize);
 
-			typedef NCsRunnable::NTask::NInfo::FResource InfoContainerType;
+			const TArray<TaskInfoContainerType*>& Pool = Manager_TaskInfo.GetPool();
 
-			const TArray<InfoContainerType*>& Pool = Manager_TaskInfo.GetPool();
-
-			for (InfoContainerType* Container : Pool)
+			for (TaskInfoContainerType* Container : Pool)
 			{
-				CsRunnableTaskInfoType* R = Container->Get();
-				const int32& Index		  = R->GetIndex();
+				TaskInfoType* R		= Container->Get();
+				const int32& Index	= R->GetIndex();
 				R->SetIndex(Index);
 			}
 		}
@@ -284,13 +286,12 @@ void UCsManager_Runnable::Initialize()
 			Manager_TaskPayload.CreatePool(Settings.TaskPayloadSize);
 
 			typedef NCsRunnable::NTask::NPayload::FResource PayloadContainerType;
-			typedef NCsRunnable::NTask::NPayload::FImpl PayloadType;
 
 			const TArray<PayloadContainerType*>& Pool = Manager_TaskPayload.GetPool();
 
 			for (PayloadContainerType* Container : Pool)
 			{
-				PayloadType* R	   = Container->Get();
+				TaskPayloadType* R	   = Container->Get();
 				const int32& Index = R->GetIndex();
 				R->SetIndex(Index);
 			}
@@ -340,12 +341,10 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 {
 	// Task
 	{
-		typedef NCsRunnable::NTask::NInfo::FResource InfoContainerType;
-
 		// if Tasks Queued, process Task
-		if (TCsDoubleLinkedList<InfoContainerType*>* Current = Manager_TaskInfo.GetAllocatedHead())
+		if (TCsDoubleLinkedList<TaskInfoContainerType*>* Current = Manager_TaskInfo.GetAllocatedHead())
 		{
-			CsRunnableTaskInfoType* Info = nullptr;
+			TaskInfoType* Info = nullptr;
 
 			// Complete
 			if (Runnable->IsTaskComplete())
@@ -357,17 +356,17 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 					OnComplete.Execute();
 				}
 
-				InfoContainerType* CurrentContainer = **Current;
-				CsRunnableTaskInfoType* CurrentInfo	= CurrentContainer->Get();
+				TaskInfoContainerType* CurrentContainer = **Current;
+				TaskInfoType* CurrentInfo				= CurrentContainer->Get();
 
 				CurrentInfo->Reset();
 				Manager_TaskInfo.DeallocateHead();
 
 				// Process Next Task
-				if (TCsDoubleLinkedList<InfoContainerType*>* Next = Manager_TaskInfo.GetAllocatedHead())
+				if (TCsDoubleLinkedList<TaskInfoContainerType*>* Next = Manager_TaskInfo.GetAllocatedHead())
 				{
-					InfoContainerType* Container = **Next;
-					Info						 = Container->Get();
+					TaskInfoContainerType* Container = **Next;
+					Info							 = Container->Get();
 				}
 				// If NO Queued Task, Mark Ready
 				else
@@ -379,8 +378,8 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 			else
 			if (Runnable->IsReadyForTask())
 			{
-				InfoContainerType* Container = **Current;
-				Info						 = Container->Get();
+				TaskInfoContainerType* Container = **Current;
+				Info							 = Container->Get();
 			}
 
 			// Start Task
@@ -388,9 +387,7 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 				Info->GetOwner())
 			{
 				// Copy Payload from Info
-				typedef NCsRunnable::NTask::NPayload::FImpl PayloadType;
-
-				PayloadType* Payload = Manager_TaskPayload.AllocateResource();
+				TaskPayloadType* Payload = Manager_TaskPayload.AllocateResource();
 
 				Payload->Owner = Info->Owner;
 				Payload->Task  = Info->Task;
@@ -409,8 +406,6 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 	}
 	// Runnables
 	{
-		typedef NCsRunnable::FResource ContainerType;
-
 		TCsDoubleLinkedList<ContainerType*>* Current = Manager_Internal.GetAllocatedHead();
 		TCsDoubleLinkedList<ContainerType*>* Next    = Current;
 
@@ -434,11 +429,8 @@ void UCsManager_Runnable::Update(const FCsDeltaTime& DeltaTime)
 // Delegate
 #pragma region
 
-#define PayloadType NCsRunnable::NPayload::FImpl
 FCsRunnable* UCsManager_Runnable::Start(PayloadType* Payload)
 {
-#undef PayloadType
-
 	using namespace NCsManagerRunnable::NCached;
 
 	const FString& Context = Str::Start;
@@ -463,14 +455,12 @@ FCsRunnable* UCsManager_Runnable::Start(PayloadType* Payload)
 	// Task
 #pragma region
 
-#define TaskPayloadType NCsRunnable::NTask::NPayload::FImpl
+
 FCsRunnableHandle UCsManager_Runnable::StartTask(TaskPayloadType* Payload)
 {
-#undef TaskPayloadType
-
 	checkf(Payload, TEXT("UCsManager_Runnable::StartTask: Payload is NULL."));
 
-	CsRunnableTaskInfoType* Info = Manager_TaskInfo.AllocateResource();
+	TaskInfoType* Info = Manager_TaskInfo.AllocateResource();
 
 	Info->Owner = Payload->Owner;
 	Info->Task  = Payload->Task;
@@ -486,18 +476,16 @@ bool UCsManager_Runnable::StopQueuedTask(const FCsRunnableHandle& Handle)
 	if (Runnable->GetHandle() == Handle)
 		return false;
 
-	typedef NCsRunnable::NTask::NInfo::FResource InfoContainerType;
-
-	TCsDoubleLinkedList<InfoContainerType*>* Current = Manager_TaskInfo.GetAllocatedHead();
-	TCsDoubleLinkedList<InfoContainerType*>* Next	 = Current;
+	TCsDoubleLinkedList<TaskInfoContainerType*>* Current = Manager_TaskInfo.GetAllocatedHead();
+	TCsDoubleLinkedList<TaskInfoContainerType*>* Next	 = Current;
 
 	while (Next)
 	{
-		Current						 = Next;
-		InfoContainerType* Container = **Current;
-		Next						 = Current->GetNextLink();
+		Current							 = Next;
+		TaskInfoContainerType* Container = **Current;
+		Next							 = Current->GetNextLink();
 
-		CsRunnableTaskInfoType* R = Container->Get();
+		TaskInfoType* R = Container->Get();
 
 		if (R->Handle == Handle)
 		{

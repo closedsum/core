@@ -14,6 +14,8 @@
 // Game
 #include "Engine/GameInstance.h"
 
+using LogClassType = NCsPlayback::FLog;
+
 namespace NCsPlayback
 {
 	namespace NManager
@@ -29,10 +31,11 @@ namespace NCsPlayback
 			}
 		}
 
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		#define USING_NS_CACHED using namespace NCsPlayback::NManager::NLibrary::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsPlayback::NManager::NLibrary::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/
 
 		// ContextRoot
 		#pragma region
@@ -44,7 +47,7 @@ namespace NCsPlayback
 			return CsGameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			return CsGameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
@@ -72,7 +75,7 @@ namespace NCsPlayback
 			return Manager_Playback;
 		}
 
-		UCsManager_Playback* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
+		UCsManager_Playback* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -109,14 +112,18 @@ namespace NCsPlayback
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef LogLevel
+	}
+}
 
-
+namespace NCsPlayback
+{
+	namespace NManager
+	{
 		namespace NPlayback
 		{
-			#define LogLevel void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/
-			
-			void FLibrary::SafePlayLatest(const FString& Context, const UObject* ContextObject, LogLevel)
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
+			void FLibrary::SafePlayLatest(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UCsManager_Playback* Manager_Playback = CsPlaybackManagerLibrary::GetSafe(Context, ContextObject, Log))
 				{
@@ -124,7 +131,7 @@ namespace NCsPlayback
 				}
 			}
 
-			bool FLibrary::IsSafeSustainedGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEvent& Event, LogLevel)
+			bool FLibrary::IsSafeSustainedGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEvent& Event, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UCsManager_Playback* Manager_Playback = CsPlaybackManagerLibrary::GetSafe(Context, ContextObject, Log))
 				{
@@ -134,8 +141,6 @@ namespace NCsPlayback
 				}
 				return false;
 			}
-
-			#undef LogLevel
 		}
 	}
 }

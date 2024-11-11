@@ -18,6 +18,10 @@ namespace NCsRunnable
 	*/
 	struct CSTHREAD_API FCache
 	{
+	private:
+
+		using PayloadType = NCsRunnable::NPayload::FImpl;
+
 	public:
 
 		int32 Index;
@@ -54,9 +58,7 @@ namespace NCsRunnable
 		FORCEINLINE const int32& GetIndex() const { return Index; }
 		FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
-		#define PayloadType NCsRunnable::NPayload::FImpl
 		void Allocate(PayloadType* Payload);
-		#undef PayloadType
 
 		FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
 

@@ -39,11 +39,11 @@ class CSFX_API UCsFXActorPooledImpl : public UObject,
 {
 	GENERATED_UCLASS_BODY()
 
+	using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 	using CacheType = NCsPooledObject::NCache::ICache;
 	using CacheImplType = NCsFX::NCache::FImpl;
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define FXPayloadType NCsFX::NPayload::IPayload
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+	using PayloadType = NCsFX::NPayload::IPayload;
 
 // UObject Interface
 #pragma region
@@ -141,13 +141,13 @@ protected:
 
 	UNiagaraSystem** AssetPropertyPtr;
 
-	void Handle_SetFXSystem(FXPayloadType* Payload);
-	void Log_SetFXSystem(FXPayloadType* Payload);
+	void Handle_SetFXSystem(PayloadType* Payload);
+	void Log_SetFXSystem(PayloadType* Payload);
 
 	FName AttachToBone;
 
-	void Handle_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* FXPayload);
-	void Log_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* FXPayload);
+	void Handle_AttachAndSetTransform(PooledPayloadType* Payload, PayloadType* FXPayload);
+	void Log_AttachAndSetTransform(PooledPayloadType* Payload, PayloadType* FXPayload);
 
 	void Handle_ClearFXSystem();
 	void WaitForSystemComplete();
@@ -155,8 +155,4 @@ protected:
 	void Handle_ClearAttachAndTransform();
 
 	void LogChangeCounter();
-
-#undef PooledPayloadType
-#undef FXPayloadType
-#undef ConstructParamsType
 };

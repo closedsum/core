@@ -16,123 +16,125 @@ namespace NCsUserWidget
 {
 	namespace NCache
 	{
-	#define PooledCacheType NCsPooledObject::NCache::ICache
-	#define WidgetCacheType NCsUserWidget::NCache::ICache
-
-		/**
-		* Basic implementation for Cache implementing the interfaces:
-		* PooledCacheType (NCsPooledObject::NCache::ICache) and 
-		* WidgetCacheType (NCsUserWidget::NCache::ICache). This only supports 
-		* a bare minimum functionality. For custom functionality create
-		* another implementation
-		*/
-		struct CSUI_API FImpl final : public PooledCacheType,
-									  public WidgetCacheType
+		namespace NImpl
 		{
-		public:
+			using PooledCacheType = NCsPooledObject::NCache::ICache;
+			using CacheType = NCsUserWidget::NCache::ICache;
+			using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 
-			static const FName Name;
+			/**
+			* Basic implementation for Cache implementing the interfaces:
+			* PooledCacheType (NCsPooledObject::NCache::ICache) and 
+			* WidgetCacheType (NCsUserWidget::NCache::ICache). This only supports 
+			* a bare minimum functionality. For custom functionality create
+			* another implementation
+			*/
+			struct CSUI_API FImpl final : public PooledCacheType,
+										  public CacheType
+			{
+			public:
 
-		private:
+				static const FName Name;
+
+			private:
+
+				using PooledStateType = NCsPooledObject::EState;
+				using PooledUpdateType = NCsPooledObject::EUpdate;
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				// NCsPooledObject::NCache::ICache
+
+				int32 Index;
+
+				bool bAllocated;
+
+				bool bQueueDeallocate;
+
+				PooledStateType State;
+
+				PooledUpdateType UpdateType;
+
+				TCsWeakObjectPtr<UObject> Instigator;
+
+				TCsWeakObjectPtr<UObject> Owner;
+
+				TCsWeakObjectPtr<UObject> Parent;
+
+				float WarmUpTime;
+
+				float LifeTime;
+
+				FCsTime StartTime;
+
+				FCsDeltaTime ElapsedTime;
+
+				// NCsUserWidget::NCache::ICache
+
+			public:
+
+				FImpl();
+
+				~FImpl();
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+
+			#pragma endregion ICsGetInterfaceMap
 
 			// NCsPooledObject::NCache::ICache
+			#pragma region
+			public:
 
-			int32 Index;
+				FORCEINLINE void Init(const int32& InIndex) { Index = InIndex; }
+				FORCEINLINE const int32& GetIndex() const { return Index; }
 
-			bool bAllocated;
+				void Allocate(PooledPayloadType* Payload);
 
-			bool bQueueDeallocate;
+				FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
 
-			NCsPooledObject::EState State;
+				void Deallocate();
 
-			NCsPooledObject::EUpdate UpdateType;
+				FORCEINLINE void QueueDeallocate() { bQueueDeallocate = true; }
+				FORCEINLINE bool ShouldDeallocate() const { return bQueueDeallocate; }
 
-			TCsWeakObjectPtr<UObject> Instigator;
+				FORCEINLINE const  PooledStateType& GetState() const { return State; }
+				FORCEINLINE const PooledUpdateType& GetUpdateType() const { return UpdateType; }
+				FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
+				FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }
+				FORCEINLINE UObject* GetParent() const { return Parent.Get(); }
+				FORCEINLINE const float& GetWarmUpTime() const { return WarmUpTime; }
+				FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+				FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
+				FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
 
-			TCsWeakObjectPtr<UObject> Owner;
+				FORCEINLINE bool HasLifeTimeExpired() const { return LifeTime > 0.0f && ElapsedTime.Time > LifeTime; }
 
-			TCsWeakObjectPtr<UObject> Parent;
+				void Reset();
 
-			float WarmUpTime;
+			#pragma endregion NCsPooledObject::NCache::ICache
 
-			float LifeTime;
+			public:
 
-			FCsTime StartTime;
-
-			FCsDeltaTime ElapsedTime;
+				FORCEINLINE void SetLifeTime(const float& InLifeTime) { LifeTime = InLifeTime; }
 
 			// NCsUserWidget::NCache::ICache
+			#pragma region
+			public:
 
-		public:
+			#pragma endregion NCsUserWidget::NCache::ICache
 
-			FImpl();
+			public:
 
-			~FImpl();
+				FORCEINLINE void Update(const FCsDeltaTime& DeltaTime) { ElapsedTime += DeltaTime; }
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
-
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
-
-		#pragma endregion ICsGetInterfaceMap
-
-		// NCsPooledObject::NCache::ICache
-		#pragma region
-		public:
-
-			FORCEINLINE void Init(const int32& InIndex) { Index = InIndex; }
-			FORCEINLINE const int32& GetIndex() const { return Index; }
-
-		#define PayloadType NCsPooledObject::NPayload::IPayload
-			void Allocate(PayloadType* Payload);
-		#undef PayloadType
-
-			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
-
-			void Deallocate();
-
-			FORCEINLINE void QueueDeallocate() { bQueueDeallocate = true; }
-			FORCEINLINE bool ShouldDeallocate() const { return bQueueDeallocate; }
-
-			FORCEINLINE const NCsPooledObject::EState& GetState() const { return State; }
-			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
-			FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
-			FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }
-			FORCEINLINE UObject* GetParent() const { return Parent.Get(); }
-			FORCEINLINE const float& GetWarmUpTime() const { return WarmUpTime; }
-			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
-			FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
-			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
-
-			FORCEINLINE bool HasLifeTimeExpired() const { return LifeTime > 0.0f && ElapsedTime.Time > LifeTime; }
-
-			void Reset();
-
-		#pragma endregion NCsPooledObject::NCache::ICache
-
-		public:
-
-			FORCEINLINE void SetLifeTime(const float& InLifeTime) { LifeTime = InLifeTime; }
-
-		// NCsUserWidget::NCache::ICache
-		#pragma region
-		public:
-
-		#pragma endregion NCsUserWidget::NCache::ICache
-
-		public:
-
-			FORCEINLINE void Update(const FCsDeltaTime& DeltaTime) { ElapsedTime += DeltaTime; }
-
-			//void SetData(ICsData_Projectile* InData);
-		};
-
-	#undef PooledCacheType
-	#undef WidgetCacheType
+				//void SetData(ICsData_Projectile* InData);
+			};
+		}
 	}
 }

@@ -16,8 +16,8 @@
 
 // NCsPooledObject::NCache::ICache
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
-// NCsUserWidget::NCache::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NCache, FImpl)
+// NCsUserWidget::NCache::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsUserWidget, NCache, NImpl, FImpl)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsUserWidget::NPayload::IPayload
@@ -35,11 +35,13 @@ class CSUI_API UCsUserWidget_TextPooledImpl : public UUserWidget,
 {
 	GENERATED_UCLASS_BODY()
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-#define CacheType NCsPooledObject::NCache::ICache
-#define CacheImplType NCsUserWidget::NCache::FImpl
-#define PayloadType NCsPooledObject::NPayload::IPayload
-#define UserWidgetPayloadType NCsUserWidget::NPayload::IPayload
+private:
+
+	using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+	using CacheType = NCsPooledObject::NCache::ICache;
+	using CacheImplType = NCsUserWidget::NCache::NImpl::FImpl;
+	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+	using PayloadType = NCsUserWidget::NPayload::IPayload;
 
 // UObject Interface
 #pragma region
@@ -89,7 +91,7 @@ public:
 
 	FORCEINLINE CacheType* GetCache() const { return Cache; }
 	
-	void Allocate(PayloadType* Payload);
+	void Allocate(PooledPayloadType* Payload);
 
 	void Deallocate();
 
@@ -120,7 +122,7 @@ protected:
 
 	int32 CurrentZOrder;
 
-	void Handle_AddToViewport(UserWidgetPayloadType* Payload);
+	void Handle_AddToViewport(PayloadType* Payload);
 
 	void Handle_RemoveFromViewport();
 
@@ -132,10 +134,4 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* MyText;
-
-#undef ConstructParamsType
-#undef CacheType
-#undef CacheImplType
-#undef PayloadType
-#undef UserWidgetPayloadType
 };

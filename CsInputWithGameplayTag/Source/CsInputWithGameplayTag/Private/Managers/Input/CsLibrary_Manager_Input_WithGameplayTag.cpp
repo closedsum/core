@@ -19,6 +19,8 @@
 // Input
 #include "Managers/Input/CsGetManagerInputWithGameplayTag.h"
 
+using LogClassType = NCsInput::NWithGameplayTag::FLog;
+
 namespace NCsInput
 {
 	namespace NWithGameplayTag
@@ -36,8 +38,6 @@ namespace NCsInput
 					}
 				}
 			}
-
-			using LogClassType = NCsInput::NWithGameplayTag::FLog;
 
 			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 

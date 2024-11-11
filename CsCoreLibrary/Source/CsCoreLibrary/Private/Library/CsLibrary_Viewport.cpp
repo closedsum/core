@@ -43,7 +43,7 @@ namespace NCsViewport
 				}
 			}
 
-			using LogClassType = NCsCore::NLibrary::FLog::Warning;
+			using LogClassType = NCsCore::NLibrary::FLog;
 
 			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 			

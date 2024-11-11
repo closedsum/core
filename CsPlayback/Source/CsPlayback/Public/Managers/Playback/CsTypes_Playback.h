@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"

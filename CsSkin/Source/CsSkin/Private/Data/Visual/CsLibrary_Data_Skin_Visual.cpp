@@ -27,13 +27,22 @@
 #include "Engine/StaticMesh.h"
 #include "Engine/SkeletalMesh.h"
 
+using LogClassType = NCsSkin::FLog;
+
 namespace NCsSkin
 {
 	namespace NData
 	{
 		namespace NVisual
 		{
-		#define LogLevel void(*Log)(const FString&) /*=NCsSkin::FLog::Warning*/
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+	
+			using StaticMeshSkinDataType = NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh;
+			using SkeletalMeshSkinDataType = NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh;
+			using MaterialSkinDataType = NCsSkin::NData::NVisual::NMaterial::IMaterial;
+
+			using SetMeshAndMIDsResultType = NCsSkin::NData::NVisual::FLibrary::FSetMeshAndMIDs::EResult;
+			using SetMaterialsResultType = NCsSkin::NData::NVisual::FLibrary::FSetMaterials::FResult;
 
 			FString FLibrary::PrintObjectAndClass(const CsSkinDataType* Skin)
 			{
@@ -169,7 +178,7 @@ namespace NCsSkin
 				return true;
 			}
 
-			bool FLibrary::IsValid(const FString& Context, const CsSkinDataType* Skin, LogLevel)
+			bool FLibrary::IsValid(const FString& Context, const CsSkinDataType* Skin, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL(Skin)
 
@@ -292,7 +301,7 @@ namespace NCsSkin
 				return true;
 			}
 
-			ICsDeconstructInterfaceSliceMap* FLibrary::GetSafeDeconstructInterfaceSliceMap(const FString& Context, CsSkinDataType* Skin, LogLevel)
+			ICsDeconstructInterfaceSliceMap* FLibrary::GetSafeDeconstructInterfaceSliceMap(const FString& Context, CsSkinDataType* Skin, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL_RET_NULL(Skin)
 
@@ -329,7 +338,7 @@ namespace NCsSkin
 				CsMaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
 			}
 
-			void FLibrary::SetSafeStaticMeshAndMaterials(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, LogLevel)
+			void FLibrary::SetSafeStaticMeshAndMaterials(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (const CsStaticMeshSkinDataType* StaticMeshSkin = GetSafeInterfaceChecked<CsStaticMeshSkinDataType>(Context, Skin))
 				{
@@ -357,7 +366,7 @@ namespace NCsSkin
 				SetMaterialsChecked(Context, Skin, Component, OutMIDs);
 			}
 
-			bool FLibrary::SetSafeStaticMeshAndMIDs(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, LogLevel)
+			bool FLibrary::SetSafeStaticMeshAndMIDs(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (!SetSafeStaticMesh(Context, Skin, Component, Log))
 					return false;
@@ -373,7 +382,7 @@ namespace NCsSkin
 				SetStaticMeshChecked(Context, GetInterfaceChecked<CsStaticMeshSkinDataType>(Context, Skin), Component);
 			}
 
-			void FLibrary::SetStaticMeshChecked(const FString& Context, const CsStaticMeshSkinDataType* StaticMeshSkin, UStaticMeshComponent* Component)
+			void FLibrary::SetStaticMeshChecked(const FString& Context, const StaticMeshSkinDataType* StaticMeshSkin, UStaticMeshComponent* Component)
 			{
 				CS_IS_PTR_NULL_CHECKED(StaticMeshSkin)
 
@@ -386,7 +395,7 @@ namespace NCsSkin
 				Component->SetStaticMesh(Mesh);
 			}
 
-			bool FLibrary::SetSafeStaticMesh(const FString& Context, const CsStaticMeshSkinDataType* StaticMeshSkin, UStaticMeshComponent* Component, LogLevel)
+			bool FLibrary::SetSafeStaticMesh(const FString& Context, const StaticMeshSkinDataType* StaticMeshSkin, UStaticMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL(StaticMeshSkin)
 
@@ -404,7 +413,7 @@ namespace NCsSkin
 				return true;
 			}
 
-			bool FLibrary::SetSafeStaticMesh(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, LogLevel)
+			bool FLibrary::SetSafeStaticMesh(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (const CsStaticMeshSkinDataType* StaticMeshSkin = GetSafeInterfaceChecked<CsStaticMeshSkinDataType>(Context, Skin))
 				{
@@ -472,7 +481,7 @@ namespace NCsSkin
 				checkf(0, TEXT("%s: %s does NOT implement any material interface."), *Context, *PrintSkinAndClass(Skin));
 			}
 
-			bool FLibrary::SetSafeSkeletalMeshAndMaterials(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, LogLevel)
+			bool FLibrary::SetSafeSkeletalMeshAndMaterials(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (const CsSkeletalMeshSkinDataType* SkeletalMeshSkin = GetSafeInterfaceChecked<CsSkeletalMeshSkinDataType>(Context, Skin))
 				{
@@ -514,7 +523,7 @@ namespace NCsSkin
 				SetMaterialsChecked(Context, Skin, Component, OutMIDs);
 			}
 
-			bool FLibrary::SetSafeSkeletalMeshAndMIDs(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, LogLevel)
+			bool FLibrary::SetSafeSkeletalMeshAndMIDs(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (!SetSafeSkeletalMesh(Context, Skin, Component, Log))
 					return false;
@@ -530,7 +539,7 @@ namespace NCsSkin
 				SetSkeletalMeshChecked(Context, GetInterfaceChecked<CsSkeletalMeshSkinDataType>(Context, Skin), Component);
 			}
 
-			void FLibrary::SetSkeletalMeshChecked(const FString& Context, const CsSkeletalMeshSkinDataType* SkeletalMeshSkin, USkeletalMeshComponent* Component)
+			void FLibrary::SetSkeletalMeshChecked(const FString& Context, const SkeletalMeshSkinDataType* SkeletalMeshSkin, USkeletalMeshComponent* Component)
 			{
 				CS_IS_PTR_NULL_CHECKED(SkeletalMeshSkin)
 
@@ -543,7 +552,7 @@ namespace NCsSkin
 				Component->SetSkeletalMesh(Mesh);
 			}
 
-			bool FLibrary::SetSafeSkeletalMesh(const FString& Context, const CsSkeletalMeshSkinDataType* SkeletalMeshSkin, USkeletalMeshComponent* Component, LogLevel)
+			bool FLibrary::SetSafeSkeletalMesh(const FString& Context, const SkeletalMeshSkinDataType* SkeletalMeshSkin, USkeletalMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL(SkeletalMeshSkin)
 
@@ -561,7 +570,7 @@ namespace NCsSkin
 				return true;
 			}
 
-			bool FLibrary::SetSafeSkeletalMesh(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, LogLevel)
+			bool FLibrary::SetSafeSkeletalMesh(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (const CsSkeletalMeshSkinDataType* SkeletalMeshSkin = GetSafeInterfaceChecked<CsSkeletalMeshSkinDataType>(Context, Skin))
 				{
@@ -595,37 +604,33 @@ namespace NCsSkin
 				}
 			}
 
-			#define ResultType NCsSkin::NData::NVisual::FLibrary::FSetMeshAndMIDs::EResult
-			ResultType FLibrary::SetMeshAndMIDsChecked(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* StaticMeshComponent, USkeletalMeshComponent* SkeletalMeshComponent, TArray<UMaterialInstanceDynamic*>& OutMIDs)
+			SetMeshAndMIDsResultType FLibrary::SetMeshAndMIDsChecked(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* StaticMeshComponent, USkeletalMeshComponent* SkeletalMeshComponent, TArray<UMaterialInstanceDynamic*>& OutMIDs)
 			{
 				if (const CsStaticMeshSkinDataType* StaticMeshSkin = GetSafeInterfaceChecked<CsStaticMeshSkinDataType>(Context, Skin))
 				{
 					SetStaticMeshChecked(Context, StaticMeshSkin, StaticMeshComponent);
 					SetMaterialsChecked(Context, Skin, StaticMeshComponent, OutMIDs);
-					return ResultType::StaticMeshComponent;
+					return SetMeshAndMIDsResultType::StaticMeshComponent;
 				}
 
 				if (const CsSkeletalMeshSkinDataType* SkeletalMeshSkin = GetSafeInterfaceChecked<CsSkeletalMeshSkinDataType>(Context, Skin))
 				{
 					SetSkeletalMeshChecked(Context, SkeletalMeshSkin, SkeletalMeshComponent);
 					SetMaterialsChecked(Context, Skin, SkeletalMeshComponent, OutMIDs);
-					return ResultType::SkeletalMeshComponent;
+					return SetMeshAndMIDsResultType::SkeletalMeshComponent;
 				}
 				checkf(0, TEXT("%s: Skin: %s does NOT implement the interfaces: %s or %s."), *Context, *PrintNameAndClass(Skin), *(CsStaticMeshSkinDataType::Name.ToString()), *(CsSkeletalMeshSkinDataType::Name.ToString()));
-				return ResultType::None;
+				return SetMeshAndMIDsResultType::None;
 			}
-			#undef ResultType
 
 		#pragma endregion Mesh
 
 		// Material
 		#pragma region
 
-			#define ResultType NCsSkin::NData::NVisual::FLibrary::FSetMaterials::FResult
-
-			ResultType FLibrary::SetMaterialsChecked(const FString& Context, const CsSkinDataType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs)
+			SetMaterialsResultType FLibrary::SetMaterialsChecked(const FString& Context, const CsSkinDataType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs)
 			{
-				ResultType Result;
+				SetMaterialsResultType Result;
 
 				// Material
 				if (const CsMaterialSkinDataType* MaterialSkin = GetSafeInterfaceChecked<CsMaterialSkinDataType>(Context, Skin))
@@ -668,9 +673,9 @@ namespace NCsSkin
 				return Result;
 			}
 
-			ResultType FLibrary::SetSafeMaterials(const FString& Context, const CsSkinDataType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, LogLevel)
+			SetMaterialsResultType FLibrary::SetSafeMaterials(const FString& Context, const CsSkinDataType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				ResultType Result;
+				SetMaterialsResultType Result;
 
 				// Material
 				if (const CsMaterialSkinDataType* MaterialSkin = GetSafeInterfaceChecked<CsMaterialSkinDataType>(Context, Skin))
@@ -715,8 +720,6 @@ namespace NCsSkin
 				return Result;
 			}
 
-			#undef ResultType
-
 		#pragma endregion Material
 
 		// Scale
@@ -748,7 +751,7 @@ namespace NCsSkin
 				Component->SetRelativeScale3D(UniformScale * FVector3d::OneVector);
 			}
 
-			bool FLibrary::SetSafeUniformScaleRelative(const FString& Context, const CsSkinDataType* Skin, USceneComponent* Component, LogLevel)
+			bool FLibrary::SetSafeUniformScaleRelative(const FString& Context, const CsSkinDataType* Skin, USceneComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (const CsUniformScaleSkinDataType* UniformScaleSkin = GetSafeInterfaceChecked<CsUniformScaleSkinDataType>(Context, Skin))
 				{
@@ -768,7 +771,7 @@ namespace NCsSkin
 				}
 			}
 
-			bool FLibrary::SetSafeScaleRelative(const FString& Context, const CsSkinDataType* Skin, USceneComponent* Component, LogLevel)
+			bool FLibrary::SetSafeScaleRelative(const FString& Context, const CsSkinDataType* Skin, USceneComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				// Uniform
 				if (const CsUniformScaleSkinDataType* UniformScaleSkin = GetSafeInterfaceChecked<CsUniformScaleSkinDataType>(Context, Skin))
@@ -836,7 +839,7 @@ namespace NCsSkin
 				checkf(0, TEXT("%s: Skin: %s does NOT implement the interface related to scale."), *Context, *PrintNameAndClass(Skin));
 			}
 
-			bool FLibrary::SetSafeScale(const FString& Context, const CsSkinDataType* Skin, AActor* Actor, LogLevel)
+			bool FLibrary::SetSafeScale(const FString& Context, const CsSkinDataType* Skin, AActor* Actor, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL(Skin)
 				CS_IS_PTR_NULL(Actor)
@@ -871,8 +874,6 @@ namespace NCsSkin
 			}
 
 		#pragma endregion Scale
-
-		#undef LogLevel
 		}
 	}
 }

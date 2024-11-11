@@ -5,6 +5,7 @@
 #include "Data/Visual/CsData_Skin_Visual.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
+#include "CsMacro_Log.h"
 #include "CsMacro_Namespace.h"
 // Log
 #include "Utility/CsSkinLog.h"
@@ -39,12 +40,16 @@ namespace NCsSkin
 	{
 		namespace NVisual
 		{
-		#define CsStaticMeshSkinDataType NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh
-		#define CsSkeletalMeshSkinDataType NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh
-
 			struct CSSKIN_API FLibrary : NCsInterfaceMap::TLibrary<CsSkinDataType>
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsSkin::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
+
+				using StaticMeshSkinDataType = NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh;
+				using SkeletalMeshSkinDataType = NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh;
+				using MaterialSkinDataType = NCsSkin::NData::NVisual::NMaterial::IMaterial;
+				using MaterialWithParamsSkinDataType = NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters;
 
 			public:
 
@@ -62,11 +67,11 @@ namespace NCsSkin
 
 				/**
 				*/
-				static FString PrintNameAndClass(const CsStaticMeshSkinDataType* Skin);
+				static FString PrintNameAndClass(const StaticMeshSkinDataType* Skin);
 
 				/**
 				*/
-				static FString PrintNameAndClass(const CsSkeletalMeshSkinDataType* Skin);
+				static FString PrintNameAndClass(const SkeletalMeshSkinDataType* Skin);
 
 				/**
 				* 
@@ -85,7 +90,7 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return
 				*/
-				static bool IsValid(const FString& Context, const CsSkinDataType* Skin, LogLevel);
+				static bool IsValid(const FString& Context, const CsSkinDataType* Skin, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				*
@@ -95,7 +100,7 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return
 				*/
-				static ICsDeconstructInterfaceSliceMap* GetSafeDeconstructInterfaceSliceMap(const FString& Context, CsSkinDataType* Skin, LogLevel);
+				static ICsDeconstructInterfaceSliceMap* GetSafeDeconstructInterfaceSliceMap(const FString& Context, CsSkinDataType* Skin, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			// Static Mesh
 			#pragma region
@@ -135,7 +140,7 @@ namespace NCsSkin
 				* @param Component	StaticMeshComponent
 				* @param Log		(optional)
 				*/
-				static void SetSafeStaticMeshAndMaterials(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, LogLevel);
+				static void SetSafeStaticMeshAndMaterials(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Set the Static Mesh and Materials on a StaticMeshComponent (Component)
@@ -163,7 +168,7 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return
 				*/
-				static bool SetSafeStaticMeshAndMIDs(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, LogLevel);
+				static bool SetSafeStaticMeshAndMIDs(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Set the Static Mesh on a StaticMeshComponent (Component)
@@ -183,7 +188,7 @@ namespace NCsSkin
 				* @param StaticMeshSkin		Implements the interface: CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh).
 				* @param Component			StaticMeshComponent
 				*/
-				static void SetStaticMeshChecked(const FString& Context, const CsStaticMeshSkinDataType* StaticMeshSkin, UStaticMeshComponent* Component);
+				static void SetStaticMeshChecked(const FString& Context, const StaticMeshSkinDataType* StaticMeshSkin, UStaticMeshComponent* Component);
 
 				/**
 				* Set the Static Mesh on a StaticMeshComponent (Component)
@@ -193,7 +198,7 @@ namespace NCsSkin
 				* @param StaticMeshSkin		Implements the interface: CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh).
 				* @param Component			StaticMeshComponent
 				*/
-				static bool SetSafeStaticMesh(const FString& Context, const CsStaticMeshSkinDataType* StaticMeshSkin, UStaticMeshComponent* Component, LogLevel);
+				static bool SetSafeStaticMesh(const FString& Context, const StaticMeshSkinDataType* StaticMeshSkin, UStaticMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely set the Static Mesh on a StaticMeshComponent (Component)
@@ -208,7 +213,7 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return
 				*/
-				static bool SetSafeStaticMesh(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, LogLevel);
+				static bool SetSafeStaticMesh(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				// Attachment
 			#pragma region
@@ -267,7 +272,7 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return
 				*/
-				static bool SetSafeSkeletalMeshAndMaterials(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, LogLevel);
+				static bool SetSafeSkeletalMeshAndMaterials(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Set the Skeletal Mesh and Materials on a SkeletalMeshComponent (Component)
@@ -295,7 +300,7 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return
 				*/
-				static bool SetSafeSkeletalMeshAndMIDs(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, LogLevel);
+				static bool SetSafeSkeletalMeshAndMIDs(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Set the Skeletal Mesh on a SkeletalMeshComponent (Component)
@@ -315,7 +320,7 @@ namespace NCsSkin
 				* @param SkeletalMeshSkin	Implements the interface: CsSkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
 				* @param Component			SkeletalMeshComponent
 				*/
-				static void SetSkeletalMeshChecked(const FString& Context, const CsSkeletalMeshSkinDataType* SkeletalMeshSkin, USkeletalMeshComponent* Component);
+				static void SetSkeletalMeshChecked(const FString& Context, const SkeletalMeshSkinDataType* SkeletalMeshSkin, USkeletalMeshComponent* Component);
 
 				/**
 				* Safely set the Skeletal Mesh on a SkeletalMeshComponent (Component)
@@ -327,7 +332,7 @@ namespace NCsSkin
 				* @param Log				(optional)
 				* return
 				*/
-				static bool SetSafeSkeletalMesh(const FString& Context, const CsSkeletalMeshSkinDataType* SkeletalMeshSkin, USkeletalMeshComponent* Component, LogLevel);
+				static bool SetSafeSkeletalMesh(const FString& Context, const SkeletalMeshSkinDataType* SkeletalMeshSkin, USkeletalMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely set the Skeletal Mesh on a SkeletalMeshComponent (Component)
@@ -342,7 +347,7 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return
 				*/
-				static bool SetSafeSkeletalMesh(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, LogLevel);
+				static bool SetSafeSkeletalMesh(const FString& Context, const CsSkinDataType* Skin, USkeletalMeshComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Skeletal Mesh
 
@@ -371,7 +376,7 @@ namespace NCsSkin
 					};
 				};
 
-				#define ResultType NCsSkin::NData::NVisual::FLibrary::FSetMeshAndMIDs::EResult
+				using SetMeshAndMIDsResultType = NCsSkin::NData::NVisual::FLibrary::FSetMeshAndMIDs::EResult;
 
 				/**
 				* Set the Mesh (Static or Skeletal) and Materials on a StaticMeshComponent or SkeletalMeshComponent
@@ -385,18 +390,13 @@ namespace NCsSkin
 				* return						0 = None, 1 = StaticMeshComponent, 2 = SkeletalMeshComponent
 				*								TODO: NOTE: Use a enum or wrap in a struct.
 				*/
-				static ResultType SetMeshAndMIDsChecked(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* StaticMeshComponent, USkeletalMeshComponent* SkeletalMeshComponent, TArray<UMaterialInstanceDynamic*>& OutMIDs);
-
-				#undef ResultType
+				static SetMeshAndMIDsResultType SetMeshAndMIDsChecked(const FString& Context, const CsSkinDataType* Skin, UStaticMeshComponent* StaticMeshComponent, USkeletalMeshComponent* SkeletalMeshComponent, TArray<UMaterialInstanceDynamic*>& OutMIDs);
 
 			#pragma endregion Mesh
 
 			// Material
 			#pragma region
 			public:
-
-			#define CsMaterialSkinDataType NCsSkin::NData::NVisual::NMaterial::IMaterial
-			#define CsMaterialWithParamsSkinDataType NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters
 
 				struct FSetMaterials
 				{
@@ -415,9 +415,9 @@ namespace NCsSkin
 
 						ESkin Type;
 
-						CsMaterialSkinDataType* MaterialSkinData;
+						MaterialSkinDataType* MaterialSkinData;
 
-						CsMaterialWithParamsSkinDataType* MaterialWithParamsSkinData;
+						MaterialWithParamsSkinDataType* MaterialWithParamsSkinData;
 
 						FResult() :
 							bSuccess(false),
@@ -429,7 +429,7 @@ namespace NCsSkin
 					};
 				};
 
-			#define ResultType NCsSkin::NData::NVisual::FLibrary::FSetMaterials::FResult
+				using SetMaterialsResultType = NCsSkin::NData::NVisual::FLibrary::FSetMaterials::FResult;
 
 				/**
 				* Set the Materials on MIDs that correspond to a Mesh Component (Static or Skeletal Component)
@@ -444,7 +444,7 @@ namespace NCsSkin
 				* @param OutMIDs	(out) Material Instance Dynamics to create from Material in the given Skin.
 				* return			Result describing which material skin interface was applied.			
 				*/
-				static ResultType SetMaterialsChecked(const FString& Context, const CsSkinDataType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs);
+				static SetMaterialsResultType SetMaterialsChecked(const FString& Context, const CsSkinDataType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs);
 
 				/**
 				* Safely set the Materials on MIDs that correspond to a Mesh Component (Static or Skeletal Component)
@@ -459,12 +459,7 @@ namespace NCsSkin
 				* @param OutMIDs	(out) Material Instance Dynamics to create from Material in the given Skin.
 				* return			Result describing which material skin interface was applied.
 				*/
-				static ResultType SetSafeMaterials(const FString& Context, const CsSkinDataType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, LogLevel);
-
-			#undef ResultType
-
-			#undef CsMaterialSkinDataType
-			#undef CsMaterialWithParamsSkinDataType
+				static SetMaterialsResultType SetSafeMaterials(const FString& Context, const CsSkinDataType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Material
 
@@ -499,7 +494,7 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return			Whether the scale was set
 				*/
-				static bool SetSafeUniformScaleRelative(const FString& Context, const CsSkinDataType* Skin, USceneComponent* Component, LogLevel);
+				static bool SetSafeUniformScaleRelative(const FString& Context, const CsSkinDataType* Skin, USceneComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely set the relative scale of Component from the given Skin.
@@ -513,7 +508,7 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return			Whether the scale was set
 				*/
-				static bool SetSafeScaleRelative(const FString& Context, const CsSkinDataType* Skin, USceneComponent* Component, LogLevel);
+				static bool SetSafeScaleRelative(const FString& Context, const CsSkinDataType* Skin, USceneComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Set the scale of Actor from the given Skin.
@@ -541,15 +536,10 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return			Whether the scale was set
 				*/
-				static bool SetSafeScale(const FString& Context, const CsSkinDataType* Skin, AActor* Actor, LogLevel);
+				static bool SetSafeScale(const FString& Context, const CsSkinDataType* Skin, AActor* Actor, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Scale
-
-			#undef LogLevel
 			};
-
-		#undef CsStaticMeshSkinDataType
-		#undef CsSkeletalMeshSkinDataType
 		}
 	}
 }

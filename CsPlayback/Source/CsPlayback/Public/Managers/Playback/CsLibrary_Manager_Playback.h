@@ -19,7 +19,9 @@ namespace NCsPlayback
 		*/
 		struct CSPLAYBACK_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsPlayback::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// ContextRoot
 		#pragma region
@@ -54,9 +56,9 @@ namespace NCsPlayback
 			* @param Log
 			* return				Context for UCsManager_Playback.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				return nullptr;
 			}
@@ -106,7 +108,7 @@ namespace NCsPlayback
 			* @param Log
 			* return				UCsManager_Playback.
 			*/
-			static UCsManager_Playback* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
+			static UCsManager_Playback* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Get
 
@@ -138,15 +140,21 @@ namespace NCsPlayback
 			static const CsPlaybackStateType& GetPlaybackStateChecked(const FString& Context, const UObject* ContextObject);
 
 		#pragma endregion State
-
-		#undef LogLevel
 		};
+	}
+}
 
+namespace NCsPlayback
+{
+	namespace NManager
+	{
 		namespace NPlayback
 		{
 			struct CSPLAYBACK_API FLibrary final
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsPlayback::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			public:
 
@@ -159,7 +167,7 @@ namespace NCsPlayback
 				*						A reference to the GameInstance.
 				* @param Log
 				*/
-				static void SafePlayLatest(const FString& Context, const UObject* ContextObject, LogLevel);
+				static void SafePlayLatest(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely check if the GameEvent is currently being Sustained (i.e. broadcasted every frame).
@@ -171,9 +179,7 @@ namespace NCsPlayback
 				* @param Event			Game Event.
 				* @param Log
 				*/
-				static bool IsSafeSustainedGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEvent& Event, LogLevel);
-
-			#undef LogLevel
+				static bool IsSafeSustainedGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEvent& Event, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 			};
 		}
 	}

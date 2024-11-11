@@ -27,36 +27,42 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerUserWidget_OnSpawn, const
 // Internal
 #pragma region
 
+// PayloadType (NCsUserWidget::NPayload::IPayload)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NPayload, IPayload)
+
 class ICsUserWidgetPooled;
 
 namespace NCsUserWidget
 {
-#define ManagerMapType NCsPooledObject::NManager::TTMap
-#define PayloadType NCsUserWidget::NPayload::IPayload
-
-	class CSUI_API FManager : public ManagerMapType<ICsUserWidgetPooled, FCsUserWidgetPooled, PayloadType, FECsUserWidgetPooled>
+	namespace NManager
 	{
-	private:
-
-		typedef ManagerMapType<ICsUserWidgetPooled, FCsUserWidgetPooled, PayloadType, FECsUserWidgetPooled> Super;
-
-	public:
-
-		FManager();
-
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsUserWidgetPooled& Type) const override
+		namespace NInternal
 		{
-			return Type.GetName();
-		}
+			using PayloadType = NCsUserWidget::NPayload::IPayload;
+			using ManagerMapType = NCsPooledObject::NManager::TTMap<ICsUserWidgetPooled, FCsUserWidgetPooled, PayloadType, FECsUserWidgetPooled>;
 
-		FORCEINLINE virtual bool IsValidKey(const FECsUserWidgetPooled& Type) const override
-		{
-			return EMCsUserWidgetPooled::Get().IsValidEnum(Type);
-		}
-	};
+			class CSUI_API FManager : public ManagerMapType
+			{
+			private:
 
-#undef ManagerMapType
-#undef PayloadType
+				using Super = ManagerMapType;
+
+			public:
+
+				FManager();
+
+				FORCEINLINE virtual const FString& KeyTypeToString(const FECsUserWidgetPooled& Type) const override
+				{
+					return Type.GetName();
+				}
+
+				FORCEINLINE virtual bool IsValidKey(const FECsUserWidgetPooled& Type) const override
+				{
+					return EMCsUserWidgetPooled::Get().IsValidEnum(Type);
+				}
+			};
+		}
+	}
 }
 
 #pragma endregion Internal
@@ -100,14 +106,14 @@ class CSUI_API UCsManager_UserWidget : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define ManagerType NCsUserWidget::FManager
-#define ManagerParamsType NCsUserWidget::FManager::FParams
-#define PayloadType NCsUserWidget::NPayload::IPayload
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-#define ClassHandlerType NCsData::NManager::NHandler::TClass
-#define DataHandlerType NCsData::NManager::NHandler::TData
-#define DataType NCsUserWidget::NData::IData
-#define DataInterfaceMapType NCsUserWidget::NData::FInterfaceMap
+using ManagerType = NCsUserWidget::NManager::NInternal::FManager;
+using ManagerParamsType = NCsUserWidget::NManager::NInternal::FManager::FParams;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PayloadType = NCsUserWidget::NPayload::IPayload;
+using ClassHandlerType = NCsData::NManager::NHandler::TClass<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass>;
+using DataType = NCsUserWidget::NData::IData;
+using DataInterfaceMapType = NCsUserWidget::NData::FInterfaceMap;
+using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_UserWidgetPtr, DataInterfaceMapType>;
 
 public:	
 
@@ -787,7 +793,7 @@ public:
 #pragma region
 protected:
 
-	ClassHandlerType<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass>* ClassHandler;
+	ClassHandlerType* ClassHandler;
 
 	virtual void ConstructClassHandler();
 
@@ -824,7 +830,7 @@ public:
 
 protected:
 
-	ClassHandlerType<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass>* PooledClassHandler;
+	ClassHandlerType* PooledClassHandler;
 
 	virtual void ConstructPooledClassHandler();
 
@@ -876,7 +882,7 @@ public:
 #pragma region
 protected:
 
-	DataHandlerType<DataType, FCsData_UserWidgetPtr, DataInterfaceMapType>* DataHandler;
+	DataHandlerType* DataHandler;
 
 	virtual void ConstructDataHandler();
 
@@ -952,7 +958,7 @@ public:
 
 	private:
 
-	#define IDManagerType NCsResource::NManager::NValue::NFixed::NInt32::FManager
+		using IDManagerType = NCsResource::NManager::NValue::NFixed::NInt32::FManager;
 
 		IDManagerType Manager_ID;
 
@@ -988,20 +994,9 @@ public:
 		void UpdateWorldPositionAndOffset(const int32& ID, const FVector3f& WorldPosition, const FVector2f& Offset);
 
 		void Update(const FCsDeltaTime& DeltaTime);
-
-	#undef IDManagerType
 	};
 
 public:
 
 	FSetPositionInViewports SetPositionInViewports;
-
-#undef ManagerType
-#undef ManagerParamsType
-#undef PayloadType
-#undef ConstructParamsType
-#undef ClassHandlerType
-#undef DataHandlerType
-#undef DataType
-#undef DataInterfaceMapType
 };

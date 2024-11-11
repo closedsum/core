@@ -59,9 +59,15 @@ namespace NCsManagerWidgetActor
 
 namespace NCsWidgetActor
 {
-	FManager::FManager()
-		: Super()
+	namespace NManager
 	{
+		namespace NInternal
+		{
+			FManager::FManager()
+				: Super()
+			{
+			}
+		}
 	}
 }
 
@@ -75,6 +81,12 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 	: Super(ObjectInitializer)
 {
 }
+
+using ManagerParamsType = NCsWidgetActor::NManager::NInternal::FManager::FParams;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PayloadType = NCsWidgetActor::NPayload::IPayload;
+using PayloadImplType = NCsWidgetActor::NPayload::FImpl;
+using DataType = NCsWidgetActor::NData::IData;
 
 // Singleton
 #pragma region
@@ -357,8 +369,6 @@ void UCsManager_WidgetActor::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsWidgetActor::FManager::FParams ManagerParamsType;
-
 		ManagerParamsType ManagerParams;
 
 		ManagerParams.Name  = TEXT("UCsManager_WidgetActor::NCsWidgetActor::FManager");
@@ -397,7 +407,6 @@ void UCsManager_WidgetActor::InitInternalFromSettings()
 	}
 }
 
-#define ManagerParamsType NCsWidgetActor::FManager::FParams
 void UCsManager_WidgetActor::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
@@ -426,7 +435,6 @@ void UCsManager_WidgetActor::InitInternal(const ManagerParamsType& Params)
 	}
 	Internal.Init(Params);
 }
-#undef ManagerParamsType
 
 void UCsManager_WidgetActor::Clear()
 {
@@ -458,10 +466,8 @@ FCsWidgetActorPooled* UCsManager_WidgetActor::ConstructContainer(const FECsWidge
 	return new FCsWidgetActorPooled();
 }
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 TMulticastDelegate<void(const FCsWidgetActorPooled*, const ConstructParamsType&)>& UCsManager_WidgetActor::GetOnConstructObject_Event(const FECsWidgetActor& Type)
 {
-#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 
@@ -610,20 +616,13 @@ void UCsManager_WidgetActor::ConstructPayloads(const FECsWidgetActor& Type, cons
 	Internal.ConstructPayloads(Type, Size);
 }
 
-#define PayloadType NCsWidgetActor::NPayload::IPayload
 PayloadType* UCsManager_WidgetActor::ConstructPayload(const FECsWidgetActor& Type)
 {
-#undef PayloadType
-
-	typedef NCsWidgetActor::NPayload::FImpl PayloadImplType;
-
 	return new PayloadImplType();
 }
 
-#define PayloadType NCsWidgetActor::NPayload::IPayload
 PayloadType* UCsManager_WidgetActor::AllocatePayload(const FECsWidgetActor& Type)
 {
-#undef PayloadType
 	return Internal.AllocatePayload(Type);
 }
 
@@ -632,10 +631,8 @@ PayloadType* UCsManager_WidgetActor::AllocatePayload(const FECsWidgetActor& Type
 	// Spawn
 #pragma region
 
-#define PayloadType NCsWidgetActor::NPayload::IPayload
 const FCsWidgetActorPooled* UCsManager_WidgetActor::Spawn(const FECsWidgetActor& Type, PayloadType* Payload)
 {
-#undef PayloadType
 	return Internal.Spawn(Type, Payload);
 }
 
@@ -749,8 +746,6 @@ void UCsManager_WidgetActor::ConstructDataHandler()
 	DataHandler->MyRoot = MyRoot;
 }
 
-#define DataType NCsWidgetActor::NData::IData
-
 DataType* UCsManager_WidgetActor::GetData(const FName& Name)
 {
 	using namespace NCsManagerWidgetActor::NCached;
@@ -774,7 +769,5 @@ DataType* UCsManager_WidgetActor::GetDataChecked(const FString& Context, const F
 {
 	return GetDataChecked(Context, Type.GetFName());
 }
-
-#undef DataType
 
 #pragma endregion Data

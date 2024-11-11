@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "Managers/Save/CsTypes_Save.h"
 // Log
 #include "Utility/CsPlatformServicesLog.h"
@@ -29,7 +30,9 @@ namespace NCsSave
 		*/
 		struct CSPLATFORMSERVICES_API FLibrary final
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsPlatformServices::FLog::Warning
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
 
 		// ContextRoot
 		#pragma region
@@ -64,9 +67,9 @@ namespace NCsSave
 			* @param Log
 			* return				Context for UCsManager_Save.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				return nullptr;
 			}
@@ -135,7 +138,7 @@ namespace NCsSave
 			* @param Log
 			* return				UCsManager_Save.
 			*/
-			static UCsManager_Save* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
+			static UCsManager_Save* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get the reference to UCsManager_Save from a ContextObject.
@@ -148,7 +151,7 @@ namespace NCsSave
 			* return				UCsManager_Save.
 			*/
 			template<typename T>
-			static T* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel)
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				UCsManager_Save* O = GetChecked(Context, ContextObject);
 
@@ -224,8 +227,8 @@ namespace NCsSave
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SetSafeCurrentSave(const FString& Context, const UObject* ContextObject, const ECsSave& Save, LogLevel);
-			FORCEINLINE static bool SetSafeCurrentSave(const FString& Context, const UObject* ContextObject, const ECsSave& Save, bool& OutSuccess, LogLevel)
+			static bool SetSafeCurrentSave(const FString& Context, const UObject* ContextObject, const ECsSave& Save, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SetSafeCurrentSave(const FString& Context, const UObject* ContextObject, const ECsSave& Save, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SetSafeCurrentSave(Context, ContextObject, Save, Log);
 				return OutSuccess;
@@ -256,8 +259,8 @@ namespace NCsSave
 			*						A reference to the GameInstance.
 			* @param Log			(optional)
 			*/
-			static bool SafeEnumerate(const FString& Context, const UObject* ContextObject, LogLevel);
-			FORCEINLINE static bool SafeEnumerate(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+			static bool SafeEnumerate(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeEnumerate(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeEnumerate(Context, ContextObject, Log);
 				return OutSuccess;
@@ -293,8 +296,8 @@ namespace NCsSave
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeRead(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, LogLevel);
-			FORCEINLINE static bool SafeRead(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, bool& OutSuccess, LogLevel)
+			static bool SafeRead(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeRead(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeRead(Context, ContextObject, Profile, Save, Log);
 				return OutSuccess;
@@ -322,8 +325,8 @@ namespace NCsSave
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeReadAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, LogLevel);
-			FORCEINLINE static bool SafeReadAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, bool& OutSuccess, LogLevel)
+			static bool SafeReadAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeReadAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeReadAll(Context, ContextObject, Profile, Log);
 				return OutSuccess;
@@ -359,8 +362,8 @@ namespace NCsSave
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeWrite(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, LogLevel);
-			FORCEINLINE static bool SafeWrite(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, bool& OutSuccess, LogLevel)
+			static bool SafeWrite(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeWrite(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeWrite(Context, ContextObject, Profile, Save, Log);
 				return OutSuccess;
@@ -388,8 +391,8 @@ namespace NCsSave
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeWriteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, LogLevel);
-			FORCEINLINE static bool SafeWriteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, bool& OutSuccess, LogLevel)
+			static bool SafeWriteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeWriteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeWriteAll(Context, ContextObject, Profile, Log);
 				return OutSuccess;
@@ -421,8 +424,8 @@ namespace NCsSave
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeDelete(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, LogLevel);
-			FORCEINLINE static bool SafeDelete(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, bool& OutSuccess, LogLevel)
+			static bool SafeDelete(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeDelete(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeDelete(Context, ContextObject, Profile, Save, Log);
 				return OutSuccess;
@@ -446,8 +449,8 @@ namespace NCsSave
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeDeleteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, LogLevel);
-			FORCEINLINE static bool SafeDeleteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, bool& OutSuccess, LogLevel)
+			static bool SafeDeleteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeDeleteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeDeleteAll(Context, ContextObject, Profile, Log);
 				return OutSuccess;
@@ -469,16 +472,14 @@ namespace NCsSave
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeDeleteAllContent(const FString& Context, const UObject* ContextObject, LogLevel);
-			FORCEINLINE static bool SafeDeleteAllContent(const FString& Context, const UObject* ContextObject, bool& OutSuccess, LogLevel)
+			static bool SafeDeleteAllContent(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			FORCEINLINE static bool SafeDeleteAllContent(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				OutSuccess = SafeDeleteAllContent(Context, ContextObject, Log);
 				return OutSuccess;
 			}
 
 		#pragma endregion Delete
-
-		#undef LogLevel
 		};
 	}
 }

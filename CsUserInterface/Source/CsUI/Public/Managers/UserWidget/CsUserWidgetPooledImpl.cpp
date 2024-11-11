@@ -50,6 +50,13 @@ UCsUserWidgetPooledImpl::UCsUserWidgetPooledImpl(const FObjectInitializer& Objec
 {
 }
 
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+using PooledPayloadLibrary = NCsPooledObject::NPayload::FLibrary;
+using PayloadType = NCsUserWidget::NPayload::IPayload;
+using ChangeType = NCsUserWidget::NPayload::EChange;
+using CacheImplType = NCsUserWidget::NCache::NImpl::FImpl;
+
 // UObject Interface
 #pragma region
 
@@ -65,11 +72,8 @@ void UCsUserWidgetPooledImpl::BeginDestroy()
 // ICsOnConstructObject
 #pragma region
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 void UCsUserWidgetPooledImpl::OnConstructObject(const ConstructParamsType& Params)
 {
-#undef ConstructParamsType
-
 	using namespace NCsUserWidgetPooledImpl::NCached;
 
 	const FString& Context = Str::OnConstructObject;
@@ -155,11 +159,8 @@ void UCsUserWidgetPooledImpl::Shutdown()
 // ICsPooledObject
 #pragma region
 
-#define PayloadType NCsPooledObject::NPayload::IPayload
-void UCsUserWidgetPooledImpl::Allocate(PayloadType* Payload)
+void UCsUserWidgetPooledImpl::Allocate(PooledPayloadType* Payload)
 {
-#undef PayloadType
-
 	using namespace NCsUserWidgetPooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
@@ -168,10 +169,7 @@ void UCsUserWidgetPooledImpl::Allocate(PayloadType* Payload)
 
 	PreserveChangesToDefaultMask = Payload->GetPreserveChangesFromDefaultMask();
 
-	typedef NCsUserWidget::NPayload::IPayload UserWidgetPayloadType;
-	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-
-	UserWidgetPayloadType* UserWidgetPayload = PooledPayloadLibrary::GetInterfaceChecked<UserWidgetPayloadType>(Context, Payload);
+	PayloadType* UserWidgetPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	UserWidget->SetVisibility(UserWidgetPayload->GetVisibility());
 	UserWidget->SetIsEnabled(true);
@@ -183,8 +181,6 @@ void UCsUserWidgetPooledImpl::Deallocate()
 {
 	UserWidget->SetVisibility(ESlateVisibility::Collapsed);
 	UserWidget->SetIsEnabled(false);
-
-	typedef NCsUserWidget::NPayload::EChange ChangeType;
 
 	// Keep in viewport
 	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::AddedToViewport) &&
@@ -206,19 +202,12 @@ void UCsUserWidgetPooledImpl::Deallocate()
 
 void UCsUserWidgetPooledImpl::ConstructCache()
 {
-	typedef NCsUserWidget::NCache::FImpl CacheImplType;
-
 	CacheImpl = new CacheImplType();
 	Cache	  = CacheImpl;
 }
 
-#define UserWidgetPayloadType NCsUserWidget::NPayload::IPayload
-void UCsUserWidgetPooledImpl::Handle_AddToViewport(UserWidgetPayloadType* Payload)
+void UCsUserWidgetPooledImpl::Handle_AddToViewport(PayloadType* Payload)
 {
-#undef UserWidgetPayloadType
-
-	typedef NCsUserWidget::NPayload::EChange ChangeType;
-
 	// If ADD to viewport, Mark the change
 	if (Payload->ShouldAddToViewport())
 	{

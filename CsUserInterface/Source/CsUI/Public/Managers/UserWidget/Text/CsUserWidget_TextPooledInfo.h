@@ -131,10 +131,12 @@ namespace NCsUserWidget
 			*/
 			struct CSUI_API FInfo final
 			{
-			#define DeallocateMethodType NCsUserWidget::EDeallocateMethod
-			#define OutlineSettingsType NCsUserWidget::NText::FOutline
-			#define ShadowSettingsType NCsUserWidget::NText::FShadow
-			#define AnimParamsType NCsUserWidget::NAnim::NPlay::FParams
+			private:
+
+				using DeallocateMethodType = NCsUserWidget::EDeallocateMethod;
+				using OutlineSettingsType = NCsUserWidget::NText::FOutline;
+				using ShadowSettingsType = NCsUserWidget::NText::FShadow;
+				using AnimParamsType = NCsUserWidget::NAnim::NPlay::FParams;
 
 			private:
 
@@ -268,11 +270,6 @@ namespace NCsUserWidget
 				* return
 				*/
 				const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const int32& Value, const FVector3f& Location) const;
-
-			#undef DeallocateMethodType
-			#undef OutlineSettingsType
-			#undef ShadowSettingsType
-			#undef AnimParamsType
 			};
 		}
 	}

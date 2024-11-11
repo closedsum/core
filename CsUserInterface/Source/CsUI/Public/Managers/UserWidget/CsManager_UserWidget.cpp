@@ -84,9 +84,15 @@ namespace NCsManagerUserWidget
 
 namespace NCsUserWidget
 {
-	FManager::FManager()
-		: Super()
+	namespace NManager
 	{
+		namespace NInternal
+		{
+			FManager::FManager()
+				: Super()
+			{
+			}
+		}
 	}
 }
 
@@ -101,6 +107,11 @@ UCsManager_UserWidget::UCsManager_UserWidget(const FObjectInitializer& ObjectIni
 	SetPositionInViewports()
 {
 }
+
+using ManagerParamsType = NCsUserWidget::NManager::NInternal::FManager::FParams;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PayloadType = NCsUserWidget::NPayload::IPayload;
+using DataType = NCsUserWidget::NData::IData;
 
 // Singleton
 #pragma region
@@ -438,8 +449,6 @@ void UCsManager_UserWidget::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsUserWidget::FManager::FParams ManagerParamsType;
-
 		ManagerParamsType ManagerParams;
 
 		ManagerParams.Name  = TEXT("UCsManager_UserWidget::NCsUserWidget::FManager");
@@ -489,7 +498,6 @@ void UCsManager_UserWidget::InitInternalFromSettings()
 	}
 }
 
-#define ManagerParamsType NCsUserWidget::FManager::FParams
 void UCsManager_UserWidget::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
@@ -518,7 +526,6 @@ void UCsManager_UserWidget::InitInternal(const ManagerParamsType& Params)
 	}
 	Internal.Init(Params);
 }
-#undef ManagerParamsType
 
 void UCsManager_UserWidget::Clear()
 {
@@ -550,8 +557,6 @@ FCsUserWidgetPooled* UCsManager_UserWidget::ConstructContainer(const FECsUserWid
 	return new FCsUserWidgetPooled();
 }
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-
 UObject* UCsManager_UserWidget::CustomNewObject(const ConstructParamsType& Params)
 {
 	using namespace NCsManagerUserWidget::NCached;
@@ -576,8 +581,6 @@ TMulticastDelegate<void(const FCsUserWidgetPooled*, const ConstructParamsType&)>
 {
 	return Internal.GetOnConstructObject_Event(Type);
 }
-
-#undef ConstructParamsType
  
 		// Add
 #pragma region
@@ -725,8 +728,6 @@ void UCsManager_UserWidget::ConstructPayloads(const FECsUserWidgetPooled& Type, 
 	Internal.ConstructPayloads(GetTypeFromTypeMap(Type), Size);
 }
 
-#define PayloadType NCsUserWidget::NPayload::IPayload
-
 PayloadType* UCsManager_UserWidget::ConstructPayload(const FECsUserWidgetPooled& Type)
 {
 	// TODO: Perform a new in place for all structs.
@@ -786,17 +787,13 @@ PayloadType* UCsManager_UserWidget::AllocatePayload(const FECsUserWidgetPooled& 
 	return Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 }
 
-#undef PayloadType
-
 #pragma endregion Payload
 
 	// Spawn
 #pragma region
 
-#define PayloadType NCsUserWidget::NPayload::IPayload
 const FCsUserWidgetPooled* UCsManager_UserWidget::Spawn(const FECsUserWidgetPooled& Type, PayloadType* Payload)
 {
-#undef PayloadType
 	return Internal.Spawn(Type, Payload);
 }
 
@@ -870,9 +867,9 @@ void UCsManager_UserWidget::LogTransaction(const FString& Context, const ECsPool
 
 void UCsManager_UserWidget::ConstructClassHandler()
 {
-	typedef NCsUserWidget::NManager::NHandler::FClass ClassHandlerType;
+	using _ClassHandlerType = NCsUserWidget::NManager::NHandler::NClass::FClass;
 
-	ClassHandler = new ClassHandlerType();
+	ClassHandler = new _ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
 }
@@ -944,14 +941,12 @@ FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidgetChecked(const FString& Con
 
 void UCsManager_UserWidget::ConstructDataHandler()
 {
-	typedef NCsUserWidget::NManager::NHandler::FData DataHandlerType;
+	using _DataHandlerType = NCsUserWidget::NManager::NHandler::FData;
 
-	DataHandler = new DataHandlerType();
+	DataHandler = new _DataHandlerType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
 }
-
-#define DataType NCsUserWidget::NData::IData
 
 DataType* UCsManager_UserWidget::GetData(const FName& Name)
 {
@@ -994,8 +989,6 @@ DataType* UCsManager_UserWidget::GetDataChecked(const FString& Context, const FE
 {
 	return DataHandler->GetDataChecked<EMCsUserWidgetPooled, FECsUserWidgetPooled>(Context, Type);
 }
-
-#undef DataType
 
 #pragma endregion Data
 

@@ -72,9 +72,9 @@ namespace NCsEnum
 				};
 			};
 
-		#define PayloadType NCsEnum::NSettings::FLibrary::FPopulate::FPayload
+			using PayloadType = NCsEnum::NSettings::FLibrary::FPopulate::FPayload;
+
 			static void Populate(const FString& Context, PayloadType& Payload);
-		#undef PayloadType
 		};
 	}
 }

@@ -57,3 +57,5 @@ namespace NCsPrimitiveComponent
 	#undef SET_CONTEXT
 	};
 }
+
+using CsPrimitiveComponentLibrary = NCsPrimitiveComponent::FLibrary;

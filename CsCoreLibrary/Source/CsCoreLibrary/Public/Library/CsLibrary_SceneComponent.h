@@ -245,3 +245,5 @@ namespace NCsSceneComponent
 	#undef LogLevel
 	};
 }
+
+using CsSceneComponentLibrary = NCsSceneComponent::FLibrary;

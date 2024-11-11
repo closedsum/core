@@ -20,6 +20,14 @@ class CSTIME_API UCsManager_Time : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	using ConsoleCommandManagerType = NCsTime::NManager::FConsoleCommand;
+	using OnPauseEventType = NCsTime::NManager::FOnPause;
+	using OnPauseDelegateType = OnPauseEventType::FDelegate;
+	using OnSetScaledDeltaTimeEventType = NCsTime::NManager::FOnSetScaledDeltaTime;
+	using OnResetScaledDeltaTimeEventType = NCsTime::NManager::FOnResetScaledDeltaTime;
+
 // Singleton
 #pragma region
 public:
@@ -96,9 +104,7 @@ public:
 #pragma region
 private:
 
-#define ConsoleCommandManagerType NCsTime::NManager::FConsoleCommand
 	ConsoleCommandManagerType* Manager_ConsoleCommand;
-#undef ConsoleCommandManagerType
 
 #pragma endregion Console Command
 
@@ -119,9 +125,6 @@ public:
 #pragma region
 private:
 
-#define OnPauseEventType NCsTime::NManager::FOnPause
-#define OnPauseDelegateType OnPauseEventType::FDelegate
-
 	TArray<OnPauseEventType> OnPause_Events;
 
 public:
@@ -135,9 +138,6 @@ public:
 	{
 		return OnPause_Events[Group.GetValue()].Add(OnPause);
 	}
-
-#undef OnPauseDelegateType
-#undef OnPauseEventType
 
 	FORCEINLINE void RemoveOnPause(const FECsUpdateGroup& Group, const FDelegateHandle& Handle)
 	{
@@ -330,10 +330,8 @@ public:
 		OnSetScaledDeltaTime_ScriptEvent.Broadcast(Group, Scale);
 	}
 
-#define OnSetScaledDeltaTimeEventType NCsTime::NManager::FOnSetScaledDeltaTime
 	OnSetScaledDeltaTimeEventType OnSetScaledDeltaTime_Event;
 	FORCEINLINE OnSetScaledDeltaTimeEventType& GetOnSetScaledDeltaTime_Event() { return OnSetScaledDeltaTime_Event; }
-#undef OnSetScaledDeltaTimeEventType
 
 	UPROPERTY(BlueprintAssignable, Category = "CsCore|Mangager|Time")
 	FCsManagerTime_OnSetScaledDeltaTime OnSetScaledDeltaTime_ScriptEvent;
@@ -351,10 +349,8 @@ public:
 		OnResetScaledDeltaTime_ScriptEvent.Broadcast(Group);
 	}
 
-#define OnResetScaledDeltaTimeEventType NCsTime::NManager::FOnResetScaledDeltaTime
 	OnResetScaledDeltaTimeEventType OnResetScaledDeltaTime_Event;
 	FORCEINLINE OnResetScaledDeltaTimeEventType& GetOnResetScaledDeltaTime_Event() { return OnResetScaledDeltaTime_Event; }
-#undef OnResetScaledDeltaTimeEventType
 
 	UPROPERTY(BlueprintAssignable, Category = "CsCore|Mangager|Time")
 	FCsManagerTime_OnResetScaledDeltaTime OnResetScaledDeltaTime_ScriptEvent;

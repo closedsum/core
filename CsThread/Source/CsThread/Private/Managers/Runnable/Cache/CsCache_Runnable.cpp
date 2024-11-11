@@ -8,11 +8,10 @@
 
 namespace NCsRunnable
 {
-	#define PayloadType NCsRunnable::NPayload::FImpl
+	using PayloadType = NCsRunnable::NPayload::FImpl;
+
 	void FCache::Allocate(PayloadType* Payload)
 	{
-	#undef PayloadType
-
 		bAllocated = true;
 		Owner = Payload->GetOwner();
 		Time = Payload->Time;

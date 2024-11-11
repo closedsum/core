@@ -28,17 +28,21 @@ namespace NCsSkin
 
 						static const FName Name;
 
+					private:
+
+						// Allow clearer names without name collisions
+						struct _
+						{
+							using MaterialType = NCsMaterial::NInterface::FWithRangeParameters;
+						};
+
 					public:
 
 						virtual ~IWithParameters() {}
 
-					#define MaterialType NCsMaterial::NInterface::FWithRangeParameters
-
 						/**
 						*/
-						virtual const TArray<MaterialType>& GetMaterials() const = 0;
-
-					#undef MaterialType
+						virtual const TArray<_::MaterialType>& GetMaterials() const = 0;
 					};
 				}
 			}
@@ -65,13 +69,18 @@ public:
 
 	static const FName Name;
 
-public:
+private:
 
-#define MaterialType NCsMaterial::NInterface::FWithRangeParameters
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using MaterialType = NCsMaterial::NInterface::FWithRangeParameters;
+	};
+
+
+public:
 
 	/**
 	*/
-	virtual const TArray<MaterialType>& GetMaterials() const = 0;
-
-#undef MaterialType
+	virtual const TArray<_::MaterialType>& GetMaterials() const = 0;
 };

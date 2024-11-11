@@ -22,6 +22,8 @@ namespace NCsRunnable
 			{
 			private:
 
+				using TaskType = NCsRunnable::NTask::ITask;
+
 				int32 Index;
 
 			public:
@@ -30,9 +32,7 @@ namespace NCsRunnable
 
 				TWeakObjectPtr<UObject> Owner;
 
-			#define CsRunnableTaskType NCsRunnable::NTask::ITask
-				CsRunnableTaskType* Task;
-			#undef CsRunnableTaskType
+				TaskType* Task;
 
 				FCsRunnableHandle Handle;
 

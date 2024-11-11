@@ -28,6 +28,12 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsRunnable, NTask, NPayload, FImpl)
 */
 class CSTHREAD_API FCsRunnable : public FRunnable
 {
+private:
+
+	using PayloadType = NCsRunnable::NPayload::FImpl;
+	using CacheType = NCsRunnable::FCache;
+	using TaskType = NCsRunnable::NTask::ITask;
+	using TaskPayloadType = NCsRunnable::NTask::NPayload::FImpl;
 
 public:
 
@@ -49,9 +55,7 @@ public:
 #pragma region
 public:
 
-#define PayloadType NCsRunnable::NPayload::FImpl
 	void Allocate(PayloadType* Payload);
-#undef PayloadType
 
 	void Deallocate();
 
@@ -78,15 +82,13 @@ public:
 
 #pragma endregion Thread
 
-#define CsRunnableCacheType NCsRunnable::FCache
+
 
 private:
 
-	CsRunnableCacheType* Cache;
+	CacheType* Cache;
 public:
-	FORCEINLINE CsRunnableCacheType* GetCache() const { return Cache; }
-
-#undef CsRunnableCacheType
+	FORCEINLINE CacheType* GetCache() const { return Cache; }
 
 private:
 
@@ -132,18 +134,14 @@ public:
 // Task
 #pragma region
 
-#define CsRunnableTaskType NCsRunnable::NTask::ITask
-
 private:
 
 	/** */
-	CsRunnableTaskType* Task;
+	TaskType* Task;
 
 public:
 
-	FORCEINLINE CsRunnableTaskType* GetTask() const { return Task; }
-
-#undef CsRunnableTaskType
+	FORCEINLINE TaskType* GetTask() const { return Task; }
 
 private:
 
@@ -166,9 +164,7 @@ public:
 		return TaskState == ETaskState::Complete;
 	}
 
-#define TaskPayloadType NCsRunnable::NTask::NPayload::FImpl
 	FCsRunnableHandle StartTask(TaskPayloadType* Payload);
-#undef TaskPayloadType
 
 	void StopTask();
 

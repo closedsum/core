@@ -160,6 +160,8 @@ namespace NCsBlueprint
 	{
 		SET_CONTEXT(GetSafeClass);
 
+		void(*Log)(const FString&) = LogLevel;
+
 		return GetSafeClass(Context, CS_CAST(Blueprint, UObject, UBlueprint), nullptr);
 	}
 

@@ -28,34 +28,37 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerWidgetActor_OnSpawn, cons
 
 class ICsWidgetActor;
 
-#define ManagerMapType NCsPooledObject::NManager::TTMap
-#define PayloadType NCsWidgetActor::NPayload::IPayload
-
 namespace NCsWidgetActor
 {
-	class CSUI_API FManager : public ManagerMapType<ICsWidgetActor, FCsWidgetActorPooled, PayloadType, FECsWidgetActor>
+	namespace NManager
 	{
-	private:
-
-		typedef ManagerMapType<ICsWidgetActor, FCsWidgetActorPooled, PayloadType, FECsWidgetActor> Super;
-
-	public:
-
-		FManager();
-
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsWidgetActor& Type) const override
+		namespace NInternal
 		{
-			return Type.GetName();
-		}
+			using PayloadType = NCsWidgetActor::NPayload::IPayload;
+			using ManagerMapType = NCsPooledObject::NManager::TTMap<ICsWidgetActor, FCsWidgetActorPooled, PayloadType, FECsWidgetActor>;
 
-		FORCEINLINE virtual bool IsValidKey(const FECsWidgetActor& Type) const override
-		{
-			return EMCsWidgetActor::Get().IsValidEnum(Type);
-		}
-	};
+			class CSUI_API FManager : public ManagerMapType
+			{
+			private:
 
-#undef ManagerMapType
-#undef PayloadType
+				using Super = ManagerMapType;
+
+			public:
+
+				FManager();
+
+				FORCEINLINE virtual const FString& KeyTypeToString(const FECsWidgetActor& Type) const override
+				{
+					return Type.GetName();
+				}
+
+				FORCEINLINE virtual bool IsValidKey(const FECsWidgetActor& Type) const override
+				{
+					return EMCsWidgetActor::Get().IsValidEnum(Type);
+				}
+			};
+		}
+	}
 }
 
 #pragma endregion Internal
@@ -86,14 +89,14 @@ class CSUI_API UCsManager_WidgetActor : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define ManagerType NCsWidgetActor::FManager
-#define ManagerParamsType NCsWidgetActor::FManager::FParams
-#define PayloadType NCsWidgetActor::NPayload::IPayload
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-#define ClassHandlerType NCsData::NManager::NHandler::TClass
-#define DataHandlerType NCsData::NManager::NHandler::TData
-#define DataType NCsWidgetActor::NData::IData
-#define DataInterfaceMapType NCsWidgetActor::NData::FInterfaceMap
+using ManagerType = NCsWidgetActor::NManager::NInternal::FManager;
+using ManagerParamsType = NCsWidgetActor::NManager::NInternal::FManager::FParams;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PayloadType = NCsWidgetActor::NPayload::IPayload;
+using ClassHandlerType = NCsData::NManager::NHandler::TClass<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActorClass>;
+using DataType = NCsWidgetActor::NData::IData;
+using DataInterfaceMapType = NCsWidgetActor::NData::FInterfaceMap;
+using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_WidgetActorPtr, DataInterfaceMapType>;
 
 public:	
 
@@ -708,7 +711,7 @@ public:
 #pragma region
 protected:
 
-	ClassHandlerType<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActorClass>* ClassHandler;
+	ClassHandlerType* ClassHandler;
 
 	virtual void ConstructClassHandler();
 
@@ -749,7 +752,7 @@ public:
 #pragma region
 protected:
 
-	DataHandlerType<DataType, FCsData_WidgetActorPtr, DataInterfaceMapType>* DataHandler;
+	DataHandlerType* DataHandler;
 
 	virtual void ConstructDataHandler();
 
@@ -792,13 +795,4 @@ public:
 	DataType* GetDataChecked(const FString& Context, const FECsWidgetActor& Type);
 
 #pragma endregion Data
-
-#undef ManagerType
-#undef ManagerParamsType
-#undef PayloadType
-#undef ConstructParamsType
-#undef ClassHandlerType
-#undef DataHandlerType
-#undef DataType
-#undef DataInterfaceMapType
 };

@@ -45,25 +45,26 @@ namespace NCsRunnable
 {
 	namespace NPayload
 	{
-	#define PayloadType NCsRunnable::NPayload::FImpl
-
-		/**
-		* Container for holding a reference to a PayloadType (NCsRunnable::NPayload::FImpl).
-		* This serves as an easy way for a Manager Resource to keep track of the resource.
-		*/
-		struct CSTHREAD_API FResource : public TCsResourceContainer<PayloadType>
+		namespace NImpl
 		{
-		};
+			using PayloadType = NCsRunnable::NPayload::FImpl;
 
-		/**
-		* A manager handling allocating and deallocating of a PayloadType (NCsRunnable::NPayload::FImpl) and
-		* are wrapped in the container: FResource.
-		*/
-		struct CSTHREAD_API FManager : public NCsResource::NManager::NValue::TFixed<PayloadType, FResource, 0>
-		{
-		};
+			/**
+			* Container for holding a reference to a PayloadType (NCsRunnable::NPayload::FImpl).
+			* This serves as an easy way for a Manager Resource to keep track of the resource.
+			*/
+			struct CSTHREAD_API FResource : public TCsResourceContainer<PayloadType>
+			{
+			};
 
-	#undef PayloadType
+			/**
+			* A manager handling allocating and deallocating of a PayloadType (NCsRunnable::NPayload::FImpl) and
+			* are wrapped in the container: FResource.
+			*/
+			struct CSTHREAD_API FManager : public NCsResource::NManager::NValue::TFixed<PayloadType, FResource, 0>
+			{
+			};
+		}
 	}
 }
 
@@ -74,13 +75,13 @@ namespace NCsRunnable
 	{
 		namespace NInfo
 		{
-		#define CsRunnableTaskInfoType NCsRunnable::NTask::NInfo::FInfo
+			using InfoType = NCsRunnable::NTask::NInfo::FInfo;
 
 			/**
 			* Container for holding a reference to a InfoType (NCsRunnable::NTask::NInfo::Info).
 			* This serves as an easy way for a Manager Resource to keep track of the resource.
 			*/
-			struct CSTHREAD_API FResource : public TCsResourceContainer<CsRunnableTaskInfoType>
+			struct CSTHREAD_API FResource : public TCsResourceContainer<InfoType>
 			{
 			};
 
@@ -88,11 +89,9 @@ namespace NCsRunnable
 			* A manager handling allocating and deallocating of a InfoType (NCsRunnable::NTask::NInfo::Info) and
 			* are wrapped in the container: FResource.
 			*/
-			struct CSTHREAD_API FManager : public NCsResource::NManager::NValue::TFixed<CsRunnableTaskInfoType, FResource, 0>
+			struct CSTHREAD_API FManager : public NCsResource::NManager::NValue::TFixed<InfoType, FResource, 0>
 			{
 			};
-
-		#undef CsRunnableTaskInfoType
 		}
 	}
 }
@@ -104,7 +103,7 @@ namespace NCsRunnable
 	{
 		namespace NPayload
 		{
-		#define PayloadType NCsRunnable::NTask::NPayload::FImpl
+			using PayloadType = NCsRunnable::NTask::NPayload::FImpl;
 
 			/**
 			* Container for holding a reference to a PayloadType (NCsRunnable::NTask::NPayload::FImpl).
@@ -121,8 +120,6 @@ namespace NCsRunnable
 			struct CSTHREAD_API FManager : public NCsResource::NManager::NValue::TFixed<PayloadType, FResource, 0>
 			{
 			};
-
-		#undef PayloadType
 		}
 	}
 }
@@ -135,6 +132,15 @@ UCLASS(transient)
 class CSTHREAD_API UCsManager_Runnable : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	using RunnableManagerType = NCsRunnable::FManager;
+	using PayloadType = NCsRunnable::NPayload::FImpl;
+	using PayloadManagerType = NCsRunnable::NPayload::NImpl::FManager;
+	using TaskPayloadType = NCsRunnable::NTask::NPayload::FImpl;
+	using TaskPayloadManagerType = NCsRunnable::NTask::NPayload::FManager;
+	using TaskInfoManagerType = NCsRunnable::NTask::NInfo::FManager;
 
 // Singleton
 #pragma region
@@ -217,9 +223,6 @@ public:
 	// Runnable
 #pragma region
 
-#define PayloadType NCsRunnable::NPayload::FImpl
-#define PayloadManagerType NCsRunnable::NPayload::FManager
-
 private:
 
 	PayloadManagerType Manager_Payload;
@@ -233,24 +236,16 @@ public:
 
 private:
 
-#define RunnableManagerType NCsRunnable::FManager
 	RunnableManagerType Manager_Internal;
-#undef RunnableManagerType
 
 public:
 
 	FCsRunnable* Start(PayloadType* Payload);
 
-#undef PayloadType
-#undef PayloadManagerType
-
 #pragma endregion Payload
 
 	// Task
 #pragma region
-
-#define TaskPayloadType NCsRunnable::NTask::NPayload::FImpl
-#define TaskPayloadManagerType NCsRunnable::NTask::NPayload::FManager
 
 private:
 
@@ -267,9 +262,7 @@ public:
 
 private:
 
-#define TaskInfoManagerType NCsRunnable::NTask::NInfo::FManager
 	TaskInfoManagerType Manager_TaskInfo;
-#undef TaskInfoManagerType
 
 public:
 
@@ -277,9 +270,6 @@ public:
 	FCsRunnableHandle StartTask(TaskPayloadType* Payload);
 
 	bool StopQueuedTask(const FCsRunnableHandle& Handle);
-
-#undef TaskPayloadType
-#undef TaskPayloadManagerType
 
 #pragma endregion Task
 

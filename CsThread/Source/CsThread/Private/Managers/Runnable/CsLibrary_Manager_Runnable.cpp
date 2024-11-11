@@ -13,6 +13,8 @@
 // Game
 #include "Engine/GameInstance.h"
 
+using LogClassType = NCsThread::FLog;
+
 namespace NCsRunnable
 {
 	namespace NManager
@@ -29,8 +31,7 @@ namespace NCsRunnable
 			}
 		}
 
-		#define LogLevel void(*Log)(const FString&) /*=&NCsThread::FLog::Warning*/
-		#define GameInstanceLibrary NCsGameInstance::FLibrary
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		// ContextRoot
 		#pragma region
@@ -39,12 +40,12 @@ namespace NCsRunnable
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
 		{
-			return GameInstanceLibrary::GetChecked(Context, ContextObject);
+			return CsGameInstanceLibrary::GetChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, LogLevel)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
-			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
+			return CsGameInstanceLibrary::GetSafe(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
@@ -72,7 +73,7 @@ namespace NCsRunnable
 			return Manager_Runnable;
 		}
 
-		UCsManager_Runnable* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, LogLevel)
+		UCsManager_Runnable* FLibrary::GetSafe(const FString& Context, UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -100,8 +101,5 @@ namespace NCsRunnable
 		}
 
 		#pragma endregion Get
-
-		#undef LogLevel
-		#undef GameInstanceLibrary
 	}
 }

@@ -226,8 +226,16 @@ public:
 
 	virtual ~ICsAchievement(){}
 
-#define ProgressType NCsAchievement::EProgress
-#define StateType NCsAchievement::EState
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using ProgressType = NCsAchievement::EProgress;
+		using StateType = NCsAchievement::EState;
+	};
+
+public:
 
 	/**
 	* Get the Id of the Achievement. This is usually the internal name for
@@ -263,7 +271,7 @@ public:
 	*
 	* return Progress Type.
 	*/
-	virtual const ProgressType& GetProgressType() const = 0;
+	virtual const _::ProgressType& GetProgressType() const = 0;
 
 	/**
 	* Set the Progress Type.
@@ -271,7 +279,7 @@ public:
 	*
 	* @param InProgressType		New Progress Type.
 	*/
-	virtual void SetProgressType(const ProgressType& InProgressType) = 0;
+	virtual void SetProgressType(const _::ProgressType& InProgressType) = 0;
 
 	/**
 	* Get the current Progress. The value is in the range defined by the Progress Type.
@@ -377,7 +385,7 @@ public:
 	*
 	* return State.
 	*/
-	virtual const StateType& GetState() const = 0;
+	virtual const _::StateType& GetState() const = 0;
 
 	/**
 	* Get the Title of the Achievement (i.e. Achievement 1 Title).
@@ -418,9 +426,6 @@ public:
 	*
 	*/
 	virtual void Complete() = 0;
-
-#undef ProgressType
-#undef StateType
 };
 
 #pragma endregion ICsAchievement
@@ -430,9 +435,12 @@ public:
 
 struct CSPLATFORMSERVICES_API FCsAchievement : public ICsAchievement
 {
+private:
+
+	using StateType = NCsAchievement::EState;
+
 public:
 
-#define StateType NCsAchievement::EState
 	/** */
 	FString Id;
 
@@ -676,8 +684,6 @@ public:
 	void ClearBit(const uint32& Index);
 
 	bool IsValidBitfield(const FString& InBitfield);
-
-#undef StateType
 };
 
 #pragma endregion FCsAchievement
@@ -1123,11 +1129,13 @@ namespace NCsAchievement
 		{
 			struct CSPLATFORMSERVICES_API FInfo
 			{
-			public:
+			private:
 
-			#define ActionType NCsAchievement::EAction
-			#define ValueType NCsAchievement::FValue
-			#define ActionStateType NCsAchievement::NAction::EState
+				using ActionType = NCsAchievement::EAction;
+				using ValueType = NCsAchievement::FValue;
+				using ActionStateType = NCsAchievement::NAction::EState;
+
+			public:
 
 				/** Action to processed. See ActionType (NCsAchievement::EAction). */
 				ActionType Action;
@@ -1211,10 +1219,6 @@ namespace NCsAchievement
 					State = ActionStateType::None;
 					bSuccess = false;
 				}
-
-			#undef ActionType
-			#undef ValueType
-			#undef ActionStateType
 			};
 		}
 	}

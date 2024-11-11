@@ -40,7 +40,7 @@ FCsRunnable::FCsRunnable() :
 	TaskState(ETaskState::None)
 
 {
-	Cache = new CsRunnableCacheType();
+	Cache = new CacheType();
 }
 
 FCsRunnable::~FCsRunnable()
@@ -59,6 +59,9 @@ FCsRunnable::~FCsRunnable()
 	}
 	delete Cache;
 }
+
+using PayloadType = NCsRunnable::NPayload::FImpl;
+using TaskPayloadType = NCsRunnable::NTask::NPayload::FImpl;
 
 // FRunnable interface
 #pragma region
@@ -131,11 +134,8 @@ void FCsRunnable::Exit()
 // Pool
 #pragma region
 
-#define PayloadType NCsRunnable::NPayload::FImpl
 void FCsRunnable::Allocate(PayloadType* Payload)
 {
-#undef PayloadType
-
 	Cache->Allocate(Payload);
 
 	Task = Payload->Task;
@@ -204,11 +204,8 @@ void FCsRunnable::SetIndex(const int32& InIndex)
 // Task
 #pragma region
 
-#define TaskPayloadType NCsRunnable::NTask::NPayload::FImpl
 FCsRunnableHandle FCsRunnable::StartTask(TaskPayloadType* Payload)
 {
-#undef TaskPayloadType
-
 	checkf(Payload, TEXT("FCsRunnable::StartTask: Payload is NULL."));
 
 	Cache->Owner = Payload->Owner;

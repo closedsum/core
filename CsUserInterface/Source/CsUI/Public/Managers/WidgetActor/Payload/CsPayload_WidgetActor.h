@@ -20,6 +20,13 @@ namespace NCsWidgetActor
 		public:
 
 			static const FName Name;
+		private:
+
+			// Allow clearer names without name collisions
+			struct _
+			{
+				using DeallocateMethodType = ECsWidgetActorDeallocateMethod;
+			};
 
 		public:
 
@@ -39,7 +46,7 @@ namespace NCsWidgetActor
 			* 
 			* return Deallocate Method
 			*/
-			virtual const ECsWidgetActorDeallocateMethod& GetDeallocateMethod() const = 0;
+			virtual const _::DeallocateMethodType& GetDeallocateMethod() const = 0;
 
 			/**
 			* Relevant if the DeallocateMethod == ECsWidgetActorDeallocateMethod::LifeTime.

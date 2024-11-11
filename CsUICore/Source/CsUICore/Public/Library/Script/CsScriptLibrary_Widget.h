@@ -7,7 +7,6 @@
 #include "Types/CsTypes_UserWidget_Anim.h"
 #include "Templates/SubclassOf.h"
 
-
 #include "CsScriptLibrary_Widget.generated.h"
 
 class UUserWidget;

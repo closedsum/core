@@ -1,13 +1,13 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 #include "Managers/Data/Handler/CsManager_Data_ClassHandler.h"
 // Types
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #include "Managers/UserWidget/CsUserWidgetPooled.h"
 // UI
 #include "Blueprint/UserWidget.h"
-#pragma once
 
 namespace NCsUserWidget
 {
@@ -15,55 +15,70 @@ namespace NCsUserWidget
 	{
 		namespace NHandler
 		{
-#define ClassHandlerType NCsData::NManager::NHandler::TClass
-
-			/**
-			*/
-			class CSUI_API FClass : public ClassHandlerType<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass>
+			namespace NClass
 			{
-			private:
+				using ClassHandlerType = NCsData::NManager::NHandler::TClass<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass>;
 
-				typedef ClassHandlerType<FCsUserWidgetPtr, FCsUserWidgetPtr, FECsUserWidgetClass> Super;
+				/**
+				*/
+				class CSUI_API FClass : public ClassHandlerType
+				{
+				private:
 
-			public:
+					using Super = ClassHandlerType;
 
-				FClass();
+				public:
 
-			// ClassHandlerType
-			#pragma region
-			protected:
+					FClass();
 
-				virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
+				// ClassHandlerType
+				#pragma region
+				protected:
 
-				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+					virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
 
-			#pragma endregion ClassHandlerType
-			};
+					virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
 
-			/**
-			*/
-			class CSUI_API FPooledClass : public ClassHandlerType<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass>
+				#pragma endregion ClassHandlerType
+				};
+			}
+		}
+	}
+}
+
+namespace NCsUserWidget
+{
+	namespace NManager
+	{
+		namespace NHandler
+		{
+			namespace NPooledClass
 			{
-			private:
+				using ClassHandlerType = NCsData::NManager::NHandler::TClass<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass>;
 
-				typedef ClassHandlerType<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass> Super;
+				/**
+				*/
+				class CSUI_API FPooledClass : public ClassHandlerType
+				{
+				private:
 
-			public:
+					using Super = ClassHandlerType;
 
-				FPooledClass();
+				public:
 
-			// ClassHandlerType
-			#pragma region
-			protected:
+					FPooledClass();
 
-				virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
+				// ClassHandlerType
+				#pragma region
+				protected:
 
-				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+					virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
 
-			#pragma endregion ClassHandlerType
-			};
+					virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
 
-#undef ClassHandlerType
+				#pragma endregion ClassHandlerType
+				};
+			}
 		}
 	}
 }

@@ -706,9 +706,9 @@ void UCsManager_WidgetActor::LogTransaction(const FString& Context, const ECsPoo
 
 void UCsManager_WidgetActor::ConstructClassHandler()
 {
-	typedef NCsWidgetActor::NManager::NHandler::FClass ClassHandlerType;
+	using _ClassHandlerType = NCsWidgetActor::NManager::NHandler::NClass::FClass;
 
-	ClassHandler = new ClassHandlerType();
+	ClassHandler = new _ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
 }
@@ -739,7 +739,7 @@ FCsWidgetActorPooled* UCsManager_WidgetActor::GetWidgetActorChecked(const FStrin
 
 void UCsManager_WidgetActor::ConstructDataHandler()
 {
-	typedef NCsWidgetActor::NManager::NHandler::FData DataHandlerType;
+	using _DataHandlerType = NCsWidgetActor::NManager::NHandler::NData::FData;
 
 	DataHandler = new DataHandlerType();
 	DataHandler->Outer = this;

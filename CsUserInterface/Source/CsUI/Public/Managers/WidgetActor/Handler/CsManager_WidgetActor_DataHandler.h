@@ -15,34 +15,32 @@ namespace NCsWidgetActor
 	{
 		namespace NHandler
 		{
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataType NCsWidgetActor::NData::IData
-		#define DataInterfaceMapType NCsWidgetActor::NData::FInterfaceMap
-
-			/**
-			*/
-			class CSUI_API FData : public DataHandlerType<DataType, FCsData_WidgetActorPtr, DataInterfaceMapType>
+			namespace NData
 			{
-			private:
+				using DataType = NCsWidgetActor::NData::IData;
+				using DataInterfaceMapType = NCsWidgetActor::NData::FInterfaceMap;
+				using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_WidgetActorPtr, DataInterfaceMapType>;
+				/**
+				*/
+				class CSUI_API FData : public DataHandlerType
+				{
+				private:
 
-				typedef DataHandlerType<DataType, FCsData_WidgetActorPtr, DataInterfaceMapType> Super;
+					using Super = DataHandlerType;
 
-			public:
+				public:
 
-				FData();
+					FData();
 
-			// DataHandlerType (NCsData::NManager::NHandler::TData)
-			#pragma region
-			protected:
+				// DataHandlerType (NCsData::NManager::NHandler::TData)
+				#pragma region
+				protected:
 
-				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
+					virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
 
-			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
-			};
-
-		#undef DataHandlerType
-		#undef DataType
-		#undef DataInterfaceMapType
+				#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
+				};
+			}
 		}
 	}
 }

@@ -899,9 +899,9 @@ FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetPooledChecked(const FSt
 
 void UCsManager_UserWidget::ConstructPooledClassHandler()
 {
-	typedef NCsUserWidget::NManager::NHandler::FPooledClass ClassHandlerType;
+	using _ClassHandlerType = NCsUserWidget::NManager::NHandler::NPooledClass::FPooledClass;
 
-	PooledClassHandler = new ClassHandlerType();
+	PooledClassHandler = new _ClassHandlerType();
 	PooledClassHandler->Outer = this;
 	PooledClassHandler->MyRoot = MyRoot;
 }

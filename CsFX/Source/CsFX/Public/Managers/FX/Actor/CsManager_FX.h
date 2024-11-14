@@ -169,31 +169,35 @@ class ICsFXActorPooled;
 
 namespace NCsFX
 {
-#define ManagerMapType NCsPooledObject::NManager::TTMap
-#define PayloadType NCsFX::NPayload::IPayload
-
-	class CSFX_API FManager : public ManagerMapType<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX>
+	namespace NManager
 	{
-	private:
-
-		typedef ManagerMapType<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX> Super;
-
-	public:
-
-		FManager();
-
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsFX& Type) const override
+		namespace NInternal
 		{
-			return Type.GetName();
-		}
+			using PayloadType = NCsFX::NPayload::IPayload;
+			using ManagerMapType = NCsPooledObject::NManager::TTMap<ICsFXActorPooled, FCsFXActorPooled, PayloadType, FECsFX>;
+		
+			class CSFX_API FManager : public ManagerMapType
+			{
+			private:
 
-		FORCEINLINE virtual bool IsValidKey(const FECsFX& Type) const override
-		{
-			return EMCsFX::Get().IsValidEnum(Type);
-		}
-	};
+				using Super = ManagerMapType;
 
-#undef PayloadType
+			public:
+
+				FManager();
+
+				FORCEINLINE virtual const FString& KeyTypeToString(const FECsFX& Type) const override
+				{
+					return Type.GetName();
+				}
+
+				FORCEINLINE virtual bool IsValidKey(const FECsFX& Type) const override
+				{
+					return EMCsFX::Get().IsValidEnum(Type);
+				}
+			};
+		}
+	}
 }
 
 #pragma endregion Internal
@@ -209,7 +213,7 @@ class CSFX_API UCsManager_FX : public UObject
 
 public:	
 
-using ManagerType = NCsFX::FManager;
+using ManagerType = NCsFX::NManager::NInternal::FManager;
 using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 using PayloadType = NCsFX::NPayload::IPayload;
 

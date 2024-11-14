@@ -114,6 +114,7 @@ using ClassHandlerType = NCsData::NManager::NHandler::TClass<FCsUserWidgetPtr, F
 using DataType = NCsUserWidget::NData::IData;
 using DataInterfaceMapType = NCsUserWidget::NData::FInterfaceMap;
 using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_UserWidgetPtr, DataInterfaceMapType>;
+using PooledClassHandlerType = NCsData::NManager::NHandler::TClass<FCsUserWidgetPooled, FCsUserWidgetPooledPtr, FECsUserWidgetPooledClass>;
 
 public:	
 
@@ -830,7 +831,7 @@ public:
 
 protected:
 
-	ClassHandlerType* PooledClassHandler;
+	PooledClassHandlerType* PooledClassHandler;
 
 	virtual void ConstructPooledClassHandler();
 

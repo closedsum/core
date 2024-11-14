@@ -433,6 +433,8 @@ namespace NCsFX
 	{
 		namespace NParams
 		{
+			CS_DEFINE_STATIC_LOG_WARNING(FParams, LogClassType::Warning);
+
 			bool FParams::IsValidChecked(const FString& Context) const
 			{
 				CS_IS_VALID_CHECKED(FX);

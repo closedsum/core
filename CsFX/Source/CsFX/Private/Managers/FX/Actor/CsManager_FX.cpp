@@ -61,9 +61,15 @@ namespace NCsManagerFX
 
 namespace NCsFX
 {
-	FManager::FManager()
+	namespace NManager
+	{
+		namespace NInternal
+		{
+			FManager::FManager()
 		: Super()
 	{
+	}
+		}
 	}
 }
 
@@ -115,7 +121,7 @@ UCsManager_FX::UCsManager_FX(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-using ManagerParamsType = NCsFX::FManager::FParams;
+using ManagerParamsType = NCsFX::NManager::NInternal::FManager::FParams;
 using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 using PayloadType = NCsFX::NPayload::IPayload;
 using PayloadImplType = NCsFX::NPayload::NImpl::FImpl;

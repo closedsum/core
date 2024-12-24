@@ -71,26 +71,24 @@ namespace NCsData
 	// Convert
 	#pragma region
 
-	#define DataType NCsData::IData
-
-	DataType* FLibrary::ConvertChecked(const FString& Context, UObject* Object)
+	CsDataType* FLibrary::ConvertChecked(const FString& Context, UObject* Object)
 	{
-		ICsData* UData = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsData);
-		DataType* Data = UData->_getIData();
+		ICsData* UData   = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsData);
+		CsDataType* Data = UData->_getIData();
 
-		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
+		checkf(Data, TEXT("%s: Failed to get data of type: CsDataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
 		return Data;
 	}
 
-	DataType* FLibrary::SafeConvert(const FString& Context, UObject* Object, LogLevel)
+	CsDataType* FLibrary::SafeConvert(const FString& Context, UObject* Object, LogLevel)
 	{
 		if (ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData))
 		{
-			DataType* Data = UData->_getIData();
+			CsDataType* Data = UData->_getIData();
 
 			if (!Data)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: CsDataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
 				return nullptr;
 			}
 			return Data;
@@ -98,16 +96,12 @@ namespace NCsData
 		return nullptr;
 	}
 
-	#undef DataType
-
 	#pragma endregion Convert
 
 	// Load
 	#pragma region
 
-	#define DataType NCsData::IData
-
-	DataType* FLibrary::SafeLoad(const FString& Context, UObject* Object, LogLevel)
+	CsDataType* FLibrary::SafeLoad(const FString& Context, UObject* Object, LogLevel)
 	{
 		ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData);
 
@@ -116,36 +110,36 @@ namespace NCsData
 
 		UData->Load(NCsLoadFlags::All);
 
-		DataType* Data = UData->_getIData();
+		CsDataType* Data = UData->_getIData();
 
 		if (!Data)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: CsDataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
 			return nullptr;
 		}
 		return Data;
 	}
 
-	DataType* FLibrary::SafeLoad(UObject* Object)
+	CsDataType* FLibrary::SafeLoad(UObject* Object)
 	{
 		SET_CONTEXT(SafeLoad);
 
 		return SafeLoad(Context, Object, nullptr);
 	}
 
-	const DataType* FLibrary::TopLoadChecked(const FString& Context, UObject* Object)
+	const CsDataType* FLibrary::TopLoadChecked(const FString& Context, UObject* Object)
 	{
 		ICsData* UData = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsData);
 
 		UData->TopLoad();
 
-		DataType* Data = UData->_getIData();
+		CsDataType* Data = UData->_getIData();
 
-		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
+		checkf(Data, TEXT("%s: Failed to get data of type: CsDataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
 		return Data;
 	}
 
-	const DataType* FLibrary::SafeTopLoad(const FString& Context, UObject* Object, LogLevel)
+	const CsDataType* FLibrary::SafeTopLoad(const FString& Context, UObject* Object, LogLevel)
 	{
 		ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData);
 
@@ -154,11 +148,11 @@ namespace NCsData
 
 		UData->TopLoad();
 
-		DataType* Data = UData->_getIData();
+		CsDataType* Data = UData->_getIData();
 
 		if (!Data)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: CsDataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
 			return nullptr;
 		}
 		return Data;
@@ -177,8 +171,6 @@ namespace NCsData
 		ICsScriptData::Execute_Script_Unload(Object, OutSuccess);
 		checkf(OutSuccess, TEXT("%s: %s does NOT implement the function: Unload (Script_Unload) properly."), *Context, *PrintDataAndClass(Object));
 	}
-
-	#undef DataType
 
 	#pragma endregion Load
 
@@ -309,9 +301,7 @@ namespace NCsData
 	// Get
 	#pragma region
 
-	#define DataType NCsData::IData
-
-	DataType* FLibrary::GetSafe(const FString& Context, UObject* Object, LogLevel)
+	CsDataType* FLibrary::GetSafe(const FString& Context, UObject* Object, LogLevel)
 	{
 		CS_IS_PTR_NULL_RET_NULL(Object)
 
@@ -320,41 +310,41 @@ namespace NCsData
 		if (!UData)
 			return nullptr;
 
-		DataType* Data = UData->_getIData();
+		CsDataType* Data = UData->_getIData();
 
 		if (!Data)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: CsDataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
 			return nullptr;
 		}
 		return Data;
 	}
 
-	DataType* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const FName& DataName)
+	CsDataType* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const FName& DataName)
 	{
-		ICsData* UData = CsDataManagerLibrary::GetDataChecked(Context, WorldContext, DataName);
-		DataType* Data = UData->_getIData();
+		ICsData* UData   = CsDataManagerLibrary::GetDataChecked(Context, WorldContext, DataName);
+		CsDataType* Data = UData->_getIData();
 
-		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
+		checkf(Data, TEXT("%s: Failed to get data of type: CsDataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
 		return Data;
 	}
 
-	DataType* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel)
+	CsDataType* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel)
 	{
 		if (ICsData* UData = CsDataManagerLibrary::GetSafeData(Context, WorldContext, DataName, Log))
 		{
-			DataType* Data = UData->_getIData();
+			CsDataType* Data = UData->_getIData();
 
 			if (!Data)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: CsDataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
 			}
 			return Data;
 		}
 		return nullptr;
 	}
 
-	DataType* FLibrary::GetChecked(const FString& Context, UObject* Object)
+	CsDataType* FLibrary::GetChecked(const FString& Context, UObject* Object)
 	{
 		CS_IS_PTR_NULL_CHECKED(Object)
 
@@ -363,18 +353,15 @@ namespace NCsData
 		return GetChecked(Context, UData);
 	}
 
-	DataType* FLibrary::GetChecked(const FString& Context, ICsData* UData)
+	CsDataType* FLibrary::GetChecked(const FString& Context, ICsData* UData)
 	{
 		CS_IS_PTR_NULL_CHECKED(UData)
 
-		DataType* Data = UData->_getIData();
+		CsDataType* Data = UData->_getIData();
 
-		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
-
+		checkf(Data, TEXT("%s: Failed to get data of type: CsDataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
 		return Data;
 	}
-
-	#undef DataType
 
 		// Script
 	#pragma region

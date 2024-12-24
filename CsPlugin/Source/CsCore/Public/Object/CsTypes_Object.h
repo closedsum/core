@@ -79,10 +79,10 @@ namespace NCsObject
 
 		struct CSCORE_API FCreated
 		{
-		#define HandleType NCsObject::NCreate::FHandle
-		#define ObjectType NCsObject::NCreate::FObject
-
 		private:
+
+			using HandleType = NCsObject::NCreate::FHandle;
+			using ObjectType = NCsObject::NCreate::FObject;
 
 			TMap<HandleType, ObjectType> Map;
 
@@ -186,9 +186,6 @@ namespace NCsObject
 			void DestroyByWorld(UWorld* World);
 
 			void DestroyAndRemoveNullPendingKillOrOrphaned();
-
-		#undef HandleType
-		#undef ObjectType
 		};
 	}
 }

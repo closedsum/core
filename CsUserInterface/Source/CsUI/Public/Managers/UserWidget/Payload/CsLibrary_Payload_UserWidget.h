@@ -11,15 +11,16 @@ namespace NCsUserWidget
 {
 	namespace NPayload
 	{
-	#define PayloadType NCsUserWidget::NPayload::IPayload
-
-		/**
-		*/
-		struct CSUI_API FLibrary final : public NCsInterfaceMap::TLibrary<PayloadType>
+		namespace NLibrary
 		{
-		public:
-		};
+			using PayloadType = NCsUserWidget::NPayload::IPayload;
 
-	#undef PayloadType
+			/**
+			*/
+			struct CSUI_API FLibrary final : public NCsInterfaceMap::TLibrary<PayloadType>
+			{
+			public:
+			};
+		}
 	}
 }

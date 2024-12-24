@@ -13,21 +13,20 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualSkeletalMeshAndMaterialImpl)
 
-#define ImplType NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl
-
-void FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::CopyToImpl(ImplType* Impl)
+namespace NCsData_Skin_VisualSkeletalMeshAndMaterialImpl
 {
-	Impl->SetSkeletalMesh(Mesh.GetPtr());
-	Impl->SetMaterials(Materials.GetPtr());
-}
+	void FImpl::CopyToImpl(ThisType* This, ImplType* Impl)
+	{
+		Impl->SetSkeletalMesh(This->Mesh.GetPtr());
+		Impl->SetMaterials(This->Materials.GetPtr());
+	}
 
-void FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::CopyToImplAsValue(ImplType* Impl) const
-{
-	Impl->SetSkeletalMesh(Mesh.Get());
-	Impl->SetMaterials(Materials.Get());
+	void FImpl::CopyToImplAsValue(const ThisType* This, ImplType* Impl)
+	{
+		Impl->SetSkeletalMesh(This->Mesh.Get());
+		Impl->SetMaterials(This->Materials.Get());
+	}
 }
-
-#undef ImplType
 
 bool FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::IsValidChecked(const FString& Context) const
 {
@@ -94,9 +93,7 @@ namespace NCsSkin
 
 					InterfaceMap->SetRoot<FImpl>(this);
 
-					typedef NCsData::IData DataType;
-
-					InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
+					InterfaceMap->Add<CsDataType>(static_cast<CsDataType*>(this));
 					InterfaceMap->Add<CsSkinDataType>(static_cast<CsSkinDataType*>(this));
 					InterfaceMap->Add<CsSkeletalMeshSkinDataType>(static_cast<CsSkeletalMeshSkinDataType*>(this));
 					InterfaceMap->Add<CsMaterialSkinDataType>(static_cast<CsMaterialSkinDataType*>(this));

@@ -16,19 +16,25 @@ namespace NCsConsoleCommand
 		*/
 		class CSCONSOLECOMMAND_API IManager
 		{
-		#define InfoType NCsConsoleCommand::FInfo
+		private:
+
+			// Allow clearer names without name collisions
+			struct _
+			{
+				using InfoType = NCsConsoleCommand::FInfo;
+			};
 
 		public:
 
 			virtual ~IManager(){}
 
-			virtual const TArray<InfoType>& GetCommandInfos() const = 0;
+			virtual const TArray<_::InfoType>& GetCommandInfos() const = 0;
 
 			virtual const FString& GetCategoryName() const = 0;
 
 			virtual bool Exec(UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Out = *GLog) = 0;
-
-		#undef InfoType
 		};
 	}
 }
+
+using CsConsoleCommandManagerType = NCsConsoleCommand::NManager::IManager;

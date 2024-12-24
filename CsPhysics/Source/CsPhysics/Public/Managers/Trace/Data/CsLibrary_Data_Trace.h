@@ -9,17 +9,18 @@ namespace NCsTrace
 {
 	namespace NData
 	{
-	#define DataType NCsTrace::NData::IData
-
-		/**
-		*/
-		struct CSPHYSICS_API FLibrary : public NCsInterfaceMap::TLibrary<DataType>
+		namespace NLibrary
 		{
+			using DataType = NCsTrace::NData::IData;
+
 			/**
 			*/
-			static bool IsValidChecked(const FString& Context, DataType* Data);
-		};
-
-	#undef DataType
+			struct CSPHYSICS_API FLibrary : public NCsInterfaceMap::TLibrary<DataType>
+			{
+				/**
+				*/
+				static bool IsValidChecked(const FString& Context, DataType* Data);
+			};
+		}
 	}
 }

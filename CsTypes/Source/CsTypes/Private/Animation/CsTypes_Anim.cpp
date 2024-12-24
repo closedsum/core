@@ -51,21 +51,20 @@ namespace NCsFpvAnimMember
 // FCsAnimSequenceInfo
 #pragma region
 
-#define InfoType NCsAnim::NSequence::FInfo
-
-void FCsAnimSequenceInfo::CopyToInfo(InfoType* Info)
+namespace NCsAnimSequenceInfo
 {
-	CS_COPY_PTR_TO_PROXY(Info, Anim);
-	CS_COPY_TO_PROXY(Info, PlayRate);
-}
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_PTR_TO_PROXY(Info, Anim);
+		CS_THIS_COPY_TO_PROXY(Info, PlayRate);
+	}
 
-void FCsAnimSequenceInfo::CopyToInfoAsValue(InfoType* Info)
-{
-	CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Anim);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, PlayRate);
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Anim);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, PlayRate);
+	}
 }
-
-#undef InfoType
 
 bool FCsAnimSequenceInfo::IsValidChecked(const FString& Context) const
 {
@@ -132,21 +131,20 @@ namespace NCsAnim
 // FCsAnimMontageInfo
 #pragma region
 
-#define InfoType NCsAnim::NMontage::FInfo
-
-void FCsAnimMontageInfo::CopyToInfo(InfoType* Info)
+namespace NCsAnimMontageInfo
 {
-	CS_COPY_PTR_TO_PROXY(Info, Anim);
-	CS_COPY_TO_PROXY(Info, PlayRate);
-}
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_PTR_TO_PROXY(Info, Anim);
+		CS_THIS_COPY_TO_PROXY(Info, PlayRate);
+	}
 
-void FCsAnimMontageInfo::CopyToInfoAsValue(InfoType* Info)
-{
-	CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Anim);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, PlayRate);
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Anim);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, PlayRate);
+	}
 }
-
-#undef InfoType
 
 bool FCsAnimMontageInfo::IsValidChecked(const FString& Context) const
 {

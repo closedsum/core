@@ -30,13 +30,17 @@ namespace NCsAchievement
 	{
 		namespace NInfo
 		{
-		#define InfoType NCsAchievement::NAction::NInfo::FInfo
+			// Allow clearer names without name collisions
+			struct _
+			{
+				using InfoType = NCsAchievement::NAction::NInfo::FInfo;
+			};
 
 			/**
 			* Container for holding a reference to the object InfoType (NCsAchievement::NAction::NInfo::FInfo).
 			* This serves as an easy way for a Manager Resource to keep track of the resource.
 			*/
-			struct CSPLATFORMSERVICES_API FResource : public TCsResourceContainer<InfoType>
+			struct CSPLATFORMSERVICES_API FResource : public TCsResourceContainer<_::InfoType>
 			{
 				~FResource(){}
 			};
@@ -45,7 +49,7 @@ namespace NCsAchievement
 			* A manager handling allocating and deallocating the object InfoType (NCsAchievement::NAction::NInfo::FInfo) and
 			* are wrapped in the container: NCsAchievement::NAction::NInfo::FResource.
 			*/
-			struct CSPLATFORMSERVICES_API FManager : public NCsResource::NManager::NValue::TFixed<InfoType, FResource, 256>
+			struct CSPLATFORMSERVICES_API FManager : public NCsResource::NManager::NValue::TFixed<_::InfoType, FResource, 256>
 			{
 				~FManager(){}
 			};
@@ -62,11 +66,27 @@ class CSPLATFORMSERVICES_API UCsManager_Achievement : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define ActionType NCsAchievement::EAction
-#define ActionInfoManagerType NCsAchievement::NAction::NInfo::FManager
-#define ActionInfoType NCsAchievement::NAction::NInfo::FInfo
-#define ActionAllocationType NCsAchievement::NAction::EAllocation
-#define ValueType NCsAchievement::FValue
+private:
+
+	using ActionType = NCsAchievement::EAction;
+	using ActionInfoManagerType = NCsAchievement::NAction::NInfo::FManager;
+	using ActionInfoType = NCsAchievement::NAction::NInfo::FInfo;
+	using ActionAllocationType = NCsAchievement::NAction::EAllocation;
+	using ValueType = NCsAchievement::FValue;
+	using QueryStateType = NCsAchievement::NQuery::FState;
+	using OnQueryIdsEventType = NCsAchievement::NManager::FOnQueryIds;
+	using OnQueryDescriptionsEventType = NCsAchievement::NManager::FOnQueryDescriptions;
+	using OnCreateEventType = NCsAchievement::NManager::FOnCreate;
+	using OnModifyEventType = NCsAchievement::NManager::FOnModify;
+	using OnRemoveEventType = NCsAchievement::NManager::FOnRemove;
+	using OnRemoveAllEventType = NCsAchievement::NManager::FOnRemoveAll;
+	using OnCompleteEventType = NCsAchievement::NManager::FOnComplete;
+	using OnCompleteAllEventType = NCsAchievement::NManager::FOnCompleteAll;
+	using OnResetEventType = NCsAchievement::NManager::FOnReset;
+	using OnResetAllEventType = NCsAchievement::NManager::FOnResetAll;
+	using OnProgressEventType = NCsAchievement::NManager::FOnProgress;
+	using QueryOrderType = NCsAchievement::NQuery::EOrder;
+	using ProgressType = NCsAchievement::EProgress;
 
 // Singleton
 #pragma region
@@ -301,11 +321,7 @@ protected:
 #pragma region
 protected:
 
-#define QueryStateType NCsAchievement::NQuery::FState
-
 	QueryStateType QueryState;
-
-#undef QueryStateType
 
 	// Ids
 #pragma region
@@ -323,8 +339,6 @@ protected:
 	virtual void QueryAchievementIds(const FUniqueNetId& PlayerId, const FOnQueryAchievementsCompleteDelegate& Delegate);
 
 public:
-
-#define OnQueryIdsEventType NCsAchievement::NManager::FOnQueryIds
 
 	/** Event for when Querying Achievement Ids has completed.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
@@ -352,8 +366,6 @@ public:
 
 	FORCEINLINE FCsManagerAchievement_OnQueryIds& GetOnQueryIds_AsyncScriptEvent() { return OnQueryIds_AsyncScriptEvent; }
 
-#undef OnQueryIdsEventType
-
 #pragma endregion Ids
 
 	// Descriptions
@@ -373,8 +385,6 @@ protected:
 
 public:
 
-#define OnQueryDescriptionsEventType NCsAchievement::NManager::FOnQueryDescriptions
-
 	/** Event for when Querying Achievement Descriptions has completed.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	OnQueryDescriptionsEventType OnQueryDescriptions_Event;
@@ -392,8 +402,6 @@ public:
 	Latent and Asynchronous. Only called when an OnlineSubsystem with OnlineAchievements is valid. */
 	UPROPERTY(BlueprintAssignable, Category = "CsPlatformServices|Managers|Achievement")
 	FCsManagerAchievement_OnQueryDescriptions OnQueryDescriptions_AsyncScriptEvent;
-
-#undef OnQueryDescriptionsEventType
 
 #pragma endregion Descriptions
 
@@ -470,8 +478,6 @@ protected:
 
 public:
 
-#define OnCreateEventType NCsAchievement::NManager::FOnCreate
-
 	/** Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	OnCreateEventType OnCreate_Event;
@@ -484,8 +490,6 @@ public:
 	FCsManagerAchievement_OnCreate OnCreate_ScriptEvent;
 
 	FORCEINLINE FCsManagerAchievement_OnCreate& GetOnCreate_ScriptEvent() { return OnCreate_ScriptEvent; }
-
-#undef OnCreateEventType
 
 #pragma endregion Create
 
@@ -501,8 +505,6 @@ protected:
 
 public:
 
-#define OnModifyEventType NCsAchievement::NManager::FOnModify
-
 	/** Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	OnModifyEventType OnModify_Event;
@@ -515,8 +517,6 @@ public:
 	FCsManagerAchievement_OnModify OnModify_ScriptEvent;
 
 	FORCEINLINE FCsManagerAchievement_OnModify& GetOnModify_ScriptEvent() { return OnModify_ScriptEvent; }
-
-#undef OnModifyEventType
 
 #pragma endregion Modify
 
@@ -537,8 +537,6 @@ protected:
 
 public:
 
-#define OnRemoveEventType NCsAchievement::NManager::FOnRemove
-
 	/** Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	OnRemoveEventType OnRemove_Event;
@@ -552,8 +550,6 @@ public:
 
 	FORCEINLINE FCsManagerAchievement_OnRemove& GetOnRemove_ScriptEvent() { return OnRemove_ScriptEvent; }
 
-#undef OnRemoveEventType
-
 	void RemoveAll();
 
 protected:
@@ -561,8 +557,6 @@ protected:
 	void RemoveAll_Internal(ActionInfoType* ActionInfo);
 
 public:
-
-#define OnRemoveAllEventType NCsAchievement::NManager::FOnRemoveAll
 
 	/** Event for when .
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
@@ -576,8 +570,6 @@ public:
 	FCsManagerAchievement_OnRemoveAll OnRemoveAll_ScriptEvent;
 
 	FORCEINLINE FCsManagerAchievement_OnRemoveAll& GetOnRemoveAll_ScriptEvent() { return OnRemoveAll_ScriptEvent; }
-
-#undef OnRemoveAllEventType
 
 protected:
 
@@ -654,8 +646,6 @@ protected:
 
 public:
 
-#define OnCompleteEventType NCsAchievement::NManager::FOnComplete
-
 	/** Event for when an Achievement has completed. 
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	OnCompleteEventType OnComplete_Event;
@@ -681,8 +671,6 @@ public:
 	FCsManagerAchievement_OnComplete OnComplete_AsyncScriptEvent;
 
 	FORCEINLINE FCsManagerAchievement_OnComplete& GetOnComplete_AsyncScriptEvent() { return OnComplete_AsyncScriptEvent; }
-
-#undef OnCompleteEventType
 
 public:
 
@@ -727,8 +715,6 @@ protected:
 
 public:
 
-#define OnCompleteAllEventType NCsAchievement::NManager::FOnCompleteAll
-
 	/** Event for when all achievements have been completed.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	OnCompleteAllEventType OnCompleteAll_Event;
@@ -741,8 +727,6 @@ public:
 	FCsManagerAchievement_OnCompleteAll OnCompleteAll_ScriptEvent;
 
 	FORCEINLINE FCsManagerAchievement_OnCompleteAll& GetOnCompleteAll_ScriptEvent() { return OnCompleteAll_ScriptEvent; }
-
-#undef OnCompleteAllEventType
 
 #pragma endregion Complete
 
@@ -805,8 +789,6 @@ protected:
 
 public:
 
-#define OnResetEventType NCsAchievement::NManager::FOnReset
-
 	/** Event for when the progress of an Achievement has reset to a value (default is 0).
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	OnResetEventType OnReset_Event;
@@ -833,8 +815,6 @@ public:
 
 	FORCEINLINE FCsManagerAchievement_OnReset& GetOnReset_AsyncScriptEvent() { return OnReset_AsyncScriptEvent; }
 
-#undef OnResetEventType
-
 	/**
 	*
 	*/
@@ -845,8 +825,6 @@ protected:
 	virtual void ResetAll_Internal(ActionInfoType* ActionInfo);
 
 public:
-
-#define OnResetAllEventType NCsAchievement::NManager::FOnResetAll
 
 	/** Event for when all achievements have been reset.
 	Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
@@ -860,8 +838,6 @@ public:
 	FCsManagerAchievement_OnResetAll OnResetAll_ScriptEvent;
 
 	FORCEINLINE FCsManagerAchievement_OnResetAll& GetResetAll_ScriptEvent() { return OnResetAll_ScriptEvent; }
-
-#undef OnResetAllEventType
 
 #pragma endregion Reset
 
@@ -894,8 +870,6 @@ public:
 	*/
 	void SetSafeProgress(const FECsAchievement& Achievement, const float& Percent);
 
-#define OnProgressEventType NCsAchievement::NManager::FOnProgress
-
 	/** Event for when the progress of an Achievement has updated. 
 		Latent and Synchronous (Game Thread) when an OnlineSubsystem with OnlineAchievements is valid. */
 	OnProgressEventType OnProgress_Event;
@@ -921,8 +895,6 @@ public:
 	FCsManagerAchievement_OnProgress OnProgress_AsyncScriptEvent;
 
 	FORCEINLINE FCsManagerAchievement_OnProgress& GetOnProgress_AsyncScriptEvent() { return OnProgress_AsyncScriptEvent; }
-
-#undef OnProgressEventType
 
 public:
 
@@ -1107,9 +1079,7 @@ public:
 
 protected:
 
-#define QueryOrderType NCsAchievement::NQuery::EOrder
 	QueryOrderType QueryOrder;
-#undef QueryOrderType
 
 	void OnQueryAchievementsComplete(const FUniqueNetId& PlayerId, const bool Success);
 
@@ -1146,9 +1116,7 @@ protected:
 
 	virtual void SetType(ICsAchievement* Achievement, const FECsAchievement& AchievementType);
 
-#define ProgressType NCsAchievement::EProgress
 	virtual void SetProgressType(ICsAchievement* Achievement, const ProgressType& Type);
-#undef ProgressType
 
 	virtual void SetProgress(ICsAchievement* Achievement, const float& Percent);
 
@@ -1177,10 +1145,4 @@ protected:
 	virtual void SetUnlockedDescription(ICsAchievement* Achievement, const FString& UnlockedDescription);
 
 #pragma endregion Internals
-
-#undef ActionType
-#undef ActionInfoManagerType
-#undef ActionInfoType
-#undef ActionAllocationType
-#undef ValueType
 };

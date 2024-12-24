@@ -29,6 +29,8 @@ namespace NCsWidgetActor
 			}
 		}
 
+		using PayloadType = NCsWidgetActor::NPayload::IPayload;
+
 		// ContextRoot
 		#pragma region
 
@@ -105,10 +107,8 @@ namespace NCsWidgetActor
 		// Payload
 		#pragma region
 
-		#define PayloadType NCsWidgetActor::NPayload::IPayload
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsWidgetActor& Type)
 		{
-		#undef PayloadType
 			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
 		}
 
@@ -117,10 +117,8 @@ namespace NCsWidgetActor
 		// Spawn
 		#pragma region
 
-		#define PayloadType NCsWidgetActor::NPayload::IPayload
 		const FCsWidgetActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsWidgetActor& Type, PayloadType* Payload)
 		{
-		#undef PayloadType
 			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
 		}
 

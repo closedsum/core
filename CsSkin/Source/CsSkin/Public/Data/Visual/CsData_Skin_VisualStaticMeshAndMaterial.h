@@ -34,11 +34,9 @@ public:
 
 	static const FName Name;
 
-#define DataType NCsData::IData
-
 private:
 
-	DataType* DataProxy;
+	CsDataType* DataProxy;
 
 // UObject Interface
 #pragma region
@@ -73,7 +71,7 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE DataType* _getIData() const { return DataProxy; }
+	FORCEINLINE CsDataType* _getIData() const { return DataProxy; }
 
 	bool IsValid(const int32& LoadFlags);
 
@@ -112,6 +110,4 @@ public:
 	FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return Materials.Get(); }
 
 #pragma endregion ICsData_Skin_VisualMaterial
-
-#undef DataType
 };

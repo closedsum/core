@@ -51,7 +51,11 @@ UCLASS(transient)
 class CSLOAD_API UCsManager_Load : public UObject
 {
 	GENERATED_UCLASS_BODY()
-public:
+
+private:
+
+	using TaskManagerType = NCsLoad::NManager::NTask::NLoadObjects::FManager;
+	using PayloadType = NCsLoad::NManager::NLoadObjectPaths::FPayload;
 
 // Singleton
 #pragma region
@@ -140,9 +144,7 @@ public:
 #pragma region
 protected:
 
-#define TaskManagerType NCsLoad::NManager::NTask::NLoadObjects::FManager
 	TaskManagerType Manager_Tasks;
-#undef TaskManagerType
 
 	UPROPERTY()
 	TArray<UObject*> Tasks;
@@ -153,7 +155,5 @@ public:
 
 	FStreamableManager StreamableManager;
 
-#define PayloadType NCsLoad::NManager::NLoadObjectPaths::FPayload
 	FCsLoadHandle LoadObjectPaths(const PayloadType& Payload);
-#undef PayloadType
 };

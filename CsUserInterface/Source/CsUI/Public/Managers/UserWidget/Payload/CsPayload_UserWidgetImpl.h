@@ -12,130 +12,128 @@ namespace NCsUserWidget
 {
 	namespace NPayload
 	{
-	#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-	#define WidgetPayloadType NCsUserWidget::NPayload::IPayload
-
-		/**
-		*/
-		struct CSUI_API FImpl final : public PooledPayloadType,
-									  public WidgetPayloadType
+		namespace NImpl
 		{
-		public:
+			using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+			using WidgetPayloadType = NCsUserWidget::NPayload::IPayload;
 
-			static const FName Name;
+			/**
+			*/
+			struct CSUI_API FImpl final : public PooledPayloadType,
+										  public WidgetPayloadType
+			{
+			public:
 
-		#define AnimParamsType NCsUserWidget::NAnim::NPlay::FParams
+				static const FName Name;
 
-		private:
+				using AnimParamsType = NCsUserWidget::NAnim::NPlay::FParams;
 
-			FCsInterfaceMap* InterfaceMap;
+			private:
 
-			bool bAllocated;
+				FCsInterfaceMap* InterfaceMap;
 
-		public:
+				bool bAllocated;
+
+			public:
+
+				// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+
+				NCsPooledObject::EUpdate UpdateType;
+
+				UObject* Instigator;
+
+				UObject* Owner;
+
+				UObject* Parent;
+	
+				FCsTime Time;
+
+				uint32  PreserveChangesFromDefaultMask;
+
+				// WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
+
+				ESlateVisibility Visibility;
+
+				bool bAddToViewport;
+
+				float RenderScale;
+
+				float LifeTime;
+
+				NCsUserWidget::EPosition PositionType;
+
+				FVector3f Position;
+
+				NCsUserWidget::EPosition OffsetType;
+
+				FVector3f Offset;
+
+				int32 ZOrder;
+
+				bool bAnimParams;
+
+				AnimParamsType AnimParams;
+
+			public:
+
+				FImpl();
+				~FImpl();
+
+			// ICsGetInterfaceMap
+			#pragma region
+			public:
+
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+
+			#pragma endregion ICsGetInterfaceMap
 
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+			#pragma region
+			public:
 
-			NCsPooledObject::EUpdate UpdateType;
+				FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+				FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
+				FORCEINLINE UObject* GetInstigator() const { return Instigator; }
+				FORCEINLINE UObject* GetOwner() const { return Owner; }
+				FORCEINLINE UObject* GetParent() const { return Parent; }
+				FORCEINLINE const FCsTime& GetTime() const { return Time; }
+				FORCEINLINE void Allocate() { bAllocated = true; }
 
-			UObject* Instigator;
+				void Reset();
 
-			UObject* Owner;
+				FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
 
-			UObject* Parent;
-	
-			FCsTime Time;
+			#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
-			uint32  PreserveChangesFromDefaultMask;
+			public:
+
+				template<typename T>
+				FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
+
+				template<typename T>
+				FORCEINLINE T* GetOwner() const { return Cast<T>(GetOwner()); }
+
+				template<typename T>
+				FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
 			// WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
+			#pragma region
+			public:
 
-			ESlateVisibility Visibility;
+				FORCEINLINE const ESlateVisibility& GetVisibility() const { return Visibility; }
+				FORCEINLINE const bool& ShouldAddToViewport() const { return bAddToViewport; }
+				FORCEINLINE const float& GetRenderScale() const { return RenderScale; }
+				FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+				FORCEINLINE const NCsUserWidget::EPosition& GetPositionType() const { return PositionType; }
+				FORCEINLINE const FVector3f& GetPosition() const { return Position; }
+				FORCEINLINE const NCsUserWidget::EPosition& GetOffsetType() const { return OffsetType; }
+				FORCEINLINE const FVector3f& GetOffset() const { return Offset; }
+				FORCEINLINE const int32& GetZOrder() const { return ZOrder; }
+				FORCEINLINE const bool& HasAnimParams() const { return bAnimParams; }
+				FORCEINLINE const AnimParamsType& GetAnimParams() const { return AnimParams; }
 
-			bool bAddToViewport;
-
-			float RenderScale;
-
-			float LifeTime;
-
-			NCsUserWidget::EPosition PositionType;
-
-			FVector3f Position;
-
-			NCsUserWidget::EPosition OffsetType;
-
-			FVector3f Offset;
-
-			int32 ZOrder;
-
-			bool bAnimParams;
-
-			AnimParamsType AnimParams;
-
-		public:
-
-			FImpl();
-			~FImpl();
-
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
-
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
-
-		#pragma endregion ICsGetInterfaceMap
-
-		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-		#pragma region
-		public:
-
-			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
-			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
-			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
-			FORCEINLINE UObject* GetOwner() const { return Owner; }
-			FORCEINLINE UObject* GetParent() const { return Parent; }
-			FORCEINLINE const FCsTime& GetTime() const { return Time; }
-			FORCEINLINE void Allocate() { bAllocated = true; }
-
-			void Reset();
-
-			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
-
-		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-
-		public:
-
-			template<typename T>
-			FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
-
-			template<typename T>
-			FORCEINLINE T* GetOwner() const { return Cast<T>(GetOwner()); }
-
-			template<typename T>
-			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
-
-		// WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
-		#pragma region
-		public:
-
-			FORCEINLINE const ESlateVisibility& GetVisibility() const { return Visibility; }
-			FORCEINLINE const bool& ShouldAddToViewport() const { return bAddToViewport; }
-			FORCEINLINE const float& GetRenderScale() const { return RenderScale; }
-			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
-			FORCEINLINE const NCsUserWidget::EPosition& GetPositionType() const { return PositionType; }
-			FORCEINLINE const FVector3f& GetPosition() const { return Position; }
-			FORCEINLINE const NCsUserWidget::EPosition& GetOffsetType() const { return OffsetType; }
-			FORCEINLINE const FVector3f& GetOffset() const { return Offset; }
-			FORCEINLINE const int32& GetZOrder() const { return ZOrder; }
-			FORCEINLINE const bool& HasAnimParams() const { return bAnimParams; }
-			FORCEINLINE const AnimParamsType& GetAnimParams() const { return AnimParams; }
-
-		#pragma endregion WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
-
-		#undef AnimParamsType
-		};
-
-	#undef PooledPayloadType
-	#undef WidgetPayloadType
+			#pragma endregion WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
+			};
+		}
 	}
 }

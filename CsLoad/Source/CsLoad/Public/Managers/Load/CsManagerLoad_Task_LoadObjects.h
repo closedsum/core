@@ -112,6 +112,11 @@ class CSLOAD_API UCsManagerLoad_Task_LoadObjects : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	using LoadInfoType = NCsLoad::NObjectPath::FInfo;
+	using PayloadType = NCsLoad::NManager::NLoadObjectPaths::FPayload;
+
 public:
 
 	/** Internal Index of the struct in the Manager_Resource. */
@@ -192,8 +197,6 @@ public:
 	/** Event to broadcast when starting to load an Object's Path. */
 	FOnStartLoadObjectPath OnStartLoadObjectPath_Event;
 
-#define LoadInfoType NCsLoad::NObjectPath::FInfo
-
 	/**
 	*  Delegate type
 	*
@@ -204,8 +207,6 @@ public:
 
 	/** Event to broadcast when finish loading an Object's Path. */
 	FOnFinishLoadObjectPath OnFinishLoadObjectPath_Event;
-
-#undef LoadInfoType
 
 	/**
 	*  Delegate type
@@ -261,10 +262,8 @@ private:
 	/** Current memory size of all objects loaded. */
 	FCsResourceSize SizeLoaded;
 
-#define LoadInfoType NCsLoad::NObjectPath::FInfo
 	/** */
 	LoadInfoType Info;
-#undef LoadInfoType
 
 	/** */
 	float StartTime;
@@ -277,9 +276,7 @@ private:
 
 public:
 
-#define PayloadType NCsLoad::NManager::NLoadObjectPaths::FPayload
 	FCsLoadHandle LoadObjectPaths(const PayloadType& Payload);
-#undef PayloadType
 
 #pragma endregion Load
 };

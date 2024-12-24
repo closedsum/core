@@ -15,6 +15,26 @@
 
 #include "CsUserWidget_TextInfo.generated.h"
 
+struct FCsUserWidget_TextInfo;
+
+// NCsUserWidget::NText::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NText, FInfo)
+
+namespace NCsUserWidget_TextInfo
+{
+	using ThisType = FCsUserWidget_TextInfo;
+	using InfoType = NCsUserWidget::NText::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSUI_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
 // NCsUserWidget::NText::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NText, FInfo)
 
@@ -100,10 +120,11 @@ public:
 	{
 	}
 
-#define InfoType NCsUserWidget::NText::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsUserWidget::NText::FInfo;
+	using _Impl = NCsUserWidget_TextInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)					{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
@@ -120,10 +141,10 @@ namespace NCsUserWidget
 		*/
 		struct CSUI_API FInfo final
 		{
-		#define DeallocateMethodType NCsUserWidget::EDeallocateMethod
-		#define OutlineSettingsType NCsUserWidget::NText::FOutline
-		#define ShadowSettingsType NCsUserWidget::NText::FShadow
-		#define AnimParamsType NCsUserWidget::NAnim::NPlay::FParams
+			using DeallocateMethodType = NCsUserWidget::EDeallocateMethod;
+			using OutlineSettingsType = NCsUserWidget::NText::FOutline;
+			using ShadowSettingsType = NCsUserWidget::NText::FShadow;
+			using AnimParamsType = NCsUserWidget::NAnim::NPlay::FParams;
 
 		private:
 
@@ -229,11 +250,6 @@ namespace NCsUserWidget
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
-
-		#undef DeallocateMethodType
-		#undef OutlineSettingsType
-		#undef ShadowSettingsType
-		#undef AnimParamsType
 		};
 	}
 }

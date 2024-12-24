@@ -40,11 +40,9 @@ public:
 
 	static const FName Name;
 
-#define DataType NCsData::IData
-
 public:
 
-	virtual DataType* _getIData() const = 0;
+	virtual CsDataType* _getIData() const = 0;
 
 	/**
 	*
@@ -76,8 +74,6 @@ public:
 	* return
 	*/
 	virtual bool IsLoaded() const = 0;
-
-#undef DataType
 };
 
 // FCsData
@@ -88,7 +84,6 @@ struct CSDATA_API FCsData : public TCsInterfaceObject<ICsData>
 private:
 
 	typedef TCsInterfaceObject<ICsData> Super;
-	typedef NCsData::IData DataType;
 
 public:
 
@@ -99,7 +94,7 @@ public:
 
 public:
 
-	DECLARE_DELEGATE_RetVal_OneParam(DataType* /*Data*/, FScript_getIData, UObject* /*Object*/);
+	DECLARE_DELEGATE_RetVal_OneParam(CsDataType* /*Data*/, FScript_getIData, UObject* /*Object*/);
 
 	FScript_getIData Script_getIData_Impl;
 
@@ -215,7 +210,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE DataType* _getIData() const
+	FORCEINLINE CsDataType* _getIData() const
 	{
 		if (bScript)
 			return Script_getIData_Impl.Execute(Object);

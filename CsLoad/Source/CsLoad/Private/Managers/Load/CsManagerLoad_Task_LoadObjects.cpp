@@ -57,7 +57,7 @@ UCsManagerLoad_Task_LoadObjects::UCsManagerLoad_Task_LoadObjects(const FObjectIn
 #define USING_NS_CACHED using namespace NCsManagerLoadTaskLoadObjects::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerLoadTaskLoadObjects::NCached; \
 	const FString& Context = Str::__FunctionName
-#define TimeLibrary NCsTime::FLibrary
+using PayloadType = NCsLoad::NManager::NLoadObjectPaths::FPayload;
 
 void UCsManagerLoad_Task_LoadObjects::Init()
 {
@@ -104,7 +104,7 @@ void UCsManagerLoad_Task_LoadObjects::Update(const FCsDeltaTime& DeltaTime)
 	if (Count < Paths.Num())
 		return;
 
-	const float CurrentTime = TimeLibrary::GetCurrentDateTimeSeconds();
+	const float CurrentTime = CsTimeLibrary::GetCurrentDateTimeSeconds();
 	const float LoadTime    = CurrentTime - StartTime;
 
 	// All AssetReferences are LOADED
@@ -150,7 +150,7 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 	SizeLoaded.Kilobytes += Kilobytes;
 	SizeLoaded.Megabytes += Megabytes;
 
-	const float CurrentTime = TimeLibrary::GetCurrentDateTimeSeconds();
+	const float CurrentTime = CsTimeLibrary::GetCurrentDateTimeSeconds();
 	const float LoadingTime	= CurrentTime - StartTime;
 
 	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
@@ -210,7 +210,6 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
 // Load
 #pragma region
 
-#define PayloadType NCsLoad::NManager::NLoadObjectPaths::FPayload
 FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const PayloadType& Payload)
 {
 	SET_CONTEXT(LoadObjectPaths);
@@ -265,16 +264,14 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const PayloadType
 		StreamableHandles.Add(StreamableManager->RequestAsyncLoad(ObjectPaths, OnFinishLoadObjectPathsDelegate));
 	}
 
-	StartTime = TimeLibrary::GetCurrentDateTimeSeconds();
+	StartTime = CsTimeLibrary::GetCurrentDateTimeSeconds();
 
 	Handle.New();
 
 	return Handle;
 }
-#undef PayloadType
 
 #pragma endregion Load
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef TimeLibrary

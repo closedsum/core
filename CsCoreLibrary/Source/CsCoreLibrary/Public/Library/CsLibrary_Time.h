@@ -19,3 +19,5 @@ namespace NCsTime
 		static uint64 GetCurrentFrame(const UWorld* InWorld);
 	};
 }
+
+using CsTimeLibrary = NCsTime::FLibrary;

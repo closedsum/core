@@ -8,23 +8,22 @@
 // Utility
 #include "Utility/CsLibrary_EnumStruct.h"
 
+using PayloadType = FCsUIPopulateEnumMapFromSettings::FFromDataTable::FPayload;
+
 const FCsUIDataRootSet* FCsUIPopulateEnumMapFromSettings::GetDataRootSet(const FString& Context, UObject* ContextRoot)
 {
 	return CsEnumStructPopulateLibrary::GetDataRootSet<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, ContextRoot);
 }
 
-#define PayloadType FCsUIPopulateEnumMapFromSettings::FFromDataTable::FPayload
 void FCsUIPopulateEnumMapFromSettings::FromDataTable(const FString& Context, PayloadType& Payload)
 {
-#undef PayloadType
-
 	const FCsUIDataRootSet* DataRootSet = GetDataRootSet(Context, Payload.ContextRoot);
 
 	if (!DataRootSet)
 		return;
 
-	typedef CsEnumStructPopulateLibrary::FFromDataTable::FPayload PayloadType;
-	PayloadType P;
+	using BasePayloadType = CsEnumStructPopulateLibrary::FFromDataTable::FPayload;
+	BasePayloadType P;
 
 	P.ContextRoot			= Payload.ContextRoot;
 	P.DataTableSoftObject	= DataRootSet->GetDataTableSoftObjectChecked(Context, Payload.DataTableName);

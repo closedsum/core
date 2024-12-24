@@ -34,8 +34,8 @@ namespace NCsGameEvent
 	
 		class CSINPUT_API FConsoleCommand : ConsoleCommandManagerType
 		{
-		#define HandleType NCsConsoleCommand::NManager::FHandle
-		#define InfoType NCsConsoleCommand::FInfo
+			using HandleType = NCsConsoleCommand::NManager::FHandle;
+			using InfoType = NCsConsoleCommand::FInfo;
 
 		public:
 
@@ -115,9 +115,6 @@ namespace NCsGameEvent
 			* return		Whether the console command was found / executed
 			*/
 			bool Exec_BroadcastGameEvent(const TCHAR* Cmd);
-
-		#undef HandleType
-		#undef InfoType
 		};
 	#undef ConsoleCommandManagerType
 	}

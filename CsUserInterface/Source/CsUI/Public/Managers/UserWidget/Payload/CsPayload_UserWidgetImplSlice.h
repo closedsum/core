@@ -12,97 +12,99 @@ namespace NCsUserWidget
 {
 	namespace NPayload
 	{
-	#define PayloadType NCsUserWidget::NPayload::IPayload
-
-		/**
-		* Basic implementation of the interface: PayloadType (NCsUserWidget::NPayload::IPayload).
-		*/
-		struct CSUI_API FImplSlice final : public PayloadType,
-										   public ICsReset
+		namespace NImpl
 		{
-		public:
+			namespace NSlice
+			{
+				using PayloadType = NCsUserWidget::NPayload::IPayload;
 
-			static const FName Name;
+				/**
+				* Basic implementation of the interface: PayloadType (NCsUserWidget::NPayload::IPayload).
+				*/
+				struct CSUI_API FSlice final : public PayloadType,
+											   public ICsReset
+				{
+				public:
 
-		#define AnimParamsType NCsUserWidget::NAnim::NPlay::FParams
+					static const FName Name;
 
-		private:
+				private:
 
-			// ICsGetInterfaceMap
+					using AnimParamsType = NCsUserWidget::NAnim::NPlay::FParams;
 
-			FCsInterfaceMap* InterfaceMap;
+					// ICsGetInterfaceMap
 
-		public:
+					FCsInterfaceMap* InterfaceMap;
 
-			// PayloadType (NCsUserWidget::NPayload::IPayload)
+				public:
 
-			ESlateVisibility Visibility;
+					// PayloadType (NCsUserWidget::NPayload::IPayload)
 
-			bool bAddToViewport;
+					ESlateVisibility Visibility;
 
-			float RenderScale;
+					bool bAddToViewport;
 
-			float LifeTime;
+					float RenderScale;
 
-			NCsUserWidget::EPosition PositionType;
+					float LifeTime;
 
-			FVector3f Position;
+					NCsUserWidget::EPosition PositionType;
 
-			NCsUserWidget::EPosition OffsetType;
+					FVector3f Position;
 
-			FVector3f Offset;
+					NCsUserWidget::EPosition OffsetType;
 
-			int32 ZOrder;
+					FVector3f Offset;
 
-			bool bAnimParams;
+					int32 ZOrder;
 
-			AnimParamsType AnimParams;
+					bool bAnimParams;
 
-		public:
+					AnimParamsType AnimParams;
 
-			FImplSlice();
+				public:
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
+					FSlice();
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+				// ICsGetInterfaceMap
+				#pragma region
+				public:
 
-		#pragma endregion ICsGetInterfaceMap
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-		public:
+				#pragma endregion ICsGetInterfaceMap
 
-			void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
+				public:
 
-		// PayloadType (NCsUserWidget::NPayload::IPayload)
-		#pragma region
-		public:
+					void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
-			FORCEINLINE const ESlateVisibility& GetVisibility() const { return Visibility; }
-			FORCEINLINE const bool& ShouldAddToViewport() const { return bAddToViewport; }
-			FORCEINLINE const float& GetRenderScale() const { return RenderScale; }
-			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
-			FORCEINLINE const NCsUserWidget::EPosition& GetPositionType() const { return PositionType; }
-			FORCEINLINE const FVector3f& GetPosition() const { return Position; }
-			FORCEINLINE const NCsUserWidget::EPosition& GetOffsetType() const { return OffsetType; }
-			FORCEINLINE const FVector3f& GetOffset() const { return Offset; }
-			FORCEINLINE const int32& GetZOrder() const { return ZOrder; }
-			FORCEINLINE const bool& HasAnimParams() const { return bAnimParams; }
-			FORCEINLINE const AnimParamsType& GetAnimParams() const { return AnimParams; }
+				// PayloadType (NCsUserWidget::NPayload::IPayload)
+				#pragma region
+				public:
 
-		#pragma endregion PayloadType (NCsUserWidget::NPayload::IPayload)
+					FORCEINLINE const ESlateVisibility& GetVisibility() const { return Visibility; }
+					FORCEINLINE const bool& ShouldAddToViewport() const { return bAddToViewport; }
+					FORCEINLINE const float& GetRenderScale() const { return RenderScale; }
+					FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+					FORCEINLINE const NCsUserWidget::EPosition& GetPositionType() const { return PositionType; }
+					FORCEINLINE const FVector3f& GetPosition() const { return Position; }
+					FORCEINLINE const NCsUserWidget::EPosition& GetOffsetType() const { return OffsetType; }
+					FORCEINLINE const FVector3f& GetOffset() const { return Offset; }
+					FORCEINLINE const int32& GetZOrder() const { return ZOrder; }
+					FORCEINLINE const bool& HasAnimParams() const { return bAnimParams; }
+					FORCEINLINE const AnimParamsType& GetAnimParams() const { return AnimParams; }
 
-		// ICsReset
-		#pragma region
-		public:
+				#pragma endregion PayloadType (NCsUserWidget::NPayload::IPayload)
 
-			void Reset();
+				// ICsReset
+				#pragma region
+				public:
 
-		#pragma endregion ICsReset
+					void Reset();
 
-		#undef AnimParamsType
-		};
-
-	#undef PayloadType
+				#pragma endregion ICsReset
+				};
+			}
+		}
 	}
 }

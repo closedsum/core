@@ -22,11 +22,9 @@ namespace NCsData
 		}
 	}
 
-#define DataType NCsData::IData
-
 	/**
 	*/
-	struct CSDATA_API FLibrary : public NCsInterfaceMap::TLibrary<DataType>
+	struct CSDATA_API FLibrary : public NCsInterfaceMap::TLibrary<CsDataType>
 	{
 	#define LogLevel void(*Log)(const FString&) = &NCsData::FLog::Warning
 
@@ -77,7 +75,7 @@ namespace NCsData
 	#pragma region
 	public:
 
-		static DataType* ConvertChecked(const FString& Context, UObject* Object);
+		static CsDataType* ConvertChecked(const FString& Context, UObject* Object);
 
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* ConvertChecked(const FString& Context, UObject* Object)
@@ -85,12 +83,12 @@ namespace NCsData
 			return GetInterfaceChecked<InterfaceType>(Context, ConvertChecked(Context, Object));
 		}
 
-		static DataType* SafeConvert(const FString& Context, UObject* Object, LogLevel);
+		static CsDataType* SafeConvert(const FString& Context, UObject* Object, LogLevel);
 
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* SafeConvert(const FString& Context, UObject* Object, LogLevel)
 		{
-			if (DataType* Data = SafeConvert(Context, Object, Log))
+			if (CsDataType* Data = SafeConvert(Context, Object, Log))
 				return GetSafeInterfaceChecked<InterfaceType>(Context, Data);
 			return nullptr;
 		}
@@ -103,14 +101,14 @@ namespace NCsData
 
 		/**
 		* Safely load the Data from Object.
-		*  Data implements the interface: DataType (NCsData::IData).
+		*  Data implements the interface: CsDataType (NCsData::IData).
 		* 
 		* @param Context	The calling context.
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
 		* @param Log		Log function.
-		* return			Loaded object of type: DataType (NCsData::IData).
+		* return			Loaded object of type: CsDataType (NCsData::IData).
 		*/
-		static DataType* SafeLoad(const FString& Context, UObject* Object, LogLevel);
+		static CsDataType* SafeLoad(const FString& Context, UObject* Object, LogLevel);
 
 		/**
 		* Safely load the Data from Object.
@@ -124,19 +122,19 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* SafeLoad(const FString& Context, UObject* Object, LogLevel)
 		{
-			DataType* Data = SafeLoad(Context, Object, Log);
+			CsDataType* Data = SafeLoad(Context, Object, Log);
 
 			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}
 
 		/**
 		* Safely load the Data from Object.
-		*  Data implements the interface: DataType (NCsData::IData).
+		*  Data implements the interface: CsDataType (NCsData::IData).
 		*
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
-		* return			Loaded object of type: DataType (NCsData::IData).
+		* return			Loaded object of type: CsDataType (NCsData::IData).
 		*/
-		static DataType* SafeLoad(UObject* Object);
+		static CsDataType* SafeLoad(UObject* Object);
 
 		/**
 		* Safely load the Data from Object.
@@ -152,12 +150,12 @@ namespace NCsData
 
 			const FString& Context = Str::SafeLoad;
 
-			DataType* Data = SafeLoad(Object);
+			CsDataType* Data = SafeLoad(Object);
 
 			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}
 
-		static const DataType* TopLoadChecked(const FString& Context, UObject* Object);
+		static const CsDataType* TopLoadChecked(const FString& Context, UObject* Object);
 
 		template<typename InterfaceType>
 		FORCEINLINE static const InterfaceType* TopLoadChecked(const FString& Context, UObject* Object)
@@ -165,12 +163,12 @@ namespace NCsData
 			return GetInterfaceChecked<InterfaceType>(Context, TopLoadChecked(Context, Object));
 		}
 
-		static const DataType* SafeTopLoad(const FString& Context, UObject* Object, LogLevel);
+		static const CsDataType* SafeTopLoad(const FString& Context, UObject* Object, LogLevel);
 
 		template<typename InterfaceType>
 		static const InterfaceType* SafeTopLoad(const FString& Context, UObject* Object, LogLevel)
 		{
-			if (const DataType* Data = SafeTopLoad(Context, Object, Log))
+			if (const CsDataType* Data = SafeTopLoad(Context, Object, Log))
 			{
 				if (const InterfaceType* Interface = GetSafeInterfaceChecked<InterfaceType>(Context, Data))
 					return Interface;
@@ -252,15 +250,15 @@ namespace NCsData
 	public:
 
 		/**
-		* Get Data with name DataName which implements the interface: DataType (NCsData::IData).
+		* Get Data with name DataName which implements the interface: CsDataType (NCsData::IData).
 		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that has a reference to a UWorld (GetWorld() is Valid).
 		*						Used to route to Manager_Data.
 		* @param DataName		Name of the data to get. This is the EntryName in Manager_Data.
-		* return				Data which implements the interface: DataType (NCsData::IData).	
+		* return				Data which implements the interface: CsDataType (NCsData::IData).	
 		*/
-		static DataType* GetChecked(const FString& Context, const UObject* WorldContext, const FName& DataName);
+		static CsDataType* GetChecked(const FString& Context, const UObject* WorldContext, const FName& DataName);
 
 		/**
 		* Get Data with name DataName which implements the interface: InterfaceType.
@@ -274,22 +272,22 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* GetChecked(const FString& Context, const UObject* WorldContext, const FName& DataName)
 		{
-			DataType* Data = GetChecked(Context, WorldContext, DataName);
+			CsDataType* Data = GetChecked(Context, WorldContext, DataName);
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}
 
 		/**
-		* Safely get Data with name DataName which implements the interface: DataType (NCsData::IData).
+		* Safely get Data with name DataName which implements the interface: CsDataType (NCsData::IData).
 		*
 		* @param Context		The calling context.
 		* @param WorldContext	Object that has a reference to a UWorld (GetWorld() is Valid).
 		*						Used to route to Manager_Data.
 		* @param DataName		Name of the data to get. This is the EntryName in Manager_Data.
 		* @param Log			(optional)
-		* return				Data which implements the interface: DataType (NCsData::IData).
+		* return				Data which implements the interface: CsDataType (NCsData::IData).
 		*/
-		static DataType* GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel);
+		static CsDataType* GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel);
 
 		/**
 		* Safely get Data with name DataName which implements the interface: InterfaceType.
@@ -304,7 +302,7 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel)
 		{
-			DataType* Data = GetSafe(Context, WorldContext, DataName, Log);
+			CsDataType* Data = GetSafe(Context, WorldContext, DataName, Log);
 
 			if (!Data)
 				return nullptr;
@@ -320,13 +318,13 @@ namespace NCsData
 		}
 
 		/**
-		* Get Data from Object which implements the interface: DataType (NCsData::IData).
+		* Get Data from Object which implements the interface: CsDataType (NCsData::IData).
 		* 
 		* @param Context	The calling context.
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
-		* return			Object that implements the interface: DataType (NCsData::IData).
+		* return			Object that implements the interface: CsDataType (NCsData::IData).
 		*/
-		static DataType* GetChecked(const FString& Context, UObject* Object);
+		static CsDataType* GetChecked(const FString& Context, UObject* Object);
 
 		/**
 		* Get Data from Object which implements the interface: InterfaceType.
@@ -338,20 +336,20 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* GetChecked(const FString& Context, UObject* Object)
 		{
-			DataType* Data = GetChecked(Context, Object);
+			CsDataType* Data = GetChecked(Context, Object);
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}
 
 		/**
 		* Safely get the Data from Object.
-		*  Data implements the interface: DataType (NCsData::IData).
+		*  Data implements the interface: CsDataType (NCsData::IData).
 		*
 		* @param Context	The calling context.
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
-		* return			Data that implements the interface: DataType (NCsData::IData).
+		* return			Data that implements the interface: CsDataType (NCsData::IData).
 		*/
-		static DataType* GetSafe(const FString& Context, UObject* Object, LogLevel);
+		static CsDataType* GetSafe(const FString& Context, UObject* Object, LogLevel);
 
 		/**
 		* Safely get the Data from Object.
@@ -364,20 +362,20 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* GetSafe(const FString& Context, UObject* Object, LogLevel)
 		{
-			DataType* Data = GetSafe(Context, Object, Log);
+			CsDataType* Data = GetSafe(Context, Object, Log);
 
 			return Data ? GetSafeInterfaceChecked<InterfaceType>(Context, Data) : nullptr;
 		}
 
 		/**
-		* Get the underlying data that implements the interface: DataType (NCsData::IData)
+		* Get the underlying data that implements the interface: CsDataType (NCsData::IData)
 		* from the UObject, UData, which implements the interface: ICsData.
 		* 
 		* @param Context	The calling context.
 		* @param Data		UObject that implements the interface: ICsData.
-		* return			Object that implements the interface: DataType (NCsData::IData).
+		* return			Object that implements the interface: CsDataType (NCsData::IData).
 		*/
-		static DataType* GetChecked(const FString& Context, ICsData* UData);
+		static CsDataType* GetChecked(const FString& Context, ICsData* UData);
 
 		/**
 		* Get the underlying data that implements the interface: InterfaceType
@@ -390,7 +388,7 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* GetChecked(const FString& Context, ICsData* UData)
 		{
-			DataType* Data = GetChecked(Context, UData);
+			CsDataType* Data = GetChecked(Context, UData);
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}
@@ -411,7 +409,7 @@ namespace NCsData
 		static UObject* GetScriptChecked(const FString& Context, const UObject* WorldContext, const FName& DataName);
 
 		/**
-		* Safely get Script Data with name DataName which implements the interface: DataType ICsScriptData.
+		* Safely get Script Data with name DataName which implements the interface: ICsScriptData.
 		*
 		* @param Context		The calling context.
 		* @param WorldContext	Object that has a reference to a UWorld (GetWorld() is Valid).
@@ -428,7 +426,6 @@ namespace NCsData
 
 	#undef LogLevel
 	};
-#undef DataType
 }
 
 using CsDataLibrary = NCsData::FLibrary;

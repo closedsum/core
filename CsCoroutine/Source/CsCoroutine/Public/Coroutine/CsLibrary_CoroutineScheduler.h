@@ -24,7 +24,11 @@ namespace NCsCoroutine
 	{
 		struct CSCOROUTINE_API FLibrary final
 		{
+		private:
+
 		#define LogLevel void(*Log)(const FString&) = &NCsCoroutine::FLog::Warning
+
+			using PayloadType = NCsCoroutine::NPayload::FImpl;
 
 		// ContextRoot
 		#pragma region
@@ -122,10 +126,8 @@ namespace NCsCoroutine
 			// Start
 		#pragma region
 		public:
-
-		#define PayloadType NCsCoroutine::NPayload::FImpl
+		
 			static const FCsRoutineHandle& StartChecked(const FString& Context, const UObject* ContextObject, PayloadType* Payload);
-		#undef PayloadType
 			
 		#pragma endregion Start
 
@@ -249,9 +251,7 @@ namespace NCsCoroutine
 		#pragma region
 		public:
 
-		#define PayloadType NCsCoroutine::NPayload::FImpl
 			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup);
-		#undef PayloadType
 
 		#pragma endregion Payload
 
@@ -329,9 +329,7 @@ namespace NCsCoroutine
 		#pragma region
 		public:
 
-		#define PayloadType NCsCoroutine::NPayload::FImpl
 			static const FCsRoutineHandle& CustomStartChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const int32& OwnerID, PayloadType* Payload);
-		#undef PayloadType
 			
 		#pragma endregion Start
 
@@ -445,9 +443,7 @@ namespace NCsCoroutine
 		#pragma region
 		public:
 
-		#define PayloadType NCsCoroutine::NPayload::FImpl
 			static PayloadType* AllocateCustomPayloadChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex);
-		#undef PayloadType
 
 		#pragma endregion Payload
 

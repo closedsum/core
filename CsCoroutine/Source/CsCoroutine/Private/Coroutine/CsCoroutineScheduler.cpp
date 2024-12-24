@@ -47,8 +47,8 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 #define USING_NS_CACHED using namespace NCsCoroutineScheduler::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsCoroutineScheduler::NCached; \
 	const FString& Context = Str::__FunctionName
-#define DefaultScheduleType NCsCoroutine::NSchedule::FDefault
-#define CustomScheduleType NCsCoroutine::NSchedule::FCustom
+using DefaultScheduleType = NCsCoroutine::NSchedule::FDefault;
+using CustomScheduleType = NCsCoroutine::NSchedule::FCustom;
 
 // Singleton
 #pragma region
@@ -264,5 +264,3 @@ void UCsCoroutineScheduler::AllocateCustomGroupIndexAndOwnerID(int32& OutGroupIn
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef DefaultScheduleType
-#undef CustomScheduleType

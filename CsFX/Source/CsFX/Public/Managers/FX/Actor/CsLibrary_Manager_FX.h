@@ -310,8 +310,6 @@ namespace NCsFX
 		#pragma region
 		public:
 
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-
 			/**
 			* Spawn an FX with the given payload.
 			* 
@@ -364,10 +362,6 @@ namespace NCsFX
 			*/
 			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector3f& Location);
 
-		#undef PooledPayloadType
-
-		#define PayloadType NCsFX::NPayload::IPayload
-
 			/**
 			* Spawn an FX with the given Type and Payload.
 			*
@@ -378,8 +372,6 @@ namespace NCsFX
 			* return				Spawned FX
 			*/
 			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsFX& Type, PayloadType* Payload);
-
-		#undef PayloadType
 
 			/**
 			* Spawn an FX with the given payload.

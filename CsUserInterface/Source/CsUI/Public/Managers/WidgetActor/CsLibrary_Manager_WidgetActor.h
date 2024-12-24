@@ -25,6 +25,10 @@ namespace NCsWidgetActor
 		*/
 		struct CSUI_API FLibrary
 		{
+		private:
+
+			using PayloadType = NCsWidgetActor::NPayload::IPayload;
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -107,8 +111,6 @@ namespace NCsWidgetActor
 		#pragma region
 		public:
 
-		#define PayloadType NCsWidgetActor::NPayload::IPayload
-
 			/*
 			* Allocate a Payload (used to Spawn a UserWidget from Manager_WidgetActor).
 			* 
@@ -119,15 +121,11 @@ namespace NCsWidgetActor
 			*/
 			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsWidgetActor& Type);
 
-		#undef PayloadType 
-
 		#pragma endregion Payload
 
 		// Spawn
 		#pragma region
 		public:
-
-		#define PayloadType NCsWidgetActor::NPayload::IPayload
 
 			/**
 			* Spawn a WidgetActor with the given Payload.
@@ -139,8 +137,6 @@ namespace NCsWidgetActor
 			* return				Spawned WidgetActor
 			*/
 			static const FCsWidgetActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsWidgetActor& Type, PayloadType* Payload);
-
-		#undef PayloadType
 
 		#pragma endregion Spawn
 		};

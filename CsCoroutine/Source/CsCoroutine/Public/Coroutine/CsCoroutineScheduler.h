@@ -15,6 +15,12 @@ class CSCOROUTINE_API UCsCoroutineScheduler : public UObject
 
 private:
 
+	using DefaultScheduleType = NCsCoroutine::NSchedule::FDefault;
+	using CustomScheduleType = NCsCoroutine::NSchedule::FCustom;
+	using PayloadResourceType = NCsCoroutine::NPayload::FResource;
+	using PayloadType = NCsCoroutine::NPayload::FImpl;
+	using MessageType = NCsCoroutine::EMessage;
+
 // Singleton
 #pragma region
 public:
@@ -97,10 +103,6 @@ public:
 #pragma region
 private:
 
-#define DefaultScheduleType NCsCoroutine::NSchedule::FDefault 
-#define PayloadResourceType NCsCoroutine::NPayload::FResource
-#define PayloadType NCsCoroutine::NPayload::FImpl
-
 	TArray<DefaultScheduleType> DefaultSchedules_Internal;
 
 	/** */
@@ -138,16 +140,9 @@ private:
 		return GetDefaultSchedule(PayloadContainer->Get());
 	}
 
-#undef DefaultScheduleType
-#undef PayloadResourceType
-#undef PayloadType
-
 	// Start
 #pragma region
 public:
-
-#define PayloadResourceType NCsCoroutine::NPayload::FResource
-#define PayloadType NCsCoroutine::NPayload::FImpl
 
 	/**
 	*
@@ -193,9 +188,6 @@ public:
 		return GetDefaultSchedule(Payload).StartChild(Payload);
 	}
 
-#undef PayloadResourceType
-#undef PayloadType
-
 #pragma endregion Start
 
 	// Update
@@ -218,8 +210,6 @@ public:
 	// End
 #pragma region
 public:
-
-#define CustomScheduleType NCsCoroutine::NSchedule::FCustom
 
 	/**
 	*
@@ -289,16 +279,11 @@ public:
 		return GetDefaultSchedule(Group).HasJustEnded(Handle);
 	}
 
-#undef CustomScheduleType
-
 #pragma endregion End
 
 	// Payload
 #pragma region
 public:
-
-#define PayloadResourceType NCsCoroutine::NPayload::FResource
-#define PayloadType NCsCoroutine::NPayload::FImpl
 
 	/**
 	*
@@ -321,9 +306,6 @@ public:
 	{
 		return GetDefaultSchedule(Group).AllocatePayload();
 	}
-
-#undef PayloadResourceType
-#undef PayloadType
 
 #pragma endregion Payload
 
@@ -379,9 +361,6 @@ public:
 #pragma region
 public:
 
-#define CustomScheduleType NCsCoroutine::NSchedule::FCustom
-#define MessageType NCsCoroutine::EMessage
-
 	FORCEINLINE void BroadcastMessage(const FECsUpdateGroup& Group, const MessageType& Type, const FName& Message, void* InOwner = nullptr)
 	{
 		if (Group == NCsUpdateGroup::Custom)
@@ -397,9 +376,6 @@ public:
 		}
 	}
 
-#undef MessageType
-#undef CustomScheduleType
-
 #pragma endregion Message
 
 #pragma endregion Default
@@ -407,8 +383,6 @@ public:
 // Custom
 #pragma region
 private:
-
-#define CustomScheduleType NCsCoroutine::NSchedule::FCustom
 
 	TArray<CustomScheduleType> CustomSchedules;
 
@@ -437,8 +411,6 @@ public:
 		return true;
 	}
 
-#undef CustomScheduleType
-
 	// Owner
 #pragma region
 public:
@@ -455,9 +427,6 @@ public:
 	// Start
 #pragma region
 public:
-
-#define PayloadResourceType NCsCoroutine::NPayload::FResource
-#define PayloadType NCsCoroutine::NPayload::FImpl
 
 	/**
 	*
@@ -510,9 +479,6 @@ public:
 	{
 		return GetCustomSchedule(GroupIndex).StartChild(OwnerID, Payload);
 	}
-
-#undef PayloadResourceType
-#undef PayloadType
 
 #pragma endregion Start
 
@@ -581,9 +547,6 @@ public:
 #pragma region
 public:
 
-#define PayloadResourceType NCsCoroutine::NPayload::FResource
-#define PayloadType NCsCoroutine::NPayload::FImpl
-
 	/**
 	*
 	*
@@ -605,9 +568,6 @@ public:
 	{
 		return GetCustomSchedule(GroupIndex).AllocatePayload();
 	}
-
-#undef PayloadResourceType
-#undef PayloadType
 
 #pragma endregion Payload
 

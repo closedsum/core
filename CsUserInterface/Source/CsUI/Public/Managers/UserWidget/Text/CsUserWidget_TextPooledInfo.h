@@ -11,9 +11,34 @@
 
 #include "CsUserWidget_TextPooledInfo.generated.h"
 
+struct FCsUserWidget_TextPooledInfo;
+
 // NCsUserWidget::NPooled::NText::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsUserWidget, NPooled, NText, FInfo)
+// NCsUserWidget::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NPayload, IPayload)
 
+namespace NCsUserWidget_TextPooledInfo
+{
+	using ThisType = FCsUserWidget_TextPooledInfo;
+	using InfoType = NCsUserWidget::NPooled::NText::FInfo;
+	using PayloadType = NCsUserWidget::NPayload::IPayload;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSUI_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+
+		static void SetPayloadChecked(const ThisType* This, const FString& Context, PayloadType* Payload);
+		static bool SetSafePayload(const ThisType* This, const FString& Context, PayloadType* Payload, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+	};
+}
+
+// NCsUserWidget::NPooled::NText::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsUserWidget, NPooled, NText, FInfo)
 // NCsUserWidget::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NPayload, IPayload)
 
@@ -102,15 +127,15 @@ public:
 	{
 	}
 
-#define InfoType NCsUserWidget::NPooled::NText::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsUserWidget::NPooled::NText::FInfo;
+	using PayloadType = NCsUserWidget::NPayload::IPayload;
+	using _Impl = NCsUserWidget_TextPooledInfo::FImpl;
 
-#define PayloadType NCsUserWidget::NPayload::IPayload
-	void SetPayloadChecked(const FString& Context, PayloadType* Payload) const;
-	bool SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
-#undef PayloadType
+	FORCEINLINE void CopyToInfo(InfoType* Info)				 { _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const { _Impl::CopyToInfoAsValue(this, Info); }
+
+	FORCEINLINE void SetPayloadChecked(const FString& Context, PayloadType* Payload) const													{ _Impl::SetPayloadChecked(this, Context, Payload); }
+	FORCEINLINE bool SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const { _Impl::SetSafePayload(this, Context, Payload, Log); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;

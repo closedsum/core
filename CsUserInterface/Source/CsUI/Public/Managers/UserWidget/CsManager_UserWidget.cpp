@@ -751,9 +751,9 @@ PayloadType* UCsManager_UserWidget::ConstructPayload(const FECsUserWidgetPooled&
 		PayloadInterfaceMap->AddDeconstructSliceImpl(BaseSliceType::Name, &BaseSliceType::Deconstruct);
 	}
 
-	// SliceType (NCsProjectile::NPayload::FImplSice)
+	// SliceType (NCsProjectile::NPayload::NImpl::NSlice::FSlice)
 	{
-		typedef NCsUserWidget::NPayload::FImplSlice SliceType;
+		typedef NCsUserWidget::NPayload::NImpl::NSlice::FSlice SliceType;
 
 		SliceType* Slice = new SliceType();
 
@@ -765,10 +765,10 @@ PayloadType* UCsManager_UserWidget::ConstructPayload(const FECsUserWidgetPooled&
 
 	const TSet<FECsUserWidgetPayload>& PayloadTypes	= Settings.PayloadTypes;
 
-	// TextSliceType (NCsUserWidget::NPayload::NText::FImplSlice)
+	// TextSliceType (NCsUserWidget::NPayload::NText::NImpl::NSlice::FSlice)
 	if (PayloadTypes.Contains(NCsUserWidgetPayload::Text))
 	{
-		typedef NCsUserWidget::NPayload::NText::FImplSlice SliceType;
+		typedef NCsUserWidget::NPayload::NText::NImpl::NSlice::FSlice SliceType;
 
 		SliceType* Slice = new SliceType();
 
@@ -941,7 +941,7 @@ FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidgetChecked(const FString& Con
 
 void UCsManager_UserWidget::ConstructDataHandler()
 {
-	using _DataHandlerType = NCsUserWidget::NManager::NHandler::FData;
+	using _DataHandlerType = NCsUserWidget::NManager::NHandler::NData::FData;
 
 	DataHandler = new _DataHandlerType();
 	DataHandler->Outer = this;

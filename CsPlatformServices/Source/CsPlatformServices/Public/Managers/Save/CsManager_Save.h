@@ -27,19 +27,21 @@ namespace NCsSave
 	{
 		namespace NInfo
 		{
-		#define InfoType NCsSave::NAction::NInfo::FInfo
+			// Allow clearer names without name collisions
+			struct _
+			{
+				using InfoType = NCsSave::NAction::NInfo::FInfo;
+			};
 
-			struct CSPLATFORMSERVICES_API FResource : public TCsResourceContainer<InfoType>
+			struct CSPLATFORMSERVICES_API FResource : public TCsResourceContainer<_::InfoType>
 			{
 				~FResource(){}
 			};
 
-			struct CSPLATFORMSERVICES_API FManager : public NCsResource::NManager::NValue::TFixed<InfoType, FResource, 64>
+			struct CSPLATFORMSERVICES_API FManager : public NCsResource::NManager::NValue::TFixed<_::InfoType, FResource, 64>
 			{
 				~FManager(){}
 			};
-
-		#undef InfoType
 		}
 	}
 }
@@ -60,9 +62,11 @@ class CSPLATFORMSERVICES_API UCsManager_Save : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define FileInfoType NCsSave::NFile::FInfo
-#define ActionType NCsSave::EAction
-#define ActionInfoType NCsSave::NAction::NInfo::FInfo
+private:
+
+	using FileInfoType = NCsSave::NFile::FInfo;
+	using ActionType = NCsSave::EAction;
+	using ActionInfoType = NCsSave::NAction::NInfo::FInfo;
 
 // Singleton
 #pragma region
@@ -926,8 +930,4 @@ protected:
 	void OnDeleteUserFileComplete(bool WasSuccessful, const FUniqueNetId& UserId, const FString& FileName);
 
 #pragma endregion IOnlineUserCloud
-
-#undef FileInfoType
-#undef ActionType
-#undef ActionInfoType
 };

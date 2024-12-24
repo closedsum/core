@@ -27,6 +27,8 @@ namespace NCsUserWidget
 			}
 		}
 
+		using PayloadType = NCsUserWidget::NPayload::IPayload;
+
 		// ContextRoot
 		#pragma region
 
@@ -103,10 +105,8 @@ namespace NCsUserWidget
 		// Payload
 		#pragma region
 
-		#define PayloadType NCsUserWidget::NPayload::IPayload
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsUserWidgetPooled& Type)
 		{
-		#undef PayloadType
 			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
 		}
 
@@ -115,10 +115,8 @@ namespace NCsUserWidget
 		// Spawn
 		#pragma region
 
-		#define PayloadType NCsUserWidget::NPayload::IPayload
 		const FCsUserWidgetPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsUserWidgetPooled& Type, PayloadType* Payload)
 		{
-		#undef PayloadType
 			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
 		}
 

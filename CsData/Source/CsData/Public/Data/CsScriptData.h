@@ -20,9 +20,7 @@ class CSDATA_API ICsScriptData : public ICsData
 #pragma region
 public:
 
-#define DataType NCsData::IData
-	DataType* _getIData() const { return nullptr; }
-#undef DataType
+	CsDataType* _getIData() const { return nullptr; }
 
 	bool IsValid(const int32& LoadFlags);
 	void Load(const int32& LoadFlags);

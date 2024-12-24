@@ -52,6 +52,8 @@ public:
 		};
 	};
 
+	using PayloadType = FCsUIPopulateEnumMapFromSettings::FFromDataTable::FPayload;
+
 	/**
 	* Populate EnumMap with values corresponding to the rows of the DataTable.
 	*  Assume the struct used as the entry of the DataTable has the properties:
@@ -62,7 +64,5 @@ public:
 	* @param Context		The calling context.
 	* @param Payload
 	*/
-#define PayloadType FCsUIPopulateEnumMapFromSettings::FFromDataTable::FPayload
 	static void FromDataTable(const FString& Context, PayloadType& Payload);
-#undef PayloadType
 };

@@ -31,8 +31,10 @@ namespace NCsTime
 	
 		class CSTIME_API FConsoleCommand : ConsoleCommandManagerType
 		{
-		#define HandleType NCsConsoleCommand::NManager::FHandle
-		#define InfoType NCsConsoleCommand::FInfo
+		private:
+
+			using HandleType = NCsConsoleCommand::NManager::FHandle;
+			using InfoType = NCsConsoleCommand::FInfo;
 
 		public:
 
@@ -140,9 +142,6 @@ namespace NCsTime
 			* return		Whether the console command was found / executed
 			*/
 			bool Exec_CustomUpdate(const TCHAR* Cmd);
-
-		#undef HandleType
-		#undef InfoType
 		};
 	#undef ConsoleCommandManagerType
 	}

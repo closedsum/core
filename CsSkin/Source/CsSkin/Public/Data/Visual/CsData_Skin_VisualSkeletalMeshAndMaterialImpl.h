@@ -15,6 +15,26 @@
 
 #include "CsData_Skin_VisualSkeletalMeshAndMaterialImpl.generated.h"
 
+struct FCsData_Skin_VisualSkeletalMeshAndMaterialImpl;
+
+// NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NSkeletalMeshAndMaterial, FImpl)
+
+namespace NCsData_Skin_VisualSkeletalMeshAndMaterialImpl
+{
+	using ThisType = FCsData_Skin_VisualSkeletalMeshAndMaterialImpl;
+	using ImplType = NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSSKIN_API FImpl
+	{
+	public:
+
+		static void CopyToImpl(ThisType* This, ImplType* Impl);
+		static void CopyToImplAsValue(const ThisType* This, ImplType* Impl);
+	};
+}
+
 // NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NSkeletalMeshAndMaterial, FImpl)
 
@@ -52,10 +72,11 @@ public:
 	{
 	}
 
-#define ImplType NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl
-	void CopyToImpl(ImplType* Impl);
-	void CopyToImplAsValue(ImplType* Impl) const;
-#undef ImplType
+	using ImplType = NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl;
+	using _Impl = NCsData_Skin_VisualSkeletalMeshAndMaterialImpl::FImpl;
+
+	FORCEINLINE void CopyToImpl(ImplType* Impl)					{ _Impl::CopyToImpl(this, Impl); }
+	FORCEINLINE void CopyToImplAsValue(ImplType* Impl) const	{ _Impl::CopyToImplAsValue(this, Impl); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
@@ -78,8 +99,6 @@ namespace NCsSkin
 		{
 			namespace NSkeletalMeshAndMaterial
 			{
-			#define DataType NCsData::IData
-
 				/**
 				* Represents an implementation of data which implement the interfaces: 
 				* - DataType (NCsData::IData)
@@ -96,7 +115,7 @@ namespace NCsSkin
 				* 
 				* The idea behind "emulating" another object (usually a UObject) is to keep the code a cleaner and more readable.
 				*/
-				struct CSSKIN_API FImpl : public DataType,
+				struct CSSKIN_API FImpl : public CsDataType,
 										  public CsSkinDataType,
 										  public CsSkeletalMeshSkinDataType,
 										  public CsMaterialSkinDataType
@@ -178,8 +197,6 @@ namespace NCsSkin
 					void SetChecked(const FString& Context, USkeletalMeshComponent* Component) const;
 					bool SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 				};
-
-			#undef DataType
 			}
 		}
 	}

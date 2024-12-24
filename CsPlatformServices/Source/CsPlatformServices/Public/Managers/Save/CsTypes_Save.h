@@ -411,10 +411,12 @@ namespace NCsSave
 		{
 			struct CSPLATFORMSERVICES_API FInfo
 			{
-			public:
+			private:
 
-			#define ActionType NCsSave::EAction
-			#define ActionStateType NCsSave::NAction::EState
+				using ActionType = NCsSave::EAction;
+				using ActionStateType = NCsSave::NAction::EState;
+
+			public:
 
 				/** Profile to perform the action on.
 					If Profile == ECsPlayerProfile_MAX, then perform action on ALL Profiles. */
@@ -499,9 +501,6 @@ namespace NCsSave
 					State = ActionStateType::None;
 					bSuccess = false;
 				}
-
-			#undef ActionType
-			#undef ActionStateType
 			};
 		}
 	}

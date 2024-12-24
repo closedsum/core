@@ -29,6 +29,10 @@ namespace NCsUserWidget
 		*/
 		struct CSUI_API FLibrary
 		{
+		private:
+
+			using PayloadType = NCsUserWidget::NPayload::IPayload;
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -111,8 +115,6 @@ namespace NCsUserWidget
 		#pragma region
 		public:
 
-		#define PayloadType NCsUserWidget::NPayload::IPayload
-
 			/*
 			* Allocate a Payload (used to Spawn a UserWidget from Manager_UserWidget).
 			* 
@@ -123,15 +125,11 @@ namespace NCsUserWidget
 			*/
 			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsUserWidgetPooled& Type);
 
-		#undef PayloadType 
-
 		#pragma endregion Payload
 
 		// Spawn
 		#pragma region
 		public:
-
-		#define PayloadType NCsUserWidget::NPayload::IPayload
 
 			/**
 			* Spawn a UserWidget with the given Payload.
@@ -143,8 +141,6 @@ namespace NCsUserWidget
 			* return				Spawned StaticMeshActor
 			*/
 			static const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsUserWidgetPooled& Type, PayloadType* Payload);
-
-		#undef PayloadType
 
 		#pragma endregion Spawn
 
@@ -163,13 +159,11 @@ namespace NCsUserWidget
 			template<typename InterfaceType>
 			static InterfaceType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsUserWidgetPooled& Type)
 			{
-				UCsManager_UserWidget* Manager_UserWidget = GetChecked(Context, WorldContext);
-
+				typedef NCsUserWidget::NData::NLibrary::FLibrary DataLibrary;
 				typedef NCsUserWidget::NData::IData DataType;
 
-				DataType* Data = Manager_UserWidget->GetDataChecked(Context, Type);
-
-				typedef NCsUserWidget::NData::FLibrary DataLibrary;
+				UCsManager_UserWidget* Manager_UserWidget = GetChecked(Context, WorldContext);
+				DataType* Data							  = Manager_UserWidget->GetDataChecked(Context, Type);	
 
 				return DataLibrary::GetInterfaceChecked<InterfaceType>(Context, Data);
 			}

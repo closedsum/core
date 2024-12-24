@@ -41,6 +41,8 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 	UpdateGroup = NCsUpdateGroup::GameInstance;
 }
 
+using PayloadType = NCsLoad::NManager::NLoadObjectPaths::FPayload;
+
 // Singleton
 #pragma region
 
@@ -259,11 +261,8 @@ void UCsManager_Load::Update(const FCsDeltaTime& DeltaTime)
 	}
 }
 
-#define PayloadType NCsLoad::NManager::NLoadObjectPaths::FPayload
 FCsLoadHandle UCsManager_Load::LoadObjectPaths(const PayloadType& Payload)
 {
-#undef PayloadType
-
 	typedef NCsLoad::NManager::NTask::NLoadObjects::FResource ResourceType;
 	typedef UCsManagerLoad_Task_LoadObjects TaskType;
 

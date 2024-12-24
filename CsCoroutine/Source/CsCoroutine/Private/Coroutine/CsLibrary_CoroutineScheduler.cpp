@@ -47,6 +47,8 @@ namespace NCsCoroutine
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsCoroutine::FLog::Warning*/
 
+		using PayloadType = NCsCoroutine::NPayload::FImpl;
+
 		// ContextRoot
 		#pragma region
 
@@ -138,14 +140,12 @@ namespace NCsCoroutine
 			// Start
 		#pragma region
 
-		#define PayloadType NCsCoroutine::NPayload::FImpl
 		const FCsRoutineHandle& FLibrary::StartChecked(const FString& Context, const UObject* ContextObject, PayloadType* Payload)
 		{
 			CS_IS_PTR_NULL_CHECKED(Payload)
 
 			return GetChecked(Context, ContextObject)->Start(Payload);
 		}
-		#undef PayloadType
 			
 		#pragma endregion Start
 
@@ -244,14 +244,12 @@ namespace NCsCoroutine
 			// Payload
 		#pragma region
 		
-		#define PayloadType NCsCoroutine::NPayload::FImpl
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup)
 		{
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, UpdateGroup)
 
 			return GetChecked(Context, ContextObject)->AllocatePayload(UpdateGroup);
 		}
-		#undef PayloadType
 
 		#pragma endregion Payload
 
@@ -314,12 +312,10 @@ namespace NCsCoroutine
 			// Start
 		#pragma region
 
-		#define PayloadType NCsCoroutine::NPayload::FImpl
 		const FCsRoutineHandle& FLibrary::CustomStartChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex, const int32& OwnerID, PayloadType* Payload)
 		{
 			return GetChecked(Context, ContextObject)->CustomStart(GroupIndex, OwnerID, Payload);
 		}
-		#undef PayloadType
 			
 		#pragma endregion Start
 
@@ -398,12 +394,10 @@ namespace NCsCoroutine
 			// Payload
 		#pragma region
 
-		#define PayloadType NCsCoroutine::NPayload::FImpl
 		PayloadType* FLibrary::AllocateCustomPayloadChecked(const FString& Context, const UObject* ContextObject, const int32& GroupIndex)
 		{	
 			return GetChecked(Context, ContextObject)->AllocateCustomPayload(GroupIndex);
 		}
-		#undef PayloadType
 
 		#pragma endregion Payload
 

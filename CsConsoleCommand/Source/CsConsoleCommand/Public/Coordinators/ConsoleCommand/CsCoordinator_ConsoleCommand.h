@@ -19,6 +19,12 @@ class CSCONSOLECOMMAND_API UCsCoordinator_ConsoleCommand : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	using HandleType = NCsConsoleCommand::NManager::FHandle;
+	using ManagerType = NCsConsoleCommand::NManager::IManager;
+	using InfoType = NCsConsoleCommand::FInfo;
+
 // Singleton
 #pragma region
 public:
@@ -108,10 +114,6 @@ public:
 
 	bool Exec(UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Out = *GLog);
 
-#define HandleType NCsConsoleCommand::NManager::FHandle
-#define ManagerType NCsConsoleCommand::NManager::IManager
-#define InfoType NCsConsoleCommand::FInfo
-
 private:
 
 	TMap<HandleType, ManagerType*> ManagerMap;
@@ -127,8 +129,4 @@ public:
 	void GetCategories(TArray<FString>& OutCategories);
 
 	const TArray<InfoType>* GetConsoleCommandInfos(const FString& Category);
-
-#undef HandleType
-#undef ManagerType
-#undef InfoType
 };

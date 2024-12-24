@@ -85,7 +85,7 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 using ManagerParamsType = NCsWidgetActor::NManager::NInternal::FManager::FParams;
 using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 using PayloadType = NCsWidgetActor::NPayload::IPayload;
-using PayloadImplType = NCsWidgetActor::NPayload::FImpl;
+using PayloadImplType = NCsWidgetActor::NPayload::NImpl::FImpl;
 using DataType = NCsWidgetActor::NData::IData;
 
 // Singleton

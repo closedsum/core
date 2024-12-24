@@ -24,12 +24,18 @@ namespace NCsUserWidget
 
 				static const FName Name;
 
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using OutlineSettingsType = NCsUserWidget::NText::FOutline;
+					using ShadowSettingsType = NCsUserWidget::NText::FShadow;
+				};
+
 			public:
 
 				virtual ~IText() {}
-
-			#define OutlineSettingsType NCsUserWidget::NText::FOutline
-			#define ShadowSettingsType NCsUserWidget::NText::FShadow
 
 				/**
 				* Get the color of the text.
@@ -57,17 +63,14 @@ namespace NCsUserWidget
 				* 
 				* return Settings
 				*/
-				virtual const OutlineSettingsType& GetOutlineSettings() const = 0;
+				virtual const _::OutlineSettingsType& GetOutlineSettings() const = 0;
 					
 				/**
 				* Get any information describing the Shadow Settings for the text.
 				*
 				* return Settings
 				*/
-				virtual const ShadowSettingsType& GetShadowSettings() const = 0;
-
-			#undef OutlineSettingsType
-			#undef ShadowSettingsType
+				virtual const _::ShadowSettingsType& GetShadowSettings() const = 0;
 			};
 		}
 	}
@@ -87,8 +90,14 @@ public:
 
 	static const FName Name;
 
-#define OutlineSettingsType NCsUserWidget::NText::FOutline
-#define ShadowSettingsType NCsUserWidget::NText::FShadow
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using OutlineSettingsType = NCsUserWidget::NText::FOutline;
+		using ShadowSettingsType = NCsUserWidget::NText::FShadow;
+	};
 
 	/**
 	* Get the color of the text.
@@ -116,15 +125,12 @@ public:
 	* 
 	* return Settings
 	*/
-	virtual const OutlineSettingsType& GetOutlineSettings() const = 0;
+	virtual const _::OutlineSettingsType& GetOutlineSettings() const = 0;
 
 	/**
 	* Get any information describing the Shadow Settings for the text.
 	*
 	* return Settings
 	*/
-	virtual const ShadowSettingsType& GetShadowSettings() const = 0;
-
-#undef OutlineSettingsType
-#undef ShadowSettingsType
+	virtual const _::ShadowSettingsType& GetShadowSettings() const = 0;
 };

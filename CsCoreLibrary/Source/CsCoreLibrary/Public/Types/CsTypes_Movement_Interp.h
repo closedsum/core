@@ -525,7 +525,9 @@ namespace NCsSpeed
 		*/
 		struct CSCORELIBRARY_API FInterp
 		{
-		#define InfoType NCsSpeed::NInterp::FInfo
+		private:
+
+			using InfoType = NCsSpeed::NInterp::FInfo;
 
 		public:
 
@@ -626,8 +628,6 @@ namespace NCsSpeed
 			void Update(const float& DeltaTime);
 
 			float RemapValue(const float& Value) const;
-
-		#undef InfoType
 		};
 	}
 }

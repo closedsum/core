@@ -15,6 +15,26 @@
 
 #include "CsData_Skin_VisualStaticMeshAndMaterialImpl.generated.h"
 
+struct FCsData_Skin_VisualStaticMeshAndMaterialImpl;
+
+// NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NStaticMeshAndMaterial, FImpl)
+
+namespace NCsData_Skin_VisualStaticMeshAndMaterialImpl
+{
+	using ThisType = FCsData_Skin_VisualStaticMeshAndMaterialImpl;
+	using ImplType = NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSSKIN_API FImpl
+	{
+	public:
+
+		static void CopyToImpl(ThisType* This, ImplType* Impl);
+		static void CopyToImplAsValue(const ThisType* This, ImplType* Impl);
+	};
+}
+
 // NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NStaticMeshAndMaterial, FImpl)
 
@@ -52,10 +72,11 @@ public:
 	{
 	}
 
-#define ImplType NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl
-	void CopyToImpl(ImplType* Impl);
-	void CopyToImplAsValue(ImplType* Impl) const;
-#undef ImplType
+	using ImplType = NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl;
+	using _Impl = NCsData_Skin_VisualStaticMeshAndMaterialImpl::FImpl;
+
+	FORCEINLINE void CopyToImpl(ImplType* Impl)					{ _Impl::CopyToImpl(this, Impl); }
+	FORCEINLINE void CopyToImplAsValue(ImplType* Impl) const	{ _Impl::CopyToImplAsValue(this, Impl); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
@@ -77,17 +98,15 @@ namespace NCsSkin
 		{
 			namespace NStaticMeshAndMaterial
 			{
-			#define DataType NCsData::IData
-
 				/**
 				* Represents an implementation of data which implement the interfaces:
-				* - DataType (NCsData::IData)
+				* - CsDataType (NCsData::IData)
 				* - CsSkinDataType (NCsSkin::NData::NVisual::IVisual)
 				* - CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 				* - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 				*
 				* If members are set via pointers to an "owning" data, then "Emulates":
-				* - DataType (NCsData::IData).
+				* - CsDataType (NCsData::IData).
 				* - CsSkinDataType (NCsSkin::NData::NVisual::IVisual)
 				* - CsStaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 				* - CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
@@ -95,7 +114,7 @@ namespace NCsSkin
 				*
 				* The idea behind "emulating" another object (usually a UObject) is to keep the code a cleaner and more readable.
 				*/
-				struct CSSKIN_API FImpl : public DataType,
+				struct CSSKIN_API FImpl : public CsDataType,
 										  public CsSkinDataType,
 										  public CsStaticMeshSkinDataType,
 										  public CsMaterialSkinDataType
@@ -177,8 +196,6 @@ namespace NCsSkin
 					void SetChecked(const FString& Context, UStaticMeshComponent* Component) const;
 					bool SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
 				};
-
-			#undef DataType
 			}
 		}
 	}

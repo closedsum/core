@@ -16,162 +16,146 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidget_TextPooledInfo)
 
-#define InfoType NCsUserWidget::NPooled::NText::FInfo
-
-void FCsUserWidget_TextPooledInfo::CopyToInfo(InfoType* Info)
+namespace NCsUserWidget_TextPooledInfo
 {
-	Info->SetType(&Type);
+	using DeallocateMethodType = NCsUserWidget::EDeallocateMethod;
 
-	typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
+	{
+		Info->SetType(&This->Type);
+		Info->SetDeallocateMethod((DeallocateMethodType*)(&This->DeallocateMethod));
+		Info->SetRenderScale(&This->RenderScale);
+		Info->SetLifeTime(&This->LifeTime);
+		Info->SetPositionType((NCsUserWidget::EPosition*)(&This->PositionType));
+		Info->SetOffsetType((NCsUserWidget::EPosition*)(&This->OffsetType));
+		Info->SetOffset(&This->Offset);
+		Info->SetZOrder(&This->ZOrder);
+		Info->SetColor(&This->Color);
+		This->OutlineSettings.CopyToSettings(Info->GetOutlineSettingsPtr());
+		This->ShadowSettings.CopyToSettings(Info->GetShadowSettingsPtr());
+		Info->SetbAnimParams(&This->bAnimParams);
+		This->AnimParams.CopyToParams(Info->GetAnimParamsPtr());
+	}
 
-	Info->SetDeallocateMethod((DeallocateMethodType*)(&DeallocateMethod));
-	Info->SetRenderScale(&RenderScale);
-	Info->SetLifeTime(&LifeTime);
-	Info->SetPositionType((NCsUserWidget::EPosition*)(&PositionType));
-	Info->SetOffsetType((NCsUserWidget::EPosition*)(&OffsetType));
-	Info->SetOffset(&Offset);
-	Info->SetZOrder(&ZOrder);
-	Info->SetColor(&Color);
-	OutlineSettings.CopyToSettings(Info->GetOutlineSettingsPtr());
-	ShadowSettings.CopyToSettings(Info->GetShadowSettingsPtr());
-	Info->SetbAnimParams(&bAnimParams);
-	AnimParams.CopyToParams(Info->GetAnimParamsPtr());
-}
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
+	{
+		Info->SetType(This->Type);
+		Info->SetDeallocateMethod((DeallocateMethodType)(This->DeallocateMethod));
+		Info->SetRenderScale(This->RenderScale);
+		Info->SetLifeTime(This->LifeTime);
+		Info->SetPositionType((NCsUserWidget::EPosition)This->PositionType);
+		Info->SetOffsetType((NCsUserWidget::EPosition)This->OffsetType);
+		Info->SetOffset(This->Offset);
+		Info->SetZOrder(This->ZOrder);
+		Info->SetColor(This->Color);
+		This->OutlineSettings.CopyToSettingsAsValue(Info->GetOutlineSettingsPtr());
+		This->ShadowSettings.CopyToSettingsAsValue(Info->GetShadowSettingsPtr());
+		Info->SetbAnimParams(This->bAnimParams);
+		This->AnimParams.CopyToParamsAsValue(Info->GetAnimParamsPtr());
+	}
 
-void FCsUserWidget_TextPooledInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	Info->SetType(Type);
+	using PayloadLibrary = NCsUserWidget::NPayload::NLibrary::FLibrary;
+	using SliceType = NCsUserWidget::NPayload::NImpl::NSlice::FSlice;
+	using TextSliceType = NCsUserWidget::NPayload::NText::NImpl::NSlice::FSlice;
 
-	typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
-
-	Info->SetDeallocateMethod((DeallocateMethodType)(DeallocateMethod));
-	Info->SetRenderScale(RenderScale);
-	Info->SetLifeTime(LifeTime);
-	Info->SetPositionType((NCsUserWidget::EPosition)PositionType);
-	Info->SetOffsetType((NCsUserWidget::EPosition)OffsetType);
-	Info->SetOffset(Offset);
-	Info->SetZOrder(ZOrder);
-	Info->SetColor(Color);
-	OutlineSettings.CopyToSettingsAsValue(Info->GetOutlineSettingsPtr());
-	ShadowSettings.CopyToSettingsAsValue(Info->GetShadowSettingsPtr());
-	Info->SetbAnimParams(bAnimParams);
-	AnimParams.CopyToParamsAsValue(Info->GetAnimParamsPtr());
-}
-
-#undef InfoType
-
-#define PayloadType NCsUserWidget::NPayload::IPayload
-
-void FCsUserWidget_TextPooledInfo::SetPayloadChecked(const FString& Context, PayloadType* Payload) const
-{
-	CS_IS_PTR_NULL_CHECKED(Payload)
+	void FImpl::SetPayloadChecked(const ThisType* This, const FString& Context, PayloadType* Payload)
+	{
+		CS_IS_PTR_NULL_CHECKED(Payload)
 	
-	check(IsValidChecked(Context));
+		check(This->IsValidChecked(Context));
 
-	typedef NCsUserWidget::NPayload::FLibrary PayloadLibrary;
-
-	if (PayloadLibrary::HasUniqueBasedSlices(Context, Payload))
-	{
-		FCsInterfaceMap* InterfaceMap		 = Payload->GetInterfaceMap();
-		const TMap<FName, void*>& Interfaces = InterfaceMap->GetInterfaces();
-
-		typedef NCsUserWidget::NPayload::FImplSlice SliceType;
-		typedef NCsUserWidget::NPayload::NText::FImplSlice TextSliceType;
-
-		checkf(Interfaces.Find(SliceType::Name), TEXT("%s: Payload does NOT contain Slice of type: %s."), *Context, *(SliceType::Name.ToString()));
-		checkf(Interfaces.Find(TextSliceType::Name), TEXT("%s: Payload does NOT contain Slice of type: %s."), *Context, *(TextSliceType::Name.ToString()));
-
-		for (const TPair<FName, void*>& Pair : Interfaces)
+		if (PayloadLibrary::HasUniqueBasedSlices(Context, Payload))
 		{
-			const FName& Name = Pair.Key;
+			FCsInterfaceMap* InterfaceMap		 = Payload->GetInterfaceMap();
+			const TMap<FName, void*>& Interfaces = InterfaceMap->GetInterfaces();
 
-			// SliceType (NCsPooledObject::NPayload::FImplSlice)
-			if (Name == SliceType::Name)
+			checkf(Interfaces.Find(SliceType::Name), TEXT("%s: Payload does NOT contain Slice of type: %s."), *Context, *(SliceType::Name.ToString()));
+			checkf(Interfaces.Find(TextSliceType::Name), TEXT("%s: Payload does NOT contain Slice of type: %s."), *Context, *(TextSliceType::Name.ToString()));
+
+			for (const TPair<FName, void*>& Pair : Interfaces)
 			{
-				SliceType* Slice = static_cast<SliceType*>(Pair.Value);
+				const FName& Name = Pair.Key;
 
-				Slice->RenderScale = RenderScale;
-				Slice->LifeTime	   = LifeTime;
-			}
-			// TextSliceType (NCsUserWidget::NPayload::NText::FImplSlice)
-			if (Name == TextSliceType::Name)
-			{
-				TextSliceType* Slice = static_cast<TextSliceType*>(Pair.Value);
+				// SliceType (NCsPooledObject::NPayload::FImplSlice)
+				if (Name == SliceType::Name)
+				{
+					SliceType* Slice = static_cast<SliceType*>(Pair.Value);
 
-				Slice->Color = Color;
-				OutlineSettings.CopyToSettingsAsValue(Slice->GetOutlineSettingsPtr());
-				ShadowSettings.CopyToSettingsAsValue(Slice->GetShadowSettingsPtr());
+					Slice->RenderScale = This->RenderScale;
+					Slice->LifeTime	   = This->LifeTime;
+				}
+				// TextSliceType (NCsUserWidget::NPayload::NText::NImpl::NSlice::FSlice)
+				if (Name == TextSliceType::Name)
+				{
+					TextSliceType* Slice = static_cast<TextSliceType*>(Pair.Value);
+
+					Slice->Color = This->Color;
+					This->OutlineSettings.CopyToSettingsAsValue(Slice->GetOutlineSettingsPtr());
+					This->ShadowSettings.CopyToSettingsAsValue(Slice->GetShadowSettingsPtr());
+				}
 			}
 		}
+		else
+		{
+			checkf(0, TEXT("%s: Payload is NOT supported."), *Context);
+		}
 	}
-	else
+
+	bool FImpl::SetSafePayload(const ThisType* This, const FString& Context, PayloadType* Payload, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 	{
-		checkf(0, TEXT("%s: Payload is NOT supported."), *Context);
+		CS_IS_PTR_NULL(Payload)
+
+		if (!This->IsValid(Context, Log))
+			return false;
+
+		if (PayloadLibrary::HasUniqueBasedSlices(Context, Payload))
+		{
+			FCsInterfaceMap* InterfaceMap		 = Payload->GetInterfaceMap();
+			const TMap<FName, void*>& Interfaces = InterfaceMap->GetInterfaces();
+
+			if (!Interfaces.Find(SliceType::Name))
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload does NOT contain Slice of type: %s."), *Context, *(SliceType::Name.ToString())));
+				return false;
+			}
+
+			if (!Interfaces.Find(TextSliceType::Name))
+			{	
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload does NOT contain Slice of type: %s."), *Context, *(TextSliceType::Name.ToString())));
+				return false;
+			}
+
+			for (const TPair<FName, void*>& Pair : Interfaces)
+			{
+				const FName& Name = Pair.Key;
+
+				// SliceType (NCsPooledObject::NPayload::FImplSlice)
+				if (Name == SliceType::Name)
+				{
+					SliceType* Slice = static_cast<SliceType*>(Pair.Value);
+
+					Slice->RenderScale = This->RenderScale;
+					Slice->LifeTime    = This->LifeTime;
+				}
+				// TextSliceType (NCsUserWidget::NPayload::NText::NImipl::NSlice::FSlice)
+				if (Name == TextSliceType::Name)
+				{
+					TextSliceType* Slice = static_cast<TextSliceType*>(Pair.Value);
+
+					Slice->Color = This->Color;
+					This->OutlineSettings.CopyToSettingsAsValue(Slice->GetOutlineSettingsPtr());
+					This->ShadowSettings.CopyToSettingsAsValue(Slice->GetShadowSettingsPtr());
+				}
+			}
+		}
+		else
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NOT supported."), *Context));
+			return false;
+		}
+		return true;
 	}
 }
-
-bool FCsUserWidget_TextPooledInfo::SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
-{
-	CS_IS_PTR_NULL(Payload)
-
-	if (!IsValid(Context, Log))
-		return false;
-
-	typedef NCsUserWidget::NPayload::FLibrary PayloadLibrary;
-
-	if (PayloadLibrary::HasUniqueBasedSlices(Context, Payload))
-	{
-		FCsInterfaceMap* InterfaceMap		 = Payload->GetInterfaceMap();
-		const TMap<FName, void*>& Interfaces = InterfaceMap->GetInterfaces();
-
-		typedef NCsUserWidget::NPayload::FImplSlice SliceType;
-
-		if (!Interfaces.Find(SliceType::Name))
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload does NOT contain Slice of type: %s."), *Context, *(SliceType::Name.ToString())));
-			return false;
-		}
-
-		typedef NCsUserWidget::NPayload::NText::FImplSlice TextSliceType;
-
-		if (!Interfaces.Find(TextSliceType::Name))
-		{	
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload does NOT contain Slice of type: %s."), *Context, *(TextSliceType::Name.ToString())));
-			return false;
-		}
-
-		for (const TPair<FName, void*>& Pair : Interfaces)
-		{
-			const FName& Name = Pair.Key;
-
-			// SliceType (NCsPooledObject::NPayload::FImplSlice)
-			if (Name == SliceType::Name)
-			{
-				SliceType* Slice = static_cast<SliceType*>(Pair.Value);
-
-				Slice->RenderScale = RenderScale;
-				Slice->LifeTime = LifeTime;
-			}
-			// TextSliceType (NCsUserWidget::NPayload::NText::FImplSlice)
-			if (Name == TextSliceType::Name)
-			{
-				TextSliceType* Slice = static_cast<TextSliceType*>(Pair.Value);
-
-				Slice->Color = Color;
-				OutlineSettings.CopyToSettingsAsValue(Slice->GetOutlineSettingsPtr());
-				ShadowSettings.CopyToSettingsAsValue(Slice->GetShadowSettingsPtr());
-			}
-		}
-	}
-	else
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Payload is NOT supported."), *Context));
-		return false;
-	}
-	return true;
-}	
-
-#undef PayloadType
 
 bool FCsUserWidget_TextPooledInfo::IsValidChecked(const FString& Context) const
 {
@@ -228,11 +212,11 @@ namespace NCsUserWidget
 
 			using PoolePayloadType = NCsPooledObject::NPayload::IPayload;
 			using PooledSliceType = NCsPooledObject::NPayload::FImplSlice;
-			using PayloadLibrary = NCsUserWidget::NPayload::FLibrary;
+			using PayloadLibrary = NCsUserWidget::NPayload::NLibrary::FLibrary;
 			using PayloadType = NCsUserWidget::NPayload::IPayload;
-			using SliceType = NCsUserWidget::NPayload::FImplSlice;
+			using SliceType = NCsUserWidget::NPayload::NImpl::NSlice::FSlice;
 			using TextPayloadType = NCsUserWidget::NPayload::NText::IText;
-			using TextSliceType = NCsUserWidget::NPayload::NText::FImplSlice;
+			using TextSliceType = NCsUserWidget::NPayload::NText::NImpl::NSlice::FSlice;
 
 			bool FInfo::IsValidChecked(const FString& Context) const
 			{

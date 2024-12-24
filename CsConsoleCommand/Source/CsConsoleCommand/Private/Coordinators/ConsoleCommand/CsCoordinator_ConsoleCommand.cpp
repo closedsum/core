@@ -54,6 +54,10 @@ UCsCoordinator_ConsoleCommand::UCsCoordinator_ConsoleCommand(const FObjectInitia
 #define SET_CONTEXT(__FunctionName) using namespace NCsCoordinatorConsoleCommand::NCached; \
 	const FString& Context = Str::__FunctionName
 
+using HandleType = NCsConsoleCommand::NManager::FHandle;
+using ManagerType = NCsConsoleCommand::NManager::IManager;
+using InfoType = NCsConsoleCommand::FInfo;
+
 // Singleton
 #pragma region
 
@@ -247,9 +251,6 @@ void UCsCoordinator_ConsoleCommand::SetMyRoot(UObject* InRoot)
 
 bool UCsCoordinator_ConsoleCommand::Exec(UWorld* InWorld, const TCHAR* Cmd, FOutputDevice& Out /*=*GLog*/)
 {
-	typedef NCsConsoleCommand::NManager::FHandle HandleType;
-	typedef NCsConsoleCommand::NManager::IManager ManagerType;
-
 	for (TPair<HandleType, ManagerType*>& Pair : ManagerMap)
 	{
 		ManagerType* Manager = Pair.Value;
@@ -260,8 +261,6 @@ bool UCsCoordinator_ConsoleCommand::Exec(UWorld* InWorld, const TCHAR* Cmd, FOut
 	return false;
 }
 
-#define HandleType NCsConsoleCommand::NManager::FHandle
-#define ManagerType NCsConsoleCommand::NManager::IManager
 HandleType UCsCoordinator_ConsoleCommand::AddManager(ManagerType* Manager)
 {
 	HandleType Handle;
@@ -271,16 +270,9 @@ HandleType UCsCoordinator_ConsoleCommand::AddManager(ManagerType* Manager)
 
 	return Handle;
 }
-#undef HandleType
-#undef ManagerType
 
-#define HandleType NCsConsoleCommand::NManager::FHandle
-#define ManagerType NCsConsoleCommand::NManager::IManager
 void UCsCoordinator_ConsoleCommand::OnDeconstructManager(ManagerType* Manager, const HandleType& Handle)
 {
-#undef HandleType
-#undef ManagerType
-
 	// TODO: HACK: Need look into why this needs to be checked
 	if (this)
 	{
@@ -288,18 +280,13 @@ void UCsCoordinator_ConsoleCommand::OnDeconstructManager(ManagerType* Manager, c
 	}
 }
 
-#define HandleType NCsConsoleCommand::NManager::FHandle
 void UCsCoordinator_ConsoleCommand::RemoveManager(const HandleType& Handle)
 {
-#undef HandleType
 	ManagerMap.Remove(Handle);
 }
 
 void UCsCoordinator_ConsoleCommand::GetCategories(TArray<FString>& OutCategories)
 {
-	typedef NCsConsoleCommand::NManager::FHandle HandleType;
-	typedef NCsConsoleCommand::NManager::IManager ManagerType;
-
 	OutCategories.Reset(ManagerMap.Num());
 
 	for (TPair<HandleType, ManagerType*>& Pair : ManagerMap)
@@ -310,14 +297,8 @@ void UCsCoordinator_ConsoleCommand::GetCategories(TArray<FString>& OutCategories
 	}
 }
 
-#define InfoType NCsConsoleCommand::FInfo
 const TArray<InfoType>* UCsCoordinator_ConsoleCommand::GetConsoleCommandInfos(const FString& Category)
 {
-#undef InfoType
-
-	typedef NCsConsoleCommand::NManager::FHandle HandleType;
-	typedef NCsConsoleCommand::NManager::IManager ManagerType;
-
 	for (TPair<HandleType, ManagerType*>& Pair : ManagerMap)
 	{
 		ManagerType* Manager = Pair.Value;

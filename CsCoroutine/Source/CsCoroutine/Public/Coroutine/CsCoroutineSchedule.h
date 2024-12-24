@@ -60,6 +60,14 @@ namespace NCsCoroutine
 
 		private:
 
+			using PayloadManagerType = NCsCoroutine::NPayload::FManager;
+			using PayloadResourceType = NCsCoroutine::NPayload::FResource;
+			using PayloadType = NCsCoroutine::NPayload::FImpl;
+			using RoutineManagerType = NCsRoutine::FManager;
+			using RoutineResourceType = NCsRoutine::FResource;
+			using MessageType = NCsCoroutine::EMessage;
+			using TransactionType = NCsCoroutine::ETransaction;
+
 		// Schedule
 		#pragma region
 		protected:
@@ -80,10 +88,7 @@ namespace NCsCoroutine
 
 		// Routine
 		#pragma region
-		protected:
-
-		#define RoutineManagerType NCsRoutine::FManager
-		#define RoutineResourceType NCsRoutine::FResource
+		protected:		
 
 			/** */
 			RoutineManagerType Manager_Routine;
@@ -106,9 +111,6 @@ namespace NCsCoroutine
 			*/
 			FCsRoutine* GetRoutine(const FCsRoutineHandle& Handle) const;
 
-		#undef RoutineManagerType
-		#undef RoutineResourceType
-
 		#pragma endregion Routine
 
 		// Handle
@@ -127,9 +129,6 @@ namespace NCsCoroutine
 		// Start
 		#pragma region
 		public:
-
-		#define PayloadResourceType NCsCoroutine::NPayload::FResource
-		#define PayloadType NCsCoroutine::NPayload::FImpl
 
 			/**
 			*
@@ -162,9 +161,6 @@ namespace NCsCoroutine
 			* return
 			*/
 			const FCsRoutineHandle& StartChild(PayloadType* Payload);
-
-		#undef PayloadResourceType
-		#undef PayloadType
 
 		#pragma endregion Start
 
@@ -231,10 +227,6 @@ namespace NCsCoroutine
 		#pragma region
 		protected:
 
-		#define PayloadManagerType NCsCoroutine::NPayload::FManager
-		#define PayloadResourceType NCsCoroutine::NPayload::FResource
-		#define PayloadType NCsCoroutine::NPayload::FImpl
-
 			/** */
 			PayloadManagerType Manager_Payload;
 
@@ -270,17 +262,11 @@ namespace NCsCoroutine
 			*/
 			PayloadResourceType* GetPayloadContainer(PayloadType* Payload);
 
-		#undef PayloadManagerType
-		#undef PayloadResourceType
-		#undef PayloadType
-
 		#pragma endregion Payload
 
 		// Message
 		#pragma region
-		public:
-
-		#define MessageType NCsCoroutine::EMessage
+		public:		
 
 			/**
 			*
@@ -291,15 +277,11 @@ namespace NCsCoroutine
 			*/
 			void BroadcastMessage(const MessageType& Type, const FName& Message, void* Owner = nullptr);
 
-		#undef MessageType
-
 		#pragma endregion Message
 
 		// Log
 		#pragma region
 		public:
-
-		#define TransactionType NCsCoroutine::ETransaction
 
 			/**
 			*
@@ -314,8 +296,6 @@ namespace NCsCoroutine
 			*
 			*/
 			void LogRunning();
-
-		#undef TransactionType
 
 		#pragma endregion Log
 		};
@@ -334,11 +314,20 @@ namespace NCsCoroutine
 
 			virtual ~FCustom();
 		
+		private:
+
+			using IDManagerType = NCsResource::NManager::NValue::NFixed::NInt32::FManager;
+			using PayloadManagerType = NCsCoroutine::NPayload::FManager;
+			using PayloadResourceType = NCsCoroutine::NPayload::FResource;
+			using PayloadType = NCsCoroutine::NPayload::FImpl;
+			using RoutineManagerType = NCsRoutine::FManager;
+			using RoutineResourceType = NCsRoutine::FResource;
+			using MessageType = NCsCoroutine::EMessage;
+			using TransactionType = NCsCoroutine::ETransaction;
+
 		// Owner
 		#pragma region
 		private:
-
-		#define IDManagerType NCsResource::NManager::NValue::NFixed::NInt32::FManager
 
 			IDManagerType Manager_OwnerID;
 
@@ -364,8 +353,6 @@ namespace NCsCoroutine
 			}
 			int32 GetOwnerID(const FCsRoutineHandle& Handle);
 
-		#undef IDManagerType
-
 		#pragma endregion Owner
 
 		// Schedule
@@ -390,9 +377,6 @@ namespace NCsCoroutine
 		#pragma region
 		protected:
 
-		#define RoutineManagerType NCsRoutine::FManager
-		#define RoutineResourceType NCsRoutine::FResource
-
 			/** */
 			RoutineManagerType Manager_Routine;
 
@@ -414,9 +398,6 @@ namespace NCsCoroutine
 			*/
 			FCsRoutine* GetRoutine(const FCsRoutineHandle& Handle) const;
 
-		#undef RoutineManagerType
-		#undef RoutineResourceType
-
 		#pragma endregion Routine
 
 		// Handle
@@ -435,9 +416,6 @@ namespace NCsCoroutine
 		// Start
 		#pragma region
 		public:
-
-		#define PayloadResourceType NCsCoroutine::NPayload::FResource
-		#define PayloadType NCsCoroutine::NPayload::FImpl
 
 			/**
 			*
@@ -470,9 +448,6 @@ namespace NCsCoroutine
 			* return
 			*/
 			const FCsRoutineHandle& StartChild(const int32& OwnerID, PayloadType* Payload);
-
-		#undef PayloadResourceType
-		#undef PayloadType
 
 		#pragma endregion Start
 
@@ -560,10 +535,6 @@ namespace NCsCoroutine
 		#pragma region
 		protected:
 
-		#define PayloadManagerType NCsCoroutine::NPayload::FManager
-		#define PayloadResourceType NCsCoroutine::NPayload::FResource
-		#define PayloadType NCsCoroutine::NPayload::FImpl
-
 			/** */
 			PayloadManagerType Manager_Payload;
 
@@ -599,17 +570,11 @@ namespace NCsCoroutine
 			*/
 			PayloadResourceType* GetPayloadContainer(PayloadType* Payload);
 
-		#undef PayloadManagerType
-		#undef PayloadResourceType
-		#undef PayloadType
-
 		#pragma endregion Payload
 
 		// Message
 		#pragma region
 		public:
-
-		#define MessageType NCsCoroutine::EMessage
 
 			/**
 			*
@@ -620,15 +585,11 @@ namespace NCsCoroutine
 			*/
 			void BroadcastMessage(const MessageType& Type, const FName& Message, void* Owner = nullptr);
 
-		#undef MessageType
-
 		#pragma endregion Message
 
 		// Log
 		#pragma region
 		public:
-
-		#define TransactionType NCsCoroutine::ETransaction
 
 			/**
 			*
@@ -643,8 +604,6 @@ namespace NCsCoroutine
 			*
 			*/
 			void LogRunning();
-
-		#undef TransactionType
 
 		#pragma endregion Log
 		};

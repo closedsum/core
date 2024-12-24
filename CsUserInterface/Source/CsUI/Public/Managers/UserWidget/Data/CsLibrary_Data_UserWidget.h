@@ -10,14 +10,15 @@ namespace NCsUserWidget
 {
 	namespace NData
 	{
-	#define DataType NCsUserWidget::NData::IData
-
-		/**
-		*/
-		struct CSUI_API FLibrary : public NCsInterfaceMap::TLibrary<DataType>
+		namespace NLibrary
 		{
-		};
+			using DataType = NCsUserWidget::NData::IData;
 
-	#undef DataType
+			/**
+			*/
+			struct CSUI_API FLibrary : public NCsInterfaceMap::TLibrary<DataType>
+			{
+			};
+		}
 	}
 }

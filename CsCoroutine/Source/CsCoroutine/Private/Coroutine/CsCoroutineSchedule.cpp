@@ -11,6 +11,16 @@
 // Settings
 #include "Coroutine/CsSettings_CoroutineScheduler.h"
 
+using PayloadManagerType = NCsCoroutine::NPayload::FManager;
+using PayloadResourceType = NCsCoroutine::NPayload::FResource;
+using PayloadType = NCsCoroutine::NPayload::FImpl;
+using RoutineManagerType = NCsRoutine::FManager;
+using RoutineResourceType = NCsRoutine::FResource;
+using StateType = NCsCoroutine::EState;
+using EndReasonType = NCsCoroutine::EEndReason;
+using MessageType = NCsCoroutine::EMessage;
+using TransactionType = NCsCoroutine::ETransaction;
+
 namespace NCsCoroutine
 {
 	namespace NSchedule
@@ -31,16 +41,7 @@ namespace NCsCoroutine
 		#define USING_NS_CACHED using namespace NCsCoroutine::NSchedule::NDefault::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsCoroutine::NSchedule::NDefault::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define RoutineManagerType NCsRoutine::FManager
-		#define RoutineResourceType NCsRoutine::FResource
-		#define PayloadManagerType NCsCoroutine::NPayload::FManager
-		#define PayloadResourceType NCsCoroutine::NPayload::FResource
-		#define PayloadType NCsCoroutine::NPayload::FImpl
-		#define StateType NCsCoroutine::EState
-		#define EndReasonType NCsCoroutine::EEndReason
-		#define TransactionType NCsCoroutine::ETransaction
-		#define MessageType NCsCoroutine::EMessage
-
+		
 		FDefault::FDefault()
 		{
 			// Set Index for fast look up
@@ -559,15 +560,6 @@ namespace NCsCoroutine
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef RoutineManagerType
-		#undef RoutineResourceType
-		#undef PayloadManagerType
-		#undef PayloadResourceType
-		#undef PayloadType
-		#undef StateType
-		#undef EndReasonType
-		#undef TransactionType
-		#undef MessageType
 	}
 }
 
@@ -600,15 +592,6 @@ namespace NCsCoroutine
 		#define USING_NS_CACHED using namespace NCsCoroutine::NSchedule::NCustom::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsCoroutine::NSchedule::NCustom::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define RoutineManagerType NCsRoutine::FManager
-		#define RoutineResourceType NCsRoutine::FResource
-		#define PayloadManagerType NCsCoroutine::NPayload::FManager
-		#define PayloadResourceType NCsCoroutine::NPayload::FResource
-		#define PayloadType NCsCoroutine::NPayload::FImpl
-		#define StateType NCsCoroutine::EState
-		#define EndReasonType NCsCoroutine::EEndReason
-		#define TransactionType NCsCoroutine::ETransaction
-		#define MessageType NCsCoroutine::EMessage
 
 		FCustom::FCustom()
 		{
@@ -1382,14 +1365,5 @@ namespace NCsCoroutine
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef RoutineManagerType
-		#undef RoutineResourceType
-		#undef PayloadManagerType
-		#undef PayloadResourceType
-		#undef PayloadType
-		#undef StateType
-		#undef EndReasonType
-		#undef TransactionType
-		#undef MessageType
 	}
 }

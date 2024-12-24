@@ -233,6 +233,26 @@ public:
 // FCsAnimSequenceInfo
 #pragma region
 
+struct FCsAnimSequenceInfo;
+
+// NCsAnim::NSequence::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsAnim, NSequence, FInfo)
+
+namespace NCsAnimSequenceInfo
+{
+	using ThisType = FCsAnimSequenceInfo;
+	using InfoType = NCsAnim::NSequence::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSTYPES_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
 // NCsAnim::NSequence::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsAnim, NSequence, FInfo)
 
@@ -255,10 +275,11 @@ public:
 	{
 	}
 
-#define InfoType NCsAnim::NSequence::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info);
-#undef InfoType
+	using InfoType = NCsAnim::NSequence::FInfo;
+	using _Impl = NCsAnimSequenceInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)			{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info)	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsAnimSequenceInfo)
 	CS_STRUCT_OPS_IS_VALID(FCsAnimSequenceInfo)
@@ -580,6 +601,26 @@ public:
 // FCsAnimMontageInfo
 #pragma region
 
+struct FCsAnimMontageInfo;
+
+// NCsAnim::NMontage::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsAnim, NMontage, FInfo)
+
+namespace NCsAnimMontageInfo
+{
+	using ThisType = FCsAnimMontageInfo;
+	using InfoType = NCsAnim::NMontage::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSTYPES_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
 // NCsAnim::NMontage::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsAnim, NMontage, FInfo)
 
@@ -600,10 +641,11 @@ struct CSTYPES_API FCsAnimMontageInfo
 	{
 	}
 
-#define InfoType NCsAnim::NMontage::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info);
-#undef InfoType
+	using InfoType = NCsAnim::NMontage::FInfo;
+	using _Impl = NCsAnimMontageInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)			{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info)	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	CS_STRUCT_OPS_IS_VALID_CHECKED(FCsAnimMontageInfo)
 	CS_STRUCT_OPS_IS_VALID(FCsAnimMontageInfo)

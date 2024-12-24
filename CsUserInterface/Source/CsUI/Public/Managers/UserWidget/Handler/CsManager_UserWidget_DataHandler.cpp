@@ -12,28 +12,31 @@ namespace NCsUserWidget
 	{
 		namespace NHandler
 		{
-			FData::FData()
+			namespace NData
 			{
+				using DataRootSetLibrary = NCsUI::NDataRootSet::FLibrary;
+				using MemberType = FCsUIDataRootSet::EMember;
+
+				FData::FData()
+				{
+				}
+
+				// DataHandlerType (NCsData::NManager::NHandler::TData)
+				#pragma region
+
+				void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
+				{
+					const MemberType Member = MemberType::UserWidgets;
+
+					UDataTable* DataTable						   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+					TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
+
+					OutDataTables.Add(DataTable);
+					OutDataTableSoftObjects.Add(DataTableSoftObject);
+				}
+
+				#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 			}
-
-			// DataHandlerType (NCsData::NManager::NHandler::TData)
-			#pragma region
-
-			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
-			{
-				typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
-				typedef FCsUIDataRootSet::EMember MemberType;
-
-				const MemberType Member = MemberType::UserWidgets;
-
-				UDataTable* DataTable						   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
-				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
-
-				OutDataTables.Add(DataTable);
-				OutDataTableSoftObjects.Add(DataTableSoftObject);
-			}
-
-			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 		}
 	}
 }

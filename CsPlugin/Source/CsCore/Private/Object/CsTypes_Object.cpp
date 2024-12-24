@@ -12,12 +12,12 @@ namespace NCsObject
 {
 	namespace NCreate
 	{
+		using HandleType = NCsObject::NCreate::FHandle;
+		using ObjectType = NCsObject::NCreate::FObject;
+
 		void FCreated::DestroyByOwner(UObject* Owner)
 		{
 			checkf(Owner, TEXT("NCsObject::NCreate::FCreated::DestroyByOwner: Owner is NULL."));
-
-			typedef NCsObject::NCreate::FHandle HandleType;
-			typedef NCsObject::NCreate::FObject ObjectType;
 
 			for (TPair<HandleType, ObjectType>& Pair : Map)
 			{
@@ -49,9 +49,6 @@ namespace NCsObject
 		void FCreated::DestroyByWorld(UWorld* World)
 		{
 			checkf(World, TEXT("NCsObject::NCreate::FCreated::DestroyByWorld: Owner is NULL."));
-
-			typedef NCsObject::NCreate::FHandle HandleType;
-			typedef NCsObject::NCreate::FObject ObjectType;
 
 			for (TPair<HandleType, ObjectType>& Pair : Map)
 			{
@@ -100,9 +97,6 @@ namespace NCsObject
 
 		void FCreated::DestroyAndRemoveNullPendingKillOrOrphaned()
 		{
-			typedef NCsObject::NCreate::FHandle HandleType;
-			typedef NCsObject::NCreate::FObject ObjectType;
-
 			for (TPair<HandleType, ObjectType>& Pair : Map)
 			{
 				const HandleType& Handle = Pair.Key;

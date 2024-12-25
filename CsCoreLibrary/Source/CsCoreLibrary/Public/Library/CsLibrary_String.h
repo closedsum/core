@@ -250,3 +250,5 @@ namespace NCsString
 	#pragma endregion Class
 	};
 }
+
+using CsStringLibrary = NCsString::FLibrary;

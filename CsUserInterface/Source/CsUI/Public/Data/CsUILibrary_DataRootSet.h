@@ -15,6 +15,10 @@ namespace NCsUI
 		*/
 		class CSUI_API FLibrary final
 		{
+		private:
+
+			using MemberType = FCsUIDataRootSet::EMember;
+
 		public:
 
 			/**
@@ -43,8 +47,6 @@ namespace NCsUI
 			* return				
 			*/
 			static const FCsUIDataRootSet& GetChecked(const FString& Context, const UObject* WorldContext);
-
-		#define MemberType FCsUIDataRootSet::EMember
 
 			/**
 			* 
@@ -143,8 +145,6 @@ namespace NCsUI
 			* return				Whether a string path was found.
 			*/
 			static bool GetSafeDataTablePath(const FString& Context, const UObject* WorldContext, const MemberType& Member, FString& OutPath, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
-
-		#undef MemberType
 		};
 	}
 }

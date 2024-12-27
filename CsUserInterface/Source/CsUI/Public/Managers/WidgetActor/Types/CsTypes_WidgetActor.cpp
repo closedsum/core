@@ -164,23 +164,22 @@ namespace NCsWidgetActorDeallocateMethod
 // FCsWidgetActorPooled_CameraInfo
 #pragma region
 
-#define InfoType NCsWidgetActor::NCamera::FInfo
-
-void FCsWidgetActorPooled_CameraInfo::CopyToInfo(InfoType* Info)
+namespace NCsWidgetActorPooled_CameraInfo
 {
-	Info->SetLerpRate(&LerpRate);
-	Info->SetLockAxes(&LockAxes);
-	Info->SetRotation(&Rotation);
-}
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_TO_PROXY(Info, LerpRate);
+		CS_THIS_COPY_TO_PROXY(Info, LockAxes);
+		CS_THIS_COPY_TO_PROXY(Info, Rotation);
+	}
 
-void FCsWidgetActorPooled_CameraInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	Info->SetLerpRate(LerpRate);
-	Info->SetLockAxes(LockAxes);
-	Info->SetRotation(Rotation);
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, LerpRate);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, LockAxes);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Rotation);
+	}
 }
-
-#undef InfoType
 
 bool FCsWidgetActorPooled_CameraInfo::IsValidChecked(const FString& Context) const
 {

@@ -15,14 +15,16 @@ class CSUI_API UCsUserWidget_ProgressBarImpl : public UUserWidget
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	using InfoType = NCsUserWidget::NProgressBar::FInfo;
+
 public:
 
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* MyBar;
 
-#define InfoType NCsUserWidget::NProgressBar::FInfo
 	void SetInfo(const InfoType& Info);
-#undef InfoType
 
 	void SetPercent(const float& Percent);
 };

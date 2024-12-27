@@ -34,7 +34,7 @@ namespace NCsInput
 
 		namespace NFirst
 		{
-			#define FirstLocalPlayerLibrary NCsPlayer::NLocal::NFirst::FLibrary
+			using FirstLocalPlayerLibrary = NCsPlayer::NLocal::NFirst::FLibrary;
 
 			UEnhancedInputLocalPlayerSubsystem* FLibrary::GetSubsystemChecked(const FString& Context, const UObject* WorldContext)
 			{
@@ -44,8 +44,6 @@ namespace NCsInput
 				CS_IS_PENDING_KILL_CHECKED(Subsystem)
 				return Subsystem;
 			}
-
-			#undef FirstLocalPlayerLibrary
 		}
 	}
 }

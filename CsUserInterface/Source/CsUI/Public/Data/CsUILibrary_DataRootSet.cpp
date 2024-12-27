@@ -15,6 +15,8 @@ namespace NCsUI
 {
 	namespace NDataRootSet
 	{
+		using MemberType = FCsUIDataRootSet::EMember;
+
 		const FCsUIDataRootSet* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext)
 		{
 			return CsDataRootSetLibrary::GetSafe<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, WorldContext, &NCsUI::FLog::Warning);
@@ -29,8 +31,6 @@ namespace NCsUI
 		{
 			return CsDataRootSetLibrary::GetChecked<FCsUIDataRootSet, ICsUIGetDataRootSet, &ICsUIGetDataRootSet::GetCsUIDataRootSet>(Context, WorldContext);
 		}
-
-		#define MemberType FCsUIDataRootSet::EMember
 
 		UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const MemberType& Member)
 		{
@@ -83,7 +83,5 @@ namespace NCsUI
 			}
 			return false;
 		}
-
-		#undef MemberType
 	}
 }

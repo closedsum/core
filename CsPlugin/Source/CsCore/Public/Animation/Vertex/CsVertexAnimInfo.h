@@ -61,10 +61,10 @@ public:
 	{
 	}
 
-#define InfoType NCsAnim::NVertex::FInfo
+	using InfoType = NCsAnim::NVertex::FInfo;
+
 	void CopyToInfo(InfoType* Info);
 	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -82,7 +82,7 @@ namespace NCsAnim
 
 		private:
 
-		#define NotifyType NCsAnim::NVertex::FNotify
+			using NotifyType = NCsAnim::NVertex::FNotify;
 
 			CS_DECLARE_MEMBER_WITH_PROXY(NumFrames, int32)
 			CS_DECLARE_MEMBER_WITH_PROXY(AnimStartGenerated, int32)
@@ -199,8 +199,6 @@ namespace NCsAnim
 			*		for the duration of the Blend Out.
 			*/
 			float GetAlpha_BlendOut(const float& ElapsedTime) const;
-
-		#undef NotifyType
 		};
 	}
 }

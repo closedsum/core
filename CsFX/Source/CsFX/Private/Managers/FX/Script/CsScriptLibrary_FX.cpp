@@ -22,6 +22,7 @@ namespace NCsScriptLibraryFX
 		namespace Str
 		{
 			const FString FECsFX = TEXT("FECsFX");
+			const FString EnumType = TEXT("FECsFX");
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, Get);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, GetByIndex);
@@ -52,8 +53,8 @@ UCsScriptLibrary_FX::UCsScriptLibrary_FX(const FObjectInitializer& ObjectInitial
 // Enum
 #pragma region
 
-#define EnumMapType EMCsFX
-#define EnumType FECsFX
+using EnumMapType = EMCsFX;
+using EnumType = FECsFX;
 
 EnumType UCsScriptLibrary_FX::Get(const FString& Name)
 {
@@ -93,9 +94,6 @@ bool UCsScriptLibrary_FX::EqualEqual(const EnumType& A, const EnumType& B)
 {
 	return A == B;
 }
-
-#undef EnumMapType
-#undef EnumType
 
 #pragma endregion Enum
 

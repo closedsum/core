@@ -26,12 +26,10 @@ namespace NCsPlayback
 			}
 		}
 
-	#define ConsoleCommandManagerType NCsConsoleCommand::NManager::IManager
-	
-		class CSPLAYBACK_API FConsoleCommand : ConsoleCommandManagerType
+		class CSPLAYBACK_API FConsoleCommand : CsConsoleCommandManagerType
 		{
-		#define HandleType NCsConsoleCommand::NManager::FHandle
-		#define InfoType NCsConsoleCommand::FInfo
+			using HandleType = NCsConsoleCommand::NManager::FHandle;
+			using InfoType = NCsConsoleCommand::FInfo;
 
 		public:
 
@@ -52,7 +50,7 @@ namespace NCsPlayback
 
 		private:
 			
-			DECLARE_DELEGATE_TwoParams(FOnDeconstruct, ConsoleCommandManagerType* /*Manager*/, const HandleType& /*Handle*/);
+			DECLARE_DELEGATE_TwoParams(FOnDeconstruct, CsConsoleCommandManagerType* /*Manager*/, const HandleType& /*Handle*/);
 
 			FOnDeconstruct OnDeconstruct_Event;
 
@@ -94,10 +92,6 @@ namespace NCsPlayback
 			* return		Whether the console command was found / executed
 			*/
 			bool Exec_PlayLatest(const TCHAR* Cmd);
-
-		#undef HandleType
-		#undef InfoType
 		};
-	#undef ConsoleCommandManagerType
 	}
 }

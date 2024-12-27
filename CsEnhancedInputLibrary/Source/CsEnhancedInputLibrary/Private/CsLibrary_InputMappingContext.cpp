@@ -16,7 +16,7 @@ namespace NCsInput
 	{
 		namespace NInputMappingContext
 		{
-			#define InputTriggerLibrary NCsInput::NEnhanced::NInputTrigger::FLibrary
+			using InputTriggerLibrary = NCsInput::NEnhanced::NInputTrigger::FLibrary;
 
 			bool FLibrary::IsValidChecked(const FString& Context, const UInputMappingContext* MappingContext)
 			{
@@ -130,8 +130,6 @@ namespace NCsInput
 				checkf(ActionFound, TEXT("%s: Failed to find InputAction: %s in MappingContext: %s."), *Context, *(InputAction->GetName()), *(MappingContext->GetName()));
 				return false;
 			}
-
-			#undef InputActinoLibrary
 		}
 	}
 }

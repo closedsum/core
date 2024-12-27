@@ -36,11 +36,10 @@ namespace NCsAnimation
 	}
 }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+using InfoType = NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo;
+
 void FCsMannequinSilhouette_BoneControl_Core::OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Core& DOb, InfoType& Info)
 {
-#undef InfoType
-
 	const FTransform Transform = Info.Control->GetRelativeTransform();
 	Info.Transform			   = Transform;
 
@@ -57,11 +56,8 @@ void FCsMannequinSilhouette_BoneControl_Core::OnUpdateByComponent(FCsMannequinSi
 	Info.Resolve();
 }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 void FCsMannequinSilhouette_BoneControl_Core::OnUpdateByMember(InfoType& DObInfo, InfoType& Info)
 {
-#undef InfoType
-
 	const FVector3d Scale = GetScale();
 
 	Info.Control->SetRelativeScale3D(Scale);
@@ -78,11 +74,8 @@ void FCsMannequinSilhouette_BoneControl_Core::OnUpdateByMember(InfoType& DObInfo
 	Info.Resolve();
 }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 void FCsMannequinSilhouette_BoneControl_Limb::OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Limb& DOb, InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right)
 {
-#undef InfoType
-
 	const FTransform Transform_L = Left.Control->GetRelativeTransform();
 	const FTransform Transform_R = Right.Control->GetRelativeTransform();
 
@@ -120,11 +113,8 @@ void FCsMannequinSilhouette_BoneControl_Limb::OnUpdateByComponent(FCsMannequinSi
 	Right.Resolve();
 }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 void FCsMannequinSilhouette_BoneControl_Limb::OnUpdateByMember(InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right)
 {
-#undef InfoType
-
 	const FVector3d Scale = GetScale();
 
 	LeftDOb.Control->SetRelativeScale3D(Scale);
@@ -139,11 +129,8 @@ void FCsMannequinSilhouette_BoneControl_Limb::OnUpdateByMember(InfoType& LeftDOb
 	Right.Resolve();
 }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 void FCsMannequinSilhouette_BoneControl_Foot::OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Foot& DOb, InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right)
 {
-#undef InfoType
-
 	const FTransform Transform_L = Left.Control->GetRelativeTransform();
 	const FTransform Transform_R = Right.Control->GetRelativeTransform();
 
@@ -181,11 +168,8 @@ void FCsMannequinSilhouette_BoneControl_Foot::OnUpdateByComponent(FCsMannequinSi
 	Right.Resolve();
 }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 void FCsMannequinSilhouette_BoneControl_Foot::OnUpdateByMember(InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right)
 {
-#undef InfoType
-
 	const FVector3d _Scale = GetScale();
 
 	LeftDOb.Control->SetRelativeScale3D(_Scale);
@@ -200,11 +184,8 @@ void FCsMannequinSilhouette_BoneControl_Foot::OnUpdateByMember(InfoType& LeftDOb
 	Right.Resolve();
 }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 void FCsMannequinSilhouette_BoneControl_Hand::OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Hand& DOb, InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right)
 {
-#undef InfoType
-
 	const FTransform Transform_L = Left.Control->GetRelativeTransform();
 	const FTransform Transform_R = Right.Control->GetRelativeTransform();
 
@@ -242,11 +223,8 @@ void FCsMannequinSilhouette_BoneControl_Hand::OnUpdateByComponent(FCsMannequinSi
 	Right.Resolve();
 }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 void FCsMannequinSilhouette_BoneControl_Hand::OnUpdateByMember(InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right)
 {
-#undef InfoType
-
 	const FVector3d _Scale = GetScale();
 
 	LeftDOb.Control->SetRelativeScale3D(_Scale);
@@ -261,11 +239,8 @@ void FCsMannequinSilhouette_BoneControl_Hand::OnUpdateByMember(InfoType& LeftDOb
 	Right.Resolve();
 }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 void FCsMannequinSilhouette_BoneControl_Head::OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Head& DOb, InfoType& Info)
 {
-#undef InfoType
-
 	const FTransform Transform = Info.Control->GetRelativeTransform();
 	Info.Transform			   = Transform;
 
@@ -282,11 +257,8 @@ void FCsMannequinSilhouette_BoneControl_Head::OnUpdateByComponent(FCsMannequinSi
 	Info.Resolve();
 }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 void FCsMannequinSilhouette_BoneControl_Head::OnUpdateByMember(InfoType& DObInfo, InfoType& Info)
 {
-#undef InfoType
-
 	const FVector3d _Scale = GetScale();
 
 	Info.Control->SetRelativeScale3D(_Scale);

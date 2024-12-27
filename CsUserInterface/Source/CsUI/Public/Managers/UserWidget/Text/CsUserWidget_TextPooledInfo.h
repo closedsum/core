@@ -135,7 +135,7 @@ public:
 	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const { _Impl::CopyToInfoAsValue(this, Info); }
 
 	FORCEINLINE void SetPayloadChecked(const FString& Context, PayloadType* Payload) const													{ _Impl::SetPayloadChecked(this, Context, Payload); }
-	FORCEINLINE bool SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const { _Impl::SetSafePayload(this, Context, Payload, Log); }
+	FORCEINLINE bool SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const { return _Impl::SetSafePayload(this, Context, Payload, Log); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;

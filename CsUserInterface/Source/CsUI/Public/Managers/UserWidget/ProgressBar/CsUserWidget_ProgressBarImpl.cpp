@@ -14,11 +14,10 @@ UCsUserWidget_ProgressBarImpl::UCsUserWidget_ProgressBarImpl(const FObjectInitia
 {
 }
 
-#define InfoType NCsUserWidget::NProgressBar::FInfo
+using InfoType = NCsUserWidget::NProgressBar::FInfo;
+
 void UCsUserWidget_ProgressBarImpl::SetInfo(const InfoType& Info)
 {
-#undef InfoType
-
 	MyBar->SetFillColorAndOpacity(Info.GetFillColorAndOpacity());
 }
 

@@ -17,6 +17,8 @@
 #include "RHICommandList.h"
 #include "RHIUniformBufferLayoutInitializer.h"
 
+using CollectionLibrary = NCsMaterial::NParameter::NCollection::FLibrary;
+
 namespace NCsMaterial
 {
 	namespace NParameter
@@ -48,8 +50,6 @@ namespace NCsMaterial
 
 						Resource = InResource;
 						
-						typedef NCsMaterial::NParameter::NCollection::FLibrary CollectionLibrary;
-
 						Id					= CollectionLibrary::GetIdPtrChecked(Context, Resource);
 						OwnerName			= CollectionLibrary::GetOwnerNamePtrChecked(Context, Resource);
 						UniformBuffer		= CollectionLibrary::GetUniformBufferPtrChecked(Context, Resource);
@@ -146,8 +146,6 @@ namespace NCsMaterial
 					UpdateParamterData();
 				}
 					
-				typedef NCsMaterial::NParameter::NCollection::FLibrary CollectionLibrary;
-
 				FMaterialParameterCollectionInstanceResource* Resource = CollectionLibrary::GetDefaultResourceChecked(Context, Collection);
 
 				ResourceProxy.Init(Resource);
@@ -240,10 +238,7 @@ namespace NCsMaterial
 
 					CS_IS_PENDING_KILL_CHECKED(InInstance);
 
-					Instance = InInstance;
-
-					typedef NCsMaterial::NParameter::NCollection::FLibrary CollectionLibrary;
-
+					Instance			  = InInstance;
 					ScalarParameterValues = CollectionLibrary::GetScalarParameterValuesPtrChecked(Context, Instance);
 
 					// Populate ScalarParamterValues with ScalarParamters from Instance

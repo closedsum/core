@@ -8,23 +8,22 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidget_ImageInfo)
 
-#define InfoType NCsUserWidget::NImage::FInfo
-
-void FCsUserWidget_ImageInfo::CopyToInfo(InfoType* Info)
+namespace NCsUserWidget_ImageInfo
 {
-	CS_COPY_PTR_TO_PROXY(Info, Image);
-	CS_COPY_TO_PROXY(Info, RenderScale);
-	CS_COPY_TO_PROXY(Info, ZOrder);
-}
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_PTR_TO_PROXY(Info, Image);
+		CS_THIS_COPY_TO_PROXY(Info, RenderScale);
+		CS_THIS_COPY_TO_PROXY(Info, ZOrder);
+	}
 
-void FCsUserWidget_ImageInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Image);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, RenderScale);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, ZOrder);
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Image);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, RenderScale);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, ZOrder);
+	}
 }
-
-#undef InfoType
 
 bool FCsUserWidget_ImageInfo::IsValidChecked(const FString& Context) const
 {

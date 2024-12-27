@@ -15,12 +15,15 @@ class CSUI_API UCsUserWidget_TextImpl : public UUserWidget
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	using InfoType = NCsUserWidget::NText::FInfo;
+
 public:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* MyText;
 
-#define InfoType NCsUserWidget::NText::FInfo
+
 	void SetInfo(const InfoType& Info);
-#undef InfoType
 };

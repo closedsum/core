@@ -13,6 +13,26 @@
 // FCsWidgetComponent_CameraInfo
 #pragma region
 
+struct FCsWidgetComponent_CameraInfo;
+
+// NCsWidgetComponent::NCamera::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWidgetComponent, NCamera, FInfo)
+
+namespace NCsWidgetComponent_CameraInfo
+{
+	using ThisType = FCsWidgetComponent_CameraInfo;
+	using InfoType = NCsWidgetComponent::NCamera::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSUI_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
 // NCsWidgetComponent::NCamera::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWidgetComponent, NCamera, FInfo)
 
@@ -47,10 +67,11 @@ struct CSUI_API FCsWidgetComponent_CameraInfo
 	{
 	}
 
-#define InfoType NCsWidgetComponent::NCamera::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsWidgetComponent::NCamera::FInfo;
+	using _Impl = NCsWidgetComponent_CameraInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)					{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
@@ -123,6 +144,26 @@ namespace NCsWidgetComponent
 
 // FCsWidgetComponentInfo
 #pragma region
+
+struct FCsWidgetComponentInfo;
+
+// NCsWidgetComponent::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsWidgetComponent, FInfo)
+
+namespace NCsWidgetComponentInfo
+{
+	using ThisType = FCsWidgetComponentInfo;
+	using InfoType = NCsWidgetComponent::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSUI_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
 
 // NCsWidgetComponent::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsWidgetComponent, FInfo)
@@ -206,10 +247,11 @@ public:
 		TransformSpaces[(uint8)ECsTransform::Scale]		  = ECsTransformSpace::Relative;
 	}
 
-#define InfoType NCsWidgetComponent::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsWidgetComponent::FInfo;
+	using _Impl = NCsWidgetComponentInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)					{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
@@ -225,7 +267,7 @@ namespace NCsWidgetComponent
 	*/
 	struct CSUI_API FInfo
 	{
-	#define CameraInfoType NCsWidgetComponent::NCamera::FInfo
+		using CameraInfoType = NCsWidgetComponent::NCamera::FInfo;
 
 	private:
 
@@ -354,8 +396,6 @@ namespace NCsWidgetComponent
 
 		bool IsValidChecked(const FString& Context) const;
 		bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
-
-	#undef CameraInfoType
 	};
 }
 #pragma endregion FCsWidgetComponentInfo

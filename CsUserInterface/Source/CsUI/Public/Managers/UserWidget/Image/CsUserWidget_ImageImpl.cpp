@@ -14,10 +14,9 @@ UCsUserWidget_ImageImpl::UCsUserWidget_ImageImpl(const FObjectInitializer& Objec
 {
 }
 
-#define InfoType NCsUserWidget::NImage::FInfo
+using InfoType = NCsUserWidget::NImage::FInfo;
+
 void UCsUserWidget_ImageImpl::SetInfo(const InfoType& Info)
 {
-#undef InfoType
-
 	MyImage->SetBrushFromTexture(Info.GetImage());
 }

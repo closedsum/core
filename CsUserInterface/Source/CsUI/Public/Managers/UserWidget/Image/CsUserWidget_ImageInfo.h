@@ -11,6 +11,26 @@
 
 #include "CsUserWidget_ImageInfo.generated.h"
 
+struct FCsUserWidget_ImageInfo;
+
+// NCsUserWidget::NImage::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NImage, FInfo)
+
+namespace NCsUserWidget_ImageInfo
+{
+	using ThisType = FCsUserWidget_ImageInfo;
+	using InfoType = NCsUserWidget::NImage::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSUI_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
 // NCsUserWidget::NImage::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NImage, FInfo)
 
@@ -45,10 +65,11 @@ public:
 	{
 	}
 
-#define InfoType NCsUserWidget::NImage::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsUserWidget::NImage::FInfo;
+	using _Impl = NCsUserWidget_ImageInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)					{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;

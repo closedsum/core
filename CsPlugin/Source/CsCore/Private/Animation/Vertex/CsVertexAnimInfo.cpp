@@ -9,8 +9,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsVertexAnimInfo)
 
-#define InfoType NCsAnim::NVertex::FInfo
-#define NotifyType NCsAnim::NVertex::FNotify
+using InfoType = NCsAnim::NVertex::FInfo;
+using NotifyType = NCsAnim::NVertex::FNotify;
 
 void FCsVertexAnimInfo::CopyToInfo(InfoType* Info)
 {
@@ -57,9 +57,6 @@ void FCsVertexAnimInfo::CopyToInfoAsValue(InfoType* Info) const
 		N.CopyToNotifyAsValue(&Notify);
 	}
 }
-
-#undef InfoType
-#undef NotifyType
 
 bool FCsVertexAnimInfo::IsValidChecked(const FString& Context) const
 {
@@ -117,8 +114,6 @@ namespace NCsAnim
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetBlendOutTime(), 0.0f)
 			CS_IS_FLOAT_LESS_THAN_CHECKED(GetBlendOutTime(), GetLength())
 
-			typedef NCsAnim::NVertex::FNotify NotifyType;
-
 			for (const NotifyType& Notify : Notifies)
 			{
 				CS_IS_VALID_CHECKED(Notify);
@@ -137,8 +132,6 @@ namespace NCsAnim
 			CS_IS_FLOAT_LESS_THAN(GetBlendInTime(), GetLength())
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetBlendOutTime(), 0.0f)
 			CS_IS_FLOAT_LESS_THAN(GetBlendOutTime(), GetLength())
-
-			typedef NCsAnim::NVertex::FNotify NotifyType;
 
 			for (const NotifyType& Notify : Notifies)
 			{

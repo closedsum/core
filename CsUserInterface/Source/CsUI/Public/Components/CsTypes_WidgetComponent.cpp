@@ -17,23 +17,22 @@
 // FCsWidgetComponent_CameraInfo
 #pragma region
 
-#define InfoType NCsWidgetComponent::NCamera::FInfo
-
-void FCsWidgetComponent_CameraInfo::CopyToInfo(InfoType* Info)
+namespace NCsWidgetComponent_CameraInfo
 {
-	CS_COPY_TO_PROXY(Info, LerpRate);
-	CS_COPY_TO_PROXY(Info, LockAxes);
-	CS_COPY_TO_PROXY(Info, Rotation);
-}
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_TO_PROXY(Info, LerpRate);
+		CS_THIS_COPY_TO_PROXY(Info, LockAxes);
+		CS_THIS_COPY_TO_PROXY(Info, Rotation);
+	}
 
-void FCsWidgetComponent_CameraInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	CS_COPY_TO_PROXY_AS_VALUE(Info, LerpRate);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, LockAxes);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, Rotation);
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, LerpRate);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, LockAxes);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Rotation);
+	}
 }
-
-#undef InfoType
 
 bool FCsWidgetComponent_CameraInfo::IsValidChecked(const FString& Context) const
 {
@@ -78,38 +77,36 @@ namespace NCsWidgetComponent
 // FCsWidgetComponentInfo
 #pragma region
 
-
-#define InfoType NCsWidgetComponent::FInfo
-
-void FCsWidgetComponentInfo::CopyToInfo(InfoType* Info)
+namespace NCsWidgetComponentInfo
 {
-	CS_COPY_CLASS_PTR_TO_PROXY(Info, Widget);
-	CS_COPY_TO_PROXY(Info, bDrawSize);
-	CS_COPY_TO_PROXY(Info, DrawSize);
-	Info->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
-	CS_COPY_TO_PROXY(Info, Bone);
-	CS_COPY_TO_PROXY(Info, TransformRules);
-	CS_COPY_TO_PROXY(Info, TransformSpaces);
-	CS_COPY_TO_PROXY(Info, Transform);
-	CS_COPY_TO_PROXY(Info, bCameraInfo);
-	CS_COPY_INFO_TO_PROXY_PTR(Info, CameraInfo);
-}
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_CLASS_PTR_TO_PROXY(Info, Widget);
+		CS_THIS_COPY_TO_PROXY(Info, bDrawSize);
+		CS_THIS_COPY_TO_PROXY(Info, DrawSize);
+		Info->SetAttachmentTransformRules(This->AttachmentTransformRules.ToRule());
+		CS_THIS_COPY_TO_PROXY(Info, Bone);
+		CS_THIS_COPY_TO_PROXY(Info, TransformRules);
+		CS_THIS_COPY_TO_PROXY(Info, TransformSpaces);
+		CS_THIS_COPY_TO_PROXY(Info, Transform);
+		CS_THIS_COPY_TO_PROXY(Info, bCameraInfo);
+		CS_THIS_COPY_INFO_TO_PROXY_PTR(Info, CameraInfo);
+	}
 
-void FCsWidgetComponentInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	CS_COPY_CLASS_PTR_TO_PROXY_AS_VALUE(Info, Widget);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, bDrawSize);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, DrawSize);
-	Info->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
-	CS_COPY_TO_PROXY_AS_VALUE(Info, Bone);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, TransformRules);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, TransformSpaces);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, Transform);
-	CS_COPY_TO_PROXY_AS_VALUE(Info, bCameraInfo);
-	CS_COPY_INFO_TO_PROXY_PTR_AS_VALUE(Info, CameraInfo);
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_CLASS_PTR_TO_PROXY_AS_VALUE(Info, Widget);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, bDrawSize);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, DrawSize);
+		Info->SetAttachmentTransformRules(This->AttachmentTransformRules.ToRule());
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Bone);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, TransformRules);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, TransformSpaces);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Transform);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, bCameraInfo);
+		CS_THIS_COPY_INFO_TO_PROXY_PTR_AS_VALUE(Info, CameraInfo);
+	}
 }
-
-#undef InfoType
 
 bool FCsWidgetComponentInfo::IsValidChecked(const FString& Context) const
 {

@@ -16,11 +16,10 @@ UCsUserWidget_TextImpl::UCsUserWidget_TextImpl(const FObjectInitializer& ObjectI
 {
 }
 
-#define InfoType NCsUserWidget::NText::FInfo
+using InfoType = NCsUserWidget::NText::FInfo;
+
 void UCsUserWidget_TextImpl::SetInfo(const InfoType& Info)
 {
-#undef InfoType
-
 	MyText->SetText(FText::FromString(Info.GetText()));
 	
 	FSlateFontInfo FontInfo;

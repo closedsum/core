@@ -9,6 +9,26 @@
 
 #include "CsUserWidget_ProgressBarInfo.generated.h"
 
+struct FCsUserWidget_ProgressBarInfo;
+
+// NCsUserWidget::NProgressBar::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NProgressBar, FInfo)
+
+namespace NCsUserWidget_ProgressBarInfo
+{
+	using ThisType = FCsUserWidget_ProgressBarInfo;
+	using InfoType = NCsUserWidget::NProgressBar::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSUI_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
 // NCsUserWidget::NProgressBar::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NProgressBar, FInfo)
 
@@ -31,10 +51,11 @@ public:
 	{
 	}
 
-#define InfoType NCsUserWidget::NProgressBar::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsUserWidget::NProgressBar::FInfo;
+	using _Impl = NCsUserWidget_ProgressBarInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)					{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;

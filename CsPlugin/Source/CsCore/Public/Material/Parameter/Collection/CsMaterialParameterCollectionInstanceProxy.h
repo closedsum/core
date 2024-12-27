@@ -93,7 +93,9 @@ namespace NCsMaterial
 		{
 			struct CSCORE_API FProxy final
 			{
-			#define ResourceProxyType NCsMaterial::NParameter::NCollection::NInstance::NResource::FProxy
+			private:
+
+				using ResourceProxyType = NCsMaterial::NParameter::NCollection::NInstance::NResource::FProxy;
 
 			public:
 
@@ -138,8 +140,6 @@ namespace NCsMaterial
 					ResourceProxy.Reset();
 					bComplete = false;
 				}
-
-			#undef ResourceProxyType
 			};
 		}
 	}
@@ -158,7 +158,10 @@ namespace NCsMaterial
 			{
 				struct CSCORE_API FProxy final
 				{
-				#define ResourceProxyType NCsMaterial::NParameter::NCollection::NInstance::NResource::FProxy
+				private:
+				
+					using ResourceProxyType = NCsMaterial::NParameter::NCollection::NInstance::NResource::FProxy;
+					using MemberType = NCsVector4::EMember;
 
 				public:
 
@@ -223,8 +226,7 @@ namespace NCsMaterial
 						*(VectorParameterValuesByIndex[Index]) = Value;
 						bDirty = true;
 					}
-
-				#define MemberType NCsVector4::EMember
+	
 					FORCEINLINE void SetVectorParameterValue(const int32& Index, const MemberType& Member, const float& Value)
 					{
 						FLinearColor& C  = *(VectorParameterValuesByIndex[Index]);
@@ -233,7 +235,6 @@ namespace NCsMaterial
 						C				 = FLinearColor(V);
 						bDirty = true;
 					}
-				#undef MemberType
 
 					FORCEINLINE void SetVectorParameterValues(const int32& StartIndex, const TArray<FLinearColor>& Values)
 					{
@@ -300,8 +301,6 @@ namespace NCsMaterial
 						bDirty = false;
 						bComplete = false;
 					}
-
-				#undef ResourceProxyType
 				};
 			}
 		}

@@ -138,12 +138,10 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Core
 
 	FORCEINLINE FVector3d GetScale() const { return FVector3d(Height, Depth, Width); }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+	using InfoType = NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo;
 
 	void OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Core& DOb, InfoType& Info);
 	void OnUpdateByMember(InfoType& DObInfo, InfoType& Info);
-
-#undef InfoType
 
 	FORCEINLINE bool IsModified(const FString& MemberName, const TSet<FString>& PropertyNames)
 	{
@@ -195,12 +193,10 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Limb
 
 	FORCEINLINE FVector3d GetScale() const { return FVector3d(Length, Depth, Width); }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+	using InfoType = NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo;
 
 	void OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Limb& DOb, InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right);
 	void OnUpdateByMember(InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right);
-
-#undef InfoType
 
 	FORCEINLINE bool IsModified(const FString& MemberName, const TSet<FString>& PropertyNames)
 	{
@@ -252,12 +248,10 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Foot
 
 	FORCEINLINE FVector3d GetScale() const { return FVector3d(Height, Length, Width); }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+	using InfoType = NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo;
 
 	void OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Foot& DOb, InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right);
 	void OnUpdateByMember(InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right);
-
-#undef InfoType
 
 	FORCEINLINE bool IsModified(const FString& MemberName, const TSet<FString>& PropertyNames)
 	{
@@ -309,12 +303,10 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Hand
 
 	FORCEINLINE FVector3d GetScale() const { return FVector3d(Length, Thickness, Width); }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+	using InfoType = NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo;
 
 	void OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Hand& DOb, InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right);
 	void OnUpdateByMember(InfoType& LeftDOb, InfoType& Left, InfoType& RightDOb, InfoType& Right);
-
-#undef InfoType
 
 	FORCEINLINE bool IsModified(const FString& MemberName, const TSet<FString>& PropertyNames)
 	{
@@ -370,12 +362,10 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Head
 
 	FORCEINLINE FVector3d GetScale() const { return FVector3d(Height, Depth, Width); }
 
-#define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
+	using InfoType = NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo;
 
 	void OnUpdateByComponent(FCsMannequinSilhouette_BoneControl_Head& DOb, InfoType& Info);
 	void OnUpdateByMember(InfoType& DObInfo, InfoType& Info);
-
-#undef InfoType
 
 	FORCEINLINE bool IsModified(const FString& MemberName, const TSet<FString>& PropertyNames)
 	{

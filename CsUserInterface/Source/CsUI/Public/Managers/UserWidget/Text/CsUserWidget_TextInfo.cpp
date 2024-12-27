@@ -12,36 +12,36 @@ namespace NCsUserWidget_TextInfo
 {
 	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
 	{
-		CS_COPY_TO_PROXY(Info, This->Text);
-		CS_COPY_PTR_TO_PROXY(Info, This->Font);
-		CS_COPY_TO_PROXY(Info, This->bMaterial);
-		CS_COPY_PTR_TO_PROXY(Info, This->Material);
-		CS_COPY_TO_PROXY(Info, This->Size);
-		CS_COPY_TO_PROXY(Info, This->RenderScale);
-		CS_COPY_TO_PROXY_AS_VALUE(Info, This->Justification);
-		CS_COPY_TO_PROXY(Info, This->ZOrder);
-		CS_COPY_TO_PROXY(Info, This->Color);
-		CS_COPY_SETTINGS_TO_PROXY_PTR(Info, This->OutlineSettings);
-		CS_COPY_SETTINGS_TO_PROXY_PTR(Info, This->ShadowSettings);
-		CS_COPY_TO_PROXY(Info, This->bAnimParams);
-		CS_COPY_PARAMS_TO_PROXY_PTR(Info, This->AnimParams);
+		CS_THIS_COPY_TO_PROXY(Info, Text);
+		CS_THIS_COPY_PTR_TO_PROXY(Info, Font);
+		CS_THIS_COPY_TO_PROXY(Info, bMaterial);
+		CS_THIS_COPY_PTR_TO_PROXY(Info, Material);
+		CS_THIS_COPY_TO_PROXY(Info, Size);
+		CS_THIS_COPY_TO_PROXY(Info, RenderScale);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Justification);
+		CS_THIS_COPY_TO_PROXY(Info, ZOrder);
+		CS_THIS_COPY_TO_PROXY(Info, Color);
+		CS_THIS_COPY_SETTINGS_TO_PROXY_PTR(Info, OutlineSettings);
+		CS_THIS_COPY_SETTINGS_TO_PROXY_PTR(Info, ShadowSettings);
+		CS_THIS_COPY_TO_PROXY(Info, bAnimParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Info, AnimParams);
 	}
 
 	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
 	{
-		CS_COPY_TO_PROXY_AS_VALUE(Info, This->Text);
-		CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, This->Font);
-		CS_COPY_TO_PROXY_AS_VALUE(Info, This->bMaterial);
-		CS_COPY_PTR_TO_PROXY_AS_VALUE(Info, This->Material);
-		CS_COPY_TO_PROXY_AS_VALUE(Info, This->Size);
-		CS_COPY_TO_PROXY_AS_VALUE(Info, This->RenderScale);
-		CS_COPY_TO_PROXY_AS_VALUE(Info, This->Justification);
-		CS_COPY_TO_PROXY_AS_VALUE(Info, This->ZOrder);
-		CS_COPY_TO_PROXY_AS_VALUE(Info, This->Color);
-		CS_COPY_SETTINGS_TO_PROXY_PTR_AS_VALUE(Info, This->OutlineSettings);
-		CS_COPY_SETTINGS_TO_PROXY_PTR_AS_VALUE(Info, This->ShadowSettings);
-		CS_COPY_TO_PROXY_AS_VALUE(Info, This->bAnimParams);
-		CS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Info, This->AnimParams);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Text);
+		CS_THIS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Font);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, bMaterial);
+		CS_THIS_COPY_PTR_TO_PROXY_AS_VALUE(Info, Material);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Size);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, RenderScale);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Justification);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, ZOrder);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, Color);
+		CS_THIS_COPY_SETTINGS_TO_PROXY_PTR_AS_VALUE(Info, OutlineSettings);
+		CS_THIS_COPY_SETTINGS_TO_PROXY_PTR_AS_VALUE(Info, ShadowSettings);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, bAnimParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Info, AnimParams);
 	}
 }
 

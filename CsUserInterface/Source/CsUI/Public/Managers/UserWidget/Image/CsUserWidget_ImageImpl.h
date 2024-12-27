@@ -15,12 +15,14 @@ class CSUI_API UCsUserWidget_ImageImpl : public UUserWidget
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	using InfoType = NCsUserWidget::NImage::FInfo;
+	
 public:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* MyImage;
 
-#define InfoType NCsUserWidget::NImage::FInfo
 	void SetInfo(const InfoType& Info);
-#undef InfoType
 };

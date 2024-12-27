@@ -313,6 +313,26 @@ struct CSUI_API FCsWidgetActorEntry : public FTableRowBase
 // FCsWidgetActorPooled_CameraInfo
 #pragma region
 
+struct FCsWidgetActorPooled_CameraInfo;
+
+// NCsWidgetActor::NCamera::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWidgetActor, NCamera, FInfo)
+
+namespace NCsWidgetActorPooled_CameraInfo
+{
+	using ThisType = FCsWidgetActorPooled_CameraInfo;
+	using InfoType = NCsWidgetActor::NCamera::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSUI_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
 // NCsWidgetActor::NCamera::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWidgetActor, NCamera, FInfo)
 
@@ -348,10 +368,11 @@ struct CSUI_API FCsWidgetActorPooled_CameraInfo
 	{
 	}
 
-#define InfoType NCsWidgetActor::NCamera::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsWidgetActor::NCamera::FInfo;
+	using _Impl = NCsWidgetActorPooled_CameraInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)					{ _Impl::CopyToInfo(this, Info);  }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;

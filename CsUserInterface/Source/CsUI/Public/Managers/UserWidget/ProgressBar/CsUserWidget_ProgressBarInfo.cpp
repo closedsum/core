@@ -8,19 +8,18 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsUserWidget_ProgressBarInfo)
 
-#define InfoType NCsUserWidget::NProgressBar::FInfo
-
-void FCsUserWidget_ProgressBarInfo::CopyToInfo(InfoType* Info)
+namespace NCsUserWidget_ProgressBarInfo
 {
-	CS_COPY_TO_PROXY(Info, FillColorAndOpacity);
-}
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_TO_PROXY(Info, FillColorAndOpacity);
+	}
 
-void FCsUserWidget_ProgressBarInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	CS_COPY_TO_PROXY_AS_VALUE(Info, FillColorAndOpacity);
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Info, FillColorAndOpacity);
+	}
 }
-
-#undef InfoType
 
 bool FCsUserWidget_ProgressBarInfo::IsValidChecked(const FString& Context) const
 {

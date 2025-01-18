@@ -27,6 +27,9 @@ private:
 	using OnPauseDelegateType = OnPauseEventType::FDelegate;
 	using OnSetScaledDeltaTimeEventType = NCsTime::NManager::FOnSetScaledDeltaTime;
 	using OnResetScaledDeltaTimeEventType = NCsTime::NManager::FOnResetScaledDeltaTime;
+	using OnUpdateType = FCsUpdateGroup::FOnUpdate;
+	using OnUpdateDelegateType = FCsUpdateGroup::FOnUpdate::FDelegate;
+	using OnUpdateEventType = NCsTime::NManager::FOnUpdate;
 
 // Singleton
 #pragma region
@@ -205,9 +208,6 @@ public:
 	*/
 	void Update(const FECsUpdateGroup& Group, const float& DeltaTime, const float& Time, const float& RealTime);
 
-#define OnUpdateType FCsUpdateGroup::FOnUpdate
-#define OnUpdateDelegateType FCsUpdateGroup::FOnUpdate::FDelegate
-
 	FORCEINLINE OnUpdateType& GetOnUpdate_Event(const FECsUpdateGroup& Group)
 	{
 		return UpdateGroups[Group.GetValue()].GetOnUpdate_Event();
@@ -223,13 +223,8 @@ public:
 		UpdateGroups[Group.GetValue()].RemoveOnUpdate(Handle);
 	}
 
-#undef OnUpdateType
-#undef OnUpdateDelegateType
-
-#define OnUpdateEventType NCsTime::NManager::FOnUpdate
 	OnUpdateEventType OnUpdate_Event;
 	FORCEINLINE OnUpdateEventType& GetOnUpdate_Event() { return OnUpdate_Event; }
-#undef OnUpdateEventType
 
 	UPROPERTY(BlueprintAssignable, Category = "CsCore|Mangager|Time")
 	FCsManagerTime_OnUpdate OnUpdate_ScriptEvent;

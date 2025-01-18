@@ -6,7 +6,7 @@
 #include "UObject/Object.h"
 // Interfaces
 #include "Managers/Pool/CsOnConstructObject.h"
-#include "Managers/Time/CsUpdate.h"
+#include "Update/CsUpdate.h"
 #include "Managers/Time/CsPause.h"
 #include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"

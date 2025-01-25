@@ -43,3 +43,5 @@ namespace NCsWeapon
 		}
 	}
 }
+
+using CsProjectileWeaponDataLibrary = NCsWeapon::NProjectile::NData::FLibrary;

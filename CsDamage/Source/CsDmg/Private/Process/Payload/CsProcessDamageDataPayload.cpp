@@ -24,11 +24,10 @@ namespace NCsDamage
 
 				Type = InType;
 
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 				typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 				typedef NCsDamage::NValue::IValue ValueType;
 
-				Data  = DamageManagerLibrary::GetDataChecked(Context, WorldContext, Type);
+				Data  = CsDamageManagerLibrary::GetDataChecked(Context, WorldContext, Type);
 				Value = const_cast<ValueType*>(Data->GetValue());
 
 				if (ShapeDataType* ShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))

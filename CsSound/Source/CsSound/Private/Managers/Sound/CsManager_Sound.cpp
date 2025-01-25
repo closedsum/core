@@ -278,9 +278,7 @@ void UCsManager_Sound::Initialize()
 void UCsManager_Sound::CleanUp()
 {
 #if WITH_EDITOR
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	UObject* ContextRoot = TimeManagerLibrary::GetSafeContextRoot(this);
+	UObject* ContextRoot = CsTimeManagerLibrary::GetSafeContextRoot(this);
 
 	if (ContextRoot)
 #else

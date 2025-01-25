@@ -7,7 +7,7 @@
 
 #include "CsData_Weapon_VisualSkin.generated.h"
 
-// NCsSkin::NData::NVisual::IVisual
+// SkinType (NCsSkin::NData::NVisual::IVisual)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSkin, NData, NVisual, IVisual)
 
 namespace NCsWeapon
@@ -27,7 +27,13 @@ namespace NCsWeapon
 
 					static const FName Name;
 
-				#define SkinType NCsSkin::NData::NVisual::IVisual
+				private:
+
+					// Allow clearer names without name collisions
+					struct _
+					{
+						using SkinType = NCsSkin::NData::NVisual::IVisual;
+					};
 
 				public:
 
@@ -35,7 +41,7 @@ namespace NCsWeapon
 
 					/**
 					*/
-					virtual SkinType* GetSkin() const = 0;
+					virtual _::SkinType* GetSkin() const = 0;
 
 				#undef SkinType
 				};
@@ -44,13 +50,15 @@ namespace NCsWeapon
 	}
 }
 
+using CsWeaponSkinDataType = NCsWeapon::NData::NVisual::NSkin::ISkin;
+
 UINTERFACE(BlueprintType)
 class CSWP_API UCsData_Weapon_VisualSkin : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-// NCsSkin::NData::NVisual::IVisual
+// SkinType (NCsSkin::NData::NVisual::IVisual)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSkin, NData, NVisual, IVisual)
 
 /**
@@ -64,13 +72,17 @@ public:
 
 	static const FName Name;
 
-#define SkinType NCsSkin::NData::NVisual::IVisual
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using SkinType = NCsSkin::NData::NVisual::IVisual;
+	};
 
 public:
 
 	/**
 	*/
-	virtual SkinType* GetSkin() const = 0;
-
-#undef SkinType
+	virtual _::SkinType* GetSkin() const = 0;
 };

@@ -16,6 +16,10 @@ namespace NCsDamage
 		*/
 		struct CSDMG_API FLibrary final
 		{
+		private:
+
+			using MemberType = FCsDmgDataRootSet::EMember;
+
 		public:
 
 			/**
@@ -44,8 +48,6 @@ namespace NCsDamage
 			* return				
 			*/
 			static const FCsDmgDataRootSet& GetChecked(const FString& Context, const UObject* WorldContext);
-
-		#define MemberType FCsDmgDataRootSet::EMember
 
 			/**
 			* Safely get the DataTable associated with Member.
@@ -144,8 +146,6 @@ namespace NCsDamage
 			* return				Whether a string path was found.
 			*/
 			static bool GetSafeDataTablePath(const FString& Context, const UObject* WorldContext, const MemberType& Member, FString& OutPath, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
-
-		#undef MemberType
 		};
 	}
 }

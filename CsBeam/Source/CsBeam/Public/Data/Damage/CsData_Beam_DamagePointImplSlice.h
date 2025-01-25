@@ -83,7 +83,7 @@ namespace NCsBeam
 					static const FName Name;
 
 				#define DamageDataType NCsDamage::NData::IData
-				#define DamageDataImplType NCsDamage::NData::NPoint::FImpl
+				#define DamageDataImplType NCsDamage::NData::NPoint::NImpl::FImpl
 
 				private:
 

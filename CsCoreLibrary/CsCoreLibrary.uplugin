@@ -13,7 +13,7 @@
 	"EngineVersion": "5.4.0",
 	"CanContainContent": true,
 	"Installed": true,
-  "Modules": [
+	"Modules": [
 		{
 			"Name": "CsCoreLibrary",
 			"Type": "Runtime",
@@ -21,8 +21,13 @@
 			"PlatformAllowList": [
 				"Win64"
 			]
+		},
+		{
+			"Name": "CsCoreLibraryEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
-  ],
+	],
 	"Plugins": [
 		{
 			"Name": "CsMacro",

@@ -17,7 +17,7 @@ public:
 
 	/**
 	* Constructs a data that implements the interface: NCsDamage::NData::IData and
-	* is of type: NCsDamage::NData::NPoint::FImplSlice
+	* is of type: NCsDamage::NData::NPoint::NImplSlice::FImplSlice
 	* 
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
@@ -30,7 +30,7 @@ public:
 
 	/**
 	* Constructs a data that implements the interface: NCsDamage::NData::IData with Name.
-	* Adds slice of type: NCsDamage::NData::NPoint::FImplSlice.
+	* Adds slice of type: NCsDamage::NData::NPoint::NImplSlice::FImplSlice.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).

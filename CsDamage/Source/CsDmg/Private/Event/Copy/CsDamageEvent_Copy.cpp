@@ -3,4 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Event/Copy/CsDamageEvent_Copy.h"
 
-const FName NCsDamage::NEvent::NCopy::ICopy::Name = FName("NCsDamage::NEvent::NCopy::ICopy");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsDamage::NEvent::NCopy::ICopy);

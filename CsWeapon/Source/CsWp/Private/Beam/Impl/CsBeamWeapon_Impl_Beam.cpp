@@ -356,9 +356,8 @@ namespace NCsWeapon
 					// Get collision information related to the trace.
 					
 					typedef NCsWeapon::NBeam::NData::IData WeaponBeamDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					WeaponBeamDataType* WeaponBeamData = WeaponDataLibrary::GetInterfaceChecked<WeaponBeamDataType>(Context, Data);
+					WeaponBeamDataType* WeaponBeamData = CsWeaponDataLibrary::GetInterfaceChecked<WeaponBeamDataType>(Context, Data);
 
 					typedef NCsWeapon::NBeam::NParams::NBeam::IBeam BeamParamsType;
 					typedef NCsWeapon::NBeam::NParams::NBeam::FLibrary BeamParamsLibrary;
@@ -435,9 +434,7 @@ namespace NCsWeapon
 					
 					//Payload->Parent = IsAttached ? Component : nullptr;
 
-					typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-					Payload->Time = TimeManagerLibrary::GetTimeChecked(Context, Outer, GetUpdateGroup->GetUpdateGroup());
+					Payload->Time = CsTimeManagerLibrary::GetTimeChecked(Context, Outer, GetUpdateGroup->GetUpdateGroup());
 
 					//Payload->PreserveChangesFromDefaultMask;
 

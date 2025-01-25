@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/Damage/CsData_Projectile_DamagePointImplSlice.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Library/CsLibrary_Property.h"
@@ -11,7 +13,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Projectile_DamagePointImplSlice)
 
-#define SliceType NCsProjectile::NData::NDamage::NPoint::FImplSlice
+using SliceType = NCsProjectile::NData::NDamage::NPoint::FImplSlice;
 
 SliceType* FCsData_Projectile_DamagePointImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 {
@@ -39,13 +41,11 @@ SliceType* FCsData_Projectile_DamagePointImplSlice::AddSafeSliceAsValue(const FS
 
 SliceType* FCsData_Projectile_DamagePointImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCLog::Warning*/) const
 {
-	#define DataHandlerType NCsData::NManager::NHandler::TData
-	typedef NCsProjectile::NData::IData DataType;
-	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+	using DataType = NCsProjectile::NData::IData;
+	using DataInterfaceMapType = NCsProjectile::NData::FInterfaceMap;
+	using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>;
 
-	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = CsPrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
-
-	#undef DataHandlerType
+	DataHandlerType* DataHandler = CsPrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 
 	if (!DataHandler)
 		return nullptr;
@@ -67,8 +67,6 @@ void FCsData_Projectile_DamagePointImplSlice::CopyToSliceAsValue(SliceType* Slic
 	Damage.CopyToPointAsValue(Slice->GetDamageDataImpl());
 }
 
-#undef SliceType
-
 bool FCsData_Projectile_DamagePointImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
 	if (!Damage.IsValid(Context, Log))
@@ -76,7 +74,7 @@ bool FCsData_Projectile_DamagePointImplSlice::IsValid(const FString& Context, vo
 	return true;
 }
 
-const FName NCsProjectile::NData::NDamage::NPoint::FImplSlice::Name = FName("NCsProjectile::NData::NDamage::NPoint::FImplSlice");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsProjectile::NData::NDamage::NPoint::FImplSlice);
 
 namespace NCsProjectile
 {
@@ -104,19 +102,17 @@ namespace NCsProjectile
 					using namespace NCsProjectile::NData::NDamage::NPoint::NImplSlice::NCached;
 
 					CS_IS_PTR_NULL_RET_NULL(Object)
+	
+					using DataType = NCsProjectile::NData::IData;
+					using DataInterfaceMapType = NCsProjectile::NData::FInterfaceMap;
+					using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>;
 
-					#define DataHandlerType NCsData::NManager::NHandler::TData
-					typedef NCsProjectile::NData::IData DataType;
-					typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
-
-					DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = CsPrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
-				
-					#undef DataHandlerType
+					DataHandlerType* DataHandler = CsPrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 
 					if (!DataHandler)
 						return nullptr;
 
-					typedef NCsProjectile::NData::NDamage::IDamage DamageDataType;
+					using DamageDataType = NCsProjectile::NData::NDamage::IDamage;
 
 					FImplSlice* Slice = DataHandler->AddSafeDataSlice<FImplSlice, DamageDataType>(Context, DataName);
 
@@ -124,14 +120,12 @@ namespace NCsProjectile
 						return nullptr;
 
 					// Check for properties matching interface: DamageDataType (NCsProjectile::NData::NDamage::IDamage)
-					typedef NCsProperty::FLibrary PropertyLibrary;
-
 					bool Success = false;
 
 					// Try FCsData_Projectile_DamagePointImplSlice
-					typedef FCsData_Projectile_DamagePointImplSlice StructSliceType;
+					using StructSliceType = FCsData_Projectile_DamagePointImplSlice;
 
-					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::DamagePointSlice, nullptr))
+					if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::DamagePointSlice, nullptr))
 					{
 						SliceAsStruct->CopyToSlice(Slice);
 						Success = true;
@@ -139,7 +133,7 @@ namespace NCsProjectile
 					// Try individual properties
 					else
 					{
-						FCsData_DamagePoint* DamagePointPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsData_DamagePoint>(Context, Object, Object->GetClass(), Name::DamagePoint, nullptr);
+						FCsData_DamagePoint* DamagePointPtr = CsPropertyLibrary::GetStructPropertyValuePtr<FCsData_DamagePoint>(Context, Object, Object->GetClass(), Name::DamagePoint, nullptr);
 
 						if (DamagePointPtr)
 						{

@@ -256,10 +256,9 @@ ParamsType* FCsProjectileWeapon_LaunchTraceParams::AddSafeToSlice_Internal(const
 	if (!Data)
 		return nullptr;
 
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 	typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
 
-	PrjWeaponDataType* PrjWeaponData = WeaponDataLibrary::GetSafeInterfaceChecked<PrjWeaponDataType>(Context, Data);
+	PrjWeaponDataType* PrjWeaponData = CsWeaponDataLibrary::GetSafeInterfaceChecked<PrjWeaponDataType>(Context, Data);
 
 	if (!PrjWeaponData)
 	{

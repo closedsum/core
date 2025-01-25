@@ -1,7 +1,7 @@
 #pragma once
 #include "Components/ActorComponent.h"
 // Interfaces
-#include "Managers/Time/CsUpdate.h"
+#include "Update/CsUpdate.h"
 #include "CsWeapon.h"
 #include "Projectile/CsProjectileWeapon.h"
 // Types
@@ -23,20 +23,20 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsProjectileWeaponComponent_OnCo
 class AActor;
 struct FCsRoutine;
 
-// NCsWeapon::NData::IData
+// DataType (NCsWeapon::NData::IData)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 
-// NCsProjectile::NPayload::IPayload
+// CsProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 // NCsSound::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
-// NCsFX::NPayload::IPayload
+// CsFXPayloadType (NCsFX::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
 
 // NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire, IFire)
 
-// NCsProjectile::NModifier::IModifier
+// CsProjectileModifierType (NCsProjectile::NModifier::IModifier)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, IModifier)
 
 
@@ -53,10 +53,10 @@ class CSWP_API UCsProjectileWeaponComponent : public UActorComponent,
 {
 	GENERATED_UCLASS_BODY()
 
-#define DataType NCsWeapon::NData::IData
-#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
-#define SoundPayloadType NCsSound::NPayload::IPayload
-#define FXPayloadType NCsFX::NPayload::IPayload
+	using DataType = NCsWeapon::NData::IData;
+	using CsProjectilePayloadType = NCsProjectile::NPayload::IPayload;
+	using CsFXPayloadType = NCsFX::NPayload::IPayload;
+	using CsProjectileModifierType = NCsProjectile::NModifier::IModifier;
 
 // UObject Interface
 #pragma region
@@ -329,6 +329,10 @@ public:
 
 	protected:
 
+		using LaunchParamsType = NCsWeapon::NProjectile::NParams::NLaunch::ILaunch;
+
+	protected:
+
 		UCsProjectileWeaponComponent* Outer;
 
 		USceneComponent* LaunchComponentTransform;
@@ -369,7 +373,7 @@ public:
 		* @param Payload	The payload to set.
 		* return			Whether the payload was successfully set.
 		*/
-		virtual bool SetPayload(const FString& Context, ProjectilePayloadType* Payload);
+		virtual bool SetPayload(const FString& Context, CsProjectilePayloadType* Payload);
 
 		/**
 		* Copy the slice of values from From to To with checks.
@@ -382,7 +386,7 @@ public:
 		* @param To			What to copy to.
 		* return			Whether the From copied to To successfully.
 		*/
-		virtual bool CopyPayload(const FString& Context, const ProjectilePayloadType* From, ProjectilePayloadType* To);
+		virtual bool CopyPayload(const FString& Context, const CsProjectilePayloadType* From, CsProjectilePayloadType* To);
 
 	public:
 
@@ -392,9 +396,7 @@ public:
 
 	protected:
 
-	#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
 		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector3f& Direction);
-	#undef LaunchParamsType
 
 		void Launch();
 	};
@@ -437,9 +439,7 @@ protected:
 
 public:
 
-#define PrjModifierType NCsProjectile::NModifier::IModifier
-	virtual void GetProjectileModifiers(TArray<PrjModifierType*>& OutModifiers);
-#undef PrjModifierType
+	virtual void GetProjectileModifiers(TArray<CsProjectileModifierType*>& OutModifiers);
 
 #pragma endregion Projectile
 	
@@ -497,6 +497,8 @@ public:
 
 	protected:
 
+		using FXDataType = NCsWeapon::NProjectile::NData::NVisual::NFire::IFire;
+
 		UCsProjectileWeaponComponent* Outer;
 
 		USceneComponent* Component;
@@ -534,18 +536,15 @@ public:
 		* @param Payload
 		* @param FX
 		*/
-		void SetPayload(const int32 InCurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX);
+		void SetPayload(const int32 InCurrentProjectilePerShotIndex, CsFXPayloadType* Payload, const FCsFX& FX);
 
-#define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 		/**
 		*
 		*
 		* @param Payload
 		* @param FXData
 		*/
-		void SetPayload(const int32 InCurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData);
-
-#undef FXDataType
+		void SetPayload(const int32 InCurrentProjectilePerShotIndex, CsFXPayloadType* Payload, FXDataType* FXData);
 	};
 
 	FFXImpl* FXImpl;
@@ -578,9 +577,4 @@ public:
 	FString PrintNameClassAndOwner();
 
 #pragma endregion Print
-
-#undef DataType
-#undef ProjectilePayloadType
-#undef SoundPayloadType
-#undef FXPayloadType
 };

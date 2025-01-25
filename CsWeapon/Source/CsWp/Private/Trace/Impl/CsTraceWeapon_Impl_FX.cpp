@@ -67,9 +67,8 @@ namespace NCsWeapon
 
 					// FXDataType (NCsWeapon::NTrace::NData::NVisual::NFire::IFire)
 					typedef NCsWeapon::NTrace::NData::NVisual::NFire::IFire FXDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Data))
+					if (FXDataType* FXData = CsWeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Data))
 					{
 						typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams ParamsType;
 						typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::EAttach AttachType;
@@ -124,7 +123,7 @@ namespace NCsWeapon
 
 					// TracerVisualDataType (NCsTrace::NData::NVisual::NTracer::ITracer)
 					typedef NCsTrace::NData::NVisual::NTracer::ITracer TracerVisualDataType;
-					typedef NCsTrace::NData::FLibrary TraceDataLibrary;
+					typedef NCsTrace::NData::NLibrary::FLibrary TraceDataLibrary;
 
 					if (TracerVisualDataType* TracerVisualData = TraceDataLibrary::GetSafeInterfaceChecked<TracerVisualDataType>(Context, Data))
 					{
@@ -216,7 +215,7 @@ namespace NCsWeapon
 						}
 
 						// Allocate Payload
-						typedef NCsFX::NPayload::FImpl PayloadImplType;
+						typedef NCsFX::NPayload::NImpl::FImpl PayloadImplType;
 
 						PayloadImplType* Payload  = CsFXManagerLibrary::AllocatePayloadImplChecked(Context, Outer, &PooledPayload, FX, Transform);
 						UCsManager_FX* Manager_FX = CsFXManagerLibrary::GetChecked(Context, Outer);
@@ -245,7 +244,7 @@ namespace NCsWeapon
 
 					// ImpactVisualDataType (NCsTrace::NData::NVisual::NImpact::IImpact)
 					typedef NCsTrace::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
-					typedef NCsTrace::NData::FLibrary TraceDataLibrary;
+					typedef NCsTrace::NData::NLibrary::FLibrary TraceDataLibrary;
 
 					if (ImpactVisualDataType* ImpactVisualData = TraceDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 					{

@@ -96,6 +96,11 @@ ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializ
 	SetCanBeDamaged(false);
 }
 
+using CacheType = NCsPooledObject::NCache::ICache;
+using CacheImplType = NCsSound::NCache::FImpl;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+using SoundPayloadType = NCsSound::NPayload::IPayload;
+
 // UObject Interface
 #pragma region
 
@@ -206,18 +211,13 @@ void ACsSoundPooledImpl::ConstructCache()
 // ICsPooledObject
 #pragma region
 
-#define CacheType NCsPooledObject::NCache::ICache
 CacheType* ACsSoundPooledImpl::GetCache() const
 {
-#undef CacheType
 	return Cache;
 }
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 void ACsSoundPooledImpl::Allocate(PooledPayloadType* Payload)
 {
-#undef PooledPayloadType
-
 	using namespace NCsSoundPooledImpl::NCached;
 
 	Cache->Allocate(Payload);
@@ -258,15 +258,13 @@ void ACsSoundPooledImpl::Stop(const float& FadeOutTime /*=0.0f*/)
 
 	if (FadeOutTime > 0.0f)
 	{
-		typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
 		const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
-		CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, this, UpdateGroup, StopHandle);
+		CsCoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, this, UpdateGroup, StopHandle);
 
 		// TODO: Have a way of passing the UpdateGroup
 
-		UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, this);
+		UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, this);
 
 		typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
@@ -274,10 +272,8 @@ void ACsSoundPooledImpl::Stop(const float& FadeOutTime /*=0.0f*/)
 
 		#define COROUTINE Stop_Internal
 
-		typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
 		Payload->CoroutineImpl.BindUObject(this, &ACsSoundPooledImpl::COROUTINE);
-		Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
+		Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
 		Payload->Owner.SetObject(this);
 		Payload->SetName(Str::COROUTINE);
 		Payload->SetFName(Name::COROUTINE);
@@ -365,11 +361,8 @@ char ACsSoundPooledImpl::Stop_Internal(FCsRoutine* R)
 
 #pragma endregion SoundPooled
 
-#define SoundPayloadType NCsSound::NPayload::IPayload
 void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
 {
-#undef SoundPayloadType
-
 	using namespace NCsSoundPooledImpl::NCached;
 
 	const FString& Context = Str::Play;
@@ -428,13 +421,8 @@ void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
 	CS_NON_SHIPPING_EXPR(LogChangeCounter());
 }
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define SoundPayloadType NCsSound::NPayload::IPayload
 void ACsSoundPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, SoundPayloadType* SoundPayload)
 {
-#undef PooledPayloadType
-#undef SoundPayloadType
-
 	CS_NON_SHIPPING_EXPR(Log_AttachAndSetTransform(Payload, SoundPayload));
 
 	// If the Parent is set, attach the SkeletalMeshActor to the Parent
@@ -540,13 +528,8 @@ void ACsSoundPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload
 	#undef ChangeHelper
 }
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define SoundPayloadType NCsSound::NPayload::IPayload
 void ACsSoundPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, SoundPayloadType* SoundPayload)
 {
-#undef PooledPayloadType
-#undef SoundPayloadType
-
 }
 
 void ACsSoundPooledImpl::Handle_ClearAttachAndTransform()

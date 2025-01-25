@@ -20,3 +20,5 @@ namespace NCsProjectile
 		};
 	}
 }
+
+using CsProjectileModifierType = NCsProjectile::NModifier::IModifier;

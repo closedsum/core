@@ -69,6 +69,10 @@
     {
       "Name": "CsPhysics",
       "Enabled": true
+    },
+    {
+      "Name": "CsTemp",
+      "Enabled": true
     }
   ]
 }

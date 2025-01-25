@@ -25,15 +25,17 @@ namespace NCsDamage
 
 				static const FName Name;
 
-			#define EventType NCsDamage::NEvent::IEvent
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using EventType = NCsDamage::NEvent::IEvent;
+				};
 
 			public:
 
 				virtual ~ICopy(){}
 
-				virtual void Copy(const EventType* From) = 0;
-
-			#undef EventType
+				virtual void Copy(const _::EventType* From) = 0;
 			};
 		}
 	}

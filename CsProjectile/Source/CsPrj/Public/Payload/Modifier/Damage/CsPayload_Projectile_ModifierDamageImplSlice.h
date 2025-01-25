@@ -2,14 +2,18 @@
 #pragma once
 #include "Payload/Modifier/Damage/CsPayload_Projectile_ModifierDamage.h"
 #include "Reset/CsReset.h"
+// Types
+#include "CsMacro_Cached.h"
 // Damage
 #include "Modifier/CsAllocated_DamageModifier.h"
 
 class UObject;
 struct FCsInterfaceMap;
 
-// NCsDamage::NModifier::IModifier
+// ModifierType (NCsDamage::NModifier::IModifier)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_4(NCsProjectile, NPayload, NModifier, NDamage, FImplSlice)
 
 namespace NCsProjectile
 {
@@ -29,8 +33,13 @@ namespace NCsProjectile
 
 					static const FName Name;
 
-				#define DmgModifierType NCsDamage::NModifier::IModifier
-				#define AllocatedDmgModifierType NCsDamage::NModifier::FAllocated
+				private:
+
+					CS_USING_CACHED_FUNCTION_NAME_NESTED_4(NCsProjectile, NPayload, NModifier, NDamage, FImplSlice);
+
+					using ThisType = NCsProjectile::NPayload::NModifier::NDamage::FImplSlice;
+					using ModifierType = NCsDamage::NModifier::IModifier;
+					using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
 
 				private:
 
@@ -42,9 +51,9 @@ namespace NCsProjectile
 
 					// IDamage
 
-					TArray<DmgModifierType*> Modifiers;
+					TArray<ModifierType*> Modifiers;
 
-					TArray<AllocatedDmgModifierType> Modifiers_Internal;
+					TArray<AllocatedModifierType> Modifiers_Internal;
 
 				public:
 
@@ -64,29 +73,29 @@ namespace NCsProjectile
 
 				public:
 
-					void CopyFromModifiers(const UObject* WorldContext, const TArray<DmgModifierType*>& FromModifiers);
-					void CopyAndEmptyFromModifiers(const UObject* WorldContext, TArray<DmgModifierType*>& FromModifiers);
-					void CopyFromModifiers(const UObject* WorldContext, const TArray<AllocatedDmgModifierType>& FromModifiers);
+					void CopyFromModifiers(const UObject* WorldContext, const TArray<ModifierType*>& FromModifiers);
+					void CopyAndEmptyFromModifiers(const UObject* WorldContext, TArray<ModifierType*>& FromModifiers);
+					void CopyFromModifiers(const UObject* WorldContext, const TArray<AllocatedModifierType>& FromModifiers);
 
-					void AddAndEmptyFromModifiers(TArray<DmgModifierType*>& FromModifiers);
+					void AddAndEmptyFromModifiers(TArray<ModifierType*>& FromModifiers);
 
-					FORCEINLINE void SetModifiers(const TArray<DmgModifierType*>& InModifiers)
+					FORCEINLINE void SetModifiers(const TArray<ModifierType*>& InModifiers)
 					{
 						Modifiers.Reset(FMath::Max(Modifiers.Max(), InModifiers.Num()));
 
-						for (DmgModifierType* Modifier : InModifiers)
+						for (ModifierType* Modifier : InModifiers)
 						{
 							Modifiers.Add(Modifier);
 						}
 					}
 
-					void TransferFromModifiers(TArray<AllocatedDmgModifierType>& FromModifiers);
+					void TransferFromModifiers(TArray<AllocatedModifierType>& FromModifiers);
 
 				// IDamage
 				#pragma region
 				public:
 
-					FORCEINLINE const TArray<DmgModifierType*>& GetDamageModifiers() const { return Modifiers; }
+					FORCEINLINE const TArray<ModifierType*>& GetDamageModifiers() const { return Modifiers; }
 
 				#pragma endregion IDamage
 
@@ -104,11 +113,8 @@ namespace NCsProjectile
 
 					FORCEINLINE static void Deconstruct(void* Ptr)
 					{
-						delete static_cast<NCsProjectile::NPayload::NModifier::NDamage::FImplSlice*>(Ptr);
+						delete static_cast<ThisType*>(Ptr);
 					}
-
-				#undef DmgModifierType
-				#undef AllocatedDmgModifierType
 				};
 			}
 		}

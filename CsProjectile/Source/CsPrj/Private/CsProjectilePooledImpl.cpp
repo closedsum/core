@@ -282,6 +282,18 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	InitialLifeSpan = 0.0f;
 }
 
+using DataType = NCsProjectile::NData::IData;
+using PooledCacheType = NCsPooledObject::NCache::ICache;
+using CacheImplType = NCsProjectile::NCache::NImpl::FImpl;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+using PayloadType = NCsProjectile::NPayload::IPayload;
+using HitResultType = NCsProjectile::NCollision::NHit::FResult;
+using CollisionDataType = NCsProjectile::NData::NCollision::ICollision;
+using DamageDataType = NCsDamage::NData::IData;
+using DamageValueLibrary = NCsDamage::NValue::FLibrary;
+using ValueType = NCsDamage::NValue::IValue;
+using RangeType = NCsDamage::NRange::IRange;
+
 // UObject Interface
 #pragma region
 
@@ -542,8 +554,6 @@ void ACsProjectilePooledImpl::Shutdown()
 
 void ACsProjectilePooledImpl::ConstructCache()
 {
-	typedef NCsProjectile::NCache::FImpl CacheImplType;
-
 	CacheImpl = new CacheImplType();
 	Cache	  = CacheImpl;
 }
@@ -551,11 +561,8 @@ void ACsProjectilePooledImpl::ConstructCache()
 // ICsPooledObject
 #pragma region
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 {
-#undef PooledPayloadType
-
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
@@ -619,17 +626,15 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 
 	// End any Coroutines
 	{
-		typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
 	#if WITH_EDITOR
 		if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(this))
 		{
-			CoroutineSchedulerLibrary::SafeEndAndInvalidate(Context, GetWorldContext(), NCsUpdateGroup::GameState, Launch_Delayed_Handle, nullptr);
+			CsCoroutineSchedulerLibrary::SafeEndAndInvalidate(Context, GetWorldContext(), NCsUpdateGroup::GameState, Launch_Delayed_Handle, nullptr);
 		}
 		else
 	#endif // #if WITH_EDITOR
 		{
-			CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, GetWorldContext(), NCsUpdateGroup::GameState, Launch_Delayed_Handle);
+			CsCoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, GetWorldContext(), NCsUpdateGroup::GameState, Launch_Delayed_Handle);
 		}
 	}
 
@@ -732,10 +737,8 @@ UObject* ACsProjectilePooledImpl::GetCache_Instigator()
 // ICsProjectile
 #pragma region
 
-#define PayloadType NCsProjectile::NPayload::IPayload
 void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 {
-#undef PayloadType
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::Launch;
@@ -775,10 +778,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		LifeTime = ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsProjectileModifier::LifeTime, LifeTime);
 
 		// TODO: Add Modifier for Delay
-
-		typedef NCsProjectile::NCache::FLibrary CacheLibrary;
-
-		CacheLibrary::SetLifeTimeChecked(Context, Cache, LifeTime + Delay);
+		CsProjectileCacheLibrary::SetLifeTimeChecked(Context, Cache, LifeTime + Delay);
 	}
 
 	//const ECsProjectileRelevance& Relevance = Cache.Relevance;
@@ -1015,11 +1015,8 @@ UObject* ACsProjectilePooledImpl::GetDataAsObject()
 // Launch
 #pragma region
 
-#define PayloadType NCsProjectile::NPayload::IPayload
 void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 {
-#undef PayloadType
-
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::OnLaunch_SetModifiers;
@@ -1056,21 +1053,17 @@ void ACsProjectilePooledImpl::Launch_Delayed(const FLaunch_Delayed_Payload& Payl
 
 	// TODO: NOTE: Need a way UpdateGroup is passed via Payload
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, GetWorldContext());
+	UCsCoroutineScheduler* Scheduler   = CsCoroutineSchedulerLibrary::GetChecked(Context, GetWorldContext());
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+	typedef NCsCoroutine::NPayload::FImpl CoroutinePayloadType;
 
-	PayloadType* CoroutinePayload = Scheduler->AllocatePayload(UpdateGroup);
+	CoroutinePayloadType* CoroutinePayload = Scheduler->AllocatePayload(UpdateGroup);
 
 	#define COROUTINE Launch_Delayed_Internal
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
 	CoroutinePayload->CoroutineImpl.BindUObject(this, &ACsProjectilePooledImpl::COROUTINE);
-	CoroutinePayload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
+	CoroutinePayload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
 	CoroutinePayload->Owner.SetObject(this);
 	CoroutinePayload->SetName(Str::COROUTINE);
 	CoroutinePayload->SetFName(Name::COROUTINE);
@@ -1133,8 +1126,6 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 
 		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
-		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
-
 		if (CollisionDataType* CollisionData = CsPrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
 			const FCsCollisionPreset& CollisionPreset = CollisionData->GetCollisionPreset();
@@ -1192,7 +1183,6 @@ void ACsProjectilePooledImpl::Movement_SetVelocity(const FVector3f& Velocity)
 // ICsProjectile_Collision
 #pragma region
 
-#define HitResultType NCsProjectile::NCollision::NHit::FResult
 void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 {
 	using namespace NCsProjectilePooledImpl::NCached;
@@ -1262,7 +1252,6 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 
 			if (Info.GetbSound())
 			{
-				typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
 				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
 				PayloadImplType Payload;
@@ -1272,7 +1261,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				Transform.SetLocation(CsMathLibrary::Convert(HitResult.Location));
 				Transform.SetRotation(CsMathLibrary::Convert(HitResult.ImpactNormal.Rotation().Quaternion()));
 
-				SoundManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, Info.GetSound(), Transform);
+				CsSoundManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, Info.GetSound(), Transform);
 			}
 		}
 	}
@@ -1284,17 +1273,14 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 
 		if (PrjDamageDataType* PrjDamageData = CsPrjDataLibrary::GetSafeInterfaceChecked<PrjDamageDataType>(Context, Data))
 		{
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-			typedef NCsDamage::NData::IData DamageDataType;
-
 			DamageDataType* DamageData = PrjDamageData->GetDamageData();
 
 			static TArray<DamageDataType*> DamageDatas;
 			DamageDatas.Add(DamageData);
-			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
+			CsDamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
 
 			static TArray<FECsDamageData> DamageDataTypes;
-			DamageDataTypes.Add(DamageManagerLibrary::GetDataTypeChecked(Context, GetWorldContext(), DamageData));
+			DamageDataTypes.Add(CsDamageManagerLibrary::GetDataTypeChecked(Context, GetWorldContext(), DamageData));
 			DamageDataTypes.Append(DamageImpl.DataTypes);
 
 			// NOTE: For now reset and apply the modifiers on each hit.
@@ -1323,7 +1309,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				ProcessPayload.HitResult  = HitResult;
 
 				CsDamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
+				CsDamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
 
 				ProcessPayload.Reset();
 
@@ -1332,20 +1318,15 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 			}
 		}
 	}
-	// GetDamageDataTypeDataType (NCsData::IGetDamageDataType)
+	// CsGetDamageDataTypeDataType (NCsData::IGetDamageDataType)
 	{
-		typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
-
-		if (GetDamageDataTypeDataType* GetDamageDataType = CsPrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
+		if (CsGetDamageDataTypeDataType* GetDamageDataType = CsPrjDataLibrary::GetSafeInterfaceChecked<CsGetDamageDataTypeDataType>(Context, Data))
 		{
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-			typedef NCsDamage::NData::IData DamageDataType;
-
-			DamageDataType* DamageData = DamageManagerLibrary::GetDataChecked(Context, GetWorldContext(), GetDamageDataType);
+			DamageDataType* DamageData = CsDamageManagerLibrary::GetDataChecked(Context, GetWorldContext(), GetDamageDataType);
 
 			static TArray<DamageDataType*> DamageDatas;
 			DamageDatas.Add(DamageData);
-			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
+			CsDamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
 
 			static TArray<FECsDamageData> DamageDataTypes;
 			DamageDataTypes.Add(GetDamageDataType->GetDamageDataType());
@@ -1377,7 +1358,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				ProcessPayload.HitResult  = HitResult;
 
 				CsDamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
+				CsDamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
 
 				ProcessPayload.Reset();
 
@@ -1386,18 +1367,13 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 			}
 		}
 	}
-	// GetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes)
+	// CsGetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes)
 	{
-		typedef NCsData::IGetDamageDataTypes GetDamageDataTypeDataTypes;
-
-		if (GetDamageDataTypeDataTypes* GetDamageDataTypes = CsPrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataTypes>(Context, Data))
+		if (CsGetDamageDataTypeDataTypes* GetDamageDataTypes = CsPrjDataLibrary::GetSafeInterfaceChecked<CsGetDamageDataTypeDataTypes>(Context, Data))
 		{
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-			typedef NCsDamage::NData::IData DamageDataType;
-
 			static TArray<DamageDataType*> DamageDatas;
-			DamageManagerLibrary::GetDatasChecked(Context, GetWorldContext(), GetDamageDataTypes, DamageDatas);
-			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
+			CsDamageManagerLibrary::GetDatasChecked(Context, GetWorldContext(), GetDamageDataTypes, DamageDatas);
+			CsDamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
 
 			static TArray<FECsDamageData> DamageDataTypes;
 			DamageDataTypes.Append(GetDamageDataTypes->GetDamageDataTypes());
@@ -1429,7 +1405,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				ProcessPayload.HitResult  = HitResult;
 
 				CsDamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
+				CsDamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
 
 				ProcessPayload.Reset();
 
@@ -1478,7 +1454,6 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 
 	OnHit_Event.Broadcast(this, HitResult);
 }
-#undef HitResultType
 
 #pragma endregion ICsProjectile_Collision
 
@@ -1530,11 +1505,8 @@ const UObject* ACsProjectilePooledImpl::GetWorldContext() const
 // Variables
 #pragma region
 
-#define PayloadType NCsProjectile::NPayload::IPayload
 void ACsProjectilePooledImpl::AllocateVariables(const PayloadType* Payload)
 {
-#undef PayloadType
-
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::AllocateVariables;
@@ -1668,11 +1640,8 @@ void ACsProjectilePooledImpl::StartMovementFromData(const FVector3f& Direction)
 	// Tracking
 #pragma region
 
-#define PayloadType NCsProjectile::NPayload::IPayload
 void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 {
-#undef PayloadType
-	
 	using namespace NCsProjectilePooledImpl::NTrackingImpl::NCached;
 
 	const FString& Context = Str::Init;
@@ -2055,10 +2024,8 @@ void ACsProjectilePooledImpl::SetTrailFXPooled(const FString& Context, const FEC
 // Modifier
 #pragma region
 
-#define CollisionDataType NCsProjectile::NData::NCollision::ICollision
 void ACsProjectilePooledImpl::ApplyHitCountModifiers(const FString& Context, const CollisionDataType* CollisionData)
 {
-#undef CollisionDataType
 	HitCount = CollisionData->GetHitCount();
 
 	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
@@ -2100,11 +2067,8 @@ ACsProjectilePooledImpl::FDamageImpl::FDamageImpl() :
 	DataTypes(),
 	Modifiers()
 {
-	typedef NCsDamage::NValue::NPoint::FImpl PointType;
-	typedef NCsDamage::NValue::NRange::FImpl RangeType;
-
-	ValuePoint = new PointType();
-	ValueRange = new RangeType();
+	ValuePoint = new PointImplType();
+	ValueRange = new RangeImplType();
 }
 
 ACsProjectilePooledImpl::FDamageImpl::~FDamageImpl()
@@ -2124,17 +2088,11 @@ ACsProjectilePooledImpl::FDamageImpl::~FDamageImpl()
 	Modifiers.Reset();
 }
 
-#define DamageDataType NCsDamage::NData::IData
 void ACsProjectilePooledImpl::FDamageImpl::SetValue(DamageDataType* InData)
 {
-#undef DamageDataType
-
 	using namespace NCsProjectilePooledImpl::NDamageImpl::NCached;
 
 	const FString& Context = Str::SetValue;
-
-	typedef NCsDamage::NValue::FLibrary DamageValueLibrary;
-	typedef NCsDamage::NValue::IValue ValueType;
 
 	const ValueType* Value = InData->GetValue();
 	Type				   = DamageValueLibrary::GetTypeChecked(Context, Value);
@@ -2143,11 +2101,8 @@ void ACsProjectilePooledImpl::FDamageImpl::SetValue(DamageDataType* InData)
 	DamageValueLibrary::CopyChecked(Context, Value, GetValue());
 }
 
-#define ValueType NCsDamage::NValue::IValue
 ValueType* ACsProjectilePooledImpl::FDamageImpl::GetValue()
 {
-#undef ValueType
-
 	// Point
 	if (Type == NCsDamageValue::Point)
 		return ValuePoint;
@@ -2173,22 +2128,20 @@ void ACsProjectilePooledImpl::FDamageImpl::Reset()
 	Modifiers.Reset(Modifiers.Max());
 }
 
-#define RangeType NCsDamage::NRange::IRange
 const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& Context)
 {
-	typedef NCsDamage::NData::IData DmgDataType;
 	typedef NCsDamage::NData::NShape::IShape DmgShapeDataType;
 
 	// NOTE: For now assume the ONLY way to get RangeType is from a Damage Shape.
 	//		  Damage Shape is an object that implements the interface: DmgShapeDataType (NCsDamage::NData::NShape::IShape)
 	
-	// DamageDataType (NCsProjectile::NData::NDamage::IDamage)
+	// PrjDmgDataType (NCsProjectile::NData::NDamage::IDamage)
 	{
 		typedef NCsProjectile::NData::NDamage::IDamage PrjDmgDataType;
 
 		if (const PrjDmgDataType* PrjDmgData = CsPrjDataLibrary::GetSafeInterfaceChecked<PrjDmgDataType>(Context, Data))
 		{
-			const DmgDataType* DmgData = PrjDmgData->GetDamageData();
+			const DamageDataType* DmgData = PrjDmgData->GetDamageData();
 
 			if (const DmgShapeDataType* DmgShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
 			{
@@ -2196,15 +2149,11 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 			}
 		}
 	}
-	// GetDamageDataTypeDataType (NCsData::IGetDamageDataType)
+	// CsGetDamageDataTypeDataType (NCsData::IGetDamageDataType)
 	{
-		typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
-
-		if (const GetDamageDataTypeDataType* GetDamageDataType = CsPrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
+		if (const CsGetDamageDataTypeDataType* GetDamageDataType = CsPrjDataLibrary::GetSafeInterfaceChecked<CsGetDamageDataTypeDataType>(Context, Data))
 		{
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-			const DmgDataType* DmgData = DamageManagerLibrary::GetDataChecked(Context, GetWorldContext(), GetDamageDataType);
+			const DamageDataType* DmgData = CsDamageManagerLibrary::GetDataChecked(Context, GetWorldContext(), GetDamageDataType);
 
 			if (const DmgShapeDataType* DmgShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
 			{
@@ -2214,17 +2163,13 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 	}
 	// GetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes)
 	{
-		typedef NCsData::IGetDamageDataTypes GetDamageDataTypeDataTypes;
-
-		if (const GetDamageDataTypeDataTypes* GetDamageDataTypes = CsPrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataTypes>(Context, Data))
+		if (const CsGetDamageDataTypeDataTypes* GetDamageDataTypes = CsPrjDataLibrary::GetSafeInterfaceChecked<CsGetDamageDataTypeDataTypes>(Context, Data))
 		{
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			static TArray<DamageDataType*> DamageDatas;
 
-			static TArray<DmgDataType*> DamageDatas;
+			CsDamageManagerLibrary::GetDatasChecked(Context, GetWorldContext(), GetDamageDataTypes, DamageDatas);
 
-			DamageManagerLibrary::GetDatasChecked(Context, GetWorldContext(), GetDamageDataTypes, DamageDatas);
-
-			for (const DmgDataType* DmgData : DamageDatas)
+			for (const DamageDataType* DmgData : DamageDatas)
 			{
 				if (const DmgShapeDataType* DmgShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
 				{
@@ -2238,12 +2183,9 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 	checkf(0, TEXT("%s: Failed to get Damage Data from %s"), *Context, *CsPrjDataLibrary::PrintDataAndClass(Data));
 	return nullptr;
 }
-#undef RangeType
 
 float ACsProjectilePooledImpl::GetMaxDamageRangeChecked(const FString& Context)
 {
-	typedef NCsDamage::NRange::IRange RangeType;
-
 	const RangeType* Range = GetDamageRangeChecked(Context);
 
 	return CsDamageModifierLibrary::GetMaxRangeChecked(Context, DamageImpl.Modifiers, Range);

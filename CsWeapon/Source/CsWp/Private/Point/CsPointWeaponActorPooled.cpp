@@ -376,11 +376,10 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 
 	// Get Data
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 	typedef NCsWeapon::NPoint::NData::IData PointWeaponDataType;
 
 	Data		    = WeaponManagerLibrary::GetDataChecked(Context, GetWorldContext(), WeaponType);
-	PointWeaponData = WeaponDataLibrary::GetInterfaceChecked<PointWeaponDataType>(Context, Data);
+	PointWeaponData = CsWeaponDataLibrary::GetInterfaceChecked<PointWeaponDataType>(Context, Data);
 
 	SetActorHiddenInGame(false);
 	SetActorTickEnabled(true);
@@ -441,9 +440,7 @@ void ACsPointWeaponActorPooled::Deallocate()
 	OnDeallocate_Start_Event.Broadcast(this);
 
 	// End Routines
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	if (UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetSafe(GetWorldContext()))
+	if (UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetSafe(GetWorldContext()))
 	{
 		static TSet<FCsRoutineHandle> TempHandles;
 
@@ -590,9 +587,7 @@ void ACsPointWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& DeltaT
 
 	const FString& Context = Str::OnUpdate_HandleStates;
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointState))
@@ -673,9 +668,7 @@ bool ACsPointWeaponActorPooled::CanFire() const
 
 	const FString& Context = Str::CanFire;
 	
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 	const float TimeBetweenShots = GetTimeBetweenShots();
 
@@ -721,13 +714,9 @@ void ACsPointWeaponActorPooled::Fire()
 
 	const FString& Context = Str::Fire;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, GetWorldContext());
 
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, GetWorldContext());
-
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 	Fire_StartTime = TimeSinceStart.Time;
 
@@ -739,7 +728,7 @@ void ACsPointWeaponActorPooled::Fire()
 	#define COROUTINE Fire_Internal
 
 	Payload->CoroutineImpl.BindUObject(this, &ACsPointWeaponActorPooled::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -875,9 +864,7 @@ void ACsPointWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	const FString& Context = Str::OnElapsedTime;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, Outer->GetWorldContext());
+	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, Outer->GetWorldContext());
 
 	// Setup Routine
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
@@ -886,10 +873,8 @@ void ACsPointWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	#define COROUTINE OnElapsedTime_Internal
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
 	Payload->CoroutineImpl.BindRaw(this, &ACsPointWeaponActorPooled::FTimeBetweenShotsImpl::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer->GetWorldContext(), Outer->GetUpdateGroup());
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, Outer->GetWorldContext(), Outer->GetUpdateGroup());
 	Payload->Owner.SetObject(Outer);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -951,10 +936,7 @@ float ACsPointWeaponActorPooled::GetTimeBetweenShots() const
 	float Value = PointWeaponData->GetTimeBetweenShots();
 
 	// TODO: Priority
-
-	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-
-	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_TimeBetweenShots, Value);
+	return CsWeaponModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_TimeBetweenShots, Value);
 }
 
 	// Point
@@ -975,10 +957,7 @@ int32 ACsPointWeaponActorPooled::PointsPerShot_GetCount() const
 	float Value = PointWeaponData->GetPointsPerShotParams().GetCount();
 
 	// TODO: Priority
-
-	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-
-	return ModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Count, Value);
+	return CsWeaponModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Count, Value);
 }
 
 float ACsPointWeaponActorPooled::PointsPerShot_GetInterval() const
@@ -996,10 +975,7 @@ float ACsPointWeaponActorPooled::PointsPerShot_GetInterval() const
 	float Value = PointWeaponData->GetPointsPerShotParams().GetInterval();
 
 	// TODO: Priority
-
-	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-
-	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Interval, Value);
+	return CsWeaponModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Interval, Value);
 }
 
 void ACsPointWeaponActorPooled::Point_Execute(const int32& CurrentPointPerShotIndex)
@@ -1020,9 +996,8 @@ void ACsPointWeaponActorPooled::FSoundImpl::Play()
 
 	// SoundDataType (NCsWeapon::NPoint::NData::NSound::NFire::IFire)
 	typedef NCsWeapon::NPoint::NData::NSound::NFire::IFire SoundDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
+	if (SoundDataType* SoundData = CsWeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
 	{
 		if (SoundData->UseFireSoundParams())
 		{
@@ -1062,9 +1037,8 @@ void ACsPointWeaponActorPooled::FFXImpl::Play()
 
 	// FXDataType (NCsWeapon::NPoint::NData::NVisual::NFire::IFire)
 	typedef NCsWeapon::NPoint::NData::NVisual::NFire::IFire FXDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Outer->GetData()))
+	if (FXDataType* FXData = CsWeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Outer->GetData()))
 	{
 		if (FXData->UseFireVisualParams())
 		{
@@ -1107,8 +1081,8 @@ void ACsPointWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, FXDa
 	const FCsFX& FX			 = Params.GetFX();
 	const AttachType& Type	 = Params.GetAttach();
 
-	typedef NCsFX::NPayload::FImpl PayloadImplType;
-	typedef NCsFX::NPayload::FLibrary PayloadLibrary;
+	typedef NCsFX::NPayload::NImpl::FImpl PayloadImplType;
+	typedef NCsFX::NPayload::NLibrary::FLibrary PayloadLibrary;
 
 	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 

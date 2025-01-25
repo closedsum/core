@@ -629,10 +629,9 @@ void ACsBeamActorPooledImpl::FCollisionImpl::Emit()
 
 	const FString& Context = Str::Emit;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	UCsCoroutineScheduler* Scheduler  = CoroutineSchedulerLibrary::GetChecked(Context, Outer);
+	UCsCoroutineScheduler* Scheduler  = CsCoroutineSchedulerLibrary::GetChecked(Context, Outer);
 	const FECsUpdateGroup& Group	  = Outer->GetUpdateGroup();
 	PayloadType* Payload			  = Scheduler->AllocatePayload(Group);
 
@@ -770,9 +769,7 @@ void ACsBeamActorPooledImpl::FCollisionImpl::Shutdown()
 
 	const FString& Context = Str::Shutdown;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	CoroutineSchedulerLibrary::SafeEnd(Outer, Outer->GetUpdateGroup(), EmitInternalHandle);
+	CsCoroutineSchedulerLibrary::SafeEnd(Outer, Outer->GetUpdateGroup(), EmitInternalHandle);
 
 	CollisionData = nullptr;
 	FrequencyParams = nullptr;
@@ -889,10 +886,7 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 			DamageImpl.SetValue(DamageData->GetDamageData());
 
 			CsDamageModifierLibrary::ModifyChecked(Context, DamageImpl.Modifiers, DamageData->GetDamageData(), DamageImpl.GetValue());
-
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageImpl.GetValue(), DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit);
+			CsDamageManagerLibrary::ProcessDataChecked(Context, this, DamageImpl.GetValue(), DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit);
 		}
 		*/
 	}

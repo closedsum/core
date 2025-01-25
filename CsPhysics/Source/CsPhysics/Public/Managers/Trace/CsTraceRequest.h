@@ -19,7 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsTraceRequest_OnResponse, const FC
 class UObject;
 struct FCsTraceResponse;
 
-// NCsTrace::NRequest::FRequest
+// RequestType (NCsTrace::NRequest::FRequest)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
 
 class UCapsuleComponent;
@@ -146,7 +146,7 @@ struct CSPHYSICS_API FCsTraceRequest
 
 class UObject;
 
-// NCsTrace::NResponse::FResponse
+// ResponseType (NCsTrace::NResponse::FResponse)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
 
 namespace NCsTrace
@@ -349,3 +349,5 @@ namespace NCsTrace
 		};
 	}
 }
+
+using CsTraceRequestType = NCsTrace::NRequest::FRequest;

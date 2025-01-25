@@ -113,7 +113,7 @@ namespace NCsWeapon
 
 					TraceData = Value;
 
-					typedef NCsTrace::NData::FLibrary TraceDataLibrary;
+					typedef NCsTrace::NData::NLibrary::FLibrary TraceDataLibrary;
 
 					check(TraceDataLibrary::IsValidChecked(Context, TraceData));
 				}
@@ -133,7 +133,7 @@ namespace NCsWeapon
 				{
 					CS_IS_PTR_NULL_CHECKED(TraceData)
 
-					typedef NCsTrace::NData::FLibrary TraceDataLibrary;
+					typedef NCsTrace::NData::NLibrary::FLibrary TraceDataLibrary;
 
 					check(TraceDataLibrary::IsValidChecked(Context, TraceData));
 					return true;
@@ -155,9 +155,8 @@ namespace NCsWeapon
 
 					// Get Data Slice
 					typedef NCsWeapon::NTrace::NData::IData WeaponDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
+					WeaponDataType* WeaponData = CsWeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
 	
 					// Get Trace Params
 
@@ -246,9 +245,8 @@ namespace NCsWeapon
 
 					// Get Data Slice
 					typedef NCsWeapon::NTrace::NData::IData WeaponDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
+					WeaponDataType* WeaponData = CsWeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
 	
 					// Get Trace Params
 					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
@@ -355,9 +353,8 @@ namespace NCsWeapon
 
 					// Get Data Slice
 					typedef NCsWeapon::NTrace::NData::IData WeaponDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
+					WeaponDataType* WeaponData = CsWeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
 
 					// Get Trace Params
 					using namespace NCsWeapon::NTrace::NParams::NTrace;
@@ -455,9 +452,8 @@ namespace NCsWeapon
 
 					// Get collision information related to the trace.
 					typedef NCsWeapon::NTrace::NData::IData WeaponTraceDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					WeaponTraceDataType* WeaponTraceData = WeaponDataLibrary::GetInterfaceChecked<WeaponTraceDataType>(Context, Data);
+					WeaponTraceDataType* WeaponTraceData = CsWeaponDataLibrary::GetInterfaceChecked<WeaponTraceDataType>(Context, Data);
 
 					typedef NCsWeapon::NTrace::NParams::NTrace::ITrace TraceParamsType;
 					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
@@ -518,11 +514,10 @@ namespace NCsWeapon
 
 					// Get collision information related to the trace.
 					typedef NCsWeapon::NTrace::NData::IData WeaponTraceDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 					typedef NCsWeapon::NTrace::NParams::NTrace::ITrace TraceParamsType;
 					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
 
-					WeaponTraceDataType* WeaponTraceData = WeaponDataLibrary::GetInterfaceChecked<WeaponTraceDataType>(Context, Data);
+					WeaponTraceDataType* WeaponTraceData = CsWeaponDataLibrary::GetInterfaceChecked<WeaponTraceDataType>(Context, Data);
 					const TraceParamsType* TraceParams   = WeaponTraceData->GetTraceParams();
 
 					check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));

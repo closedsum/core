@@ -11,7 +11,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_ProjectileImplSlice)
 
-#define SliceType NCsProjectile::NData::FImplSlice
+using SliceType = NCsProjectile::NData::FImplSlice;
 
 SliceType* FCsData_ProjectileImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 {
@@ -77,8 +77,6 @@ void FCsData_ProjectileImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 	Slice->SetMaxSpeed(MaxSpeed);
 	Slice->SetGravityScale(GravityScale);
 }
-
-#undef SliceType
 
 bool FCsData_ProjectileImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
@@ -178,9 +176,7 @@ namespace NCsProjectile
 
 			// NOTE: If this technique is to be used in a shipping build, this will need to be slightly altered to
 			//		 allow destroying the object when the data needs to be "unloaded"
-			typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-			DataManagerLibrary::AddDataCompositionObject_Loaded_Checked(Context, WorldContext, FName(*DataName), Object, FImplSlice::Name);
+			CsDataManagerLibrary::AddDataCompositionObject_Loaded_Checked(Context, WorldContext, FName(*DataName), Object, FImplSlice::Name);
 
 			return Slice;
 		}

@@ -64,9 +64,15 @@ class CSPRJ_API ICsProjectile_Collision
 {
 	GENERATED_IINTERFACE_BODY()
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using ResultType = NCsProjectile::NCollision::NHit::FResult;
+	};
+
 public:
 
-#define ResultType NCsProjectile::NCollision::NHit::FResult
-	virtual void Hit(const ResultType& Result) = 0;
-#undef ResultType
+	virtual void Hit(const _::ResultType& Result) = 0;
 };

@@ -1,4 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Payload/CsPayload_Projectile.h"
 
-const FName NCsProjectile::NPayload::IPayload::Name = FName("NCsProjectile::NPayload::IPayload");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsProjectile::NPayload::IPayload);

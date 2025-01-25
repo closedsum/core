@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Damage/Data/Point/CsData_DamagePointImplSlice.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Managers/Data/CsLibrary_Manager_Data.h"
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
@@ -14,7 +16,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_DamagePointImplSlice)
 
-#define SliceType NCsDamage::NData::NPoint::FImplSlice
+using SliceType = NCsDamage::NData::NPoint::NImplSlice::FImplSlice;
 
 SliceType* FCsData_DamagePointImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 {
@@ -50,11 +52,10 @@ SliceType* FCsData_DamagePointImplSlice::SafeConstruct_Internal(const FString& C
 		return nullptr;
 
 	#define DataHandlerType NCsData::NManager::NHandler::TData
-	typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 	typedef NCsDamage::NData::IData DataType;
 	typedef NCsDamage::NData::FInterfaceMap DataInterfaceMapType;
 	
-	DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* DataHandler = DamageManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* DataHandler = CsDamageManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 	
 	#undef DataHandlerType
 
@@ -78,15 +79,13 @@ void FCsData_DamagePointImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 	Slice->SetType(Type);
 }
 
-#undef SliceType
-
 bool FCsData_DamagePointImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
 {
 	CS_IS_ENUM_STRUCT_VALID(EMCsDamageType, FECsDamageType, Type)
 	return true;
 }
 
-const FName NCsDamage::NData::NPoint::FImplSlice::Name = FName("NCsDamage::NData::NPoint::FImplSlice");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsDamage::NData::NPoint::NImplSlice::FImplSlice);
 
 namespace NCsDamage
 {
@@ -106,97 +105,94 @@ namespace NCsDamage
 						const FName Type = FName("Type");
 					}
 				}
-			}
 
-			/*static*/ FImplSlice* FImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
-			{
-				using namespace NCsDamage::NData::NPoint::NImplSlice::NCached;
-
-				CS_IS_PTR_NULL_RET_NULL(Object)
-
-				FImplSlice* Slice = SafeConstruct_Internal(Context, WorldContext, DataName, Log);
-
-				if (!Slice)
-					return nullptr;
-
-				// Check for properties matching interface: ProjectileDataType (NCsProjectile::NData::IData)
-				typedef NCsProperty::FLibrary PropertyLibrary;
-
-				bool Success = false;
-
-				// Try FCsData_DamagePointImplSlice
-				typedef FCsData_DamagePointImplSlice StructSliceType;
-
-				if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::DamagePointSlice, nullptr))
+				/*static*/ FImplSlice* FImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 				{
-					SliceAsStruct->CopyToSlice(Slice);
-					Success = true;
-				}
-				// Try individual properties
-				else
-				{
-					float* ValuePtr			= PropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::Value, nullptr);
-					FECsDamageType* TypePtr = PropertyLibrary::GetStructPropertyValuePtr<FECsDamageType>(Context, Object, Object->GetClass(), Name::Type, nullptr);
+					using namespace NCsDamage::NData::NPoint::NImplSlice::NCached;
 
-					if (ValuePtr &&
-						TypePtr)
+					CS_IS_PTR_NULL_RET_NULL(Object)
+
+					FImplSlice* Slice = SafeConstruct_Internal(Context, WorldContext, DataName, Log);
+
+					if (!Slice)
+						return nullptr;
+
+					// Check for properties matching interface: ProjectileDataType (NCsProjectile::NData::IData)
+					typedef NCsProperty::FLibrary PropertyLibrary;
+
+					bool Success = false;
+
+					// Try FCsData_DamagePointImplSlice
+					typedef FCsData_DamagePointImplSlice StructSliceType;
+
+					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::DamagePointSlice, nullptr))
 					{
-						Slice->SetValue(ValuePtr);
-						Slice->SetType(TypePtr);
+						SliceAsStruct->CopyToSlice(Slice);
 						Success = true;
 					}
-				}
-
-				if (!Success)
-				{
-					if (Log)
+					// Try individual properties
+					else
 					{
-						Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: NCsDamage::NData::IData."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
-						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_DamagePointImplSlice with name: DamagePointSlice."), *Context));
-						Log(FString::Printf(TEXT("%s: - OR"), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get float property with name: Value."), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FECsDamageType with name: Type."), *Context));
+						float* ValuePtr			= PropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::Value, nullptr);
+						FECsDamageType* TypePtr = PropertyLibrary::GetStructPropertyValuePtr<FECsDamageType>(Context, Object, Object->GetClass(), Name::Type, nullptr);
+
+						if (ValuePtr &&
+							TypePtr)
+						{
+							Slice->SetValue(ValuePtr);
+							Slice->SetType(TypePtr);
+							Success = true;
+						}
 					}
+
+					if (!Success)
+					{
+						if (Log)
+						{
+							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: NCsDamage::NData::IData."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
+							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_DamagePointImplSlice with name: DamagePointSlice."), *Context));
+							Log(FString::Printf(TEXT("%s: - OR"), *Context));
+							Log(FString::Printf(TEXT("%s: - Failed to get float property with name: Value."), *Context));
+							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FECsDamageType with name: Type."), *Context));
+						}
+					}
+
+					// NOTE: If this technique is to be used in a shipping build, this will need to be slightly altered to
+					//		 allow destroying the object when the data needs to be "unloaded"
+					CsDataManagerLibrary::AddDataCompositionObject_Loaded_Checked(Context, WorldContext, FName(*DataName), Object, FImplSlice::Name);
+
+					return Slice;
 				}
 
-				// NOTE: If this technique is to be used in a shipping build, this will need to be slightly altered to
-				//		 allow destroying the object when the data needs to be "unloaded"
-				typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-				DataManagerLibrary::AddDataCompositionObject_Loaded_Checked(Context, WorldContext, FName(*DataName), Object, FImplSlice::Name);
-
-				return Slice;
-			}
-
-			/*static*/ FImplSlice* FImplSlice::SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& DataName, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
-			{
-				#define DataHandlerType NCsData::NManager::NHandler::TData
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-				typedef NCsDamage::NData::IData DataType;
-				typedef NCsDamage::NData::FInterfaceMap DataInterfaceMapType;
+				/*static*/ FImplSlice* FImplSlice::SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& DataName, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+				{
+					#define DataHandlerType NCsData::NManager::NHandler::TData
+					typedef NCsDamage::NData::IData DataType;
+					typedef NCsDamage::NData::FInterfaceMap DataInterfaceMapType;
 	
-				DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* DataHandler = DamageManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+					DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* DataHandler = CsDamageManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 	
-				#undef DataHandlerType
+					#undef DataHandlerType
 
-				if (!DataHandler)
-					return nullptr;
+					if (!DataHandler)
+						return nullptr;
 
-				FImplSlice* Slice = DataHandler->SafeConstructData<FImplSlice, EMCsDamageData>(Context, DataName);
+					FImplSlice* Slice = DataHandler->SafeConstructData<FImplSlice, EMCsDamageData>(Context, DataName);
 
-				return Slice;
-			}
+					return Slice;
+				}
 
-			bool FImplSlice::IsValidChecked(const FString& Context) const
-			{
-				check(EMCsDamageType::Get().IsValidEnumChecked(Context, GetType()));
-				return true;
-			}
+				bool FImplSlice::IsValidChecked(const FString& Context) const
+				{
+					check(EMCsDamageType::Get().IsValidEnumChecked(Context, GetType()));
+					return true;
+				}
 
-			bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
-			{
-				CS_IS_ENUM_STRUCT_VALID(EMCsDamageType, FECsDamageType, GetType())
-				return true;
+				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
+				{
+					CS_IS_ENUM_STRUCT_VALID(EMCsDamageType, FECsDamageType, GetType())
+					return true;
+				}
 			}
 		}
 	}

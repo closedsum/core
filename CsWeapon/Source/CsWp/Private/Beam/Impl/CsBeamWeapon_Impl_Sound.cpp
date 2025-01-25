@@ -55,9 +55,8 @@ namespace NCsWeapon
 
 					// SoundDataType (NCsWeapon::NBeam::NData::NSound::NFire::IFire)
 					typedef NCsWeapon::NBeam::NData::NSound::NFire::IFire SoundDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Data))
+					if (SoundDataType* SoundData = CsWeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Data))
 					{
 						typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
 

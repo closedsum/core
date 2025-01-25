@@ -12,8 +12,8 @@
 // FCsBeamData_DamagePoint
 #pragma region
 
-// NCsDamage::NData::NPoint::FProxy
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NPoint, FProxy)
+// NCsDamage::NData::NPoint::NProxy::FProxy
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NPoint, NProxy, FProxy)
 
 USTRUCT(BlueprintType)
 struct CSBEAM_API FCsBeamData_DamagePoint
@@ -36,7 +36,7 @@ public:
 
 private:
 
-	typedef NCsDamage::NData::NPoint::FProxy PointDataProxyType;
+	using PointDataProxyType = NCsDamage::NData::NPoint::NProxy::FProxy;
 
 public:
 

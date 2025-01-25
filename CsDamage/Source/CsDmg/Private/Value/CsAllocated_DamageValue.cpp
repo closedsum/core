@@ -32,7 +32,6 @@ namespace NCsDamage
 		#define USING_NS_CACHED using namespace NCsDamage::NValue::NAllocated::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsDamage::NValue::NAllocated::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define DamageManagerLibrary NCsDamage::NManager::FLibrary
 		#define DamageValueLibrary NCsDamage::NValue::FLibrary
 
 		FAllocated::~FAllocated()
@@ -48,7 +47,7 @@ namespace NCsDamage
 			CS_IS_PTR_NULL_CHECKED(From)
 
 			Root	  = InRoot;
-			Container = DamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), From);
+			Container = CsDamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), From);
 			Value	  = Container->Get();
 			Type	  = DamageValueLibrary::GetTypeChecked(Context, Value);
 		}
@@ -62,7 +61,7 @@ namespace NCsDamage
 			CS_IS_PTR_NULL_CHECKED(Data)
 
 			Root	  = InRoot;
-			Container = DamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), Data->GetValue());
+			Container = CsDamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), Data->GetValue());
 			Value	  = Container->Get();
 			Type	  = DamageValueLibrary::GetTypeChecked(Context, Value);
 		}
@@ -78,7 +77,7 @@ namespace NCsDamage
 			if (From->GetContainer())
 			{
 				Root	  = From->Root;
-				Container = DamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), From->GetContainer());
+				Container = CsDamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), From->GetContainer());
 				Value	  = Container->Get();
 				Type	  = DamageValueLibrary::GetTypeChecked(Context, Value);
 			}
@@ -92,7 +91,7 @@ namespace NCsDamage
 			{
 				CS_IS_PTR_NULL_CHECKED(GetRoot())
 
-				DamageManagerLibrary::DeallocateValueChecked(Context, GetRoot(), Type, Container);
+				CsDamageManagerLibrary::DeallocateValueChecked(Context, GetRoot(), Type, Container);
 			}
 
 			Root	  = nullptr;
@@ -103,7 +102,6 @@ namespace NCsDamage
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef DamageManagerLibrary
 		#undef DamageValueLibrary
 	}
 }

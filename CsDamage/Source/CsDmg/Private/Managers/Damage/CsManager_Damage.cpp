@@ -75,6 +75,25 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 {
 }
 
+using EventResourceType = NCsDamage::NEvent::FResource;
+using EventType = NCsDamage::NEvent::IEvent;
+using EventImplType = NCsDamage::NEvent::NImpl::FImpl;
+using CopyType = NCsDamage::NEvent::NCopy::ICopy;
+using DataType = NCsDamage::NData::IData;
+using ShapeDataType = NCsDamage::NData::NShape::IShape;
+using ModifierManagerType = NCsDamage::NModifier::FManager;
+using ModifierResourceType = NCsDamage::NModifier::FResource;
+using ModifierType = NCsDamage::NModifier::IModifier;
+using ModifierImplType = NCsDamage::NModifier::EImpl;
+using ValueLibrary = NCsDamage::NValue::FLibrary;
+using ValueManagerType = NCsDamage::NValue::FManager;
+using ValueResourceType = NCsDamage::NValue::FResource;
+using ValueType = NCsDamage::NValue::IValue;
+using RangeResourceType = NCsDamage::NRange::FResource;
+using RangeType = NCsDamage::NRange::IRange;
+using RangeImplType = NCsDamage::NRange::FImpl;
+using ProcessPayloadType = NCsDamage::NData::NProcess::FPayload;
+
 // Singleton
 #pragma region
 
@@ -220,10 +239,8 @@ void UCsManager_Damage::Initialize()
 	const FString& Context = Str::Initialize;
 
 	// Populate EnumMaps
-	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-	NCsDamageType::PopulateEnumMapFromSettings(Context, GameInstanceLibrary::GetSafeAsObject(MyRoot));
-	NCsDamageData::PopulateEnumMapFromSettings(Context, GameInstanceLibrary::GetSafeAsObject(MyRoot));
+	NCsDamageType::PopulateEnumMapFromSettings(Context, CsGameInstanceLibrary::GetSafeAsObject(MyRoot));
+	NCsDamageData::PopulateEnumMapFromSettings(Context, CsGameInstanceLibrary::GetSafeAsObject(MyRoot));
 
 	UCsDamageSettings* Settings = GetMutableDefault<UCsDamageSettings>();
 
@@ -249,8 +266,6 @@ void UCsManager_Damage::Initialize()
 
 		for (const FECsDamageValue& Value : EMCsDamageValue::Get())
 		{
-			typedef NCsDamage::NValue::FManager ValueManagerType;
-
 			ValueManagerType& Manager = Manager_Values[Value.GetValue()];
 
 			Manager.SetDeconstructResourcesOnShutdown();
@@ -299,8 +314,6 @@ void UCsManager_Damage::CleanUp()
 	{
 		for (const FECsDamageValue& Value : EMCsDamageValue::Get())
 		{
-			typedef NCsDamage::NValue::FManager ValueManagerType;
-
 			ValueManagerType& Manager = Manager_Values[Value.GetValue()];
 
 			Manager.Shutdown();
@@ -309,10 +322,6 @@ void UCsManager_Damage::CleanUp()
 	// Range
 	Manager_Range.Shutdown();
 	// Modifier
-	typedef NCsDamage::NModifier::FManager ModifierManagerType;
-	typedef NCsDamage::NModifier::FResource ModifierResourceType;
-	typedef NCsDamage::NModifier::IModifier ModifierType;
-
 	for (ModifierManagerType& ModifierManager : Manager_Modifiers)
 	{
 		const TArray<ModifierResourceType*>& Containers = ModifierManager.GetPool();
@@ -396,13 +405,8 @@ void UCsManager_Damage::Remove(ICsReceiveDamage* Object)
 // Event
 #pragma region
 
-#define EventResourceType NCsDamage::NEvent::FResource
-#define EventType NCsDamage::NEvent::IEvent
-
 EventType* UCsManager_Damage::ConstructEvent()
 {
-	typedef NCsDamage::NEvent::FImpl EventImplType;
-
 	return new EventImplType();
 }
 
@@ -413,10 +417,8 @@ EventResourceType* UCsManager_Damage::AllocateEvent()
 
 void UCsManager_Damage::DeallocateEvent(const FString& Context, EventResourceType* Event)
 {
-	typedef NCsDamage::NEvent::FLibrary DamageEventLibrary;
-
 	// Reset
-	ICsReset* IReset = DamageEventLibrary::GetInterfaceChecked<ICsReset>(Context, Event->Get());
+	ICsReset* IReset = CsDamageEventLibrary::GetInterfaceChecked<ICsReset>(Context, Event->Get());
 	IReset->Reset();
 
 	Manager_Event.Deallocate(Event);
@@ -427,10 +429,7 @@ EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, 
 	EventResourceType* Container = AllocateEvent();
 	EventType* Copy				 = Container->Get();
 
-	typedef NCsDamage::NEvent::FLibrary EventLibrary;
-	typedef NCsDamage::NEvent::NCopy::ICopy CopyType;
-
-	CopyType* ICopy = EventLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+	CopyType* ICopy = CsDamageEventLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
 	ICopy->Copy(Event);
 
@@ -442,15 +441,8 @@ EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, 
 	return CreateCopyOfEvent(Context, Event->Get());
 }
 
-#define DataType NCsDamage::NData::IData
-#define ModifierType NCsDamage::NModifier::IModifier
-#define ValueType NCsDamage::NValue::IValue
-#define RangeType NCsDamage::NRange::IRange
-
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult,  const TArray<ModifierType*>& Modifiers)
 {
-	typedef NCsDamage::NData::NShape::IShape ShapeDataType;
-
 	CS_IS_PTR_NULL_CHECKED(Data)
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 
@@ -468,11 +460,8 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	EventResourceType* Container = AllocateEvent();
 
 	// Event
-	typedef NCsDamage::NEvent::FLibrary EventLibrary;
-	typedef NCsDamage::NEvent::FImpl EventImplType;
-
 	EventType* Event		 = Container->Get();
-	EventImplType* EventImpl = EventLibrary::PureStaticCastChecked<EventImplType>(Context, Event);
+	EventImplType* EventImpl = CsDamageEventLibrary::PureStaticCastChecked<EventImplType>(Context, Event);
 
 	// Copy Value this can change with modifiers
 	EventImpl->DamageValue.CopyFrom(Context, MyRoot, Value);
@@ -508,8 +497,6 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 {
-	typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
-
 	static ProcessPayloadType ProcessPayload;
 	ProcessPayload.Reset();
 
@@ -525,7 +512,6 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	return CreateEvent(Context, ProcessPayload);
 }
 
-#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ProcessPayloadType& ProcessPayload)
 {
 	CS_IS_PTR_NULL_CHECKED(ProcessPayload.Data)
@@ -534,11 +520,8 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	EventResourceType* Container = AllocateEvent();
 
 	// Event
-	typedef NCsDamage::NEvent::FLibrary EventLibrary;
-	typedef NCsDamage::NEvent::FImpl EventImplType;
-
 	EventType* Event		 = Container->Get();
-	EventImplType* EventImpl = EventLibrary::PureStaticCastChecked<EventImplType>(Context, Event);
+	EventImplType* EventImpl = CsDamageEventLibrary::PureStaticCastChecked<EventImplType>(Context, Event);
 
 	// Copy Value this can changed with modifiers
 	EventImpl->DamageValue.CopyFrom(Context, MyRoot, ProcessPayload.Value);
@@ -572,12 +555,6 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 
 	return Container;
 }
-#undef ProcessPayloadType
-
-#undef DataType
-#undef ModifierType
-#undef ValueType
-#undef RangeType
 
 void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 {
@@ -600,26 +577,20 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 
 	const EventType* Event = EventContainer->Get();
 
-	typedef NCsDamage::NEvent::FLibrary EventLibrary;
-
 	CS_NON_SHIPPING_EXPR(LogEvent(Event));
-	CS_NON_SHIPPING_EXPR(EventLibrary::Draw(Context, Event));
-
-	typedef NCsDamage::NData::IData DataType;
+	CS_NON_SHIPPING_EXPR(CsDamageEventLibrary::Draw(Context, Event));
 
 	DataType* Data = Event->GetData();
 
 	checkf(Data, TEXT("%s: Data is NULL. No Damage Data found for Event."), *Context);
 
 	// Shape
-	typedef NCsDamage::NData::NShape::IShape ShapeDataType;
-
 	if (ShapeDataType* ShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 	{
 		// Collision
-		typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
-		typedef NCsDamage::NCollision::FInfo CollisionInfoType;
-		typedef NCsDamage::NCollision::EMethod CollisionMethodType;
+		using CollisionDataType = NCsDamage::NData::NCollision::ICollision;
+		using CollisionInfoType = NCsDamage::NCollision::FInfo;
+		using CollisionMethodType = NCsDamage::NCollision::EMethod;
 
 		if (CollisionDataType* CollisionData = CsDamageDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
@@ -631,7 +602,7 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 			{
 				static TArray<FHitResult> Hits;
 
-				EventLibrary::SweepChecked(Context, MyRoot, Event, Hits);
+				CsDamageEventLibrary::SweepChecked(Context, MyRoot, Event, Hits);
 
 				if (Hits.Num() > CS_EMPTY)
 				{
@@ -641,7 +612,7 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 					{
 						const FHitResult& Hit = Hits[I]; 
 
-						if (UObject* O = EventLibrary::Implements_ICsReceiveDamage(Context, Hit, nullptr))
+						if (UObject* O = CsDamageEventLibrary::Implements_ICsReceiveDamage(Context, Hit, nullptr))
 						{
 							Local_Receivers.AddDefaulted();
 							Local_Receivers.Last().SetObject(O);
@@ -670,7 +641,7 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 	{
 		const FHitResult& HitResult = Event->GetHitResult();
 		
-		if (UObject* O = EventLibrary::Implements_ICsReceiveDamage(Context, HitResult, nullptr))
+		if (UObject* O = CsDamageEventLibrary::Implements_ICsReceiveDamage(Context, HitResult, nullptr))
 		{
 			Local_Receivers.AddDefaulted();
 			Local_Receivers.Last().SetObject(O);
@@ -704,16 +675,10 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 	DeallocateEvent(Context, const_cast<EventResourceType*>(EventContainer));
 }
 
-#undef EventResourceType
-#undef EventType
-
 #pragma endregion Event
 
 // Value
 #pragma region
-
-#define ValueResourceType NCsDamage::NValue::FResource
-#define ValueType NCsDamage::NValue::IValue
 
 ValueType* UCsManager_Damage::ConstructValue(const FECsDamageValue& Type)
 {
@@ -739,8 +704,6 @@ void UCsManager_Damage::DeallocateValue(const FString& Context, const FECsDamage
 
 	CS_IS_PTR_NULL_CHECKED(Value)
 
-	typedef NCsDamage::NValue::FLibrary ValueLibrary;
-
 	// Reset
 	ICsReset* IReset = ValueLibrary::GetInterfaceChecked<ICsReset>(Context, Value->Get());
 	IReset->Reset();
@@ -750,27 +713,18 @@ void UCsManager_Damage::DeallocateValue(const FString& Context, const FECsDamage
 
 void UCsManager_Damage::DeallocateValue(const FString& Context, ValueResourceType* Value)
 {
-	typedef NCsDamage::NValue::FLibrary ValueLibrary;
-
 	const FECsDamageValue& Type = ValueLibrary::GetTypeChecked(Context, Value->Get());
 
 	DeallocateValue(Context, Type, Value);
 }
-
-#undef ValueResourceType
-#undef ValueType
 
 #pragma endregion Value
 
 // Range
 #pragma region
 
-#define RangeResourceType NCsDamage::NRange::FResource
-#define RangeType NCsDamage::NRange::IRange
-
 RangeType* UCsManager_Damage::ConstructRange()
 {
-	typedef NCsDamage::NRange::FImpl RangeImplType;
 	return new RangeImplType();
 }
 
@@ -788,25 +742,15 @@ void UCsManager_Damage::DeallocateRange(const FString& Context, RangeResourceTyp
 	Manager_Range.Deallocate(Range);
 }
 
-#undef RangeResourceType
-#undef RangeType
-
 #pragma endregion  Range
 
 // Modifier
 #pragma region
 
-#define ModifierResourceType NCsDamage::NModifier::FResource
-#define ModifierType NCsDamage::NModifier::IModifier
-
 void UCsManager_Damage::SetupModifiers()
 {
-	typedef NCsDamage::NModifier::EImpl ModifierImplType;
-
 	Manager_Modifiers.Reset((uint8)ModifierImplType::EImpl_MAX);
 	Manager_Modifiers.AddDefaulted((uint8)ModifierImplType::EImpl_MAX);
-
-	typedef NCsDamage::NModifier::FManager ModifierManagerType;
 
 	const FCsSettings_Manager_Damage_Modifier& ModifierSettings = FCsSettings_Manager_Damage_Modifier::Get();
 
@@ -859,7 +803,6 @@ void UCsManager_Damage::SetupModifiers()
 	ImplTypeByModifier[NCsDamageModifier::CriticalStrike.GetValue()] = ModifierImplType::Float;
 }
 
-#define ModifierImplType NCsDamage::NModifier::EImpl
 ModifierType* UCsManager_Damage::ConstructModifier(const ModifierImplType& ImplType)
 {
 	// Int
@@ -875,7 +818,6 @@ ModifierType* UCsManager_Damage::ConstructModifier(const ModifierImplType& ImplT
 	check(0);
 	return nullptr;
 }
-#undef ModifierImplType
 
 ModifierResourceType* UCsManager_Damage::AllocateModifier(const FECsDamageModifier& Type)
 {
@@ -906,9 +848,6 @@ const FECsDamageModifier& UCsManager_Damage::GetModifierType(const FString& Cont
 	return Type;
 }
 
-#undef ModifierResourceType
-#undef ModifierType
-
 #pragma endregion Modifier
 
 // Data
@@ -916,14 +855,12 @@ const FECsDamageModifier& UCsManager_Damage::GetModifierType(const FString& Cont
 
 void UCsManager_Damage::ConstructDataHandler()
 {
-	typedef NCsDamage::NManager::NHandler::FData DataHandlerType;
+	using DataHandlerImplType = NCsDamage::NManager::NHandler::NData::FData;
 
-	DataHandler			= new DataHandlerType();
+	DataHandler			= new DataHandlerImplType();
 	DataHandler->Outer  = this;
 	DataHandler->MyRoot = MyRoot;
 }
-
-#define DataType NCsDamage::NData::IData
 
 const FECsDamageData& UCsManager_Damage::GetDataTypeChecked(const FString& Context, const DataType* Data) const
 {
@@ -957,11 +894,11 @@ DataType* UCsManager_Damage::GetSafeData(const FString& Context, const FName& Na
 #endif // #if UE_BUILD_SHIPPING
 }
 
-#define EnumMapType EMCsDamageData
-#define EnumType FECsDamageData
-
-DataType* UCsManager_Damage::GetSafeData(const FString& Context, const EnumType& Type, void(*Log)(const FString&) /*=nullptr*/)
+DataType* UCsManager_Damage::GetSafeData(const FString& Context, const FECsDamageData& Type, void(*Log)(const FString&) /*=nullptr*/)
 {
+	using EnumMapType = EMCsDamageData;
+	using EnumType = FECsDamageData;
+
 #if UE_BUILD_SHIPPING
 	return DataHandler->GetSafeData<EnumMapType, EnumType>(Context, Type, Log);
 #else
@@ -973,17 +910,10 @@ DataType* UCsManager_Damage::GetSafeData(const FString& Context, const EnumType&
 #endif // #if UE_BUILD_SHIPPING
 }
 
-#undef EnumMapType
-#undef EnumType
-
-#undef DataType
-
 #pragma endregion Data
 
 // Valid
 #pragma region
-
-#define DataType NCsDamage::NData::IData
 
 bool UCsManager_Damage::IsValidChecked(const FString& Context, const DataType* Data) const
 {
@@ -998,27 +928,20 @@ bool UCsManager_Damage::IsValid(const FString& Context, const DataType* Data, vo
 	return true;
 }
 
-#undef DataType
-
 #pragma endregion Valid
 
 // Log
 #pragma region
 
-#define EventType NCsDamage::NEvent::IEvent
 void UCsManager_Damage::LogEvent(const EventType* Event)
 {
-#undef EventType
-
 	using namespace NCsManagerDamage::NCached;
 
 	const FString& Context = Str::LogEvent;
 
 	if (CS_CVAR_LOG_IS_SHOWING(LogManagerDamageEvents))
 	{
-		typedef NCsDamage::NEvent::FLibrary EventLibrary;
-
-		EventLibrary::LogEvent(Context, Event);
+		CsDamageEventLibrary::LogEvent(Context, Event);
 	}
 }
 

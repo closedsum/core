@@ -97,6 +97,8 @@ namespace NCsWeapon
 	}
 }
 
+using CsTraceWeaponDataType = NCsWeapon::NTrace::NData::IData;
+
 UINTERFACE(BlueprintType)
 class CSWP_API UCsData_TraceWeapon : public UCsGetInterfaceMap
 {

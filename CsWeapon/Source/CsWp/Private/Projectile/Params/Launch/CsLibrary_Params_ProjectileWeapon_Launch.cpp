@@ -37,9 +37,8 @@ namespace NCsWeapon
 					CS_IS_PTR_NULL_CHECKED(Data);
 
 					typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					const PrjWeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<PrjWeaponDataType>(Context, Data);
+					const PrjWeaponDataType* WeaponData = CsWeaponDataLibrary::GetInterfaceChecked<PrjWeaponDataType>(Context, Data);
 					const ParamsType* LaunchParams		= WeaponData->GetLaunchParams();
 
 					check(IsValidChecked(Context, LaunchParams));

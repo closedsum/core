@@ -1,7 +1,7 @@
 #pragma once
 #include "Components/ActorComponent.h"
 // Interfaces
-#include "Managers/Time/CsUpdate.h"
+#include "Update/CsUpdate.h"
 #include "Managers/Time/CsGetUpdateGroup.h"
 #include "CsWeapon.h"
 #include "Beam/CsBeamWeapon.h"

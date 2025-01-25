@@ -118,6 +118,8 @@ namespace NCsWeapon
 	}
 }
 
+using CsProjectileWeaponDataType = NCsWeapon::NProjectile::NData::IData;
+
 UINTERFACE(BlueprintType)
 class CSWP_API UCsData_ProjectileWeapon : public UCsGetInterfaceMap
 {

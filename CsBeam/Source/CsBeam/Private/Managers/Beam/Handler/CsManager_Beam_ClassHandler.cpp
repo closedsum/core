@@ -30,9 +30,7 @@ namespace NCsBeam
 
 				checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsBeamDataRootSet().BeamClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
 
-				typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-				OutDataTable = DataManagerLibrary::GetDataTableChecked(Context, MyRoot, OutDataTableSoftObject);
+				OutDataTable = CsDataManagerLibrary::GetDataTableChecked(Context, MyRoot, OutDataTableSoftObject);
 			}
 
 			void FClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)

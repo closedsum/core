@@ -11,28 +11,22 @@
 // Damage
 #include "Modifier/CsResource_DamageModifier.h"
 
+// Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_2(NCsDamage, NModifier, Allocated)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NModifier::FAllocated, Copy)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NModifier::FAllocated, Transfer)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NModifier::FAllocated, Reset)
+CS_END_CACHED_FUNCTION_NAME_NESTED_2
+
+#pragma endregion Cached
+
 namespace NCsDamage 
 {
 	namespace NModifier
 	{
-		namespace NAllocated
-		{
-			namespace NCached
-			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::FAllocated, Copy);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::FAllocated, Transfer);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::FAllocated, Reset);
-				}
-			}
-		}
-
-		#define USING_NS_CACHED using namespace NCsDamage::NModifier::NAllocated::NCached;
-		#define SET_CONTEXT(__FunctionName) using namespace NCsDamage::NModifier::NAllocated::NCached; \
-			const FString& Context = Str::__FunctionName
-		#define DamageManagerLibrary NCsDamage::NManager::FLibrary
-		#define DamageModifierLibrary NCsDamage::NManager::NModifier::FLibrary
+		using DamageModifierLibrary = NCsDamage::NManager::NModifier::FLibrary;
 
 		FAllocated::~FAllocated()
 		{
@@ -43,11 +37,11 @@ namespace NCsDamage
 
 		void FAllocated::Copy(const UObject* WorldContext, const IModifier* From)
 		{
-			SET_CONTEXT(Copy);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
 
 			CS_IS_PTR_NULL_CHECKED(From)
 
-			Root	  = DamageManagerLibrary::GetContextRootChecked(Context, WorldContext);
+			Root	  = CsDamageManagerLibrary::GetContextRootChecked(Context, WorldContext);
 			Container = DamageModifierLibrary::CopyChecked(Context, WorldContext, From);
 			Modifier  = Container->Get();
 			Type	  = DamageModifierLibrary::GetTypeChecked(Context, WorldContext, Modifier);
@@ -55,7 +49,7 @@ namespace NCsDamage
 
 		void FAllocated::Copy(const FAllocated& From)
 		{
-			SET_CONTEXT(Copy);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
 
 			CS_EDITOR_IS_PTR_NULL_CHECKED(From.GetRoot())
 
@@ -76,7 +70,7 @@ namespace NCsDamage
 
 		void FAllocated::Transfer(FAllocated& To)
 		{
-			SET_CONTEXT(Transfer);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(Transfer);
 
 			checkf(!To.Container, TEXT("%s: Container is already SET."), *Context);
 
@@ -98,7 +92,7 @@ namespace NCsDamage
 
 		void FAllocated::Reset()
 		{
-			SET_CONTEXT(Reset);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(Reset);
 
 			if (Container)
 			{
@@ -108,10 +102,5 @@ namespace NCsDamage
 			}
 			Clear();
 		}
-
-		#undef USING_NS_CACHED
-		#undef SET_CONTEXT
-		#undef DamageManagerLibrary
-		#undef DamageModifierLibrary
 	}
 }

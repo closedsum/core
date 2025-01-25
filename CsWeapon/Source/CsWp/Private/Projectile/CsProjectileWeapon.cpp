@@ -6,7 +6,7 @@
 // Weapon
 #include "CsWeapon.h"
 // Update
-#include "Managers/Time/CsUpdate.h"
+#include "Update/CsUpdate.h"
 
 UCsProjectileWeapon::UCsProjectileWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

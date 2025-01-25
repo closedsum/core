@@ -150,9 +150,7 @@ namespace NCsWeapon
 
 			const FString& Context = Str::Copy;
 
-			typedef NCsWeapon::NModifier::FLibrary WeaponModifierLibrary;
-
-			const FInt* FromImpl = WeaponModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
+			const FInt* FromImpl = CsWeaponModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
 
 			SetType(FromImpl->GetType());
 			SetValue(FromImpl->GetValue());
@@ -304,9 +302,7 @@ namespace NCsWeapon
 
 			const FString& Context = Str::Copy;
 
-			typedef NCsWeapon::NModifier::FLibrary WeaponModifierLibrary;
-
-			const FFloat* FromImpl = WeaponModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
+			const FFloat* FromImpl = CsWeaponModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
 
 			SetType(FromImpl->GetType());
 			SetValue(FromImpl->GetValue());
@@ -427,9 +423,7 @@ namespace NCsWeapon
 
 			const FString& Context = Str::Copy;
 
-			typedef NCsWeapon::NModifier::FLibrary WeaponModifierLibrary;
-
-			const FToggle* FromImpl = WeaponModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
+			const FToggle* FromImpl = CsWeaponModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
 
 			SetType(FromImpl->GetType());
 			SetbEnable(FromImpl->GetbEnable());

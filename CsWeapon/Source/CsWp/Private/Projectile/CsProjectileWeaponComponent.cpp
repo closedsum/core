@@ -181,6 +181,8 @@ UCsProjectileWeaponComponent::UCsProjectileWeaponComponent(const FObjectInitiali
 {
 }
 
+using LaunchParamsType = NCsWeapon::NProjectile::NParams::NLaunch::ILaunch;
+
 // UObject Interface
 #pragma region
 
@@ -324,16 +326,12 @@ void UCsProjectileWeaponComponent::Init()
 
 	const FString& Context = Str::Init;
 
-	check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Str::UpdateGroup, UpdateGroup));
-
-	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::WeaponType, WeaponType));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, UpdateGroup);
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeapon, WeaponType);
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectile, ProjectileType);
 
 	// Get Data
-	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-
-	Data = WeaponManagerLibrary::GetDataChecked(Context, this, WeaponType);
-
-	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Str::ProjectileType, ProjectileType));
+	Data = CsWeaponManagerLibrary::GetDataChecked(Context, this, WeaponType);
 
 	// Set States
 	const FCsWeaponSettings_ProjectileWeaponImpl& Settings = FCsWeaponSettings_ProjectileWeaponImpl::Get();
@@ -345,10 +343,9 @@ void UCsProjectileWeaponComponent::Init()
 	CurrentState = IdleState;
 
 	// Ammo
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
 
-	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
+	ProjectileDataType* PrjData = CsWeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	CurrentAmmo = PrjData->GetMaxAmmo();
 
@@ -449,9 +446,8 @@ bool UCsProjectileWeaponComponent::CanFire() const
 	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
 
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
+	ProjectileDataType* PrjData = CsWeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	// Check if enough time has elapsed to fire again.
 	const bool Pass_Time = !bHasFired || (TimeSinceStart.Time - Fire_StartTime > TimeBetweenShotsImpl.Value);
@@ -491,16 +487,12 @@ void UCsProjectileWeaponComponent::Fire()
 
 	const FString& Context = Str::Fire;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, this);
 
 	// End previous Fire Routine
 	Scheduler->End(UpdateGroup, FireRoutineHandle);
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 	Fire_StartTime = TimeSinceStart.Time;
 
@@ -512,7 +504,7 @@ void UCsProjectileWeaponComponent::Fire()
 	#define COROUTINE Fire_Internal
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsProjectileWeaponComponent::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -523,10 +515,7 @@ void UCsProjectileWeaponComponent::Fire()
 	#undef COROUTINE
 
 	// Cache pointer to ICsData_ProjectileWeapon
-	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
+	CsProjectileWeaponDataType* PrjData = CsWeaponDataLibrary::GetInterfaceChecked<CsProjectileWeaponDataType>(Context, Data);
 
 	// Ammo
 	static const int32 HAS_INFINITE_AMMO = 0;
@@ -613,9 +602,7 @@ void UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	const FString& Context = Str::OnElapsedTime;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, Outer);
+	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, Outer);
 
 	// Setup Routine
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
@@ -624,10 +611,8 @@ void UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	#define COROUTINE OnElapsedTime_Internal
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
 	Payload->CoroutineImpl.BindRaw(this, &UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer, Outer->GetUpdateGroup());
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, Outer, Outer->GetUpdateGroup());
 	Payload->Owner.SetObject(Outer);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -635,11 +620,6 @@ void UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 	#undef COROUTINE
 
 	// Get total elapsed time (= TimeBetweenShots)
-	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Outer->GetData());
-
 	static const int32 TIME_BETWEEN_SHOTS = 0;
 	Payload->SetValue_Float(TIME_BETWEEN_SHOTS, Value);
 
@@ -683,9 +663,7 @@ char UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal
 	// Projectile
 #pragma region
 
-#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
-
-bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Context, ProjectilePayloadType* Payload)
+bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Context, CsProjectilePayloadType* Payload)
 {
 	bool Result = true;
 
@@ -703,7 +681,7 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 		typedef NCsProjectile::NPayload::FImplSlice SliceType;
 		typedef NCsProjectile::NPayload::IPayload SliceInterfaceType;
 
-		SliceType* Slice = CsPrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
+		SliceType* Slice = CsProjectilePayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
 		Slice->Type		 = Outer->GetProjectileType();
 		Slice->Location  = GetLaunchLocation();
 		Slice->Direction = GetLaunchDirection();
@@ -713,11 +691,9 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 		typedef NCsProjectile::NPayload::NModifier::FImplSlice SliceType;
 		typedef NCsProjectile::NPayload::NModifier::IModifier SliceInterfaceType;
 
-		if (SliceType* Slice = CsPrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		if (SliceType* Slice = CsProjectilePayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
-			typedef NCsProjectile::NModifier::IModifier PrjModifierType;
-
-			static TArray<PrjModifierType*> Modifiers;
+			static TArray<CsProjectileModifierType*> Modifiers;
 			Modifiers.Reset(Modifiers.Max());
 
 			Outer->GetProjectileModifiers(Modifiers);
@@ -728,12 +704,10 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 	return Result;
 }
 
-bool UCsProjectileWeaponComponent::FProjectileImpl::CopyPayload(const FString& Context, const ProjectilePayloadType* From, ProjectilePayloadType* To)
+bool UCsProjectileWeaponComponent::FProjectileImpl::CopyPayload(const FString& Context, const CsProjectilePayloadType* From, CsProjectilePayloadType* To)
 {
-	return CsPrjPayloadLibrary::CopyChecked(Context, From, To);
+	return CsProjectilePayloadLibrary::CopyChecked(Context, From, To);
 }
-
-#undef ProjectilePayloadType
 
 FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 {
@@ -748,19 +722,15 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 	const FString& Context = Str::GetLaunchLocation;
 
 	// Get Data Slice
-	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
+	CsProjectileWeaponDataType* WeaponData = CsWeaponDataLibrary::GetInterfaceChecked<CsProjectileWeaponDataType>(Context, Outer->GetData());
 	
 	// Get Launch Params
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
 
 	const LaunchParamsType* LaunchParams = WeaponData->GetLaunchParams();
 
 	checkf(LaunchParams, TEXT("%s: Failed to get LaunchParams from Data."), *Context);
-
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
 
 	const LaunchLocationType& LocationType = LaunchParams->GetLocationType();
 
@@ -788,7 +758,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 	// Component
 	if (LocationType == LaunchLocationType::Component)
 	{
-		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."), *Context);
+		CS_IS_PENDING_KILL_CHECKED(LaunchComponentTransform);
 
 		return CsMathLibrary::Convert(LaunchComponentTransform->GetComponentLocation());
 	}
@@ -819,10 +789,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 #endif // #if WITH_EDITOR
 
 	// Get Data Slice
-	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
+	CsProjectileWeaponDataType* WeaponData = CsWeaponDataLibrary::GetInterfaceChecked<CsProjectileWeaponDataType>(Context, Outer->GetData());
 	
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
@@ -836,7 +803,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 	const LaunchLocationType& LocationType   = LaunchParams->GetLocationType();
 	const LaunchDirectionType& DirectionType = LaunchParams->GetDirectionType();
-	const int32& DirectionRules				  = LaunchParams->GetDirectionRules();
+	const int32& DirectionRules				 = LaunchParams->GetDirectionRules();
 
 	checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in LaunchParams for Data."), *Context);
 
@@ -1067,23 +1034,21 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	return FVector3f::ZeroVector;
 }
 
-#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
 void UCsProjectileWeaponComponent::FProjectileImpl::Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector3f& Direction)
 {
-#undef LaunchParamsType
-
-	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
-
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileLaunchDirection))
 	{
+		using LaunchDirectionType = NCsWeapon::NProjectile::NParams::NLaunch::EDirection;
+		using LaunchDirectionMapType = NCsWeapon::NProjectile::NParams::NLaunch::EMDirection;
+
 		UE_LOG(LogCsWp, Warning, TEXT("UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection"));
 		UE_LOG(LogCsWp, Warning, TEXT(" Weapon: %s"), *(Outer->GetName()));
 		UE_LOG(LogCsWp, Warning, TEXT(" Class: %s"), *(Outer->GetClass()->GetName()));
 		UE_LOG(LogCsWp, Warning, TEXT(" Owner: %s"), Outer->GetOwner() ? *(Outer->GetOwner()->GetName()) : TEXT("None"));
 
-		const EDirection& DirectionType = LaunchParams->GetDirectionType();
+		const LaunchDirectionType& DirectionType = LaunchParams->GetDirectionType();
 
-		UE_LOG(LogCsWp, Warning, TEXT(" DirectionType: %s"), EMDirection::Get().ToChar(DirectionType));
+		UE_LOG(LogCsWp, Warning, TEXT(" DirectionType: %s"), LaunchDirectionMapType::Get().ToChar(DirectionType));
 		UE_LOG(LogCsWp, Warning, TEXT(" Direction: %s"), *(Direction.ToString()));
 	}
 }
@@ -1096,14 +1061,12 @@ void UCsProjectileWeaponComponent::FProjectileImpl::Launch()
 
 	const FString& Context = Str::Launch;
 
-	typedef NCsProjectile::NPayload::IPayload PayloadType;
-
-	UCsManager_Projectile* Manager_Projectile = CsPrjManagerLibrary::GetChecked(Context, Outer);
+	UCsManager_Projectile* Manager_Projectile = CsProjectileManagerLibrary::GetChecked(Context, Outer);
 
 	// Get Payload
 	const FECsProjectile& PrjType = Outer->GetProjectileType();
 
-	PayloadType* Payload1 = Manager_Projectile->AllocatePayload(PrjType);
+	CsProjectilePayloadType* Payload1 = Manager_Projectile->AllocatePayload(PrjType);
 
 	// Set appropriate members on Payload
 	const bool SetSuccess = SetPayload(Context, Payload1);
@@ -1111,7 +1074,7 @@ void UCsProjectileWeaponComponent::FProjectileImpl::Launch()
 	checkf(SetSuccess, TEXT("%s: Failed to set Payload1."), *Context);
 
 	// Cache copy of Payload for Launch
-	PayloadType* Payload2 = Manager_Projectile->AllocatePayload(PrjType);
+	CsProjectilePayloadType* Payload2 = Manager_Projectile->AllocatePayload(PrjType);
 
 	const bool CopySuccess = CopyPayload(Context, Payload1, Payload2);
 
@@ -1137,10 +1100,8 @@ void UCsProjectileWeaponComponent::ProjectileImpl_SetLaunchComponentTransform(US
 	ProjectileImpl->SetLaunchComponentTransform(Component);
 }
 
-#define PrjModifierType NCsProjectile::NModifier::IModifier
-void UCsProjectileWeaponComponent::GetProjectileModifiers(TArray<PrjModifierType*>& OutModifiers)
+void UCsProjectileWeaponComponent::GetProjectileModifiers(TArray<CsProjectileModifierType*>& OutModifiers)
 {
-#undef PrjModifierType
 }
 
 #pragma endregion Projectile
@@ -1156,9 +1117,8 @@ void UCsProjectileWeaponComponent::FSoundImpl::Play(const int32 InCurrentProject
 
 	// SoundDataType (NCsWeapon::NProjectile::NData::NSound::NFire::IFire)
 	typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire SoundDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Outer->GetData()))
+	if (SoundDataType* SoundData = CsWeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Outer->GetData()))
 	{
 		typedef NCsWeapon::NProjectile::NFire::NSound::FParams ParamsType;
 
@@ -1234,13 +1194,12 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 InCurrentProjectile
 
 	const FString& Context = Str::Play;
 
+	// Handling Playing FX related to "Fire"
+	
 	// FXDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire)
-	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Outer->GetData()))
+	if (FXDataType* FXData = CsWeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Outer->GetData()))
 	{
-		typedef NCsWeapon::NProjectile::NFire::NVisual::FParams ParamsType;
+		using ParamsType = NCsWeapon::NProjectile::NFire::NVisual::FParams;
 
 		const ParamsType& Params = FXData->GetFireVisualParams();
 
@@ -1251,20 +1210,16 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 InCurrentProjectile
 		{
 			if (Params.GetbStartParams())
 			{
-				typedef NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams StartParamsType;
+				using StartParamsType = NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams;
 
 				const StartParamsType& StartParams = Params.GetStartParams();
-
-				const FCsFX& FX	= StartParams.GetFX();
-
-				UNiagaraSystem* FXAsset = FX.GetChecked(Context);
+				const FCsFX& FX					   = StartParams.GetFX();
+				UNiagaraSystem* FXAsset			   = FX.GetChecked(Context);
 
 				// Get Manager
 				UCsManager_FX* Manager_FX = CsFXManagerLibrary::GetChecked(Context, Outer);
 				// Allocate payload
-				typedef NCsFX::NPayload::IPayload PayloadType;
-
-				PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
+				CsFXPayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
 				// Set appropriate values on payload
 				SetPayload(InCurrentProjectilePerShotIndex, Payload, FX);
 				SetPayload(InCurrentProjectilePerShotIndex, Payload, FXData);
@@ -1285,16 +1240,13 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 InCurrentProjectile
 				if (!ShotParams.GetbSkipFirst() ||
 					InCurrentProjectilePerShotIndex > 0)
 				{
-					const FCsFX& FX	= ShotParams.GetFX();
-
+					const FCsFX& FX			= ShotParams.GetFX();
 					UNiagaraSystem* FXAsset = FX.GetChecked(Context);
 
 					// Get Manager
 					UCsManager_FX* Manager_FX = CsFXManagerLibrary::GetChecked(Context, Outer);
 					// Allocate payload
-					typedef NCsFX::NPayload::IPayload PayloadType;
-
-					PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
+					CsFXPayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
 					// Set appropriate values on payload
 					SetPayload(InCurrentProjectilePerShotIndex, Payload, FX);
 					SetPayload(InCurrentProjectilePerShotIndex, Payload, FXData);
@@ -1306,19 +1258,13 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 InCurrentProjectile
 	}
 }
 
-#define FXPayloadType NCsFX::NPayload::IPayload
-void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX)
+void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProjectilePerShotIndex, CsFXPayloadType* Payload, const FCsFX& FX)
 {
-#undef FXPayloadType
-
 	using namespace NCsProjectileWeaponComponent::NCached::NFXImpl;
 
 	const FString& Context = Str::SetPayload;
 
-	typedef NCsFX::NPayload::FImpl PayloadImplType;
-	typedef NCsFX::NPayload::FLibrary PayloadLibrary;
-
-	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+	CsFXPayloadImplType* PayloadImpl = CsFXPayloadLibrary::PureStaticCastChecked<CsFXPayloadImplType>(Context, Payload);
 
 	PayloadImpl->Instigator = Outer;
 	PayloadImpl->Owner = Outer->GetMyOwner();
@@ -1330,13 +1276,10 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProj
 	PayloadImpl->TransformRules = FX.TransformRules;
 	PayloadImpl->Transform = FX.Transform;
 
-	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+	FXDataType* FXData = CsWeaponDataLibrary::GetInterfaceChecked<FXDataType>(Context, Outer->GetData());
 
-	FXDataType* FXData = WeaponDataLibrary::GetInterfaceChecked<FXDataType>(Context, Outer->GetData());
-
-	typedef NCsWeapon::NProjectile::NFire::NVisual::FParams ParamsType;
-	typedef NCsWeapon::NProjectile::NFire::NVisual::EAttach AttachType;
+	using ParamsType = NCsWeapon::NProjectile::NFire::NVisual::FParams;
+	using AttachType = NCsWeapon::NProjectile::NFire::NVisual::EAttach;
 
 	const ParamsType& Params = FXData->GetFireVisualParams();
 
@@ -1382,13 +1325,8 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProj
 	}
 }
 
-#define FXPayloadType NCsFX::NPayload::IPayload
-#define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
-void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData)
+void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProjectilePerShotIndex, CsFXPayloadType* Payload, FXDataType* FXData)
 {
-#undef FXPayloadType
-#undef FXDataType
-
 	using namespace NCsProjectileWeaponComponent::NCached::NFXImpl;
 
 	const FString& Context = Str::SetPayload;
@@ -1411,10 +1349,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProj
 		Type = Params.GetShotParams().GetAttach();
 	}
 
-	typedef NCsFX::NPayload::FImpl PayloadImplType;
-	typedef NCsFX::NPayload::FLibrary PayloadLibrary;
-
-	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+	CsFXPayloadImplType* PayloadImpl = CsFXPayloadLibrary::PureStaticCastChecked<CsFXPayloadImplType>(Context, Payload);
 
 	// None
 	if (Type == AttachType::None)

@@ -28,16 +28,22 @@ namespace NCsDamage
 
 				virtual ~ICollision(){}
 
-			#define CollisionInfoType NCsDamage::NCollision::FInfo
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using CollisionInfoType = NCsDamage::NCollision::FInfo;
+				};
+		
+			public:
 
 				/**
 				* Get any information related to Collision for Damage.
 				* 
 				* return Collision Info.
 				*/
-				virtual const CollisionInfoType& GetCollisionInfo() const = 0;
-
-			#undef CollisionInfoType
+				virtual const _::CollisionInfoType& GetCollisionInfo() const = 0;
 			};
 		}
 	}
@@ -61,16 +67,20 @@ public:
 
 	static const FName Name;
 
-public:
+private:
 
-#define CollisionInfoType NCsDamage::NCollision::FInfo
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using CollisionInfoType = NCsDamage::NCollision::FInfo;
+	};
+
+public:
 
 	/**
 	* Get any information related to Collision for Damage.
 	*
 	* return Collision Info.
 	*/
-	virtual const CollisionInfoType& GetCollisionInfo() const = 0;
-
-#undef CollisionInfoType
+	virtual const _::CollisionInfoType& GetCollisionInfo() const = 0;
 };

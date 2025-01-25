@@ -51,9 +51,9 @@ public:
 		return Data_Internal;
 	}
 
-#define CsSkinDataType NCsSkin::NData::NVisual::IVisual
+	using CsSkinDataType = NCsSkin::NData::NVisual::IVisual;
+
 	CsSkinDataType* Load(const FString& Context, const int32& LoadFlags);
-#undef CsSkinDataType
 
 private:
 

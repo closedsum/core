@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "CsMacro_Cached.h"
 // Data
 #include "Data/CsData_ProjectileImplSlice.h"
 #include "Data/Collision/CsData_Projectile_CollisionImplSlice.h"
@@ -10,10 +12,16 @@
 
 #include "CsScriptLibrary_Data_Projectile.generated.h"
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_Data_Projectile)
+
 UCLASS()
 class CSPRJ_API UCsScriptLibrary_Data_Projectile : public UObject
 { 
 	GENERATED_UCLASS_BODY() 
+
+public:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_Data_Projectile);
 
 public:
 

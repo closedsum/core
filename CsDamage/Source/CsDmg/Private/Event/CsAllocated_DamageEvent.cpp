@@ -12,31 +12,27 @@
 // Managers
 #include "Managers/Damage/CsManager_Damage.h" // TODO: Fix: Potentially put resources into separate file?
 
+// Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_2(NCsDamage, NEvent, Allocated)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NEvent::FAllocated, Set);
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NEvent::FAllocated, Copy);
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NEvent::FAllocated, Reset);
+CS_END_CACHED_FUNCTION_NAME_NESTED_2
+
+#pragma endregion Cached
+
 namespace NCsDamage
 {
 	namespace NEvent
 	{
-		namespace NAllocated
+		using ResourceType = NCsDamage::NEvent::FResource;
+		using EventType =  NCsDamage::NEvent::IEvent;
+			
+		void FAllocated::Set(UObject* InRoot, ResourceType* InContainer)
 		{
-			namespace NCached
-			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FAllocated, Set);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FAllocated, Copy);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FAllocated, Reset);
-				}
-			}
-		}
-
-		#define USING_NS_CACHED using namespace NCsDamage::NEvent::NAllocated::NCached;
-		#define SET_CONTEXT(__FunctionName) using namespace NCsDamage::NEvent::NAllocated::NCached; \
-			const FString& Context = Str::__FunctionName
-		#define DamageManagerLibrary NCsDamage::NManager::FLibrary
-
-		void FAllocated::Set(UObject* InRoot, FResource* InContainer)
-		{
-			SET_CONTEXT(Set);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(Set);
 
 			CS_IS_PENDING_KILL_CHECKED(InRoot)
 			CS_IS_PTR_NULL_CHECKED(InContainer)
@@ -48,21 +44,21 @@ namespace NCsDamage
 			Event	  = Container->Get();
 		}
 
-		void FAllocated::Copy(UObject* InRoot, const IEvent* From)
+		void FAllocated::Copy(UObject* InRoot, const EventType* From)
 		{
-			SET_CONTEXT(Copy);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
 
 			CS_IS_PTR_NULL_CHECKED(InRoot)
 			CS_IS_PTR_NULL_CHECKED(From)
 
 			Root	  = InRoot;
-			Container = DamageManagerLibrary::CreateCopyOfEventChecked(Context, Root, From);
+			Container = CsDamageManagerLibrary::CreateCopyOfEventChecked(Context, Root, From);
 			Event	  = Container->Get();
 		}
 
 		void FAllocated::Copy(const FAllocated& From)
 		{
-			SET_CONTEXT(Copy);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
 
 			CS_IS_PTR_NULL_CHECKED(From.Root)
 
@@ -71,29 +67,25 @@ namespace NCsDamage
 			if (From.Container)
 			{
 				Root	  = From.Root;
-				Container = DamageManagerLibrary::CreateCopyOfEventChecked(Context, Root, From.Container->Get());
+				Container = CsDamageManagerLibrary::CreateCopyOfEventChecked(Context, Root, From.Container->Get());
 				Event	  = Container->Get();
 			}
 		}
 
 		void FAllocated::Reset()
 		{
-			SET_CONTEXT(Reset);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(Reset);
 
 			if (Container)
 			{
 				CS_IS_PTR_NULL_CHECKED(Root)
 
-				DamageManagerLibrary::DeallocateEventChecked(Context, Root, Container);
+				CsDamageManagerLibrary::DeallocateEventChecked(Context, Root, Container);
 			}
 
 			Root	  = nullptr;
 			Container = nullptr;
 			Event	  = nullptr;
 		}
-
-		#undef USING_NS_CACHED
-		#undef SET_CONTEXT
-		#undef DamageManagerLibrary
 	}
 }

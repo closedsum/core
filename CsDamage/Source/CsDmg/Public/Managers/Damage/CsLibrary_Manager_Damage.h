@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Cached.h"
 #include "Value/Types/CsTypes_DamageValue.h"
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Damage
@@ -21,9 +22,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
 
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
-// NCsData::IGetDamageDataType
+// CsGetDamageDataTypeDataType (NCsData::IGetDamageDataType)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsData, IGetDamageDataType)
-// NCsData::IGetDamageDataTypes
+// CsGetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes_
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsData, IGetDamageDataTypes)
 
 // NCsDamage::NValue::FResource
@@ -53,12 +54,32 @@ namespace NCsData {
 // NCsDamage::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, FInterfaceMap)
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_2(NCsDamage, NManager, Library)
+
 namespace NCsDamage
 {
 	namespace NManager
 	{
 		struct CSDMG_API FLibrary final
 		{
+		private:
+
+			CS_USING_CACHED_FUNCTION_NAME_NESTED_2(NCsDamage, NManager, Library);
+
+			using EventResourceType = NCsDamage::NEvent::FResource;
+			using EventType = NCsDamage::NEvent::IEvent;
+			using CsGetDamageDataTypeDataType = NCsData::IGetDamageDataType;
+			using CsGetDamageDataTypeDataTypes = NCsData::IGetDamageDataTypes;
+			using ProcessPayloadType = NCsDamage::NData::NProcess::FPayload;
+			using ValueResourceType = NCsDamage::NValue::FResource;
+			using ValueType = NCsDamage::NValue::IValue;
+			using RangeResourceType = NCsDamage::NRange::FResource;
+			using RangeType = NCsDamage::NRange::IRange;
+			using DataType = NCsDamage::NData::IData;
+			using DataInterfaceMapType = NCsDamage::NData::FInterfaceMap;	
+			using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_DamagePtr, DataInterfaceMapType>;
+			using ModifierType = NCsDamage::NModifier::IModifier;
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -141,9 +162,6 @@ namespace NCsDamage
 		#pragma region
 		public:
 
-		#define EventResourceType NCsDamage::NEvent::FResource
-		#define EventType NCsDamage::NEvent::IEvent
-
 			/**
 			* 
 			* 
@@ -173,9 +191,6 @@ namespace NCsDamage
 			*/
 			static void CreateCopyOfEventChecked(const FString& Context, const UObject* WorldContext, const EventType* Event, EventResourceType*& OutEventContainer, EventType*& OutEvent);
 
-		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
-		#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
-
 			/**
 			*
 			*
@@ -198,15 +213,9 @@ namespace NCsDamage
 			* @param Causer
 			* @param HitResult
 			*/
-			static EventResourceType* CreateEventChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, const ProcessPayloadType& ProcessPayload);
-
-		#undef GetDamageDataTypeDataType
-		#undef ProcessPayloadType
+			static EventResourceType* CreateEventChecked(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataType* GetDamageDataType, const ProcessPayloadType& ProcessPayload);
 
 			static void ProcessEventChecked(const FString& Context, const UObject* WorldContext, const EventType* Event);
-
-		#undef EventResourceType
-		#undef EventType
 
 		#pragma endregion Event
 
@@ -214,63 +223,49 @@ namespace NCsDamage
 		#pragma region
 		public:
 
-		#define ValueResourceType NCsDamage::NValue::FResource
-		#define ValueType NCsDamage::NValue::IValue
+			/**
+			*
+			*
+			* @param Type
+			* @param Value
+			*/
+			static void DeallocateValueChecked(const FString& Context, const UObject* WorldContext, const FECsDamageValue& Type, ValueResourceType* Value);
 
-		/**
-		*
-		*
-		* @param Type
-		* @param Value
-		*/
-		static void DeallocateValueChecked(const FString& Context, const UObject* WorldContext, const FECsDamageValue& Type, ValueResourceType* Value);
+			/**
+			*
+			*
+			* @param Context	The calling context.
+			* @param Value
+			* return
+			*/
+			static ValueResourceType* CreateCopyOfValueChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value);
 
-		/**
-		*
-		*
-		* @param Context	The calling context.
-		* @param Value
-		* return
-		*/
-		static ValueResourceType* CreateCopyOfValueChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value);
-
-		/**
-		*
-		*
-		* @param Context	The calling context.
-		* @param Value
-		* return
-		*/
-		static ValueResourceType* CreateCopyOfValueChecked(const FString& Context, const UObject* WorldContext, const ValueResourceType* Value);
-
-		#undef ValueResourceType
-		#undef ValueType
+			/**
+			*
+			*
+			* @param Context	The calling context.
+			* @param Value
+			* return
+			*/
+			static ValueResourceType* CreateCopyOfValueChecked(const FString& Context, const UObject* WorldContext, const ValueResourceType* Value);
 
 		#pragma endregion Value
 
 		// Range
 		#pragma region
-		public:
+		public:	
 
-		#define RangeResourceType NCsDamage::NRange::FResource
-		#define RangeType NCsDamage::NRange::IRange
+			static void DeallocateRangeChecked(const FString& Context, const UObject* WorldContext, RangeResourceType* Range);
 
-		static void DeallocateRangeChecked(const FString& Context, const UObject* WorldContext, RangeResourceType* Range);
+			static RangeResourceType* CreateCopyOfRangeChecked(const FString& Context, const UObject* WorldContext, const RangeType* Range);
 
-		static RangeResourceType* CreateCopyOfRangeChecked(const FString& Context, const UObject* WorldContext, const RangeType* Range);
-
-		static RangeResourceType* CreateCopyOfRangeChecked(const FString& Context, const UObject* WorldContext, const RangeResourceType* Range);
-
-		#undef RangeResourceType
-		#undef RangeType
+			static RangeResourceType* CreateCopyOfRangeChecked(const FString& Context, const UObject* WorldContext, const RangeResourceType* Range);
 
 		#pragma endregion Range
 
 		// Data
 		#pragma region
 		public:
-
-		#define DataType NCsDamage::NData::IData
 
 			static const FECsDamageData& GetDataTypeChecked(const FString& Context, const UObject* WorldContext, const DataType* Data);
 
@@ -285,8 +280,6 @@ namespace NCsDamage
 			*/
 			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsDamageData& Type);
 
-		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
-
 			/**
 			* Get the Data, Object that implements the interface: DataType (NCsDamage::NData::IData), 
 			* associated with the result of GetDamageDataType->GetDamageDataType (FECsDamageData).
@@ -296,7 +289,7 @@ namespace NCsDamage
 			* @param GetDamageDataType
 			* return					Object which implements the interface: DataType (NCsDamage::NData::IData).
 			*/
-			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType);
+			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataType* GetDamageDataType);
 
 			/**
 			* Safely get the Data, Object that implements the interface: DataType (NCsDamage::NData::IData),
@@ -308,11 +301,7 @@ namespace NCsDamage
 			* @param Log				(optional)
 			* return					Object which implements the interface: DataType (NCsDamage::NData::IData).
 			*/
-			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
-
-		#undef GetDamageDataTypeDataType
-
-		#define GetDamageDataTypeDataTypes NCsData::IGetDamageDataTypes
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataType* GetDamageDataType, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 			/**
 			* Get the Datas, Objects that implements the interface: DataType (NCsDamage::NData::IData),
@@ -334,7 +323,7 @@ namespace NCsDamage
 			* @param GetDamageDataTypes
 			* @param OutDatas			(out) Objects which implements the interface: DataType (NCsDamage::NData::IData).
 			*/
-			static void GetDatasChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas);
+			static void GetDatasChecked(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas);
 
 			/**
 			* Safely, get the Datas, Objects that implements the interface: DataType (NCsDamage::NData::IData),
@@ -347,10 +336,8 @@ namespace NCsDamage
 			* @param Log				(optional)
 			* return
 			*/
-			static bool GetSafeDatas(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
+			static bool GetSafeDatas(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
-		#undef GetDamageDataTypeDataTypes
-			
 			/**
 			* Get the Data as a UObject (implements interface: DataType (ICsData_Damage)) associated with Type.
 			*
@@ -384,9 +371,6 @@ namespace NCsDamage
 			*/
 			static void AddDatasChecked(const FString& Context, const UObject* WorldContext, const TArray<FECsDamageData>& DamageDataTypes, TArray<DataType*>& OutDatas);
 
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
-
 			/**
 			*
 			*
@@ -394,14 +378,7 @@ namespace NCsDamage
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log			(optional)
 			*/
-			static DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
-
-		#undef DataHandlerType
-		#undef DataInterfaceMapType
-
-		#define ModifierType NCsDamage::NModifier::IModifier
-		#define ValueType NCsDamage::NValue::IValue
-		#define RangeType NCsDamage::NRange::IRange
+			static DataHandlerType* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 			/**
 			* Process, create a Damage Event, and broadcast the Event with Data, Instigator, Causer, HitResult, and Modifiers
@@ -521,8 +498,6 @@ namespace NCsDamage
 			*/
 			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
 
-		#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
-
 			/**
 			* Process, create a Damage Event, and broadcast the Event with Data, Value, Instigator, Causer, and HitResult
 			*
@@ -532,27 +507,27 @@ namespace NCsDamage
 			*/
 			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ProcessPayloadType& ProcessPayload);
 
-		#undef ProcessPayloadType
-
-		#undef ModifierType
-		#undef ValueType
-		#undef RangeType
-
-		#undef DataType
-
 		#pragma endregion Data
 		};
+	}
+}
 
+namespace NCsDamage
+{
+	namespace NManager
+	{
 		namespace NModifier
 		{
 			struct CSDMG_API FLibrary final
 			{
+			private:
+
+				using ModifierResourceType = NCsDamage::NModifier::FResource;
+				using ModifierType = NCsDamage::NModifier::IModifier;
+				using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
+
 			public:
 
-			#define ModifierResourceType NCsDamage::NModifier::FResource
-			#define ModifierType NCsDamage::NModifier::IModifier
-			#define AllocatedModifierType NCsDamage::NModifier::FAllocated
-		
 				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsDamageModifier& Type, ModifierResourceType* Modifier);
 
 				static const FECsDamageModifier& GetTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
@@ -582,10 +557,6 @@ namespace NCsDamage
 				* @param To
 				*/
 				static void CopyChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
-
-			#undef ModifierResourceType
-			#undef ModifierType
-			#undef AllocatedModifierType
 			};
 		}
 	}

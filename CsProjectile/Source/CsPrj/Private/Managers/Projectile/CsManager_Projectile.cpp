@@ -146,6 +146,19 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 {
 }
 
+using ManagerParamsType = NCsProjectile::FManager::FParams;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PoolParamsType = NCsPooledObject::NManager::FPoolParams;
+using PayloadType = NCsProjectile::NPayload::IPayload;
+using DataType = NCsProjectile::NData::IData;
+using ModifierLibrary = NCsProjectile::NModifier::FLibrary;
+using ModifierManagerType = NCsProjectile::NModifier::FManager;
+using ModifierResourceType = NCsProjectile::NModifier::FResource;
+using ModifierType = NCsProjectile::NModifier::IModifier;
+using ModifierImplType = NCsProjectile::NModifier::EImpl;
+using VariablesType = NCsProjectile::NVariables::FVariables;
+using VariablesPayloadType = NCsProjectile::NVariables::NAllocate::FPayload;
+
 // Singleton
 #pragma region
 
@@ -319,10 +332,6 @@ void UCsManager_Projectile::CleanUp()
 
 	Pool.Reset();
 
-	typedef NCsProjectile::NModifier::FManager ModifierManagerType;
-	typedef NCsProjectile::NModifier::FResource ModifierResourceType;
-	typedef NCsProjectile::NModifier::IModifier ModifierType;
-
 	for (ModifierManagerType& ModifierManager : Manager_Modifiers)
 	{
 		const TArray<ModifierResourceType*>& Containers = ModifierManager.GetPool();
@@ -392,8 +401,6 @@ void UCsManager_Projectile::AddPoolParams(const FECsProjectile& Type, const FCsS
 	}
 
 	check(InPoolParams.IsValidChecked(Context));
-
-	typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 	PoolParamsType PoolParams;
 
@@ -468,9 +475,7 @@ void UCsManager_Projectile::SetupInternal()
 	else
 #endif // #if WITH_EDITOR
 	{
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-		ContextRoot = GameInstanceLibrary::GetSafeAsObject(Context, MyRoot);
+		ContextRoot = CsGameInstanceLibrary::GetSafeAsObject(Context, MyRoot);
 	}
 
 	NCsProjectile::PopulateEnumMapFromSettings(Context, ContextRoot);
@@ -624,8 +629,6 @@ void UCsManager_Projectile::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsProjectile::FManager::FParams ManagerParamsType;
-
 		ManagerParamsType ManagerParams;
 
 		ManagerParams.Name  = TEXT("UCsManager_Projectile::NCsProjectile::FManager");
@@ -635,8 +638,6 @@ void UCsManager_Projectile::InitInternalFromSettings()
 		{
 			const FECsProjectile& Type								= Pair.Key;
 			const FCsSettings_Manager_Projectile_PoolParams& Params = Pair.Value;
-
-			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
@@ -665,7 +666,6 @@ void UCsManager_Projectile::InitInternalFromSettings()
 	}
 }
 
-#define ManagerParamsType NCsProjectile::FManager::FParams
 void UCsManager_Projectile::InitInternal(const ManagerParamsType& Params)
 {
 	using namespace NCsManagerProjectile::NCached;
@@ -675,8 +675,6 @@ void UCsManager_Projectile::InitInternal(const ManagerParamsType& Params)
 	// Add CVars
 	{
 		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
-
-		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 		for (TPair<FECsProjectile, PoolParamsType>& Pair : P.ObjectParams)
 		{
@@ -718,7 +716,6 @@ void UCsManager_Projectile::InitInternal(const ManagerParamsType& Params)
 		}
 	}
 }
-#undef ManagerParamsType
 
 void UCsManager_Projectile::Clear()
 {
@@ -750,10 +747,8 @@ FCsProjectilePooled* UCsManager_Projectile::ConstructContainer(const FECsProject
 	return new FCsProjectilePooled();
 }
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 TMulticastDelegate<void(const FCsProjectilePooled*, const ConstructParamsType&)>& UCsManager_Projectile::GetOnConstructObject_Event(const FECsProjectile& Type)
 {
-#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 
@@ -974,8 +969,6 @@ void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const 
 	Internal.ConstructPayloads(GetTypeFromTypeMap(Type), Size);
 }
 
-#define PayloadType NCsProjectile::NPayload::IPayload
-
 PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 {
 	// TODO: Perform a new in place for all structs.
@@ -1086,17 +1079,13 @@ PayloadType* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
 	return Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 }
 
-#undef PayloadType
-
 #pragma endregion Payload
 
 	// Spawn
 #pragma region
 
-#define PayloadType NCsProjectile::NPayload::IPayload
 const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Type, PayloadType* Payload)
 {
-#undef PayloadType
 	return Internal.Spawn(GetTypeFromTypeMap(Type), Payload);
 }
 
@@ -1170,9 +1159,9 @@ void UCsManager_Projectile::LogTransaction(const FString& Context, const ECsPool
 
 void UCsManager_Projectile::ConstructClassHandler()
 {
-	typedef NCsProjectile::NManager::NHandler::FClass ClassHandlerType;
+	using ClassHandlerImplType = NCsProjectile::NManager::NHandler::FClass;
 
-	ClassHandler = new ClassHandlerType();
+	ClassHandler = new ClassHandlerImplType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
 }
@@ -1217,14 +1206,12 @@ FCsProjectilePooled* UCsManager_Projectile::GetSafeProjectile(const FString& Con
 
 void UCsManager_Projectile::ConstructDataHandler()
 {
-	typedef NCsProjectile::NManager::NHandler::FData DataHandlerType;
+	using DataHandlerImplType = NCsProjectile::NManager::NHandler::FData;
 
-	DataHandler = new DataHandlerType();
+	DataHandler = new DataHandlerImplType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
 }
-
-#define DataType NCsProjectile::NData::IData
 
 DataType* UCsManager_Projectile::GetData(const FName& Name)
 {
@@ -1300,8 +1287,6 @@ DataType* UCsManager_Projectile::GetSafeData(const FString& Context, const FECsP
 	return Data;
 }
 
-#undef DataType
-
 void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
 {
 }
@@ -1310,8 +1295,6 @@ void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
 
 // Valid
 #pragma region
-
-#define DataType NCsProjectile::NData::IData
 
 bool UCsManager_Projectile::IsValidChecked(const FString& Context, const DataType* Data) const
 {
@@ -1326,24 +1309,15 @@ bool UCsManager_Projectile::IsValid(const FString& Context, const DataType* Data
 	return true;
 }
 
-#undef DataType
-
 #pragma endregion Valid
 
 // Modifier
 #pragma region
 
-#define ModifierResourceType NCsProjectile::NModifier::FResource
-#define ModifierType NCsProjectile::NModifier::IModifier
-
 void UCsManager_Projectile::SetupModifiers()
 {
-	typedef NCsProjectile::NModifier::EImpl ModifierImplType;
-
 	Manager_Modifiers.Reset((uint8)ModifierImplType::EImpl_MAX);
 	Manager_Modifiers.AddDefaulted((uint8)ModifierImplType::EImpl_MAX);
-
-	typedef NCsProjectile::NModifier::FManager ModifierManagerType;
 
 	const FCsSettings_Manager_Projectile_Modifiers& ModifierSettings = FCsSettings_Manager_Projectile_Modifiers::Get();
 
@@ -1394,7 +1368,6 @@ void UCsManager_Projectile::SetupModifiers()
 	ImplTypeByModifier[NCsProjectileModifier::HitCount.GetValue()]			= ModifierImplType::Int;
 }
 
-#define ModifierImplType NCsProjectile::NModifier::EImpl
 ModifierType* UCsManager_Projectile::ConstructModifier(const ModifierImplType& ImplType)
 {
 	// Int
@@ -1409,7 +1382,6 @@ ModifierType* UCsManager_Projectile::ConstructModifier(const ModifierImplType& I
 	check(0);
 	return nullptr;
 }
-#undef ModifierImplType
 
 ModifierResourceType* UCsManager_Projectile::AllocateModifier(const FECsProjectileModifier& Type)
 {
@@ -1424,8 +1396,6 @@ void UCsManager_Projectile::DeallocateModifier(const FString& Context, const FEC
 
 	CS_IS_PTR_NULL_CHECKED(Modifier)
 
-	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-
 	// Reset
 	ICsReset* IReset = ModifierLibrary::GetInterfaceChecked<ICsReset>(Context, Modifier->Get());
 	
@@ -1436,8 +1406,6 @@ void UCsManager_Projectile::DeallocateModifier(const FString& Context, const FEC
 
 const FECsProjectileModifier& UCsManager_Projectile::GetModifierType(const FString& Context, const ModifierType* Modifier)
 {
-	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-
 	const ICsGetProjectileModifierType* GetProjectileModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
 	const FECsProjectileModifier& PrjModifierType				  = GetProjectileModifierType->GetProjectileModifierType();
 
@@ -1445,9 +1413,6 @@ const FECsProjectileModifier& UCsManager_Projectile::GetModifierType(const FStri
 
 	return PrjModifierType;
 }
-
-#undef ModifierResourceType
-#undef ModifierType
 
 #pragma endregion Modifier
 
@@ -1466,11 +1431,8 @@ void UCsManager_Projectile::UpdateVariablesManager(const FCsDeltaTime& DeltaTime
 	Manager_Variables.Update(DeltaTime);
 }
 
-#define VariablesType NCsProjectile::NVariables::FVariables
-#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
 VariablesType* UCsManager_Projectile::AllocateVariablesChecked(const FString& Context, const VariablesPayloadType& Payload)
 {
-#undef VariablesPayloadType
 	return Manager_Variables.AllocateChecked(Context, Payload);
 }
 
@@ -1478,8 +1440,6 @@ void UCsManager_Projectile::DeallocateVariablesChecked(const FString& Context, V
 {
 	Manager_Variables.DeallocateChecked(Context, Variables);
 }
-
-#undef VariablesType
 
 #pragma endregion Variables
 

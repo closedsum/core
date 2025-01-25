@@ -31,28 +31,32 @@
 #include "Game/CsLibrary_GameState.h"
 #endif // #if WITH_EDITOR
 
+// Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_2(NCsDamage, NManager, Library)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NManager::FLibrary, GetSafeContextRoot)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NManager::FLibrary, GetSafe)
+CS_END_CACHED_FUNCTION_NAME_NESTED_2
+
+#pragma endregion Cached
+
 namespace NCsDamage
 {
 	namespace NManager
 	{
-		namespace NLibrary
-		{
-			namespace NCached
-			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NManager::FLibrary, GetSafeContextRoot);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NManager::FLibrary, GetSafe);
-				}
-			}
-		}
-
-		#define USING_NS_CACHED using namespace NCsDamage::NManager::NLibrary::NCached;
-		#define SET_CONTEXT(__FunctionName) using namespace NCsDamage::NManager::NLibrary::NCached; \
-			const FString& Context = Str::__FunctionName
-	#if WITH_EDITOR
-		#define GameStateLibrary NCsGameState::FLibrary
-	#endif // #if WITH_EDITOR
+		using EventResourceType = NCsDamage::NEvent::FResource;
+		using EventType = NCsDamage::NEvent::IEvent;
+		using ProcessPayloadType = NCsDamage::NData::NProcess::FPayload;
+		using ValueLibrary = NCsDamage::NValue::FLibrary;
+		using ValueResourceType = NCsDamage::NValue::FResource;
+		using ValueType = NCsDamage::NValue::IValue;
+		using RangeResourceType = NCsDamage::NRange::FResource;
+		using RangeType = NCsDamage::NRange::IRange;
+		using DataType = NCsDamage::NData::IData;
+		using DataInterfaceMapType = NCsDamage::NData::FInterfaceMap;
+		using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_DamagePtr, DataInterfaceMapType>;
+		using ModifierType = NCsDamage::NModifier::IModifier;
 
 		// ContextRoot
 		#pragma region
@@ -67,7 +71,7 @@ namespace NCsDamage
 
 				return GetManagerSingleton->_getUObject();
 			}
-			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
+			return CsGameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
@@ -80,12 +84,12 @@ namespace NCsDamage
 				}
 				return nullptr;
 			}
-			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
+			return CsGameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
-			SET_CONTEXT(GetSafeContextRoot);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafeContextRoot);
 
 			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
@@ -126,7 +130,7 @@ namespace NCsDamage
 
 		UCsManager_Damage* FLibrary::GetSafe(const UObject* WorldContext)
 		{
-			SET_CONTEXT(GetSafe);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafe);
 
 			return GetSafe(Context, WorldContext, nullptr);
 		}
@@ -135,9 +139,6 @@ namespace NCsDamage
 		
 		// Event
 		#pragma region
-
-		#define EventResourceType NCsDamage::NEvent::FResource
-		#define EventType NCsDamage::NEvent::IEvent
 
 		void FLibrary::DeallocateEventChecked(const FString& Context, const UObject* WorldContext, EventResourceType* Event)
 		{
@@ -155,27 +156,18 @@ namespace NCsDamage
 			OutEvent = OutEventContainer->Get();
 		}
 
-		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
-		#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
-
 		EventResourceType* FLibrary::CreateEventChecked(const FString& Context, const UObject* WorldContext, const ProcessPayloadType& ProcessPayload)
 		{
 			return GetChecked(Context, WorldContext)->CreateEvent(Context, ProcessPayload);
 		}
 
-		EventResourceType* FLibrary::CreateEventChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, const ProcessPayloadType& ProcessPayload)
+		EventResourceType* FLibrary::CreateEventChecked(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataType* GetDamageDataType, const ProcessPayloadType& ProcessPayload)
 		{
-			typedef NCsDamage::NData::IData DataType;
-
 			DataType* Data = GetDataChecked(Context, WorldContext, GetDamageDataType);
 
 			ProcessPayloadType* ProcessPayloadPtr = const_cast<ProcessPayloadType*>(&ProcessPayload);
 			ProcessPayloadPtr->Type  = GetDamageDataType->GetDamageDataType();
 			ProcessPayloadPtr->Data	 = Data;
-
-			typedef NCsDamage::NValue::IValue ValueType;
-			typedef NCsDamage::NRange::IRange RangeType;
-
 			ProcessPayloadPtr->Value = const_cast<ValueType*>(Data->GetValue());
 
 			if (const RangeType* Range = CsDamageDataLibrary::GetSafeRange(Context, Data, nullptr))
@@ -186,24 +178,15 @@ namespace NCsDamage
 			return GetChecked(Context, WorldContext)->CreateEvent(Context, ProcessPayload);
 		}
 
-		#undef GetDamageDataTypeDataType
-		#undef ProcessPayloadType
-
 		void FLibrary::ProcessEventChecked(const FString& Context, const UObject* WorldContext, const EventType* Event)
 		{
 			GetChecked(Context, WorldContext)->ProcessDamageEvent(Event);
 		}
 
-		#undef EventResourceType
-		#undef EventType
-
 		#pragma endregion Event
 
 		// Value
-		#pragma region
-
-		#define ValueResourceType NCsDamage::NValue::FResource
-		#define ValueType NCsDamage::NValue::IValue
+		#pragma region	
 
 		void FLibrary::DeallocateValueChecked(const FString& Context, const UObject* WorldContext, const FECsDamageValue& Type, ValueResourceType* Value)
 		{
@@ -214,18 +197,13 @@ namespace NCsDamage
 		{
 			UCsManager_Damage* Manager_Damage = GetChecked(Context, WorldContext);
 
-			typedef NCsDamage::NValue::FLibrary DamageValueLibrary;
-
-			const FECsDamageValue& Type  = DamageValueLibrary::GetTypeChecked(Context, Value);
+			const FECsDamageValue& Type  = ValueLibrary::GetTypeChecked(Context, Value);
 			ValueResourceType* Container = Manager_Damage->AllocateValue(Type);
 			ValueType* Copy				 = Container->Get();
-
-			typedef NCsDamage::NValue::FLibrary ValueLibrary;
 
 			bool Success = ValueLibrary::CopyChecked(Context, Value, Copy);
 
 			checkf(Success, TEXT("%s: Failed to create copy of Value."), *Context);
-
 			return Container;
 		}
 
@@ -236,16 +214,10 @@ namespace NCsDamage
 			return CreateCopyOfValueChecked(Context, WorldContext, Value->Get());
 		}
 
-		#undef ValueResourceType
-		#undef ValueType
-
 		#pragma endregion Value
 
 		// Range
 		#pragma region
-
-		#define RangeResourceType NCsDamage::NRange::FResource
-		#define RangeType NCsDamage::NRange::IRange
 
 		void FLibrary::DeallocateRangeChecked(const FString& Context, const UObject* WorldContext, RangeResourceType* Range)
 		{
@@ -273,9 +245,6 @@ namespace NCsDamage
 			return CreateCopyOfRangeChecked(Context, WorldContext, Range->Get());
 		}
 
-		#undef RangeResourceType
-		#undef RangeType
-
 		#pragma endregion Range
 
 		// Modifier
@@ -285,8 +254,6 @@ namespace NCsDamage
 
 		// Data
 		#pragma region
-
-		#define DataType NCsDamage::NData::IData
 
 		const FECsDamageData& FLibrary::GetDataTypeChecked(const FString& Context, const UObject* WorldContext, const DataType* Data)
 		{
@@ -300,9 +267,7 @@ namespace NCsDamage
 			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Type.GetFName());
 		}
 
-		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
-
-		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType)
+		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataType* GetDamageDataType)
 		{
 			CS_IS_PTR_NULL_CHECKED(GetDamageDataType)
 
@@ -313,7 +278,7 @@ namespace NCsDamage
 			return GetChecked(Context, WorldContext)->GetDataChecked(Context, DamageDataType.GetFName());
 		}
 
-		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataType* GetDamageDataType, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL_RET_NULL(GetDamageDataType)
 
@@ -327,10 +292,6 @@ namespace NCsDamage
 			}
 			return nullptr;
 		}
-
-		#undef GetDamageDataTypeDataType
-
-		#define GetDamageDataTypeDataTypes NCsData::IGetDamageDataTypes
 
 		void FLibrary::GetDatasChecked(const FString& Context, const UObject* WorldContext, const TArray<FECsDamageData>& DamageDataTypes, TArray<DataType*>& OutDatas)
 		{
@@ -348,7 +309,7 @@ namespace NCsDamage
 			}
 		}
 
-		void FLibrary::GetDatasChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas)
+		void FLibrary::GetDatasChecked(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas)
 		{
 			CS_IS_PTR_NULL_CHECKED(GetDamageDataTypes)
 
@@ -357,7 +318,7 @@ namespace NCsDamage
 			GetDatasChecked(Context, WorldContext, DamageDataTypes, OutDatas);
 		}
 
-		bool FLibrary::GetSafeDatas(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+		bool FLibrary::GetSafeDatas(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(GetDamageDataTypes)
 
@@ -378,8 +339,6 @@ namespace NCsDamage
 			}
 			return false;
 		}
-
-		#undef GetDamageDataTypeDataTypes
 
 		UObject* FLibrary::GetSafeDataAsObject(const FString& Context, const UObject* WorldContext, const FECsDamageData& Type, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
@@ -403,7 +362,6 @@ namespace NCsDamage
 			}
 			return nullptr;
 		}
-
 
 		UObject* FLibrary::GetSafeDataAsObject(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
@@ -442,13 +400,8 @@ namespace NCsDamage
 			}
 		}
 
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
-		DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+		DataHandlerType* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
-		#undef DataHandlerType
-		#undef DataInterfaceMapType
-
 			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
 			{
 				return Manager_Damage->GetDataHandler();
@@ -456,10 +409,6 @@ namespace NCsDamage
 			return nullptr;
 		}
 	
-		#define ModifierType NCsDamage::NModifier::IModifier
-		#define ValueType NCsDamage::NValue::IValue
-		#define RangeType NCsDamage::NRange::IRange
-
 		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 		{
 			GetChecked(Context, WorldContext)->ProcessData(Context, Data, Type, Instigator, Causer, HitResult, Modifiers);
@@ -530,65 +479,47 @@ namespace NCsDamage
 			GetChecked(Context, WorldContext)->ProcessData(Context, Value, Range, Data, Type, Instigator, Causer, HitResult);
 		}
 
-		#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
-		
 		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ProcessPayloadType& ProcessPayload)
 		{
 			GetChecked(Context, WorldContext)->ProcessData(Context, ProcessPayload);
 		}
 
-		#undef ProcessPayloadType
-
-		#undef ModifierType
-		#undef ValueType
-		#undef RangeType
-
-		#undef DataType
-
 		#pragma endregion Data
+	}
+}
 
-		#undef USING_NS_CACHED
-		#undef SET_CONTEXT
-	#if WITH_EDITOR
-		#undef GameStateLibrary
-	#endif // #if WITH_EDITOR
-
+namespace NCsDamage
+{
+	namespace NManager
+	{
 		namespace NModifier
 		{
-			#define ModifierResourceType NCsDamage::NModifier::FResource
-			#define ModifierType NCsDamage::NModifier::IModifier
-			#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+			using ModifierResourceType = NCsDamage::NModifier::FResource;
+			using ModifierType = NCsDamage::NModifier::IModifier;
+			using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
+			using CopyType = NCsDamage::NModifier::NCopy::ICopy;
 		
 			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsDamageModifier& Type, ModifierResourceType* Modifier)
 			{
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-				DamageManagerLibrary::GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
+				CsDamageManagerLibrary::GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
 			}
 
 			const FECsDamageModifier& FLibrary::GetTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
 			{
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-				return DamageManagerLibrary::GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
+				return CsDamageManagerLibrary::GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
 			}
 
 			ModifierResourceType* FLibrary::CopyChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
 			{
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-				UCsManager_Damage* Manager_Damage = DamageManagerLibrary::GetChecked(Context, WorldContext);
+				UCsManager_Damage* Manager_Damage = CsDamageManagerLibrary::GetChecked(Context, WorldContext);
 
 				const FECsDamageModifier& Type  = CsDamageModifierLibrary::GetTypeChecked(Context, Modifier);
 				ModifierResourceType* Container = Manager_Damage->AllocateModifier(Type);
 				ModifierType* Copy				= Container->Get();
 
-				typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
-
 				CopyType* ICopy = CsDamageModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
 				ICopy->Copy(Modifier);
-
 				return Container;
 			}
 
@@ -613,9 +544,7 @@ namespace NCsDamage
 
 			void FLibrary::CopyChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
 			{
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-				UObject* ContextRoot = DamageManagerLibrary::GetContextRootChecked(Context, WorldContext);
+				UObject* ContextRoot = CsDamageManagerLibrary::GetContextRootChecked(Context, WorldContext);
 
 				CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
@@ -630,24 +559,16 @@ namespace NCsDamage
 
 			void FLibrary::CopyChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsDamageModifier& OutType)
 			{
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-				UCsManager_Damage* Manager_Damage = DamageManagerLibrary::GetChecked(Context, WorldContext);
+				UCsManager_Damage* Manager_Damage = CsDamageManagerLibrary::GetChecked(Context, WorldContext);
 
 				OutType				= CsDamageModifierLibrary::GetTypeChecked(Context, Modifier);
 				OutContainer		= Manager_Damage->AllocateModifier(OutType);
 				ModifierType* Copy	= OutContainer->Get();
 
-				typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
-
 				CopyType* ICopy = CsDamageModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
 				ICopy->Copy(Modifier);
 			}
-
-			#undef ModifierResourceType
-			#undef ModifierType
-			#undef AllocatedModifierType
 		}
 	}
 }

@@ -287,9 +287,7 @@ void UCsManager_FX::CleanUp()
 
 	// Unbind delegates for Time related events
 	{
-		typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-		if (UCsManager_Time* Manager_Time = TimeManagerLibrary::GetSafe(MyRoot))
+		if (UCsManager_Time* Manager_Time = CsTimeManagerLibrary::GetSafe(MyRoot))
 		{
 			for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
 			{
@@ -884,9 +882,7 @@ void UCsManager_FX::BindToOnPause(const FECsUpdateGroup& Group)
 
 	const FString& Context = Str::BindToOnPause;
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	UObject* ContextRoot   = TimeManagerLibrary::GetContextRootChecked(Context, GetOuter());
+	UObject* ContextRoot   = CsTimeManagerLibrary::GetContextRootChecked(Context, GetOuter());
 	FDelegateHandle Handle = UCsManager_Time::Get(ContextRoot)->GetOnPause_Event(Group).AddUObject(this, &UCsManager_FX::Pause);
 
 	OnPauseHandleByGroupMap.Add(Group, Handle);

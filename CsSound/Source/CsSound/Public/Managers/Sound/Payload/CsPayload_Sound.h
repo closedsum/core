@@ -129,3 +129,5 @@ namespace NCsSound
 		};
 	}
 }
+
+using CsSoundPayloadType = NCsSound::NPayload::IPayload;

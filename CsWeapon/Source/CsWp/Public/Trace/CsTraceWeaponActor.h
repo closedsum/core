@@ -1,7 +1,7 @@
 #pragma once
 #include "GameFramework/Actor.h"
 // Interfaces
-#include "Managers/Time/CsUpdate.h"
+#include "Update/CsUpdate.h"
 #include "CsWeapon.h"
 #include "Trace/CsTraceWeapon.h"
 // Types

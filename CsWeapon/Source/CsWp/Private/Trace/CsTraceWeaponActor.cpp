@@ -16,6 +16,7 @@
 #include "Material/CsLibrary_Material.h"
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/Time/CsLibrary_Manager_Time.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -256,55 +257,44 @@ void ACsTraceWeaponActor::Init()
 
 	const FString& Context = Str::Init;
 
-	check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Str::UpdateGroup, UpdateGroup));
-
-	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::WeaponType, WeaponType));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, UpdateGroup);
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeapon, WeaponType);
 
 	// Get Data
 	Data = UCsManager_Weapon::Get(GetWorld()->GetGameState())->GetDataChecked(Context, WeaponType.GetFName());
 
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	check(WeaponDataLibrary::IsValidChecked(Context, Data));
+	check(CsWeaponDataLibrary::IsValidChecked(Context, Data));
 
 	// Set States
 	UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
 
 	IdleState = Settings->ProjectileWeaponImpl.IdleState;
-
-	check(EMCsWeaponState::Get().IsValidEnumChecked(Context, Str::IdleState, IdleState));
-
 	FireState = Settings->ProjectileWeaponImpl.FireState;
 
-	check(EMCsWeaponState::Get().IsValidEnumChecked(Context, Str::FireState, FireState));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponState, IdleState);
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponState, FireState);
 
 	CurrentState = IdleState;
 
 	// Ammo
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
 
-	TraceDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
+	TraceDataType* PrjData = CsWeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
 
 	CurrentAmmo = PrjData->GetMaxAmmo();
 
 	// Set Skin
 	{
-		typedef NCsWeapon::NData::NVisual::NSkin::ISkin WeaponSkinType;
-
-		if (WeaponSkinType* WeaponSkin = WeaponDataLibrary::GetSafeInterfaceChecked<WeaponSkinType>(Context, Data))
+		if (CsWeaponSkinDataType* WeaponSkin = CsWeaponDataLibrary::GetSafeInterfaceChecked<CsWeaponSkinDataType>(Context, Data))
 		{
-			typedef NCsSkin::NData::NVisual::IVisual SkinType;
+			CsSkinDataType* Skin = WeaponSkin->GetSkin();
 
-			SkinType* Skin = WeaponSkin->GetSkin();
-
-			checkf(Skin, TEXT("%s: Failed to get Skin of type: %s from Data."), *Context, *(SkinType::Name.ToString()));
-
-			typedef NCsSkin::NData::NVisual::FLibrary SkinLibrary;
+			checkf(Skin, TEXT("%s: Failed to get Skin of type: %s from Data."), *Context, *(CsSkinDataType::Name.ToString()));
 
 			// Static Mesh
-			SkinLibrary::SetSafeStaticMeshAndMaterials(Context, Skin, GetStaticMeshComponent());
+			CsSkinDataLibrary::SetSafeStaticMeshAndMaterials(Context, Skin, GetStaticMeshComponent());
 			// Skeletal Mesh
-			SkinLibrary::SetSafeSkeletalMeshAndMaterials(Context, Skin, GetSkeletalMeshComponent());
+			CsSkinDataLibrary::SetSafeSkeletalMeshAndMaterials(Context, Skin, GetSkeletalMeshComponent());
 		}
 	}
 
@@ -327,9 +317,7 @@ void ACsTraceWeaponActor::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime)
 
 	const FString& Context = Str::OnUpdate_HandleStates;
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceState))
@@ -410,14 +398,11 @@ bool ACsTraceWeaponActor::CanFire() const
 
 	const FString& Context = Str::CanFire;
 	
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	TraceDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
+	TraceDataType* PrjData = CsWeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
 
 	// Check if enough time has elapsed to fire again.
 	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > PrjData->GetTimeBetweenShots());
@@ -457,16 +442,12 @@ void ACsTraceWeaponActor::Fire()
 
 	const FString& Context = Str::Fire;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, this);
 
 	// End previous Fire Routine
 	Scheduler->End(UpdateGroup, FireRoutineHandle);
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 	Fire_StartTime = TimeSinceStart.Time;
 
@@ -478,7 +459,7 @@ void ACsTraceWeaponActor::Fire()
 	#define COROUTINE Fire_Internal
 
 	Payload->CoroutineImpl.BindUObject(this, &ACsTraceWeaponActor::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -490,9 +471,8 @@ void ACsTraceWeaponActor::Fire()
 
 	// Cache pointer to TraceDataType (NCsWeapon::NTrace::NData::IData)
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	TraceDataType* TraceData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
+	TraceDataType* TraceData = CsWeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
 
 	//check(WeaponDataLibrary::IsValidChecked(Context, Data));
 
@@ -566,9 +546,7 @@ void ACsTraceWeaponActor::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	const FString& Context = Str::OnElapsedTime;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, Outer);
+	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, Outer);
 
 	// Setup Routine
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
@@ -577,10 +555,8 @@ void ACsTraceWeaponActor::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	#define COROUTINE OnElapsedTime_Internal
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
 	Payload->CoroutineImpl.BindRaw(this, &ACsTraceWeaponActor::FTimeBetweenShotsImpl::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer, Outer->GetUpdateGroup());
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, Outer, Outer->GetUpdateGroup());
 	Payload->Owner.SetObject(Outer);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -589,9 +565,8 @@ void ACsTraceWeaponActor::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	// Get total elapsed time (= TimeBetweenShots)
 	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	TraceDataType* TraceData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Outer->GetData());
+	TraceDataType* TraceData = CsWeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Outer->GetData());
 
 	Payload->SetValue_Float(CS_FIRST, TraceData->GetTimeBetweenShots());
 

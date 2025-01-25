@@ -270,36 +270,28 @@ void UCsBeamWeaponComponent::Init()
 
 	const FString& Context = Str::Init;
 
-	check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Str::UpdateGroup, UpdateGroup));
-
-	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::WeaponType, WeaponType));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, UpdateGroup);
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeapon, WeaponType);
 
 	// Get Data
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
 	Data = WeaponManagerLibrary::GetDataChecked(Context, this, WeaponType.GetFName());
 
-	check(WeaponDataLibrary::IsValidChecked(Context, Data));
+	check(CsWeaponDataLibrary::IsValidChecked(Context, Data));
 
 	// Set Skin
 	{
-		typedef NCsWeapon::NData::NVisual::NSkin::ISkin WeaponSkinType;
-
-		if (WeaponSkinType* WeaponSkin = WeaponDataLibrary::GetSafeInterfaceChecked<WeaponSkinType>(Context, Data))
+		if (CsWeaponSkinDataType* WeaponSkin = CsWeaponDataLibrary::GetSafeInterfaceChecked<CsWeaponSkinDataType>(Context, Data))
 		{
-			typedef NCsSkin::NData::NVisual::IVisual SkinType;
+			CsSkinDataType* Skin = WeaponSkin->GetSkin();
 
-			SkinType* Skin = WeaponSkin->GetSkin();
-
-			checkf(Skin, TEXT("%s: Failed to get Skin of type: %s from Data."), *Context, *(SkinType::Name.ToString()));
-
-			typedef NCsSkin::NData::NVisual::FLibrary SkinLibrary;
+			checkf(Skin, TEXT("%s: Failed to get Skin of type: %s from Data."), *Context, *(CsSkinDataType::Name.ToString()));
 
 			// Static Mesh
-			SkinLibrary::SetSafeStaticMeshAndMaterials(Context, Skin, GetStaticMeshComponent());
+			CsSkinDataLibrary::SetSafeStaticMeshAndMaterials(Context, Skin, GetStaticMeshComponent());
 			// Skeletal Mesh
-			SkinLibrary::SetSafeSkeletalMeshAndMaterials(Context, Skin, GetSkeletalMeshComponent());
+			CsSkinDataLibrary::SetSafeSkeletalMeshAndMaterials(Context, Skin, GetSkeletalMeshComponent());
 		}
 	}
 
@@ -307,26 +299,22 @@ void UCsBeamWeaponComponent::Init()
 	UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
 
 	IdleState = Settings->ProjectileWeaponImpl.IdleState;
-
-	check(EMCsWeaponState::Get().IsValidEnumChecked(Context, Str::IdleState, IdleState));
-
 	FireState = Settings->ProjectileWeaponImpl.FireState;
 
-	check(EMCsWeaponState::Get().IsValidEnumChecked(Context, Str::FireState, FireState));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponState, IdleState);
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponState, FireState);
 
 	CurrentState = IdleState;
 
 	typedef NCsWeapon::NBeam::NData::IData BeamDataType;
 
-	BeamData = WeaponDataLibrary::GetInterfaceChecked<BeamDataType>(Context, Data);
+	BeamData = CsWeaponDataLibrary::GetInterfaceChecked<BeamDataType>(Context, Data);
 
 	CurrentCharge = GetMaxCharge();
 
 	BeamImpl->SetOwner(MyOwner);
 	BeamImpl->SetData(Data);
 	BeamImpl->SetBeamData(BeamData);
-
-
 	BeamImpl->SetFXImpl(FXImpl);
 	BeamImpl->SetSoundImpl(SoundImpl);
 
@@ -343,9 +331,7 @@ void UCsBeamWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime
 
 	const FString& Context = Str::OnUpdate_HandleStates;
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponBeamState))
@@ -436,9 +422,7 @@ bool UCsBeamWeaponComponent::CanFire() const
 
 	const FString& Context = Str::CanFire;
 	
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 	// Check if enough time has elapsed to fire again.
 	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > GetTimeBetweenShots());
@@ -478,16 +462,12 @@ void UCsBeamWeaponComponent::Fire()
 
 	const FString& Context = Str::Fire;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, this);
 
 	// End previous Fire Routine
 	Scheduler->End(UpdateGroup, FireRoutineHandle);
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 	Fire_StartTime = TimeSinceStart.Time;
 
@@ -499,7 +479,7 @@ void UCsBeamWeaponComponent::Fire()
 	#define COROUTINE Fire_Internal
 
 	Payload->CoroutineImpl.BindUObject(this, &UCsBeamWeaponComponent::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -598,9 +578,7 @@ void UCsBeamWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	const FString& Context = Str::OnElapsedTime;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, Outer);
+	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, Outer);
 
 	// Setup Routine
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
@@ -609,10 +587,8 @@ void UCsBeamWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	#define COROUTINE OnElapsedTime_Internal
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
 	Payload->CoroutineImpl.BindRaw(this, &UCsBeamWeaponComponent::FTimeBetweenShotsImpl::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer, Outer->GetUpdateGroup());
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, Outer, Outer->GetUpdateGroup());
 	Payload->Owner.SetObject(Outer);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);

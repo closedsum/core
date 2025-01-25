@@ -26,6 +26,8 @@ namespace NCsData
 	};
 }
 
+using CsGetDamageDataTypeDataType = NCsData::IGetDamageDataType;
+
 UINTERFACE(BlueprintType)
 class CSDMG_API UCsData_GetDamageDataType : public UCsGetInterfaceMap
 {

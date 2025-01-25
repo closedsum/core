@@ -95,9 +95,7 @@ namespace NCsProjectile
 				CS_IS_VALID_CHECKED(TrailVisualData->GetTrailInfo());
 			}
 			// Damage
-			typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
-
-			if (const GetDamageDataTypeDataType* GetDamageDataType = GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
+			if (const CsGetDamageDataTypeDataType* GetDamageDataType = GetSafeInterfaceChecked<CsGetDamageDataTypeDataType>(Context, Data))
 			{
 				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, GetDamageDataType->GetDamageDataType())
 			}
@@ -163,9 +161,7 @@ namespace NCsProjectile
 				CS_IS_VALID(TrailVisualData->GetTrailInfo())
 			}
 			// Damage
-			typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
-
-			if (const GetDamageDataTypeDataType* GetDamageDataType = GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
+			if (const CsGetDamageDataTypeDataType* GetDamageDataType = GetSafeInterfaceChecked<CsGetDamageDataTypeDataType>(Context, Data))
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsDamageData, FECsDamageData, GetDamageDataType->GetDamageDataType())
 			}

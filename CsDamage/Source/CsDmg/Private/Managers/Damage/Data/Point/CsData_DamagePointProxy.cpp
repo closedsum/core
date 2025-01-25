@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Value/CsLibrary_DamageValue.h"
 // Container
@@ -11,7 +13,7 @@
 #include "Value/CsDamageValue.h"
 #include "Value/Point/CsDamageValuePointImpl.h"
 
-const FName NCsDamage::NData::NPoint::FProxy::Name = FName("NCsDamage::NData::NPoint::FProxy");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsDamage::NData::NPoint::NProxy::FProxy);
 
 namespace NCsDamage
 {
@@ -19,46 +21,44 @@ namespace NCsDamage
 	{
 		namespace NPoint
 		{
-			FProxy::FProxy() :
-				Outer(nullptr),
-				// ICsInterfaceMap
-				InterfaceMap(nullptr),
-				// DataType (NCsDamage::NData::IData)
-				Value(nullptr),
-				Type(nullptr)
+			namespace NProxy
 			{
-				// ICsInterfaceMap
+				using ValuePointImplType = NCsDamage::NValue::NPoint::FImpl;
 
-				InterfaceMap = new FCsInterfaceMap();
+				FProxy::FProxy() :
+					Outer(nullptr),
+					// ICsInterfaceMap
+					InterfaceMap(nullptr),
+					// DataType (NCsDamage::NData::IData)
+					Value(nullptr),
+					Type(nullptr)
+				{
+					// ICsInterfaceMap
 
-				InterfaceMap->SetRoot<FProxy>(this);
+					InterfaceMap = new FCsInterfaceMap();
 
-				typedef NCsData::IData DataType;
-				typedef NCsDamage::NData::IData DamageDataType;
+					InterfaceMap->SetRoot<FProxy>(this);
 
-				InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
-				InterfaceMap->Add<DamageDataType>(static_cast<DamageDataType*>(this));
+					InterfaceMap->Add<CsDataType>(static_cast<CsDataType*>(this));
+					InterfaceMap->Add<CsDamageDataType>(static_cast<CsDamageDataType*>(this));
 
-				// NCsDamage::NData::IData
-				typedef NCsDamage::NValue::NPoint::FImpl ValuePointImplType;
+					// NCsDamage::NData::IData
+					Value = new ValuePointImplType();
+				}
 
-				Value = new ValuePointImplType();
-			}
+				FProxy::~FProxy()
+				{
+					// ICsInterfaceMap
+					delete InterfaceMap;
+					// CsDamageDataType (NCsDamage::NData::IData)
+					delete Value;
+				}
 
-			FProxy::~FProxy()
-			{
-				// ICsInterfaceMap
-				delete InterfaceMap;
-				// DamageDataType (NCsDamage::NData::IData)
-				delete Value;
-			}
-
-			void FProxy::SetValue(float* InValue)
-			{
-				typedef NCsDamage::NValue::NPoint::FImpl ValuePointImplType;
-
-				ValuePointImplType* Impl = static_cast<ValuePointImplType*>(Value);
-				Impl->SetValue(InValue);
+				void FProxy::SetValue(float* InValue)
+				{
+					ValuePointImplType* Impl = static_cast<ValuePointImplType*>(Value);
+					Impl->SetValue(InValue);
+				}
 			}
 		}
 	}

@@ -106,13 +106,23 @@ class CSWP_API UCsManager_Weapon : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define ManagerType NCsWeapon::FManager
-#define ManagerParamsType NCsWeapon::FManager::FParams
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-#define PayloadType NCsWeapon::NPayload::IPayload
-#define ClassHandlerType NCsData::NManager::NHandler::TClass
-#define DataHandlerType NCsData::NManager::NHandler::TData
-#define DataType NCsWeapon::NData::IData
+private:
+
+	using ManagerType = NCsWeapon::FManager;
+	using ManagerParamsType = NCsWeapon::FManager::FParams;
+	using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+	using PayloadType = NCsWeapon::NPayload::IPayload;
+	using ClassHandlerType = NCsData::NManager::NHandler::TClass<FCsWeaponClass, FCsWeaponPtr, FECsWeaponClass>;
+	using DataType = NCsWeapon::NData::IData;
+	using DataInterfaceMapType = NCsWeapon::NData::FInterfaceMap;
+	using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_WeaponPtr, DataInterfaceMapType>;
+	using ModifierManagerType = NCsWeapon::NModifier::FManager;
+	using ModifierResourceType = NCsWeapon::NModifier::FResource;
+	using ModifierType = NCsWeapon::NModifier::IModifier;
+	using ModifierImplType = NCsWeapon::NModifier::EImpl;
+	using SpreadVariablesManagerType = NCsWeapon::NProjectile::NSpread::NVariables::FManager;
+	using SpreadVariablesResourceType = NCsWeapon::NProjectile::NSpread::NVariables::FResource;
 
 public:	
 
@@ -767,7 +777,7 @@ public:
 #pragma region
 protected:
 
-	ClassHandlerType<FCsWeaponClass, FCsWeaponPtr, FECsWeaponClass>* ClassHandler;
+	ClassHandlerType* ClassHandler;
 
 	virtual void ConstructClassHandler();
 
@@ -843,17 +853,13 @@ public:
 #pragma region
 protected:
 
-#define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
-
-	DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* DataHandler;
+	DataHandlerType* DataHandler;
 
 	virtual void ConstructDataHandler();
 
 public:
 
-	FORCEINLINE DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* GetDataHandler() const { return DataHandler; }
-
-#undef DataInterfaceMapType
+	FORCEINLINE DataHandlerType* GetDataHandler() const { return DataHandler; }
 
 public:
 
@@ -929,11 +935,6 @@ protected:
 // Modifier
 #pragma region
 
-#define ModifierResourceType NCsWeapon::NModifier::FResource
-#define ModifierManagerType NCsWeapon::NModifier::FManager
-#define ModifierType NCsWeapon::NModifier::IModifier
-#define ModifierImplType NCsWeapon::NModifier::EImpl
-
 protected:
 
 	TArray<ModifierManagerType> Manager_Modifiers;
@@ -973,18 +974,11 @@ public:
 
 	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier);
 
-#undef ModifierResourceType
-#undef ModifierManagerType
-#undef ModifierType
-#undef ModifierImplType
-
 #pragma endregion Modifier
 
 // Events
 #pragma region
 public:
-
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FWeapon_OnAllocate, const ICsWeapon* /*Weapon*/, PooledPayloadType* /*Payload*/);
 
@@ -996,8 +990,6 @@ private:
 	{
 		Weapon_OnAllocate_Event.Broadcast(Weapon, Payload);
 	}
-
-#undef PooledPayloadType
 
 public:
 
@@ -1052,9 +1044,6 @@ private:
 #pragma region
 private:
 
-#define SpreadVariablesManagerType NCsWeapon::NProjectile::NSpread::NVariables::FManager
-#define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
-
 	SpreadVariablesManagerType SpreadVariablesManager;
 
 	void SetupSpreadVariables();
@@ -1066,16 +1055,5 @@ public:
 	FORCEINLINE void DeallocateSpreadVariables(SpreadVariablesResourceType* Resource) { SpreadVariablesManager.Deallocate(Resource); }
 	FORCEINLINE void DeallocateSpreadVariables(const int32& Index) { SpreadVariablesManager.DeallocateAt(Index); }
 
-#undef SpreadVariablesManagerType
-#undef SpreadVariablesResourceType
-
 #pragma endregion Spread
-
-#undef ManagerType
-#undef ManagerParamsType
-#undef ConstructParamsType
-#undef PayloadType
-#undef ClassHandlerType
-#undef DataHandlerType
-#undef DataType
 };

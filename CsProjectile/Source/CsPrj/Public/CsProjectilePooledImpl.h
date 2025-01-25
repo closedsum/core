@@ -2,7 +2,7 @@
 #pragma once
 #include "GameFramework/Actor.h"
 // Interfaces
-#include "Managers/Time/CsUpdate.h"
+#include "Update/CsUpdate.h"
 #include "Managers/Time/CsPause.h"
 #include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
@@ -56,8 +56,8 @@ class UPrimitiveComponent;
 
 // NCsPooledObject::NCache::ICache
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
-// NCsProjectile::NCache::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NCache, FImpl)
+// NCsProjectile::NCache::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NCache, NImpl, FImpl)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsProjectile::NPayload::IPayload
@@ -108,10 +108,20 @@ class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
-#define DataType NCsProjectile::NData::IData
-#define PooledCacheType NCsPooledObject::NCache::ICache
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define PayloadType NCsProjectile::NPayload::IPayload
+private:
+
+	using DataType = NCsProjectile::NData::IData;
+	using PooledCacheType = NCsPooledObject::NCache::ICache;
+	using CacheImplType = NCsProjectile::NCache::NImpl::FImpl;
+	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+	using PayloadType = NCsProjectile::NPayload::IPayload;
+	using HitResultType = NCsProjectile::NCollision::NHit::FResult;
+	using StateType = NCsProjectile::EState;
+	using VariablesType = NCsProjectile::NVariables::FVariables;
+	using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
+	using CollisionDataType = NCsProjectile::NData::NCollision::ICollision;
+	using ValueType = NCsDamage::NValue::IValue;
+	using RangeType = NCsDamage::NRange::IRange;
 
 // UObject Interface
 #pragma region
@@ -164,16 +174,12 @@ public:
 	int32 Generation;
 
 	void SetType(const FECsProjectile& InType);
-
-#define StateType NCsProjectile::EState
 	
 	StateType State;
 
 	FORCEINLINE const StateType& GetState() const { return State; }
 private:
 	FORCEINLINE StateType& GetState() { return State; }
-
-#undef StateType
 
 // ICsUpdate
 #pragma region
@@ -213,8 +219,6 @@ private:
 #pragma region
 protected:
 
-#define CacheImplType NCsProjectile::NCache::FImpl
-
 	PooledCacheType* Cache;
 
 	CacheImplType* CacheImpl;
@@ -226,8 +230,6 @@ public:
 protected:
 
 	virtual void ConstructCache();
-
-#undef CacheImplType
 
 #pragma endregion PooledObject
 
@@ -366,9 +368,7 @@ public:
 #pragma region
 public:
 
-#define HitResultType NCsProjectile::NCollision::NHit::FResult
 	void Hit(const HitResultType& Result);
-#undef HitResultType
 
 #pragma endregion ICsProjectile_Collision
 
@@ -404,16 +404,12 @@ protected:
 #pragma region
 protected:
 
-#define VariablesType NCsProjectile::NVariables::FVariables
-
 	VariablesType* Variables;
 
 public:
 
 	FORCEINLINE const VariablesType* GetVariables() const { return Variables; }
 	FORCEINLINE VariablesType* GetVariables() { return Variables; }
-
-#undef VariablesType
 
 protected:
 
@@ -433,6 +429,8 @@ public:
 
 		ACsProjectilePooledImpl* Outer;
 
+		using VariablesProxyType = NCsProjectile::NVariables::FVariables::FMovementInfo;
+
 	public:
 
 		FMovementInfo() :
@@ -440,10 +438,8 @@ public:
 		{
 		}
 
-	#define VariablesProxyType NCsProjectile::NVariables::FVariables::FMovementInfo
 		FORCEINLINE const VariablesProxyType& GetProxy() const { return Outer->GetVariables()->MovementInfo; }
 		FORCEINLINE VariablesProxyType& GetProxy() { return Outer->GetVariables()->MovementInfo; }
-	#undef VariablesProxyType
 
 		FORCEINLINE const float& GetInitialSpeed() const { return GetProxy().GetInitialSpeed(); }
 		FORCEINLINE float& GetInitialSpeed() { return GetProxy().GetInitialSpeed(); }
@@ -547,6 +543,10 @@ public:
 
 		ACsProjectilePooledImpl* Outer;
 
+		using VariablesProxyType = NCsProjectile::NVariables::FVariables::FTrackingInfo;
+		using DestinationType = NCsProjectile::NTracking::EDestination;
+		using TrackingDataType = NCsProjectile::NData::NTracking::ITracking;
+
 	public:
 
 		FTrackingInfo() :
@@ -554,19 +554,17 @@ public:
 		{
 		}
 
-	#define VariablesProxyType NCsProjectile::NVariables::FVariables::FTrackingInfo
 		FORCEINLINE const VariablesProxyType& GetProxy() const { return Outer->GetVariables()->TrackingInfo; }
 		FORCEINLINE VariablesProxyType& GetProxy() { return Outer->GetVariables()->TrackingInfo; }
-	#undef VariablesProxyType
 
 		FORCEINLINE const float& GetDelay() const { return GetProxy().GetDelay(); }
 		FORCEINLINE float& GetDelay() { return GetProxy().GetDelay(); }
 		FORCEINLINE const NCsProjectile::NTracking::EState& GetCurrentState() const { return GetProxy().GetState(); }
 		FORCEINLINE NCsProjectile::NTracking::EState& GetCurrentState() { return GetProxy().GetState(); }
-	#define DestinationType NCsProjectile::NTracking::EDestination
+	
 		FORCEINLINE const DestinationType& GetDestinationType() const { return GetProxy().GetDestinationType(); }
 		FORCEINLINE DestinationType& GetDestinationType() { return GetProxy().GetDestinationType(); }
-	#undef DestinationType 
+
 		FORCEINLINE const uint32& GetDestinationMask() const { return GetProxy().GetDestinationMask(); }
 		FORCEINLINE uint32& GetDestinationMask() { return GetProxy().GetDestinationMask(); }
 		FORCEINLINE const USceneComponent* GetComponent() const { return GetProxy().GetComponent(); }
@@ -608,9 +606,9 @@ public:
 
 		ACsProjectilePooledImpl* Outer;
 
-	public:
+		using TrackingDataType = NCsProjectile::NData::NTracking::ITracking;
 
-	#define TrackingDataType NCsProjectile::NData::NTracking::ITracking
+	public:
 
 		TrackingDataType* TrackingData;
 
@@ -629,8 +627,6 @@ public:
 		{
 			TrackingData = nullptr;
 		}
-
-	#undef TrackingDataType
 	};
 
 	FTrackingImpl TrackingImpl;
@@ -751,21 +747,15 @@ public:
 #pragma region
 protected:
 
-#define AllocateModifierType NCsProjectile::NModifier::FAllocated
-
-	TArray<AllocateModifierType> Modifiers;
+	TArray<AllocatedModifierType> Modifiers;
 
 public:
 
-	FORCEINLINE const TArray<AllocateModifierType>& GetModifiers() const { return Modifiers; }
-
-#undef AllocateModifierType
+	FORCEINLINE const TArray<AllocatedModifierType>& GetModifiers() const { return Modifiers; }
 
 protected:
 
-#define CollisionDataType NCsProjectile::NData::NCollision::ICollision
 	void ApplyHitCountModifiers(const FString& Context, const CollisionDataType* CollisionData);
-#undef CollisionDataType
 
 	void StartMovementFromModifiers(const FString& Context, const FVector3f& Direction);
 
@@ -782,36 +772,30 @@ public:
 	private:
 
 		ACsProjectilePooledImpl* Outer;
+		
+		using PointImplType = NCsDamage::NValue::NPoint::FImpl;
+		using RangeImplType = NCsDamage::NValue::NRange::FImpl;
+		using DamageDataType = NCsDamage::NData::IData;
+		using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
 
 		FECsDamageValue Type;
 
-	#define PointType NCsDamage::NValue::NPoint::FImpl
-	#define RangeType NCsDamage::NValue::NRange::FImpl
-	#define AllocatedModifierType NCsDamage::NModifier::FAllocated
-
-		PointType* ValuePoint;
-		RangeType* ValueRange;
+		PointImplType* ValuePoint;
+		RangeImplType* ValueRange;
 
 		TArray<FECsDamageData> DataTypes;
 
 		TArray<AllocatedModifierType> Modifiers;
-		
-	#undef PointType
-	#undef RangeType
-	#undef AllocatedModifierType
+	
 
 	public:
 
 		FDamageImpl();
 		virtual ~FDamageImpl();
-
-	#define DamageDataType NCsDamage::NData::IData
+	
 		void SetValue(DamageDataType* InData);
-	#undef DamageDataType
 
-	#define ValueType NCsDamage::NValue::IValue
 		ValueType* GetValue();
-	#undef ValueType
 
 		void ResetValue();
 		void Reset();
@@ -821,16 +805,9 @@ public:
 
 private:
 
-#define RangeType NCsDamage::NRange::IRange
 	const RangeType* GetDamageRangeChecked(const FString& Context);
-#undef RangeType
 
 	float GetMaxDamageRangeChecked(const FString& Context);
 
 #pragma endregion Damage
-
-#undef DataType
-#undef PooledCacheType
-#undef PooledPayloadType
-#undef PayloadType
 };

@@ -32,6 +32,8 @@ namespace NCsProjectile
 	}
 }
 
+using CsProjectilePayloadType = NCsProjectile::NPayload::IPayload;
+
 // WIP Trait
 
 namespace NCsProjectile

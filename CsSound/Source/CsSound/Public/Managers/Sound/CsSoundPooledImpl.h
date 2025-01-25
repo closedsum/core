@@ -4,7 +4,7 @@
 #pragma once
 #include "GameFramework/Actor.h"
 // Interfaces
-#include "Managers/Time/CsUpdate.h"
+#include "Update/CsUpdate.h"
 #include "Managers/Time/CsPause.h"
 #include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
@@ -43,10 +43,10 @@ class CSSOUND_API ACsSoundPooledImpl : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
-#define CacheType NCsPooledObject::NCache::ICache
-#define CacheImplType NCsSound::NCache::FImpl
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define SoundPayloadType NCsSound::NPayload::IPayload
+using CacheType = NCsPooledObject::NCache::ICache;
+using CacheImplType = NCsSound::NCache::FImpl;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+using SoundPayloadType = NCsSound::NPayload::IPayload;
 
 public:
 
@@ -174,9 +174,4 @@ public:
 	void Handle_ClearAttachAndTransform();
 
 	void LogChangeCounter();
-
-#undef CacheType
-#undef CacheImplType
-#undef PooledPayloadType
-#undef SoundPayloadType
 };

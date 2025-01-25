@@ -11,7 +11,6 @@
 #include "Data/CsData_Weapon.h"
 #include "Data/Types/CsData_GetProjectileType.h"
 
-
 namespace NCsWeapon
 {
 	namespace NProjectile
@@ -19,12 +18,11 @@ namespace NCsWeapon
 		const FECsProjectile& FLibrary::GetProjectileTypeChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
 		{
 			typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-			typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 			typedef NCsWeapon::NData::IData WeaponDataType;
 
 			WeaponDataType* Data = WeaponManagerLibrary::GetDataChecked(Context, WorldContext, Type);
 
-			ICsData_GetProjectileType* Data_GetProjectileType = WeaponDataLibrary::GetInterfaceChecked<ICsData_GetProjectileType>(Context, Data);
+			ICsData_GetProjectileType* Data_GetProjectileType = CsWeaponDataLibrary::GetInterfaceChecked<ICsData_GetProjectileType>(Context, Data);
 
 			const FECsProjectile& ProjectileType = Data_GetProjectileType->GetProjectileType();
 
@@ -45,9 +43,7 @@ namespace NCsWeapon
 				return EMCsProjectile::Get().GetMAX();
 			}
 
-			typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-			ICsData_GetProjectileType* Data_GetProjectileType = WeaponDataLibrary::GetSafeInterfaceChecked<ICsData_GetProjectileType>(Context, Data);
+			ICsData_GetProjectileType* Data_GetProjectileType = CsWeaponDataLibrary::GetSafeInterfaceChecked<ICsData_GetProjectileType>(Context, Data);
 
 			if (!Data_GetProjectileType)
 			{

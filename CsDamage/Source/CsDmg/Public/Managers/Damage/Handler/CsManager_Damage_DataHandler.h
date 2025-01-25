@@ -15,34 +15,33 @@ namespace NCsDamage
 	{
 		namespace NHandler
 		{
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataType NCsDamage::NData::IData
-		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
-
-			/**
-			*/
-			class CSDMG_API FData : public DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>
+			namespace NData
 			{
-			private:
+				using DataType = NCsDamage::NData::IData;
+				using DataInterfaceMapType = NCsDamage::NData::FInterfaceMap;
+				using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_DamagePtr, DataInterfaceMapType>;
+				
+				/**
+				*/
+				class CSDMG_API FData : public DataHandlerType
+				{
+				private:
 
-				typedef DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType> Super;
+					using Super = DataHandlerType;
 
-			public:
+				public:
 
-				FData();
+					FData();
 
-			// DataHandlerType
-			#pragma region
-			protected:
+				// DataHandlerType
+				#pragma region
+				protected:
 
-				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
+					virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
 
-			#pragma endregion DataHandlerType
-			};
-
-		#undef DataHandlerType
-		#undef DataType
-		#undef DataInterfaceMapType
+				#pragma endregion DataHandlerType
+				};
+			}
 		}
 	}
 

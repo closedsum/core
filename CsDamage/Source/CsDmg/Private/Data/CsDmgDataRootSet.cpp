@@ -44,7 +44,8 @@ namespace NCsDmgDataRootSet
 
 #pragma endregion Cached
 
-#define MemberType FCsDmgDataRootSet::EMember
+using MemberType = FCsDmgDataRootSet::EMember;
+
 MemberType FCsDmgDataRootSet::GetMember(const FName& MemberName)
 {
 	using namespace NCsDmgDataRootSet::NCached;
@@ -54,7 +55,6 @@ MemberType FCsDmgDataRootSet::GetMember(const FName& MemberName)
 	check(0);
 	return MemberType::Damages;
 }
-#undef MemberType
 
 bool FCsDmgDataRootSet::IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {
@@ -108,10 +108,8 @@ UDataTable* FCsDmgDataRootSet::GetSafeDataTable(const FString& Context, const UO
 {
 	using namespace NCsDmgDataRootSet::NCached;
 
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
 	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::Member) \
-		return DataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsDmgDataRootSet, Member, Str::Member);
+		return CsDataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsDmgDataRootSet, Member, Str::Member);
 
 	// Damages
 	CS_TEMP_GET_SAFE_DATA_TABLE(Damages)
@@ -130,10 +128,7 @@ UDataTable* FCsDmgDataRootSet::GetDataTableChecked(const FString& Context, const
 		return GetDataTableChecked(Context, MemberType);
 	}
 #endif // #if WITH_EDITOR
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType));
+	return CsDataRootSetLibrary::GetDataTableChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType));
 }
 
 UDataTable* FCsDmgDataRootSet::GetDataTableChecked(const FString& Context, const EMember& MemberType) const
@@ -158,10 +153,7 @@ uint8* FCsDmgDataRootSet::GetDataTableRowChecked(const FString& Context, const U
 		return GetDataTableRowChecked(Context, MemberType, RowName);
 	}
 #endif // #if WITH_EDITOR
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowName);
+	return CsDataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowName);
 }
 
 uint8* FCsDmgDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const
@@ -172,10 +164,7 @@ uint8* FCsDmgDataRootSet::GetDataTableRowChecked(const FString& Context, const U
 		return GetDataTableRowChecked(Context, MemberType, RowStruct, RowName);
 	}
 #endif // #if WITH_EDITOR
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
+	return CsDataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
 }
 
 uint8* FCsDmgDataRootSet::GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const FName& RowName) const

@@ -96,13 +96,25 @@ class CSPRJ_API UCsManager_Projectile : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define ManagerType NCsProjectile::FManager
-#define ManagerParamsType NCsProjectile::FManager::FParams
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-#define PayloadType NCsProjectile::NPayload::IPayload
-#define ClassHandlerType NCsData::NManager::NHandler::TClass
-#define DataHandlerType NCsData::NManager::NHandler::TData
-#define DataType NCsProjectile::NData::IData
+private:
+
+	using ManagerType = NCsProjectile::FManager;
+	using ManagerParamsType = NCsProjectile::FManager::FParams;
+	using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+	using PayloadType = NCsProjectile::NPayload::IPayload;
+	using ClassHandlerType = NCsData::NManager::NHandler::TClass<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>;
+	using DataType = NCsProjectile::NData::IData;
+	using DataInterfaceMapType = NCsProjectile::NData::FInterfaceMap;
+	using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>;
+	using ModifierManagerType = NCsProjectile::NModifier::FManager;
+	using ModifierResourceType = NCsProjectile::NModifier::FResource;
+	using ModifierType = NCsProjectile::NModifier::IModifier;
+	using ModifierImplType = NCsProjectile::NModifier::EImpl;
+	using VariablesManagerType = NCsProjectile::NVariables::FManager;
+	using VariablesPayloadType = NCsProjectile::NVariables::NAllocate::FPayload;
+	using VariablesType = NCsProjectile::NVariables::FVariables;
+	using BoundsWorldType = NCsGrid::NUniform::FGrid;
 
 public:	
 
@@ -844,7 +856,7 @@ public:
 #pragma region
 protected:
 
-	ClassHandlerType<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>* ClassHandler;
+	ClassHandlerType* ClassHandler;
 
 	virtual void ConstructClassHandler();
 
@@ -908,17 +920,13 @@ public:
 #pragma region
 protected:
 
-#define DataInterfaceMapType NCsProjectile::NData::FInterfaceMap
-
-	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler;
+	DataHandlerType* DataHandler;
 
 	virtual void ConstructDataHandler();
 
 public:
 
-	FORCEINLINE DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* GetDataHandler() const { return DataHandler; }
-
-#undef DataInterfaceMapType
+	FORCEINLINE DataHandlerType* GetDataHandler() const { return DataHandler; }
 
 	/**
 	* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the projectile type.
@@ -989,12 +997,6 @@ protected:
 
 // Modifier
 #pragma region
-
-#define ModifierResourceType NCsProjectile::NModifier::FResource
-#define ModifierManagerType NCsProjectile::NModifier::FManager
-#define ModifierType NCsProjectile::NModifier::IModifier
-#define ModifierImplType NCsProjectile::NModifier::EImpl
-
 protected:
 
 	TArray<ModifierManagerType> Manager_Modifiers;
@@ -1030,19 +1032,10 @@ public:
 	*/
 	virtual const FECsProjectileModifier& GetModifierType(const FString& Context, const ModifierType* Modifier);
 
-#undef ModifierResourceType
-#undef ModifierManagerType
-#undef ModifierType
-#undef ModifierImplType
-
 #pragma endregion Modifier
 
 // Events
 #pragma region
-private:
-
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-
 public:
 
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FProjectile_OnAllocate, const ICsProjectile* /*Projectile*/, PooledPayloadType* /*Payload*/);
@@ -1055,8 +1048,6 @@ private:
 	{
 		Projectile_OnAllocate_Event.Broadcast(Projectile, Payload);
 	}
-
-#undef PooledPayloadType
 
 public:
 
@@ -1090,10 +1081,6 @@ private:
 #pragma region
 protected:
 
-#define VariablesManagerType NCsProjectile::NVariables::FManager
-#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
-#define VariablesType NCsProjectile::NVariables::FVariables
-
 	VariablesManagerType Manager_Variables;
 
 public:
@@ -1113,19 +1100,13 @@ public:
 
 	virtual void DeallocateVariablesChecked(const FString& Context, VariablesType* Variables);
 
-#undef VariablesManagerType
-#undef VariablesPayloadType
-#undef VariablesType
-
 #pragma endregion Variables
 
 // Search
 #pragma region
 public:
 
-#define BoundsWorldType NCsGrid::NUniform::FGrid
 	FORCEINLINE BoundsWorldType* GetBoundsWorld() { return &(Manager_Variables.BoundsWorld); }
-#undef BoundsWorldType
 
 #pragma endregion Search
 
@@ -1161,12 +1142,14 @@ public:
 
 			private:
 
+				using VariablesManagerType = NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FManager;
+				using VariablesResourceType = NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource;
+
+			private:
+
 				UCsManager_Projectile::FOnHit::FSpawn* Outer;
 
 			public:
-
-			#define VariablesManagerType NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FManager
-			#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource
 
 				VariablesManagerType VariablesManager;
 
@@ -1178,8 +1161,10 @@ public:
 					friend struct UCsManager_Projectile::FOnHit::FSpawn;
 					friend struct UCsManager_Projectile::FOnHit::FSpawn::FProjectile;
 
-				#define SpreadVariablesManagerType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FManager
-				#define SpreadVariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource
+				private:
+
+					using SpreadVariablesManagerType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FManager;
+					using SpreadVariablesResourceType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource;
 
 				private: 
 
@@ -1201,9 +1186,6 @@ public:
 
 					FORCEINLINE void DeallocateVariables(SpreadVariablesResourceType* Resource) { VariablesManager.Deallocate(Resource); }
 					FORCEINLINE void DeallocateVariables(const int32& Index) { VariablesManager.DeallocateAt(Index); }
-
-				#undef SpreadVariablesManagerType
-				#undef SpreadVariablesResourceType
 				};
 
 				FSpread Spread;
@@ -1234,9 +1216,6 @@ public:
 
 				FORCEINLINE void AddHandle(const FCsRoutineHandle& Handle) { Handles.Add(Handle); }
 				FORCEINLINE void RemoveHandle(const FCsRoutineHandle& Handle) { Handles.Remove(Handle); }
-
-			#undef VariablesManagerType
-			#undef VariablesResourceType
 			};
 
 			FProjectile Projectile;
@@ -1266,12 +1245,4 @@ public:
 	void SetupOnHit();
 
 #pragma endregion OnHit
-
-#undef ManagerType
-#undef ManagerParamsType
-#undef ConstructParamsType
-#undef PayloadType
-#undef ClassHandlerType
-#undef DataHandlerType
-#undef DataType
 };

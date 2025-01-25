@@ -14,29 +14,33 @@ namespace NCsProjectile
 {
 	namespace NCache
 	{
-	#define CacheType NCsProjectile::NCache::ICache
-
-		/**
-		*/
-		struct CSPRJ_API FLibrary final : public NCsInterfaceMap::TLibrary<CacheType>
+		namespace NLibrary
 		{
-		public:
-
-		#define PooledCacheType NCsPooledObject::NCache::ICache
+			using CacheType = NCsProjectile::NCache::ICache;
 
 			/**
-			* Set the LifeTime for PooledCache.
-			* This assumes PooledCache implements the interface: CacheType (NCsProjectile::NCache::ICache).
-			* 
-			* @param Context		The calling context.
-			* @param PooledCache
-			* @param LifeTime
 			*/
-			static void SetLifeTimeChecked(const FString& Context, PooledCacheType* PooledCache, const float& LifeTime);
+			struct CSPRJ_API FLibrary final : public NCsInterfaceMap::TLibrary<CacheType>
+			{
+			private:
+				
+				using PooledCacheType = NCsPooledObject::NCache::ICache;
+				
+			public:
 
-		#undef PooledCacheType
-		};
-
-	#undef CacheType
+				/**
+				* Set the LifeTime for PooledCache.
+				* This assumes PooledCache implements the interface: CacheType (NCsProjectile::NCache::ICache).
+				* 
+				* @param Context		The calling context.
+				* @param PooledCache
+				* @param LifeTime
+				*/
+				static void SetLifeTimeChecked(const FString& Context, PooledCacheType* PooledCache, const float& LifeTime);
+			};
+		}
 	}
 }
+
+using CsProjectileCacheLibrary = NCsProjectile::NCache::NLibrary::FLibrary;
+using CsPrjCacheLibrary = NCsProjectile::NCache::NLibrary::FLibrary;

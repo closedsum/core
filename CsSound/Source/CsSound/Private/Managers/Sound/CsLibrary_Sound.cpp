@@ -85,12 +85,9 @@ namespace NCsSound
 		using namespace NCsSound::NLibrary::NCached;
 
 		check(Get().Manager_SpawnParams.ContainsChecked(Context, Params));
-
 		check(Params->Get()->IsValidChecked(Context));
 
-		typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-		UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);
+		UObject* ContextRoot = CsCoroutineSchedulerLibrary::GetContextRootChecked(Context, WorldContext);
 
 		UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
 		const FECsUpdateGroup& UpdateGroup = Params->Get()->Group;
@@ -171,9 +168,7 @@ namespace NCsSound
 		
 		// Check to get Context Root for CoroutineScheduler
 		{
-			typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-			UObject* ContextRoot = CoroutineSchedulerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
+			UObject* ContextRoot = CsCoroutineSchedulerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
 
 #if WITH_EDITOR
 			if (!ContextRoot)

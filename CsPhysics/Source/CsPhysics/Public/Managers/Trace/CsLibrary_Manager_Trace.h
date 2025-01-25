@@ -375,3 +375,5 @@ namespace NCsTrace
 		};
 	}
 }
+
+using CsTraceManagerLibrary = NCsTrace::NManager::FLibrary;

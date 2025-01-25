@@ -279,3 +279,5 @@ namespace NCsSound
 		};
 	}
 }
+
+using CsSoundManagerLibrary = NCsSound::NManager::FLibrary;

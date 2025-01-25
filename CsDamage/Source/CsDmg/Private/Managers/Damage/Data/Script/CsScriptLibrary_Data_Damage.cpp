@@ -30,13 +30,13 @@ UCsScriptLibrary_Data_Damage::UCsScriptLibrary_Data_Damage(const FObjectInitiali
 {
 }
 
+using DataSliceType = NCsDamage::NData::NPoint::NImplSlice::FImplSlice;
+
 bool UCsScriptLibrary_Data_Damage::Construct_Point(const FString& Context, const UObject* WorldContextObject, const FString& Name, const FCsData_DamagePointImplSlice& Slice)
 {
 	using namespace NCsScriptLibraryDataDamage::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Construct_Point : Context;
-
-	typedef NCsDamage::NData::NPoint::FImplSlice DataSliceType;
 
 	if (!Slice.IsValid(Context))
 		return false;
@@ -51,8 +51,6 @@ bool UCsScriptLibrary_Data_Damage::ConstructFromObject_Point(const FString& Cont
 	using namespace NCsScriptLibraryDataDamage::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::ConstructFromObject_Point : Context;
-
-	typedef NCsDamage::NData::NPoint::FImplSlice DataSliceType;
 
 	DataSliceType* DataSlice = DataSliceType::SafeConstruct(Context, WorldContextObject, Name, Object);
 

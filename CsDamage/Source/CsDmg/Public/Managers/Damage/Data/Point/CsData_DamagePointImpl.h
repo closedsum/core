@@ -15,8 +15,8 @@
 // FCsData_DamagePoint
 #pragma region
 
-// NCsDamage::NData::NPoint::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NPoint, FImpl)
+// NCsDamage::NData::NPoint::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NPoint, NImpl, FImpl)
 
 USTRUCT(BlueprintType)
 struct CSDMG_API FCsData_DamagePoint
@@ -35,10 +35,10 @@ struct CSDMG_API FCsData_DamagePoint
 	{
 	}
 
-#define PointType NCsDamage::NData::NPoint::FImpl
-	void CopyToPoint(PointType* Point);
-	void CopyToPointAsValue(PointType* Point) const;
-#undef PointType
+	using PointImplType = NCsDamage::NData::NPoint::NImpl::FImpl;
+
+	void CopyToPoint(PointImplType* Point);
+	void CopyToPointAsValue(PointImplType* Point) const;
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
 };
@@ -51,72 +51,70 @@ namespace NCsDamage
 	{
 		namespace NPoint
 		{
-		#define DataType NCsData::IData
-		#define DamageDataType NCsDamage::NData::IData
-
-			/**
-			*
-			*/
-			struct CSDMG_API FImpl : public DataType,
-									 public DamageDataType
+			namespace NImpl
 			{
-			public:
+				using DamageDataType = NCsDamage::NData::IData;
 
-				static const FName Name;
+				/**
+				*
+				*/
+				struct CSDMG_API FImpl : public CsDataType,
+										 public DamageDataType
+				{
+				public:
 
-			#define ValueType NCsDamage::NValue::IValue
-			#define ValueImplType NCsDamage::NValue::NPoint::FImpl
+					static const FName Name;
 
-			private:
+				private:
 
-			// ICsGetInterfaceMap
+					using ValueType = NCsDamage::NValue::IValue;
+					using ValueImplType = NCsDamage::NValue::NPoint::FImpl;
 
-				FCsInterfaceMap* InterfaceMap;
+				private:
 
-			// DataType (NCsDamage::NData::IData)
+				// ICsGetInterfaceMap
 
-				ValueImplType Value;
+					FCsInterfaceMap* InterfaceMap;
 
-				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageType)
+				// DataType (NCsDamage::NData::IData)
 
-			public:
+					ValueImplType Value;
 
-				FImpl();
-				~FImpl();
+					CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageType)
 
-				FORCEINLINE UObject* _getUObject() const { return nullptr; }
+				public:
 
-			// ICsGetInterfaceMap
-			#pragma region
-			public:
+					FImpl();
+					~FImpl();
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+					FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
-			#pragma endregion ICsGetInterfaceMap
+				// ICsGetInterfaceMap
+				#pragma region
+				public:
 
-			public:
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-				FORCEINLINE void SetValue(const float& InValue) { Value.SetValue(InValue); }
-				FORCEINLINE void SetValue(float* InValue) { Value.SetValue(InValue); }
+				#pragma endregion ICsGetInterfaceMap
 
-			// DamageDataType (NCsDamage::NData::IData)
-			#pragma region
-			public:
+				public:
 
-				FORCEINLINE const ValueType* GetValue() const { return &Value; }
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageType)
+					FORCEINLINE void SetValue(const float& InValue) { Value.SetValue(InValue); }
+					FORCEINLINE void SetValue(float* InValue) { Value.SetValue(InValue); }
 
-			#pragma endregion DamageDataType (NCsDamage::NData::IData)
+				// DamageDataType (NCsDamage::NData::IData)
+				#pragma region
+				public:
 
-			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
+					FORCEINLINE const ValueType* GetValue() const { return &Value; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageType)
 
-			#undef ValueType
-			#undef ValueImplType
-			};
+				#pragma endregion DamageDataType (NCsDamage::NData::IData)
 
-		#undef DataType
-		#undef DamageDataType
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
+				};
+			}
 		}
 	}
 }
@@ -125,8 +123,8 @@ namespace NCsDamage
 
 struct FCsInterfaceMap;
 
-// NCsDamage::NData::NPoint::FProxy
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NPoint, FProxy)
+// DamagePointProxyType (NCsDamage::NData::NPoint::NProxy::FProxy)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NPoint, NProxy, FProxy)
 
 /**
 * Data for a Damage Point
@@ -146,12 +144,14 @@ public:
 
 	static const FName Name;
 
-#define DataType NCsData::IData
-#define ValueType NCsDamage::NValue::IValue
+private:
+
+	using ValueType = NCsDamage::NValue::IValue;
+	using DamagePointProxyType = NCsDamage::NData::NPoint::NProxy::FProxy;
 
 private:
 
-	DataType* DataProxy;
+	CsDataType* DataProxy;
 
 // UObject Interface
 #pragma region
@@ -186,7 +186,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE DataType* _getIData() const { return DataProxy; }
+	FORCEINLINE CsDataType* _getIData() const { return DataProxy; }
 
 	bool IsValid(const int32& LoadFlags);
 
@@ -208,9 +208,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Data|Point")
 	FECsDamageType Type;
 
-#define DamagePointProxyType NCsDamage::NData::NPoint::FProxy
 	DamagePointProxyType* DamageDataPointProxy;
-#undef DamagePointProxyType
 
 // ICsData_Damage
 #pragma region
@@ -220,7 +218,4 @@ public:
 	FORCEINLINE const FECsDamageType& GetType() const { return Type; }
 
 #pragma endregion ICsData_Damage
-
-#undef DataType
-#undef ValueType
 };

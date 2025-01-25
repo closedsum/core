@@ -24,11 +24,15 @@ class CSDMG_API ICsGetCurrentDamageEvent
 {
 	GENERATED_IINTERFACE_BODY()
 
-#define EventType NCsDamage::NEvent::IEvent
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using EventType = NCsDamage::NEvent::IEvent;
+	};
 
 public:
 
-	virtual const EventType* GetCurrentDamageEvent() const = 0;
-
-#undef EventType
+	virtual const _::EventType* GetCurrentDamageEvent() const = 0;
 };

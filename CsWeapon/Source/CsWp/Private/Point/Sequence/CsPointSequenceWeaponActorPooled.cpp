@@ -377,11 +377,10 @@ void ACsPointSequenceWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 
 	// Get Data
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 	typedef NCsWeapon::NPoint::NSequence::NData::IData PointSequenceWeaponDataType;
 
 	Data					= WeaponManagerLibrary::GetDataChecked(Context, GetWorldContext(), WeaponType);
-	PointSequenceWeaponData = WeaponDataLibrary::GetInterfaceChecked<PointSequenceWeaponDataType>(Context, Data);
+	PointSequenceWeaponData = CsWeaponDataLibrary::GetInterfaceChecked<PointSequenceWeaponDataType>(Context, Data);
 
 	SetActorHiddenInGame(false);
 	SetActorTickEnabled(true);
@@ -442,9 +441,7 @@ void ACsPointSequenceWeaponActorPooled::Deallocate()
 	OnDeallocate_Start_Event.Broadcast(this);
 
 	// End Routines
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	if (UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetSafe(GetWorldContext()))
+	if (UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetSafe(GetWorldContext()))
 	{
 		static TSet<FCsRoutineHandle> TempHandles;
 
@@ -722,13 +719,8 @@ void ACsPointSequenceWeaponActorPooled::Fire()
 
 	const FString& Context = Str::Fire;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, GetWorldContext());
-
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
+	UCsCoroutineScheduler* Scheduler   = CsCoroutineSchedulerLibrary::GetChecked(Context, GetWorldContext());
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 	Fire_StartTime = TimeSinceStart.Time;
 
@@ -740,7 +732,7 @@ void ACsPointSequenceWeaponActorPooled::Fire()
 	#define COROUTINE Fire_Internal
 
 	Payload->CoroutineImpl.BindUObject(this, &ACsPointSequenceWeaponActorPooled::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -876,9 +868,7 @@ void ACsPointSequenceWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	const FString& Context = Str::OnElapsedTime;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, Outer->GetWorldContext());
+	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, Outer->GetWorldContext());
 
 	// Setup Routine
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
@@ -887,10 +877,8 @@ void ACsPointSequenceWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	#define COROUTINE OnElapsedTime_Internal
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
 	Payload->CoroutineImpl.BindRaw(this, &ACsPointSequenceWeaponActorPooled::FTimeBetweenShotsImpl::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer->GetWorldContext(), Outer->GetUpdateGroup());
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, Outer->GetWorldContext(), Outer->GetUpdateGroup());
 	Payload->Owner.SetObject(Outer);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -952,10 +940,7 @@ float ACsPointSequenceWeaponActorPooled::GetTimeBetweenShots() const
 	float Value = PointSequenceWeaponData->GetTimeBetweenShots();
 
 	// TODO: Priority
-
-	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-
-	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_TimeBetweenShots, Value);
+	return CsWeaponModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_TimeBetweenShots, Value);
 }
 
 	// Point
@@ -976,10 +961,7 @@ int32 ACsPointSequenceWeaponActorPooled::Sequence_GetCount() const
 	float Value = PointSequenceWeaponData->GetSequenceParams().GetCount();
 
 	// TODO: Priority
-
-	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-
-	return ModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_Sequence_Count, Value);
+	return CsWeaponModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_Sequence_Count, Value);
 }
 
 float ACsPointSequenceWeaponActorPooled::Sequence_GetInterval() const
@@ -997,10 +979,7 @@ float ACsPointSequenceWeaponActorPooled::Sequence_GetInterval() const
 	float Value = PointSequenceWeaponData->GetSequenceParams().GetInterval();
 
 	// TODO: Priority
-
-	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-
-	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_Sequence_Interval, Value);
+	return CsWeaponModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_Sequence_Interval, Value);
 }
 
 int32 ACsPointSequenceWeaponActorPooled::SequencesPerShot_GetCount() const
@@ -1018,10 +997,7 @@ int32 ACsPointSequenceWeaponActorPooled::SequencesPerShot_GetCount() const
 	float Value = PointSequenceWeaponData->GetSequencesPerShotParams().GetCount();
 
 	// TODO: Priority
-
-	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-
-	return ModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_SequencesPerShot_Count, Value);
+	return CsWeaponModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_SequencesPerShot_Count, Value);
 }
 
 float ACsPointSequenceWeaponActorPooled::SequencesPerShot_GetInterval() const
@@ -1039,10 +1015,7 @@ float ACsPointSequenceWeaponActorPooled::SequencesPerShot_GetInterval() const
 	float Value = PointSequenceWeaponData->GetSequencesPerShotParams().GetInterval();
 
 	// TODO: Priority
-
-	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-
-	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_SequencesPerShot_Interval, Value);
+	return CsWeaponModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_SequencesPerShot_Interval, Value);
 }
 
 void ACsPointSequenceWeaponActorPooled::Sequence_Execute(const int32& CurrentSequencePerShotIndex)
@@ -1063,9 +1036,8 @@ void ACsPointSequenceWeaponActorPooled::FSoundImpl::Play()
 
 	// SoundDataType (NCsWeapon::NPoint::NSequence::NData::NSound::NFire::IFire)
 	typedef NCsWeapon::NPoint::NSequence::NData::NSound::NFire::IFire SoundDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
+	if (SoundDataType* SoundData = CsWeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
 	{
 		if (SoundData->UseFireSoundParams())
 		{
@@ -1105,9 +1077,8 @@ void ACsPointSequenceWeaponActorPooled::FFXImpl::Play()
 
 	// FXDataType (NCsWeapon::NPoint::NSequence::NData::NVisual::NFire::IFire)
 	typedef NCsWeapon::NPoint::NSequence::NData::NVisual::NFire::IFire FXDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Outer->GetData()))
+	if (FXDataType* FXData = CsWeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Outer->GetData()))
 	{
 		if (FXData->UseFireVisualParams())
 		{
@@ -1150,8 +1121,8 @@ void ACsPointSequenceWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Paylo
 	const FCsFX& FX			 = Params.GetFX();
 	const AttachType& Type	 = Params.GetAttach();
 
-	typedef NCsFX::NPayload::FImpl PayloadImplType;
-	typedef NCsFX::NPayload::FLibrary PayloadLibrary;
+	typedef NCsFX::NPayload::NImpl::FImpl PayloadImplType;
+	typedef NCsFX::NPayload::NLibrary::FLibrary PayloadLibrary;
 
 	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 

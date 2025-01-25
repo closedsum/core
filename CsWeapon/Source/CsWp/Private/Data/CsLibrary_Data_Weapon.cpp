@@ -10,54 +10,35 @@ namespace NCsWeapon
 {
 	namespace NData
 	{
-		#define DataType NCsWeapon::NData::IData
-
-		bool FLibrary::IsValidChecked(const FString& Context, const DataType* Data)
+		namespace NLibrary
 		{
-			// Projectile
-			typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
-			typedef NCsWeapon::NProjectile::NData::FLibrary ProjectileDataLibrary;
+			bool FLibrary::IsValidChecked(const FString& Context, const DataType* Data)
+			{
+				// Projectile
+				if (const CsProjectileWeaponDataType* PrjData = GetSafeInterfaceChecked<CsProjectileWeaponDataType>(Context, Data))
+					return CsProjectileWeaponDataLibrary::IsValidChecked(Context, PrjData);
+				// Trace
+				if (const CsTraceWeaponDataType* TraceData = GetSafeInterfaceChecked<CsTraceWeaponDataType>(Context, Data))
+					return CsTraceWeaponDataLibrary::IsValidChecked(Context, TraceData);
+				// Point
+				if (const CsPointWeaponDataType* PointData = GetSafeInterfaceChecked<CsPointWeaponDataType>(Context, Data))
+					return CsPointWeaponDataLibrary::IsValidChecked(Context, PointData);
+				return true;
+			}
 
-			if (const ProjectileDataType* PrjData = GetSafeInterfaceChecked<ProjectileDataType>(Context, Data))
-				return ProjectileDataLibrary::IsValidChecked(Context, PrjData);
-			// Trace
-			typedef NCsWeapon::NTrace::NData::IData TraceDataType;
-			typedef NCsWeapon::NTrace::NData::FLibrary TraceDataLibrary;
-
-			if (const TraceDataType* TraceData = GetSafeInterfaceChecked<TraceDataType>(Context, Data))
-				return TraceDataLibrary::IsValidChecked(Context, TraceData);
-			// Point
-			typedef NCsWeapon::NPoint::NData::IData PointDataType;
-			typedef NCsWeapon::NPoint::NData::FLibrary PointDataLibrary;
-
-			if (const PointDataType* PointData = GetSafeInterfaceChecked<PointDataType>(Context, Data))
-				return PointDataLibrary::IsValidChecked(Context, PointData);
-			return true;
+			bool FLibrary::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+			{
+				// Projectile
+				if (const CsProjectileWeaponDataType* PrjData = GetSafeInterfaceChecked<CsProjectileWeaponDataType>(Context, Data))
+					return CsProjectileWeaponDataLibrary::IsValid(Context, PrjData, Log);
+				// Trace
+				if (const CsTraceWeaponDataType* TraceData = GetSafeInterfaceChecked<CsTraceWeaponDataType>(Context, Data))
+					return CsTraceWeaponDataLibrary::IsValid(Context, TraceData, Log);
+				// Point
+				if (const CsPointWeaponDataType* PointData = GetSafeInterfaceChecked<CsPointWeaponDataType>(Context, Data))
+					return CsPointWeaponDataLibrary::IsValid(Context, PointData, Log);
+				return true;
+			}
 		}
-
-		bool FLibrary::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
-		{
-			// Projectile
-			typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
-			typedef NCsWeapon::NProjectile::NData::FLibrary ProjectileDataLibrary;
-
-			if (const ProjectileDataType* PrjData = GetSafeInterfaceChecked<ProjectileDataType>(Context, Data))
-				return ProjectileDataLibrary::IsValid(Context, PrjData, Log);
-			// Trace
-			typedef NCsWeapon::NTrace::NData::IData TraceDataType;
-			typedef NCsWeapon::NTrace::NData::FLibrary TraceDataLibrary;
-
-			if (const TraceDataType* TraceData = GetSafeInterfaceChecked<TraceDataType>(Context, Data))
-				return TraceDataLibrary::IsValid(Context, TraceData, Log);
-			// Point
-			typedef NCsWeapon::NPoint::NData::IData PointDataType;
-			typedef NCsWeapon::NPoint::NData::FLibrary PointDataLibrary;
-
-			if (const PointDataType* PointData = GetSafeInterfaceChecked<PointDataType>(Context, Data))
-				return PointDataLibrary::IsValid(Context, PointData, Log);
-			return true;
-		}
-
-		#undef DataType
 	}
 }

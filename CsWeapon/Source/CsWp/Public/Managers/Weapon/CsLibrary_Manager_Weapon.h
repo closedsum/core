@@ -496,3 +496,5 @@ namespace NCsWeapon
 		}
 	}
 }
+
+using CsWeaponManagerLibrary = NCsWeapon::NManager::FLibrary;

@@ -53,6 +53,9 @@ namespace NCsWeapon
 
 #pragma endregion ProjectileWeaponFireVisualAttach
 
+using AttachType = NCsWeapon::NProjectile::NFire::NVisual::EAttach;
+using AttachMapType = NCsWeapon::NProjectile::NFire::NVisual::EMAttach;
+
 // FCsProjectileWeapon_Fire_Visual_StartParams
 #pragma region
 
@@ -61,18 +64,12 @@ namespace NCsWeapon
 void FCsProjectileWeapon_Fire_Visual_StartParams::CopyToParams(ParamsType* Params)
 {
 	Params->SetFX(&FX);
-
-	typedef NCsWeapon::NProjectile::NFire::NVisual::EAttach AttachType;
-
 	Params->SetAttach((AttachType*)(&Attach));
 }
 
 void FCsProjectileWeapon_Fire_Visual_StartParams::CopyToParamsAsValue(ParamsType* Params) const
 {
 	Params->SetFX(FX);
-
-	typedef NCsWeapon::NProjectile::NFire::NVisual::EAttach AttachType;
-
 	Params->SetAttach((AttachType)Attach);
 }
 
@@ -81,7 +78,6 @@ void FCsProjectileWeapon_Fire_Visual_StartParams::CopyToParamsAsValue(ParamsType
 bool FCsProjectileWeapon_Fire_Visual_StartParams::IsValidChecked(const FString& Context) const
 {
 	CS_IS_VALID_CHECKED(FX);
-
 	CS_IS_ENUM_VALID_CHECKED(EMCsProjectileWeaponFireVisualAttach, Attach)
 	return true;
 }
@@ -89,7 +85,6 @@ bool FCsProjectileWeapon_Fire_Visual_StartParams::IsValidChecked(const FString& 
 bool FCsProjectileWeapon_Fire_Visual_StartParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	CS_IS_VALID(FX)
-
 	CS_IS_ENUM_VALID(EMCsProjectileWeaponFireVisualAttach, ECsProjectileWeaponFireVisualAttach, Attach)
 	return true;
 }
@@ -107,9 +102,6 @@ namespace NCsWeapon
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
 						CS_IS_VALID_CHECKED(GetFX());
-
-						typedef NCsWeapon::NProjectile::NFire::NVisual::EMAttach AttachMapType;
-
 						CS_IS_ENUM_VALID_CHECKED(AttachMapType, GetAttach())
 						return true;
 					}
@@ -117,10 +109,6 @@ namespace NCsWeapon
 					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
 						CS_IS_VALID(GetFX())
-
-						typedef NCsWeapon::NProjectile::NFire::NVisual::EMAttach AttachMapType;
-						typedef NCsWeapon::NProjectile::NFire::NVisual::EAttach AttachType;
-
 						CS_IS_ENUM_VALID(AttachMapType, AttachType, GetAttach())
 						return true;
 					}
@@ -141,9 +129,6 @@ void FCsProjectileWeapon_Fire_Visual_ShotParams::CopyToParams(ParamsType* Params
 {
 	Params->SetbSkipFirst(&bSkipFirst);
 	Params->SetFX(&FX);
-
-	typedef NCsWeapon::NProjectile::NFire::NVisual::EAttach AttachType;
-
 	Params->SetAttach((AttachType*)(&Attach));
 }
 
@@ -151,9 +136,6 @@ void FCsProjectileWeapon_Fire_Visual_ShotParams::CopyToParamsAsValue(ParamsType*
 {
 	Params->SetbSkipFirst(bSkipFirst);
 	Params->SetFX(FX);
-
-	typedef NCsWeapon::NProjectile::NFire::NVisual::EAttach AttachType;
-
 	Params->SetAttach((AttachType)Attach);
 }
 
@@ -188,9 +170,6 @@ namespace NCsWeapon
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
 						CS_IS_VALID_CHECKED(GetFX());
-
-						typedef NCsWeapon::NProjectile::NFire::NVisual::EMAttach AttachMapType;
-
 						CS_IS_ENUM_VALID_CHECKED(AttachMapType, GetAttach())
 						return true;
 					}
@@ -198,10 +177,6 @@ namespace NCsWeapon
 					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
 						CS_IS_VALID(GetFX())
-
-						typedef NCsWeapon::NProjectile::NFire::NVisual::EMAttach AttachMapType;
-						typedef NCsWeapon::NProjectile::NFire::NVisual::EAttach AttachType;
-
 						CS_IS_ENUM_VALID(AttachMapType, AttachType, GetAttach())
 						return true;
 					}

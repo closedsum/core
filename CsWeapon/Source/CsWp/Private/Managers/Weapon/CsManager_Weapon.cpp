@@ -105,6 +105,19 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 {
 }
 
+using ManagerParamsType = NCsWeapon::FManager::FParams;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PoolParamsType = NCsPooledObject::NManager::FPoolParams;
+using DataLibrary = NCsWeapon::NData::NLibrary::FLibrary;
+using DataType = NCsWeapon::NData::IData;
+using PayloadType = NCsWeapon::NPayload::IPayload;
+using PayloadImplType = NCsWeapon::NPayload::FImpl;
+using ModifierManagerType = NCsWeapon::NModifier::FManager;
+using ModifierResourceType = NCsWeapon::NModifier::FResource;
+using ModifierType = NCsWeapon::NModifier::IModifier;
+using ModifierImplType = NCsWeapon::NModifier::EImpl;
+using CopyType = NCsWeapon::NModifier::NCopy::ICopy;
+
 // Singleton
 #pragma region
 
@@ -263,10 +276,6 @@ void UCsManager_Weapon::CleanUp()
 	Internal.Shutdown();
 	Pool.Reset();
 
-	typedef NCsWeapon::NModifier::FManager ModifierManagerType;
-	typedef NCsWeapon::NModifier::FResource ModifierResourceType;
-	typedef NCsWeapon::NModifier::IModifier ModifierType;
-
 	for (ModifierManagerType& ModifierManager : Manager_Modifiers)
 	{
 		const TArray<ModifierResourceType*>& Containers = ModifierManager.GetPool();
@@ -336,8 +345,6 @@ void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_
 	}
 
 	CS_IS_VALID_CHECKED(InPoolParams);
-
-	typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 	PoolParamsType PoolParams;
 
@@ -423,9 +430,7 @@ void UCsManager_Weapon::SetupInternal()
 	else
 #endif // #if WITH_EDITOR
 	{
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-		ContextRoot = GameInstanceLibrary::GetSafeAsObject(Context, MyRoot);
+		ContextRoot = CsGameInstanceLibrary::GetSafeAsObject(Context, MyRoot);
 	}
 
 	NCsWeapon::PopulateEnumMapFromSettings(Context, ContextRoot);
@@ -559,8 +564,6 @@ void UCsManager_Weapon::InitInternalFromSettings()
 	// Setup Pool
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsWeapon::FManager::FParams ManagerParamsType;
-
 		ManagerParamsType ManagerParams;
 
 		ManagerParams.Name  = TEXT("UCsManager_Weapon::NCsWeapon::FManager");
@@ -571,8 +574,6 @@ void UCsManager_Weapon::InitInternalFromSettings()
 		{
 			const FECsWeapon& Type									= Pair.Key;
 			const FCsSettings_Manager_Weapon_PoolParams& Params = Pair.Value;
-
-			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
@@ -601,14 +602,11 @@ void UCsManager_Weapon::InitInternalFromSettings()
 	}
 }
 
-#define ManagerParamsType NCsWeapon::FManager::FParams
 void UCsManager_Weapon::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
 	{
 		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
-
-		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 		for (TPair<FECsWeapon, PoolParamsType>& Pair : P.ObjectParams)
 		{
@@ -661,7 +659,6 @@ void UCsManager_Weapon::InitInternal(const ManagerParamsType& Params)
 		}
 	}
 }
-#undef ManagerParamsType
 
 void UCsManager_Weapon::Clear()
 {
@@ -693,10 +690,8 @@ FCsWeaponPooled* UCsManager_Weapon::ConstructContainer(const FECsWeapon& Type)
 	return new FCsWeaponPooled();
 }
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 TMulticastDelegate<void(const FCsWeaponPooled*, const ConstructParamsType&)>& UCsManager_Weapon::GetOnConstructObject_Event(const FECsWeapon& Type)
 {
-#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 
@@ -840,20 +835,13 @@ void UCsManager_Weapon::ConstructPayloads(const FECsWeapon& Type, const int32& S
 	Internal.ConstructPayloads(GetTypeFromTypeMap(Type), Size);
 }
 
-#define PayloadType NCsWeapon::NPayload::IPayload
 PayloadType* UCsManager_Weapon::ConstructPayload(const FECsWeapon& Type)
 {
-#undef PayloadType
-	
-	typedef NCsWeapon::NPayload::FImpl PayloadImplType;
-
 	return new PayloadImplType();
 }
 
-#define PayloadType NCsWeapon::NPayload::IPayload
 PayloadType* UCsManager_Weapon::AllocatePayload(const FECsWeapon& Type)
 {
-#undef PayloadType
 	return Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 }
 
@@ -862,10 +850,8 @@ PayloadType* UCsManager_Weapon::AllocatePayload(const FECsWeapon& Type)
 	// Spawn
 #pragma region
 
-#define PayloadType NCsWeapon::NPayload::IPayload
 const FCsWeaponPooled* UCsManager_Weapon::Spawn(const FECsWeapon& Type, PayloadType* Payload)
 {
-#undef PayloadType
 	return Internal.Spawn(GetTypeFromTypeMap(Type), Payload);
 }
 
@@ -908,9 +894,9 @@ void UCsManager_Weapon::LogTransaction(const FString& Context, const ECsPoolTran
 
 void UCsManager_Weapon::ConstructClassHandler()
 {
-	typedef NCsWeapon::NManager::NHandler::FClass ClassHandlerType;
+	using ClassHandlerImplType = NCsWeapon::NManager::NHandler::FClass;
 
-	ClassHandler = new ClassHandlerType();
+	ClassHandler = new ClassHandlerImplType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
 }
@@ -970,14 +956,12 @@ bool UCsManager_Weapon::SafeAddClass(const FString& Context, const FECsWeaponCla
 
 void UCsManager_Weapon::ConstructDataHandler()
 {
-	typedef NCsWeapon::NManager::NHandler::FData DataHandlerType;
+	using DataHandlerImplType = NCsWeapon::NManager::NHandler::FData;
 
-	DataHandler = new DataHandlerType();
+	DataHandler = new DataHandlerImplType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
 }
-
-#define DataType NCsWeapon::NData::IData
 
 DataType* UCsManager_Weapon::GetData(const FName& Name)
 {
@@ -1061,8 +1045,6 @@ DataType* UCsManager_Weapon::GetSafeData(const FString& Context, const FECsWeapo
 #endif // #if WITH_EDITOR
 }
 
-#undef DataType
-
 void UCsManager_Weapon::OnPayloadUnloaded(const FName& Payload)
 {
 }
@@ -1072,43 +1054,28 @@ void UCsManager_Weapon::OnPayloadUnloaded(const FName& Payload)
 // Valid
 #pragma region
 
-#define DataType NCsWeapon::NData::IData
-
 bool UCsManager_Weapon::IsValidChecked(const FString& Context, const DataType* Data) const
 {
-	typedef NCsWeapon::NData::FLibrary DataLibrary;
-
 	check(DataLibrary::IsValidChecked(Context, Data));	
 	return true;
 }
 
 bool UCsManager_Weapon::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 {
-	typedef NCsWeapon::NData::FLibrary DataLibrary;
-
 	if (!DataLibrary::IsValid(Context, Data, Log))
 		return false;
 	return true;
 }
-
-#undef DataType
 
 #pragma endregion Valid
 
 // Modifier
 #pragma region
 
-#define ModifierResourceType NCsWeapon::NModifier::FResource
-#define ModifierType NCsWeapon::NModifier::IModifier
-
 void UCsManager_Weapon::SetupModifiers()
 {
-	typedef NCsWeapon::NModifier::EImpl ModifierImplType;
-
 	Manager_Modifiers.Reset((uint8)ModifierImplType::EImpl_MAX);
 	Manager_Modifiers.AddDefaulted((uint8)ModifierImplType::EImpl_MAX);
-
-	typedef NCsWeapon::NModifier::FManager ModifierManagerType;
 
 	const FCsSettings_Manager_Weapon_Modifiers& ModifierSettings = FCsSettings_Manager_Weapon_Modifiers::Get();
 
@@ -1173,7 +1140,6 @@ void UCsManager_Weapon::SetupModifiers()
 	ImplTypeByModifier[NCsWeaponModifier::PointSeqWp_SequencesPerShot_Interval.GetValue()] = ModifierImplType::Float;
 }
 
-#define ModifierImplType NCsWeapon::NModifier::EImpl
 ModifierType* UCsManager_Weapon::ConstructModifier(const ModifierImplType& ImplType)
 {
 	// Int
@@ -1188,7 +1154,6 @@ ModifierType* UCsManager_Weapon::ConstructModifier(const ModifierImplType& ImplT
 	check(0);
 	return nullptr;
 }
-#undef ModifierImplType
 
 ModifierResourceType* UCsManager_Weapon::AllocateModifier(const FECsWeaponModifier& Type)
 {
@@ -1203,10 +1168,8 @@ void UCsManager_Weapon::DeallocateModifier(const FString& Context, const FECsWea
 
 	CS_IS_PTR_NULL_CHECKED(Modifier)
 
-	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-
 	// Reset
-	if (ICsReset* IReset = ModifierLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Modifier->Get()))
+	if (ICsReset* IReset = CsWeaponModifierLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Modifier->Get()))
 		IReset->Reset();
 
 	Manager_Modifiers[Type.GetValue()].Deallocate(Modifier);
@@ -1214,9 +1177,7 @@ void UCsManager_Weapon::DeallocateModifier(const FString& Context, const FECsWea
 
 const FECsWeaponModifier& UCsManager_Weapon::GetModifierType(const FString& Context, const ModifierType* Modifier)
 {
-	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-
-	const ICsGetWeaponModifierType* GetWeaponModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
+	const ICsGetWeaponModifierType* GetWeaponModifierType = CsWeaponModifierLibrary::GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
 	const FECsWeaponModifier& Type						  = GetWeaponModifierType->GetWeaponModifierType();
 
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponModifier, Type);
@@ -1230,10 +1191,7 @@ ModifierResourceType* UCsManager_Weapon::CreateCopyOfModifier(const FString& Con
 	ModifierResourceType* Container	= AllocateModifier(Type);
 	ModifierType* Copy				= Container->Get();
 
-	typedef NCsWeapon::NModifier::FLibrary WeaponModifierLibrary;
-	typedef NCsWeapon::NModifier::NCopy::ICopy CopyType;
-
-	CopyType* ICopy = WeaponModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+	CopyType* ICopy = CsWeaponModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
 	ICopy->Copy(Modifier);
 
@@ -1244,9 +1202,6 @@ ModifierResourceType* UCsManager_Weapon::CreateCopyOfModifier(const FString& Con
 {
 	return CreateCopyOfModifier(Context, Modifier->Get());
 }
-
-#undef ModifierResourceType
-#undef ModifierType
 
 #pragma endregion Modifier
 

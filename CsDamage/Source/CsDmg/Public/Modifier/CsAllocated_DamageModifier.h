@@ -4,6 +4,7 @@
 #pragma once
 // Types
 #include "CsMacro_Namespace.h"
+#include "CsMacro_Cached.h"
 #include "Modifier/Types/CsTypes_DamageModifier.h"
 
 class UObject;
@@ -13,6 +14,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_2(NCsDamage, NModifier, Allocated)
 
 namespace NCsDamage
 {
@@ -25,6 +27,10 @@ namespace NCsDamage
 		*/
 		struct CSDMG_API FAllocated
 		{
+		private:
+
+			CS_USING_CACHED_FUNCTION_NAME_NESTED_2(NCsDamage, NModifier, Allocated);
+
 		public:
 
 			/** The Root for UCsManager_Damage. */

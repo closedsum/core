@@ -9,32 +9,35 @@ namespace NCsWeapon
 {
 	namespace NData
 	{
-	#define DataType NCsWeapon::NData::IData
-
-		struct CSWP_API FLibrary : NCsInterfaceMap::TLibrary<DataType>
+		namespace NLibrary
 		{
-		public:
+			using DataType = NCsWeapon::NData::IData;
 
-			/**
-			*
-			*
-			* @param Context	The calling context.
-			* @param Data
-			* return
-			*/
-			static bool IsValidChecked(const FString& Context, const DataType* Data);
+			struct CSWP_API FLibrary : NCsInterfaceMap::TLibrary<DataType>
+			{
+			public:
 
-			/**
-			*
-			*
-			* @param Context	The calling context.
-			* @param Data
-			* @param Log		(optional)
-			* return
-			*/
-			static bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
-		};
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Data
+				* return
+				*/
+				static bool IsValidChecked(const FString& Context, const DataType* Data);
 
-	#undef DataType
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Data
+				* @param Log		(optional)
+				* return
+				*/
+				static bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			};
+		}
 	}
 }
+
+using CsWeaponDataLibrary = NCsWeapon::NData::NLibrary::FLibrary;

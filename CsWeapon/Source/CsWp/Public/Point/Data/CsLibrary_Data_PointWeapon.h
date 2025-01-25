@@ -43,3 +43,5 @@ namespace NCsWeapon
 		}
 	}
 }
+
+using CsPointWeaponDataLibrary = NCsWeapon::NPoint::NData::FLibrary;

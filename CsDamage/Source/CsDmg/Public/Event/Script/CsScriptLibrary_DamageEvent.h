@@ -4,9 +4,12 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Types/CsTypes_Damage.h"
 
 #include "CsScriptLibrary_DamageEvent.generated.h"
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_DamageEvent)
 
 /**
 * Script Library to access any information from the current damage event (EventType: NCsDamage::NEvent::IEvent)).
@@ -22,6 +25,10 @@ UCLASS()
 class CSDMG_API UCsScriptLibrary_DamageEvent : public UObject
 { 
 	GENERATED_UCLASS_BODY() 
+
+public:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_DamageEvent);
 
 public:
 

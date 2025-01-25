@@ -78,6 +78,30 @@ namespace NCsActor
 
 		static AActor* GetByClassChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass);
 
+		template<typename T>
+		FORCEINLINE static T* GetByClassChecked(const FString& Context, const UObject* WorldContext)
+		{
+			T* A = Cast<T>(GetByClassChecked(Context, WorldContext, T::StaticClass()));
+
+			checkf(A, TEXT("%s: Failed to cast Actor to type: %s."), *Context, *(T::StaticClass()->GetName()));
+			return A;
+		}
+
+		static AActor* GetSafeByClass(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, LogLevel);
+
+		template<typename T>
+		FORCEINLINE static T* GetSafeByClass(const FString& Context, const UObject* WorldContext, LogLevel)
+		{
+			T* A = Cast<T>(GetSafeByClass(Context, WorldContext, T::StaticClass(), Log));
+
+			if (!A)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Failed to cast Actor to type: %s."), *Context, *(T::StaticClass()->GetName())));
+			}
+			return A;
+		}
+
 		static AActor* GetByClassAndTagChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const FName& Tag);
 
 		static AActor* GetSafeByClassAndTag(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const FName& Tag, LogLevel);
@@ -118,7 +142,6 @@ namespace NCsActor
 			T* A = Cast<T>(GetByTagChecked(Context, WorldContext, Tag));
 
 			checkf(A, TEXT("%s: Failed to cast Actor to type: %s."), *Context, *(T::StaticClass()->GetName()));
-
 			return A;
 		}
 

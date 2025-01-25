@@ -148,7 +148,9 @@ namespace NCsWeapon
 					*/
 					struct CSWP_API FParams
 					{
-					#define AttachType NCsWeapon::NProjectile::NFire::NVisual::EAttach
+					private:
+
+						using AttachType = NCsWeapon::NProjectile::NFire::NVisual::EAttach;
 
 					private:
 
@@ -174,8 +176,6 @@ namespace NCsWeapon
 						
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-					#undef AttachType
 					};
 				}
 			}
@@ -248,7 +248,9 @@ namespace NCsWeapon
 					*/
 					struct CSWP_API FParams
 					{
-					#define AttachType NCsWeapon::NProjectile::NFire::NVisual::EAttach
+					private:
+
+						using AttachType = NCsWeapon::NProjectile::NFire::NVisual::EAttach;
 
 					private:
 
@@ -279,8 +281,6 @@ namespace NCsWeapon
 						
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-					#undef AttachType
 					};
 				}
 			}
@@ -356,8 +356,10 @@ namespace NCsWeapon
 				*/
 				struct CSWP_API FParams
 				{
-				#define StartParamsType NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams
-				#define ShotParamsType NCsWeapon::NProjectile::NFire::NVisual::NShot::FParams
+				private:
+
+					using StartParamsType = NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams;
+					using ShotParamsType = NCsWeapon::NProjectile::NFire::NVisual::NShot::FParams;
 
 				private:
 	
@@ -391,9 +393,6 @@ namespace NCsWeapon
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-				#undef StartParamsType
-				#undef ShotParamsType
 				};
 			}
 		}

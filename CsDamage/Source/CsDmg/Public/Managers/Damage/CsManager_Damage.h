@@ -89,21 +89,32 @@ class CSDMG_API UCsManager_Damage : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define EventResourceType NCsDamage::NEvent::FResource
-#define EventManagerType NCsDamage::NEvent::FManager
-#define EventType NCsDamage::NEvent::IEvent
+private:
 
-#define ValueResourceType NCsDamage::NValue::FResource
-#define ValueManagerType NCsDamage::NValue::FManager
-#define ValueType NCsDamage::NValue::IValue
+	using EventResourceType = NCsDamage::NEvent::FResource;
+	using EventManagerType = NCsDamage::NEvent::FManager;
+	using EventType = NCsDamage::NEvent::IEvent;
 
-#define RangeResourceType NCsDamage::NRange::FResource
-#define RangeManagerType NCsDamage::NRange::FManager
-#define RangeType NCsDamage::NRange::IRange
+	using ValueResourceType = NCsDamage::NValue::FResource;
+	using ValueManagerType = NCsDamage::NValue::FManager;
+	using ValueType = NCsDamage::NValue::IValue;
 
-#define DataType NCsDamage::NData::IData
+	using RangeResourceType = NCsDamage::NRange::FResource;
+	using RangeManagerType = NCsDamage::NRange::FManager;
+	using RangeType = NCsDamage::NRange::IRange;
 
-#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
+	using ModifierResourceType = NCsDamage::NModifier::FResource;
+	using ModifierManagerType = NCsDamage::NModifier::FManager;
+	using ModifierType = NCsDamage::NModifier::IModifier;
+	using ModifierImplType = NCsDamage::NModifier::EImpl;
+
+	using DataType = NCsDamage::NData::IData;
+	using DataInterfaceMapType = NCsDamage::NData::FInterfaceMap;
+	using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_DamagePtr, DataInterfaceMapType>;
+
+	using CollisionDataType = NCsDamage::NData::NCollision::ICollision;
+
+	using ProcessPayloadType = NCsDamage::NData::NProcess::FPayload;
 
 // Singleton
 #pragma region
@@ -235,8 +246,6 @@ public:
 
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventResourceType* Event);
 
-#define ModifierType NCsDamage::NModifier::IModifier
-
 	EventResourceType* CreateEvent(const FString& Context, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 	FORCEINLINE EventResourceType* CreateEvent(const FString& Context, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
 	{
@@ -257,8 +266,6 @@ public:
 		static TArray<ModifierType*> Modifiers;
 		return CreateEvent(Context, Value, Range, Data, Type, Instigator, Causer, HitResult, Modifiers);
 	}
-
-#undef ModifierType
 
 	EventResourceType* CreateEvent(const FString& Context, const ProcessPayloadType& ProcessPayload);
 
@@ -296,12 +303,10 @@ public:
 
 protected:
 
-#define CollisionDataType NCsDamage::NData::NCollision::ICollision
 	virtual void ProcessDamageEvent_CustomCollision(const EventType* Event, const CollisionDataType* CollisionData)
 	{
 		checkf(0, TEXT("UCsManager_Damage::ProcessDamageEvent_CustomCollision: NOT IMPLEMENTED."));
 	}
-#undef CollisionDataType
 
 #pragma endregion Event
 
@@ -368,12 +373,6 @@ public:
 
 // Modifier
 #pragma region
-
-#define ModifierResourceType NCsDamage::NModifier::FResource
-#define ModifierManagerType NCsDamage::NModifier::FManager
-#define ModifierType NCsDamage::NModifier::IModifier
-#define ModifierImplType NCsDamage::NModifier::EImpl
-
 protected:
 
 	TArray<ModifierManagerType> Manager_Modifiers;
@@ -409,30 +408,19 @@ public:
 	*/
 	virtual const FECsDamageModifier& GetModifierType(const FString& Context, const ModifierType* Modifier);
 
-#undef ModifierResourceType
-#undef ModifierManagerType
-#undef ModifierType
-#undef ModifierImplType
-
 #pragma endregion Modifier
 
 // Data
 #pragma region
 protected:
 
-#define DataHandlerType NCsData::NManager::NHandler::TData
-#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
-
-	DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* DataHandler;
+	DataHandlerType* DataHandler;
 
 	virtual void ConstructDataHandler();
 
 public:
 
-	FORCEINLINE DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* GetDataHandler() const { return DataHandler; }
-
-#undef DataHandlerType
-#undef DataInterfaceMapType
+	FORCEINLINE DataHandlerType* GetDataHandler() const { return DataHandler; }
 
 public:
 
@@ -467,8 +455,6 @@ public:
 	* return			Data that implements the interface: DataType (NCsData::NData::IData).
 	*/
 	DataType* GetSafeData(const FString& Context, const FECsDamageData& Type, void(*Log)(const FString&) = nullptr);
-
-#define ModifierType NCsDamage::NModifier::IModifier
 
 	FORCEINLINE void ProcessData(const FString& Context, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 	{
@@ -507,8 +493,6 @@ public:
 		ProcessData(Context, Value, Range, Data, Type, Instigator, Causer, HitResult, Modifiers);
 	}
 
-#undef ModifierType
-
 	FORCEINLINE void ProcessData(const FString& Context, const ProcessPayloadType& ProcessPayload)
 	{
 		const EventResourceType* Container = CreateEvent(Context, ProcessPayload);
@@ -534,20 +518,4 @@ public:
 	void LogEvent(const EventType* Event);
 
 #pragma endregion Log
-
-#undef EventResourceType
-#undef EventManagerType
-#undef EventType
-
-#undef ValueResourceType
-#undef ValueManagerType
-#undef ValueType
-
-#undef RangeResourceType
-#undef RangeManagerType
-#undef RangeType
-
-#undef DataType
-
-#undef ProcessPayloadType
 };

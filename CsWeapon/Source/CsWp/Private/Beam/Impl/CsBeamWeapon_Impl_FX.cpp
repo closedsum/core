@@ -58,9 +58,8 @@ namespace NCsWeapon
 
 					// FXDataType (NCsWeapon::NBeam::NData::NVisual::NFire::IFire)
 					typedef NCsWeapon::NBeam::NData::NVisual::NFire::IFire FXDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Data))
+					if (FXDataType* FXData = CsWeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Data))
 					{
 						typedef NCsWeapon::NBeam::NData::NVisual::NFire::NParams::IParams ParamsType;
 						typedef NCsWeapon::NBeam::NData::NVisual::NFire::NParams::EAttach AttachType;

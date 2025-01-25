@@ -1,7 +1,7 @@
 #pragma once
 #include "GameFramework/Actor.h"
 // Interfaces
-#include "Managers/Time/CsUpdate.h"
+#include "Update/CsUpdate.h"
 #include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsWeapon.h"

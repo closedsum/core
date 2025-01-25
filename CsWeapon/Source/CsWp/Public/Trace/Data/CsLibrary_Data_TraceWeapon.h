@@ -41,3 +41,5 @@ namespace NCsWeapon
 		}
 	}
 }
+
+using CsTraceWeaponDataLibrary = NCsWeapon::NTrace::NData::FLibrary;

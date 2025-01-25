@@ -4,7 +4,7 @@
 // Weapon
 #include "CsWeapon.h"
 // Update
-#include "Managers/Time/CsUpdate.h"
+#include "Update/CsUpdate.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsBeamWeapon)
 

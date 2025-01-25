@@ -8,7 +8,7 @@
 
 struct FCsInterfaceMap;
 
-// NCsDamage::NValue::IValue
+// (ValueType) NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 
 namespace NCsDamage
@@ -17,74 +17,71 @@ namespace NCsDamage
 	{
 		namespace NPoint
 		{
-		#define DataType NCsData::IData
-		#define DamageDataType NCsDamage::NData::IData
-
-			/**
-			* "Emulates" an object by mimicking the interfaces and having pointers to the appropriate
-			* members. The idea behind this struct is to keep the code a cleaner and more readable.
-			*/
-			struct CSDMG_API FProxy : public DataType,
-									  public DamageDataType
+			namespace  NProxy
 			{
-			public:
+				/**
+				* "Emulates" an object by mimicking the interfaces and having pointers to the appropriate
+				* members. The idea behind this struct is to keep the code a cleaner and more readable.
+				*/
+				struct CSDMG_API FProxy : public CsDataType,
+										  public CsDamageDataType
+				{
+				public:
 
-				static const FName Name;
+					static const FName Name;
 
-			#define ValueType NCsDamage::NValue::IValue
+				private:
 
-			private:
+					using ValueType = NCsDamage::NValue::IValue;
 
-				UObject* Outer;
+				private:
 
-			// ICsGetInterfaceMap
+					UObject* Outer;
 
-				FCsInterfaceMap* InterfaceMap;
+				// ICsGetInterfaceMap
 
-			public:
+					FCsInterfaceMap* InterfaceMap;
 
-			// DamageDataType (NCsDamage::NData::IData)
+				public:
 
-				ValueType* Value;
+				// CsDamageDataType (NCsDamage::NData::IData)
 
-				FECsDamageType* Type;
+					ValueType* Value;
 
-			public:
+					FECsDamageType* Type;
 
-				FProxy();
-				~FProxy();
+				public:
 
-				FORCEINLINE void SetOuter(UObject* InOuter) { Outer = InOuter; }
+					FProxy();
+					~FProxy();
 
-				FORCEINLINE UObject* _getUObject() const { return Outer; }
+					FORCEINLINE void SetOuter(UObject* InOuter) { Outer = InOuter; }
 
-			// ICsGetInterfaceMap
-			#pragma region
-			public:
+					FORCEINLINE UObject* _getUObject() const { return Outer; }
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+				// ICsGetInterfaceMap
+				#pragma region
+				public:
 
-			#pragma endregion ICsGetInterfaceMap
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-			public:
+				#pragma endregion ICsGetInterfaceMap
 
-				void SetValue(float* InValue);
-				void SetType(FECsDamageType* InValue) { Type = InValue; }
+				public:
 
-			// DamageDataType (NCsDamage::NData::IData)
-			#pragma region
-			public:
+					void SetValue(float* InValue);
+					void SetType(FECsDamageType* InValue) { Type = InValue; }
 
-				FORCEINLINE const ValueType* GetValue() const { return Value; }
-				FORCEINLINE const FECsDamageType& GetType() const { return const_cast<FECsDamageType&>(*Type); }
+				// DamageDataType (NCsDamage::NData::IData)
+				#pragma region
+				public:
 
-			#pragma endregion DamageDataType (NCsDamage::NData::IData)
+					FORCEINLINE const ValueType* GetValue() const { return Value; }
+					FORCEINLINE const FECsDamageType& GetType() const { return const_cast<FECsDamageType&>(*Type); }
 
-			#undef ValueType
-			};
-
-		#undef DataType
-		#undef DamageDataType
+				#pragma endregion DamageDataType (NCsDamage::NData::IData)
+				};
+			}
 		}
 	}
 }

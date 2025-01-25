@@ -26,7 +26,13 @@ namespace NCsDamage
 
 			static const FName Name;
 
-		#define ValueType NCsDamage::NValue::IValue
+		private:
+
+			// Allow clearer names without name collisions
+			struct _
+			{
+				using ValueType = NCsDamage::NValue::IValue;
+			};
 
 		public:
 
@@ -37,7 +43,7 @@ namespace NCsDamage
 			*
 			* return Damage Value.
 			*/
-			virtual const ValueType* GetValue() const = 0;
+			virtual const _::ValueType* GetValue() const = 0;
 
 			/**
 			* Get the type of damage.
@@ -45,11 +51,11 @@ namespace NCsDamage
 			* return Damage Type.
 			*/
 			virtual const FECsDamageType& GetType() const = 0;
-
-		#undef ValueType
 		};
 	}
 }
+
+using CsDamageDataType = NCsDamage::NData::IData;
 
 UINTERFACE(BlueprintType)
 class CSDMG_API UCsData_Damage : public UCsGetInterfaceMap
@@ -72,7 +78,13 @@ public:
 
 	static const FName Name;
 
-#define ValueType NCsDamage::NValue::IValue
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using ValueType = NCsDamage::NValue::IValue;
+	};
 
 public:
 
@@ -81,7 +93,7 @@ public:
 	* 
 	* return Damage Value.
 	*/
-	virtual const ValueType* GetValue() const = 0;
+	virtual const _::ValueType* GetValue() const = 0;
 
 	/**
 	* Get the type of damage.
@@ -89,6 +101,4 @@ public:
 	* return Damage Type.
 	*/
 	virtual const FECsDamageType& GetType() const = 0;
-
-#undef ValueType
 };

@@ -171,6 +171,55 @@ namespace NCsActor
 		return nullptr;
 	}
 
+	AActor* FLibrary::GetSafeByClass(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, LogLevel)
+	{
+		UWorld* World = CsWorldLibrary::GetSafe(Context, WorldContext, Log);
+
+		if (!IsValid(World))
+			return nullptr;
+
+		CS_IS_SUBCLASS_OF_NULL_RET_NULL(ActorClass, AActor)
+
+	#if UE_BUILD_SHIPPING
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			return A;
+		}
+	#else
+		AActor* Actor = nullptr;
+		
+		for (TActorIterator<AActor> Itr(World, ActorClass); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+
+			if (!Actor)
+			{
+				Actor = A;
+			}
+			else
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: There are more than one Actor of type ActorClass: %s."), *Context, *(ActorClass.Get()->GetName())));
+				return nullptr;
+			}
+		}
+
+		if (Actor)
+			return Actor;
+	#endif // UE_BUILD_SHIPPING
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actor with Tag: %s."), *Context, *(ActorClass.Get()->GetName())));
+		return nullptr;
+	}
+
 	AActor* FLibrary::GetByClassAndTagChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, const FName& Tag)
 	{
 		UWorld* World = CsWorldLibrary::GetChecked(Context, WorldContext);

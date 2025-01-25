@@ -54,9 +54,7 @@ const FECsProjectile& UCsScriptLibrary_Data_Weapon_GetProjectileType::GetProject
 		return EMCsProjectile::Get().GetMAX();
 	}
 
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	ICsData_GetProjectileType* Data_GetProjectileType = WeaponDataLibrary::GetSafeInterfaceChecked<ICsData_GetProjectileType>(Ctxt, Data);
+	ICsData_GetProjectileType* Data_GetProjectileType = CsWeaponDataLibrary::GetSafeInterfaceChecked<ICsData_GetProjectileType>(Ctxt, Data);
 
 	if (!Data_GetProjectileType)
 	{

@@ -10,27 +10,24 @@ namespace NCsProjectile
 {
 	namespace NCache
 	{
-		#define CacheType NCsProjectile::NCache::ICache
-
-		#define PooledCacheType NCsPooledObject::NCache::ICache
-		void FLibrary::SetLifeTimeChecked(const FString& Context, PooledCacheType* PooledCache, const float& LifeTime)
+		namespace NLibrary
 		{
-		#undef PooledCacheType
-
-			typedef NCsPooledObject::NCache::FLibrary CacheLibrary;
-
-			check(CacheLibrary::ImplementsChecked<CacheType>(Context, PooledCache));
-
-			typedef NCsProjectile::NCache::FImpl CacheImplType;
-
-			if (CacheImplType* Impl = CacheLibrary::SafePureStaticCastChecked<CacheImplType>(Context, PooledCache))
+			using CacheLibrary = NCsPooledObject::NCache::NLibrary::FLibrary;
+			using PooledCacheType = NCsPooledObject::NCache::ICache;
+			using CacheType = NCsProjectile::NCache::ICache;
+			using CacheImplType = NCsProjectile::NCache::NImpl::FImpl;
+	
+			void FLibrary::SetLifeTimeChecked(const FString& Context, PooledCacheType* PooledCache, const float& LifeTime)
 			{
-				Impl->SetLifeTimeChecked(Context, LifeTime);
-				return;
-			}
-			checkf(0, TEXT("%s: Failed to set LifeTime for PooledCache."), *Context);
-		}
+				check(CacheLibrary::ImplementsChecked<CacheType>(Context, PooledCache));
 
-		#undef CacheType
+				if (CacheImplType* Impl = CacheLibrary::SafePureStaticCastChecked<CacheImplType>(Context, PooledCache))
+				{
+					Impl->SetLifeTimeChecked(Context, LifeTime);
+					return;
+				}
+				checkf(0, TEXT("%s: Failed to set LifeTime for PooledCache."), *Context);
+			}
+		}
 	}
 }

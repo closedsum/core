@@ -2,15 +2,18 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-#include "CoreMinimal.h"
+// Types
 #include "CsMacro_Namespace.h"
+#include "CsMacro_Cached.h"
 
 class UObject;
 
-// NCsDamage::NEvent::FResource
+// ResourceType (NCsDamage::NEvent::FResource)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, FResource)
-// NCsDamage::NEvent::IEvent
+// EventType (NCsDamage::NEvent::IEvent)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_2(NCsDamage, NEvent, Allocated)
 
 namespace NCsDamage
 {
@@ -18,18 +21,25 @@ namespace NCsDamage
 	{
 		/**
 		* Container for an allocated object which implements the interface
-		* NCsDamage::NEvent::IEvent. This container is used to some what cleanly free
+		* EventType (NCsDamage::NEvent::IEvent). This container is used to some what cleanly free
 		* the object after use.
 		*/
 		struct CSDMG_API FAllocated
 		{
+		private:
+
+			CS_USING_CACHED_FUNCTION_NAME_NESTED_2(NCsDamage, NEvent, Allocated);
+
+			using ResourceType = NCsDamage::NEvent::FResource;
+			using EventType =  NCsDamage::NEvent::IEvent;
+
 		public:
 
 			UObject* Root;
 
-			FResource* Container;
+			ResourceType* Container;
 
-			IEvent* Event;
+			EventType* Event;
 
 			FAllocated() :
 				Root(nullptr),
@@ -38,11 +48,11 @@ namespace NCsDamage
 			{
 			}
 
-			FORCEINLINE const IEvent* GetEvent() const { return Event; }
+			FORCEINLINE const EventType* GetEvent() const { return Event; }
 
-			void Set(UObject* InRoot, FResource* InContainer);
+			void Set(UObject* InRoot, ResourceType* InContainer);
 
-			void Copy(UObject* InRoot, const IEvent* From);
+			void Copy(UObject* InRoot, const EventType* From);
 
 			void Copy(const FAllocated& From);
 

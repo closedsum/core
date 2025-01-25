@@ -11,8 +11,8 @@
 // FCsPrjData_DamagePoint
 #pragma region
 
-// NCsDamage::NData::NPoint::FProxy
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NPoint, FProxy)
+// PointDataProxyType (NCsDamage::NData::NPoint::NProxy::FProxy)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NPoint, NProxy, FProxy)
 
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsPrjData_DamagePoint
@@ -35,7 +35,7 @@ public:
 
 private:
 
-	typedef NCsDamage::NData::NPoint::FProxy PointDataProxyType;
+	using PointDataProxyType = NCsDamage::NData::NPoint::NProxy::FProxy;
 
 public:
 

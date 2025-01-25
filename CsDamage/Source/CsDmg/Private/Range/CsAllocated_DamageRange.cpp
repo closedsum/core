@@ -33,7 +33,6 @@ namespace NCsDamage
 		#define USING_NS_CACHED using namespace NCsDamage::NRange::NAllocated::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsDamage::NRange::NAllocated::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define DamageManagerLibrary NCsDamage::NManager::FLibrary
 
 		FAllocated::~FAllocated()
 		{
@@ -48,7 +47,7 @@ namespace NCsDamage
 			CS_IS_PTR_NULL_CHECKED(From)
 
 			Root	  = InRoot;
-			Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From);
+			Container = CsDamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From);
 			Range	  = Container->Get();
 		}
 
@@ -71,7 +70,7 @@ namespace NCsDamage
 			}
 
 			Root	  = InRoot;
-			Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From->GetRange());
+			Container = CsDamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From->GetRange());
 			Range	  = Container->Get();
 		}
 
@@ -86,7 +85,7 @@ namespace NCsDamage
 			if (From->GetContainer())
 			{
 				Root	  = From->GetRoot();
-				Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From->GetContainer());
+				Container = CsDamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From->GetContainer());
 				Range	  = Container->Get();
 			}
 		}
@@ -99,7 +98,7 @@ namespace NCsDamage
 			{
 				CS_IS_PTR_NULL_CHECKED(GetRoot())
 
-				DamageManagerLibrary::DeallocateRangeChecked(Context, GetRoot(), Container);
+				CsDamageManagerLibrary::DeallocateRangeChecked(Context, GetRoot(), Container);
 			}
 
 			Root	  = nullptr;
@@ -109,6 +108,5 @@ namespace NCsDamage
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef DamageManagerLibrary
 	}
 }

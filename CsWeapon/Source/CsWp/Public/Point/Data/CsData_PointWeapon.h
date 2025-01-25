@@ -98,6 +98,8 @@ namespace NCsWeapon
 	}
 }
 
+using CsPointWeaponDataType = NCsWeapon::NPoint::NData::IData;
+
 UINTERFACE(BlueprintType)
 class CSWP_API UCsData_PointWeapon : public UCsGetInterfaceMap
 {

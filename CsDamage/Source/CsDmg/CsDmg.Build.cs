@@ -37,7 +37,8 @@ public class CsDmg : ModuleRules
                     "CsCoreLibrary",
                     "CsData",
                     "CsModifier",
-                    "CsPhysics"
+                    "CsPhysics",
+                    "CsTemp" // TODO: Temp
                 }
             );
 

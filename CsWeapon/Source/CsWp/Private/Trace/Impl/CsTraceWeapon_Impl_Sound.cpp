@@ -56,9 +56,8 @@ namespace NCsWeapon
 
 					// SoundDataType (NCsWeapon::NTrace::NData::NSound::NFire::IFire)
 					typedef NCsWeapon::NTrace::NData::NSound::NFire::IFire SoundDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Data))
+					if (SoundDataType* SoundData = CsWeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Data))
 					{
 						typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
 
@@ -90,7 +89,7 @@ namespace NCsWeapon
 
 					// ImpactSoundDataType (NCsTrace::NData::NSound::NImpact::IImpact)
 					typedef NCsTrace::NData::NSound::NImpact::IImpact ImpactSoundDataType;
-					typedef NCsTrace::NData::FLibrary TraceDataLibrary;
+					typedef NCsTrace::NData::NLibrary::FLibrary TraceDataLibrary;
 					typedef NCsCollision::FLibrary CollisionLibrary;
 
 					if (ImpactSoundDataType* ImpactSoundData = TraceDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))

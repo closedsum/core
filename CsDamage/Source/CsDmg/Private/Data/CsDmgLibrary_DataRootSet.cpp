@@ -12,6 +12,8 @@ namespace NCsDamage
 {
 	namespace NDataRootSet
 	{
+		using MemberType = FCsDmgDataRootSet::EMember;
+
 		const FCsDmgDataRootSet* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext)
 		{
 			return NCsDataRootSet::FLibrary::GetSafe<FCsDmgDataRootSet, ICsDmgGetDataRootSet, &ICsDmgGetDataRootSet::GetCsDmgDataRootSet>(Context, WorldContext, &NCsDamage::FLog::Warning);
@@ -26,8 +28,6 @@ namespace NCsDamage
 		{
 			return NCsDataRootSet::FLibrary::GetChecked<FCsDmgDataRootSet, ICsDmgGetDataRootSet, &ICsDmgGetDataRootSet::GetCsDmgDataRootSet>(Context, WorldContext);
 		}
-
-		#define MemberType FCsDmgDataRootSet::EMember
 
 		UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const MemberType& Member)
 		{
@@ -80,7 +80,5 @@ namespace NCsDamage
 			}
 			return false;
 		}
-
-		#undef MemberType
 	}
 }

@@ -39,9 +39,7 @@ UObject* UCsScriptLibrary_Manager_Damage::GetData(const FString& Context, const 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetData : Context;
 
-	typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-	return DamageManagerLibrary::GetSafeDataAsObject(Context, WorldContextObject, Type);
+	return CsDamageManagerLibrary::GetSafeDataAsObject(Context, WorldContextObject, Type);
 }
 
 UObject* UCsScriptLibrary_Manager_Damage::GetDataByName(const FString& Context, const UObject* WorldContextObject, const FName& Name)
@@ -50,9 +48,7 @@ UObject* UCsScriptLibrary_Manager_Damage::GetDataByName(const FString& Context, 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetDataByName : Context;
 
-	typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-	return DamageManagerLibrary::GetSafeDataAsObject(Context, WorldContextObject, Name);
+	return CsDamageManagerLibrary::GetSafeDataAsObject(Context, WorldContextObject, Name);
 }
 
 bool UCsScriptLibrary_Manager_Damage::ProcessData(const FString& Context, const UObject* WorldContextObject, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
@@ -61,7 +57,5 @@ bool UCsScriptLibrary_Manager_Damage::ProcessData(const FString& Context, const 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::ProcessData : Context;
 
-	typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-	return DamageManagerLibrary::SafeProcessData(Context, WorldContextObject, DataName, Instigator, Causer, HitResult);
+	return CsDamageManagerLibrary::SafeProcessData(Context, WorldContextObject, DataName, Instigator, Causer, HitResult);
 }

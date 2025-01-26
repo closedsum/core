@@ -44,6 +44,11 @@ namespace NCsSkin
 			using SetMeshAndMIDsResultType = NCsSkin::NData::NVisual::FLibrary::FSetMeshAndMIDs::EResult;
 			using SetMaterialsResultType = NCsSkin::NData::NVisual::FLibrary::FSetMaterials::FResult;
 
+			using MaterialWithRangeParamsType = NCsMaterial::NInterface::FWithRangeParameters;
+
+			using AttachmentSkinDataType = NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment;
+			using AttachmentType = NCsStaticMesh::NAttachment::FAttachment;
+
 			FString FLibrary::PrintObjectAndClass(const CsSkinDataType* Skin)
 			{
 				if (UObject* O = Skin->_getUObject())
@@ -95,11 +100,9 @@ namespace NCsSkin
 
 				if (MaterialWithParamsSkin)
 				{
-					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
+					const TArray<MaterialWithRangeParamsType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
-					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
-
-					for (const MaterialType& Material : Materials)
+					for (const MaterialWithRangeParamsType& Material : Materials)
 					{
 						check(Material.IsValidChecked(Context));
 					}
@@ -132,10 +135,8 @@ namespace NCsSkin
 				if (MaterialWithParamsSkin &&
 					StaticMeshSkin)
 				{
-					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
-
-					UStaticMesh* Mesh					  = StaticMeshSkin->GetStaticMesh();
-					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
+					UStaticMesh* Mesh									 = StaticMeshSkin->GetStaticMesh();
+					const TArray<MaterialWithRangeParamsType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
 					checkf(Materials.Num() == Mesh->GetStaticMaterials().Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->StaticMaterials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->GetStaticMaterials().Num());
 				}
@@ -152,10 +153,8 @@ namespace NCsSkin
 				if (MaterialWithParamsSkin &&
 					SkeletalMeshSkin)
 				{
-					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
-
-					USkeletalMesh* Mesh					  = SkeletalMeshSkin->GetSkeletalMesh();
-					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
+					USkeletalMesh* Mesh									 = SkeletalMeshSkin->GetSkeletalMesh();
+					const TArray<MaterialWithRangeParamsType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
 					checkf(Materials.Num() == Mesh->GetMaterials().Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->GetMaterials().Num());
 				}
@@ -195,11 +194,9 @@ namespace NCsSkin
 
 				if (MaterialWithParamsSkin)
 				{
-					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
+					const TArray<MaterialWithRangeParamsType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
-					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
-
-					for (const MaterialType& Material : Materials)
+					for (const MaterialWithRangeParamsType& Material : Materials)
 					{
 						if (!Material.IsValid(Context, Log))
 							return false;
@@ -245,10 +242,8 @@ namespace NCsSkin
 				if (MaterialWithParamsSkin &&
 					StaticMeshSkin)
 				{
-					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
-
-					UStaticMesh* Mesh					  = StaticMeshSkin->GetStaticMesh();
-					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
+					UStaticMesh* Mesh									 = StaticMeshSkin->GetStaticMesh();
+					const TArray<MaterialWithRangeParamsType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
 					if (Materials.Num() != Mesh->GetStaticMaterials().Num())
 					{
@@ -273,10 +268,8 @@ namespace NCsSkin
 				if (MaterialWithParamsSkin &&
 					SkeletalMeshSkin)
 				{
-					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
-
-					USkeletalMesh* Mesh					  = SkeletalMeshSkin->GetSkeletalMesh();
-					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
+					USkeletalMesh* Mesh									 = SkeletalMeshSkin->GetSkeletalMesh();
+					const TArray<MaterialWithRangeParamsType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
 					if (Materials.Num() != Mesh->GetMaterials().Num())
 					{
@@ -308,7 +301,7 @@ namespace NCsSkin
 				FCsInterfaceMap* InterfaceMap = Skin->GetInterfaceMap();
 				const FName& RootName		  = InterfaceMap->GetRootName();
 
-				typedef NCsSkin::NData::NVisual::FInterfaceMap DataInterfaceMapType;
+				using DataInterfaceMapType = NCsSkin::NData::NVisual::FInterfaceMap;
 
 				if (RootName == DataInterfaceMapType::Name)
 				{
@@ -371,9 +364,7 @@ namespace NCsSkin
 				if (!SetSafeStaticMesh(Context, Skin, Component, Log))
 					return false;
 
-				typedef NCsSkin::NData::NVisual::FLibrary::FSetMaterials::FResult ResultType;
-
-				ResultType Result = SetSafeMaterials(Context, Skin, Component, OutMIDs, Log);
+				SetMaterialsResultType Result = SetSafeMaterials(Context, Skin, Component, OutMIDs, Log);
 				return Result.bSuccess;
 			}
 
@@ -428,11 +419,8 @@ namespace NCsSkin
 
 			int32 FLibrary::GetNumAttachmentsChecked(const FString& Context, const UObject* WorldContext, const CsSkinDataType* Skin)
 			{
-				typedef NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment AttachmentSkinType;
-				typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
-
-				const AttachmentSkinType* AttachmentSkin  = GetInterfaceChecked<AttachmentSkinType>(Context, Skin);
-				const TArray<AttachmentType>& Attachments = AttachmentSkin->GetStaticMeshAttachments();
+				const AttachmentSkinDataType* AttachmentSkin  = GetInterfaceChecked<AttachmentSkinDataType>(Context, Skin);
+				const TArray<AttachmentType>& Attachments	  = AttachmentSkin->GetStaticMeshAttachments();
 
 				return Attachments.Num();
 			}
@@ -464,15 +452,13 @@ namespace NCsSkin
 				// MaterialWithParameters
 				if (const CsMaterialWithParamsSkinDataType* MaterialWithParamsSkin = GetSafeInterfaceChecked<CsMaterialWithParamsSkinDataType>(Context, Skin))
 				{
-					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
-
-					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
+					const TArray<MaterialWithRangeParamsType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
 					const int32 Count = Materials.Num();
 
 					for (int32 I = 0; I < Count; ++I)
 					{
-						const MaterialType& Material = Materials[I];
+						const MaterialWithRangeParamsType& Material = Materials[I];
 
 						Material.SetChecked(Context, Component, I);
 					}
@@ -495,15 +481,13 @@ namespace NCsSkin
 					// MaterialWithParameters
 					if (const CsMaterialWithParamsSkinDataType* MaterialWithParamsSkin = GetSafeInterfaceChecked<CsMaterialWithParamsSkinDataType>(Context, Skin))
 					{
-						typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
-
-						const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
+						const TArray<MaterialWithRangeParamsType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
 						const int32 Count = Materials.Num();
 
 						for (int32 I = 0; I < Count; ++I)
 						{
-							const MaterialType& Material = Materials[I];
+							const MaterialWithRangeParamsType& Material = Materials[I];
 
 							if (!Material.SetSafe(Context, Component, I))
 								return false;
@@ -528,9 +512,7 @@ namespace NCsSkin
 				if (!SetSafeSkeletalMesh(Context, Skin, Component, Log))
 					return false;
 
-				typedef NCsSkin::NData::NVisual::FLibrary::FSetMaterials::FResult ResultType;
-
-				ResultType Result = SetSafeMaterials(Context, Skin, Component, OutMIDs, Log);
+				SetMaterialsResultType Result = SetSafeMaterials(Context, Skin, Component, OutMIDs, Log);
 				return Result.bSuccess;
 			}
 
@@ -638,7 +620,7 @@ namespace NCsSkin
 					CsMIDLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials(), OutMIDs);
 
 					Result.bSuccess			= true;
-					Result.Type				= FSetMaterials::ESkin::Material;
+					Result.Type				= SetMaterialsSkinType::Material;
 					Result.MaterialSkinData = const_cast<CsMaterialSkinDataType*>(MaterialSkin);
 					return Result;
 				}
@@ -648,9 +630,7 @@ namespace NCsSkin
 					// Clear existing MIDs from OutMIDs
 					CsMIDLibrary::Destroy(OutMIDs);
 
-					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
-
-					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
+					const TArray<MaterialWithRangeParamsType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
 					const int32 Count = Materials.Num();
 
@@ -658,14 +638,14 @@ namespace NCsSkin
 
 					for (int32 I = 0; I < Count; ++I)
 					{
-						const MaterialType& Material   = Materials[I];
-						UMaterialInstanceDynamic*& MID = OutMIDs.AddDefaulted_GetRef();
+						const MaterialWithRangeParamsType& Material = Materials[I];
+						UMaterialInstanceDynamic*& MID				= OutMIDs.AddDefaulted_GetRef();
 
 						Material.SetChecked(Context, Component, I, MID);
 					}
 
 					Result.bSuccess					  = true;
-					Result.Type						  = FSetMaterials::ESkin::MaterialWithParameters;
+					Result.Type						  = SetMaterialsSkinType::MaterialWithParameters;
 					Result.MaterialWithParamsSkinData = const_cast<CsMaterialWithParamsSkinDataType*>(MaterialWithParamsSkin);
 					return Result;
 				}
@@ -694,9 +674,7 @@ namespace NCsSkin
 					// Clear existing MIDs from OutMIDs
 					CsMIDLibrary::Destroy(OutMIDs);
 
-					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
-
-					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
+					const TArray<MaterialWithRangeParamsType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
 					const int32 Count = Materials.Num();
 
@@ -704,8 +682,8 @@ namespace NCsSkin
 
 					for (int32 I = 0; I < Count; ++I)
 					{
-						const MaterialType& Material   = Materials[I];
-						UMaterialInstanceDynamic*& MID = OutMIDs.AddDefaulted_GetRef();
+						const MaterialWithRangeParamsType& Material = Materials[I];
+						UMaterialInstanceDynamic*& MID				= OutMIDs.AddDefaulted_GetRef();
 
 						if (!Material.SetSafe(Context, Component, I, MID, Log))
 							return Result;

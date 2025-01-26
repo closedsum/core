@@ -29,15 +29,12 @@ namespace NCsViewport
 					}
 				}
 
-			#define TraceManagerLibrary NCsTrace::NManager::FLibrary
-			#define ViewportLibrary NCsViewport::NLocal::NPlayer::FLibrary
+			using ResponseType = NCsTrace::NResponse::FResponse;
+			using RequestType = NCsTrace::NRequest::FRequest;
 
 			// Trace
 			#pragma region
-
-			#define ResponseType NCsTrace::NResponse::FResponse
-			#define RequestType NCsTrace::NRequest::FRequest
-
+			
 			ResponseType* FLibrary::TraceChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance /*=1000000.0f*/)
 			{
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(ScreenPosition.X, 0.0f)
@@ -46,7 +43,7 @@ namespace NCsViewport
 				FVector3f WorldPosition;
 				FVector3f WorldDirection;
 
-				bool Success = ViewportLibrary::DeprojectScreenToWorldChecked(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection);
+				bool Success = CsLocalPlayerViewportLibrary::DeprojectScreenToWorldChecked(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection);
 
 				check(Success);
 			
@@ -55,7 +52,7 @@ namespace NCsViewport
 				Request->Start = WorldPosition;
 				Request->End   = WorldPosition + Distance * WorldDirection;
 
-				return TraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
+				return CsTraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
 			}
 
 			ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance /*=1000000.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -66,7 +63,7 @@ namespace NCsViewport
 				FVector3f WorldPosition;
 				FVector3f WorldDirection;
 
-				if (!ViewportLibrary::SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection, Log))
+				if (!CsLocalPlayerViewportLibrary::SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection, Log))
 					return nullptr;
 
 				CS_IS_FLOAT_GREATER_THAN_RET_NULL(Distance, 0.0f)
@@ -74,7 +71,7 @@ namespace NCsViewport
 				Request->Start = WorldPosition;
 				Request->End   = WorldPosition + Distance * WorldDirection;
 
-				return TraceManagerLibrary::SafeTrace(Context, WorldContext, Request, Log);
+				return CsTraceManagerLibrary::SafeTrace(Context, WorldContext, Request, Log);
 			}
 
 			ResponseType* FLibrary::SafeTrace(const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance /*=1000000.0f*/)
@@ -86,13 +83,7 @@ namespace NCsViewport
 				return SafeTrace(Context, WorldContext, ScreenPosition, Request, Distance, nullptr);
 			}
 
-			#undef ResponseType
-			#undef RequestType
-
 			#pragma endregion Trace
-
-			#undef TraceManagerLibrary
-			#undef ViewportLibrary
 			}
 		}
 	}

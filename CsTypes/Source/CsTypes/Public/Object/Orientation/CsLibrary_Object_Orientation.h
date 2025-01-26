@@ -4,8 +4,6 @@
 #pragma once
 // Types
 #include "CsMacro_Log.h"
-// Log
-#include "Utility/CsLog.h"
 
 class UObject;
 class ICsObject_Orientation;
@@ -17,7 +15,7 @@ namespace NCsObject
 		/**
 		* Library for an Object that implements the interface: ICsObject_Orientation
 		*/
-		class CSCORE_API FLibrary final
+		class CSTYPES_API FLibrary final
 		{
 		private:
 

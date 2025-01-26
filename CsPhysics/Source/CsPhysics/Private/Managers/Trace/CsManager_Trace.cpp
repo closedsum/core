@@ -123,10 +123,10 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 #define USING_NS_CACHED using namespace NCsManagerTrace::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerTrace::NCached; \
 	const FString& Context = Str::__FunctionName
-#define RequestContainerType NCsTrace::NRequest::FResource
-#define RequestType NCsTrace::NRequest::FRequest
-#define ResponseContainerType NCsTrace::NResponse::FResource
-#define ResponseType NCsTrace::NResponse::FResponse
+using RequestContainerType = NCsTrace::NRequest::NResource::FResource;
+using RequestType = NCsTrace::NRequest::FRequest;
+using ResponseContainerType = NCsTrace::NResponse::NResource::FResource;
+using ResponseType = NCsTrace::NResponse::FResponse;
 
 // Singleton
 #pragma region
@@ -1222,7 +1222,3 @@ void UCsManager_Trace::LogTransaction(const FString& Context, const ECsTraceTran
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef RequestContainerType
-#undef RequestType
-#undef ResponseContainerType
-#undef ResponseType

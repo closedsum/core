@@ -18,7 +18,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualStaticMeshImplSlice)
 
-#define SliceType NCsSkin::NData::NVisual::NStaticMesh::FImplSlice
+using SliceType = NCsSkin::NData::NVisual::NStaticMesh::FImplSlice;
 
 void FCsData_Skin_VisualStaticMeshImplSlice::CopyToSlice(SliceType* Slice)
 {
@@ -34,7 +34,7 @@ SliceType* FCsData_Skin_VisualStaticMeshImplSlice::AddSafeSliceAsValue(const FSt
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-	typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh InterfaceType;
+	using InterfaceType = NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh;
 
 	if (InterfaceMap->Implements(InterfaceType::Name))
 	{
@@ -123,7 +123,7 @@ namespace NCsSkin
 
 					CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-					typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh InterfaceType;
+					using InterfaceType = NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh;
 
 					if (InterfaceMap->Implements(InterfaceType::Name))
 					{
@@ -139,7 +139,7 @@ namespace NCsSkin
 					bool Success	  = false;
 
 					// Try FCsData_Skin_VisualStaticMeshImplSlice
-					typedef FCsData_Skin_VisualStaticMeshImplSlice StructSliceType;
+					using StructSliceType = FCsData_Skin_VisualStaticMeshImplSlice;
 
 					if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualStaticMeshSlice, nullptr))
 					{

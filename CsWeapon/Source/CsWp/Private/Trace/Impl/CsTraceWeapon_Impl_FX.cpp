@@ -123,9 +123,8 @@ namespace NCsWeapon
 
 					// TracerVisualDataType (NCsTrace::NData::NVisual::NTracer::ITracer)
 					typedef NCsTrace::NData::NVisual::NTracer::ITracer TracerVisualDataType;
-					typedef NCsTrace::NData::NLibrary::FLibrary TraceDataLibrary;
 
-					if (TracerVisualDataType* TracerVisualData = TraceDataLibrary::GetSafeInterfaceChecked<TracerVisualDataType>(Context, Data))
+					if (TracerVisualDataType* TracerVisualData = CsTraceDataLibrary::GetSafeInterfaceChecked<TracerVisualDataType>(Context, Data))
 					{
 						typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
 
@@ -244,9 +243,8 @@ namespace NCsWeapon
 
 					// ImpactVisualDataType (NCsTrace::NData::NVisual::NImpact::IImpact)
 					typedef NCsTrace::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
-					typedef NCsTrace::NData::NLibrary::FLibrary TraceDataLibrary;
 
-					if (ImpactVisualDataType* ImpactVisualData = TraceDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
+					if (ImpactVisualDataType* ImpactVisualData = CsTraceDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 					{
 						// Get Physics Surface
 						EPhysicalSurface SurfaceType = NCsHitResult::GetPhysSurfaceType(Hit);

@@ -3,6 +3,7 @@
 
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Modifier/Types/CsTypes_WeaponModifier.h"
 // Pool
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
@@ -32,32 +33,32 @@ class ICsWeapon;
 
 namespace NCsWeapon
 {
-#define ManagerMapType NCsPooledObject::NManager::TTMap
-#define PayloadType NCsWeapon::NPayload::IPayload
-
-	class CSWP_API FManager : public ManagerMapType<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon>
+	namespace NInternal
 	{
-	private:
-
-		typedef ManagerMapType<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon> Super;
-
-	public:
-
-		FManager();
-
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsWeapon& Type) const override
+		using PayloadType = NCsWeapon::NPayload::IPayload;
+		using ManagerMapType =NCsPooledObject::NManager::TTMap<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon>;
+		
+		class CSWP_API FManager : public ManagerMapType
 		{
-			return Type.GetName();
-		}
+		private:
 
-		FORCEINLINE virtual bool IsValidKey(const FECsWeapon& Type) const override
-		{
-			return EMCsWeapon::Get().IsValidEnum(Type);
-		}
-	};
+			using Super = ManagerMapType;
 
-#undef ManagerMapType
-#undef PayloadType
+		public:
+
+			FManager();
+
+			FORCEINLINE virtual const FString& KeyTypeToString(const FECsWeapon& Type) const override
+			{
+				return Type.GetName();
+			}
+
+			FORCEINLINE virtual bool IsValidKey(const FECsWeapon& Type) const override
+			{
+				return EMCsWeapon::Get().IsValidEnum(Type);
+			}
+		};
+	}
 }
 
 #pragma endregion Internal
@@ -94,6 +95,8 @@ struct FCsInterfaceMap;
 // NCsWeapon::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FInterfaceMap)
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsManager_Weapon)
+
 class UDataTable;
 struct FCsWeaponPtr;
 
@@ -108,8 +111,10 @@ class CSWP_API UCsManager_Weapon : public UObject
 
 private:
 
-	using ManagerType = NCsWeapon::FManager;
-	using ManagerParamsType = NCsWeapon::FManager::FParams;
+	CS_USING_CACHED_FUNCTION_NAME(CsManager_Weapon);
+
+	using ManagerType = NCsWeapon::NInternal::FManager;
+	using ManagerParamsType = NCsWeapon::NInternal::FManager::FParams;
 	using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 	using PayloadType = NCsWeapon::NPayload::IPayload;
@@ -213,6 +218,29 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+// StartPlay
+#pragma region
+public:
+
+	void StartPlay();
+
+protected:
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "CsWp|Managers|Weapon|Start Play", meta = (DisplayName = "Start Play"))
+	void ReceiveStartPlay();
+
+public:
+
+	FORCEINLINE bool HasStartedPlay() const { return bStartedPlay; }
+
+private:
+
+	bool bStartedPlay;
+
+	TArray<AActor*> WeaponsQueuedForStartPlay;
+
+#pragma endregion StartPlay
 
 // Settings
 #pragma region

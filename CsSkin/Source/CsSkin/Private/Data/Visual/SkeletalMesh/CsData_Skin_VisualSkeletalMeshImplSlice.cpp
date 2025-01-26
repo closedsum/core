@@ -17,7 +17,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualSkeletalMeshImplSlice)
 
-#define SliceType NCsSkin::NData::NVisual::NSkeletalMesh::FImplSlice
+using SliceType = NCsSkin::NData::NVisual::NSkeletalMesh::FImplSlice;
 
 void FCsData_Skin_VisualSkeletalMeshImplSlice::CopyToSlice(SliceType* Slice)
 {
@@ -33,7 +33,7 @@ SliceType* FCsData_Skin_VisualSkeletalMeshImplSlice::AddSafeSliceAsValue(const F
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-	typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh InterfaceType;
+	using InterfaceType = NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh;
 
 	if (InterfaceMap->Implements(InterfaceType::Name))
 	{
@@ -54,11 +54,8 @@ SliceType* FCsData_Skin_VisualSkeletalMeshImplSlice::AddSafeSliceAsValue(const F
 	DeconstructInterfaceSliceMap->AddDeconstructSliceImpl(SliceType::Name, &SliceType::Deconstruct);
 
 	CopyToSliceAsValue(Slice);
-
 	return Slice;
 }
-
-#undef SliceType
 
 bool FCsData_Skin_VisualSkeletalMeshImplSlice::IsValidChecked(const FString& Context) const
 {
@@ -122,7 +119,7 @@ namespace NCsSkin
 
 					CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-					typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh InterfaceType;
+					using InterfaceType = NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh;
 
 					if (InterfaceMap->Implements(InterfaceType::Name))
 					{
@@ -138,7 +135,7 @@ namespace NCsSkin
 					bool Success	  = false;
 
 					// Try FCsData_Skin_VisualSkeletalMeshImplSlice
-					typedef FCsData_Skin_VisualSkeletalMeshImplSlice StructSliceType;
+					using StructSliceType = FCsData_Skin_VisualSkeletalMeshImplSlice;
 
 					if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualSkeletalMeshSlice, nullptr))
 					{

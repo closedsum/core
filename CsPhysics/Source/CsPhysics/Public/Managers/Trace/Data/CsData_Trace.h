@@ -41,6 +41,4 @@ class CSPHYSICS_API ICsData_Trace : public ICsGetInterfaceMap
 public:
 
 	static const FName Name;
-
-public:
 };

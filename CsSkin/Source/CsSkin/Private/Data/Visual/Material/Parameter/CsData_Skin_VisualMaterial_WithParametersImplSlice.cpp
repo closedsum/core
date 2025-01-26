@@ -5,6 +5,7 @@
 
 // Types
 #include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
@@ -16,7 +17,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualMaterial_WithParametersImplSlice)
 
-#define SliceType NCsSkin::NData::NVisual::NMaterial::NWithParameters::FImplSlice
+using SliceType = NCsSkin::NData::NVisual::NMaterial::NWithParameters::FImplSlice;
 
 void FCsData_Skin_VisualMaterial_WithParametersImplSlice::CopyToSlice(SliceType* Slice)
 {
@@ -32,7 +33,7 @@ SliceType* FCsData_Skin_VisualMaterial_WithParametersImplSlice::AddSafeSliceAsVa
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-	typedef NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters InterfaceType;
+	using InterfaceType = NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters;
 
 	if (InterfaceMap->Implements(InterfaceType::Name))
 	{
@@ -56,8 +57,6 @@ SliceType* FCsData_Skin_VisualMaterial_WithParametersImplSlice::AddSafeSliceAsVa
 
 	return Slice;
 }
-
-#undef SliceType
 
 bool FCsData_Skin_VisualMaterial_WithParametersImplSlice::IsValidChecked(const FString& Context) const
 {
@@ -93,7 +92,7 @@ bool FCsData_Skin_VisualMaterial_WithParametersImplSlice::SetSafe(const FString&
 	return true;
 }
 
-const FName NCsSkin::NData::NVisual::NMaterial::NWithParameters::FImplSlice::Name = FName("NCsSkin::NData::NVisual::NMaterial::NWithParameters::FImplSlice");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsSkin::NData::NVisual::NMaterial::NWithParameters::FImplSlice);
 
 namespace NCsSkin
 {
@@ -124,7 +123,7 @@ namespace NCsSkin
 
 						CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-						typedef NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters InterfaceType;
+						using InterfaceType = NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters;
 
 						if (InterfaceMap->Implements(InterfaceType::Name))
 						{
@@ -141,7 +140,7 @@ namespace NCsSkin
 						bool Success	  = false;
 
 						// Try FCsData_Skin_VisualMaterial_WithParametersImplSlice
-						typedef FCsData_Skin_VisualMaterial_WithParametersImplSlice StructSliceType;
+						using StructSliceType = FCsData_Skin_VisualMaterial_WithParametersImplSlice;
 
 						if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualMaterialWithParamsSlice, nullptr))
 						{

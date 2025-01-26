@@ -4,6 +4,8 @@
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+// Managers
+#include "Managers/Weapon/CsManager_Weapon.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 
@@ -87,6 +89,15 @@ bool FCsSettings_Manager_Weapon_Spread::IsValid(const FString& Context, void(*Lo
 // FCsSettings_Manager_Weapon
 #pragma region
 
+FCsSettings_Manager_Weapon::FCsSettings_Manager_Weapon() :
+		Class(UCsManager_Weapon::StaticClass()),
+		TypeMap(),
+		PoolParams(),
+		Modifiers(),
+		Spread()
+	{
+	}
+
 const FCsSettings_Manager_Weapon& FCsSettings_Manager_Weapon::Get()
 {
 	return GetMutableDefault<UCsWeaponSettings>()->Manager_Weapon;
@@ -129,6 +140,12 @@ bool FCsSettings_Manager_Weapon::IsValid(const FString& Context, void(*Log)(cons
 	CS_IS_VALID(Modifiers)
 	CS_IS_VALID(Spread)
 	return true;
+}
+
+UClass* FCsSettings_Manager_Weapon::LoadClassChecked(const FString& Context) const
+{
+	check(IsValidChecked(Context));
+	return CS_SOFT_CLASS_PTR_LOAD_CHECKED(Class, UCsManager_Weapon);
 }
 
 #pragma endregion FCsSettings_Manager_Weapon

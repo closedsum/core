@@ -7,12 +7,14 @@
 #include "Library/CsLibrary_Valid.h"
 // Object
 #include "Object/Orientation/CsObject_Orientation.h"
+// Log
+#include "Utility/CsTypesLog.h
 
 namespace NCsObject
 {
 	namespace NOrientation
 	{
-		using LogClassType = FCsLog;
+		using LogClassType = NCsTypes::FLog;
 
 		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 

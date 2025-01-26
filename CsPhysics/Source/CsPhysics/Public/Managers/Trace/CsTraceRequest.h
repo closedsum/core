@@ -114,9 +114,9 @@ struct CSPHYSICS_API FCsTraceRequest
 	{
 	}
 
-#define RequestType NCsTrace::NRequest::FRequest
+	using RequestType = NCsTrace::NRequest::FRequest;
+
 	void CopyToRequestAsValue(RequestType* Request) const;
-#undef RequestType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning) const;
 
@@ -155,6 +155,10 @@ namespace NCsTrace
 	{
 		struct CSPHYSICS_API FRequest
 		{
+		private:
+
+			using ResponseType = NCsTrace::NResponse::FResponse;
+			
 		public:
 
 			int32 Index;
@@ -215,16 +219,12 @@ namespace NCsTrace
 			FCollisionObjectQueryParams ObjectParams;
 			FCollisionResponseParams ResponseParams;
 
-		#define ResponseType NCsTrace::NResponse::FResponse
-
 			/** */
 			ResponseType* Response;
 		
 
 			/** */
 			DECLARE_MULTICAST_DELEGATE_OneParam(FOnResponse, ResponseType*);
-
-		#undef ResponseType
 
 			/** */
 			FOnResponse OnResponse_Event;

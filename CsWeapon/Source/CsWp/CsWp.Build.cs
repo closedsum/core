@@ -48,7 +48,7 @@ public class CsWp : ModuleRules
                     "CsSound",
                     "CsFX",
                     "CsPhysics",
-                    "CsCore"
+                    "CsStartPlay"
                 }
             );
 

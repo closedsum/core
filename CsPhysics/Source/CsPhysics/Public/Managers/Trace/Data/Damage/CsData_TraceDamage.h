@@ -24,15 +24,19 @@ namespace NCsTrace
 
 				static const FName Name;
 
-			#define DamageDataType NCsDamage::NData::IData
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using DamageDataType = NCsDamage::NData::IData;
+				};
 
 			public:
 
 				virtual ~IDamage() {}
 
-				virtual DamageDataType* GetDamageData() const = 0;
-
-			#undef DamageDataType
+				virtual _::DamageDataType* GetDamageData() const = 0;
 			};
 		}
 	}
@@ -58,11 +62,15 @@ public:
 
 	static const FName Name;
 
-#define DamageDataType NCsDamage::NData::IData
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using DamageDataType = NCsDamage::NData::IData;
+	};
 
 public:
 
-	virtual DamageDataType* GetDamageData() const = 0;
-
-#undef DamageDataType
+	virtual _::DamageDataType* GetDamageData() const = 0;
 };

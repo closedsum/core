@@ -38,14 +38,12 @@ public:
 	{
 	}
 
-#define SliceType NCsSkin::NData::NVisual::NMaterial::NWithParameters::FImplSlice
+	using SliceType = NCsSkin::NData::NVisual::NMaterial::NWithParameters::FImplSlice;
 
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 
 	SliceType* AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
-
-#undef SliceType
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
@@ -84,7 +82,9 @@ namespace NCsSkin
 
 						static const FName Name;
 
-					#define MaterialType NCsMaterial::NInterface::FWithRangeParameters
+					private:
+
+						using MaterialType = NCsMaterial::NInterface::FWithRangeParameters;
 
 					private:
 
@@ -162,8 +162,6 @@ namespace NCsSkin
 
 						void SetChecked(const FString& Context, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs) const;
 						bool SetSafe(const FString& Context, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
-
-					#undef MaterialType
 					};
 				}
 			}

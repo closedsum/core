@@ -7,7 +7,6 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
-#include "Types/CsCached.h"
 #include "Types/CsTypes_Math_Library.h"
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
@@ -27,8 +26,10 @@
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 	// Params
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
+	// Common
 #include "Camera/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Math.h"
+#include "Library/CsLibrary_DataType.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
@@ -461,7 +462,7 @@ bool UCsProjectileWeaponComponent::CanFire() const
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileCanFire))
 	{
-		using namespace NCsCached;
+		const TCHAR*(*ToChar)(const bool& Value) = &CsDataTypeLibrary::ToChar;
 
 		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Context);
 		// Pass_Time
@@ -965,12 +966,9 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		const FVector3f End = Start + Distance * Dir;
 
 		// Perform Trace
-		typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-		typedef NCsTrace::NRequest::FRequest RequestType;
+		UCsManager_Trace* Manager_Trace = CsTraceManagerLibrary::GetChecked(Context, Outer);
 
-		UCsManager_Trace* Manager_Trace = TraceManagerLibrary::GetChecked(Context, Outer);
-
-		RequestType* Request = Manager_Trace->AllocateRequest();
+		CsTraceRequestType* Request = Manager_Trace->AllocateRequest();
 		Request->Start		 = Start;
 		Request->End		 = End;
 
@@ -994,9 +992,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			//Request->Shape = 
 		}
 		
-		typedef NCsTrace::NResponse::FResponse ResponseType;
-
-		ResponseType* Response = Manager_Trace->Trace(Request);
+		CsTraceResponseType* Response = Manager_Trace->Trace(Request);
 
 		FVector3f LookAtLocation = FVector3f::ZeroVector;
 

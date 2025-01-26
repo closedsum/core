@@ -213,9 +213,9 @@ public:
 
 class UObject;
 
-// NCsTrace::NResponse::FResponse
+// ResponseType (NCsTrace::NResponse::FResponse)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
-// NCsTrace::NRequest::FRequest
+// RequestType (NCsTrace::NRequest::FRequest)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
 
 namespace NCsBeam
@@ -224,8 +224,8 @@ namespace NCsBeam
 	{
 		namespace NShape
 		{
-			#define ResponseType NCsTrace::NResponse::FResponse
-			#define RequestType NCsTrace::NRequest::FRequest
+			using ResponseType = NCsTrace::NResponse::FResponse;
+			using RequestType = NCsTrace::NRequest::FRequest;
 
 			/**
 			* 
@@ -323,9 +323,6 @@ namespace NCsBeam
 
 				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const override;
 			};
-
-			#undef ResponseType
-			#undef RequestType
 		}
 	}
 }

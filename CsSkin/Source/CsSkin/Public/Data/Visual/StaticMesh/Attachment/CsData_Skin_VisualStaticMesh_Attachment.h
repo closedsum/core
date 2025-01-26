@@ -28,21 +28,26 @@ namespace NCsSkin
 
 						static const FName Name;
 
-
 					public:
 
 						virtual ~IAttachment() {}
 
-					#define AttachmentType NCsStaticMesh::NAttachment::FAttachment
+					private:
+
+						// Allow clearer names without name collisions
+						struct _
+						{
+							using AttachmentType = NCsStaticMesh::NAttachment::FAttachment;
+						};
+
+					public:
 
 						/**
 						* Get the Static Mesh attachments.
 						* 
 						* return
 						*/
-						virtual const TArray<AttachmentType>& GetStaticMeshAttachments() const = 0;
-
-					#undef AttachmentType
+						virtual const TArray<_::AttachmentType>& GetStaticMeshAttachments() const = 0;
 					};
 				}
 			}
@@ -71,16 +76,20 @@ public:
 
 	static const FName Name;
 
-public:
+private:
 
-#define AttachmentType NCsStaticMesh::NAttachment::FAttachment
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using AttachmentType = NCsStaticMesh::NAttachment::FAttachment;
+	};
+
+public:
 
 	/**
 	* Get the Static Mesh attachments.
 	* 
 	* return
 	*/
-	virtual const TArray<AttachmentType>& GetStaticMeshAttachments() const = 0;
-
-#undef AttachmentType
+	virtual const TArray<_::AttachmentType>& GetStaticMeshAttachments() const = 0;
 };

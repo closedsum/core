@@ -8,6 +8,8 @@
 // Trace
 #include "Managers/Trace/CsTraceRequest.h"
 
+using RequestType = NCsTrace::NRequest::FRequest;
+
 // NCsTrace::NManager::FCountInfo
 #pragma region
 
@@ -26,11 +28,8 @@ namespace NCsTrace
 			}
 		}
 
-		#define RequestType NCsTrace::NRequest::FRequest
 		void FCountInfo::Increment(RequestType* Request)
 		{
-		#undef RequestType
-
 			using namespace NCsTrace::NManager::NCountInfo::NCached;
 
 			const FString& Context = Str::Increment;
@@ -63,8 +62,6 @@ namespace NCsTrace
 {
 	namespace NManager
 	{
-		#define RequestType NCsTrace::NRequest::FRequest
-
 		RequestType* FPendingRequests::Get(const FTraceHandle& Handle) const
 		{
 			return RequestsByTraceHandle[Handle];
@@ -116,8 +113,6 @@ namespace NCsTrace
 			// Query
 			RequestsByQuery[Request->Query].Remove(Handle);
 		}
-
-		#undef RequestType
 	}
 }
 

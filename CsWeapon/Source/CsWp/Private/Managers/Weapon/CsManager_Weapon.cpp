@@ -16,6 +16,8 @@
 #include "Utility/CsWpLog.h"
 // Settings
 #include "Managers/Weapon/CsGetSettingsManagerWeapon.h"
+// Interface
+#include "ICsStartPlay.h"
 // Data
 #include "Data/CsWpGetDataRootSet.h"
 #include "Data/CsData_WeaponInterfaceMap.h"
@@ -56,24 +58,24 @@
 // Cached
 #pragma region
 
+CS_START_CACHED_FUNCTION_NAME(CsManager_Weapon)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Weapon, StartPlay)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Weapon, AddPoolParams)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Weapon, SetupInternal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Weapon, InitInternalFromSettings)
+
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Weapon, GetWeapon)
+
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Weapon, GetData)
+CS_END_CACHED_FUNCTION_NAME
+
 namespace NCsManagerWeapon
 {
 	namespace NCached
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, AddPoolParams);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, SetupInternal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, InitInternalFromSettings);
 			CS_DEFINE_CACHED_STRING(Class, "Class");
-
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, PopulateClassMapFromSettings);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, GetWeapon);
-
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, GetData);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, PopulateDataMapFromSettings);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, CreateEmulatedDataFromDataTable);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, PopulateDataMapFromDataTable);
 		}
 	}
 }
@@ -85,9 +87,12 @@ namespace NCsManagerWeapon
 
 namespace NCsWeapon
 {
-	FManager::FManager()
+	namespace NInternal
+	{
+		FManager::FManager()
 		: Super()
 	{
+	}
 	}
 }
 
@@ -105,7 +110,7 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 {
 }
 
-using ManagerParamsType = NCsWeapon::FManager::FParams;
+using ManagerParamsType = NCsWeapon::NInternal::FManager::FParams;
 using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 using PoolParamsType = NCsPooledObject::NManager::FPoolParams;
 using DataLibrary = NCsWeapon::NData::NLibrary::FLibrary;
@@ -310,13 +315,39 @@ void UCsManager_Weapon::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
+// StartPlay
+#pragma region
+
+void UCsManager_Weapon::StartPlay()
+{
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(StartPlay);
+
+	checkf(!bStartedPlay, TEXT("%s: StartPlay has ALREADY been called."), *Context);
+
+	for (AActor* Actor : WeaponsQueuedForStartPlay)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Actor)
+
+		ICsStartPlay* Interface = CS_INTERFACE_CAST_CHECKED(Actor, AActor, ICsStartPlay);
+
+		checkf(!Interface->HasStartedPlay(), TEXT("%s: Actor: %s with Class: %s has ALREADY called StartPlay."), *Context, *(Actor->GetName()), *(Actor->GetClass()->GetName()));
+
+		Interface->StartPlay();
+	}
+
+	ReceiveStartPlay();
+
+	bStartedPlay = true;
+}
+
+#pragma endregion StartPlay
+
 // Settings
 #pragma region
 
 void UCsManager_Weapon::SetAndAddTypeMapKeyValue(const FECsWeapon& Key, const FECsWeapon& Value)
 {
 	check(EMCsWeapon::Get().IsValidEnum(Key));
-
 	check(EMCsWeapon::Get().IsValidEnum(Value));
 
 	for (int32 I = TypeMapArray.Num() - 1; I < Key.GetValue(); ++I)
@@ -332,9 +363,7 @@ void UCsManager_Weapon::SetAndAddTypeMapKeyValue(const FECsWeapon& Key, const FE
 
 void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_Manager_Weapon_PoolParams& InPoolParams)
 {
-	using namespace NCsManagerWeapon::NCached;
-
-	const FString& Context = Str::AddPoolParams;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(AddPoolParams);
 
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeapon, Type)
 
@@ -355,7 +384,7 @@ void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_
 
 	checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
 
-	PoolParams.Name								= TEXT("UCManager_Weapon::NCsWeapon::FManager_") + Type.GetName();
+	PoolParams.Name								= TEXT("UCManager_Weapon::NCsWeapon::NInternal::FManager_") + Type.GetName();
 	PoolParams.World							= MyRoot->GetWorld();
 	PoolParams.ConstructParams.Outer			= this;
 	PoolParams.ConstructParams.Class			= Class;
@@ -415,9 +444,7 @@ void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_
 
 void UCsManager_Weapon::SetupInternal()
 {
-	using namespace NCsManagerWeapon::NCached;
-
-	const FString& Context = Str::SetupInternal;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetupInternal);
 
 	// Populate EnumMaps
 	UObject* ContextRoot = nullptr;
@@ -554,9 +581,7 @@ void UCsManager_Weapon::SetupInternal()
 
 void UCsManager_Weapon::InitInternalFromSettings()
 {
-	using namespace NCsManagerWeapon::NCached;
-
-	const FString& Context = Str::InitInternalFromSettings;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(InitInternalFromSettings);
 
 	ClassHandler->PopulateClassMapFromSettings(Context);
 	DataHandler->PopulateDataMapFromSettings(Context);
@@ -566,13 +591,13 @@ void UCsManager_Weapon::InitInternalFromSettings()
 	{
 		ManagerParamsType ManagerParams;
 
-		ManagerParams.Name  = TEXT("UCsManager_Weapon::NCsWeapon::FManager");
+		ManagerParams.Name  = TEXT("UCsManager_Weapon::NCsWeapon::NInternal::FManager");
 		ManagerParams.World = MyRoot->GetWorld();
 
 		//  Pool params for each specified Weapon Type
 		for (const TPair<FECsWeapon, FCsSettings_Manager_Weapon_PoolParams>& Pair : Settings.PoolParams)
 		{
-			const FECsWeapon& Type									= Pair.Key;
+			const FECsWeapon& Type								= Pair.Key;
 			const FCsSettings_Manager_Weapon_PoolParams& Params = Pair.Value;
 
 			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
@@ -580,7 +605,7 @@ void UCsManager_Weapon::InitInternalFromSettings()
 			// Get Class
 			const FECsWeaponClass& ClassType = Params.Class;
 
-			check(EMCsWeaponClass::Get().IsValidEnumChecked(Context, Str::Class, ClassType));
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponClass, ClassType);
 
 			FCsWeaponClass* Weapon = GetWeaponChecked(Context, ClassType);
 			UClass* Class		   = Weapon->GetClass();
@@ -903,9 +928,7 @@ void UCsManager_Weapon::ConstructClassHandler()
 
 FCsWeaponClass* UCsManager_Weapon::GetWeapon(const FECsWeapon& Type)
 {
-	using namespace NCsManagerWeapon::NCached;
-
-	const FString& Context = Str::GetWeapon;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GetWeapon);
 
 	return ClassHandler->GetClassByType<EMCsWeapon, FECsWeapon>(Context, Type);
 }
@@ -922,9 +945,7 @@ FCsWeaponClass* UCsManager_Weapon::GetSafeWeapon(const FString& Context, const F
 
 FCsWeaponClass* UCsManager_Weapon::GetWeapon(const FECsWeaponClass& Type)
 {
-	using namespace NCsManagerWeapon::NCached;
-
-	const FString& Context = Str::GetWeapon;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GetWeapon);
 
 	return ClassHandler->GetClassByClassType<EMCsWeaponClass>(Context, Type);
 }
@@ -965,9 +986,7 @@ void UCsManager_Weapon::ConstructDataHandler()
 
 DataType* UCsManager_Weapon::GetData(const FName& Name)
 {
-	using namespace NCsManagerWeapon::NCached;
-
-	const FString& Context = Str::GetData;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GetData);
 
 #if WITH_EDITOR
 	DataType* Data = DataHandler->GetData(Context, Name);
@@ -1006,9 +1025,7 @@ DataType* UCsManager_Weapon::GetSafeData(const FString& Context, const FName& Na
 
 DataType* UCsManager_Weapon::GetData(const FECsWeapon& Type)
 {
-	using namespace NCsManagerWeapon::NCached;
-
-	const FString& Context = Str::GetData;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GetData);
 
 #if WITH_EDITOR
 	DataType* Data = DataHandler->GetData<EMCsWeapon, FECsWeapon>(Context, Type);

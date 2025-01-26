@@ -14,7 +14,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsTraceRequest)
 
-#define RequestType NCsTrace::NRequest::FRequest
+using RequestType = NCsTrace::NRequest::FRequest;
+
 void FCsTraceRequest::CopyToRequestAsValue(RequestType* Request) const
 {
 	Request->StaleTime = StaleTime;
@@ -36,7 +37,6 @@ void FCsTraceRequest::CopyToRequestAsValue(RequestType* Request) const
 	Request->OnResponse_ScriptEvent = OnResponse_Event;
 	Request->OnResponse_AsyncScriptEvent = OnResponse_AsyncEvent;
 }
-#undef RequestType
 
 bool FCsTraceRequest::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/) const
 {

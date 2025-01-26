@@ -7,7 +7,7 @@
 #include "Managers/Trace/CsTypes_Trace.h"
 #include "WorldCollision.h"
 
-// NCsTrace::NRequest::FRequest
+// RequestType (NCsTrace::NRequest::FRequest)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
 
 namespace NCsTrace
@@ -16,7 +16,9 @@ namespace NCsTrace
 	{
 		struct CSPHYSICS_API FCountInfo
 		{
-		#define RequestType NCsTrace::NRequest::FRequest
+		private:
+
+			using RequestType = NCsTrace::NRequest::FRequest;
 
 		public:
 
@@ -80,13 +82,11 @@ namespace NCsTrace
 					Count = 0ll;
 				}
 			}
-
-		#undef RequestType
 		};
 	}
 }
 
-// NCsTrace::NRequest::FRequest
+// RequestType (NCsTrace::NRequest::FRequest0
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
 
 namespace NCsTrace
@@ -95,7 +95,9 @@ namespace NCsTrace
 	{
 		struct CSPHYSICS_API FPendingRequests
 		{
-		#define RequestType NCsTrace::NRequest::FRequest
+		private:
+
+			using RequestType = NCsTrace::NRequest::FRequest;
 
 		public:
 
@@ -142,8 +144,6 @@ namespace NCsTrace
 
 			void Add(RequestType* Request);
 			void Remove(RequestType* Request);
-
-		#undef RequestType
 		};
 	}
 }

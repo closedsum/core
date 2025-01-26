@@ -5,11 +5,10 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsTraceResponse)
 
-#define ResponseType NCsTrace::NResponse::FResponse
+using ResponseType = NCsTrace::NResponse::FResponse;
+
 void FCsTraceResponse::CopyFromResponse(ResponseType* Response)
 {
-#undef ResponseType
-
 	bResult = Response->bResult;
 	ElapsedTime = Response->ElapsedTime;
 

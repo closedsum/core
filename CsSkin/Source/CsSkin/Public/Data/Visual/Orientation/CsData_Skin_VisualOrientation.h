@@ -31,7 +31,7 @@ namespace NCsSkin
 
 					/**
 					*/
-					virtual const FRotator3f& GetRotation() const = 0;
+					virtual const FRotator& GetRotation() const = 0;
 				};
 			}
 		}
@@ -62,5 +62,5 @@ public:
 
 	/**
 	*/
-	virtual const FRotator3f& GetRotation() const = 0;
+	virtual const FRotator& GetRotation() const = 0;
 };

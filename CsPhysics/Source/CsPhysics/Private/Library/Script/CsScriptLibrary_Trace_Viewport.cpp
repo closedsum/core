@@ -33,6 +33,10 @@ UCsScriptLibrary_Trace_Viewport::UCsScriptLibrary_Trace_Viewport(const FObjectIn
 {
 }
 
+using ViewportLibrary = NCsViewport::NLocal::NPlayer::NPhysics::FLibrary;
+using RequestType = NCsTrace::NRequest::FRequest;
+using ResponseType = NCsTrace::NResponse::FResponse;
+
 bool UCsScriptLibrary_Trace_Viewport::Trace(const FString& Context, const UObject* WorldContextObject, const FVector2f& ScreenPosition, const FCsTraceRequest& Request, const float& Distance, FCsTraceResponse& OutResponse)
 {
 	using namespace NCsScriptLibraryTraceViewport::NCached;
@@ -50,18 +54,12 @@ bool UCsScriptLibrary_Trace_Viewport::Trace(const FString& Context, const UObjec
 	if (!Request.IsValid(Ctxt))
 		return false;
 
-	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-	typedef NCsTrace::NRequest::FRequest RequestType;
-
-	RequestType* RequestPtr = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject);
+	RequestType* RequestPtr = CsTraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject);
 
 	if (!RequestPtr)
 		return false;
 
 	Request.CopyToRequestAsValue(RequestPtr);
-
-	typedef NCsViewport::NLocal::NPlayer::NPhysics::FLibrary ViewportLibrary;
-	typedef NCsTrace::NResponse::FResponse ResponseType;
 
 	ResponseType* ResponsePtr = ViewportLibrary::SafeTrace(Ctxt, WorldContextObject, ScreenPosition, RequestPtr, Distance);
 
@@ -71,6 +69,6 @@ bool UCsScriptLibrary_Trace_Viewport::Trace(const FString& Context, const UObjec
 		return ResponsePtr->bResult;
 	}
 
-	TraceManagerLibrary::SafeDeallocateRequest(Ctxt, WorldContextObject, RequestPtr);
+	CsTraceManagerLibrary::SafeDeallocateRequest(Ctxt, WorldContextObject, RequestPtr);
 	return false;
 }

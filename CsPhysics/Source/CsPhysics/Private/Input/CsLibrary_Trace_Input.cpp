@@ -27,13 +27,12 @@ namespace NCsInput
 				}
 			}
 
-			#define ViewportLibrary NCsViewport::NLocal::NPlayer::NPhysics::FLibrary
+			using ViewportLibrary = NCsViewport::NLocal::NPlayer::NPhysics::FLibrary;
+			using ResponseType = NCsTrace::NResponse::FResponse;
+			using RequestType = NCsTrace::NRequest::FRequest;
 
 			// Trace
 			#pragma region
-
-			#define ResponseType NCsTrace::NResponse::FResponse
-			#define RequestType NCsTrace::NRequest::FRequest
 
 			ResponseType* FLibrary::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/)
 			{
@@ -60,12 +59,7 @@ namespace NCsInput
 				return SafeTrace(Context, WorldContext, Request, Distance, nullptr);
 			}
 
-			#undef ResponseType
-			#undef RequestType
-
 			#pragma endregion Trace
-
-			#undef ViewportLibrary
 		}
 	}
 }

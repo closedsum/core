@@ -64,3 +64,5 @@ namespace NCsCollision
 		};
 	}
 }
+
+using CsCollisionLibrary = NCsCollision::FLibrary;

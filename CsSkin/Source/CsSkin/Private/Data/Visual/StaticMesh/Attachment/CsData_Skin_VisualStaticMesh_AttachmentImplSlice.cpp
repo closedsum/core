@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/StaticMesh/Attachment/CsData_Skin_VisualStaticMesh_AttachmentImplSlice.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
@@ -13,13 +15,12 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualStaticMesh_AttachmentImplSlice)
 
-#define SliceType NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice
+using SliceType = NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice;
+using AttachmentType = NCsStaticMesh::NAttachment::FAttachment;
 
 void FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::CopyToSlice(SliceType* Slice)
 {
 	const int32 Count = Attachments.Num();
-
-	typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
 
 	TArray<AttachmentType>* AttachmentsPtr = Slice->GetStaticMeshAttachmentsPtr();
 
@@ -37,8 +38,6 @@ void FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::CopyToSliceAsValue(Slice
 {
 	const int32 Count = Attachments.Num();
 
-	typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
-
 	TArray<AttachmentType>* AttachmentsPtr = Slice->GetStaticMeshAttachmentsPtr();
 
 	AttachmentsPtr->Reset(Count);
@@ -55,7 +54,7 @@ SliceType* FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AddSafeSliceAsValu
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-	typedef NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment InterfaceType;
+	using InterfaceType = NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment;
 
 	if (InterfaceMap->Implements(InterfaceType::Name))
 	{
@@ -79,8 +78,6 @@ SliceType* FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AddSafeSliceAsValu
 
 	return Slice;
 }
-
-#undef SliceType
 
 bool FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::IsValidChecked(const FString& Context) const
 {
@@ -123,7 +120,7 @@ bool FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AttachSafe(const FString
 	return true;
 }
 
-const FName NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice::Name = FName("NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice);
 
 namespace NCsSkin
 {
@@ -154,14 +151,13 @@ namespace NCsSkin
 
 						CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-						typedef NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment InterfaceType;
+						using InterfaceType = NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment;
 
 						if (InterfaceMap->Implements(InterfaceType::Name))
 						{
 							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InterfaceMap already contains a reference an interface of type: %s."), *Context, *(InterfaceType::Name.ToString())));
 							return nullptr;
 						}
-
 						CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
 
 						CS_IS_PTR_NULL_RET_NULL(Object)
@@ -171,7 +167,7 @@ namespace NCsSkin
 						bool Success	  = false;
 
 						// Try FCsData_Skin_VisualStaticMesh_AttachmentImplSlice
-						typedef FCsData_Skin_VisualStaticMesh_AttachmentImplSlice StructSliceType;
+						using StructSliceType = FCsData_Skin_VisualStaticMesh_AttachmentImplSlice;
 
 						if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualStaticMeshAttachmentSlice, nullptr))
 						{
@@ -206,12 +202,8 @@ namespace NCsSkin
 								DeconstructInterfaceSliceMap->AddDeconstructSliceImpl(FImplSlice::Name, &FImplSlice::Deconstruct);
 
 								// Copy the values to Slice
-								TArray<FCsStaticMeshAttachment>& AttachmentsRef = *AttachmentsPtr;
-
-								const int32 Count = AttachmentsRef.Num();
-
-								typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
-
+								TArray<FCsStaticMeshAttachment>& AttachmentsRef  = *AttachmentsPtr;
+								const int32 Count								 = AttachmentsRef.Num();
 								TArray<AttachmentType>* StaticMeshAttachmentsPtr = Slice->GetStaticMeshAttachmentsPtr();
 
 								StaticMeshAttachmentsPtr->Reset(Count);
@@ -241,8 +233,6 @@ namespace NCsSkin
 
 					bool FImplSlice::IsValidChecked(const FString& Context) const
 					{
-						typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
-
 						for (const AttachmentType& Attachment : GetStaticMeshAttachments())
 						{
 							CS_IS_VALID_CHECKED(Attachment);
@@ -252,8 +242,6 @@ namespace NCsSkin
 
 					bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 					{
-						typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
-
 						for (const AttachmentType& Attachment : GetStaticMeshAttachments())
 						{
 							CS_IS_VALID(Attachment);
@@ -265,8 +253,6 @@ namespace NCsSkin
 					{
 						check(IsValidChecked(Context));
 
-						typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
-
 						for (const AttachmentType& Attachment : GetStaticMeshAttachments())
 						{
 							Attachment.AttachChecked(Context, Parent, Child);
@@ -277,8 +263,6 @@ namespace NCsSkin
 					{
 						if (!IsValid(Context, Log))
 							return false;
-
-						typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
 
 						for (const AttachmentType& Attachment : GetStaticMeshAttachments())
 						{

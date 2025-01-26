@@ -9,9 +9,9 @@
 
 class UObject;
 
-// NCsTrace::NRequest::FRequest
+// ReequestType (NCsTrace::NRequest::FRequest)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
-// NCsTrace::NResponse::FResponse
+// ResponseType (NCsTrace::NResponse::FResponse)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
 
 namespace NCsViewport
@@ -24,15 +24,16 @@ namespace NCsViewport
 			{
 				class CSPHYSICS_API FLibrary final
 				{
-				public:
+				private:
+
+					using ResponseType = NCsTrace::NResponse::FResponse;
+					using RequestType = NCsTrace::NRequest::FRequest;
 
 				// Trace
 				#pragma region
 				public:
 
-				#define ResponseType NCsTrace::NResponse::FResponse
-				#define RequestType NCsTrace::NRequest::FRequest
-
+				
 					/**
 					* Perform a trace with the given Request.
 					*  Request->Start is replaced by:
@@ -80,9 +81,6 @@ namespace NCsViewport
 					* return				Response
 					*/
 					static ResponseType* SafeTrace(const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f);
-
-				#undef ResponseType
-				#undef RequestType
 
 				#pragma endregion Trace
 				};

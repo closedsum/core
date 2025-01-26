@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Interface.h"
 
 #include "CsGetCameraComponent.generated.h"
@@ -10,12 +9,12 @@
 class UCameraComponent;
 
 UINTERFACE(Blueprintable)
-class CSCORE_API UCsGetCameraComponent : public UInterface
+class CSTYPES_API UCsGetCameraComponent : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class CSCORE_API ICsGetCameraComponent
+class CSTYPES_API ICsGetCameraComponent
 {
 	GENERATED_IINTERFACE_BODY()
 

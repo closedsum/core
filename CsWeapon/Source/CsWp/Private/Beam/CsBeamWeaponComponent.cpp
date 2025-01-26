@@ -6,17 +6,20 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
-#include "Types/CsCached.h"
 #include "Types/CsTypes_Math.h"
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
+	// Data
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Data/Visual/CsLibrary_Data_Skin_Visual.h"
+	// Pool
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+	// Common
 #include "Camera/CsLibrary_Camera.h"
 #include "Material/CsLibrary_Material.h"
+#include "Library/CsLibrary_DataType.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
@@ -436,7 +439,7 @@ bool UCsBeamWeaponComponent::CanFire() const
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponBeamCanFire))
 	{
-		using namespace NCsCached;
+		const TCHAR*(*ToChar)(const bool& Value) = &CsDataTypeLibrary::ToChar;
 
 		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Context);
 		// Pass_Time

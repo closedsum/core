@@ -19,19 +19,20 @@ namespace NCsTrace
 {
 	namespace NRequest
 	{
-	#define RequestType NCsTrace::NRequest::FRequest
-
-		struct CSPHYSICS_API FResource : public TCsResourceContainer<RequestType>
+		namespace NResource
 		{
-			~FResource(){}
-		};
+			using RequestType = NCsTrace::NRequest::FRequest;
 
-		struct CSPHYSICS_API FManager : public NCsResource::NManager::NValue::TFixed<RequestType, FResource, 0>
-		{
-			~FManager(){}
-		};
+			struct CSPHYSICS_API FResource : public TCsResourceContainer<RequestType>
+			{
+				~FResource(){}
+			};
 
-	#undef RequestType
+			struct CSPHYSICS_API FManager : public NCsResource::NManager::NValue::TFixed<RequestType, FResource, 0>
+			{
+				~FManager(){}
+			};
+		}
 	}
 }
 
@@ -40,19 +41,20 @@ namespace NCsTrace
 {
 	namespace NResponse
 	{
-	#define ResponseType NCsTrace::NResponse::FResponse
-
-		struct CSPHYSICS_API FResource : public TCsResourceContainer<ResponseType>
+		namespace NResource
 		{
-			~FResource(){}
-		};
+			using ResponseType = NCsTrace::NResponse::FResponse;
 
-		struct CSPHYSICS_API FManager : public NCsResource::NManager::NValue::TFixed<ResponseType, FResource, 0>
-		{
-			~FManager(){}
-		};
+			struct CSPHYSICS_API FResource : public TCsResourceContainer<ResponseType>
+			{
+				~FResource(){}
+			};
 
-	#undef ResponseType
+			struct CSPHYSICS_API FManager : public NCsResource::NManager::NValue::TFixed<ResponseType, FResource, 0>
+			{
+				~FManager(){}
+			};
+		}
 	}
 }
 
@@ -65,10 +67,15 @@ class CSPHYSICS_API UCsManager_Trace : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define RequestType NCsTrace::NRequest::FRequest
-#define ResponseType NCsTrace::NResponse::FResponse
-
-public:
+private:
+	
+	using RequestManagerType = NCsTrace::NRequest::NResource::FManager;
+	using RequestResourceType = NCsTrace::NRequest::NResource::FResource;
+	using RequestType = NCsTrace::NRequest::FRequest;
+	using PendingRequestsType = NCsTrace::NManager::FPendingRequests;
+	using ResponseManagerType = NCsTrace::NResponse::NResource::FManager;
+	using ResponseType = NCsTrace::NResponse::FResponse;
+	using CountInfoType = NCsTrace::NManager::FCountInfo;
 
 // Singleton
 #pragma region
@@ -170,14 +177,10 @@ protected:
 
 	int32 MaxRequestsProcessedPerTick;
 
-#define CountInfoType NCsTrace::NManager::FCountInfo
-
 	/** */
 	CountInfoType LifetimeCountInfo;
 	/** */
 	CountInfoType ThisFrameCountInfo;
-
-#undef CountInfoType
 
 private:
 
@@ -187,19 +190,13 @@ private:
 #pragma region
 private:
 
-#define RequestManagerType NCsTrace::NRequest::FManager
 	RequestManagerType Manager_Request;
-#undef RequestManagerType
 
 public:
 	
 	FORCEINLINE RequestType* AllocateRequest()
 	{
-		typedef NCsTrace::NRequest::FResource RequestResourceType;
-
-		RequestResourceType* Container = Manager_Request.Allocate();
-
-		return Container->Get();
+		return Manager_Request.Allocate()->Get();
 	}
 
 private:
@@ -212,9 +209,7 @@ public:
 
 private:
 
-#define PendingRequestsType NCsTrace::NManager::FPendingRequests
 	PendingRequestsType PendingRequests;
-#undef PendingRequestsType
 
 	bool ProcessAsyncRequest(RequestType* Request);
 
@@ -226,9 +221,7 @@ private:
 #pragma region
 private:
 
-#define ResponseManagerType NCsTrace::NResponse::FManager
 	ResponseManagerType Manager_Response;
-#undef ResponseManagerType
 
 public:
 
@@ -259,7 +252,4 @@ public:
 protected:
 
 	void LogTransaction(const FString& Context, const ECsTraceTransaction& Transaction, RequestType* Request, ResponseType* Response);
-
-#undef RequestType
-#undef ResponseType
 };

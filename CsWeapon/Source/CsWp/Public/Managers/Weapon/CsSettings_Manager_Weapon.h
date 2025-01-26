@@ -98,7 +98,7 @@ public:
 // FCsSettings_Manager_Weapon
 #pragma region
 
-class UObject;
+class UCsManager_Weapon;
 class UClass;
 
 USTRUCT(BlueprintType)
@@ -107,6 +107,9 @@ struct CSWP_API FCsSettings_Manager_Weapon
 	GENERATED_USTRUCT_BODY()
 
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, NoClear, Category = "CsWp|Managers|Weapon|Settings")
+	TSoftClassPtr<UCsManager_Weapon> Class;
 
 	/** General Idea: Pool Sharing via Mapping of Types.
 		Describes the mapping of a Weapon type to underlying Weapon type
@@ -134,19 +137,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Manager|Weapon|Settings")
 	FCsSettings_Manager_Weapon_Spread Spread;
 
-	FCsSettings_Manager_Weapon() :
-		TypeMap(),
-		PoolParams(),
-		Modifiers(),
-		Spread()
-	{
-	}
+	FCsSettings_Manager_Weapon();
 
 	static const FCsSettings_Manager_Weapon& Get();
 	static const FCsSettings_Manager_Weapon& GetEd();
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+	UClass* LoadClassChecked(const FString& Context) const;
 };
 
 #pragma endregion FCsSettings_Manager_Weapon

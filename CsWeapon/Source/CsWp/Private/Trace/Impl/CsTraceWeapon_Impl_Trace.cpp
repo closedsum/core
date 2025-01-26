@@ -93,6 +93,9 @@ namespace NCsWeapon
 					CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(TraceScopedHandle);
 				}
 
+				using DataType = NCsWeapon::NData::IData;
+				using TraceDataType = NCsTrace::NData::IData;
+
 				void FImpl::SetOuter(UObject* InOuter)
 				{
 					Outer = InOuter;
@@ -104,8 +107,6 @@ namespace NCsWeapon
 					Component = InComponent;
 					SkeletalMeshComponent = Cast<USkeletalMeshComponent>(Component);
 				}
-				 
-				#define TraceDataType NCsTrace::NData::IData
 
 				void FImpl::SetTraceData(const FString& Context, TraceDataType* Value)
 				{
@@ -113,9 +114,7 @@ namespace NCsWeapon
 
 					TraceData = Value;
 
-					typedef NCsTrace::NData::NLibrary::FLibrary TraceDataLibrary;
-
-					check(TraceDataLibrary::IsValidChecked(Context, TraceData));
+					check(CsTraceDataLibrary::IsValidChecked(Context, TraceData));
 				}
 
 				void FImpl::SetTraceData(TraceDataType* Value)
@@ -127,19 +126,12 @@ namespace NCsWeapon
 					SetTraceData(Context, Value);
 				}
 
-				#undef TraceDataType
-
 				bool FImpl::IsValidChecked(const FString& Context)
 				{
 					CS_IS_PTR_NULL_CHECKED(TraceData)
-
-					typedef NCsTrace::NData::NLibrary::FLibrary TraceDataLibrary;
-
-					check(TraceDataLibrary::IsValidChecked(Context, TraceData));
+					check(CsTraceDataLibrary::IsValidChecked(Context, TraceData));
 					return true;
 				}
-
-				#define DataType NCsWeapon::NData::IData
 
 				FVector3f FImpl::GetStart(DataType* Data)
 				{
@@ -368,8 +360,6 @@ namespace NCsWeapon
 					return Start + TraceParams->GetDistance() * GetDirection(Data, Start);
 				}
 
-				#undef DataType
-
 				void FImpl::OnHit(const FHitResult& Hit)
 				{
 					using namespace NCached;
@@ -431,8 +421,6 @@ namespace NCsWeapon
 					*/
 				}
 
-				#define DataType NCsWeapon::NData::IData
-
 				void FImpl::LineTrace(DataType* Data, const FVector3f& Start, const FVector3f& End, FHitResult& OutHit)
 				{
 					//CS_SCOPED_TIMER(LineTraceScopedHandle);
@@ -441,12 +429,9 @@ namespace NCsWeapon
 
 					const FString& Context = Str::LineTrace;
 
-					typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-					typedef NCsTrace::NRequest::FRequest RequestType;
+					UCsManager_Trace* Manager_Trace = CsTraceManagerLibrary::GetChecked(Context, Outer);
 
-					UCsManager_Trace* Manager_Trace = TraceManagerLibrary::GetChecked(Context, Outer);
-
-					RequestType* Request = Manager_Trace->AllocateRequest();
+					CsTraceRequestType* Request = Manager_Trace->AllocateRequest();
 					Request->Start	= Start;
 					Request->End	= End;
 
@@ -476,9 +461,7 @@ namespace NCsWeapon
 						Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
 					}
 
-					typedef NCsTrace::NResponse::FResponse ResponseType;
-
-					ResponseType* Response = Manager_Trace->Trace(Request);
+					CsTraceResponseType* Response = Manager_Trace->Trace(Request);
 
 					OutHit = Response->bResult ? Response->OutHits[CS_FIRST] : NCsCollision::NHit::Default;
 
@@ -501,14 +484,11 @@ namespace NCsWeapon
 					const FString& Context = Str::Trace;
 
 					const FVector3f Start = GetStart(Data);
-					const FVector3f End	= GetEnd(Data, Start);
-
-					typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-					typedef NCsTrace::NRequest::FRequest RequestType;
+					const FVector3f End	  = GetEnd(Data, Start);
 					
-					UCsManager_Trace* Manager_Trace = TraceManagerLibrary::GetChecked(Context, Outer);
+					UCsManager_Trace* Manager_Trace = CsTraceManagerLibrary::GetChecked(Context, Outer);
 	
-					RequestType* Request = Manager_Trace->AllocateRequest();
+					CsTraceRequestType* Request = Manager_Trace->AllocateRequest();
 					Request->Start = Start;
 					Request->End   = End;
 
@@ -547,9 +527,7 @@ namespace NCsWeapon
 						Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
 					}
 
-					typedef NCsTrace::NResponse::FResponse ResponseType;
-
-					ResponseType* Response = Manager_Trace->Trace(Request);
+					CsTraceResponseType* Response = Manager_Trace->Trace(Request);
 	
 				#if !UE_BUILD_SHIPPING
 					if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawWeaponTraceTrace))
@@ -568,8 +546,6 @@ namespace NCsWeapon
 					if (Response->bResult)
 						OnHit(Response->OutHits[CS_FIRST]);
 				}
-
-				#undef DataType
 
 				FString FImpl::PrintOuterNameAndClass()
 				{

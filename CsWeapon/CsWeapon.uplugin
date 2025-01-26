@@ -107,6 +107,10 @@
       "Enabled": true
     },
     {
+      "Name": "CsStartPlay",
+      "Enabled": true
+    },
+    {
       "Name": "CsPlugin",
       "Enabled": true
     }

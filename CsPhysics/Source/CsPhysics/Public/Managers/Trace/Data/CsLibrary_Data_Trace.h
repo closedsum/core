@@ -24,3 +24,5 @@ namespace NCsTrace
 		}
 	}
 }
+
+using CsTraceDataLibrary = NCsTrace::NData::NLibrary::FLibrary;

@@ -42,14 +42,12 @@ public:
 	{
 	}
 
-#define SliceType NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice
+	using SliceType = NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice;
 
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 
 	SliceType* AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
-
-#undef SliceType
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
@@ -89,7 +87,9 @@ namespace NCsSkin
 
 						static const FName Name;
 
-					#define AttachmentType NCsStaticMesh::NAttachment::FAttachment
+					private:
+
+						using AttachmentType = NCsStaticMesh::NAttachment::FAttachment;
 
 					private:
 
@@ -154,8 +154,6 @@ namespace NCsSkin
 
 						void AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const;
 						bool AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
-
-					#undef AttachmentType
 					};
 				}
 			}

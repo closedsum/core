@@ -53,6 +53,10 @@ namespace NCsTrace
 			const FString& Context = Str::__FunctionName
 		#define LogLevel void(*Log)(const FString&) /*=&NCsPhysics::FLog::Warning*/
 
+		using ResponseType = NCsTrace::NResponse::FResponse;
+		using RequestType = NCsTrace::NRequest::FRequest;
+		using BoneSpaceType = NCsTrace::NBone::ESpace;
+
 		// ContextRoot
 		#pragma region
 
@@ -170,8 +174,6 @@ namespace NCsTrace
 
 		#pragma endregion Request
 
-		#define ResponseType NCsTrace::NResponse::FResponse
-		#define RequestType NCsTrace::NRequest::FRequest
 
 		ResponseType* FLibrary::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request)
 		{
@@ -206,10 +208,9 @@ namespace NCsTrace
 			// Sphere
 		#pragma region
 
-		#define ParamsType NCsTrace::NManager::FLibrary::FSphereTrace::FParams
-		#define BoneSpaceType NCsTrace::NBone::ESpace
+		using SphereParamsType = NCsTrace::NManager::FLibrary::FSphereTrace::FParams;
 
-		bool FLibrary::SafeSphereTrace(const FString& Context, const ParamsType& Params, FHitResult& OutHit, LogLevel)
+		bool FLibrary::SafeSphereTrace(const FString& Context, const SphereParamsType& Params, FHitResult& OutHit, LogLevel)
 		{
 			if (RequestType* Request = SafeAllocateRequest(Context, Params.GetWorldContext(), Log))
 			{
@@ -276,7 +277,7 @@ namespace NCsTrace
 
 		bool FLibrary::SafeSphereTrace(const FString& Context, UObject* WorldContext, const USkeletalMeshComponent* Component, const FName& BoneOrSocket, const float& Radius, const TEnumAsByte<ECollisionChannel>& Channel, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit, LogLevel)
 		{
-			static ParamsType Params;
+			static SphereParamsType Params;
 			Params.WorldContext = WorldContext;
 			Params.Component	= const_cast<USkeletalMeshComponent*>(Component);
 			Params.BoneOrSocket = BoneOrSocket;
@@ -291,7 +292,7 @@ namespace NCsTrace
 			return SafeSphereTrace(Context, Params, OutHit, Log);
 		}
 
-		bool FLibrary::SphereTraceChecked(const FString& Context, const ParamsType& Params, FHitResult& OutHit)
+		bool FLibrary::SphereTraceChecked(const FString& Context, const SphereParamsType& Params, FHitResult& OutHit)
 		{
 			RequestType* Request = AllocateRequestChecked(Context, Params.GetWorldContext());
 			// Fill out Request
@@ -339,9 +340,6 @@ namespace NCsTrace
 			}
 			return false;
 		}
-
-		#undef ParamsType
-		#undef BoneSpaceType
 
 		#pragma endregion Sphere
 
@@ -552,9 +550,6 @@ namespace NCsTrace
 		}
 
 		#pragma endregion Screen
-
-		#undef ResponseType
-		#undef RequestType
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT

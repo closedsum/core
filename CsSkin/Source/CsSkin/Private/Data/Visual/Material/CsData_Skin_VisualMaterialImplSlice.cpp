@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/Material/CsData_Skin_VisualMaterialImplSlice.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
@@ -14,7 +16,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualMaterialImplSlice)
 
-#define SliceType NCsSkin::NData::NVisual::NMaterial::FImplSlice
+using SliceType = NCsSkin::NData::NVisual::NMaterial::FImplSlice;
 
 void FCsData_Skin_VisualMaterialImplSlice::CopyToSlice(SliceType* Slice)
 {
@@ -30,7 +32,7 @@ SliceType* FCsData_Skin_VisualMaterialImplSlice::AddSafeSliceAsValue(const FStri
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-	typedef NCsSkin::NData::NVisual::NMaterial::IMaterial InterfaceType;
+	using InterfaceType = NCsSkin::NData::NVisual::NMaterial::IMaterial;
 
 	if (InterfaceMap->Implements(InterfaceType::Name))
 	{
@@ -55,8 +57,6 @@ SliceType* FCsData_Skin_VisualMaterialImplSlice::AddSafeSliceAsValue(const FStri
 	return Slice;
 }
 
-#undef SliceType
-
 bool FCsData_Skin_VisualMaterialImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 {
 	if (!Materials.IsValid(Context, Log))
@@ -78,7 +78,7 @@ bool FCsData_Skin_VisualMaterialImplSlice::SetSafe(const FString& Context, UPrim
 	return CsMaterialLibrary::SetSafe(Context, Component, Materials.Get(), Log);
 }
 
-const FName NCsSkin::NData::NVisual::NMaterial::FImplSlice::Name = FName("NCsSkin::NData::NVisual::NMaterial::FImplSlice");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsSkin::NData::NVisual::NMaterial::FImplSlice);
 
 namespace NCsSkin
 {
@@ -107,7 +107,7 @@ namespace NCsSkin
 
 					CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial InterfaceType;
+					using InterfaceType = NCsSkin::NData::NVisual::NMaterial::IMaterial;
 
 					if (InterfaceMap->Implements(InterfaceType::Name))
 					{
@@ -124,7 +124,7 @@ namespace NCsSkin
 					bool Success	  = false;
 
 					// Try FCsData_Skin_VisualStaticMeshImplSlice
-					typedef FCsData_Skin_VisualMaterialImplSlice StructSliceType;
+					using StructSliceType = FCsData_Skin_VisualMaterialImplSlice;
 
 					if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualMaterialSlice, nullptr))
 					{
@@ -179,7 +179,6 @@ namespace NCsSkin
 				bool FImplSlice::IsValidChecked(const FString& Context) const
 				{
 					CS_IS_TARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
-
 					CS_IS_TARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
 					return true;
 				}
@@ -187,7 +186,6 @@ namespace NCsSkin
 				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsSkin::FLog::Warning*/) const
 				{
 					CS_IS_TARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
-
 					CS_IS_TARRAY_ANY_NULL(GetMaterials(), UMaterialInterface)
 					return true;
 				}

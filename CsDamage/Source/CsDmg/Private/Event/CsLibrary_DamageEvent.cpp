@@ -59,10 +59,6 @@ namespace NCsDamage
 			using EventImplType = NCsDamage::NEvent::NImpl::FImpl;
 			using CopyType = NCsDamage::NEvent::NCopy::ICopy;
 
-			using CsTraceManagerLibrary = NCsTrace::NManager::FLibrary; // TODO: Update in CsPhysics
-			using CsTraceRequestType = NCsTrace::NRequest::FRequest; // TODO: Update in CsPhysics
-			using CsTraceResponseType = NCsTrace::NResponse::FResponse; // TODO: Update in CsPhysics
-
 			FString FLibrary::PrintEvent(const EventType* Event)
 			{
 				return FString::Printf(TEXT("Event: %s"), *(Event->GetInterfaceMap()->GetRootName().ToString()));

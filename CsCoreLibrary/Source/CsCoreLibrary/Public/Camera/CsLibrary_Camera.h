@@ -17,11 +17,11 @@ namespace NCsCamera
 		{
 			namespace Str
 			{
-				extern CSCORE_API const FString GetLocation;
-				extern CSCORE_API const FString GetLocationChecked;
-				extern CSCORE_API const FString GetRotation;
-				extern CSCORE_API const FString GetRotationChecked;
-				extern CSCORE_API const FString GetDirectionChecked;
+				extern CSCORELIBRARY_API const FString GetLocation;
+				extern CSCORELIBRARY_API const FString GetLocationChecked;
+				extern CSCORELIBRARY_API const FString GetRotation;
+				extern CSCORELIBRARY_API const FString GetRotationChecked;
+				extern CSCORELIBRARY_API const FString GetDirectionChecked;
 			}
 		}
 	}
@@ -29,7 +29,7 @@ namespace NCsCamera
 	/**
 	* Library of function related to Camera
 	*/
-	class CSCORE_API FLibrary final
+	class CSCORELIBRARY_API FLibrary final
 	{
 	// Get
 	#pragma region
@@ -233,3 +233,5 @@ namespace NCsCamera
 	#pragma endregion Direction
 	};
 }
+
+using CsCameraLibrary = NCsCamera::FLibrary;

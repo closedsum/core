@@ -8,12 +8,12 @@
 #include "CsObject_Orientation.generated.h"
 
 UINTERFACE(Blueprintable)
-class CSCORE_API UCsObject_Orientation : public UInterface
+class CSTYPES_API UCsObject_Orientation : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class CSCORE_API ICsObject_Orientation
+class CSTYPES_API ICsObject_Orientation
 {
 	GENERATED_IINTERFACE_BODY()
 

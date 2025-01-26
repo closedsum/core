@@ -11,9 +11,9 @@
 class UObject;
 class UCsManager_Trace;
 
-// NCsTrace::NRequest::FRequest
+// RequestType (NCsTrace::NRequest::FRequest)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
-// NCsTrace::NResponse::FResponse
+// ResponseType (NCsTrace::NResponse::FResponse)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
 
 class AActor;
@@ -26,7 +26,12 @@ namespace NCsTrace
 	{
 		struct CSPHYSICS_API FLibrary final
 		{
+		private:
+
 		#define LogLevel void(*Log)(const FString&) = &NCsPhysics::FLog::Warning
+
+			using RequestType = NCsTrace::NRequest::FRequest;
+			using ResponseType = NCsTrace::NResponse::FResponse;
 
 		// ContextRoot
 		#pragma region
@@ -117,9 +122,7 @@ namespace NCsTrace
 
 		// Request
 		#pragma region
-		public:
-
-		#define RequestType NCsTrace::NRequest::FRequest
+		public:	
 
 			/**
 			* 
@@ -161,15 +164,10 @@ namespace NCsTrace
 			*/
 			static bool SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, LogLevel);
 
-		#undef RequestType
-
 		#pragma endregion Request
 
 		// Response
 		#pragma region
-
-		#define ResponseType NCsTrace::NResponse::FResponse
-		#define RequestType NCsTrace::NRequest::FRequest
 
 		public:
 
@@ -256,7 +254,7 @@ namespace NCsTrace
 				};
 			};
 
-			#define ParamsType NCsTrace::NManager::FLibrary::FSphereTrace::FParams
+			using SphereParamsType = NCsTrace::NManager::FLibrary::FSphereTrace::FParams;
 
 			/**
 			* Safely sweeps a sphere at the given Bone location for Component and returns the first blocking hit encountered.
@@ -268,7 +266,7 @@ namespace NCsTrace
 			* @param Log				(optional)
 			* @return					True if there was a hit, false otherwise.
 			*/
-			static bool SafeSphereTrace(const FString& Context, const ParamsType& Params, FHitResult& OutHit, LogLevel);
+			static bool SafeSphereTrace(const FString& Context, const SphereParamsType& Params, FHitResult& OutHit, LogLevel);
 
 			/**
 			* Safely sweeps a sphere at the given Bone location for Component and returns the first blocking hit encountered.
@@ -296,9 +294,7 @@ namespace NCsTrace
 			* @param OutHit				Properties of the trace hit.
 			* @return					True if there was a hit, false otherwise.
 			*/
-			static bool SphereTraceChecked(const FString& Context, const ParamsType& Params, FHitResult& OutHit);
-
-			#undef ParamsType
+			static bool SphereTraceChecked(const FString& Context, const SphereParamsType& Params, FHitResult& OutHit);
 
 		#pragma endregion Sphere
 
@@ -365,9 +361,6 @@ namespace NCsTrace
 			static ResponseType* TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const float& Distance, const ECollisionChannel& Channel);
 
 		#pragma endregion Screen
-
-		#undef ResponseType
-		#undef RequestType
 
 		#pragma endregion Response
 

@@ -17,13 +17,13 @@ namespace NCsTrace
 	{
 		namespace NLibrary
 		{
+			using DamageDataType = NCsTrace::NData::NDamage::IDamage;
+			
 			bool FLibrary::IsValidChecked(const FString& Context, DataType* Data)
 			{
 				CS_IS_PTR_NULL_CHECKED(Data)
 
 				// DamageDataType (NCsTrace::NData::NDamage::IDamage
-				typedef NCsTrace::NData::NDamage::IDamage DamageDataType;
-
 				if (DamageDataType* DamageData = GetSafeInterfaceChecked<DamageDataType>(Context, Data))
 				{
 					checkf(DamageData->GetDamageData(), TEXT("%s: Data implements interface: %s but GetDamageData() is NULL."), *Context, *(DamageDataType::Name.ToString()));

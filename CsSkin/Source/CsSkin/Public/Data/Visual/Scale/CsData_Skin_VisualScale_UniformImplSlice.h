@@ -41,14 +41,12 @@ public:
 	{
 	}
 
-#define SliceType NCsSkin::NData::NVisual::NScale::NUniform::FImplSlice
+	using SliceType = NCsSkin::NData::NVisual::NScale::NUniform::FImplSlice;
 
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 
 	SliceType* AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;
-
-#undef SliceType
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsSkin::FLog::Warning) const;

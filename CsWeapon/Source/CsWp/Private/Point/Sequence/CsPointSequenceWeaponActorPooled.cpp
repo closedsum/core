@@ -5,8 +5,6 @@
 #include "Point/Sequence/CsCVars_PointSequenceWeapon.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
-// Types
-#include "Types/CsCached.h"
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/Time/CsLibrary_Manager_Time.h"
@@ -25,6 +23,7 @@
 	// Common
 #include "Camera/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Math.h"
+#include "Library/CsLibrary_DataType.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
@@ -671,9 +670,7 @@ bool ACsPointSequenceWeaponActorPooled::CanFire() const
 
 	const FString& Context = Str::CanFire;
 	
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 	const float TimeBetweenShots = GetTimeBetweenShots();
 
@@ -691,7 +688,7 @@ bool ACsPointSequenceWeaponActorPooled::CanFire() const
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointSequenceCanFire))
 	{
-		using namespace NCsCached;
+		const TCHAR*(*ToChar)(const bool& Value) = &CsDataTypeLibrary::ToChar;
 
 		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Context);
 		// Pass_Time

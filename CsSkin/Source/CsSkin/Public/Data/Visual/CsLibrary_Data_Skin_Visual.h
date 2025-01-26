@@ -429,6 +429,8 @@ namespace NCsSkin
 					};
 				};
 
+				using SetMaterialsType = NCsSkin::NData::NVisual::FLibrary::FSetMaterials;
+				using SetMaterialsSkinType = NCsSkin::NData::NVisual::FLibrary::FSetMaterials::ESkin;
 				using SetMaterialsResultType = NCsSkin::NData::NVisual::FLibrary::FSetMaterials::FResult;
 
 				/**

@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Visual/CsData_Skin_VisualSkeletalMeshAndMaterialImpl.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
@@ -69,7 +71,7 @@ bool FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::SetSafe(const FString& Cont
 	return CsMaterialLibrary::SetSafe(Context, Component, Materials.Get());
 }
 
-const FName NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl::Name = FName("NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl);
 
 namespace NCsSkin
 {

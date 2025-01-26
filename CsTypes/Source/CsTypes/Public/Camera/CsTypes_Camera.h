@@ -9,7 +9,7 @@
 // ViewTargetBlendFunction
 #pragma region
 
-struct CSCORE_API EMCsViewTargetBlendFunction : public TCsEnumMap<EViewTargetBlendFunction>
+struct CSTYPES_API EMCsViewTargetBlendFunction : public TCsEnumMap<EViewTargetBlendFunction>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsViewTargetBlendFunction, EViewTargetBlendFunction)
 };
@@ -20,13 +20,13 @@ namespace NViewTargetBlendFunction
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type VTBlend_Linear;
-		extern CSCORE_API const Type VTBlend_Cubic;
-		extern CSCORE_API const Type VTBlend_EaseIn;
-		extern CSCORE_API const Type VTBlend_EaseOut;
-		extern CSCORE_API const Type VTBlend_EaseInOut;
-		extern CSCORE_API const Type VTBlend_PreBlended;
-		extern CSCORE_API const Type VTBlend_MAX;
+		extern CSTYPES_API const Type VTBlend_Linear;
+		extern CSTYPES_API const Type VTBlend_Cubic;
+		extern CSTYPES_API const Type VTBlend_EaseIn;
+		extern CSTYPES_API const Type VTBlend_EaseOut;
+		extern CSTYPES_API const Type VTBlend_EaseInOut;
+		extern CSTYPES_API const Type VTBlend_PreBlended;
+		extern CSTYPES_API const Type VTBlend_MAX;
 	}
 }
 

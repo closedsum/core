@@ -9,7 +9,7 @@
 
 #include "CsTraceResponse.generated.h"
 
-// NCsTrace::NResponse::FResponse
+// ResponseType (NCsTrace::NResponse::FResponse)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
 
 /**
@@ -43,9 +43,9 @@ struct CSPHYSICS_API FCsTraceResponse
 	{
 	}
 
-#define ResponseType NCsTrace::NResponse::FResponse
+	using ResponseType = NCsTrace::NResponse::FResponse;
+
 	void CopyFromResponse(ResponseType* Response);
-#undef ResponseType
 
 	FORCEINLINE void Reset()
 	{
@@ -112,3 +112,5 @@ namespace NCsTrace
 		};
 	}
 }
+
+using CsTraceResponseType = NCsTrace::NResponse::FResponse;

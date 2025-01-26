@@ -5,6 +5,7 @@
 
 // Types
 #include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
@@ -17,7 +18,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualScale_UniformImplSlice)
 
-#define SliceType NCsSkin::NData::NVisual::NScale::NUniform::FImplSlice
+using SliceType = NCsSkin::NData::NVisual::NScale::NUniform::FImplSlice;
 
 void FCsData_Skin_VisualScale_UniformImplSlice::CopyToSlice(SliceType* Slice)
 {
@@ -54,11 +55,8 @@ SliceType* FCsData_Skin_VisualScale_UniformImplSlice::AddSafeSliceAsValue(const 
 	DeconstructInterfaceSliceMap->AddDeconstructSliceImpl(SliceType::Name, &SliceType::Deconstruct);
 
 	CopyToSliceAsValue(Slice);
-
 	return Slice;
 }
-
-#undef SliceType
 
 bool FCsData_Skin_VisualScale_UniformImplSlice::IsValidChecked(const FString& Context) const
 {
@@ -92,7 +90,7 @@ bool FCsData_Skin_VisualScale_UniformImplSlice::SetSafe(const FString& Context, 
 	return true;
 }
 
-const FName NCsSkin::NData::NVisual::NScale::NUniform::FImplSlice::Name = FName("NCsSkin::NData::NVisual::NScale::NUniform::FImplSlice");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsSkin::NData::NVisual::NScale::NUniform::FImplSlice);
 
 namespace NCsSkin
 {

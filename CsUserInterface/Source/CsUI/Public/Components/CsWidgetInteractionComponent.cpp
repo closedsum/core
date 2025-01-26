@@ -171,9 +171,7 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 				{
 					UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(GetWorld()->GetGameState());
 
-					typedef NCsTrace::NRequest::FRequest RequestType;
-
-					RequestType* Request    = Manager_Trace->AllocateRequest();
+					CsTraceRequestType* Request    = Manager_Trace->AllocateRequest();
 					Request->ProfileName	= Name::OnProcessGameEventInfo;
 					Request->Type			= ECsTraceType::Line;
 					Request->Method			= ECsTraceMethod::Multi;
@@ -188,9 +186,7 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 					Request->Params = FCollisionQueryParams::DefaultQueryParam;
 					Request->Params.AddIgnoredComponents(Internal_ComponentsToIgnoreOnTrace);
 
-					typedef NCsTrace::NResponse::FResponse ResponseType;
-
-					if (ResponseType* Response = Manager_Trace->Trace(Request))
+					if (CsTraceResponseType* Response = Manager_Trace->Trace(Request))
 					{
 						TArray<FHitResult>& OutHits = Response->OutHits;
 

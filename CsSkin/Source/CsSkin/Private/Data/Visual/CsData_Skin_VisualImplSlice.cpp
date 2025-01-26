@@ -5,6 +5,7 @@
 
 // Types
 #include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
@@ -15,7 +16,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Skin_VisualImplSlice)
 
-#define SliceType NCsSkin::NData::NVisual::FImplSlice
+using SliceType = NCsSkin::NData::NVisual::FImplSlice;
 
 void FCsData_Skin_VisualImplSlice::CopyToSlice(SliceType* Slice)
 {
@@ -29,7 +30,7 @@ SliceType* FCsData_Skin_VisualImplSlice::AddSafeSliceAsValue(const FString& Cont
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-	typedef NCsSkin::NData::NVisual::IVisual InterfaceType;
+	using InterfaceType = NCsSkin::NData::NVisual::IVisual;
 
 	if (InterfaceMap->Implements(InterfaceType::Name))
 	{
@@ -50,18 +51,15 @@ SliceType* FCsData_Skin_VisualImplSlice::AddSafeSliceAsValue(const FString& Cont
 	DeconstructInterfaceSliceMap->AddDeconstructSliceImpl(SliceType::Name, &SliceType::Deconstruct);
 
 	CopyToSliceAsValue(Slice);
-
 	return Slice;
 }
-
-#undef SliceType
 
 bool FCsData_Skin_VisualImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	return true;
 }
 
-const FName NCsSkin::NData::NVisual::FImplSlice::Name = FName("NCsSkin::NData::NVisual::FImplSlice");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsSkin::NData::NVisual::FImplSlice);
 
 namespace NCsSkin
 {
@@ -86,7 +84,7 @@ namespace NCsSkin
 
 				CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-				typedef NCsSkin::NData::NVisual::IVisual InterfaceType;
+				using InterfaceType = NCsSkin::NData::NVisual::IVisual;
 
 				if (InterfaceMap->Implements(InterfaceType::Name))
 				{
@@ -104,7 +102,7 @@ namespace NCsSkin
 				bool Success	  = false;
 
 				// Try FCsData_Skin_VisualImplSlice
-				typedef FCsData_Skin_VisualImplSlice StructSliceType;
+				using StructSliceType = FCsData_Skin_VisualImplSlice;
 
 				if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualSkinSlice, nullptr))
 				{

@@ -48,9 +48,8 @@ UCsScriptLibrary_Manager_Trace::UCsScriptLibrary_Manager_Trace(const FObjectInit
 #define USING_NS_CACHED using namespace NCsScriptLibraryManagerTrace::NCached;
 #define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerTrace::NCached; \
 	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define TraceManagerLibrary NCsTrace::NManager::FLibrary
-#define RequestType NCsTrace::NRequest::FRequest
-#define ResponseType NCsTrace::NResponse::FResponse
+using RequestType = NCsTrace::NRequest::FRequest;
+using ResponseType = NCsTrace::NResponse::FResponse;
 
 void UCsScriptLibrary_Manager_Trace::Trace(const FString& Context, const UObject* WorldContextObject, const FCsTraceRequest& Request, FCsTraceResponse& OutResponse)
 {
@@ -59,11 +58,11 @@ void UCsScriptLibrary_Manager_Trace::Trace(const FString& Context, const UObject
 	if (!Request.IsValid(Ctxt))
 		return;
 
-	if (RequestType* RequestPtr = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
+	if (RequestType* RequestPtr = CsTraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
 	{
 		Request.CopyToRequestAsValue(RequestPtr);
 
-		ResponseType* ResponsePtr = TraceManagerLibrary::SafeTrace(Ctxt, WorldContextObject, RequestPtr);
+		ResponseType* ResponsePtr = CsTraceManagerLibrary::SafeTrace(Ctxt, WorldContextObject, RequestPtr);
 
 		if (ResponsePtr)
 		{
@@ -79,7 +78,7 @@ bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(const FString& Con
 {
 	CONDITIONAL_SET_CTXT(LineTraceSingleByChannel);
 	
-	if (RequestType* Request = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
+	if (RequestType* Request = CsTraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
 	{
 		// Fill out Request
 		Request->Start				  = CsMathLibrary::Convert(Start);
@@ -96,7 +95,7 @@ bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(const FString& Con
 		Request->Params.AddIgnoredActors(ActorsToIgnore);
 
 		// Check Response
-		if (ResponseType* Response = TraceManagerLibrary::SafeTrace(Ctxt, WorldContextObject, Request))
+		if (ResponseType* Response = CsTraceManagerLibrary::SafeTrace(Ctxt, WorldContextObject, Request))
 		{
 			if (Response->bResult)
 			{
@@ -118,7 +117,7 @@ bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByChannel(const FString& C
 {
 	CONDITIONAL_SET_CTXT(SphereTraceSingleByChannel);
 	
-	if (RequestType* Request = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
+	if (RequestType* Request = CsTraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
 	{
 		// Fill out Request
 		Request->Start				  = CsMathLibrary::Convert(Start);
@@ -136,7 +135,7 @@ bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByChannel(const FString& C
 		Request->Params.AddIgnoredActors(ActorsToIgnore);
 
 		// Check Response
-		if (ResponseType* Response = TraceManagerLibrary::SafeTrace(Ctxt, WorldContextObject, Request))
+		if (ResponseType* Response = CsTraceManagerLibrary::SafeTrace(Ctxt, WorldContextObject, Request))
 		{
 			if (Response->bResult)
 			{
@@ -153,14 +152,14 @@ bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByChannelAtBone(const FStr
 {
 	CONDITIONAL_SET_CTXT(SphereTraceSingleByChannelAtBone);
 
-	return TraceManagerLibrary::SafeSphereTrace(Ctxt, WorldContextObject, Component, BoneOrSocket, Radius, Channel, bTraceComplex, bIgnoreSelf, ActorsToIgnore, OutHit);
+	return CsTraceManagerLibrary::SafeSphereTrace(Ctxt, WorldContextObject, Component, BoneOrSocket, Radius, Channel, bTraceComplex, bIgnoreSelf, ActorsToIgnore, OutHit);
 }
 
 bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByObjectType(const FString& Context, UObject* WorldContextObject, const FVector& Start, const FVector& End, const float& Radius, const TArray<TEnumAsByte<EObjectTypeQuery>>& ObjectTypes, const bool& bTraceComplex, const bool& bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit)
 {
 	CONDITIONAL_SET_CTXT(SphereTraceSingleByObjectType);
 	
-	if (RequestType* Request = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
+	if (RequestType* Request = CsTraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
 	{
 		// Fill out Request
 		Request->Start	= CsMathLibrary::Convert(Start);
@@ -180,7 +179,7 @@ bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByObjectType(const FString
 		Request->Params.AddIgnoredActors(ActorsToIgnore);
 
 		// Check Response
-		if (ResponseType* Response = TraceManagerLibrary::SafeTrace(Ctxt, WorldContextObject, Request))
+		if (ResponseType* Response = CsTraceManagerLibrary::SafeTrace(Ctxt, WorldContextObject, Request))
 		{
 			if (Response->bResult)
 			{
@@ -208,7 +207,7 @@ bool UCsScriptLibrary_Manager_Trace::SweepByCapsuleComponent(const FString& Cont
 	static FCollisionQueryParams QueryParams;
 	Params.CopyToParams(QueryParams);
 
-	ResponseType* ResponsePtr = TraceManagerLibrary::SafeSweep(Ctxt, WorldContextObject, CapsuleComponent, QueryParams);
+	ResponseType* ResponsePtr = CsTraceManagerLibrary::SafeSweep(Ctxt, WorldContextObject, CapsuleComponent, QueryParams);
 
 	if (ResponsePtr)
 	{
@@ -228,7 +227,7 @@ bool UCsScriptLibrary_Manager_Trace::SweepByCapsuleComponentAgainstObject(const 
 	static FCollisionQueryParams QueryParams;
 	Params.CopyToParams(QueryParams);
 
-	ResponseType* ResponsePtr = TraceManagerLibrary::SafeSweepAgainstObject(Ctxt, WorldContextObject, CapsuleComponent, QueryParams, Object);
+	ResponseType* ResponsePtr = CsTraceManagerLibrary::SafeSweepAgainstObject(Ctxt, WorldContextObject, CapsuleComponent, QueryParams, Object);
 
 	if (ResponsePtr)
 	{
@@ -248,7 +247,7 @@ bool UCsScriptLibrary_Manager_Trace::SweepByCapsuleComponentAgainstObjectOnly(co
 	static FCollisionQueryParams QueryParams;
 	Params.CopyToParams(QueryParams);
 
-	ResponseType* ResponsePtr = TraceManagerLibrary::SafeSweepAgainstObjectOnly(Ctxt, WorldContextObject, CapsuleComponent, QueryParams, Object);
+	ResponseType* ResponsePtr = CsTraceManagerLibrary::SafeSweepAgainstObjectOnly(Ctxt, WorldContextObject, CapsuleComponent, QueryParams, Object);
 
 	if (ResponsePtr)
 	{
@@ -262,6 +261,3 @@ bool UCsScriptLibrary_Manager_Trace::SweepByCapsuleComponentAgainstObjectOnly(co
 
 #undef USING_NS_CACHED
 #undef CONDITIONAL_SET_CTXT
-#undef TraceManagerLibrary
-#undef RequestType
-#undef ResponseType

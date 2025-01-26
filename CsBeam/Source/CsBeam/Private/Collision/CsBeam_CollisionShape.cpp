@@ -196,9 +196,8 @@ ShapeType* FCsBeamCollisionShape::ConstructShapeAsValue() const
 
 bool FCsBeamCollisionShape::IsValidChecked(const FString& Context) const
 {
-	check(EMCsBeamCollisionShapeScale::Get().IsValidEnumChecked(Context, ScaleType));
-
-	check(EMCsBeamCollisionShapeType::Get().IsValidEnumChecked(Context, Type));
+	CS_IS_ENUM_VALID_CHECKED(EMCsBeamCollisionShapeScale, ScaleType)
+	CS_IS_ENUM_VALID_CHECKED(EMCsBeamCollisionShapeType, Type)
 
 	// Line
 	if (Type == ECsBeamCollisionShapeType::Line)
@@ -216,7 +215,6 @@ bool FCsBeamCollisionShape::IsValidChecked(const FString& Context) const
 	if (Type == ECsBeamCollisionShapeType::Capsule)
 	{
 		CS_IS_FLOAT_GREATER_THAN_CHECKED(Radius, 0.0f);
-
 		CS_IS_FLOAT_GREATER_THAN_CHECKED(HalfHeight, 0.0f);
 	}
 	return true;
@@ -225,7 +223,6 @@ bool FCsBeamCollisionShape::IsValidChecked(const FString& Context) const
 bool FCsBeamCollisionShape::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
 	CS_IS_ENUM_VALID(EMCsBeamCollisionShapeScale, ECsBeamCollisionShapeScale, ScaleType)
-
 	CS_IS_ENUM_VALID(EMCsBeamCollisionShapeType, ECsBeamCollisionShapeType, Type)
 
 	// Line
@@ -244,7 +241,6 @@ bool FCsBeamCollisionShape::IsValid(const FString& Context, void(*Log)(const FSt
 	if (Type == ECsBeamCollisionShapeType::Capsule)
 	{
 		CS_IS_FLOAT_GREATER_THAN(Radius, 0.0f);
-
 		CS_IS_FLOAT_GREATER_THAN(HalfHeight, 0.0f);
 	}
 	return true;
@@ -256,13 +252,15 @@ namespace NCsBeam
 	{
 		namespace NShape
 		{
+			using ResponseType = NCsTrace::NResponse::FResponse;
+			using RequestType = NCsTrace::NRequest::FRequest;
+
 		// FLine
 		#pragma region
 
 			bool FLine::IsValidChecked(const FString& Context) const
 			{
-				check(EMScale::Get().IsValidEnumChecked(Context, GetScaleType()));
-
+				CS_IS_ENUM_VALID_CHECKED(EMScale, GetScaleType())			
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLength(), 0.0f);
 				return true;
 			}
@@ -270,21 +268,14 @@ namespace NCsBeam
 			bool FLine::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 			{
 				CS_IS_ENUM_VALID(EMScale, EScale, GetScaleType())
-
 				CS_IS_FLOAT_GREATER_THAN(GetLength(), 0.0f);
 				return true;
 			}
 
-			#define ResponseType NCsTrace::NResponse::FResponse
-			#define RequestType NCsTrace::NRequest::FRequest
+
 			ResponseType* FLine::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const
 			{
-			#undef ResponseType
-			#undef RequestType
-
-				typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-
-				return TraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
+				return CsTraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
 			}
 
 		#pragma endregion FLine
@@ -294,8 +285,7 @@ namespace NCsBeam
 
 			bool FBox::IsValidChecked(const FString& Context) const
 			{
-				check(EMScale::Get().IsValidEnumChecked(Context, GetScaleType()));
-
+				CS_IS_ENUM_VALID_CHECKED(EMScale, GetScaleType())			
 				CS_IS_VECTOR_ZERO_CHECKED(GetHalfExtents())
 				return true;
 			}
@@ -303,21 +293,13 @@ namespace NCsBeam
 			bool FBox::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 			{
 				CS_IS_ENUM_VALID(EMScale, EScale, GetScaleType())
-
 				CS_IS_VECTOR_ZERO(GetHalfExtents())
 				return true;
 			}
 
-			#define ResponseType NCsTrace::NResponse::FResponse
-			#define RequestType NCsTrace::NRequest::FRequest
 			ResponseType* FBox::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const
 			{
-			#undef ResponseType
-			#undef RequestType
-
-				typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-
-				return TraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
+				return CsTraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
 			}
 
 		#pragma endregion FBox
@@ -327,10 +309,8 @@ namespace NCsBeam
 
 			bool FCapsule::IsValidChecked(const FString& Context) const
 			{
-				check(EMScale::Get().IsValidEnumChecked(Context, GetScaleType()));
-
+				CS_IS_ENUM_VALID_CHECKED(EMScale, GetScaleType())				
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetRadius(), 0.0f);
-
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetHalfHeight(), 0.0f);
 				return true;
 			}
@@ -338,23 +318,14 @@ namespace NCsBeam
 			bool FCapsule::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 			{
 				CS_IS_ENUM_VALID(EMScale, EScale, GetScaleType())
-
 				CS_IS_FLOAT_GREATER_THAN(GetRadius(), 0.0f);
-
 				CS_IS_FLOAT_GREATER_THAN(GetHalfHeight(), 0.0f);
 				return true;
 			}
 
-			#define ResponseType NCsTrace::NResponse::FResponse
-			#define RequestType NCsTrace::NRequest::FRequest
 			ResponseType* FCapsule::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const
 			{
-			#undef ResponseType
-			#undef RequestType
-
-				typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-
-				return TraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
+				return CsTraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
 			}
 
 		#pragma endregion FCapsule

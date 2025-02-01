@@ -14,6 +14,10 @@ namespace NCsProjectile
 		*/
 		struct CSPRJ_API FLibrary final
 		{
+		private:
+
+			using MemberType = FCsPrjDataRootSet::EMember;
+			
 		public:
 
 			/**
@@ -42,8 +46,6 @@ namespace NCsProjectile
 			* return				
 			*/
 			static const FCsPrjDataRootSet& GetChecked(const FString& Context, const UObject* WorldContext);
-
-		#define MemberType FCsPrjDataRootSet::EMember
 
 			/**
 			* Safely get the DataTable associated with Member.
@@ -143,8 +145,6 @@ namespace NCsProjectile
 			* return				Whether a string path was found.
 			*/
 			static bool GetSafeDataTablePath(const FString& Context, const UObject* WorldContext, const MemberType& Member, FString& OutPath, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
-
-		#undef MemberType
 		};
 	}
 }

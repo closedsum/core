@@ -50,7 +50,8 @@ public class CsWpEditor : ModuleRules
                     "CsEnumEditor",
                     "CsSkin",
                     "CsPrj",
-                    "CsWp"
+                    "CsWp",
+                    "CsTemp"
                 }
             );
 

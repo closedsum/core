@@ -68,10 +68,10 @@ public:
 			}
 			else
 			{
-#if !UE_BUILD_SHIPPING
+			#if !UE_BUILD_SHIPPING
 				if (Log)
 					Log(FString::Printf(TEXT("%s: Failed to find Row: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DataTable->GetName())));
-#endif // #if !UE_BUILD_SHIPPING
+			#endif // #if !UE_BUILD_SHIPPING
 			}
 		}
 		return nullptr;

@@ -47,6 +47,13 @@ namespace NCsProjectile
 	{
 		struct CSPRJ_API FLibrary final
 		{
+		private:
+			
+			using DataType = NCsProjectile::NData::IData;
+			using DataInterfaceMapType = NCsProjectile::NData::FInterfaceMap;
+			using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>;
+			using PayloadType = NCsProjectile::NPayload::IPayload;
+
 		// Print
 		#pragma region
 		public:
@@ -278,8 +285,6 @@ namespace NCsProjectile
 		#pragma region
 		public:
 
-		#define PayloadType NCsProjectile::NPayload::IPayload
-
 			/*
 			* Allocate a Payload (used to Spawn a Projectile from Manager_Projectile).
 			* 
@@ -301,15 +306,11 @@ namespace NCsProjectile
 			*/
 			static PayloadType* SafeAllocatePayload(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 
-		#undef PayloadType
-
 		#pragma endregion Payload
 
 		// Spawn
 		#pragma region
 		public:
-
-		#define PayloadType NCsProjectile::NPayload::IPayload
 
 			/**
 			* Spawn a Projectile with the given Payload.
@@ -322,18 +323,11 @@ namespace NCsProjectile
 			*/
 			static const FCsProjectilePooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload);
 
-		#undef PayloadType
-
 		#pragma endregion Spawn
 
 		// Data
 		#pragma region
 		public:
-
-		#define DataType NCsProjectile::NData::IData
-
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataInterfaceMapType NCsProjectile::NData::FInterfaceMap
 
 			/**
 			* 
@@ -342,10 +336,7 @@ namespace NCsProjectile
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log			(optional)
 			*/
-			static DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
-
-		#undef DataHandlerType
-		#undef DataInterfaceMapType
+			static DataHandlerType* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 
 			/**
 			* Get the Data (implements interface: DataType (NCsProjectile::NData::IData)) associated with Name of the weapon type.
@@ -402,8 +393,6 @@ namespace NCsProjectile
 			*/
 			static UObject* GetSafeDataAsObject(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 
-		#undef DataType
-
 		#pragma endregion Data
 		};
 
@@ -411,11 +400,13 @@ namespace NCsProjectile
 		{
 			struct CSPRJ_API FLibrary final
 			{
-			public:
+			private:
 
-			#define ModifierResourceType NCsProjectile::NModifier::FResource
-			#define ModifierType NCsProjectile::NModifier::IModifier
-			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+				using ModifierResourceType = NCsProjectile::NModifier::NResource::FResource;
+				using ModifierType = NCsProjectile::NModifier::IModifier;
+				using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
+
+			public:
 		
 				static ModifierResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type);
 
@@ -468,10 +459,6 @@ namespace NCsProjectile
 				* @param To
 				*/
 				static void AddChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
-
-			#undef ModifierResourceType
-			#undef ModifierType
-			#undef AllocatedModifierType
 			};
 		}
 
@@ -479,19 +466,18 @@ namespace NCsProjectile
 		{
 			struct CSPRJ_API FLibrary final
 			{
-			public:
+			private:
 
-			#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
-			#define VariablesType NCsProjectile::NVariables::FVariables
+				using VariablesPayloadType = NCsProjectile::NVariables::NAllocate::FPayload;
+				using VariablesType = NCsProjectile::NVariables::FVariables;
+
+			public:
 
 				static VariablesType* AllocateChecked(const FString& Context, const UObject* WorldContext, const VariablesPayloadType& Payload);
 
 				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, VariablesType* Variables);
 
 				static bool SafeDeallocate(const FString& Context, const UObject* WorldContext, VariablesType* Variables, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
-
-			#undef VariablesPayloadType
-			#undef VariablesType
 			};
 		}
 
@@ -499,11 +485,13 @@ namespace NCsProjectile
 		{
 			struct CSPRJ_API FLibrary final
 			{
-			public:
+			private:
 
-			#define BoundsWorldType NCsGrid::NUniform::FGrid
+				using BoundsWorldType = NCsGrid::NUniform::FGrid;
+
+			public:
+	
 				static BoundsWorldType* GetBoundsWorldChecked(const FString& Context, const UObject* WorldContext);
-			#undef BoundsWorldType
 			};
 		}
 
@@ -515,16 +503,16 @@ namespace NCsProjectile
 				{
 					struct CSPRJ_API FLibrary final
 					{
-					public:
+					private:
 
-					#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource
+						using VariablesResourceType = NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource;
+
+					public:
 
 						static VariablesResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext);
 
 						static void DeallocateChecked(const FString& Context, const UObject* WorldContext, VariablesResourceType* Resource);
 						static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const int32& Index);
-
-					#undef VariablesResourceType
 
 						static void AddHandleChecked(const FString& Context, const UObject* WorldContext, const FCsRoutineHandle& Handle);
 						
@@ -535,16 +523,16 @@ namespace NCsProjectile
 					{
 						struct CSPRJ_API FLibrary final
 						{
-						public:
+						private:
 
-						#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource
+							using VariablesResourceType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource;
+
+						public:
 
 							static VariablesResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext);
 
 							static void DeallocateChecked(const FString& Context, const UObject* WorldContext, VariablesResourceType* Resource);
 							static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const int32& Index);
-
-						#undef VariablesResourceType
 						};
 					}
 				}

@@ -13,34 +13,34 @@ namespace NCsWeapon
 	{
 		namespace NHandler
 		{
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataType NCsWeapon::NData::IData
-		#define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
-
-			/**
-			*/
-			class CSWP_API FData : public DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>
+			namespace NData
 			{
-			private:
+				using DataType = NCsWeapon::NData::IData;
+				using DataInterfaceMapType = NCsWeapon::NData::FInterfaceMap;
+				using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_WeaponPtr, DataInterfaceMapType>;
+				
 
-				typedef DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType> Super;
+				/**
+				*/
+				class CSWP_API FData : public DataHandlerType
+				{
+				private:
 
-			public:
+					using Super = DataHandlerType;
 
-				FData();
+				public:
 
-			// DataHandlerType (NCsData::NManager::NHandler::TData)
-			#pragma region
-			protected:
+					FData();
 
-				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
+				// DataHandlerType (NCsData::NManager::NHandler::TData)
+				#pragma region
+				protected:
 
-			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
-			};
+					virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
 
-		#undef DataHandlerType
-		#undef DataType
-		#undef DataInterfaceMapType
+				#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
+				};
+			}
 		}
 	}
 

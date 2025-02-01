@@ -31,6 +31,7 @@
 	// Common
 #include "Camera/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Math.h"
+#include "Library/Cslibrary_DataType.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
@@ -774,6 +775,8 @@ bool ACsProjectileWeaponActorPooled::CanFire() const
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileCanFire))
 	{
+		const TCHAR*(*ToChar)(const bool& Value) = &CsDataTypeLibrary::ToChar;
+
 		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Context);
 		// Pass_Time
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, TimeBetweenShots);

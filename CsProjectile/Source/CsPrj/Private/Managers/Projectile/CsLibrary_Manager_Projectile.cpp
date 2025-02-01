@@ -38,6 +38,11 @@ namespace NCsProjectile
 			}
 		}
 
+		using DataType = NCsProjectile::NData::IData;
+		using DataInterfaceMapType = NCsProjectile::NData::FInterfaceMap;
+		using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>;	
+		using PayloadType = NCsProjectile::NPayload::IPayload;
+
 		// Print
 		#pragma region
 
@@ -280,8 +285,6 @@ namespace NCsProjectile
 		// Payload
 		#pragma region
 
-		#define PayloadType NCsProjectile::NPayload::IPayload
-
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type)
 		{
 			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
@@ -298,18 +301,13 @@ namespace NCsProjectile
 			return nullptr;
 		}
 
-		#undef PayloadType
-
 		#pragma endregion Payload
 
 		// Spawn
 		#pragma region
 
-		#define PayloadType NCsProjectile::NPayload::IPayload
 		const FCsProjectilePooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload)
 		{
-		#undef PayloadType
-
 			return GetChecked(Context, WorldContext)->Spawn(Payload->GetType(), Payload);
 		}
 
@@ -318,15 +316,8 @@ namespace NCsProjectile
 		// Data
 		#pragma region
 
-		#define DataType NCsProjectile::NData::IData
-
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataInterfaceMapType NCsProjectile::NData::FInterfaceMap
-		DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		DataHandlerType* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 		{
-		#undef DataHandlerType
-		#undef DataInterfaceMapType
-
 			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
 			{
 				return Manager_Projectile->GetDataHandler();
@@ -391,9 +382,9 @@ namespace NCsProjectile
 
 		namespace NModifier
 		{
-			#define ModifierResourceType NCsProjectile::NModifier::FResource
-			#define ModifierType NCsProjectile::NModifier::IModifier
-			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+			using ModifierResourceType = NCsProjectile::NModifier::NResource::FResource;
+			using ModifierType = NCsProjectile::NModifier::IModifier;
+			using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
 		
 			ModifierResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type)
 			{
@@ -550,16 +541,18 @@ namespace NCsProjectile
 					Temp.Reset(Temp.Max());
 				}
 			}
-
-			#undef ModifierResourceType
-			#undef ModifierType
-			#undef AllocatedModifierType
 		}
+	}
+}
 
+namespace NCsProjectile
+{
+	namespace NManager
+	{
 		namespace NVariables
 		{
-			#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
-			#define VariablesType NCsProjectile::NVariables::FVariables
+			using VariablesPayloadType = NCsProjectile::NVariables::NAllocate::FPayload;
+			using VariablesType = NCsProjectile::NVariables::FVariables;
 
 			VariablesType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, const VariablesPayloadType& Payload)
 			{
@@ -582,28 +575,37 @@ namespace NCsProjectile
 				}
 				return false;
 			}
-
-			#undef VariablesPayloadType
-			#undef VariablesType
 		}
+	}
+}
 
+namespace NCsProjectile
+{
+	namespace NManager
+	{
 		namespace NSearch
 		{
-			#define BoundsWorldType NCsGrid::NUniform::FGrid
+			using BoundsWorldType = NCsGrid::NUniform::FGrid;
+
 			BoundsWorldType* FLibrary::GetBoundsWorldChecked(const FString& Context, const UObject* WorldContext)
 			{
-			#undef BoundsWorldType
 				return CsPrjManagerLibrary::GetChecked(Context, WorldContext)->GetBoundsWorld();
 			}
 		}
+	}
+}
 
+namespace NCsProjectile
+{
+	namespace NManager
+	{
 		namespace NOnHit
 		{
 			namespace NSpawn
 			{
 				namespace NProjectile
 				{
-					#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource
+					using VariablesResourceType = NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource;
 
 					VariablesResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext)
 					{
@@ -629,13 +631,25 @@ namespace NCsProjectile
 					{
 						return CsPrjManagerLibrary::GetChecked(Context, WorldContext)->OnHit.Spawn.Projectile.AddHandle(Handle);
 					}
+				}
+			}
+		}
+	}
+}
 
-					#undef VariablesResourceType
-
+namespace NCsProjectile
+{
+	namespace NManager
+	{
+		namespace NOnHit
+		{
+			namespace NSpawn
+			{
+				namespace NProjectile
+				{
 					namespace NSpread
 					{
-
-						#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource
+						using VariablesResourceType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource;
 
 						VariablesResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext)
 						{
@@ -651,8 +665,6 @@ namespace NCsProjectile
 						{
 							CsPrjManagerLibrary::GetChecked(Context, WorldContext)->OnHit.Spawn.Projectile.Spread.DeallocateVariables(Index);
 						}
-
-						#undef VariablesResourceType
 					}
 				}
 			}

@@ -122,8 +122,8 @@ private:
 	using DataType = NCsWeapon::NData::IData;
 	using DataInterfaceMapType = NCsWeapon::NData::FInterfaceMap;
 	using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_WeaponPtr, DataInterfaceMapType>;
-	using ModifierManagerType = NCsWeapon::NModifier::FManager;
-	using ModifierResourceType = NCsWeapon::NModifier::FResource;
+	using ModifierManagerType = NCsWeapon::NModifier::NResource::FManager;
+	using ModifierResourceType = NCsWeapon::NModifier::NResource::FResource;
 	using ModifierType = NCsWeapon::NModifier::IModifier;
 	using ModifierImplType = NCsWeapon::NModifier::EImpl;
 	using SpreadVariablesManagerType = NCsWeapon::NProjectile::NSpread::NVariables::FManager;
@@ -285,6 +285,15 @@ protected:
 public:
 
 	FORCEINLINE const TArray<TArray<FECsWeapon>>& GetTypeMapToArray() const { return TypeMapToArray; }
+
+protected:
+
+	/** Set of all types that have been mapped To (a list of Froms has been mapped to each To). */
+	TSet<FECsWeapon> TypeToSet;
+
+public:
+
+	FORCEINLINE const TSet<FECsWeapon>& GetTypeToSet() const { return TypeToSet; }
 
 	FORCEINLINE bool IsTypeMappedToType(const FECsWeapon& From, const FECsWeapon& To) const { return TypeMapArray[From] == To; }
 

@@ -6,9 +6,9 @@
 
 class UObject;
 
-// NCsProjectile::NModifier::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, FResource)
-// NCsProjectile::NModifier::IModifier
+// ModifierResourceType (NCsProjectile::NModifier::NResource::FResource)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NResource, FResource)
+// ModifierType (NCsProjectile::NModifier::IModifier)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, IModifier)
 
 
@@ -23,16 +23,21 @@ namespace NCsProjectile
 		*/
 		struct CSPRJ_API FAllocated
 		{
+		private:
+
+			using ModifierResourceType = NCsProjectile::NModifier::NResource::FResource;
+			using ModifierType = NCsProjectile::NModifier::IModifier;
+
 		public:
 
 			/** The Root for UCsManager_Projectile. */
 			TWeakObjectPtr<UObject> Root;
 
 			/** Container holding a reference to Modifier (a Projectile Modifier). */
-			FResource* Container;
+			ModifierResourceType* Container;
 
 			/** Projectile Modifier */
-			IModifier* Modifier;
+			ModifierType* Modifier;
 
 			/** The Type (or struct / class) of Modifier. This is used for 
 				quicker deallocation from UCsManager_Projectile. */
@@ -50,9 +55,9 @@ namespace NCsProjectile
 
 			UObject* GetRoot() const;
 
-			FORCEINLINE IModifier* Get() const { return Modifier; }
+			FORCEINLINE ModifierType* Get() const { return Modifier; }
 
-			void Copy(const UObject* WorldContext, const IModifier* From);
+			void Copy(const UObject* WorldContext, const ModifierType* From);
 
 			void Copy(const FAllocated& From);
 

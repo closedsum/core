@@ -494,7 +494,7 @@ namespace NCsDamage
 	{
 		namespace NModifier
 		{
-			using ModifierResourceType = NCsDamage::NModifier::FResource;
+			using ModifierResourceType = NCsDamage::NModifier::NResource::FResource;
 			using ModifierType = NCsDamage::NModifier::IModifier;
 			using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
 			using CopyType = NCsDamage::NModifier::NCopy::ICopy;

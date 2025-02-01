@@ -125,10 +125,8 @@ UDataTable* FCsWpDataRootSet::GetSafeDataTable(const FString& Context, const UOb
 {
 	using namespace NCsWpDataRootSet::NCached;
 
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
 	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::Member) \
-		return DataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsWpDataRootSet, Member, Str::Member);
+		return CsDataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsWpDataRootSet, Member, Str::Member);
 
 	// WeaponClasses
 	CS_TEMP_GET_SAFE_DATA_TABLE(WeaponClasses)
@@ -151,23 +149,19 @@ UDataTable* FCsWpDataRootSet::GetDataTableChecked(const FString& Context, const 
 		return GetDataTableChecked(Context, MemberType);
 	}
 #endif // #if WITH_EDITOR
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType));
+	return CsDataRootSetLibrary::GetDataTableChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType));
 }
 
 UDataTable* FCsWpDataRootSet::GetDataTableChecked(const FString& Context, const EMember& MemberType) const
 {
 	const TSoftObjectPtr<UDataTable>& SoftObject = GetDataTableSoftObjectChecked(Context, MemberType);
-	UDataTable* DT = SoftObject.LoadSynchronous();
+	UDataTable* DT								 = SoftObject.LoadSynchronous();
 
 	checkf(DT, TEXT("%s: Failed to Load DataTalbe at %s."), *Context, *(SoftObject.ToString()));
 
 #if WITH_EDITOR
 	CsLoadLibrary::LoadDataTable(DT, NCsLoadFlags::All, NCsLoadCodes::All);
 #endif // #if WITH_EDITOR
-
 	return DT;
 }
 
@@ -179,10 +173,7 @@ uint8* FCsWpDataRootSet::GetDataTableRowChecked(const FString& Context, const UO
 		return GetDataTableRowChecked(Context, MemberType, RowName);
 	}
 #endif // #if WITH_EDITOR
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowName);
+	return CsDataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowName);
 }
 
 uint8* FCsWpDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const
@@ -193,10 +184,7 @@ uint8* FCsWpDataRootSet::GetDataTableRowChecked(const FString& Context, const UO
 		return GetDataTableRowChecked(Context, MemberType, RowStruct, RowName);
 	}
 #endif // #if WITH_EDITOR
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
+	return CsDataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
 }
 
 uint8* FCsWpDataRootSet::GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const FName& RowName) const

@@ -6,9 +6,9 @@
 
 class UObject;
 
-// NCsWeapon::NModifier::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, FResource)
-// NCsWeapon::NModifier::IModifier
+// ModifierResourceType (NCsWeapon::NModifier::NResource::FResource)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NModifier, NResource, FResource)
+// ModifierType (NCsWeapon::NModifier::IModifier)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)
 
 
@@ -23,16 +23,21 @@ namespace NCsWeapon
 		*/
 		struct CSWP_API FAllocated
 		{
+		private:
+
+			using ModifierResourceType = NCsWeapon::NModifier::NResource::FResource;
+			using ModifierType = NCsWeapon::NModifier::IModifier;
+
 		public:
 
 			/** The Root for UCsManager_Weapon. */
 			TWeakObjectPtr<UObject> Root;
 
 			/** Container holding a reference to Modifier (a Weapon Modifier). */
-			FResource* Container;
+			ModifierResourceType* Container;
 
 			/** Projectile Modifier */
-			IModifier* Modifier;
+			ModifierType* Modifier;
 
 			/** The Type (or struct / class) of Modifier. This is used for 
 				quicker deallocation from UCsManager_Weapon. */
@@ -50,9 +55,9 @@ namespace NCsWeapon
 
 			UObject* GetRoot() const;
 
-			FORCEINLINE IModifier* Get() const { return Modifier; }
+			FORCEINLINE ModifierType* Get() const { return Modifier; }
 
-			void Copy(UObject* InRoot, const IModifier* From);
+			void Copy(UObject* InRoot, const ModifierType* From);
 
 			void Copy(const FAllocated&From);
 

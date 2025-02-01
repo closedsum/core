@@ -36,8 +36,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, FResource)
 
 // NCsDamage::NRange::IRange
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
-// NCsDamage::NModifier::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
+// ModifierResourceType (NCsDamage::NModifier::NResource::FResource)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NResource, FResource)
 // NCsDamage::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
@@ -522,7 +522,7 @@ namespace NCsDamage
 			{
 			private:
 
-				using ModifierResourceType = NCsDamage::NModifier::FResource;
+				using ModifierResourceType = NCsDamage::NModifier::NResource::FResource;
 				using ModifierType = NCsDamage::NModifier::IModifier;
 				using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
 

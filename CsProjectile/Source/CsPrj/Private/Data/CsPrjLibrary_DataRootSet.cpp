@@ -10,6 +10,8 @@ namespace NCsProjectile
 {
 	namespace NDataRootSet
 	{
+		using MemberType = FCsPrjDataRootSet::EMember;
+
 		const FCsPrjDataRootSet* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext)
 		{
 			return NCsDataRootSet::FLibrary::GetSafe<FCsPrjDataRootSet, ICsPrjGetDataRootSet, &ICsPrjGetDataRootSet::GetCsPrjDataRootSet>(Context, WorldContext, &NCsProjectile::FLog::Warning);
@@ -24,8 +26,6 @@ namespace NCsProjectile
 		{
 			return NCsDataRootSet::FLibrary::GetChecked<FCsPrjDataRootSet, ICsPrjGetDataRootSet, &ICsPrjGetDataRootSet::GetCsPrjDataRootSet>(Context, WorldContext);
 		}
-
-		#define MemberType FCsPrjDataRootSet::EMember
 
 		UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const MemberType& Member)
 		{
@@ -78,7 +78,5 @@ namespace NCsProjectile
 			}
 			return false;
 		}
-
-		#undef MemberType
 	}
 }

@@ -9,8 +9,8 @@
 
 class UObject;
 
-// NCsDamage::NModifier::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
+// ModifierResourceType (NCsDamage::NModifier::NResource::FResource)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NResource, FResource)
 // NCsDamage::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
@@ -31,16 +31,19 @@ namespace NCsDamage
 
 			CS_USING_CACHED_FUNCTION_NAME_NESTED_2(NCsDamage, NModifier, Allocated);
 
+			using ModifierResourceType = NCsDamage::NModifier::NResource::FResource;
+			using ModifierType = NCsDamage::NModifier::IModifier;
+
 		public:
 
 			/** The Root for UCsManager_Damage. */
 			TWeakObjectPtr<UObject> Root;
 
 			/** Container holding a reference to Modifier (a Damage Modifier). */
-			FResource* Container;
+			ModifierResourceType* Container;
 
 			/** Damage Modifier */
-			IModifier* Modifier;
+			ModifierType* Modifier;
 
 			/** The Type (or struct / class) of Modifier. This is used for 
 				quicker deallocation from UCsManager_Damage. */
@@ -58,13 +61,13 @@ namespace NCsDamage
 
 			UObject* GetRoot() const;
 
-			FORCEINLINE FResource* GetContainerChecked(const FString& Context) const
+			FORCEINLINE ModifierResourceType* GetContainerChecked(const FString& Context) const
 			{
 				checkf(Container, TEXT("%s: Container is NULL."), *Context);
 				return Container;
 			}
 
-			FORCEINLINE IModifier* GetChecked(const FString& Context) const
+			FORCEINLINE ModifierType* GetChecked(const FString& Context) const
 			{
 				checkf(Modifier, TEXT("%s: Modifier is NULL."), *Context);
 				return Modifier;
@@ -72,7 +75,7 @@ namespace NCsDamage
 
 			FORCEINLINE IModifier* Get() const { return Modifier; }
 
-			void Copy(const UObject* WorldContext, const IModifier* From);
+			void Copy(const UObject* WorldContext, const ModifierType* From);
 
 			void Copy(const FAllocated& From);
 

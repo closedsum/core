@@ -8,9 +8,10 @@
 #include "Modifier/CsLibrary_WeaponModifier.h"
 	// Data
 #include "Data/CsLibrary_Data_Weapon.h"
+#include "Level/CsLibrary_LevelData.h"
 	// Common
 #include "Game/CsLibrary_GameInstance.h"
-#include "Level/CsLibrary_LevelData.h"
+#include "Actor/CsLibrary_Actor.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsWpLog.h"
@@ -117,8 +118,8 @@ using DataLibrary = NCsWeapon::NData::NLibrary::FLibrary;
 using DataType = NCsWeapon::NData::IData;
 using PayloadType = NCsWeapon::NPayload::IPayload;
 using PayloadImplType = NCsWeapon::NPayload::FImpl;
-using ModifierManagerType = NCsWeapon::NModifier::FManager;
-using ModifierResourceType = NCsWeapon::NModifier::FResource;
+using ModifierManagerType = NCsWeapon::NModifier::NResource::FManager;
+using ModifierResourceType = NCsWeapon::NModifier::NResource::FResource;
 using ModifierType = NCsWeapon::NModifier::IModifier;
 using ModifierImplType = NCsWeapon::NModifier::EImpl;
 using CopyType = NCsWeapon::NModifier::NCopy::ICopy;
@@ -359,6 +360,7 @@ void UCsManager_Weapon::SetAndAddTypeMapKeyValue(const FECsWeapon& Key, const FE
 	TypeMapArray[Key.GetValue()] = Value;
 	
 	TypeMapToArray[Value.GetValue()].Add(Key);
+	TypeToSet.Add(Value);
 }
 
 void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_Manager_Weapon_PoolParams& InPoolParams)
@@ -532,6 +534,11 @@ void UCsManager_Weapon::SetupInternal()
 			}
 		}
 
+		// Get any Weapon placed in the Level
+		//  TODO:
+		//TArray<AActor*> WeaponsPlacedInLevel;
+		//CsActorLibrary::GetSafeAllByInterface(Context, MyRoot, UCsWeapon::StaticClass(), WeaponsPlacedInLevel, nullptr);
+
 		InitInternalFromSettings();
 
 		/*
@@ -541,38 +548,65 @@ void UCsManager_Weapon::SetupInternal()
 		DataHandler->RemapDataMap(Context);
 		*/
 		
+		// Add the Weapons to the Pool
+		//  TODO: NOTE: FUTURE: Placed Actors should be replaced by the pooled version?
+		/*
+		for (AActor* A : WeaponsPlacedInLevel)
+		{
+			// Only add Weapons that implement are "Pooled" (i.e. implement the interface: ICsPooledObject)
+			if (!Cast<ICsPooledObject>(A))
+				continue;
+
+			ICsWeapon* Interface = CS_INTERFACE_CAST_CHECKED(A, AActor, ICsWeapon);
+
+			AddToAllocatedObjects(Interface->GetCharacterType(), Interface, A);
+			
+			WeaponsQueuedForStartPlay.Add(A);
+		}
+		*/
+
 		// Editor or Editor Preview Instance should handle any additional setup.
 	}
 	else
 #endif // #if WITH_EDITOR
 	// If any settings have been set for Manager_Weapon, apply them
 	{
-		ICsGetSettingsManagerWeapon* GetSettingsManagerWeapon = CsLevelDataLibrary::GetSetupDataChecked<ICsGetSettingsManagerWeapon>(Context, MyRoot);
-
-		Settings = GetSettingsManagerWeapon->GetSettingsManagerWeapon();
-
-		// Populate TypeMapArray
+		// Get Settings for the Level Setup Data  (via Level Script Actor / Level Blueprint implementing the interface: ICsGetLevelSetupData)
+		//  NOTE: For now, do NOT Log
+		if (ICsGetSettingsManagerWeapon* GetSettingsManagerWeapon = CsLevelDataLibrary::GetSafeSetupData<ICsGetSettingsManagerWeapon>(Context, MyRoot, nullptr))
 		{
-			const int32& Count = EMCsWeapon::Get().Num();
+			Settings = GetSettingsManagerWeapon->GetSettingsManagerWeapon();
 
-			TypeMapArray.Reset(Count);
-			TypeMapToArray.Reset(Count);
+			CS_IS_VALID_CHECKED(Settings);
 
-			for (const FECsWeapon& Type : EMCsWeapon::Get())
+			// Populate TypeMapArray
 			{
-				TypeMapArray.Add(Type);
-				TypeMapToArray.AddDefaulted();
+				const int32& Count = EMCsWeapon::Get().Num();
+
+				TypeMapArray.Reset(Count);
+				TypeMapToArray.Reset(Count);
+
+				for (const FECsWeapon& Type : EMCsWeapon::Get())
+				{
+					TypeMapArray.Add(Type);
+					TypeMapToArray.AddDefaulted();
+				}
+
+				for (const TPair<FECsWeapon, FECsWeapon>& Pair : Settings.TypeMap)
+				{
+					const FECsWeapon& From = Pair.Key;
+					const FECsWeapon& To   = Pair.Value;
+
+					TypeMapArray[From.GetValue()] = To;
+
+					TypeMapToArray[To.GetValue()].Add(From);
+				}
 			}
+		}
+		// TODO: Get Settings for UCsWeaponSettings
+		else
+		{
 
-			for (const TPair<FECsWeapon, FECsWeapon>& Pair : Settings.TypeMap)
-			{
-				const FECsWeapon& From = Pair.Key;
-				const FECsWeapon& To   = Pair.Value;
-
-				TypeMapArray[From.GetValue()] = To;
-
-				TypeMapToArray[To.GetValue()].Add(From);
-			}
 		}
 
 		InitInternalFromSettings();
@@ -919,7 +953,7 @@ void UCsManager_Weapon::LogTransaction(const FString& Context, const ECsPoolTran
 
 void UCsManager_Weapon::ConstructClassHandler()
 {
-	using ClassHandlerImplType = NCsWeapon::NManager::NHandler::FClass;
+	using ClassHandlerImplType = NCsWeapon::NManager::NHandler::NClass::FClass;
 
 	ClassHandler = new ClassHandlerImplType();
 	ClassHandler->Outer = this;
@@ -977,7 +1011,7 @@ bool UCsManager_Weapon::SafeAddClass(const FString& Context, const FECsWeaponCla
 
 void UCsManager_Weapon::ConstructDataHandler()
 {
-	using DataHandlerImplType = NCsWeapon::NManager::NHandler::FData;
+	using DataHandlerImplType = NCsWeapon::NManager::NHandler::NData::FData;
 
 	DataHandler = new DataHandlerImplType();
 	DataHandler->Outer = this;

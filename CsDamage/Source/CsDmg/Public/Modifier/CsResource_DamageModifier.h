@@ -11,18 +11,24 @@ namespace NCsDamage
 {
 	namespace NModifier
 	{
-		// NCsDamage::NModifier::IModifier
+		namespace NResource
+		{
+			// ModifierType (NCsDamage::NModifier::IModifier)
+			using ModifierType = NCsDamage::NModifier::IModifier;
 
-		/**
-		* Container for holding a reference to an object that implements the interface: NCsDamage::NModifier::IModifier.
-		* This serves as an easy way for a Manager Resource to keep track of the resource.
-		*/
-		struct CSDMG_API FResource : public TCsResourceContainer<IModifier> {};
+			/**
+			* Container for holding a reference to an object that implements the interface: ModifierType (NCsDamage::NModifier::IModifier).
+			* This serves as an easy way for a Manager Resource to keep track of the resource.
+			*/
+			struct CSDMG_API FResource : public TCsResourceContainer<ModifierType> {};
 
-		/**
-		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NModifier::IModifier and
-		* are wrapped in the container: NCsDamage::NModifer::FResource.
-		*/
-		struct CSDMG_API FManager : public NCsResource::NManager::NPointer::TFixed<IModifier, FResource, 0> {};
+			using ModifierResourceType = NCsDamage::NModifier::NResource::FResource;
+
+			/**
+			* A manager handling allocating and deallocating objects that implement the interface: ModifierType (NCsDamage::NModifier::IModifier) and
+			* are wrapped in the container: NCsDamage::NModifier::NResource::FResource.
+			*/
+			struct CSDMG_API FManager : public NCsResource::NManager::NPointer::TFixed<ModifierType, ModifierResourceType, 0> {};
+		}
 	}
 }

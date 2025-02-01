@@ -14,8 +14,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
-// NCsDamage::NModifier::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
+// ModifierResourceType (NCsDamage::NModifier::NResource::FResource)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NResource, FResource)
 
 // NCsModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsModifier, IModifier)
@@ -24,154 +24,150 @@ namespace NCsDamage
 {
 	namespace NModifier
 	{
-	#define ModifierType NCsDamage::NModifier::IModifier
+		namespace NLibrary
+		{
+			using ModifierType = NCsDamage::NModifier::IModifier;
 
-	/**
-	* Library for interface: ModifierType (NCsDamage::NModifier::IModifier)
-	*/
-	struct CSDMG_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
-	{
-	#define DataType NCsDamage::NData::IData
-	#define ValueType NCsDamage::NValue::IValue
-	#define RangeType NCsDamage::NRange::IRange
-	#define ModifierResourceType NCsDamage::NModifier::FResource
-	#define AllocatedModifierType NCsDamage::NModifier::FAllocated
-	#define CsModifierType NCsModifier::IModifier
+			/**
+			* Library for interface: ModifierType (NCsDamage::NModifier::IModifier)
+			*/
+			struct CSDMG_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
+			{
+			private:
 
-	public:
+				using DataType = NCsDamage::NData::IData;
+				using ValueType = NCsDamage::NValue::IValue;
+				using RangeType = NCsDamage::NRange::IRange;
+				using ModifierResourceType = NCsDamage::NModifier::NResource::FResource;
+				using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
+				using CsModifierType = NCsModifier::IModifier;
 
-		static const FECsDamageModifier& GetTypeChecked(const FString& Context, const ModifierType* Modifier);
+			public:
 
-	// Copy
-	#pragma region
-	public:
+				static const FECsDamageModifier& GetTypeChecked(const FString& Context, const ModifierType* Modifier);
 
-		/**
-		* Copy the values from From to To with checks.
-		*
-		* @param Context	The calling context.
-		* @param From		What to copy.
-		* @param To			What to copy to.
-		* return			Whether the copy was performed successfully.
-		*/
-		static bool CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To);
+			// Copy
+			#pragma region
+			public:
 
-		/**
-		* Copy the values from From to To with checks.
-		*
-		* @param Context	The calling context.
-		* @param From		What to copy.
-		* @param To			What to copy to.
-		*/
-		static void CopyChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierType*>& To);
+				/**
+				* Copy the values from From to To with checks.
+				*
+				* @param Context	The calling context.
+				* @param From		What to copy.
+				* @param To			What to copy to.
+				* return			Whether the copy was performed successfully.
+				*/
+				static bool CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To);
 
-		/**
-		* Copy the values from From to To with checks.
-		*
-		* @param Context	The calling context.
-		* @param From		What to copy.
-		* @param To			What to copy to.
-		*/
-		static void CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierResourceType*>& To);
+				/**
+				* Copy the values from From to To with checks.
+				*
+				* @param Context	The calling context.
+				* @param From		What to copy.
+				* @param To			What to copy to.
+				*/
+				static void CopyChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierType*>& To);
 
-		/**
-		* Copy the values from From to To with checks.
-		*
-		* @param Context	The calling context.
-		* @param From		What to copy.
-		* @param To			What to copy to.
-		*/
-		static void CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierType*>& To);
+				/**
+				* Copy the values from From to To with checks.
+				*
+				* @param Context	The calling context.
+				* @param From		What to copy.
+				* @param To			What to copy to.
+				*/
+				static void CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierResourceType*>& To);
 
-		/**
-		* Copy the values from From to To with checks.
-		*
-		* @param Context	The calling context.
-		* @param From		What to copy.
-		* @param To			What to copy to.
-		*/
-		static void CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<ModifierType*>& To);
+				/**
+				* Copy the values from From to To with checks.
+				*
+				* @param Context	The calling context.
+				* @param From		What to copy.
+				* @param To			What to copy to.
+				*/
+				static void CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierType*>& To);
 
-	#pragma endregion Copy
+				/**
+				* Copy the values from From to To with checks.
+				*
+				* @param Context	The calling context.
+				* @param From		What to copy.
+				* @param To			What to copy to.
+				*/
+				static void CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<ModifierType*>& To);
 
-	// Add
-	#pragma region
-	public:
+			#pragma endregion Copy
 
-		static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
+			// Add
+			#pragma region
+			public:
 
-		static void AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<CsModifierType*>& To);
+				static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
 
-	#pragma endregion Add
+				static void AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<CsModifierType*>& To);
 
-	// Modify
-	#pragma region
-	public:
+			#pragma endregion Add
 
-		/**
-		*
-		*
-		* @param Context	The calling context.
-		* @param Modifier
-		* @param Data
-		* @param Type
-		* @param Value
-		*/
-		static void ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
+			// Modify
+			#pragma region
+			public:
 
-		/**
-		*
-		*
-		* @param Context	The calling context.
-		* @param Modifier
-		* @param Data
-		* @param Type
-		* @param Range
-		* return			Whether the Modify was "attempted" (a Modify method was called) successfully.
-		*/
-		static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, RangeType* Range);
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Modifier
+				* @param Data
+				* @param Type
+				* @param Value
+				*/
+				static void ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
 
-		static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Modifier
+				* @param Data
+				* @param Type
+				* @param Range
+				* return			Whether the Modify was "attempted" (a Modify method was called) successfully.
+				*/
+				static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, RangeType* Range);
 
-		static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask);
+				static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
 
-		static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range);
+				static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask);
 
-		static void ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range);
+				static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range);
 
-		static void ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
+				static void ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range);
 
-		static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range);
+				static void ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
 
-		static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
+				static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range);
 
-		static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
+				static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
 
-		static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask);
+				static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
 
-	#pragma endregion Modify
+				static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask);
 
-	// Range
-	#pragma region
-	public:
+			#pragma endregion Modify
 
-		static float GetMaxRangeChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range);
+			// Range
+			#pragma region
+			public:
 
-		static float GetMaxRangeChecked_Size64(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range);
+				static float GetMaxRangeChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range);
 
-	#pragma endregion Range
+				static float GetMaxRangeChecked_Size64(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range);
 
-	#undef DataType
-	#undef ValueType
-	#undef RangeType
-	#undef ModifierResourceType
-	#undef AllocatedModifierType
-	#undef CsModifierType
-	};
-
-	#undef ModifierType
+			#pragma endregion Range
+			};
+		}
 	}
 }
 
-using CsDamageModifierLibrary = NCsDamage::NModifier::FLibrary;
-using CsDmgModifierLibrary = NCsDamage::NModifier::FLibrary;
+using CsDamageModifierLibrary = NCsDamage::NModifier::NLibrary::FLibrary;
+using CsDmgModifierLibrary = NCsDamage::NModifier::NLibrary::FLibrary;

@@ -103,8 +103,8 @@ private:
 	using RangeManagerType = NCsDamage::NRange::FManager;
 	using RangeType = NCsDamage::NRange::IRange;
 
-	using ModifierResourceType = NCsDamage::NModifier::FResource;
-	using ModifierManagerType = NCsDamage::NModifier::FManager;
+	using ModifierResourceType = NCsDamage::NModifier::NResource::FResource;
+	using ModifierManagerType = NCsDamage::NModifier::NResource::FManager;
 	using ModifierType = NCsDamage::NModifier::IModifier;
 	using ModifierImplType = NCsDamage::NModifier::EImpl;
 

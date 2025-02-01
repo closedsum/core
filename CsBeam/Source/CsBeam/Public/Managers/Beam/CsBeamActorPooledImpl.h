@@ -48,8 +48,6 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NParams, FFrequency)
 // NCsBeam::NCollision::NShape::FShape
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FShape)
 
-// NCsDamage::NModifier::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 // NCsDamage::NValue::IValue

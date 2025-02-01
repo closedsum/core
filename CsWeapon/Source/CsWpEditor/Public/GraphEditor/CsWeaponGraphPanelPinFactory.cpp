@@ -21,6 +21,12 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponData.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponModifier.h"
 
+void FCsWeaponPanelGraphPinFactory::Register()
+{
+	TSharedPtr<FCsWeaponPanelGraphPinFactory> PanelGraphPinFactory = MakeShareable(new FCsWeaponPanelGraphPinFactory());
+	FEdGraphUtilities::RegisterVisualPinFactory(PanelGraphPinFactory);
+}
+
 TSharedPtr<SGraphPin> FCsWeaponPanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) const
 {
 	const UEdGraphSchema_K2* K2Schema = GetDefault<UEdGraphSchema_K2>();

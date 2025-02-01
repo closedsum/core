@@ -35,6 +35,12 @@ namespace NCsWeapon
 			}
 		}
 
+		using DataType = NCsWeapon::NData::IData;
+		using DataInterfaceMapType = NCsWeapon::NData::FInterfaceMap;
+		using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_WeaponPtr, DataInterfaceMapType>;
+		using PayloadType = NCsWeapon::NPayload::IPayload;
+		using PayloadImplType = NCsWeapon::NPayload::FImpl;
+
 		// Print
 		#pragma region
 
@@ -58,10 +64,7 @@ namespace NCsWeapon
 
 				return GetManagerSingleton->_getUObject();
 			}
-
-			typedef NCsGameState::FLibrary GameStateLibrary;
-
-			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
+			return CsGameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
@@ -73,10 +76,7 @@ namespace NCsWeapon
 					return GetManagerSingleton->_getUObject();
 				}
 			}
-
-			typedef NCsGameState::FLibrary GameStateLibrary;
-
-			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
+			return CsGameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
@@ -136,9 +136,6 @@ namespace NCsWeapon
 		// Payload
 		#pragma region
 
-		#define PayloadType NCsWeapon::NPayload::IPayload
-		#define PayloadImplType NCsWeapon::NPayload::FImpl
-
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
 		{
 			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
@@ -148,9 +145,6 @@ namespace NCsWeapon
 		{
 			return GetChecked(Context, WorldContext)->AllocatePayload<PayloadImplType>(Type);
 		}
-
-		#undef PayloadType
-		#undef PayloadImplType
 
 		#pragma endregion Payload
 
@@ -169,11 +163,8 @@ namespace NCsWeapon
 			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
 		}
 
-		#define PayloadType NCsWeapon::NPayload::IPayload
 		const FCsWeaponPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, PayloadType* Payload)
 		{
-		#undef PayloadType
-
 			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
 		}
 
@@ -275,15 +266,8 @@ namespace NCsWeapon
 		// Data
 		#pragma region
 
-		#define DataType NCsWeapon::NData::IData
-
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
-		DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		DataHandlerType* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 		{
-		#undef DataHandlerType
-		#undef DataInterfaceMapType
-
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
 				return Manager_Weapon->GetDataHandler();
@@ -325,8 +309,8 @@ namespace NCsWeapon
 
 		namespace NModifier
 		{
-			#define ModifierResourceType NCsWeapon::NModifier::FResource
-			#define ModifierType NCsWeapon::NModifier::IModifier
+			using ModifierResourceType = NCsWeapon::NModifier::NResource::FResource;
+			using ModifierType = NCsWeapon::NModifier::IModifier;
 		
 			ModifierResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type)
 			{
@@ -362,16 +346,13 @@ namespace NCsWeapon
 
 				return WeaponManagerLibrary::GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
 			}
-
-			#undef ModifierResourceType
-			#undef ModifierType
 		}
 
 		namespace NSpread
 		{
 			namespace NVariables
 			{
-				#define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
+				using SpreadVariablesResourceType = NCsWeapon::NProjectile::NSpread::NVariables::FResource;
 
 				SpreadVariablesResourceType* FLibrary::Allocate(const FString& Context, const UObject* WorldContext)
 				{
@@ -393,8 +374,6 @@ namespace NCsWeapon
 
 					WeaponManagerLibrary::GetChecked(Context, WorldContext)->DeallocateSpreadVariables(Index);
 				}
-
-				#undef SpreadVariablesResourceType
 			}
 		}
 	}

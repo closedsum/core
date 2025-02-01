@@ -28,7 +28,7 @@ namespace NCsWeaponSettings
 
 class UDataTable;
 
-UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Cs Weapon Settings"))
+UCLASS(config = Game, defaultconfig, meta = (DisplayName = "CsWeapon Settings"))
 class CSWP_API UCsWeaponSettings : public UDeveloperSettings
 {
 	GENERATED_UCLASS_BODY()

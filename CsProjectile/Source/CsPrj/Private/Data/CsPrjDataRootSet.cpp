@@ -45,7 +45,8 @@ namespace NCsPrjDataRootSet
 
 #pragma endregion Cached
 
-#define MemberType FCsPrjDataRootSet::EMember
+using MemberType = FCsPrjDataRootSet::EMember;
+
 MemberType FCsPrjDataRootSet::GetMember(const FName& MemberName)
 {
 	using namespace NCsPrjDataRootSet::NCached;
@@ -57,7 +58,6 @@ MemberType FCsPrjDataRootSet::GetMember(const FName& MemberName)
 	check(0);
 	return MemberType::Projectiles;
 }
-#undef MemberType
 
 bool FCsPrjDataRootSet::IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {
@@ -117,10 +117,8 @@ UDataTable* FCsPrjDataRootSet::GetSafeDataTable(const FString& Context, const UO
 {
 	using namespace NCsPrjDataRootSet::NCached;
 
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
 	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::Member) \
-		return DataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsPrjDataRootSet, Member, Str::Member);
+		return CsDataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsPrjDataRootSet, Member, Str::Member);
 
 	// Projectiles
 	CS_TEMP_GET_SAFE_DATA_TABLE(Projectiles)
@@ -141,10 +139,7 @@ UDataTable* FCsPrjDataRootSet::GetDataTableChecked(const FString& Context, const
 		return GetDataTableChecked(Context, MemberType);
 	}
 #endif // #if WITH_EDITOR
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType));
+	return CsDataRootSetLibrary::GetDataTableChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType));
 }
 
 UDataTable* FCsPrjDataRootSet::GetDataTableChecked(const FString& Context, const EMember& MemberType) const
@@ -169,10 +164,7 @@ uint8* FCsPrjDataRootSet::GetDataTableRowChecked(const FString& Context, const U
 		return GetDataTableRowChecked(Context, MemberType, RowName);
 	}
 #endif // #if WITH_EDITOR
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowName);
+	return CsDataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowName);
 }
 
 uint8* FCsPrjDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const
@@ -183,10 +175,7 @@ uint8* FCsPrjDataRootSet::GetDataTableRowChecked(const FString& Context, const U
 		return GetDataTableRowChecked(Context, MemberType, RowStruct, RowName);
 	}
 #endif // #if WITH_EDITOR
-
-	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
-
-	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
+	return CsDataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
 }
 
 uint8* FCsPrjDataRootSet::GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const FName& RowName) const

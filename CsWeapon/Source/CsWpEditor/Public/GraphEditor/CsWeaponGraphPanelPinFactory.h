@@ -11,6 +11,12 @@ class UEdGraphSchema_K2;
 
 class CSWPEDITOR_API FCsWeaponPanelGraphPinFactory : public FGraphPanelPinFactory
 {
+public:
+
+	static void Register();
+
+private:
+
 	virtual TSharedPtr<SGraphPin> CreatePin(UEdGraphPin* InPin) const override;
 
 	template<typename T>

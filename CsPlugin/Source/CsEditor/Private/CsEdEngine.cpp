@@ -140,6 +140,8 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 	UCsManager_Time::Init(this);
 	UCsCoroutineScheduler::Init(this);
 
+	SourceControlTool.CheckOutFileImpl = &USourceControlHelpers::CheckOutFile;
+
 	NCsEnum::NStruct::NLayout::FLibrary::ConditionalAddLayout = &NCsEnum::NStruct::NLayout::NImpl::FLibrary::ConditionalAddLayout;
 	NCsEnum::NStruct::NLayout::FLibrary::AddPropertyChange = &NCsEnum::NStruct::NLayout::NImpl::FLibrary::AddPropertyChange;
 
@@ -356,8 +358,6 @@ void UCsEdEngine::OnPostInit()
 	
 	EnumStructTool.Init(this);
 	EnumStructTool.ResolveLayoutChangesImpl = &UCsEdEngine::EnumStruct_ResolveLayoutChanges_Internal;
-
-	SourceControlTool.CheckOutFileImpl = &USourceControlHelpers::CheckOutFile;
 
 	LevelEditorTool.GetActorsImpl = &NCsLevel::NEditor::FTool::GetActors;
 	LevelEditorTool.GetActorsByClassImpl = &NCsLevel::NEditor::FTool::GetActorsByClass;

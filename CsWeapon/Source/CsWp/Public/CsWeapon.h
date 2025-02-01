@@ -14,23 +14,29 @@ class CSWP_API UCsWeapon : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
-// NCsWeapon::NData::IData
+// DataType (NCsWeapon::NData::IData)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 
 class CSWP_API ICsWeapon
 {
 	GENERATED_IINTERFACE_BODY()
 
-public:
+private:
 
-#define DataType NCsWeapon::NData::IData
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using DataType = NCsWeapon::NData::IData;
+	};
+
+public:
 
 	/**
 	*
 	*
 	* return
 	*/
-	virtual DataType* GetData() const = 0;
+	virtual _::DataType* GetData() const = 0;
 
 	/**
 	*
@@ -38,23 +44,20 @@ public:
 	* return
 	*/
 	virtual const FECsWeaponState& GetCurrentState() const = 0;
-
-#undef DataType
 };
 
 // FCsWeapon
 #pragma region
 
-// NCsWeapon::NData::IData
+// DataType (NCsWeapon::NData::IData)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 
 struct CSWP_API FCsWeapon : public TCsInterfaceObject<ICsWeapon>
 {
 private:
 
-	typedef TCsInterfaceObject<ICsWeapon> Super;
-
-#define DataType NCsWeapon::NData::IData
+	using Super = TCsInterfaceObject<ICsWeapon>;
+	using DataType = NCsWeapon::NData::IData;
 
 public:
 
@@ -133,8 +136,6 @@ public:
 	const FECsWeaponState& GetCurrentState();
 
 #pragma endregion ICsWeapon
-
-#undef DataType
 };
 
 #pragma endregion FCsWeapon

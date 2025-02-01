@@ -107,8 +107,8 @@ private:
 	using DataType = NCsProjectile::NData::IData;
 	using DataInterfaceMapType = NCsProjectile::NData::FInterfaceMap;
 	using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>;
-	using ModifierManagerType = NCsProjectile::NModifier::FManager;
-	using ModifierResourceType = NCsProjectile::NModifier::FResource;
+	using ModifierManagerType = NCsProjectile::NModifier::NResource::FManager;
+	using ModifierResourceType = NCsProjectile::NModifier::NResource::FResource;
 	using ModifierType = NCsProjectile::NModifier::IModifier;
 	using ModifierImplType = NCsProjectile::NModifier::EImpl;
 	using VariablesManagerType = NCsProjectile::NVariables::FManager;

@@ -36,9 +36,11 @@ namespace NCsProjectile
 			Reset();
 		}
 
+		using ModifierType = NCsProjectile::NModifier::IModifier;
+
 		UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-		void FAllocated::Copy(const UObject* WorldContext, const IModifier* From)
+		void FAllocated::Copy(const UObject* WorldContext, const ModifierType* From)
 		{
 			SET_CONTEXT(Copy);
 

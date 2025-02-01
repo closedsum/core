@@ -33,9 +33,11 @@ namespace NCsDamage
 			Reset();
 		}
 
+		using ModifierType = NCsDamage::NModifier::IModifier;
+
 		UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-		void FAllocated::Copy(const UObject* WorldContext, const IModifier* From)
+		void FAllocated::Copy(const UObject* WorldContext, const ModifierType* From)
 		{
 			CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
 

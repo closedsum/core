@@ -1,12 +1,20 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
+#include "CsMacro_Cached.h"
+// Property
 #include "IPropertyTypeCustomization.h"
 #include "PropertyHandle.h"
+
+//CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsData_ECsWeaponCustomization)
 
 /**
 */
 class CSWPEDITOR_API FCsData_ECsWeaponCustomization : public IPropertyTypeCustomization
 {
+private:
+
+	//CS_USING_CACHED_FUNCTION_NAME(CsData_ECsWeaponCustomization);
 
 public:
 

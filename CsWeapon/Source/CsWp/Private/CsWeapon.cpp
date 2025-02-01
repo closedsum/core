@@ -44,13 +44,13 @@ void FCsWeapon::SetObject(UObject* InObject)
 
 #pragma endregion TCsInterfaceObject
 
+using DataType = NCsWeapon::NData::IData;
+
 	// ICsWeapon
 #pragma region
 
-#define DataType NCsWeapon::NData::IData
 DataType* FCsWeapon::GetData()
 {
-#undef DataType
 	if (bScript)
 		return Script_GetData_Impl.Execute(Object);
 	return Interface->GetData();

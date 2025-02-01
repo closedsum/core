@@ -31,9 +31,12 @@ namespace NCsWeapon
 			Reset();
 		}
 
+		using ModifierLibrary = NCsWeapon::NManager::NModifier::FLibrary;
+		using ModifierType = NCsWeapon::NModifier::IModifier;
+
 		UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-		void FAllocated::Copy(UObject* InRoot, const IModifier* From)
+		void FAllocated::Copy(UObject* InRoot, const ModifierType* From)
 		{
 			using namespace NCsWeapon::NModifier::NAllocated::NCached;
 
@@ -41,8 +44,6 @@ namespace NCsWeapon
 
 			CS_IS_PTR_NULL_CHECKED(InRoot)
 			CS_IS_PTR_NULL_CHECKED(From)
-
-			typedef NCsWeapon::NManager::NModifier::FLibrary ModifierLibrary;
 
 			Root	  = InRoot;
 			Container = ModifierLibrary::CreateCopyOfChecked(Context, InRoot, From);
@@ -62,8 +63,6 @@ namespace NCsWeapon
 
 			if (From.Container)
 			{
-				typedef NCsWeapon::NManager::NModifier::FLibrary ModifierLibrary;
-
 				Root	  = From.GetRoot();
 				Container = ModifierLibrary::CreateCopyOfChecked(Context, GetRoot(), From.Container);
 				Modifier  = Container->Get();

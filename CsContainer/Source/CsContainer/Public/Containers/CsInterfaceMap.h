@@ -1544,3 +1544,6 @@ namespace NCsInterfaceMap
 		return InterfaceMap->HasUniqueBasedSlices();
 	}
 }
+
+#define CS_INTERFACE_MAP_SET_ROOT(__RootType) InterfaceMap->SetRoot<__RootType>(this)
+#define CS_INTERFACE_MAP_ADD(__InterfaceType) InterfaceMap->Add<__InterfaceType>(static_cast<__InterfaceType*>(this))

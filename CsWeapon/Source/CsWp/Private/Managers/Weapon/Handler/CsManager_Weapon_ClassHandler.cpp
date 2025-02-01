@@ -10,40 +10,40 @@ namespace NCsWeapon
 	{
 		namespace NHandler
 		{
-			FClass::FClass()
+			namespace NClass
 			{
+				using DataRootSetLibrary = NCsWeapon::NDataRootSet::FLibrary;
+				using MemberType = FCsWpDataRootSet::EMember;
 
+				FClass::FClass()
+				{
+
+				}
+
+				// ClassHandlerType
+				#pragma region
+
+				void FClass::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
+				{
+					const MemberType Member = MemberType::WeaponClasses;
+
+					OutDataTable		   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+					OutDataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
+				}
+
+				void FClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
+				{
+					const MemberType Member = MemberType::Weapons;
+
+					UDataTable* DataTable						   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+					TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
+
+					OutDataTables.Add(DataTable);
+					OutDataTableSoftObjects.Add(DataTableSoftObject);
+				}
+
+				#pragma endregion ClassHandlerType
 			}
-
-			// ClassHandlerType
-			#pragma region
-
-			void FClass::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
-			{
-				typedef NCsWeapon::NDataRootSet::FLibrary DataRootSetLibrary;
-				typedef FCsWpDataRootSet::EMember MemberType;
-
-				const MemberType Member = MemberType::WeaponClasses;
-
-				OutDataTable		   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
-				OutDataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
-			}
-
-			void FClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
-			{
-				typedef NCsWeapon::NDataRootSet::FLibrary DataRootSetLibrary;
-				typedef FCsWpDataRootSet::EMember MemberType;
-
-				const MemberType Member = MemberType::Weapons;
-
-				UDataTable* DataTable						   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
-				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
-
-				OutDataTables.Add(DataTable);
-				OutDataTableSoftObjects.Add(DataTableSoftObject);
-			}
-
-			#pragma endregion ClassHandlerType
 		}
 	}
 }

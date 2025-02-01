@@ -36,8 +36,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 // NCsWeapon::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FInterfaceMap)
 
-// NCsWeapon::NModifier::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, FResource)
+// NCsWeapon::NModifier::NResource::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NModifier, NResource, FResource)
 // NCsWeapon::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)
 
@@ -50,6 +50,14 @@ namespace NCsWeapon
 	{
 		struct CSWP_API FLibrary final
 		{
+		private:
+
+			using DataType = NCsWeapon::NData::IData;
+			using DataInterfaceMapType = NCsWeapon::NData::FInterfaceMap;
+			using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_WeaponPtr, DataInterfaceMapType>;
+			using PayloadType = NCsWeapon::NPayload::IPayload;
+			using PayloadImplType = NCsWeapon::NPayload::FImpl;
+
 		// Print
 		#pragma region
 		public:
@@ -184,9 +192,6 @@ namespace NCsWeapon
 		#pragma region
 		public:
 
-		#define PayloadType NCsWeapon::NPayload::IPayload
-		#define PayloadImplType NCsWeapon::NPayload::FImpl
-
 			/*
 			* Allocate a Payload (used to Spawn an Weapon from Manager_Weapon).
 			* 
@@ -207,9 +212,6 @@ namespace NCsWeapon
 			*/
 			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type);
 
-		#undef PayloadType
-		#undef PayloadImplType
-
 		#pragma endregion Payload
 
 		// Spawn
@@ -227,8 +229,6 @@ namespace NCsWeapon
 			*/
 			static const FCsWeaponPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Owner, const FECsWeapon& Type);
 
-		#define PayloadType NCsWeapon::NPayload::IPayload
-
 			/**
 			* Spawn an Weapon, object that implements the interface: ICsWeapon, and pass the Owner and Type.
 			*
@@ -239,8 +239,6 @@ namespace NCsWeapon
 			* return
 			*/
 			static const FCsWeaponPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, PayloadType* Payload);
-
-		#undef PayloadType
 
 		#pragma endregion Spawn
 
@@ -384,11 +382,6 @@ namespace NCsWeapon
 		#pragma region
 		public:
 
-		#define DataType NCsWeapon::NData::IData
-
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
-
 			/**
 			* 
 			* 
@@ -396,10 +389,7 @@ namespace NCsWeapon
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log			(optional)
 			*/
-			static DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
-
-		#undef DataHandlerType
-		#undef DataInterfaceMapType
+			static DataHandlerType* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 
 			/**
 			* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Name of the weapon type.
@@ -445,8 +435,6 @@ namespace NCsWeapon
 			*/
 			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 
-		#undef DataType
-
 		#pragma endregion Data
 		};
 
@@ -454,10 +442,12 @@ namespace NCsWeapon
 		{
 			struct CSWP_API FLibrary final
 			{
-			public:
+			private:
 
-			#define ModifierResourceType NCsWeapon::NModifier::FResource
-			#define ModifierType NCsWeapon::NModifier::IModifier
+				using ModifierResourceType = NCsWeapon::NModifier::NResource::FResource;
+				using ModifierType = NCsWeapon::NModifier::IModifier;
+
+			public:
 		
 				static ModifierResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type);
 
@@ -468,9 +458,6 @@ namespace NCsWeapon
 				static ModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
 
 				static ModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier);
-
-			#undef ModifierResourceType
-			#undef ModifierType
 			};
 		}
 
@@ -480,17 +467,17 @@ namespace NCsWeapon
 			{
 				struct CSWP_API FLibrary final
 				{
-				public:
+				private:
 
-				#define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
+					using SpreadVariablesResourceType = NCsWeapon::NProjectile::NSpread::NVariables::FResource;
+
+				public:
 
 					static SpreadVariablesResourceType* Allocate(const FString& Context, const UObject* WorldContext);
 
 					static void Deallocate(const FString& Context, const UObject* WorldContext, SpreadVariablesResourceType* Resource);
 
 					static void Deallocate(const FString& Context, const UObject* WorldContext, const int32& Index);
-
-				#undef SpreadVariablesResourceType
 				};
 			}
 		}

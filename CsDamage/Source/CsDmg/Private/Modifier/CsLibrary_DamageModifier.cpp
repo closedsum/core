@@ -27,261 +27,538 @@ namespace NCsDamage
 {
 	namespace NModifier
 	{
-		#define ModifierType NCsDamage::NModifier::IModifier
-		#define DataType NCsDamage::NData::IData
-		#define ValueType NCsDamage::NValue::IValue
-		#define RangeType NCsDamage::NRange::IRange
-		#define ModifierResourceType NCsDamage::NModifier::FResource
-		#define AllocatedModifierType NCsDamage::NModifier::FAllocated
-
-		const FECsDamageModifier& FLibrary::GetTypeChecked(const FString& Context, const ModifierType* Modifier)
+		namespace NLibrary
 		{
-			const ICsGetDamageModifierType* GetDamageModifierType = GetInterfaceChecked<ICsGetDamageModifierType>(Context, Modifier);
+			using DataType = NCsDamage::NData::IData;
+			using ValueLibrary = NCsDamage::NValue::FLibrary;
+			using ValueType = NCsDamage::NValue::IValue;
+			using ValuePointType = NCsDamage::NValue::NPoint::IPoint;
+			using ValueRangeType = NCsDamage::NValue::NRange::IRange;
+			using RangeType = NCsDamage::NRange::IRange;
+			using ModifierResourceType = NCsDamage::NModifier::NResource::FResource;
+			using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
+
+			const FECsDamageModifier& FLibrary::GetTypeChecked(const FString& Context, const ModifierType* Modifier)
+			{
+				const ICsGetDamageModifierType* GetDamageModifierType = GetInterfaceChecked<ICsGetDamageModifierType>(Context, Modifier);
 			
-			return GetDamageModifierType->GetDamageModifierType();
-		}
-
-		// Copy
-		#pragma region
-
-		bool FLibrary::CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To)
-		{
-			CS_IS_PTR_NULL_CHECKED(From)
-			CS_IS_PTR_NULL_CHECKED(To)
-			return false;
-		}
-
-		void FLibrary::CopyChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierType*>& To)
-		{
-			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
-
-			To.Reset(FMath::Max(To.Max(), From.Num()));
-
-			for (ModifierType* Modifier : To)
-			{
-				To.Add(Modifier);
+				return GetDamageModifierType->GetDamageModifierType();
 			}
-		}
 
-		void FLibrary::CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierResourceType*>& To)
-		{
-			To.Reset(FMath::Max(To.Max(), From.Num()));
+			// Copy
+			#pragma region
 
-			for (const AllocatedModifierType& AllocatedModifier : From)
+			bool FLibrary::CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To)
 			{
-				ModifierResourceType* Resource = AllocatedModifier.GetContainerChecked(Context);
-
-				To.Add(Resource);
+				CS_IS_PTR_NULL_CHECKED(From)
+				CS_IS_PTR_NULL_CHECKED(To)
+				return false;
 			}
-		}
 
-		void FLibrary::CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierType*>& To)
-		{
-			To.Reset(FMath::Max(To.Max(), From.Num()));
-
-			for (const AllocatedModifierType& AllocatedModifier : From)
+			void FLibrary::CopyChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierType*>& To)
 			{
-				ModifierResourceType* Resource = AllocatedModifier.GetContainerChecked(Context);
-				ModifierType* Modifier		   = Resource->Get();
+				CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
-				To.Add(Modifier);
-			}
-		}
+				To.Reset(FMath::Max(To.Max(), From.Num()));
 
-		void FLibrary::CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<ModifierType*>& To)
-		{
-			To.Reset(FMath::Max(To.Max(), From.Num()));
-
-			for (CsModifierType* B : From)
-			{
-				if (ModifierType* Modifier = CsModifierLibrary::GetSafeInterfaceChecked<ModifierType>(Context, B))
+				for (ModifierType* Modifier : To)
 				{
 					To.Add(Modifier);
 				}
 			}
-		}
 
-		#pragma endregion Copy
-
-		// Add
-		#pragma region
-
-		void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
-		{
-			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
-
-			const int32 CountToAdd = From.Num();
-
-			if (To.Num() + CountToAdd > To.Max())
+			void FLibrary::CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierResourceType*>& To)
 			{
-				const int32 Count = To.Num();
+				To.Reset(FMath::Max(To.Max(), From.Num()));
 
-				static TArray<AllocatedModifierType> TempModifiers;
-				TempModifiers.AddDefaulted(Count);
-
-				for (int32 I = 0; I < Count; ++I)
+				for (const AllocatedModifierType& AllocatedModifier : From)
 				{
-					To[I].Transfer(TempModifiers[I]);
-				}
-				To.Reset(Count + CountToAdd);
-				To.AddDefaulted(Count);
+					ModifierResourceType* Resource = AllocatedModifier.GetContainerChecked(Context);
 
-				for (int32 I = Count - 1; I >= 0; --I)
-				{
-					TempModifiers[I].Transfer(To[I]);
-					TempModifiers.RemoveAt(I, 1, false);
+					To.Add(Resource);
 				}
 			}
 
-			for (ModifierType* Modifier : From)
+			void FLibrary::CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierType*>& To)
 			{
-				AllocatedModifierType& AllocatedModifier = To.AddDefaulted_GetRef();
-				AllocatedModifier.Copy(WorldContext, Modifier);
-			}
-		}	
+				To.Reset(FMath::Max(To.Max(), From.Num()));
 
-		void FLibrary::AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<CsModifierType*>& To)
-		{
-			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
-
-			const int32 ToSize = To.Num();
-			const int32 FromSize = From.Num();
-
-			To.AddDefaulted(From.Num());
-
-			for (int32 I = 0; I < FromSize; ++I)
-			{
-				ModifierType* F		= From[I];				
-				CsModifierType* T = GetInterfaceChecked<CsModifierType>(Context, F);
-
-				To[ToSize + I] = T;
-			}
-		}
-
-		#pragma endregion Add
-
-		// Modify
-		#pragma region
-
-		void FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
-		{
-			CS_IS_PTR_NULL_CHECKED(Modifier)
-			CS_IS_PTR_NULL_CHECKED(Data)
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
-			CS_IS_PTR_NULL_CHECKED(Value)
-
-			const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
-
-			bool CanModify = true;
-
-			if (!WhitelistByDataTypeMap.IsEmpty())
-			{
-				CanModify = WhitelistByDataTypeMap.Contains(Type);
-			}
-
-			if (!CanModify)
-				return;
-
-			typedef NCsDamage::NValue::FLibrary ValueLibrary;
-
-			// Point
-			typedef NCsDamage::NValue::NPoint::IPoint ValuePointType;
-
-			if (ValuePointType* Point = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, Value))
-			{
-				const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
-
-				if (DmgModifierType == NCsDamageModifier::ValuePoint)
+				for (const AllocatedModifierType& AllocatedModifier : From)
 				{
-					float& V = *(const_cast<float*>(&(Point->GetValue())));
+					ModifierResourceType* Resource = AllocatedModifier.GetContainerChecked(Context);
+					ModifierType* Modifier		   = Resource->Get();
 
-					// Float
-					const CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
-
-					V = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, V);
+					To.Add(Modifier);
 				}
-				return;
 			}
-			// Range
-			typedef NCsDamage::NValue::NRange::IRange ValueRangeType;
 
-			if (ValueRangeType* Range = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value))
+			void FLibrary::CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<ModifierType*>& To)
 			{
-				const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
+				To.Reset(FMath::Max(To.Max(), From.Num()));
 
-				// Uniform
-				if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
+				for (CsModifierType* B : From)
 				{
-					float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
-					float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
-
-					// Float
-					if (const CsFloatModifierType* FloatModifier = GetSafeInterfaceChecked<CsFloatModifierType>(Context, Modifier))
+					if (ModifierType* Modifier = CsModifierLibrary::GetSafeInterfaceChecked<ModifierType>(Context, B))
 					{
-						Min = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
-						Max = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
-						return;
+						To.Add(Modifier);
 					}
+				}
+			}
+
+			#pragma endregion Copy
+
+			// Add
+			#pragma region
+
+			void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
+			{
+				CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
+				const int32 CountToAdd = From.Num();
+
+				if (To.Num() + CountToAdd > To.Max())
+				{
+					const int32 Count = To.Num();
+
+					static TArray<AllocatedModifierType> TempModifiers;
+					TempModifiers.AddDefaulted(Count);
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						To[I].Transfer(TempModifiers[I]);
+					}
+					To.Reset(Count + CountToAdd);
+					To.AddDefaulted(Count);
+
+					for (int32 I = Count - 1; I >= 0; --I)
+					{
+						TempModifiers[I].Transfer(To[I]);
+						TempModifiers.RemoveAt(I, 1, false);
+					}
+				}
+
+				for (ModifierType* Modifier : From)
+				{
+					AllocatedModifierType& AllocatedModifier = To.AddDefaulted_GetRef();
+					AllocatedModifier.Copy(WorldContext, Modifier);
+				}
+			}	
+
+			void FLibrary::AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<CsModifierType*>& To)
+			{
+				CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
+				const int32 ToSize = To.Num();
+				const int32 FromSize = From.Num();
+
+				To.AddDefaulted(From.Num());
+
+				for (int32 I = 0; I < FromSize; ++I)
+				{
+					ModifierType* F		= From[I];				
+					CsModifierType* T = GetInterfaceChecked<CsModifierType>(Context, F);
+
+					To[ToSize + I] = T;
+				}
+			}
+
+			#pragma endregion Add
+
+			// Modify
+			#pragma region
+
+			void FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
+			{
+				CS_IS_PTR_NULL_CHECKED(Modifier)
+				CS_IS_PTR_NULL_CHECKED(Data)
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
+				CS_IS_PTR_NULL_CHECKED(Value)
+
+				const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
+
+				bool CanModify = true;
+
+				if (!WhitelistByDataTypeMap.IsEmpty())
+				{
+					CanModify = WhitelistByDataTypeMap.Contains(Type);
+				}
+
+				if (!CanModify)
+					return;
+
+				// Point
+				if (ValuePointType* Point = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, Value))
+				{
+					const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
+
+					if (DmgModifierType == NCsDamageModifier::ValuePoint)
+					{
+						float& V = *(const_cast<float*>(&(Point->GetValue())));
+
+						// Float
+						const CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
+
+						V = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, V);
+					}
+					return;
 				}
 				// Range
-				else
-				if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
+				if (ValueRangeType* Range = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value))
 				{
-					float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
-					float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
+					const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
 
-					// Float Range
-					if (const CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
+					// Uniform
+					if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
 					{
-						Min = CsModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
-						Max = CsModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
-						return;
+						float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
+						float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
+
+						// Float
+						if (const CsFloatModifierType* FloatModifier = GetSafeInterfaceChecked<CsFloatModifierType>(Context, Modifier))
+						{
+							Min = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
+							Max = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
+							return;
+						}
+					}
+					// Range
+					else
+					if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
+					{
+						float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
+						float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
+
+						// Float Range
+						if (const CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
+						{
+							Min = CsModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
+							Max = CsModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
+							return;
+						}
+					}
+					return;
+				}
+			
+				checkf(0, TEXT("%s: Failed to Apply Modifiers to Value. No supported interfaces found for Value."), *Context);
+			}
+
+			bool FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, RangeType* Range)
+			{
+				CS_IS_PTR_NULL_CHECKED(Modifier)
+
+				CS_IS_PTR_NULL_CHECKED(Data)
+
+				CS_IS_PTR_NULL_CHECKED(Range)
+				return false;	 
+			}
+
+			void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
+			{
+				uint32 Mask = 0;
+				ModifyChecked(Context, Modifiers, Data, Type, Value, Mask);
+			}
+
+			void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask)
+			{
+				if (Modifiers.Num() <= 64)
+				{
+					ModifyChecked_Size64(Context, Modifiers, Data, Type, Value, OutMask);
+				}
+				else
+				{
+					CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+					CS_IS_PTR_NULL_CHECKED(Data)
+					CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
+					CS_IS_PTR_NULL_CHECKED(Value)
+
+					// Value
+			
+						// Point
+					ValuePointType* ValuePoint = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, Value);
+					static TArray<CsFloatModifierType*> ValuePoint_FloatModifiers;
+					float* ValuePoint_Value = nullptr;
+
+					if (ValuePoint)
+					{
+						ValuePoint_Value = const_cast<float*>(&(ValuePoint->GetValue()));
+					}
+
+						// Range
+					ValueRangeType* ValueRange = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value);
+					static TArray<CsFloatModifierType*> ValueRange_FloatModifiers;
+					static TArray<CsFloatRangeModifierType*> ValueRange_FloatRangeModifiers;
+					float* ValueRange_ValueMin = nullptr;
+					float* ValueRange_ValueMax = nullptr;
+
+					if (ValueRange)
+					{
+						ValueRange_ValueMin = const_cast<float*>(&(ValueRange->GetMinValue()));
+						ValueRange_ValueMax = const_cast<float*>(&(ValueRange->GetMaxValue()));
+					}
+
+
+					// Critical Chance
+					static TArray<CsFloatModifierType*> CriticalChance_FloatModifiers;
+					// Critical Strike
+					static TArray<CsFloatModifierType*> CriticalStrike_FloatModifiers;
+
+					for (ModifierType* Modifier : Modifiers)
+					{
+						const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
+
+						if (!WhitelistByDataTypeMap.IsEmpty() &&
+							!WhitelistByDataTypeMap.Contains(Type))
+						{
+							continue;
+						}
+
+						const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
+
+						// Value
+				
+							// Point
+						if (ValuePoint)
+						{
+							if (DmgModifierType == NCsDamageModifier::ValuePoint)
+							{
+								CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
+
+								ValuePoint_FloatModifiers.Add(FloatModifier);
+							}
+						}
+
+						// Range
+						if (ValueRange)
+						{
+							// Uniform
+							if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
+							{
+								// Float
+								if (CsFloatModifierType* FloatModifier = GetSafeInterfaceChecked<CsFloatModifierType>(Context, Modifier))
+								{
+									ValueRange_FloatModifiers.Add(FloatModifier);
+								}
+							}
+							// Range
+							else
+							if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
+							{
+								// Float Range
+								if (CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
+								{
+									ValueRange_FloatRangeModifiers.Add(FloatRangeModifier);
+								}
+							}
+						}
+
+						// TODO: Range
+					}
+
+					// Get Critical Chance
+					//  Assume Default Chance starts at 0.0f
+					//  Assume Chance is in the range [0.0f, 1.0f]
+					float CriticalChance = 0.0f;
+					CriticalChance		 = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalChance_FloatModifiers, CriticalChance);
+
+					// TODO: Need somewhere to take Random Seem
+	
+					// Check to Apply Critical Strike
+					//	 Assume Default Strike multiplier is 1.0f
+					float CriticalStrike = 1.0f;
+
+					if (CriticalChance >= FMath::FRandRange(0.0f, 1.0f))
+					{
+						CriticalStrike = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, CriticalStrike);
+					}
+
+					if (ValuePoint)
+					{
+						*ValuePoint_Value  = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
+						*ValuePoint_Value *= CriticalStrike;
+
+						if (!ValuePoint_FloatModifiers.IsEmpty())
+						{
+							OutMask |= (1 << NCsDamageModifier::ValuePoint.GetValue());
+						}
+
+						if (CriticalChance > 0.0f)
+						{
+							OutMask |= (1 << NCsDamageModifier::CriticalChance.GetValue());
+						}
+
+						if (CriticalStrike > 0.0f)
+						{
+							OutMask |= (1 << NCsDamageModifier::CriticalStrike.GetValue());
+						}
+					}
+
+					if (ValueRange)
+					{
+						const float A = ValueRange_FloatModifiers.Num();
+						const float B = ValueRange_FloatRangeModifiers.Num();
+
+						checkf((A == 0 && B == 0) || (A > 0 && B == 0) || (A == 0 && B > 0), TEXT("%s: Value currently can NOT be modified with a mix of Float and Float Range Modifiers."), *Context);
+
+						*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMin);
+						*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMax);
+
+						*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatMinAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
+						*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
+
+						*ValueRange_ValueMin *= CriticalStrike;
+						*ValueRange_ValueMax *= CriticalStrike;
+
+						if (!ValuePoint_FloatModifiers.IsEmpty())
+						{
+							OutMask |= (1 << NCsDamageModifier::ValuePoint.GetValue());
+						}
+
+						if (CriticalChance > 0.0f)
+						{
+							OutMask |= (1 << NCsDamageModifier::CriticalChance.GetValue());
+						}
+
+						if (CriticalStrike > 0.0f)
+						{
+							OutMask |= (1 << NCsDamageModifier::CriticalStrike.GetValue());
+						}
 					}
 				}
-				return;
 			}
-			
-			checkf(0, TEXT("%s: Failed to Apply Modifiers to Value. No supported interfaces found for Value."), *Context);
-		}
 
-		bool FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, RangeType* Range)
-		{
-			CS_IS_PTR_NULL_CHECKED(Modifier)
-
-			CS_IS_PTR_NULL_CHECKED(Data)
-
-			CS_IS_PTR_NULL_CHECKED(Range)
-			return false;	 
-		}
-
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
-		{
-			uint32 Mask = 0;
-			ModifyChecked(Context, Modifiers, Data, Type, Value, Mask);
-		}
-
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask)
-		{
-			if (Modifiers.Num() <= 64)
-			{
-				ModifyChecked_Size64(Context, Modifiers, Data, Type, Value, OutMask);
-			}
-			else
+			void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range)
 			{
 				CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 				CS_IS_PTR_NULL_CHECKED(Data)
 				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 				CS_IS_PTR_NULL_CHECKED(Value)
+				CS_IS_PTR_NULL_CHECKED(Range)
+			}
 
-				typedef NCsDamage::NValue::FLibrary ValueLibrary;
+			void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range)
+			{
+				for (const ModifierResourceType* Resource : Modifiers)
+				{
+					const ModifierType* Modifier = Resource->Get();
+
+					ModifyChecked(Context, Modifier, Data, Type, Value);
+					ModifyChecked(Context, Modifier, Data, Type, Range);
+				}
+			}
+
+			void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
+			{
+				CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierResourceType)
+				CS_IS_PTR_NULL_CHECKED(Data)
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
+				CS_IS_PTR_NULL_CHECKED(Value)
+
+				for (ModifierResourceType* M : Modifiers)
+				{
+					ModifierType* Modifier = M->Get();
+
+					const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
+
+					if (!WhitelistByDataTypeMap.IsEmpty() &&
+						!WhitelistByDataTypeMap.Contains(Type))
+					{
+						continue;
+					}
+
+					// Point
+					if (ValuePointType* Point = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, Value))
+					{
+						const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
+
+						if (DmgModifierType == NCsDamageModifier::ValuePoint)
+						{
+							CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
+
+							float& V = *(const_cast<float*>(&(Point->GetValue())));
+
+							V = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, V);
+						}
+					}
+
+					// Range
+					if (ValueRangeType* Range = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value))
+					{
+						const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
+
+						// Uniform
+						if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
+						{
+							float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
+							float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
+
+							// Float
+							if (CsFloatModifierType* FloatModifier = GetSafeInterfaceChecked<CsFloatModifierType>(Context, Modifier))
+							{
+								Min = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
+								Max = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
+							}
+						}
+						// Range
+						else
+						if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
+						{
+							float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
+							float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
+
+							// Float Range
+							if (CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
+							{
+								Min = CsModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
+								Max = CsModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
+							}
+						}
+
+					}
+				}
+			}
+
+			void FLibrary::ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range)
+			{
+				// TODO: FUTURE: Use a tiny / small array on the stack
+
+				for (const AllocatedModifierType& AllocatedModifier : Modifiers)
+				{
+					const ModifierType* Modifier = AllocatedModifier.Get();
+
+					ModifyChecked(Context, Modifier, Data, Type, Value);
+					ModifyChecked(Context, Modifier, Data, Type, Range);
+				}
+			}
+
+			void FLibrary::ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
+			{
+				for (const AllocatedModifierType& AllocatedModifier : Modifiers)
+				{
+					const ModifierType* Modifier = AllocatedModifier.Get();
+
+					ModifyChecked(Context, Modifier, Data, Type, Value);
+				}
+			}
+
+			void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
+			{
+				uint32 Mask = 0;
+				ModifyChecked_Size64(Context, Modifiers, Data, Type, Value, Mask);
+			}
+
+			void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask)
+			{
+				CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+				CS_IS_TARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(Modifiers, ModifierType*, 64)
+				CS_IS_PTR_NULL_CHECKED(Data)
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
+				CS_IS_PTR_NULL_CHECKED(Value)
 
 				// Value
 			
 					// Point
-				typedef NCsDamage::NValue::NPoint::IPoint ValuePointType;
-
 				ValuePointType* ValuePoint = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, Value);
-				static TArray<CsFloatModifierType*> ValuePoint_FloatModifiers;
+				TArray<CsFloatModifierType*, TFixedAllocator<64>> ValuePoint_FloatModifiers;
 				float* ValuePoint_Value = nullptr;
 
 				if (ValuePoint)
@@ -290,11 +567,9 @@ namespace NCsDamage
 				}
 
 					// Range
-				typedef NCsDamage::NValue::NRange::IRange ValueRangeType;
-
 				ValueRangeType* ValueRange = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value);
-				static TArray<CsFloatModifierType*> ValueRange_FloatModifiers;
-				static TArray<CsFloatRangeModifierType*> ValueRange_FloatRangeModifiers;
+				TArray<CsFloatModifierType*, TFixedAllocator<64>> ValueRange_FloatModifiers;
+				TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> ValueRange_FloatRangeModifiers;
 				float* ValueRange_ValueMin = nullptr;
 				float* ValueRange_ValueMax = nullptr;
 
@@ -304,11 +579,10 @@ namespace NCsDamage
 					ValueRange_ValueMax = const_cast<float*>(&(ValueRange->GetMaxValue()));
 				}
 
-
 				// Critical Chance
-				static TArray<CsFloatModifierType*> CriticalChance_FloatModifiers;
+				TArray<CsFloatModifierType*, TFixedAllocator<64>> CriticalChance_FloatModifiers;
 				// Critical Strike
-				static TArray<CsFloatModifierType*> CriticalStrike_FloatModifiers;
+				TArray<CsFloatModifierType*, TFixedAllocator<64>> CriticalStrike_FloatModifiers;
 
 				for (ModifierType* Modifier : Modifiers)
 				{
@@ -327,6 +601,7 @@ namespace NCsDamage
 						// Point
 					if (ValuePoint)
 					{
+
 						if (DmgModifierType == NCsDamageModifier::ValuePoint)
 						{
 							CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
@@ -335,7 +610,7 @@ namespace NCsDamage
 						}
 					}
 
-					// Range
+						// Range
 					if (ValueRange)
 					{
 						// Uniform
@@ -360,13 +635,28 @@ namespace NCsDamage
 					}
 
 					// TODO: Range
+
+					// Critical Chance
+					if (DmgModifierType == NCsDamageModifier::CriticalChance)
+					{
+						CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
+
+						CriticalChance_FloatModifiers.Add(FloatModifier);
+					}
+					// Critical Strike
+					if (DmgModifierType == NCsDamageModifier::CriticalStrike)
+					{
+						CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
+
+						CriticalStrike_FloatModifiers.Add(FloatModifier);
+					}
 				}
 
 				// Get Critical Chance
 				//  Assume Default Chance starts at 0.0f
 				//  Assume Chance is in the range [0.0f, 1.0f]
 				float CriticalChance = 0.0f;
-				CriticalChance		 = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalChance_FloatModifiers, CriticalChance);
+				CriticalChance		 = CsModifierLibrary::ModifyFloatChecked(Context, CriticalChance_FloatModifiers, CriticalChance);
 
 				// TODO: Need somewhere to take Random Seem
 	
@@ -376,12 +666,12 @@ namespace NCsDamage
 
 				if (CriticalChance >= FMath::FRandRange(0.0f, 1.0f))
 				{
-					CriticalStrike = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, CriticalStrike);
+					CriticalStrike = CsModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, CriticalStrike);
 				}
 
 				if (ValuePoint)
 				{
-					*ValuePoint_Value  = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
+					*ValuePoint_Value  = CsModifierLibrary::ModifyFloatChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
 					*ValuePoint_Value *= CriticalStrike;
 
 					if (!ValuePoint_FloatModifiers.IsEmpty())
@@ -407,18 +697,23 @@ namespace NCsDamage
 
 					checkf((A == 0 && B == 0) || (A > 0 && B == 0) || (A == 0 && B > 0), TEXT("%s: Value currently can NOT be modified with a mix of Float and Float Range Modifiers."), *Context);
 
-					*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMin);
-					*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMax);
+					*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMin);
+					*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMax);
 
-					*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatMinAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
-					*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
+					*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatMinChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
+					*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatMaxChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
 
 					*ValueRange_ValueMin *= CriticalStrike;
 					*ValueRange_ValueMax *= CriticalStrike;
 
-					if (!ValuePoint_FloatModifiers.IsEmpty())
+					if (!ValueRange_FloatModifiers.IsEmpty())
 					{
-						OutMask |= (1 << NCsDamageModifier::ValuePoint.GetValue());
+						OutMask |= (1 << NCsDamageModifier::ValueRange_Uniform.GetValue());
+					}
+
+					if (!ValueRange_FloatRangeModifiers.IsEmpty())
+					{
+						OutMask |= (1 << NCsDamageModifier::ValueRange_Range.GetValue());
 					}
 
 					if (CriticalChance > 0.0f)
@@ -432,343 +727,63 @@ namespace NCsDamage
 					}
 				}
 			}
-		}
 
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range)
-		{
-			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
-			CS_IS_PTR_NULL_CHECKED(Data)
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
-			CS_IS_PTR_NULL_CHECKED(Value)
-			CS_IS_PTR_NULL_CHECKED(Range)
-		}
+			#pragma endregion Modify
 
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range)
-		{
-			for (const ModifierResourceType* Resource : Modifiers)
+			// Range
+			#pragma region
+
+			float FLibrary::GetMaxRangeChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range)
 			{
-				const ModifierType* Modifier = Resource->Get();
-
-				ModifyChecked(Context, Modifier, Data, Type, Value);
-				ModifyChecked(Context, Modifier, Data, Type, Range);
-			}
-		}
-
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
-		{
-			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierResourceType)
-			CS_IS_PTR_NULL_CHECKED(Data)
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
-			CS_IS_PTR_NULL_CHECKED(Value)
-
-			typedef NCsDamage::NValue::FLibrary ValueLibrary;
-
-			for (ModifierResourceType* M : Modifiers)
-			{
-				ModifierType* Modifier = M->Get();
-
-				const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
-
-				if (!WhitelistByDataTypeMap.IsEmpty() &&
-					!WhitelistByDataTypeMap.Contains(Type))
+				if (Modifiers.Num() <= 64)
 				{
-					continue;
+					return GetMaxRangeChecked_Size64(Context, Modifiers, Range);
 				}
-
-				// Point
-				typedef NCsDamage::NValue::NPoint::IPoint ValuePointType;
-
-				if (ValuePointType* Point = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, Value))
+				else
 				{
-					const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
-
-					if (DmgModifierType == NCsDamageModifier::ValuePoint)
-					{
-						CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
-
-						float& V = *(const_cast<float*>(&(Point->GetValue())));
-
-						V = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, V);
-					}
-				}
-
-				// Range
-				typedef NCsDamage::NValue::NRange::IRange ValueRangeType;
-
-				if (ValueRangeType* Range = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value))
-				{
-					const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
-
-					// Uniform
-					if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
-					{
-						float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
-						float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
-
-						// Float
-						if (CsFloatModifierType* FloatModifier = GetSafeInterfaceChecked<CsFloatModifierType>(Context, Modifier))
-						{
-							Min = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
-							Max = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
-						}
-					}
-					// Range
-					else
-					if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
-					{
-						float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
-						float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
-
-						// Float Range
-						if (CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
-						{
-							Min = CsModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
-							Max = CsModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
-						}
-					}
-
-				}
-			}
-		}
-
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range)
-		{
-			// TODO: FUTURE: Use a tiny / small array on the stack
-
-			for (const AllocatedModifierType& AllocatedModifier : Modifiers)
-			{
-				const ModifierType* Modifier = AllocatedModifier.Get();
-
-				ModifyChecked(Context, Modifier, Data, Type, Value);
-				ModifyChecked(Context, Modifier, Data, Type, Range);
-			}
-		}
-
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
-		{
-			for (const AllocatedModifierType& AllocatedModifier : Modifiers)
-			{
-				const ModifierType* Modifier = AllocatedModifier.Get();
-
-				ModifyChecked(Context, Modifier, Data, Type, Value);
-			}
-		}
-
-		void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
-		{
-			uint32 Mask = 0;
-			ModifyChecked_Size64(Context, Modifiers, Data, Type, Value, Mask);
-		}
-
-		void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask)
-		{
-			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
-			CS_IS_TARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(Modifiers, ModifierType*, 64)
-			CS_IS_PTR_NULL_CHECKED(Data)
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
-			CS_IS_PTR_NULL_CHECKED(Value)
-
-			typedef NCsDamage::NValue::FLibrary ValueLibrary;
-			typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-			// Value
-			
-				// Point
-			typedef NCsDamage::NValue::NPoint::IPoint ValuePointType;
-
-			ValuePointType* ValuePoint = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, Value);
-			TArray<FloatModifierType*, TFixedAllocator<64>> ValuePoint_FloatModifiers;
-			float* ValuePoint_Value = nullptr;
-
-			if (ValuePoint)
-			{
-				ValuePoint_Value = const_cast<float*>(&(ValuePoint->GetValue()));
-			}
-
-				// Range
-			typedef NCsDamage::NValue::NRange::IRange ValueRangeType;
-
-			ValueRangeType* ValueRange = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value);
-			TArray<FloatModifierType*, TFixedAllocator<64>> ValueRange_FloatModifiers;
-			TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> ValueRange_FloatRangeModifiers;
-			float* ValueRange_ValueMin = nullptr;
-			float* ValueRange_ValueMax = nullptr;
-
-			if (ValueRange)
-			{
-				ValueRange_ValueMin = const_cast<float*>(&(ValueRange->GetMinValue()));
-				ValueRange_ValueMax = const_cast<float*>(&(ValueRange->GetMaxValue()));
-			}
-
-			// Critical Chance
-			TArray<FloatModifierType*, TFixedAllocator<64>> CriticalChance_FloatModifiers;
-			// Critical Strike
-			TArray<FloatModifierType*, TFixedAllocator<64>> CriticalStrike_FloatModifiers;
-
-			for (ModifierType* Modifier : Modifiers)
-			{
-				const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
-
-				if (!WhitelistByDataTypeMap.IsEmpty() &&
-					!WhitelistByDataTypeMap.Contains(Type))
-				{
-					continue;
-				}
-
-				const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
-
-				// Value
-				
-					// Point
-				if (ValuePoint)
-				{
-
-					if (DmgModifierType == NCsDamageModifier::ValuePoint)
-					{
-						FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-
-						ValuePoint_FloatModifiers.Add(FloatModifier);
-					}
-				}
+					CS_IS_PTR_NULL_CHECKED(Range)
 
 					// Range
-				if (ValueRange)
-				{
-					// Uniform
-					if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
+					TArray<CsFloatModifierType*> FloatModifiers;
+					TArray<CsFloatRangeModifierType*> FloatRangeModifiers;
+
+					float Max = Range->GetMaxRange();
+
+					for (const AllocatedModifierType& M : Modifiers)
 					{
-						// Float
-						if (FloatModifierType* FloatModifier = GetSafeInterfaceChecked<FloatModifierType>(Context, Modifier))
+						ModifierType* Modifier = M.GetChecked(Context);
+
+						const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
+
+						// Range: Uniform
+						if (DmgModifierType == NCsDamageModifier::Range_Uniform)
 						{
-							ValueRange_FloatModifiers.Add(FloatModifier);
+							CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
+
+							FloatModifiers.Add(FloatModifier);
+						}
+						// Range: Range
+						if (DmgModifierType == NCsDamageModifier::Range_Range)
+						{
+							CsFloatRangeModifierType* FloatRangeModifier = GetInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier);
+
+							FloatRangeModifiers.Add(FloatRangeModifier);
 						}
 					}
-					// Range
-					else
-					if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
-					{
-						// Float Range
-						if (CsFloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier))
-						{
-							ValueRange_FloatRangeModifiers.Add(FloatRangeModifier);
-						}
-					}
-				}
 
-				// TODO: Range
-
-				// Critical Chance
-				if (DmgModifierType == NCsDamageModifier::CriticalChance)
-				{
-					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-
-					CriticalChance_FloatModifiers.Add(FloatModifier);
-				}
-				// Critical Strike
-				if (DmgModifierType == NCsDamageModifier::CriticalStrike)
-				{
-					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-
-					CriticalStrike_FloatModifiers.Add(FloatModifier);
+					Max = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, FloatModifiers, Max);
+					Max = CsModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, FloatRangeModifiers, Max);
+					return Max;
 				}
 			}
 
-			// Get Critical Chance
-			//  Assume Default Chance starts at 0.0f
-			//  Assume Chance is in the range [0.0f, 1.0f]
-			float CriticalChance = 0.0f;
-			CriticalChance		 = CsModifierLibrary::ModifyFloatChecked(Context, CriticalChance_FloatModifiers, CriticalChance);
-
-			// TODO: Need somewhere to take Random Seem
-	
-			// Check to Apply Critical Strike
-			//	 Assume Default Strike multiplier is 1.0f
-			float CriticalStrike = 1.0f;
-
-			if (CriticalChance >= FMath::FRandRange(0.0f, 1.0f))
-			{
-				CriticalStrike = CsModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, CriticalStrike);
-			}
-
-			if (ValuePoint)
-			{
-				*ValuePoint_Value  = CsModifierLibrary::ModifyFloatChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
-				*ValuePoint_Value *= CriticalStrike;
-
-				if (!ValuePoint_FloatModifiers.IsEmpty())
-				{
-					OutMask |= (1 << NCsDamageModifier::ValuePoint.GetValue());
-				}
-
-				if (CriticalChance > 0.0f)
-				{
-					OutMask |= (1 << NCsDamageModifier::CriticalChance.GetValue());
-				}
-
-				if (CriticalStrike > 0.0f)
-				{
-					OutMask |= (1 << NCsDamageModifier::CriticalStrike.GetValue());
-				}
-			}
-
-			if (ValueRange)
-			{
-				const float A = ValueRange_FloatModifiers.Num();
-				const float B = ValueRange_FloatRangeModifiers.Num();
-
-				checkf((A == 0 && B == 0) || (A > 0 && B == 0) || (A == 0 && B > 0), TEXT("%s: Value currently can NOT be modified with a mix of Float and Float Range Modifiers."), *Context);
-
-				*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMin);
-				*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMax);
-
-				*ValueRange_ValueMin = CsModifierLibrary::ModifyFloatMinChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
-				*ValueRange_ValueMax = CsModifierLibrary::ModifyFloatMaxChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
-
-				*ValueRange_ValueMin *= CriticalStrike;
-				*ValueRange_ValueMax *= CriticalStrike;
-
-				if (!ValueRange_FloatModifiers.IsEmpty())
-				{
-					OutMask |= (1 << NCsDamageModifier::ValueRange_Uniform.GetValue());
-				}
-
-				if (!ValueRange_FloatRangeModifiers.IsEmpty())
-				{
-					OutMask |= (1 << NCsDamageModifier::ValueRange_Range.GetValue());
-				}
-
-				if (CriticalChance > 0.0f)
-				{
-					OutMask |= (1 << NCsDamageModifier::CriticalChance.GetValue());
-				}
-
-				if (CriticalStrike > 0.0f)
-				{
-					OutMask |= (1 << NCsDamageModifier::CriticalStrike.GetValue());
-				}
-			}
-		}
-
-		#pragma endregion Modify
-
-		// Range
-		#pragma region
-
-		float FLibrary::GetMaxRangeChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range)
-		{
-			if (Modifiers.Num() <= 64)
-			{
-				return GetMaxRangeChecked_Size64(Context, Modifiers, Range);
-			}
-			else
+			float FLibrary::GetMaxRangeChecked_Size64(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range)
 			{
 				CS_IS_PTR_NULL_CHECKED(Range)
 
-				typedef NCsDamage::NValue::FLibrary ValueLibrary;
-
 				// Range
-				TArray<CsFloatModifierType*> FloatModifiers;
-				TArray<CsFloatRangeModifierType*> FloatRangeModifiers;
+				TArray<CsFloatModifierType*, TFixedAllocator<64>> FloatModifiers;
+				TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> FloatRangeModifiers;
 
 				float Max = Range->GetMaxRange();
 
@@ -794,58 +809,12 @@ namespace NCsDamage
 					}
 				}
 
-				Max = CsModifierLibrary::ModifyFloatAndEmptyChecked(Context, FloatModifiers, Max);
-				Max = CsModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, FloatRangeModifiers, Max);
+				Max = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifiers, Max);
+				Max = CsModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifiers, Max);
 				return Max;
 			}
+
+			#pragma endregion Range
 		}
-
-		float FLibrary::GetMaxRangeChecked_Size64(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range)
-		{
-			CS_IS_PTR_NULL_CHECKED(Range)
-
-			typedef NCsDamage::NValue::FLibrary ValueLibrary;
-
-			// Range
-			TArray<CsFloatModifierType*, TFixedAllocator<64>> FloatModifiers;
-			TArray<CsFloatRangeModifierType*, TFixedAllocator<64>> FloatRangeModifiers;
-
-			float Max = Range->GetMaxRange();
-
-			for (const AllocatedModifierType& M : Modifiers)
-			{
-				ModifierType* Modifier = M.GetChecked(Context);
-
-				const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
-
-				// Range: Uniform
-				if (DmgModifierType == NCsDamageModifier::Range_Uniform)
-				{
-					CsFloatModifierType* FloatModifier = GetInterfaceChecked<CsFloatModifierType>(Context, Modifier);
-
-					FloatModifiers.Add(FloatModifier);
-				}
-				// Range: Range
-				if (DmgModifierType == NCsDamageModifier::Range_Range)
-				{
-					CsFloatRangeModifierType* FloatRangeModifier = GetInterfaceChecked<CsFloatRangeModifierType>(Context, Modifier);
-
-					FloatRangeModifiers.Add(FloatRangeModifier);
-				}
-			}
-
-			Max = CsModifierLibrary::ModifyFloatChecked(Context, FloatModifiers, Max);
-			Max = CsModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifiers, Max);
-			return Max;
-		}
-
-		#pragma endregion Range
-
-		#undef ModifierType
-		#undef DataType
-		#undef ValueType
-		#undef RangeType
-		#undef ModifierResourceType
-		#undef AllocatedModifierType
 	}
 }

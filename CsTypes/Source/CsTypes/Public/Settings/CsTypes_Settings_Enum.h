@@ -79,6 +79,8 @@ namespace NCsEnum
 	}
 }
 
+using CsEnumSettingsLibrary = NCsEnum::NSettings::FLibrary;
+
 #pragma endregion FCsSettings_Enum
 
 // PopulateEnumMapMethod

@@ -68,6 +68,8 @@ public:
 private:
 
 	using CreatedObjectsType = NCsObject::NCreate::FCreated;
+	using DataEntryToolType = NCsData::NEntry::NTool::FImpl;
+	using DataTableToolType = NCsDataTable::NTool::FImpl;
 
 // UEngine Interface
 #pragma region
@@ -207,9 +209,7 @@ public:
 #pragma region
 public:
 
-#define DataEntryToolType NCsData::NEntry::NTool::FImpl
 	FORCEINLINE DataEntryToolType* GetDataEntryTool() { return &DataEntryTool; }
-#undef DataEntryToolType
 
 #pragma endregion ICsGetDataEntryTool
 
@@ -217,9 +217,7 @@ public:
 #pragma region
 private:
 
-#define DataEntryToolType NCsData::NEntry::NTool::FImpl
 	DataEntryToolType DataEntryTool;
-#undef DataEntryToolType
 
 	static void DataEntry_Data_PopulateImpl(FCsDataEntry_Data* Entry);
 	static void DataEntry_ScriptData_PopulateImpl(FCsDataEntry_ScriptData* Entry);
@@ -307,9 +305,7 @@ private:
 #pragma region
 public:
 
-#define DataTableToolType NCsDataTable::NTool::FImpl
 	FORCEINLINE DataTableToolType* GetDataTableTool() { return &DataTableTool; }
-#undef DataTableToolType
 
 #pragma endregion ICsGetDataTableTool
 
@@ -317,9 +313,7 @@ public:
 #pragma region
 private:
 
-#define DataTableToolType NCsDataTable::NTool::FImpl
 	DataTableToolType DataTableTool;
-#undef DataTableToolType
 
 #pragma endregion GetDataTableTool
 

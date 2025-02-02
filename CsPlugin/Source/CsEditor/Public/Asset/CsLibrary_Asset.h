@@ -408,7 +408,10 @@ namespace NCsAsset
 
 	#pragma endregion Find
 	};
+}
 
+namespace NCsAsset
+{
 	namespace NDependency
 	{
 		namespace NSoftPath
@@ -463,7 +466,7 @@ namespace NCsAsset
 					};
 				};
 
-			#define ResultType NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult
+			using ResultType = NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult;
 
 			private:
 
@@ -472,9 +475,6 @@ namespace NCsAsset
 			public:
 
 				static void Get(const void* StructValue, UStruct* const& Struct, const int32& Depth, ResultType& OutResult);
-
-			#undef ResultType
-
 				
 				static void DataTable_CheckAndAdd(const FSoftObjectPath& Path, TArray<FName>& Dependecies);
 			};

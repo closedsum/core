@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsDataLog.h"
 
@@ -19,7 +21,9 @@ namespace NCsLevel
 		{
 			struct CSDATA_API FLibrary final
 			{
-			#define LogLevel void(*Log)(const FString& Context) = &NCsData::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			// SetupData
 			#pragma region
@@ -44,7 +48,7 @@ namespace NCsLevel
 				* @param Log			(optional)
 				* return				UObject.
 				*/
-				static UObject* GetSafeSetupDataAsObject(const FString& Context, const UObject* WorldContext, LogLevel);
+				static UObject* GetSafeSetupDataAsObject(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the Level Setup Data as a UObject from the current Persistent Level.
@@ -83,7 +87,7 @@ namespace NCsLevel
 				* return				Level Setup Data of type: T.
 				*/
 				template<typename T>
-				FORCEINLINE static T* GetSafeSetupData(const FString& Context, const UObject* WorldContext, LogLevel)
+				FORCEINLINE static T* GetSafeSetupData(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					T* Slice = Cast<T>(GetSafeSetupDataAsObject(Context, WorldContext, Log));
 
@@ -119,11 +123,9 @@ namespace NCsLevel
 
 				static void GetPayloadAndLevelNameChecked(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName);
 
-				static bool GetSafePayloadAndLevelName(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName, LogLevel);
+				static bool GetSafePayloadAndLevelName(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion ICsGetLevelPayload
-
-			#undef LogLevel
 			};
 		}
 	}

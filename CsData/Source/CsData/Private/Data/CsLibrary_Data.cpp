@@ -26,7 +26,7 @@ namespace NCsData
 				CSDATA_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::FLibrary, SafeLoad);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::FLibrary, SafeImplements);
 			}
-
+			
 			namespace Name
 			{
 				const FName Script_Load = FName("Script_Load");
@@ -34,10 +34,13 @@ namespace NCsData
 		}
 	}
 
+	using LogClassType = NCsData::FLog;
+
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 	#define USING_NS_CACHED using namespace NCsData::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsData::NLibrary::NCached; \
 		const FString& Context = Str::__FunctionName
-	#define LogLevel void(*Log)(const FString&) /*=&NCsData::FLog::Warning*/
 
 	FString FLibrary::PrintObjectAndClass(UObject* Object)
 	{
@@ -80,7 +83,7 @@ namespace NCsData
 		return Data;
 	}
 
-	CsDataType* FLibrary::SafeConvert(const FString& Context, UObject* Object, LogLevel)
+	CsDataType* FLibrary::SafeConvert(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData))
 		{
@@ -101,7 +104,7 @@ namespace NCsData
 	// Load
 	#pragma region
 
-	CsDataType* FLibrary::SafeLoad(const FString& Context, UObject* Object, LogLevel)
+	CsDataType* FLibrary::SafeLoad(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData);
 
@@ -139,7 +142,7 @@ namespace NCsData
 		return Data;
 	}
 
-	const CsDataType* FLibrary::SafeTopLoad(const FString& Context, UObject* Object, LogLevel)
+	const CsDataType* FLibrary::SafeTopLoad(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData);
 
@@ -177,7 +180,7 @@ namespace NCsData
 	// ICsScriptData
 	#pragma region
 	
-	bool FLibrary::SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess, LogLevel)
+	bool FLibrary::SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		USING_NS_CACHED
 
@@ -208,7 +211,7 @@ namespace NCsData
 		return true;
 	}
 
-	UObject* FLibrary::SafeScript_Load(const FString& Context, const FString& Path, const int32& LoadFlags, bool& OutSuccess, LogLevel)
+	UObject* FLibrary::SafeScript_Load(const FString& Context, const FString& Path, const int32& LoadFlags, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -236,7 +239,7 @@ namespace NCsData
 		return true;
 	}
 
-	bool FLibrary::SafeScriptImplements(const FString& Context, const UObject* Object, LogLevel)
+	bool FLibrary::SafeScriptImplements(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Object)
 
@@ -268,7 +271,7 @@ namespace NCsData
 		return true;
 	}
 
-	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, LogLevel)
+	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Object)
 
@@ -301,7 +304,7 @@ namespace NCsData
 	// Get
 	#pragma region
 
-	CsDataType* FLibrary::GetSafe(const FString& Context, UObject* Object, LogLevel)
+	CsDataType* FLibrary::GetSafe(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PTR_NULL_RET_NULL(Object)
 
@@ -329,7 +332,7 @@ namespace NCsData
 		return Data;
 	}
 
-	CsDataType* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel)
+	CsDataType* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (ICsData* UData = CsDataManagerLibrary::GetSafeData(Context, WorldContext, DataName, Log))
 		{
@@ -374,7 +377,7 @@ namespace NCsData
 		return UData;
 	}
 
-	UObject* FLibrary::GetSafeScript(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel)
+	UObject* FLibrary::GetSafeScript(const FString& Context, const UObject* WorldContext, const FName& DataName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (UObject* UData = CsDataManagerLibrary::GetSafeScriptDataObject(Context, WorldContext, DataName, Log))
 		{
@@ -391,5 +394,4 @@ namespace NCsData
 
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
-	#undef LogLevel
 }

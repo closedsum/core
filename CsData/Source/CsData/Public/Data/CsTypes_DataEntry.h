@@ -587,6 +587,7 @@ public:
 		}
 	}
 
+	void PopulateDataTable();
 	void PopulateRow(const FName& RowName, const TSet<FSoftObjectPath>& PathSet, const TArray<TSet<FSoftObjectPath>>& PathSetsByGroup);
 
 #endif // #if WITH_EDITOR

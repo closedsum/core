@@ -83,7 +83,7 @@ struct CSDATA_API FCsData : public TCsInterfaceObject<ICsData>
 {
 private:
 
-	typedef TCsInterfaceObject<ICsData> Super;
+	using Super = TCsInterfaceObject<ICsData>;
 
 public:
 

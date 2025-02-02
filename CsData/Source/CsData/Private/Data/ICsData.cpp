@@ -3,11 +3,13 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/ICsData.h"
 
+// Types
+#include "CsMacro_Interface.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(ICsData)
 
-const FName NCsData::IData::Name = FName("NCsData::IData");
-
-const FName ICsData::Name = FName("ICsData");
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsData::IData);
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(ICsData);
 
 UCsData::UCsData(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

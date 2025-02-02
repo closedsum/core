@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Log.h"
 #include "Managers/Data/CsManager_Data_Delegates.h"
 // Log
 #include "Utility/CsDataLog.h"
@@ -26,7 +27,9 @@ namespace NCsData
 
 			struct CSDATA_API FLibrary final
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsData::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			// ContextRoot
 			#pragma region
@@ -59,9 +62,9 @@ namespace NCsData
 				* @param Log
 				* return				Context for UCsManager_Data
 				*/
-				static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel);
+				static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 			#else
-				FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel) { return nullptr; }
+				FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL) { return nullptr; }
 			#endif // #if WITH_EDITOR
 
 			#if WITH_EDITOR
@@ -86,7 +89,7 @@ namespace NCsData
 
 				static UObject* GetDataRootSetImplChecked(const FString& Context, const UObject* ContextObject);
 
-				static UObject* GetSafeDataRootSetImpl(const FString& Context, const UObject* ContextObject, LogLevel);
+				static UObject* GetSafeDataRootSetImpl(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Root Set
 
@@ -115,7 +118,7 @@ namespace NCsData
 				* @param Log			(optional)
 				* return				UCsManager_Data.
 				*/
-				static UCsManager_Data* GetSafe(const FString& Context, const UObject* ContextObject, LogLevel);
+				static UCsManager_Data* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the reference to UCsManager_Data from a ContextObject.
@@ -155,7 +158,7 @@ namespace NCsData
 				* @param Log			(optional)
 				* return				Data
 				*/
-				static ICsData* GetSafeData(const FString& Context, const UObject* ContextObject, const FName& EntryName, LogLevel);
+				static ICsData* GetSafeData(const FString& Context, const UObject* ContextObject, const FName& EntryName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Get a Data by SoftObjectPath.
@@ -182,7 +185,7 @@ namespace NCsData
 				* @param Log			(optional)
 				* return				Data
 				*/
-				static ICsData* GetSafeData(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, LogLevel);
+				static ICsData* GetSafeData(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Get a Data by the Data's Entry Name.
@@ -208,7 +211,7 @@ namespace NCsData
 				* @param Log			(optional)
 				* return				Data as UObject.
 				*/
-				static UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, LogLevel);
+				static UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Get a Data by SoftObjectPath.
@@ -235,7 +238,7 @@ namespace NCsData
 				* @param Log			(optional)
 				* return
 				*/
-				static UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, LogLevel);
+				static UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Data
 
@@ -267,8 +270,8 @@ namespace NCsData
 				* @param Log			(optional)
 				* return				Script Data as UObject.
 				*/
-				static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, LogLevel);
-				FORCEINLINE static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, bool& OutSuccess, LogLevel)
+				static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+				FORCEINLINE static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					UObject* Object = GetSafeScriptDataObject(Context, ContextObject, EntryName, Log);
 					OutSuccess		= Object != nullptr;
@@ -300,8 +303,8 @@ namespace NCsData
 				* @param Log			(optional)
 				* return
 				*/
-				static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, LogLevel);
-				FORCEINLINE static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, bool& OutSuccess, LogLevel)
+				static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+				FORCEINLINE static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					UObject* Object = GetSafeScriptDataObject(Context, ContextObject, Path, Log);
 					OutSuccess		= Object != nullptr;
@@ -326,7 +329,7 @@ namespace NCsData
 				* @param Log			(optional)
 				* return				DataTable
 				*/
-				static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FName& EntryName, LogLevel);
+				static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FName& EntryName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Get a DataTable by SoftObjectPath.
@@ -353,7 +356,7 @@ namespace NCsData
 				* @param Log		(optional)
 				* return			DataTable
 				*/
-				static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, LogLevel);
+				static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get a DataTable by SoftObjectPath.
@@ -394,7 +397,7 @@ namespace NCsData
 				* @param Log			(optional)
 				* return				DataTable
 				*/
-				static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, LogLevel);
+				static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get a DataTable associated with the SoftObject.
@@ -435,7 +438,7 @@ namespace NCsData
 				* @param Log			(optional)
 				* return				Pointer to the Row.
 				*/
-				static uint8* GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, const FName& RowName, LogLevel);
+				static uint8* GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, const FName& RowName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Get a pointer to the Row with name: Row Name in a DataTable associated with SoftObject.
@@ -462,7 +465,7 @@ namespace NCsData
 				* @param Log			(optional)
 				* return				Pointer to the Row.
 				*/
-				static uint8* GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName, LogLevel);
+				static uint8* GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Get a pointer to the Row with name: Row Name in a DataTable associated with SoftObject.
@@ -497,7 +500,7 @@ namespace NCsData
 				#endif // #if !UE_BUILD_SHIPPING
 				}
 
-				FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, LogLevel)
+				FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					return GetSafe(Context, ContextObject, Log) != nullptr;
 				}
@@ -538,7 +541,7 @@ namespace NCsData
 			* @param Log			(optional)
 			* return				Whether Data was successful added to an internal list in Manager_Data.
 			*/
-			static bool SafeAddDataObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& EntryName, UObject* Data, LogLevel);
+			static bool SafeAddDataObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& EntryName, UObject* Data, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		
 			/**
 			* Add a Data UObject to an internal list in Manager_Data.
@@ -565,7 +568,7 @@ namespace NCsData
 			* @parma Log			(optional)
 			* return				Whether Data with name: DataName was successfully removed.
 			*/
-			static bool SafeRemoveDataCompositionObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& DataName, LogLevel);
+			static bool SafeRemoveDataCompositionObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& DataName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Data
 
@@ -646,7 +649,7 @@ namespace NCsData
 				*						when the async load completes.
 				* return
 				*/
-				static bool SafeAsyncLoadStartupPayload(const FString& Context, const UObject* ContextObject, OnAsyncLoadPayloadCompleteOnceType Delegate, LogLevel);
+				static bool SafeAsyncLoadStartupPayload(const FString& Context, const UObject* ContextObject, OnAsyncLoadPayloadCompleteOnceType Delegate, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Asynchronous load a list of Payloads by Name.
@@ -666,8 +669,6 @@ namespace NCsData
 			#pragma endregion Payload
 			
 			#pragma endregion Load
-
-			#undef LogLevel
 			};
 		}
 	}

@@ -32,10 +32,13 @@ namespace NCsData
 				}
 			}
 
+			using LogClassType = NCsData::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			#define USING_NS_CACHED using namespace NCsData::NManager::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsData::NManager::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogLevel void(*Log)(const FString&) /*=&NCsData::FLog::Warning*/
 
 			// ContextRoot
 			#pragma region
@@ -47,7 +50,7 @@ namespace NCsData
 				return CsGameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 			}
 
-			UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, LogLevel)
+			UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				return CsGameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 			}
@@ -71,7 +74,7 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetDataRootSetImplChecked(Context);
 			}
 
-			UObject* FLibrary::GetSafeDataRootSetImpl(const FString& Context, const UObject* ContextObject, LogLevel)
+			UObject* FLibrary::GetSafeDataRootSetImpl(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
 					return Manager_Data->GetSafeDataRootSetImpl(Context, Log);
@@ -129,7 +132,7 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetDataChecked(Context, EntryName);
 			}
 
-			ICsData* FLibrary::GetSafeData(const FString& Context, const UObject* ContextObject, const FName& EntryName, LogLevel)
+			ICsData* FLibrary::GetSafeData(const FString& Context, const UObject* ContextObject, const FName& EntryName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
 				{
@@ -143,7 +146,7 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetDataChecked(Context, Path);
 			}
 
-			ICsData* FLibrary::GetSafeData(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, LogLevel)
+			ICsData* FLibrary::GetSafeData(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
 				{
@@ -157,7 +160,7 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetDataObjectChecked(Context, EntryName);
 			}
 
-			UObject* FLibrary::GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, LogLevel)
+			UObject* FLibrary::GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
 				{
@@ -171,12 +174,10 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetDataObjectChecked(Context, Path);
 			}
 
-			UObject* FLibrary::GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, LogLevel)
+			UObject* FLibrary::GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
-				{
 					return Manager_Data->GetSafeDataObject(Context, Path, Log);
-				}
 				return nullptr;
 			}
 
@@ -190,12 +191,10 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetScriptDataObjectChecked(Context, EntryName);
 			}
 
-			UObject* FLibrary::GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, LogLevel)
+			UObject* FLibrary::GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
-				{
 					return Manager_Data->GetSafeScriptDataObject(Context, EntryName, Log);
-				}
 				return nullptr;
 			}
 
@@ -204,12 +203,10 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetScriptDataObjectChecked(Context, Path);
 			}
 
-			UObject* FLibrary::GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, LogLevel)
+			UObject* FLibrary::GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
-				{
 					return Manager_Data->GetSafeScriptDataObject(Context, Path, Log);
-				}
 				return nullptr;
 			}
 
@@ -218,16 +215,15 @@ namespace NCsData
 				// DataTabe
 			#pragma region
 		
-			UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FName& EntryName, LogLevel)
+			UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FName& EntryName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
+				{
+					CS_IS_NAME_NONE_RET_NULL(EntryName)
 
-				if (!Manager_Data)
-					return nullptr;
-
-				CS_IS_NAME_NONE_RET_NULL(EntryName)
-
-				return Manager_Data->GetDataTable(EntryName);
+					return Manager_Data->GetDataTable(EntryName);
+				}
+				return nullptr;
 			}
 
 			UDataTable* FLibrary::GetDataTableChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path)
@@ -235,16 +231,15 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetDataTableChecked(Context, Path);
 			}
 
-			UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, LogLevel)
+			UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
+				{
+					CS_IS_SOFT_OBJECT_PATH_VALID_RET_NULL(Path)
 
-				if (!Manager_Data)
-					return nullptr;
-
-				CS_IS_SOFT_OBJECT_PATH_VALID_RET_NULL(Path)
-
-				return Manager_Data->GetDataTable(Path);
+					return Manager_Data->GetDataTable(Path);
+				}
+				return nullptr;
 			}
 
 			UDataTable* FLibrary::GetSafeDataTable(const UObject* ContextObject, const FSoftObjectPath& Path)
@@ -259,16 +254,15 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetDataTableChecked(Context, SoftObject);
 			}
 
-			UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, LogLevel)
+			UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
+				{
+					CS_IS_SOFT_OBJECT_PTR_VALID_RET_NULL(SoftObject, UDataTable)
 
-				if (!Manager_Data)
-					return nullptr;
-
-				CS_IS_SOFT_OBJECT_PTR_VALID_RET_NULL(SoftObject, UDataTable)
-
-				return Manager_Data->GetDataTable(SoftObject);
+					return Manager_Data->GetDataTable(SoftObject);
+				}
+				return nullptr;
 			}
 
 			UDataTable* FLibrary::GetSafeDataTable(const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject)
@@ -283,14 +277,11 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetDataTableRowChecked(Context, Path, RowName);
 			}
 
-			uint8* FLibrary::GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, const FName& RowName, LogLevel)
+			uint8* FLibrary::GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, const FName& RowName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
-
-				if (!Manager_Data)
-					return nullptr;
-
-				return Manager_Data->GetSafeDataTableRow(Context, Path, RowName, Log);
+				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
+					return Manager_Data->GetSafeDataTableRow(Context, Path, RowName, Log);
+				return nullptr;
 			}
 
 			uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName)
@@ -298,14 +289,11 @@ namespace NCsData
 				return GetChecked(Context, ContextObject)->GetDataTableRowChecked(Context, SoftObject, RowName);
 			}
 
-			uint8* FLibrary::GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName, LogLevel)
+			uint8* FLibrary::GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
-
-				if (!Manager_Data)
-					return nullptr;
-
-				return Manager_Data->GetSafeDataTableRow(Context, SoftObject, RowName, Log);
+				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
+					return Manager_Data->GetSafeDataTableRow(Context, SoftObject, RowName, Log);
+				return nullptr;
 			}
 
 			uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const UScriptStruct* RowStruct, const FName& RowName)
@@ -343,14 +331,11 @@ namespace NCsData
 				// Data
 			#pragma region
 
-			bool FLibrary::SafeAddDataObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& EntryName, UObject* Data, LogLevel)
+			bool FLibrary::SafeAddDataObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& EntryName, UObject* Data, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
-
-				if (!Manager_Data)
-					return false;
-
-				return Manager_Data->SafeAddDataObject_Loaded(Context, EntryName, Data, Log);
+				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
+					return Manager_Data->SafeAddDataObject_Loaded(Context, EntryName, Data, Log);
+				return false;
 			}
 
 			void FLibrary::AddDataCompositionObject_Loaded_Checked(const FString& Context, const UObject* ContextObject, const FName& DataName, UObject* Data, const FName& SliceName)
@@ -358,14 +343,11 @@ namespace NCsData
 				GetChecked(Context, ContextObject)->AddDataCompositionObject_Loaded(DataName, Data, SliceName);
 			}
 
-			bool FLibrary::SafeRemoveDataCompositionObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& DataName, LogLevel)
+			bool FLibrary::SafeRemoveDataCompositionObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& DataName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
-				UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
-
-				if (!Manager_Data)
-					return false;
-
-				return Manager_Data->SafeRemoveDataCompositionObject_Loaded(Context, DataName, Log);
+				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
+					return Manager_Data->SafeRemoveDataCompositionObject_Loaded(Context, DataName, Log);
+				return false;
 			}
 
 			#pragma endregion Data
@@ -413,7 +395,7 @@ namespace NCsData
 				GetChecked(Context, ContextObject)->AsyncLoadStartupPayload(Delegate);
 			}
 
-			bool FLibrary::SafeAsyncLoadStartupPayload(const FString& Context, const UObject* ContextObject, OnAsyncLoadPayloadCompleteOnceType Delegate, LogLevel)
+			bool FLibrary::SafeAsyncLoadStartupPayload(const FString& Context, const UObject* ContextObject, OnAsyncLoadPayloadCompleteOnceType Delegate, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
 					return Manager_Data->SafeAsyncLoadStartupPaylod(Context, Delegate, Log);
@@ -436,7 +418,6 @@ namespace NCsData
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
-			#undef LogLevel
 		}
 	}
 }

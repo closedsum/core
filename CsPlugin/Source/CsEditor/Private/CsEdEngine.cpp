@@ -513,22 +513,26 @@ void UCsEdEngine::OnWorldContextDestroyed_Internal(FWorldContext& WorldContext)
 
 void UCsEdEngine::DataEntry_Data_PopulateImpl(FCsDataEntry_Data* Entry)
 {
-	typedef NCsAsset::NDependency::NSoftPath::FLibrary DependencyLibrary;
-	typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
+	using DependencyLibrary = NCsAsset::NDependency::NSoftPath::FLibrary;
+	using ResultType = NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult;
+
+	static const int32 DEPENDENCY_DEPTH = 7;
 
 	ResultType Result;
-	DependencyLibrary::Get(Entry, FCsDataEntry_Data::StaticStruct(), 7, Result);
+	DependencyLibrary::Get(Entry, FCsDataEntry_Data::StaticStruct(), DEPENDENCY_DEPTH, Result);
 
 	Entry->Populate(Result.PathSet, Result.PathSetsByGroup);
 }
 
 void UCsEdEngine::DataEntry_ScriptData_PopulateImpl(FCsDataEntry_ScriptData* Entry)
 {
-	typedef NCsAsset::NDependency::NSoftPath::FLibrary DependencyLibrary;
-	typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
+	using DependencyLibrary = NCsAsset::NDependency::NSoftPath::FLibrary;
+	using ResultType = NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult;
+
+	static const int32 DEPENDENCY_DEPTH = 7;
 
 	ResultType Result;
-	DependencyLibrary::Get(Entry, FCsDataEntry_ScriptData::StaticStruct(), 7, Result);
+	DependencyLibrary::Get(Entry, FCsDataEntry_ScriptData::StaticStruct(), DEPENDENCY_DEPTH, Result);
 
 	Entry->Populate(Result.PathSet, Result.PathSetsByGroup);
 }
@@ -583,21 +587,32 @@ void UCsEdEngine::DataEntry_DataTable_PopulateImpl(UObject* DataTable, const FNa
 		}
 	}
 
-	Entry->SetupRows(RowNames);
-
-	for (const FName& Name : RowNames)
+	// If NO Rows, try to Populate with just the DataTable
+	if (RowNames.IsEmpty())
 	{
-		const UScriptStruct* ScriptStruct = DT->GetRowStruct();
-		UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
-		UStruct* const Struct			  = Temp;
+		Entry->PopulateDataTable();
+	}
+	// Populate Paths from all Rows
+	else
+	{
+		Entry->SetupRows(RowNames);
 
-		typedef NCsAsset::NDependency::NSoftPath::FLibrary DependencyLibrary;
-		typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
+		using DependencyLibrary = NCsAsset::NDependency::NSoftPath::FLibrary;
+		using ResultType = NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult;
 
-		ResultType Result;
-		DependencyLibrary::Get(DT->FindRowUnchecked(Name), Temp, 7, Result);
+		static const int32 DEPENDENCY_DEPTH = 7;
 
-		Entry->PopulateRow(Name, Result.PathSet, Result.PathSetsByGroup);
+		for (const FName& Name : RowNames)
+		{
+			const UScriptStruct* ScriptStruct = DT->GetRowStruct();
+			UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+			UStruct* const Struct			  = Temp;
+
+			ResultType Result;
+			DependencyLibrary::Get(DT->FindRowUnchecked(Name), Temp, DEPENDENCY_DEPTH, Result);
+
+			Entry->PopulateRow(Name, Result.PathSet, Result.PathSetsByGroup);
+		}
 	}
 }
 

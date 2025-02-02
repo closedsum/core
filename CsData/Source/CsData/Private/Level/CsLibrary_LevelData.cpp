@@ -32,10 +32,13 @@ namespace NCsLevel
 				}
 			}
 
+			using LogClassType = NCsData::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 			#define USING_NS_CACHED using namespace NCsLevel::NPersistent::NData::NLibrary::NCached;
 			#define SET_CONTEXT(__FunctionName) using namespace NCsLevel::NPersistent::NData::NLibrary::NCached; \
 				const FString& Context = Str::__FunctionName
-			#define LogLevel void(*Log)(const FString& Context) /*=&NCsData::FLog::Warning*/
 
 			// SetupData
 			#pragma region
@@ -51,7 +54,7 @@ namespace NCsLevel
 				return O;
 			}
 
-			UObject* FLibrary::GetSafeSetupDataAsObject(const FString& Context, const UObject* WorldContext, LogLevel)
+			UObject* FLibrary::GetSafeSetupDataAsObject(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (ICsGetLevelSetupData* GetLevelSetupData = CsPersistentLevelLibrary::GetSafeScriptActor<ICsGetLevelSetupData>(Context, WorldContext, Log))
 				{
@@ -88,7 +91,7 @@ namespace NCsLevel
 				OutLevelName						= CsPersistentLevelLibrary::GetFNameChecked(Context, WorldContext);
 			}
 
-			bool FLibrary::GetSafePayloadAndLevelName(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName, LogLevel)
+			bool FLibrary::GetSafePayloadAndLevelName(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				OutPayload	  = nullptr;
 				OutLevelName  = NAME_None;
@@ -111,7 +114,6 @@ namespace NCsLevel
 
 			#undef USING_NS_CACHED
 			#undef SET_CONTEXT
-			#undef LogLevel
 		}
 	}
 }

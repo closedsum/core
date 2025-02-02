@@ -117,7 +117,6 @@ namespace NCsEnum
 							}
 
 							checkf(Name.Compare(RowName.ToString(), ESearchCase::IgnoreCase) == 0, TEXT("%s: Row Name != %s Name (%s != %s)."), *Context, *EnumName, *(RowName.ToString()), *Name);
-
 							checkf(!Payload.IsValidEnum(Name), TEXT("%s: %s (Name): %s already exists (declared in native)."), *Context, *EnumName, *Name);
 
 							if (!DisplayName.IsEmpty())
@@ -174,7 +173,6 @@ namespace NCsEnum
 						}
 
 						checkf(Name.Compare(RowName.ToString(), ESearchCase::IgnoreCase) == 0, TEXT("%s: Row Name != %s Name (%s != %s)."), *Context, *EnumName, *(RowName.ToString()), *Name);
-
 						checkf(!Payload.IsValidEnum(Name), TEXT("%s: %s (Name): %s already exists (declared in native)."), *Context, *EnumName, *Name);
 
 						if (!DisplayName.IsEmpty())

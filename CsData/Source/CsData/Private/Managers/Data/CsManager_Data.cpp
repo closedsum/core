@@ -162,6 +162,10 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerData::NCached; \
 	const FString& Context = Str::__FunctionName
 
+using OnAsyncLoadPayloadCompleteOnceType = NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete;
+using OnAsyncLoadPayloadsCompleteOnceType = NCsData::NManager::NOnce::FOnAsyncLoadPayloadsComplete;
+using OnAsyncLoadPayloadCompletePersistentType = NCsData::NManager::NPersistent::FOnAsyncLoadPayloadComplete;
+
 // Singleton
 #pragma region
 
@@ -297,9 +301,7 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 void UCsManager_Data::Initialize()
 {
 	// Get DataRootSet
-	typedef NCsData::NSettings::FLibrary SettingsLibrary;
-
-	TSoftClassPtr<UObject> SoftClass = SettingsLibrary::GetDataRootSet();
+	TSoftClassPtr<UObject> SoftClass = CsDataSettingsLibrary::GetDataRootSet();
 	const FSoftObjectPath& Path		 = SoftClass.ToSoftObjectPath();
 
 	checkf(Path.IsValid(), TEXT("UCsManager_Data::Initialize: UCsDataSettings.DataRootSet is NOT Valid."));
@@ -1016,8 +1018,6 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 	}
 }
 
-#define OnAsyncLoadPayloadCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete
-
 void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate)
 {
 	SET_CONTEXT(AsyncLoadPayload);
@@ -1044,7 +1044,7 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayl
 		TArray<FCsStreamableHandle>& Handles = PayloadHandleMap_Loaded.FindOrAdd(PayloadName);
 		Handles.Reset(Handles.Max());
 
-		typedef NCsLoad::NManager::NLoadObjectPaths::FPayload PayloadType;
+		using PayloadType = NCsLoad::NManager::NLoadObjectPaths::FPayload;
 
 		PayloadType Payload;
 
@@ -1079,7 +1079,7 @@ void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& P
 	}
 
 	// TODO: Add bSafe to Payload
-	typedef NCsLoad::NManager::NLoadObjectPaths::FPayload PayloadType;
+	using PayloadType = NCsLoad::NManager::NLoadObjectPaths::FPayload;
 
 	PayloadType Payload;
 
@@ -1171,8 +1171,6 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHand
 		// List
 #pragma region
 
-#define OnAsyncLoadPayloadsCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadsComplete
-
 void UCsManager_Data::AsyncLoadPayloads(const TArray<FName>& PayloadNames, OnAsyncLoadPayloadsCompleteOnceType Delegate)
 {
 	SET_CONTEXT(AsyncLoadPayloads);
@@ -1221,7 +1219,7 @@ char UCsManager_Data::AsyncLoadPayloads_Internal(FCsRoutine* R)
 	{
 		{
 			{
-				typedef NCsLoad::NManager::NLoadObjectPaths::FPayload PayloadType;
+				using PayloadType = NCsLoad::NManager::NLoadObjectPaths::FPayload;
 
 				const int32 PathCount = Payload_GetPathCountChecked(Context, PayloadName);
 	
@@ -1326,7 +1324,7 @@ char UCsManager_Data::AsyncLoadPayloadByGroup_Internal(FCsRoutine* R)
 
 	CS_COROUTINE_READ_INT_REF(R, GroupIndex);
 
-	typedef ECsObjectPathDependencyGroup GroupType;
+	using GroupType = ECsObjectPathDependencyGroup;
 
 	GroupType Group		   = (GroupType)GroupIndex;
 	const int32 GroupCount = (int32)GroupType::ECsObjectPathDependencyGroup_MAX;
@@ -1339,7 +1337,7 @@ char UCsManager_Data::AsyncLoadPayloadByGroup_Internal(FCsRoutine* R)
 	{
 		{
 			{
-				typedef NCsLoad::NManager::NLoadObjectPaths::FPayload PayloadType;
+				using PayloadType = NCsLoad::NManager::NLoadObjectPaths::FPayload;
 
 				PayloadType Payload;
 
@@ -1394,8 +1392,6 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup(const FCsL
 }
 
 #pragma endregion Group
-
-#undef OnAsyncLoadPayloadCompleteOnceType
 
 void UCsManager_Data::UnloadPayload(const FName& PayloadName)
 {
@@ -1874,9 +1870,7 @@ bool UCsManager_Data::SafeAddData_Loaded(const FString& Context, const FName& En
 		return false;
 	}
 
-	typedef NCsData::IData DataType;
-
-	DataType* IData = Data->_getIData();
+	CsDataType* IData = Data->_getIData();
 
 	if (!IData)
 	{
@@ -1906,9 +1900,7 @@ bool UCsManager_Data::SafeAddDataObject_Loaded(const FString& Context, const FNa
 		return false;
 	}
 	
-	typedef NCsData::IData DataType;
-
-	DataType* IData = InterfaceData->_getIData();
+	CsDataType* IData = InterfaceData->_getIData();
 
 	if (!IData)
 	{

@@ -80,8 +80,6 @@ void UCsDataSettings::PostEditChangeChainProperty(FPropertyChangedChainEvent& e)
 	TSet<FString> PropertyNames;
 	CsPropertyLibrary::GetPropertyNamesInChain(e, PropertyNames);
 
-	typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
-
 	// Data
 	{
 		if (PropertyNames.Contains("DataRootSets"))
@@ -177,7 +175,7 @@ void UCsDataSettings::PostEditChangeChainProperty(FPropertyChangedChainEvent& e)
 			else
 			if (PropertyName.Contains("bPopulateAll"))
 			{
-				typedef NCsData::NEntry::NTool::FImpl DataEntryToolType;
+				using DataEntryToolType = NCsData::NEntry::NTool::FImpl;
 
 				ICsGetDataEntryTool* GetDataEntryTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetDataEntryTool);
 				DataEntryToolType* DataEntryTool	  = GetDataEntryTool->GetDataEntryTool();
@@ -271,7 +269,7 @@ void UCsDataSettings::PostEditChangeChainProperty(FPropertyChangedChainEvent& e)
 			else
 			if (PropertyName.Contains("bPopulateSubset"))
 			{
-				typedef NCsData::NEntry::NTool::FImpl DataEntryToolType;
+				using DataEntryToolType = NCsData::NEntry::NTool::FImpl;
 
 				ICsGetDataEntryTool* GetDataEntryTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetDataEntryTool);
 				DataEntryToolType* DataEntryTool	  = GetDataEntryTool->GetDataEntryTool();
@@ -444,7 +442,7 @@ void UCsDataSettings::PopulateAll(const ECsPlatform & Platform)
 
 	if (GetDataRootSet)
 	{
-		typedef NCsData::NEntry::NTool::FImpl DataEntryToolType;
+		using DataEntryToolType = NCsData::NEntry::NTool::FImpl;
 
 		const FCsDataRootSet& CsDataRootSet   = GetDataRootSet->GetCsDataRootSet();
 		ICsGetDataEntryTool* GetDataEntryTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetDataEntryTool);

@@ -18,7 +18,7 @@ namespace NCsDataTable
 		{
 		public:
 
-		#define RowNameChangeType NCsDataTable::NProperty::NRowName::FChange
+			using RowNameChangeType = NCsDataTable::NProperty::NRowName::FChange;
 
 			TArray<RowNameChangeType> RowNameChanges;
 
@@ -54,8 +54,6 @@ namespace NCsDataTable
 					}
 				}
 			}
-
-		#undef RowNameChangeType
 		};
 	}
 }
@@ -70,11 +68,15 @@ class CSTYPES_API ICsGetDataTableTool
 {
 	GENERATED_IINTERFACE_BODY()
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using DataTableToolType = NCsDataTable::NTool::FImpl;
+	};
+
 public:
 
-#define DataTableToolType NCsDataTable::NTool::FImpl
-
-	virtual DataTableToolType* GetDataTableTool() = 0;
-
-#undef DataTableToolType
+	virtual _::DataTableToolType* GetDataTableTool() = 0;
 };

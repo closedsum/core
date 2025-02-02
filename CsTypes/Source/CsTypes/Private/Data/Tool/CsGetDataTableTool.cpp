@@ -9,8 +9,6 @@ namespace NCsDataTable
 {
 	namespace NTool
 	{
-		#define RowNameChangeType NCsDataTable::NProperty::NRowName::FChange
-
 		void FImpl::QueueRowNameChange(const UDataTable* DataTable, const FName& CurrentRowName, const FName& NewRowName) 
 		{ 
 			RowNameChangeType& Change = RowNameChanges.AddDefaulted_GetRef();
@@ -18,8 +16,6 @@ namespace NCsDataTable
 			Change.CurrentRowName = CurrentRowName;
 			Change.NewRowName	  = NewRowName;
 		}
-
-		#undef RowNameChangeType
 	}
 }
 

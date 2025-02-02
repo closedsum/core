@@ -51,11 +51,11 @@ namespace NCsDataRootSet
 
 #pragma endregion Cached
 
-
-#define MemberType FCsDataRootSet::EMember
-MemberType FCsDataRootSet::GetMember(const FName& MemberName)
+FCsDataRootSet::EMember FCsDataRootSet::GetMember(const FName& MemberName)
 {
 	using namespace NCsDataRootSet::NCached;
+
+	using MemberType = FCsDataRootSet::EMember;
 
 	if (MemberName == Name::Datas)
 		return MemberType::Datas;
@@ -68,7 +68,6 @@ MemberType FCsDataRootSet::GetMember(const FName& MemberName)
 	check(0);
 	return MemberType::Datas;
 }
-#undef MemberType
 
 #if WITH_EDITOR
 //
@@ -163,7 +162,8 @@ MemberType FCsDataRootSet::GetMember(const FName& MemberName)
 
 #endif // #if WITH_EDITOR
 
-#define MapType FCsDataRootSet::EMap
+using MapType = FCsDataRootSet::EMap;
+
 bool FCsDataRootSet::IsPersistentLevel(UObject* WorldContext, const MapType& Type) const
 {
 	FString MapName;
@@ -178,7 +178,6 @@ bool FCsDataRootSet::IsPersistentLevel(UObject* WorldContext, const MapType& Typ
 		
 	return CsPersistentLevelLibrary::SafeIsName(WorldContext, MapName);
 }
-#undef MapType
 
 bool FCsDataRootSet::IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {

@@ -44,26 +44,23 @@ namespace NCsDataEntryData
 		}
 	}
 
-	#define EnumStructLibrary NCsEnum::NStruct::NPopulate::FLibrary
-	#define LayoutLibrary NCsEnum::NStruct::NLayout::FLibrary
-
 	UDataTable* GetDataTable(const FString& Context)
 	{
 		using namespace NCsDataEntryData::NCached;
 
-		return EnumStructLibrary::GetDataTable(Context, Name::Datas);
+		return CsEnumStructPopulateLibrary::GetDataTable(Context, Name::Datas);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
 		using namespace NCsDataEntryData::NCached;
 
-		const FCsDataRootSet* DataRootSet = EnumStructLibrary::GetDataRootSet<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, ContextRoot);
+		const FCsDataRootSet* DataRootSet = CsEnumStructPopulateLibrary::GetDataRootSet<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, ContextRoot);
 
 		if (!DataRootSet)
 			return;
 
-		typedef NCsEnum::NStruct::NPopulate::FLibrary::FFromDataTable::FPayload PayloadType;
+		using PayloadType = CsEnumStructPopulateLibrary::FFromDataTable::FPayload;
 
 		PayloadType Payload;
 		Payload.ContextRoot				 = ContextRoot;
@@ -75,7 +72,7 @@ namespace NCsDataEntryData
 		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
 		Payload.Log						 = &NCsData::FLog::Warning;
 
-		EnumStructLibrary::FromDataTable_RowAsName(Context, Payload);
+		CsEnumStructPopulateLibrary::FromDataTable_RowAsName(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -94,17 +91,14 @@ namespace NCsDataEntryData
 		FName EnumName;
 		TArray<FName> Names;
 		GetNames(EnumName, Names);
-		LayoutLibrary::ConditionalAddLayout(EnumName, Names, GetDataTable(Context));
+		CsEnumStructLayoutLibrary::ConditionalAddLayout(EnumName, Names, GetDataTable(Context));
 	}
 
 	void AddPropertyChange()
 	{
 		ConditionalAddLayout();
-		LayoutLibrary::AddPropertyChange(EMCsDataEntryData::Get().GetEnumFName(), FECsDataEntryData::StaticStruct());
+		CsEnumStructLayoutLibrary::AddPropertyChange(EMCsDataEntryData::Get().GetEnumFName(), FECsDataEntryData::StaticStruct());
 	}
-
-	#undef EnumStructLibrary
-	#undef LayoutLibrary
 }
 
 #pragma endregion DataEntryData
@@ -198,8 +192,8 @@ void FCsDataEntry_Data::Populate(const TSet<FSoftObjectPath>& PathSet, const TAr
 			UE_LOG(LogCsData, Warning, TEXT("-- Populating Paths by Group."));
 		}
 
-		typedef EMCsObjectPathDependencyGroup GroupMapType;
-		typedef ECsObjectPathDependencyGroup GroupType;
+		using GroupMapType = EMCsObjectPathDependencyGroup;
+		using GroupType = ECsObjectPathDependencyGroup;
 
 		PathsByGroup[(uint8)GroupType::Blueprint].Populate(DOb, DataPath, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
 
@@ -322,8 +316,8 @@ void FCsDataEntry_ScriptData::Populate(const TSet<FSoftObjectPath>& PathSet, con
 			UE_LOG(LogCsData, Warning, TEXT("-- Populating Paths by Group."));
 		}
 
-		typedef EMCsObjectPathDependencyGroup GroupMapType;
-		typedef ECsObjectPathDependencyGroup GroupType;
+		using GroupMapType = EMCsObjectPathDependencyGroup;
+		using GroupType = ECsObjectPathDependencyGroup;
 
 		PathsByGroup[(uint8)GroupType::Blueprint].Populate(DOb, DataPath, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
 
@@ -392,6 +386,28 @@ void FCsDataEntry_DataTable::Unload()
 
 #if WITH_EDITOR
 
+void FCsDataEntry_DataTable::PopulateDataTable()
+{
+	// Add DataTable Path
+	FSoftObjectPath DataTablePath = DataTable.ToSoftObjectPath();
+
+	UDataTable* DT = DataTable.LoadSynchronous();
+
+	if (!DT)
+	{
+		UE_LOG(LogCsData, Warning, TEXT("FCsDataEntry_DataTable::PopulateDataTable: Failed to load DataTable at Path: %s"), *(DataTable.ToString()));
+		return;
+	}
+
+	Paths.Populate(DT, DataTablePath, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
+	Paths.BuildFromSet();
+
+	using GroupType = ECsObjectPathDependencyGroup;
+
+	PathsByGroup[(uint8)GroupType::DataTable].Populate(DT, DataTablePath, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
+	PathsByGroup[(uint8)GroupType::DataTable].BuildFromSet();
+}
+
 void FCsDataEntry_DataTable::PopulateRow(const FName& RowName, const TSet<FSoftObjectPath>& PathSet, const TArray<TSet<FSoftObjectPath>>& PathSetsByGroup)
 {
 	// Add DataTable Path
@@ -424,8 +440,8 @@ void FCsDataEntry_DataTable::PopulateRow(const FName& RowName, const TSet<FSoftO
 			UE_LOG(LogCsData, Warning, TEXT("-- Populating Paths by Group."));
 		}
 
-		typedef EMCsObjectPathDependencyGroup GroupMapType;
-		typedef ECsObjectPathDependencyGroup GroupType;
+		using GroupMapType = EMCsObjectPathDependencyGroup;
+		using GroupType = ECsObjectPathDependencyGroup;
 
 		FCsTArraySoftObjectPathByGroup& ArrGroup = PathsByGroupByRowMap[RowName];
 

@@ -38,11 +38,15 @@ class CSDATA_API ICsGetDataEntryTool
 {
 	GENERATED_IINTERFACE_BODY()
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using DataEntryToolType = NCsData::NEntry::NTool::FImpl;
+	};
+
 public:
 
-#define DataEntryToolType NCsData::NEntry::NTool::FImpl
-
-	virtual DataEntryToolType* GetDataEntryTool() = 0;
-
-#undef DataEntryToolType
+	virtual _::DataEntryToolType* GetDataEntryTool() = 0;
 };

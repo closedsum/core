@@ -76,7 +76,7 @@ void FCsSettings_EnumStruct_PopulateByDataTable::OnDataTableChanged(const UDataT
 
 			if (NewRowName.Compare(CurrentRowName, ESearchCase::IgnoreCase) != 0)
 			{
-				typedef NCsDataTable::NTool::FImpl DataTableToolType;
+				using DataTableToolType = NCsDataTable::NTool::FImpl;
 
 				ICsGetDataTableTool* GetDataTableTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetDataTableTool);
 				DataTableToolType* DataTableTool	  = GetDataTableTool->GetDataTableTool();
@@ -162,7 +162,7 @@ void FCsSettings_EnumStruct_PopulateByDataTable::OnDataTableChanged(const UDataT
 
 			if (NewRowName.Compare(CurrentRowName, ESearchCase::IgnoreCase) != 0)
 			{
-				typedef NCsDataTable::NTool::FImpl DataTableToolType;
+				using DataTableToolType = NCsDataTable::NTool::FImpl;
 
 				ICsGetDataTableTool* GetDataTableTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetDataTableTool);
 				DataTableToolType* DataTableTool	  = GetDataTableTool->GetDataTableTool();

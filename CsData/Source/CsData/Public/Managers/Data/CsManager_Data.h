@@ -88,7 +88,12 @@ UCLASS(transient)
 class CSDATA_API UCsManager_Data : public UObject
 {
 	GENERATED_UCLASS_BODY()
-public:
+
+private:
+
+	using OnAsyncLoadPayloadCompleteOnceType = NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete;
+	using OnAsyncLoadPayloadsCompleteOnceType = NCsData::NManager::NOnce::FOnAsyncLoadPayloadsComplete;
+	using OnAsyncLoadPayloadCompletePersistentType = NCsData::NManager::NPersistent::FOnAsyncLoadPayloadComplete;
 
 // Singleton
 #pragma region
@@ -432,10 +437,6 @@ public:
 #pragma region
 public:
 
-#define OnAsyncLoadPayloadCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete
-#define OnAsyncLoadPayloadsCompleteOnceType NCsData::NManager::NOnce::FOnAsyncLoadPayloadsComplete
-#define OnAsyncLoadPayloadCompletePersistentType NCsData::NManager::NPersistent::FOnAsyncLoadPayloadComplete
-
 	/**
 	* Load a Payload by Payload Name.
 	*
@@ -552,10 +553,6 @@ private:
 public:
 
 	void UnloadPayload(const FName& PayloadName);
-
-#undef OnAsyncLoadPayloadCompleteOnceType
-#undef OnAsyncLoadPayloadsCompleteOnceType
-#undef OnAsyncLoadPayloadCompletePersistentType
 
 #pragma endregion Payload
 

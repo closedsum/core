@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Data
 #include "Data/ICsData.h"
 // Containers
@@ -26,7 +28,7 @@ namespace NCsData
 	*/
 	struct CSDATA_API FLibrary : public NCsInterfaceMap::TLibrary<CsDataType>
 	{
-	#define LogLevel void(*Log)(const FString&) = &NCsData::FLog::Warning
+		CS_DECLARE_STATIC_LOG_LEVEL
 
 	public:
 
@@ -83,10 +85,10 @@ namespace NCsData
 			return GetInterfaceChecked<InterfaceType>(Context, ConvertChecked(Context, Object));
 		}
 
-		static CsDataType* SafeConvert(const FString& Context, UObject* Object, LogLevel);
+		static CsDataType* SafeConvert(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* SafeConvert(const FString& Context, UObject* Object, LogLevel)
+		FORCEINLINE static InterfaceType* SafeConvert(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			if (CsDataType* Data = SafeConvert(Context, Object, Log))
 				return GetSafeInterfaceChecked<InterfaceType>(Context, Data);
@@ -108,7 +110,7 @@ namespace NCsData
 		* @param Log		Log function.
 		* return			Loaded object of type: CsDataType (NCsData::IData).
 		*/
-		static CsDataType* SafeLoad(const FString& Context, UObject* Object, LogLevel);
+		static CsDataType* SafeLoad(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely load the Data from Object.
@@ -120,7 +122,7 @@ namespace NCsData
 		* return			Loaded object of type: InterfaceType.
 		*/
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* SafeLoad(const FString& Context, UObject* Object, LogLevel)
+		FORCEINLINE static InterfaceType* SafeLoad(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			CsDataType* Data = SafeLoad(Context, Object, Log);
 
@@ -163,10 +165,10 @@ namespace NCsData
 			return GetInterfaceChecked<InterfaceType>(Context, TopLoadChecked(Context, Object));
 		}
 
-		static const CsDataType* SafeTopLoad(const FString& Context, UObject* Object, LogLevel);
+		static const CsDataType* SafeTopLoad(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		template<typename InterfaceType>
-		static const InterfaceType* SafeTopLoad(const FString& Context, UObject* Object, LogLevel)
+		static const InterfaceType* SafeTopLoad(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			if (const CsDataType* Data = SafeTopLoad(Context, Object, Log))
 			{
@@ -202,8 +204,8 @@ namespace NCsData
 		* @param Log		(optional)
 		* return			Whether the Load was successful or not.			
 		*/
-		static bool SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess, LogLevel);
-		FORCEINLINE static bool SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, LogLevel)
+		static bool SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static bool SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			bool OutSuccess = false;
 			return SafeScript_Load(Context, Object, LoadFlags, OutSuccess, Log);
@@ -220,8 +222,8 @@ namespace NCsData
 		* @param Log		(optional)
 		* return			Object that implements the interface: ICsScriptData		
 		*/
-		static UObject* SafeScript_Load(const FString& Context, const FString& Path, const int32& LoadFlags, bool& OutSuccess, LogLevel);
-		FORCEINLINE static UObject* SafeScript_Load(const FString& Context, const FString& Path, const int32& LoadFlags, LogLevel)
+		static UObject* SafeScript_Load(const FString& Context, const FString& Path, const int32& LoadFlags, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static UObject* SafeScript_Load(const FString& Context, const FString& Path, const int32& LoadFlags, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			bool OutSuccess = false;
 			return SafeScript_Load(Context, Path, LoadFlags, OutSuccess, Log);
@@ -235,11 +237,11 @@ namespace NCsData
 
 		static bool ScriptImplementsChecked(const FString& Context, const UObject* Object);
 
-		static bool SafeScriptImplements(const FString& Context, const UObject* Object, LogLevel);
+		static bool SafeScriptImplements(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		static bool ImplementsChecked(const FString& Context, const UObject* Object);
 
-		static bool SafeImplements(const FString& Context, const UObject* Object, LogLevel);
+		static bool SafeImplements(const FString& Context, const UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		static bool SafeImplements(const UObject* Object);
 
@@ -287,7 +289,7 @@ namespace NCsData
 		* @param Log			(optional)
 		* return				Data which implements the interface: CsDataType (NCsData::IData).
 		*/
-		static CsDataType* GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel);
+		static CsDataType* GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get Data with name DataName which implements the interface: InterfaceType.
@@ -300,7 +302,7 @@ namespace NCsData
 		* return				Data which implements the interface: InterfaceType.
 		*/
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel)
+		FORCEINLINE static InterfaceType* GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			CsDataType* Data = GetSafe(Context, WorldContext, DataName, Log);
 
@@ -349,7 +351,7 @@ namespace NCsData
 		* @param Object		UObject that SHOULD implement the interface: ICsData.
 		* return			Data that implements the interface: CsDataType (NCsData::IData).
 		*/
-		static CsDataType* GetSafe(const FString& Context, UObject* Object, LogLevel);
+		static CsDataType* GetSafe(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get the Data from Object.
@@ -360,7 +362,7 @@ namespace NCsData
 		* return			Data that implements the interface: InterfaceType.
 		*/
 		template<typename InterfaceType>
-		FORCEINLINE static InterfaceType* GetSafe(const FString& Context, UObject* Object, LogLevel)
+		FORCEINLINE static InterfaceType* GetSafe(const FString& Context, UObject* Object, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			CsDataType* Data = GetSafe(Context, Object, Log);
 
@@ -418,13 +420,11 @@ namespace NCsData
 		* @param Log			(optional)
 		* return				Script Data which implements the interface: ICsScriptData.
 		*/
-		static UObject* GetSafeScript(const FString& Context, const UObject* WorldContext, const FName& DataName, LogLevel);
+		static UObject* GetSafeScript(const FString& Context, const UObject* WorldContext, const FName& DataName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Script
 
 	#pragma endregion Get
-
-	#undef LogLevel
 	};
 }
 

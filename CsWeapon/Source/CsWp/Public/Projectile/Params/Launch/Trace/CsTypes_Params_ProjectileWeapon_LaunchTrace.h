@@ -224,7 +224,27 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Launch_TraceParams
 #pragma region
 
-// NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams
+struct FCsProjectileWeapon_Launch_TraceParams;
+
+// ParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NTrace, FParams)
+
+namespace NCsProjectileWeapon_Launch_TraceParams
+{
+	using ThisType = FCsProjectileWeapon_Launch_TraceParams;
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NTrace, FParams)
 
 /**
@@ -237,6 +257,13 @@ USTRUCT(BlueprintType)
 struct CSWP_API FCsProjectileWeapon_Launch_TraceParams
 {
 	GENERATED_USTRUCT_BODY()
+
+private:
+
+	using StartMapType = EMCsProjectileWeaponLaunchTraceStart;
+	using StartType = ECsProjectileWeaponLaunchTraceStart;
+	using DirectionMapType = EMCsProjectileWeaponLaunchTraceDirection;
+	using DirectionType = ECsProjectileWeaponLaunchTraceDirection;
 
 public:
 
@@ -270,10 +297,13 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams;
+	using _Impl = NCsProjectileWeapon_Launch_TraceParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
+
+public:
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -297,8 +327,10 @@ namespace NCsWeapon
 					*/
 					struct CSWP_API FParams
 					{
-					#define StartType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart
-					#define DirectionType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection
+					private:
+
+						using StartType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart;
+						using DirectionType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection;
 
 					private:
 
@@ -339,9 +371,6 @@ namespace NCsWeapon
 					
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-					#undef StartType
-					#undef DirectionType
 					};
 				}
 			}
@@ -354,8 +383,31 @@ namespace NCsWeapon
 // FCsProjectileWeapon_LaunchTraceParams (TODO: DEPRECATE)
 #pragma region
 
-// NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NTrace, FImpl)
+struct FCsProjectileWeapon_LaunchTraceParams;
+
+// ParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::NImpl::FImpl)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NProjectile, NParams, NLaunch, NTrace, NImpl, FImpl)
+
+namespace NCsProjectileWeapon_LaunchTraceParams
+{
+	using ThisType = FCsProjectileWeapon_LaunchTraceParams;
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::NImpl::FImpl;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static ParamsType* AddSafeToSlice(const FString& Context, ThisType* This, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+		static ParamsType* AddSafeToSliceAsValue(const FString& Context, const ThisType* This, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+		static ParamsType* AddSafeToSlice_Internal(const FString& Context, const ThisType* This, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::NImpl::FImpl)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NProjectile, NParams, NLaunch, NTrace, NImpl, FImpl)
 
 /**
 * Describes any information related to Launching a Projectile using a Trace from a Projectile Weapon.
@@ -389,21 +441,16 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::NImpl::FImpl;
+	using _Impl = NCsProjectileWeapon_LaunchTraceParams::FImpl;
 
-	ParamsType* AddSafeToSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
-	ParamsType* AddSafeToSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
+	ParamsType* AddSafeToSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning)				{ return _Impl::AddSafeToSlice(Context, this, WorldContext, Name, Log); }
+	ParamsType* AddSafeToSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const	{ return _Impl::AddSafeToSliceAsValue(Context, this, WorldContext, Name, Log); }
 private:
-
-	ParamsType* AddSafeToSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
+	ParamsType* AddSafeToSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const { return _Impl::AddSafeToSlice_Internal(Context, this, WorldContext, Name, Log); }
 public:
-
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-
-#undef ParamsType
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 };
@@ -413,7 +460,27 @@ public:
 // FCsProjectileWeapon_Launch_WithTraceParams
 #pragma region
 
-// NCsWeapon::NProjectile::NParams::NLaunch::NWithTrace::FParams
+struct FCsProjectileWeapon_Launch_WithTraceParams;
+
+// ParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NWithTrace::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NWithTrace, FParams)
+
+namespace NCsProjectileWeapon_Launch_WithTraceParams
+{
+	using ThisType = FCsProjectileWeapon_Launch_WithTraceParams;
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NWithTrace::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NWithTrace::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NWithTrace, FParams)
 
 /**
@@ -447,10 +514,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NWithTrace::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NWithTrace::FParams;
+	using _Impl = NCsProjectileWeapon_Launch_WithTraceParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -473,9 +541,9 @@ namespace NCsWeapon
 					*/
 					struct CSWP_API FParams
 					{
-					#define LocationParamsType NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams
-					#define DirectionParamsType NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams
-					#define TraceParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams
+						using LocationParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams;
+						using DirectionParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams;
+						using TraceParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams;
 
 					private:
 
@@ -504,10 +572,6 @@ namespace NCsWeapon
 					
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-					#undef LocationParamsType
-					#undef DirectionParamsType
-					#undef TraceParamsType
 					};
 				}
 			}

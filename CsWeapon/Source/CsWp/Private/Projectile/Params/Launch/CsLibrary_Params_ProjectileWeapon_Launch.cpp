@@ -17,50 +17,45 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
-			#define DataType NCsWeapon::NData::IData
-			#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-
-				bool FLibrary::IsValidChecked(const FString& Context, const ParamsType* Params)
+				namespace NLibrary
 				{
-					typedef NCsWeapon::NProjectile::NParams::NLaunch::EMLocation LocationMapType;
-					typedef NCsWeapon::NProjectile::NParams::NLaunch::EMDirection DirectionMapType;
+					using DataType = NCsWeapon::NData::IData;
+					using PrjWeaponDataType = NCsWeapon::NProjectile::NData::IData;
+					using LocationType = NCsWeapon::NProjectile::NParams::NLaunch::ELocation;
+					using LocationMapType = NCsWeapon::NProjectile::NParams::NLaunch::EMLocation;
+					using DirectionType = NCsWeapon::NProjectile::NParams::NLaunch::EDirection;
+					using DirectionMapType = NCsWeapon::NProjectile::NParams::NLaunch::EMDirection;
 
-					CS_IS_ENUM_VALID_CHECKED(LocationMapType, Params->GetLocationType())
-					CS_IS_ENUM_VALID_CHECKED(DirectionMapType, Params->GetDirectionType())
+					bool FLibrary::IsValidChecked(const FString& Context, const ParamsType* Params)
+					{
+						CS_IS_ENUM_VALID_CHECKED(LocationMapType, Params->GetLocationType())
+						CS_IS_ENUM_VALID_CHECKED(DirectionMapType, Params->GetDirectionType())
 
-					checkf(Params->GetDirectionRules() != NCsRotationRules::None, TEXT("%s: No DirectionRules set in Param."), *Context);
-					return true;
+						checkf(Params->GetDirectionRules() != NCsRotationRules::None, TEXT("%s: No DirectionRules set in Param."), *Context);
+						return true;
+					}
+
+					const ParamsType* FLibrary::GetChecked(const FString& Context, const DataType* Data)
+					{
+						CS_IS_PTR_NULL_CHECKED(Data);
+
+						const PrjWeaponDataType* WeaponData = CsWeaponDataLibrary::GetInterfaceChecked<PrjWeaponDataType>(Context, Data);
+						const ParamsType* LaunchParams		= WeaponData->GetLaunchParams();
+
+						check(IsValidChecked(Context, LaunchParams));
+						return LaunchParams;
+					}
+			
+					const LocationType& FLibrary::GetLocationTypeChecked(const FString& Context, const DataType* Data)
+					{
+						return GetChecked(Context, Data)->GetLocationType();
+					}
+				
+					const DirectionType& FLibrary::GetDirectionTypeChecked(const FString& Context, const DataType* Data)
+					{
+						return GetChecked(Context, Data)->GetDirectionType();
+					}
 				}
-
-				const ParamsType* FLibrary::GetChecked(const FString& Context, const DataType* Data)
-				{
-					CS_IS_PTR_NULL_CHECKED(Data);
-
-					typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
-
-					const PrjWeaponDataType* WeaponData = CsWeaponDataLibrary::GetInterfaceChecked<PrjWeaponDataType>(Context, Data);
-					const ParamsType* LaunchParams		= WeaponData->GetLaunchParams();
-
-					check(IsValidChecked(Context, LaunchParams));
-					return LaunchParams;
-				}
-
-				#define LocationType NCsWeapon::NProjectile::NParams::NLaunch::ELocation
-				const LocationType& FLibrary::GetLocationTypeChecked(const FString& Context, const DataType* Data)
-				{
-				#undef LocationType
-					return GetChecked(Context, Data)->GetLocationType();
-				}
-
-				#define DirectionType NCsWeapon::NProjectile::NParams::NLaunch::EDirection
-				const DirectionType& FLibrary::GetDirectionTypeChecked(const FString& Context, const DataType* Data)
-				{
-				#undef DirectionType
-					return GetChecked(Context, Data)->GetDirectionType();
-				}
-
-			#undef DataType
-			#undef ParamsType
 			}
 		}
 	}

@@ -163,40 +163,32 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Launch_LocationParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams
-
-void FCsProjectileWeapon_Launch_LocationParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Launch_LocationParams
 {
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LocationType;
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace OffsetSpaceType;
+	using LocationType = NCsWeapon::NProjectile::NParams::NLaunch::ELocation;
+	using OffsetSpaceType = NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace;
 
-	Params->SetType((LocationType*)(&Type));
-	Params->SetOffsetSpace((OffsetSpaceType*)(&OffsetSpace));
-	Params->SetOffsetSpaceRules(&OffsetSpaceRules),
-	Params->SetOffsetSpaceOffset(&OffsetSpaceOffset);
-	Params->SetOffset(&Offset);
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Type, LocationType);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, OffsetSpace, OffsetSpaceType);
+		CS_THIS_COPY_TO_PROXY(Params, OffsetSpaceRules);
+		CS_THIS_COPY_TO_PROXY(Params, OffsetSpaceOffset);
+		CS_THIS_COPY_TO_PROXY(Params, Offset);
+	}
+
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Type, LocationType);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, OffsetSpace, OffsetSpaceType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, OffsetSpaceRules);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, OffsetSpaceOffset);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Offset);
+	}
 }
-
-void FCsProjectileWeapon_Launch_LocationParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LocationType;
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace OffsetSpaceType;
-
-	Params->SetType((LocationType)Type);
-	Params->SetOffsetSpace((OffsetSpaceType)OffsetSpace);
-	Params->SetOffsetSpaceRules(OffsetSpaceRules),
-	Params->SetOffsetSpaceOffset(OffsetSpaceOffset);
-	Params->SetOffset(Offset);
-}
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Launch_LocationParams::IsValidChecked(const FString& Context) const
 {
-	typedef EMCsProjectileWeaponLaunchLocation LocationMapType;
-	typedef EMCsProjectileWeaponLaunchLocationOffsetSpace LocationOffsetSpaceMap;
-	typedef ECsProjectileWeaponLaunchLocationOffsetSpace LocationOffsetSpace;
-
 	CS_IS_ENUM_VALID_CHECKED(LocationMapType, Type)
 	CS_IS_ENUM_VALID_CHECKED(LocationOffsetSpaceMap, OffsetSpace)
 
@@ -209,11 +201,6 @@ bool FCsProjectileWeapon_Launch_LocationParams::IsValidChecked(const FString& Co
 
 bool FCsProjectileWeapon_Launch_LocationParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	typedef EMCsProjectileWeaponLaunchLocation LocationMapType;
-	typedef ECsProjectileWeaponLaunchLocation LocationType;
-	typedef EMCsProjectileWeaponLaunchLocationOffsetSpace LocationOffsetSpaceMap;
-	typedef ECsProjectileWeaponLaunchLocationOffsetSpace LocationOffsetSpace;
-
 	CS_IS_ENUM_VALID(LocationMapType, LocationType, Type)
 	CS_IS_ENUM_VALID(LocationOffsetSpaceMap, LocationOffsetSpace, OffsetSpace)
 
@@ -238,12 +225,11 @@ namespace NCsWeapon
 			{
 				namespace NLocation
 				{
+					using LocationMapType = NCsWeapon::NProjectile::NParams::NLaunch::EMLocation;
+					using LocationOffsetSpaceMap = NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EMOffsetSpace;
+
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMLocation LocationMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EMOffsetSpace LocationOffsetSpaceMap;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace LocationOffsetSpace;
-
 						CS_IS_ENUM_VALID_CHECKED(LocationMapType, GetType())
 						CS_IS_ENUM_VALID_CHECKED(LocationOffsetSpaceMap, GetOffsetSpace())
 
@@ -256,11 +242,6 @@ namespace NCsWeapon
 
 					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMLocation LocationMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LocationType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EMOffsetSpace LocationOffsetSpaceMap;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace LocationOffsetSpace;
-
 						CS_IS_ENUM_VALID(LocationMapType, LocationType, GetType())
 						CS_IS_ENUM_VALID(LocationOffsetSpaceMap, LocationOffsetSpace, GetOffsetSpace())
 
@@ -285,34 +266,29 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Launch_DirectionParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams
-
-void FCsProjectileWeapon_Launch_DirectionParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Launch_DirectionParams
 {
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection DirectionType;
+	using DirectionType = NCsWeapon::NProjectile::NParams::NLaunch::EDirection;
 
-	Params->SetType((DirectionType*)(&Type));
-	Params->SetbInvert(&bInvert);
-	Params->SetOffset(&Offset);
-	Params->SetRules(&Rules);
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Type, DirectionType);
+		CS_THIS_COPY_TO_PROXY(Params, bInvert);
+		CS_THIS_COPY_TO_PROXY(Params, Offset);
+		CS_THIS_COPY_TO_PROXY(Params, Rules);
+	}
+
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Type, DirectionType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bInvert);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Offset);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Rules);
+	}
 }
-
-void FCsProjectileWeapon_Launch_DirectionParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection DirectionType;
-
-	Params->SetType((DirectionType)Type);
-	Params->SetbInvert(bInvert);
-	Params->SetOffset(Offset);
-	Params->SetRules(Rules);
-}
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Launch_DirectionParams::IsValidChecked(const FString& Context) const
 {
-	typedef EMCsProjectileWeaponLaunchDirection DirectionMapType;
-
 	CS_IS_ENUM_VALID_CHECKED(DirectionMapType, Type)
 
 	checkf(Rules != NCsRotationRules::None, TEXT("%s: No Rules set for Type, Rules == 0."), *Context);
@@ -321,9 +297,6 @@ bool FCsProjectileWeapon_Launch_DirectionParams::IsValidChecked(const FString& C
 
 bool FCsProjectileWeapon_Launch_DirectionParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	typedef EMCsProjectileWeaponLaunchDirection DirectionMapType;
-	typedef ECsProjectileWeaponLaunchDirection DirectionType;
-
 	CS_IS_ENUM_VALID(DirectionMapType, DirectionType, Type)
 
 	if (Rules == NCsRotationRules::None)
@@ -344,10 +317,10 @@ namespace NCsWeapon
 			{
 				namespace NDirection
 				{
+					using DirectionMapType = NCsWeapon::NProjectile::NParams::NLaunch::EMDirection;
+
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMDirection DirectionMapType;
-
 						CS_IS_ENUM_VALID_CHECKED(DirectionMapType, GetType())
 
 						checkf(GetRules() != NCsRotationRules::None, TEXT("%s: No Rules set for GetType(), GetRules() == 0."), *Context);
@@ -356,9 +329,6 @@ namespace NCsWeapon
 
 					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMDirection DirectionMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection DirectionType;
-
 						CS_IS_ENUM_VALID(DirectionMapType, DirectionType, GetType())
 
 						if (GetRules() == NCsRotationRules::None)

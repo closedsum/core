@@ -116,7 +116,7 @@ bool UCsScriptLibrary_Data_Weapon::AddToSlice_ProjectileWeapon_LaunchTraceParams
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddToSlice_ProjectileWeapon_LaunchTraceParams : Context;
 
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl ParamsType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::NImpl::FImpl ParamsType;
 
 	ParamsType* ParamsImpl = Params.AddSafeToSliceAsValue(Ctxt, WorldContextObject, FName(*Name));
 
@@ -129,7 +129,7 @@ bool UCsScriptLibrary_Data_Weapon::AddToSliceFromObject_ProjectileWeapon_LaunchT
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddToSliceFromObject_ProjectileWeapon_LaunchTraceParams : Context;
 
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl ParamsType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::NImpl::FImpl ParamsType;
 
 	ParamsType* ParamsImpl = ParamsType::AddSafeToSlice(Ctxt, WorldContextObject, FName(*Name), Object);
 

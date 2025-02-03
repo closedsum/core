@@ -1,3 +1,6 @@
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Projectile/CsProjectileWeaponActorPooled.h"
 #include "CsWp.h"
 
@@ -54,6 +57,8 @@
 // Pooled
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Weapon
+#include "Component/CsWeapon_Component.h"
+#include "Fire/TimeBetweenShots/CsWeapon_Fire_TimeBetweenShots.h"
 #include "Payload/CsPayload_WeaponImpl.h"
 #include "Cache/CsCache_WeaponImpl.h"
 #include "Modifier/Types/CsGetWeaponModifierType.h"
@@ -94,8 +99,16 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsProjectileWeaponActorPooled)
 
-// Cached 
+// ACsProjectileWeaponActorPooled
+//	Cached 
 #pragma region
+
+
+CS_START_CACHED_FUNCTION_NAME(CsProjectileWeaponActorPooled)
+	// AActor Interface
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, BeginPlay)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, PostInitializeComponents)
+CS_END_CACHED_FUNCTION_NAME
 
 namespace NCsProjectileWeaponActorPooled
 {
@@ -120,7 +133,6 @@ namespace NCsProjectileWeaponActorPooled
 			CS_DEFINE_CACHED_STRING(FireState, "FireState");
 
 			// AActor Interface
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, PostInitializeComponents);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, OnUpdate_HandleStates);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, CanFire);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire);
@@ -140,20 +152,6 @@ namespace NCsProjectileWeaponActorPooled
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsProjectileWeaponActorPooled, Fire_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsProjectileWeaponActorPooled, Abort_Fire_Internal);
-		}
-
-		namespace NTimeBetweenShotsImpl
-		{
-			namespace Str
-			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl, OnElapsedTime);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
-			}
-
-			namespace Name
-			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
-			}
 		}
 
 		namespace NProjectileImpl
@@ -279,13 +277,27 @@ void ACsProjectileWeaponActorPooled::BeginDestroy()
 
 void ACsProjectileWeaponActorPooled::BeginPlay()
 {
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(BeginPlay);
+
 	Super::BeginPlay();
 
 	SkeletalMeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
 
 	ConstructCache();
 
-	TimeBetweenShotsImpl.Outer = this;
+	// Create Components
+	{
+		// TimeBetweenShots
+		{
+			UActorComponent* AC = NewObject<UActorComponent>(this, CS_SOFT_CLASS_PTR_LOAD_CHECKED(TimeBetweenShotsClass, UObject));
+			AC->RegisterComponent();
+
+			TimeBetweenShotsImpl = CS_INTERFACE_CAST_CHECKED(AC, UActorComponent, ICsWeapon_Fire_TimeBetweenShots);
+			// Setup
+			ICsWeapon_Component* WC = CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(TimeBetweenShotsImpl, ICsWeapon_Fire_TimeBetweenShots, ICsWeapon_Component);
+			WC->SetWeapon(this);
+		}
+	}
 
 	ProjectileImpl = ConstructProjectileImpl();
 	ProjectileImpl->Outer = this;
@@ -323,9 +335,7 @@ void ACsProjectileWeaponActorPooled::BeginPlay()
 
 void ACsProjectileWeaponActorPooled::PostInitializeComponents()
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::PostInitializeComponents;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(PostInitializeComponents);
 
 	Super::PostInitializeComponents();
 
@@ -336,7 +346,17 @@ void ACsProjectileWeaponActorPooled::PostInitializeComponents()
 
 		ConstructCache();
 
-		TimeBetweenShotsImpl.Outer = this;
+		// TimeBetweenShots
+		if (!TimeBetweenShotsImpl)
+		{
+			UActorComponent* AC = NewObject<UActorComponent>(this, CS_SOFT_CLASS_PTR_LOAD_CHECKED(TimeBetweenShotsClass, UObject));
+			AC->RegisterComponent();
+
+			TimeBetweenShotsImpl = CS_INTERFACE_CAST_CHECKED(AC, UActorComponent, ICsWeapon_Fire_TimeBetweenShots);
+			// Setup
+			ICsWeapon_Component* WC = CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(TimeBetweenShotsImpl, ICsWeapon_Fire_TimeBetweenShots, ICsWeapon_Component);
+			WC->SetWeapon(this);
+		}
 
 		ProjectileImpl = ConstructProjectileImpl();
 		ProjectileImpl->Outer = this;
@@ -346,6 +366,8 @@ void ACsProjectileWeaponActorPooled::PostInitializeComponents()
 
 		FXImpl = ConstructFXImpl();
 		FXImpl->Outer = this;
+
+		using namespace NCsProjectileWeaponActorPooled::NCached;
 
 		// FireScopedHandle
 		{
@@ -402,6 +424,8 @@ void ACsProjectileWeaponActorPooled::Shutdown()
 {
 	CS_SAFE_DELETE_PTR(Cache)
 	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
+
+	TimeBetweenShotsImpl = nullptr;
 
 	if (ProjectileImpl)
 	{
@@ -507,8 +531,8 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 
 	CurrentAmmo = PrjWeaponData->GetMaxAmmo();
 
-	TimeBetweenShotsImpl.Base = PrjWeaponData->GetTimeBetweenShots();
-	TimeBetweenShotsImpl.ResetValueToBase();
+	TimeBetweenShotsImpl->SetBase(PrjWeaponData->GetTimeBetweenShots());
+	TimeBetweenShotsImpl->ResetValueToBase();
 }
 
 void ACsProjectileWeaponActorPooled::Deallocate()
@@ -520,7 +544,7 @@ void ACsProjectileWeaponActorPooled::Deallocate()
 	OnFire_PreShot_Event.Clear();
 	OnFire_End_Event.Clear();
 
-	TimeBetweenShotsImpl.Clear();
+	TimeBetweenShotsImpl->Clear();
 
 	// End Routines
 	if (UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetSafe(GetWorldContext()))
@@ -692,16 +716,16 @@ void ACsProjectileWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& D
 		{
 			Fire();
 
-			TimeBetweenShotsImpl.OnElapsedTime();
+			TimeBetweenShotsImpl->Evaluate();
 
 			CurrentState = FireState;
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileStateTransition))
 			{
 				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Idle -> Fire."), *Context);
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 
@@ -713,7 +737,7 @@ void ACsProjectileWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& D
 		{
 			Fire();
 
-			TimeBetweenShotsImpl.OnElapsedTime();
+			TimeBetweenShotsImpl->Evaluate();
 		}
 		// If no firing is active, go to idle
 		else
@@ -721,12 +745,12 @@ void ACsProjectileWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& D
 		{
 			CurrentState = IdleState;
 
-#if !UE_BUILD_SHIPPING
+		#if !UE_BUILD_SHIPPING
 			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileStateTransition))
 			{
 				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Fire -> Idle."), *Context);
 			}
-#endif // #if !UE_BUILD_SHIPPING
+		#endif // #if !UE_BUILD_SHIPPING
 		}
 	}
 
@@ -1167,72 +1191,6 @@ void ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 	}
 }
 
-void ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
-{
-	using namespace NCsProjectileWeaponActorPooled::NCached::NTimeBetweenShotsImpl;
-
-	const FString& Context = Str::OnElapsedTime;
-
-	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, Outer->GetWorldContext());
-
-	// Setup Routine
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
-
-	PayloadType* Payload = Scheduler->AllocatePayload(Outer->GetUpdateGroup());
-
-	#define COROUTINE OnElapsedTime_Internal
-
-	Payload->CoroutineImpl.BindRaw(this, &ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl::COROUTINE);
-	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, Outer->GetWorldContext(), Outer->GetUpdateGroup());
-	Payload->Owner.SetObject(Outer);
-	Payload->SetName(Str::COROUTINE);
-	Payload->SetFName(Name::COROUTINE);
-
-	#undef COROUTINE
-
-	// Get total elapsed time (= TimeBetweenShots)
-	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
-
-	static const int32 TIME_BETWEEN_SHOTS = 0;
-	Payload->SetValue_Float(TIME_BETWEEN_SHOTS, Value);
-
-	Scheduler->Start(Payload);
-}
-
-char ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FCsRoutine* R)
-{
-	FCsDeltaTime& ElapsedTime			   = R->GetValue_DeltaTime(CS_FIRST);
-	const FCsDeltaTime PreviousElapsedTime = ElapsedTime;
-
-	ElapsedTime += R->GetDeltaTime();
-
-	static const int32 TIME_BETWEEN_SHOTS = 0;
-	const float& Captured_TimeBetweenShots = R->GetValue_Float(TIME_BETWEEN_SHOTS);
-
-	// Broadcast ElapsedTime events
-
-		// Time
-	const float& PreviousTime = PreviousElapsedTime.Time;
-	const float NewTime		   = FMath::Max(ElapsedTime.Time, Captured_TimeBetweenShots);
-
-	OnElapsedTime_Event.Broadcast(Outer, PreviousTime, NewTime);
-	// Percent
-	const float PreviousPercent = PreviousElapsedTime.Time / Captured_TimeBetweenShots;
-	const float NewPercent		= FMath::Min(ElapsedTime.Time / Captured_TimeBetweenShots, 1.0f);
-
-	OnElapsedTimeAsPercent_Event.Broadcast(Outer, PreviousPercent, NewPercent);
-
-	CS_COROUTINE_BEGIN(R);
-
-	ElapsedTime.Reset();
-
-	CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= Captured_TimeBetweenShots);
-
-	OnComplete_Event.Broadcast(Outer);
-
-	CS_COROUTINE_END(R);
-}
-
 float ACsProjectileWeaponActorPooled::GetTimeBetweenShots() const
 { 
 	using namespace NCsProjectileWeaponActorPooled::NCached;
@@ -1246,7 +1204,7 @@ float ACsProjectileWeaponActorPooled::GetTimeBetweenShots() const
 
 	GetWeaponModifiers(Modifiers);
 
-	float Value = TimeBetweenShotsImpl.GetValue();
+	float Value = TimeBetweenShotsImpl->GetValue();
 
 	// TODO: Priority
 	return CsWeaponModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_TimeBetweenShots, Value);
@@ -1369,7 +1327,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 		return GetLaunchSpreadLocation(LaunchPayload.Shot.CachedLaunchLocation, LaunchPayload);
 
 	// Get Launch Params
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::FLibrary ParamsLibrary;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLibrary::FLibrary ParamsLibrary;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace LaunchLocationOffsetSpace;
@@ -1381,8 +1339,8 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 	const LaunchLocationOffsetSpace& LocationOffsetSpace = LaunchParams->GetLocationOffsetSpace();
 	const int32& LocationOffsetSpaceRules				 = LaunchParams->GetLocationOffsetSpaceRules();
 	const int32 InvLocationOffsetSpaceRules				 = ~LocationOffsetSpaceRules & ((int32)NCsRotationRules::All);
-	const FRotator3f& LocationOffsetSpaceOffset			 = LaunchParams->GetLocationOffsetSpaceOffset();
-	const FVector3f& LocationOffset						 = LaunchParams->GetLocationOffset();
+	const FRotator& LocationOffsetSpaceOffset			 = LaunchParams->GetLocationOffsetSpaceOffset();
+	const FVector& LocationOffset						 = LaunchParams->GetLocationOffset();
 
 	// Determine Offset
 	FVector3f Offset = LocationOffset * NCsRotationRules::GetDirection(FVector3f::OneVector, InvLocationOffsetSpaceRules);
@@ -1612,7 +1570,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 #endif // #if WITH_EDITOR
 
 	// Get Launch Params
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::FLibrary ParamsLibrary;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLibrary::FLibrary ParamsLibrary;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;

@@ -140,9 +140,9 @@ namespace NCsWeapon
 			{
 				if (LaunchParams)
 				{
-					// NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
+					// NCsWeapon::NProjectile::NParams::NLaunch::NTrace::NImpl::FImpl
 					{
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl ParamsType;
+						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::NImpl::FImpl ParamsType;
 
 						if (LaunchParamsName == ParamsType::Name)
 						{

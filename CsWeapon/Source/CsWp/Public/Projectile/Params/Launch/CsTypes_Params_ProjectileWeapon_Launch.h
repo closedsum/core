@@ -334,7 +334,27 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Launch_LocationParams
 #pragma region
 
-// NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams
+struct FCsProjectileWeapon_Launch_LocationParams;
+
+// ParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NLocation, FParams)
+
+namespace NCsProjectileWeapon_Launch_LocationParams
+{
+	using ThisType = FCsProjectileWeapon_Launch_LocationParams;
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NLocation, FParams)
 
 /**
@@ -346,6 +366,13 @@ USTRUCT(BlueprintType)
 struct CSWP_API FCsProjectileWeapon_Launch_LocationParams
 {
 	GENERATED_USTRUCT_BODY()
+
+private:
+
+	using LocationMapType = EMCsProjectileWeaponLaunchLocation;
+	using LocationType = ECsProjectileWeaponLaunchLocation;
+	using LocationOffsetSpaceMap = EMCsProjectileWeaponLaunchLocationOffsetSpace;
+	using LocationOffsetSpace = ECsProjectileWeaponLaunchLocationOffsetSpace;
 
 public:
 
@@ -364,12 +391,12 @@ public:
 
 	/** The offset to apply to the Rotation determined from LocationOffsetSpace. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	FRotator3f OffsetSpaceOffset;
+	FRotator OffsetSpaceOffset;
 
 	/** An offset applied to the start position a Projectile will be Launched. 
 		This is always applied in the "Space" defined by LocationOffsetSpace. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	FVector3f Offset;
+	FVector Offset;
 
 	FCsProjectileWeapon_Launch_LocationParams() :
 		Type(ECsProjectileWeaponLaunchLocation::Owner),
@@ -380,10 +407,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams;
+	using _Impl = NCsProjectileWeapon_Launch_LocationParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -406,8 +434,10 @@ namespace NCsWeapon
 					*/
 					struct CSWP_API FParams
 					{
-					#define LocationType NCsWeapon::NProjectile::NParams::NLaunch::ELocation
-					#define LocationOffsetSpace NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace
+					private:
+
+						using LocationType = NCsWeapon::NProjectile::NParams::NLaunch::ELocation;
+						using LocationOffsetSpace = NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace;
 
 					private:
 
@@ -419,10 +449,10 @@ namespace NCsWeapon
 							affect the LocationOffset. Components NOT affected will result the LocationOffset applied "directly" in World Space. */
 						CS_DECLARE_MEMBER_WITH_PROXY(OffsetSpaceRules, int32)
 						/** The offset to apply to the Rotation determined from LocationOffsetSpace. */
-						CS_DECLARE_MEMBER_WITH_PROXY(OffsetSpaceOffset, FRotator3f)
+						CS_DECLARE_MEMBER_WITH_PROXY(OffsetSpaceOffset, FRotator)
 						/** An offset applied to the start position a Projectile will be Launched. 
 							This is always applied in the "Space" defined by LocationOffsetSpace. */
-						CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector3f)
+						CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
 
 					public:
 
@@ -443,14 +473,11 @@ namespace NCsWeapon
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, LocationType)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpace, LocationOffsetSpace)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpaceRules, int32)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpaceOffset, FRotator3f)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector3f)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpaceOffset, FRotator)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
 					
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-					#undef LocationType
-					#undef LocationOffsetSpace
 					};
 				}
 			}
@@ -463,7 +490,27 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Launch_DirectionParams
 #pragma region
 
-// NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams
+struct FCsProjectileWeapon_Launch_DirectionParams;
+
+// ParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NDirection, FParams)
+
+namespace NCsProjectileWeapon_Launch_DirectionParams
+{
+	using ThisType = FCsProjectileWeapon_Launch_DirectionParams;
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NDirection, FParams)
 
 /**
@@ -476,6 +523,11 @@ struct CSWP_API FCsProjectileWeapon_Launch_DirectionParams
 {
 	GENERATED_USTRUCT_BODY()
 
+private:
+
+	using DirectionMapType = EMCsProjectileWeaponLaunchDirection;
+	using DirectionType = ECsProjectileWeaponLaunchDirection;
+
 public:
 
 	/** Describes the different methods to get the Direction a Projectile will be Launched. */
@@ -484,7 +536,7 @@ public:
 
 	/** An offset applied to the start direction a Projectile will be Launched.  */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	FRotator3f Offset;
+	FRotator Offset;
 
 	/** Whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
@@ -502,10 +554,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams;
+	using _Impl = NCsProjectileWeapon_Launch_DirectionParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -528,14 +581,16 @@ namespace NCsWeapon
 					*/
 					struct CSWP_API FParams
 					{
-					#define DirectionType NCsWeapon::NProjectile::NParams::NLaunch::EDirection
+					private:
+
+						using DirectionType = NCsWeapon::NProjectile::NParams::NLaunch::EDirection;
 
 					private:
 
 						/** Describes the different methods to get the Direction a Projectile will be Launched. */
 						CS_DECLARE_MEMBER_WITH_PROXY(Type, DirectionType)
 						/** An offset applied to the start direction a Projectile will be Launched.  */
-						CS_DECLARE_MEMBER_WITH_PROXY(Offset, FRotator3f)
+						CS_DECLARE_MEMBER_WITH_PROXY(Offset, FRotator)
 						/** Whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f). */
 						CS_DECLARE_MEMBER_WITH_PROXY(bInvert, bool)
 						/** Describes which components (Pitch, Yaw, and/or Roll) will be used for the Direction a Projectile will be Launched. */
@@ -557,14 +612,12 @@ namespace NCsWeapon
 						}
 
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, DirectionType)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FRotator3f)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FRotator)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInvert, bool)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Rules, int32)
 					
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-					#undef DirectionType
 					};
 				}
 			}

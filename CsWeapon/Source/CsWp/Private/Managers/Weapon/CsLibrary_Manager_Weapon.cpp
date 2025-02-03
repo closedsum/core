@@ -19,21 +19,24 @@
 #include "Singleton/CsGetManagerSingleton.h"
 #endif // #if WITH_EDITOR
 
+// NCsWeapon::NManager::FLibrary
+//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_2(NCsWeapon, NManager, Library)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsWeapon::NManager::FLibrary, GetSafeContextRoot)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsWeapon::NManager::FLibrary, GetSafe)
+CS_END_CACHED_FUNCTION_NAME_NESTED_2
+
+#pragma endregion Cached
+
 namespace NCsWeapon
 {
 	namespace NManager
 	{
-		namespace NLibrary
-		{
-			namespace NCached
-			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NManager::FLibrary, GetSafeContextRoot);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NManager::FLibrary, GetSafe);
-				}
-			}
-		}
+		using LogClassType = NCsWeapon::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		using DataType = NCsWeapon::NData::IData;
 		using DataInterfaceMapType = NCsWeapon::NData::FInterfaceMap;
@@ -67,7 +70,7 @@ namespace NCsWeapon
 			return CsGameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
@@ -81,9 +84,7 @@ namespace NCsWeapon
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
-			using namespace NCsWeapon::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeContextRoot;
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafeContextRoot);
 
 			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
@@ -104,7 +105,7 @@ namespace NCsWeapon
 			return Manager_Weapon;
 		}
 
-		UCsManager_Weapon* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		UCsManager_Weapon* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -124,9 +125,7 @@ namespace NCsWeapon
 
 		UCsManager_Weapon* FLibrary::GetSafe(const UObject* WorldContext)
 		{
-			using namespace NCsWeapon::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafe;
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafe);
 
 			return GetSafe(Context, WorldContext, nullptr);
 		}
@@ -153,8 +152,6 @@ namespace NCsWeapon
 	
 		const FCsWeaponPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Owner, const FECsWeapon& Type)
 		{
-			typedef NCsWeapon::NPayload::FImpl PayloadImplType;
-
 			PayloadImplType* Payload = AllocatePayloadImplChecked(Context, WorldContext, Type);
 
 			Payload->Owner = Owner;
@@ -193,12 +190,10 @@ namespace NCsWeapon
 			return GetChecked(Context, WorldContext)->GetWeaponChecked(Context, Type);
 		}
 
-		FCsWeaponClass* FLibrary::GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		FCsWeaponClass* FLibrary::GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
-			{
 				return Manager_Weapon->GetSafeWeapon(Context, Type);
-			}
 			return nullptr;
 		}
 
@@ -207,12 +202,10 @@ namespace NCsWeapon
 			return GetChecked(Context, WorldContext)->GetWeaponChecked(Context, Type);
 		}
 
-		FCsWeaponClass* FLibrary::GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		FCsWeaponClass* FLibrary::GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
-			{
 				return Manager_Weapon->GetSafeWeapon(Context, Type);
-			}
 			return nullptr;
 		}
 
@@ -221,7 +214,7 @@ namespace NCsWeapon
 			return GetWeaponChecked(Context, WorldContext, Type)->GetClassChecked(Context);
 		}
 
-		UClass* FLibrary::GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		UClass* FLibrary::GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
@@ -232,7 +225,7 @@ namespace NCsWeapon
 			return nullptr;
 		}
 
-		UClass* FLibrary::GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		UClass* FLibrary::GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
@@ -243,21 +236,17 @@ namespace NCsWeapon
 			return nullptr;
 		}
 
-		bool FLibrary::SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, UObject* Class, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		bool FLibrary::SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, UObject* Class, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
-			{
 				return Manager_Weapon->SafeAddClass(Context, Type, Class);
-			}
 			return false;
 		}
 
-		bool FLibrary::SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, UObject* Class, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		bool FLibrary::SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, UObject* Class, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
-			{
 				return Manager_Weapon->SafeAddClass(Context, Type, Class);
-			}
 			return false;
 		}
 
@@ -266,12 +255,10 @@ namespace NCsWeapon
 		// Data
 		#pragma region
 
-		DataHandlerType* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		DataHandlerType* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
-			{
 				return Manager_Weapon->GetDataHandler();
-			}
 			return nullptr;
 		}
 
@@ -280,12 +267,10 @@ namespace NCsWeapon
 			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);
 		}
 
-		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
-			{
 				return Manager_Weapon->GetSafeData(Context, Name);
-			}
 			return nullptr;
 		}
 
@@ -294,19 +279,21 @@ namespace NCsWeapon
 			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Type);
 		}
 
-		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
-			{
 				return Manager_Weapon->GetSafeData(Context, Type);
-			}
 			return nullptr;
 		}
 
-		#undef DataType
-
 		#pragma endregion Data
+	}
+}
 
+namespace NCsWeapon
+{
+	namespace NManager
+	{
 		namespace NModifier
 		{
 			using ModifierResourceType = NCsWeapon::NModifier::NResource::FResource;
@@ -314,40 +301,36 @@ namespace NCsWeapon
 		
 			ModifierResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type)
 			{
-				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-
-				return WeaponManagerLibrary::GetChecked(Context, WorldContext)->AllocateModifier(Type);
+				return CsWeaponManagerLibrary::GetChecked(Context, WorldContext)->AllocateModifier(Type);
 			}
 
 			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type, ModifierResourceType* Modifier)
 			{
-				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-
-				WeaponManagerLibrary::GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
+				CsWeaponManagerLibrary::GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
 			}
 
 			const FECsWeaponModifier& FLibrary::GetTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
 			{
-				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-
-				return WeaponManagerLibrary::GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
+				return CsWeaponManagerLibrary::GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
 			}
 
 			ModifierResourceType* FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
 			{
-				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-
-				return WeaponManagerLibrary::GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
+				return CsWeaponManagerLibrary::GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
 			}
 
 			ModifierResourceType* FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier)
 			{
-				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-
-				return WeaponManagerLibrary::GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
+				return CsWeaponManagerLibrary::GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
 			}
 		}
+	}
+}
 
+namespace NCsWeapon
+{
+	namespace NManager
+	{
 		namespace NSpread
 		{
 			namespace NVariables

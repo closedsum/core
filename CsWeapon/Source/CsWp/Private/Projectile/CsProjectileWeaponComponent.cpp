@@ -795,6 +795,8 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
 
+	using LaunchParamsLibrary = NCsWeapon::NProjectile::NParams::NLaunch::NLibrary::FLibrary;
+
 	const ILaunch* LaunchParams = WeaponData->GetLaunchParams();
 
 	checkf(LaunchParams, TEXT("%s: Failed to get LaunchParams from Data."), *Context);
@@ -851,9 +853,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		// Try to get camera through the owner
 		if (UObject* TheOwner = Outer->GetMyOwner())
 		{
-			typedef NCsCamera::FLibrary CameraLibrary;
-
-			const FVector3f Dir = CameraLibrary::GetDirectionChecked(Context, TheOwner);
+			const FVector3f Dir = CsCameraLibrary::GetDirectionChecked(Context, TheOwner);
 			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 			return Dir;
 		}
@@ -865,7 +865,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace TraceParamsType;
 		typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
 
-		const TraceParamsType* LaunchTraceParams = FLibrary::GetInterfaceChecked<TraceParamsType>(Context, LaunchParams);
+		const TraceParamsType* LaunchTraceParams = LaunchParamsLibrary::GetInterfaceChecked<TraceParamsType>(Context, LaunchParams);
 		
 		// Start
 		const LaunchTraceStartType& TraceStart = LaunchTraceParams->GetTraceStartType();
@@ -950,9 +950,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
 			{
-				typedef NCsCamera::FLibrary CameraLibrary;
-
-				Dir = CameraLibrary::GetDirectionChecked(Context, TheOwner, DirectionRules);
+				Dir = CsCameraLibrary::GetDirectionChecked(Context, TheOwner, DirectionRules);
 			}
 			// TODO: For now assert
 			else

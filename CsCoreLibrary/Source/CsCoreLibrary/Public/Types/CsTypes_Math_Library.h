@@ -121,7 +121,18 @@ namespace NCsRotationRules
 	*
 	* return		Actor's rotation filtered by the bit mask, Rules. 
 	*/
-	CSCORELIBRARY_API FRotator3f GetRotation(AActor* Actor, const int32& Rules);
+	CSCORELIBRARY_API FRotator3f GetRotation3f(AActor* Actor, const int32& Rules);
+
+	/**
+	* Get the rotation of Actor filtered by the bit mask, Rules. 
+	*
+	* @param Actor
+	* @param Rules	Bit mask for which components of the Actor's rotation to return.
+	*
+	* return		Actor's rotation filtered by the bit mask, Rules. 
+	*/
+	CSCORELIBRARY_API FRotator3d GetRotation3d(AActor* Actor, const int32& Rules);
+	FORCEINLINE FRotator GetRotation(AActor* Actor, const int32& Rules) { return GetRotation3d(Actor, Rules); }
 
 	/**
 	* Get the rotation of Component filtered by the bit mask, Rules.
@@ -131,7 +142,18 @@ namespace NCsRotationRules
 	*
 	* return			Component's rotation filtered by the bit mask, Rules.
 	*/
-	CSCORELIBRARY_API FRotator3f GetRotation(USceneComponent* Component, const int32& Rules);
+	CSCORELIBRARY_API FRotator3f GetRotation3f(USceneComponent* Component, const int32& Rules);
+
+	/**
+	* Get the rotation of Component filtered by the bit mask, Rules.
+	*
+	* @param Component
+	* @param Rules		Bit mask for which components of the Component's rotation to return.
+	*
+	* return			Component's rotation filtered by the bit mask, Rules.
+	*/
+	CSCORELIBRARY_API FRotator3d GetRotation3d(USceneComponent* Component, const int32& Rules);
+	FORCEINLINE FRotator GetRotation(USceneComponent* Component, const int32& Rules) { return GetRotation3d(Component, Rules); }
 
 	FORCEINLINE FVector3f GetDirection(FVector3f Direction, const int32& Rules)
 	{

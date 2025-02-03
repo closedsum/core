@@ -25,3 +25,5 @@ namespace NCsWeapon
 		};
 	}
 }
+
+using CsWeaponModifierType = NCsWeapon::NModifier::IModifier;

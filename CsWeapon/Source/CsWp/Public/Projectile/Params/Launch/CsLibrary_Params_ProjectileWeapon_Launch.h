@@ -5,7 +5,7 @@
 // Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
 
-// NCsWeapon::NData::IData
+// DataType (NCsWeapon::NData::IData)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 
 namespace NCsWeapon
@@ -16,30 +16,29 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
-			#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-
-				struct CSWP_API FLibrary final : public NCsInterfaceMap::TLibrary<ParamsType>
+				namespace NLibrary
 				{
-				public:
+					using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::ILaunch;
 
-				#define DataType NCsWeapon::NData::IData
+					struct CSWP_API FLibrary final : public NCsInterfaceMap::TLibrary<ParamsType>
+					{
+					private:
 
-					static bool IsValidChecked(const FString& Context, const ParamsType* Params);
+						using DataType = NCsWeapon::NData::IData;
+						using LocationType = NCsWeapon::NProjectile::NParams::NLaunch::ELocation;
+						using DirectionType = NCsWeapon::NProjectile::NParams::NLaunch::EDirection;
 
-					static const ParamsType* GetChecked(const FString& Context, const DataType* Data);
+					public:
 
-				#define LocationType NCsWeapon::NProjectile::NParams::NLaunch::ELocation		
-					static const LocationType& GetLocationTypeChecked(const FString& Context, const DataType* Data);
-				#undef LocationType
+						static bool IsValidChecked(const FString& Context, const ParamsType* Params);
 
-				#define DirectionType NCsWeapon::NProjectile::NParams::NLaunch::EDirection
-					static const DirectionType& GetDirectionTypeChecked(const FString& Context, const DataType* Data);
-				#undef DirectionType
-
-				#undef DataType
-				};
-
-			#undef ParamsType
+						static const ParamsType* GetChecked(const FString& Context, const DataType* Data);
+						
+						static const LocationType& GetLocationTypeChecked(const FString& Context, const DataType* Data);
+				
+						static const DirectionType& GetDirectionTypeChecked(const FString& Context, const DataType* Data);
+					};
+				}
 			}
 		}
 	}

@@ -100,7 +100,27 @@ namespace NCsProjectile
 // FCsProjectile_OnHit_SpawnProjectile_DirectionParams
 #pragma region
 
-// NCsProjectile::NOnHit::NSpawn::NProjectile::NDirection::FParams
+struct FCsProjectile_OnHit_SpawnProjectile_DirectionParams;
+
+// ParamsType (NCsProjectile::NOnHit::NSpawn::NProjectile::NDirection::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsProjectile, NOnHit, NSpawn, NProjectile, NDirection, FParams)
+
+namespace NCsProjectile_OnHit_SpawnProjectile_DirectionParams
+{
+	using ThisType = FCsProjectile_OnHit_SpawnProjectile_DirectionParams;
+	using ParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NDirection::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsProjectile::NOnHit::NSpawn::NProjectile::NDirection::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsProjectile, NOnHit, NSpawn, NProjectile, NDirection, FParams)
 
 USTRUCT(BlueprintType)
@@ -145,10 +165,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NDirection::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NDirection::FParams;
+	using _Impl = NCsProjectile_OnHit_SpawnProjectile_DirectionParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -166,7 +187,9 @@ namespace NCsProjectile
 				{
 					struct CSPRJ_API FParams
 					{
-					#define DirectionType NCsProjectile::NOnHit::NSpawn::NProjectile::EDirection
+					private:
+
+						using DirectionType = NCsProjectile::NOnHit::NSpawn::NProjectile::EDirection;
 
 					private:
 
@@ -204,8 +227,6 @@ namespace NCsProjectile
 
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-					#undef DirectionType
 					};
 				}
 			}
@@ -218,7 +239,27 @@ namespace NCsProjectile
 // FCsProjectile_OnHit_SpawnProjectile_Spread_ShapeParams
 #pragma region
 
-// NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::FParams
+struct FCsProjectile_OnHit_SpawnProjectile_Spread_ShapeParams;
+
+// ParamsType (NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsProjectile, NOnHit, NSpawn, NProjectile, NSpread, NShape, FParams)
+
+namespace NCsProjectile_OnHit_SpawnProjectile_Spread_ShapeParams
+{
+	using ThisType = FCsProjectile_OnHit_SpawnProjectile_Spread_ShapeParams;
+	using ParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsProjectile, NOnHit, NSpawn, NProjectile, NSpread, NShape, FParams)
 
 /**
@@ -269,10 +310,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::FParams;
+	using _Impl = NCsProjectile_OnHit_SpawnProjectile_Spread_ShapeParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -297,8 +339,10 @@ namespace NCsProjectile
 						*/
 						struct CSPRJ_API FParams
 						{
-						#define ShapeType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EShape
-						#define DistributionType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EDistribution
+						private:
+
+							using ShapeType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EShape;
+							using DistributionType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EDistribution;
 
 						private:
 
@@ -357,9 +401,6 @@ namespace NCsProjectile
 							{
 								return NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FLibrary::GetRandomOffsetChecked(Context, GetShape(), GetExtents(), GetDistribution());
 							}
-
-						#undef ShapeType
-						#undef DistributionType
 						};
 					}
 				}
@@ -373,7 +414,27 @@ namespace NCsProjectile
 // FCsProjectile_OnHit_SpawnProjectile_Spread_AngleParams
 #pragma region
 
-// NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::FParams
+struct FCsProjectile_OnHit_SpawnProjectile_Spread_AngleParams;
+
+// ParamsType (NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsProjectile, NOnHit, NSpawn, NProjectile, NSpread, NAngle, FParams)
+
+namespace NCsProjectile_OnHit_SpawnProjectile_Spread_AngleParams
+{
+	using ThisType = FCsProjectile_OnHit_SpawnProjectile_Spread_AngleParams;
+	using ParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsProjectile, NOnHit, NSpawn, NProjectile, NSpread, NAngle, FParams)
 
 USTRUCT(BlueprintType)
@@ -399,10 +460,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::FParams;
+	using _Impl = NCsProjectile_OnHit_SpawnProjectile_Spread_AngleParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -427,8 +489,10 @@ namespace NCsProjectile
 						*/
 						struct CSPRJ_API FParams
 						{
-						#define SpreadAngleType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EAngle
-						#define DistributionType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EDistribution
+						private:
+
+							using SpreadAngleType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EAngle;
+							using DistributionType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EDistribution;
 
 						private:
 
@@ -466,9 +530,6 @@ namespace NCsProjectile
 							{
 								return NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FLibrary::GetRandomAngleChecked(Context, GetAngleType(), GetAngle(), GetDistribution());
 							}
-
-						#undef SpreadAngleType
-						#undef DistributionType
 						};
 					}
 				}
@@ -482,7 +543,27 @@ namespace NCsProjectile
 // FCsProjectile_OnHit_SpawnProjectile_SpreadParams
 #pragma region
 
-// NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FParams
+struct FCsProjectile_OnHit_SpawnProjectile_SpreadParams;
+
+// ParamsType (NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsProjectile, NOnHit, NSpawn, NProjectile, NSpread, FParams)
+
+namespace NCsProjectile_OnHit_SpawnProjectile_SpreadParams
+{
+	using ThisType = FCsProjectile_OnHit_SpawnProjectile_SpreadParams;
+	using ParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsProjectile, NOnHit, NSpawn, NProjectile, NSpread, FParams)
 
 USTRUCT(BlueprintType)
@@ -520,10 +601,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FParams;
+	using _Impl = NCsProjectile_OnHit_SpawnProjectile_SpreadParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -546,8 +628,10 @@ namespace NCsProjectile
 					*/
 					struct CSPRJ_API FParams
 					{
-					#define ShapeParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::FParams
-					#define AngleParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::FParams
+					private:
+
+						using ShapeParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::FParams;
+						using AngleParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::FParams;
 
 					private:
 
@@ -558,7 +642,6 @@ namespace NCsProjectile
 					public:
 
 						ShapeParamsType ShapeParams;
-
 						AngleParamsType YawParams;
 						AngleParamsType PitchParams;
 
@@ -584,9 +667,6 @@ namespace NCsProjectile
 
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-					#undef ShapeParamsType
-					#undef AngleParamsType
 					};
 				}
 			}
@@ -599,7 +679,27 @@ namespace NCsProjectile
 // FCsProjectile_OnHit_SpawnProjectileParams
 #pragma region
 
-// NCsProjectile::NOnHit::NSpawn::FProjectile::FParams
+struct FCsProjectile_OnHit_SpawnProjectileParams;
+
+// ParamsType (NCsProjectile::NOnHit::NSpawn::NProjectile::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsProjectile, NOnHit, NSpawn, NProjectile, FParams)
+
+namespace NCsProjectile_OnHit_SpawnProjectileParams
+{
+	using ThisType = FCsProjectile_OnHit_SpawnProjectileParams;
+	using ParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsProjectile::NOnHit::NSpawn::NProjectile::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsProjectile, NOnHit, NSpawn, NProjectile, FParams)
 
 /**
@@ -661,10 +761,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::FParams;
+	using _Impl = NCsProjectile_OnHit_SpawnProjectileParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -684,10 +785,12 @@ namespace NCsProjectile
 				*/
 				struct CSPRJ_API FParams
 				{
-				#define DirectionParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NDirection::FParams
-				#define SpreadParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FParams
-				#define CreateModifierInfoType NCsProjectile::NModifier::NCreate::FInfo
-				#define ModifierInfoType NCsProjectile::NModifier::FInfo
+				private:
+
+					using DirectionParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NDirection::FParams;
+					using SpreadParamsType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FParams;
+					using CreateModifierInfoType = NCsProjectile::NModifier::NCreate::FInfo;
+					using ModifierInfoType = NCsProjectile::NModifier::FInfo;
 
 				private:
 
@@ -763,11 +866,6 @@ namespace NCsProjectile
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-				#undef DirectionParamsType
-				#undef SpreadParamsType
-				#undef CreateModifierInfoType
-				#undef ModifierInfoType
 				};
 			}
 		}

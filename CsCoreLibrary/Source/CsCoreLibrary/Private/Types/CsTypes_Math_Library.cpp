@@ -24,7 +24,8 @@ namespace NCsRotationRules
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsRotationRules, GetRotation);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsRotationRules, GetRotation3f);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsRotationRules, GetRotation3d);
 		}
 	}
 
@@ -32,22 +33,40 @@ namespace NCsRotationRules
 	#define SET_CONTEXT(__FunctionName) using namespace NCsRotationRules::NCached; \
 		const FString& Context = Str::__FunctionName
 
-	FRotator3f GetRotation(AActor* Actor, const int32& Rules)
+	FRotator3f GetRotation3f(AActor* Actor, const int32& Rules)
 	{
-		SET_CONTEXT(GetRotation);
+		SET_CONTEXT(GetRotation3f);
 
 		CS_IS_PTR_NULL_CHECKED(Actor)
 
 		return GetRotation(CsMathLibrary::Convert(Actor->GetActorRotation()), Rules);
 	}
 
-	FRotator3f GetRotation(USceneComponent* Component, const int32& Rules)
+	FRotator3d GetRotation3d(AActor* Actor, const int32& Rules)
 	{
-		SET_CONTEXT(GetRotation);
+		SET_CONTEXT(GetRotation3d);
+
+		CS_IS_PTR_NULL_CHECKED(Actor)
+
+		return GetRotation(Actor->GetActorRotation(), Rules);
+	}
+
+	FRotator3f GetRotation3f(USceneComponent* Component, const int32& Rules)
+	{
+		SET_CONTEXT(GetRotation3f);
 
 		CS_IS_PTR_NULL_CHECKED(Component)
 
 		return GetRotation(CsMathLibrary::Convert(Component->GetComponentRotation()), Rules);
+	}
+
+	FRotator3d GetRotation3d(USceneComponent* Component, const int32& Rules)
+	{
+		SET_CONTEXT(GetRotation3d);
+
+		CS_IS_PTR_NULL_CHECKED(Component)
+
+		return GetRotation(Component->GetComponentRotation(), Rules);
 	}
 
 	#undef USING_NS_CACHED

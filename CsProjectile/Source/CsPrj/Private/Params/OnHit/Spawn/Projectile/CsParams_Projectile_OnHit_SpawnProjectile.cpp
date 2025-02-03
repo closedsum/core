@@ -54,33 +54,30 @@ namespace NCsProjectile
 // FCsProjectile_OnHit_SpawnProjectile_DirectionParams
 #pragma region
 
-#define ParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NDirection::FParams
-
-void FCsProjectile_OnHit_SpawnProjectile_DirectionParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectile_OnHit_SpawnProjectile_DirectionParams
 {
-	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::EDirection DirectionType;
+	using DirectionType = NCsProjectile::NOnHit::NSpawn::NProjectile::EDirection;
 
-	Params->SetType((DirectionType*)(&Type));
-	Params->SetRadius(&Radius);
-	Params->SetbYaw(&bYaw);
-	Params->SetYaw(&Yaw);
-	Params->SetbPitch(&bPitch);
-	Params->SetPitch(&Pitch);
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Type, DirectionType);
+		CS_THIS_COPY_TO_PROXY(Params, Radius);
+		CS_THIS_COPY_TO_PROXY(Params, bYaw);
+		CS_THIS_COPY_TO_PROXY(Params, Yaw);
+		CS_THIS_COPY_TO_PROXY(Params, bPitch);
+		CS_THIS_COPY_TO_PROXY(Params, Pitch);
+	}
+
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Type, DirectionType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Radius);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bYaw);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Yaw);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bPitch);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Pitch);
+	}
 }
-
-void FCsProjectile_OnHit_SpawnProjectile_DirectionParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::EDirection DirectionType;
-
-	Params->SetType((DirectionType)Type);
-	Params->SetRadius(Radius);
-	Params->SetbYaw(bYaw);
-	Params->SetYaw(Yaw);
-	Params->SetbPitch(bPitch);
-	Params->SetPitch(Pitch);
-}
-
-#undef ParamsType
 
 bool FCsProjectile_OnHit_SpawnProjectile_DirectionParams::IsValidChecked(const FString& Context) const
 {
@@ -134,11 +131,10 @@ namespace NCsProjectile
 			{
 				namespace NDirection
 				{
+					using DirectionMapType = NCsProjectile::NOnHit::NSpawn::NProjectile::EMDirection;
+
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
-						typedef NCsProjectile::NOnHit::NSpawn::NProjectile::EMDirection DirectionMapType;
-						typedef NCsProjectile::NOnHit::NSpawn::NProjectile::EDirection DirectionType;
-
 						CS_IS_ENUM_VALID_CHECKED(DirectionMapType, GetType())
 
 						if (GetType() == DirectionType::ClosestTarget)
@@ -160,9 +156,6 @@ namespace NCsProjectile
 
 					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 					{
-						typedef NCsProjectile::NOnHit::NSpawn::NProjectile::EMDirection DirectionMapType;
-						typedef NCsProjectile::NOnHit::NSpawn::NProjectile::EDirection DirectionType;
-
 						CS_IS_ENUM_VALID(DirectionMapType, DirectionType, GetType())
 
 						if (GetType() == DirectionType::ClosestTarget)
@@ -192,33 +185,25 @@ namespace NCsProjectile
 // FCsProjectile_OnHit_SpawnProjectile_Spread_ShapeParams
 #pragma region
 
-#define ParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::FParams
-
-void FCsProjectile_OnHit_SpawnProjectile_Spread_ShapeParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectile_OnHit_SpawnProjectile_Spread_ShapeParams
 {
-	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EShape ShapeType;
+	using ShapeType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EShape;
+	using DistributionType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EDistribution;
 
-	Params->SetShape((ShapeType*)(&Shape));
-	Params->SetExtents(&Extents);
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Shape, ShapeType);
+		CS_THIS_COPY_TO_PROXY(Params, Extents);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Distribution, DistributionType);
+	}
 
-	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EDistribution DistributionType;
-
-	Params->SetDistribution((DistributionType*)(&Distribution));
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Shape, ShapeType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Extents);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Distribution, DistributionType);
+	}
 }
-
-void FCsProjectile_OnHit_SpawnProjectile_Spread_ShapeParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EShape ShapeType;
-
-	Params->SetShape((ShapeType)Shape);
-	Params->SetExtents(Extents);
-
-	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EDistribution DistributionType;
-
-	Params->SetDistribution((DistributionType)Distribution);
-}
-
-#undef ParamsType
 
 bool FCsProjectile_OnHit_SpawnProjectile_Spread_ShapeParams::IsValidChecked(const FString& Context) const
 {
@@ -312,30 +297,21 @@ namespace NCsProjectile
 				{
 					namespace NShape
 					{
+						using ShapeMapType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EMShape;
+						using DistributionMapType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EMDistribution;
+
 						bool FParams::IsValidChecked(const FString& Context) const
 						{
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EMShape ShapeMapType;
-
 							CS_IS_ENUM_VALID_CHECKED(ShapeMapType, GetShape())
 							CS_IS_VECTOR_ZERO_CHECKED(GetExtents())
-
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EMDistribution DistributionMapType;
-
 							CS_IS_ENUM_VALID_CHECKED(DistributionMapType, GetDistribution())
 							return true;
 						}
 
 						bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 						{
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EMShape ShapeMapType;
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EShape ShapeType;
-
 							CS_IS_ENUM_VALID(ShapeMapType, ShapeType, GetShape())
 							CS_IS_VECTOR_ZERO(GetExtents())
-
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EMDistribution DistributionMapType;
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EDistribution DistributionType;
-
 							CS_IS_ENUM_VALID(DistributionMapType, DistributionType, GetDistribution())
 							return true;
 						}
@@ -351,33 +327,25 @@ namespace NCsProjectile
 // FCsProjectile_OnHit_SpawnProjectile_Spread_AngleParams
 #pragma region
 
-#define ParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::FParams
-
-void FCsProjectile_OnHit_SpawnProjectile_Spread_AngleParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectile_OnHit_SpawnProjectile_Spread_AngleParams
 {
-	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EAngle SpreadAngleType;
+	using SpreadAngleType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EAngle;
+	using DistributionType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EDistribution;
 
-	Params->SetAngleType((SpreadAngleType*)(&AngleType));
-	Params->SetAngle(&Angle);
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, AngleType, SpreadAngleType);
+		CS_THIS_COPY_TO_PROXY(Params, Angle);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Distribution, DistributionType);
+	}
 
-	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EDistribution DistributionType;
-
-	Params->SetDistribution((DistributionType*)(&Distribution));
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, AngleType, SpreadAngleType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Angle);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Distribution, DistributionType);
+	}
 }
-
-void FCsProjectile_OnHit_SpawnProjectile_Spread_AngleParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EAngle SpreadAngleType;
-
-	Params->SetAngleType((SpreadAngleType)AngleType);
-	Params->SetAngle(Angle);
-
-	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EDistribution DistributionType;
-
-	Params->SetDistribution((DistributionType)Distribution);
-}
-
-#undef ParamsType
 
 bool FCsProjectile_OnHit_SpawnProjectile_Spread_AngleParams::IsValidChecked(const FString& Context) const
 {
@@ -409,32 +377,23 @@ namespace NCsProjectile
 				{
 					namespace NAngle
 					{
+						using SpreadAngleMapType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EMAngle;
+						using DistributionMapType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EMDistribution;
+
 						bool FParams::IsValidChecked(const FString& Context) const
 						{
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EMAngle SpreadAngleMapType;
-
 							CS_IS_ENUM_VALID_CHECKED(SpreadAngleMapType, GetAngleType())
 							CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetAngle(), 0.0f)
 							CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(GetAngle(), 180.0f)
-
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EMDistribution DistributionMapType;
-
 							CS_IS_ENUM_VALID_CHECKED(DistributionMapType, GetDistribution())
 							return true;
 						}
 
 						bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 						{
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EMAngle SpreadAngleMapType;
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EAngle SpreadAngleType;
-
 							CS_IS_ENUM_VALID(SpreadAngleMapType, SpreadAngleType, GetAngleType())
 							CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetAngle(), 0.0f)
 							CS_IS_FLOAT_LESS_THAN_OR_EQUAL(GetAngle(), 180.0f)
-
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EMDistribution DistributionMapType;
-							typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EDistribution DistributionType;
-
 							CS_IS_ENUM_VALID(DistributionMapType, DistributionType, GetDistribution())
 							return true;
 						}
@@ -450,29 +409,28 @@ namespace NCsProjectile
 // FCsProjectile_OnHit_SpawnProjectile_SpreadParams
 #pragma region
 
-#define ParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FParams
-
-void FCsProjectile_OnHit_SpawnProjectile_SpreadParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectile_OnHit_SpawnProjectile_SpreadParams
 {
-	Params->SetbShape(&bShape);
-	ShapeParams.CopyToParams(Params->GetShapeParamsPtr());
-	Params->SetbYaw(&bYaw);
-	YawParams.CopyToParams(Params->GetYawParamsPtr());
-	Params->SetbPitch(&bPitch);
-	PitchParams.CopyToParams(Params->GetPitchParamsPtr());
-}
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, bShape);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, ShapeParams);
+		CS_THIS_COPY_TO_PROXY(Params, bYaw);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, YawParams);
+		CS_THIS_COPY_TO_PROXY(Params, bPitch);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, PitchParams);
+	}
 
-void FCsProjectile_OnHit_SpawnProjectile_SpreadParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->SetbShape(bShape);
-	ShapeParams.CopyToParamsAsValue(Params->GetShapeParamsPtr());
-	Params->SetbYaw(bYaw);
-	YawParams.CopyToParamsAsValue(Params->GetYawParamsPtr());
-	Params->SetbPitch(bPitch);
-	PitchParams.CopyToParamsAsValue(Params->GetPitchParamsPtr());
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bShape);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, ShapeParams);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bYaw);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, YawParams);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bPitch);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, PitchParams);
+	}
 }
-
-#undef ParamsType
 
 bool FCsProjectile_OnHit_SpawnProjectile_SpreadParams::IsValidChecked(const FString& Context) const
 {
@@ -540,7 +498,6 @@ namespace NCsProjectile
 						}
 
 						checkf(GetbShape() || GetbYaw() || GetbPitch(), TEXT("%s: GetbShape() or GetbYaw() or GetbPitch() must be true."), *Context);
-
 						return true;
 					}
 
@@ -579,39 +536,36 @@ namespace NCsProjectile
 // FCsProjectile_OnHit_SpawnProjectileParams
 #pragma region
 
-#define ParamsType NCsProjectile::NOnHit::NSpawn::NProjectile::FParams
-
-void FCsProjectile_OnHit_SpawnProjectileParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectile_OnHit_SpawnProjectileParams
 {
-	Params->SetProjectile(Projectile.GetPtr());
-	Params->SetProjectilesPerSpawn(&ProjectilesPerSpawn);
-	Params->SetTimeBetweenProjectilesPerSpawn(&TimeBetweenProjectilesPerSpawn);
-	Params->SetbUntilGenerationCount(&bUntilGenerationCount);
-	Params->SetGenerationCount(&GenerationCount);
-	DirectionParams.CopyToParams(Params->GetDirectionParamsPtr());
-	Params->SetbSpreadParams(&bSpreadParams);
-	SpreadParams.CopyToParams(Params->GetSpreadParamsPtr());
-	Params->SetbInheritModifiers(&bInheritModifiers);
-	CreateModifiers.CopyToInfo(Params->GetCreateModifiersPtr());
-	Modifiers.CopyToInfo(Params->GetModifiersPtr());
-}
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_PTR_TO_PROXY(Params, Projectile);
+		CS_THIS_COPY_TO_PROXY(Params, ProjectilesPerSpawn);
+		CS_THIS_COPY_TO_PROXY(Params, TimeBetweenProjectilesPerSpawn);
+		CS_THIS_COPY_TO_PROXY(Params, bUntilGenerationCount);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, DirectionParams);
+		CS_THIS_COPY_TO_PROXY(Params, bSpreadParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, SpreadParams);
+		CS_THIS_COPY_TO_PROXY(Params, bInheritModifiers);
+		CS_THIS_COPY_INFO_TO_PROXY_PTR(Params, CreateModifiers);
+		CS_THIS_COPY_INFO_TO_PROXY_PTR(Params, Modifiers);
+	}
 
-void FCsProjectile_OnHit_SpawnProjectileParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->SetProjectile(Projectile.Value);
-	Params->SetProjectilesPerSpawn(ProjectilesPerSpawn);
-	Params->SetTimeBetweenProjectilesPerSpawn(TimeBetweenProjectilesPerSpawn);
-	Params->SetbUntilGenerationCount(bUntilGenerationCount);
-	Params->SetGenerationCount(GenerationCount);
-	DirectionParams.CopyToParamsAsValue(Params->GetDirectionParamsPtr());
-	Params->SetbSpreadParams(bSpreadParams);
-	SpreadParams.CopyToParamsAsValue(Params->GetSpreadParamsPtr());
-	Params->SetbInheritModifiers(bInheritModifiers);
-	CreateModifiers.CopyToInfoAsValue(Params->GetCreateModifiersPtr());
-	Modifiers.CopyToInfoAsValue(Params->GetModifiersPtr());
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_PTR_TO_PROXY_AS_VALUE(Params, Projectile);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, ProjectilesPerSpawn);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, TimeBetweenProjectilesPerSpawn);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bUntilGenerationCount);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, DirectionParams);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bSpreadParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, SpreadParams);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bInheritModifiers);
+		CS_THIS_COPY_INFO_TO_PROXY_PTR_AS_VALUE(Params, CreateModifiers);
+		CS_THIS_COPY_INFO_TO_PROXY_PTR_AS_VALUE(Params, Modifiers);
+	}
 }
-
-#undef ParamsType
 
 bool FCsProjectile_OnHit_SpawnProjectileParams::IsValidChecked(const FString& Context) const
 {

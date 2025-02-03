@@ -1,4 +1,7 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Modifier/CsWeaponModifier.h"
 
-const FName NCsWeapon::NModifier::IModifier::Name = FName("NCsWeapon::NModifier::IModifier");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsWeapon::NModifier::IModifier);

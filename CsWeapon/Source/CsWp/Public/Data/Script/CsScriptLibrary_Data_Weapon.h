@@ -72,7 +72,7 @@ public:
 	static bool AddSliceFromObject_ProjectileWeapon(const FString& Context, const UObject* WorldContextObject, const FString& Name, UObject* Object);
 
 	/**
-	* Adds the LaunchParams of type: NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl which implements the interfaces:
+	* Adds the LaunchParams of type: NCsWeapon::NProjectile::NParams::NLaunch::NTrace::NImpl::FImpl which implements the interfaces:
 	* - LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 	* - LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 	* to Data slice which implements the interface: PrjWeaponDataType (NCsProjectile::NData::NCollision::ICollision) to
@@ -88,7 +88,7 @@ public:
 	static bool AddToSlice_ProjectileWeapon_LaunchTraceParams(const FString& Context, const UObject* WorldContextObject, const FString& Name, const FCsProjectileWeapon_LaunchTraceParams& Params);
 
 	/**
-	* Adds the LaunchParams of type: NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl which implements the interfaces:
+	* Adds the LaunchParams of type: NCsWeapon::NProjectile::NParams::NLaunch::NTrace::NImpl::FImpl which implements the interfaces:
 	* - LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 	* - LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 	* to Data slice which implements the interface: PrjWeaponDataType (NCsProjectile::NData::NCollision::ICollision) to

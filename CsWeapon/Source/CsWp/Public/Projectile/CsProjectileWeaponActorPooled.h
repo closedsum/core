@@ -1,3 +1,6 @@
+// Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "GameFramework/Actor.h"
 // Interfaces
@@ -7,6 +10,7 @@
 #include "CsWeapon.h"
 #include "Projectile/CsProjectileWeapon.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Projectile.h"
 #include "Managers/Sound/CsTypes_SoundPooled.h"
@@ -23,34 +27,32 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCsProjectileWeaponActorPooled_On
 
 #pragma endregion Delegates
 
-// NCsPooledObject::NPayload::IPayload
+// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
-// NCsPooledObject::NCache::ICache
+// PooledCacheType (NCsPooledObject::NCache::ICache)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
 
 class AActor;
 struct FCsRoutine;
 
-// NCsWeapon::NData::IData
+// DataType (NCsWeapon::NData::IData)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
-// NCsWeapon::NCsProjectile::NData::IData
+// PrjWeaponDataType (NCsWeapon::NCsProjectile::NData::IData)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NProjectile, NData, IData)
 
 class USkeletalMeshComponent;
 class UStaticMeshComponent;
 class UPrimitiveComponent;
 
-// NCsProjectile::NPayload::IPayload
+// CsProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
-// NCsSound::NPayload::IPayload
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
-// NCsFX::NPayload::IPayload
+// CsFXPayloadType (NCsFX::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
 
 // NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire, IFire)
 
-// NCsWEapon::NModifier::IModifier
+// CsWeaponModifierType (NCsWEapon::NModifier::IModifier)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)
 
 // NCsProjectile::NModifier::IModifier
@@ -60,6 +62,10 @@ class USceneComponent;
 
 // NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILaunch)
+
+class ICsWeapon_Fire_TimeBetweenShots;
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsProjectileWeaponActorPooled)
 
 UCLASS(BlueprintType)
 class CSWP_API ACsProjectileWeaponActorPooled : public AActor,
@@ -71,13 +77,17 @@ class CSWP_API ACsProjectileWeaponActorPooled : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
-#define PooledCacheType NCsPooledObject::NCache::ICache
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define DataType NCsWeapon::NData::IData
-#define PrjWeaponDataType NCsWeapon::NProjectile::NData::IData
-#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
-#define SoundPayloadType NCsSound::NPayload::IPayload
-#define FXPayloadType NCsFX::NPayload::IPayload
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsProjectileWeaponActorPooled);
+
+	using PooledCacheType = NCsPooledObject::NCache::ICache;
+	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+	using DataType = NCsWeapon::NData::IData;
+	using PrjWeaponDataType = NCsWeapon::NProjectile::NData::IData;
+	using CsProjectilePayloadType = NCsProjectile::NPayload::IPayload;
+	using CsFXPayloadType = NCsFX::NPayload::IPayload;
+	using CsWeaponModifierType = NCsWeapon::NModifier::IModifier;
 
 // UObject Interface
 #pragma region
@@ -274,9 +284,7 @@ protected:
 
 protected:
 
-#define WeaponModifierType NCsWeapon::NModifier::IModifier
-	virtual void GetWeaponModifiers(TArray<WeaponModifierType*>& OutModifiers) const {}
-#undef WeaponModifierType
+	virtual void GetWeaponModifiers(TArray<CsWeaponModifierType*>& OutModifiers) const {}
 
 // Ammo
 #pragma region
@@ -356,89 +364,15 @@ protected:
 
 	FCsScopedTimerHandleWrapper FireScopedHandle;
 
+	// TimeBetweenShots
 public:
 
-	/**
-	*/
-	struct CSWP_API FTimeBetweenShotsImpl
-	{
-		friend class ACsProjectileWeaponActorPooled;
-
-	protected:
-
-		ACsProjectileWeaponActorPooled* Outer;
-
-	public:
-
-		/** This is the value BEFORE any modifications. */
-		float Base;
-
-		/** This is the value AFTER any modifications. */
-		float Value;
-
-		/**
-		* Delegate type for getting the time elapsed between "shots" after Fire() is called.
-		* 
-		* @param Weapon
-		* @param PreviousTime
-		* @param NewTime
-		*/
-		DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnElapsedTime, ICsWeapon* /*Weapon*/, const float& /*PreviousTime*/, const float& /*NewTime*/);
-
-		/** Delegate for getting the time elapsed between "shots" after Fire() is called. */
-		FOnElapsedTime OnElapsedTime_Event;
-
-		/**
-		* Delegate type for getting the time elapsed as a percent between "shots" after Fire() is called.
-		* 
-		* @param Weapon
-		* @param PreviousValue
-		* @param NewValue
-		*/
-		DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnElapsedTimeAsPercent, ICsWeapon* /*Weapon*/, const float& /*PreviousValue*/, const float& /*NewValue*/);
-
-		/** Delegate for getting the time elapsed as a percent between "shots" after Fire() is called. */
-		FOnElapsedTimeAsPercent OnElapsedTimeAsPercent_Event;
-
-		/**
-		* Delegate type for when Fire() has "completed". Meaning time between shots amount of time has elapsed from
-		* Fire() being called.
-		* 
-		* @param Weapon
-		*/
-		DECLARE_MULTICAST_DELEGATE_OneParam(FOnComplete, ICsWeapon* /*Weapon*/);
-
-		FOnComplete OnComplete_Event;
-
-		FTimeBetweenShotsImpl() :
-			Outer(nullptr),
-			OnElapsedTime_Event(),
-			OnElapsedTimeAsPercent_Event(),
-			OnComplete_Event()
-		{
-		}
-
-	private:
-
-		FORCEINLINE const float& GetValue() const { return Value; }
-
-		FORCEINLINE void ResetValueToBase() { Value = Base; }
-
-		void OnElapsedTime();
-
-		char OnElapsedTime_Internal(FCsRoutine* R);
-
-		FORCEINLINE void Clear()
-		{
-			OnElapsedTime_Event.Clear();
-			OnElapsedTimeAsPercent_Event.Clear();
-			OnComplete_Event.Clear();
-		}
-	};
-
-	FTimeBetweenShotsImpl TimeBetweenShotsImpl;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Fire|Time Between Shots", meta = (MustImplement = "/Script.CsWp.CsWeapon_Fire_TimeBetweenShots"))
+	TSoftClassPtr<UObject> TimeBetweenShotsClass;
 
 protected:
+
+	ICsWeapon_Fire_TimeBetweenShots* TimeBetweenShotsImpl;
 
 	float GetTimeBetweenShots() const;
 
@@ -644,7 +578,7 @@ public:
 		* @param Payload	The payload to set.
 		* return			Whether the payload was successfully set.
 		*/
-		virtual bool SetPayload(const FString& Context, ProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload);
+		virtual bool SetPayload(const FString& Context, CsProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload);
 
 	public:
 
@@ -742,7 +676,7 @@ public:
 public:
 
 #define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
-	virtual bool Projectile_SetPayload(const FString& Context, ProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload) { return true; }
+	virtual bool Projectile_SetPayload(const FString& Context, CsProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload) { return true; }
 #undef LaunchPayloadType
 
 #pragma endregion Projectile
@@ -840,7 +774,7 @@ public:
 		* @param Payload
 		* @param FX
 		*/
-		void SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX, const LaunchPayloadType& LaunchPayload);
+		void SetPayload(const int32 CurrentProjectilePerShotIndex, CsFXPayloadType* Payload, const FCsFX& FX, const LaunchPayloadType& LaunchPayload);
 
 #undef LaunchPayloadType
 
@@ -851,7 +785,7 @@ public:
 		* @param Payload
 		* @param FXData
 		*/
-		void SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData);
+		void SetPayload(const int32 CurrentProjectilePerShotIndex, CsFXPayloadType* Payload, FXDataType* FXData);
 
 #undef FXDataType
 	};
@@ -895,12 +829,4 @@ public:
 	FString PrintNameClassAndOwner();
 
 #pragma endregion Print
-
-#undef PooledCacheType
-#undef PooledPayloadType
-#undef DataType
-#undef PrjWeaponDataType
-#undef ProjectilePayloadType
-#undef SoundPayloadType
-#undef FXPayloadType
 };

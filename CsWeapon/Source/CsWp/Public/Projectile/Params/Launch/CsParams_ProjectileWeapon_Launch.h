@@ -14,8 +14,8 @@ namespace NCsWeapon
 			namespace NLaunch
 			{
 				/**
-				* Interface describing the Launch Parameters for a weapon of type: ICsProjectileWeapon. The
-				* parameters are usually used to location and direction of a projectile being fired from the weapon.
+				* Interface describing the Launch Parameters for a weapon of type: ICsProjectileWeapon. 
+				*  The parameters are usually used to location and direction of a projectile being fired from the weapon.
 				*/
 				struct CSWP_API ILaunch : public ICsGetInterfaceMap
 				{
@@ -27,23 +27,31 @@ namespace NCsWeapon
 
 					virtual ~ILaunch() {}
 
-				#define LaunchLocationType NCsWeapon::NProjectile::NParams::NLaunch::ELocation
-				#define LaunchLocationOffsetSpace NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace
-				#define LaunchDirectionType NCsWeapon::NProjectile::NParams::NLaunch::EDirection
+				private:
+
+					// Allow clearer names without name collisions
+					struct _
+					{
+						using LaunchLocationType = NCsWeapon::NProjectile::NParams::NLaunch::ELocation;
+						using LaunchLocationOffsetSpace = NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace;
+						using LaunchDirectionType = NCsWeapon::NProjectile::NParams::NLaunch::EDirection;
+					};
+
+				public:
 
 					/**
 					* Get the different methods to get the Location from which a Projectile is launched from a Projectile Weapon.
 					* 
 					* return
 					*/
-					virtual const LaunchLocationType& GetLocationType() const = 0;
+					virtual const _::LaunchLocationType& GetLocationType() const = 0;
 
 					/**
 					* Get the "Space" the location offset is applied to the Location a Projectile is Launched from a Projectile Weapon.
 					* 
 					* return 
 					*/
-					virtual const LaunchLocationOffsetSpace& GetLocationOffsetSpace() const = 0;
+					virtual const _::LaunchLocationOffsetSpace& GetLocationOffsetSpace() const = 0;
 
 					/**
 					*  Get which components (Pitch, Yaw, and/or Roll) or Rotation / Direction from GetLocationOffsetSpace() will
@@ -63,28 +71,28 @@ namespace NCsWeapon
 					*
 					* return
 					*/
-					virtual const FRotator3f& GetLocationOffsetSpaceOffset() const = 0;
+					virtual const FRotator& GetLocationOffsetSpaceOffset() const = 0;
 
 					/**
 					* Get the offset to apply to the Location determined from GetLocationType().
 					* 
 					* return
 					*/
-					virtual const FVector3f& GetLocationOffset() const = 0;
+					virtual const FVector& GetLocationOffset() const = 0;
 
 					/**
 					* Get the different methods to get the Direction from which a Projectile is launched from a Projectile Weapon.
 					* 
 					* return
 					*/
-					virtual const LaunchDirectionType& GetDirectionType() const = 0;
+					virtual const _::LaunchDirectionType& GetDirectionType() const = 0;
 
 					/**
 					* Get the offset to apply to the Rotation determined from GetDirectionType().
 					*
 					* return
 					*/
-					virtual const FRotator3f& GetDirectionOffset() const = 0;
+					virtual const FRotator& GetDirectionOffset() const = 0;
 
 					/**
 					* Get whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f).
@@ -96,10 +104,6 @@ namespace NCsWeapon
 					/**
 					*/
 					virtual const int32& GetDirectionRules() const = 0;
-
-				#undef LaunchLocationType
-				#undef LaunchLocationOffsetSpace
-				#undef LaunchDirectionType
 				};
 			}
 		}

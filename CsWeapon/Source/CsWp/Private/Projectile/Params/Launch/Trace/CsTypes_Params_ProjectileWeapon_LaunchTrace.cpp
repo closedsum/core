@@ -123,39 +123,32 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Launch_TraceParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams
-
-void FCsProjectileWeapon_Launch_TraceParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Launch_TraceParams
 {
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart StartType;
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection DirectionType;
+	using StartType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart;
+	using DirectionType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection;
 
-	Params->SetType(&Type);
-	Params->SetMethod(&Method);
-	Params->SetStart((StartType*)(&Start));
-	Params->SetDirection((DirectionType*)(&Direction));
-	Params->SetDistance(&Distance);
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, Type);
+		CS_THIS_COPY_TO_PROXY(Params, Method);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Start, StartType);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Direction, DirectionType);
+		CS_THIS_COPY_TO_PROXY(Params, Distance);
+	}
+
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Method);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Start, StartType);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Direction, DirectionType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Distance);
+	}
 }
-
-void FCsProjectileWeapon_Launch_TraceParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart StartType;
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection DirectionType;
-
-	Params->SetType(Type);
-	Params->SetMethod(Method);
-	Params->SetStart((StartType)Start);
-	Params->SetDirection((DirectionType)Direction);
-	Params->SetDistance(Distance);
-}
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Launch_TraceParams::IsValidChecked(const FString& Context) const
 {
-	typedef EMCsProjectileWeaponLaunchTraceStart StartMapType;
-	typedef EMCsProjectileWeaponLaunchTraceDirection DirectionMapType;
-
 	CS_IS_ENUM_VALID_CHECKED(StartMapType, Start)
 	CS_IS_ENUM_VALID_CHECKED(DirectionMapType, Direction)
 	CS_IS_FLOAT_GREATER_THAN_CHECKED(Distance, 0.0f)
@@ -164,11 +157,6 @@ bool FCsProjectileWeapon_Launch_TraceParams::IsValidChecked(const FString& Conte
 
 bool FCsProjectileWeapon_Launch_TraceParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	typedef EMCsProjectileWeaponLaunchTraceStart StartMapType;
-	typedef ECsProjectileWeaponLaunchTraceStart StartType;
-	typedef EMCsProjectileWeaponLaunchTraceDirection DirectionMapType;
-	typedef ECsProjectileWeaponLaunchTraceDirection DirectionType;
-
 	CS_IS_ENUM_VALID(StartMapType, StartType, Start)
 	CS_IS_ENUM_VALID(DirectionMapType, DirectionType, Direction)
 	CS_IS_FLOAT_GREATER_THAN(Distance, 0.0f)
@@ -185,11 +173,11 @@ namespace NCsWeapon
 			{
 				namespace NTrace
 				{
+					using StartMapType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart;
+					using DirectionMapType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection;
+
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart StartMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection DirectionMapType;
-
 						CS_IS_ENUM_VALID_CHECKED(StartMapType, GetStart())
 						CS_IS_ENUM_VALID_CHECKED(DirectionMapType, GetDirection())
 						CS_IS_FLOAT_GREATER_THAN_CHECKED(GetDistance(), 0.0f)
@@ -198,11 +186,6 @@ namespace NCsWeapon
 
 					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart StartMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart StartType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection DirectionMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection DirectionType;
-
 						CS_IS_ENUM_VALID(StartMapType, StartType, GetStart())
 						CS_IS_ENUM_VALID(DirectionMapType, DirectionType, GetDirection())
 						CS_IS_FLOAT_GREATER_THAN(GetDistance(), 0.0f)
@@ -219,83 +202,82 @@ namespace NCsWeapon
 // FCsProjectileWeapon_LaunchTraceParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
-
-ParamsType* FCsProjectileWeapon_LaunchTraceParams::AddSafeToSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+namespace NCsProjectileWeapon_LaunchTraceParams
 {
-	ParamsType* Params = AddSafeToSlice_Internal(Context, WorldContext, Name, Log);
-
-	if (!Params)
-		return nullptr;
-
-	CopyToParams(Params);
-	return Params;
-}
-
-ParamsType* FCsProjectileWeapon_LaunchTraceParams::AddSafeToSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
-{
-	ParamsType* Params = AddSafeToSlice_Internal(Context, WorldContext, Name, Log);
-
-	if (!Params)
-		return nullptr;
-
-	CopyToParamsAsValue(Params);
-	return Params;
-}
-
-ParamsType* FCsProjectileWeapon_LaunchTraceParams::AddSafeToSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
-{
-	if (!IsValid(Context, Log))
-		return nullptr;
-
-	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-	typedef NCsWeapon::NData::IData WeaponDataType;
-
-	WeaponDataType* Data = WeaponManagerLibrary::GetSafeData(Context, WorldContext, Name, Log);
-
-	if (!Data)
-		return nullptr;
-
-	typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
-
-	PrjWeaponDataType* PrjWeaponData = CsWeaponDataLibrary::GetSafeInterfaceChecked<PrjWeaponDataType>(Context, Data);
-
-	if (!PrjWeaponData)
+	ParamsType* FImpl::AddSafeToSlice(const FString& Context, ThisType* This, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) 
 	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data: %s does NOT implement the interface: %s."), *Context, *(Name.ToString()), *(PrjWeaponDataType::Name.ToString())));
-		return nullptr;
+		ParamsType* Params = AddSafeToSlice_Internal(Context, This, WorldContext, Name, Log);
+
+		if (!Params)
+			return nullptr;
+
+		CopyToParams(Params);
+		return Params;
 	}
 
-	typedef NCsWeapon::NProjectile::NData::FImplSlice PrjWeaponDataImplType;
-
-	PrjWeaponDataImplType* PrjWeaponDataImpl = NCsInterfaceMap::SafeStaticCastChecked<PrjWeaponDataImplType, PrjWeaponDataType>(Context, PrjWeaponData);
-
-	if (!PrjWeaponDataImpl)
+	ParamsType* FImpl::AddSafeToSliceAsValue(const FString& Context, const ThisType* This, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data: %s does NOT contain the slice: %s."), *Context, *(Name.ToString()), *(PrjWeaponDataImplType::Name.ToString())));
-		return nullptr;
+		ParamsType* Params = AddSafeToSlice_Internal(Context, This, WorldContext, Name, Log);
+
+		if (!Params)
+			return nullptr;
+
+		CopyToParamsAsValue(This, Params);
+		return Params;
 	}
 
-	ParamsType* Params = PrjWeaponDataImpl->ConstructLaunchParams<ParamsType>();
+	ParamsType* FImpl::AddSafeToSlice_Internal(const FString& Context, const ThisType* This, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+	{
+		if (!This->IsValid(Context, Log))
+		return nullptr;
 
-	return Params;
+		typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+		typedef NCsWeapon::NData::IData WeaponDataType;
+
+		WeaponDataType* Data = WeaponManagerLibrary::GetSafeData(Context, WorldContext, Name, Log);
+
+		if (!Data)
+			return nullptr;
+
+		typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
+
+		PrjWeaponDataType* PrjWeaponData = CsWeaponDataLibrary::GetSafeInterfaceChecked<PrjWeaponDataType>(Context, Data);
+
+		if (!PrjWeaponData)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data: %s does NOT implement the interface: %s."), *Context, *(Name.ToString()), *(PrjWeaponDataType::Name.ToString())));
+			return nullptr;
+		}
+
+		typedef NCsWeapon::NProjectile::NData::FImplSlice PrjWeaponDataImplType;
+
+		PrjWeaponDataImplType* PrjWeaponDataImpl = NCsInterfaceMap::SafeStaticCastChecked<PrjWeaponDataImplType, PrjWeaponDataType>(Context, PrjWeaponData);
+
+		if (!PrjWeaponDataImpl)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data: %s does NOT contain the slice: %s."), *Context, *(Name.ToString()), *(PrjWeaponDataImplType::Name.ToString())));
+			return nullptr;
+		}
+
+		ParamsType* Params = PrjWeaponDataImpl->ConstructLaunchParams<ParamsType>();
+
+		return Params;
+	}
+
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		This->LocationParams.CopyToParams(Params->GetLocationParamsPtr());
+		This->DirectionParams.CopyToParams(Params->GetDirectionParamsPtr());
+		This->TraceParams.CopyToParams(Params->GetTraceParamsPtr());
+	}
+
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		This->LocationParams.CopyToParamsAsValue(Params->GetLocationParamsPtr());
+		This->DirectionParams.CopyToParamsAsValue(Params->GetDirectionParamsPtr());
+		This->TraceParams.CopyToParamsAsValue(Params->GetTraceParamsPtr());
+	}
 }
-
-void FCsProjectileWeapon_LaunchTraceParams::CopyToParams(ParamsType* Params)
-{
-	LocationParams.CopyToParams(Params->GetLocationParamsPtr());
-	DirectionParams.CopyToParams(Params->GetDirectionParamsPtr());
-	TraceParams.CopyToParams(Params->GetTraceParamsPtr());
-}
-
-void FCsProjectileWeapon_LaunchTraceParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	LocationParams.CopyToParamsAsValue(Params->GetLocationParamsPtr());
-	DirectionParams.CopyToParamsAsValue(Params->GetDirectionParamsPtr());
-	TraceParams.CopyToParamsAsValue(Params->GetTraceParamsPtr());
-}
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_LaunchTraceParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
@@ -310,23 +292,22 @@ bool FCsProjectileWeapon_LaunchTraceParams::IsValid(const FString& Context, void
 // FCsProjectileWeapon_Launch_WithTraceParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NWithTrace::FParams
-
-void FCsProjectileWeapon_Launch_WithTraceParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Launch_WithTraceParams
 {
-	LocationParams.CopyToParams(Params->GetLocationParamsPtr());
-	DirectionParams.CopyToParams(Params->GetDirectionParamsPtr());
-	TraceParams.CopyToParams(Params->GetTraceParamsPtr());
-}
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, LocationParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, DirectionParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, TraceParams);
+	}
 
-void FCsProjectileWeapon_Launch_WithTraceParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	LocationParams.CopyToParamsAsValue(Params->GetLocationParamsPtr());
-	DirectionParams.CopyToParamsAsValue(Params->GetDirectionParamsPtr());
-	TraceParams.CopyToParamsAsValue(Params->GetTraceParamsPtr());
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, LocationParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, DirectionParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, TraceParams);
+	}
 }
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Launch_WithTraceParams::IsValidChecked(const FString& Context) const
 {

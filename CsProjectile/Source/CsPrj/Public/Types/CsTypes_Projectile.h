@@ -125,6 +125,7 @@ struct CSPRJ_API FCsDataNoPropertyView_ECsProjectile
 	{
 	}
 
+	FORCEINLINE const FECsProjectile& Get() const { return Value; }
 	FORCEINLINE FECsProjectile* GetPtr() { return &Value; }
 
 	bool IsValidChecked(const FString& Context) const;

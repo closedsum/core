@@ -2,10 +2,10 @@
 #pragma once
 // Types
 #include "CsMacro_Namespace.h"
+#include "CsMacro_Log.h"
+#include "CsMacro_Cached.h"
 #include "Types/CsTypes_Weapon.h"
 #include "Modifier/Types/CsTypes_WeaponModifier.h"
-// Log
-#include "Utility/CsWpLog.h"
 
 class UObject;
 class UCsManager_Weapon;
@@ -31,18 +31,12 @@ namespace NCsData {
 	}
 }
 
-// NCsWeapon::NData::IData
+// DataType (NCsWeapon::NData::IData)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
-// NCsWeapon::NData::FInterfaceMap
+// DataInterfaceMapType (NCsWeapon::NData::FInterfaceMap)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FInterfaceMap)
 
-// NCsWeapon::NModifier::NResource::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NModifier, NResource, FResource)
-// NCsWeapon::NModifier::IModifier
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)
-
-// NCsWeapon::NProjectile::NSpread::NVariables::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NSpread, NVariables, FResource)
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_2(NCsWeapon, NManager, Library)
 
 namespace NCsWeapon
 {
@@ -51,6 +45,10 @@ namespace NCsWeapon
 		struct CSWP_API FLibrary final
 		{
 		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
+
+			CS_USING_CACHED_FUNCTION_NAME_NESTED_2(NCsWeapon, NManager, Library);
 
 			using DataType = NCsWeapon::NData::IData;
 			using DataInterfaceMapType = NCsWeapon::NData::FInterfaceMap;
@@ -92,9 +90,9 @@ namespace NCsWeapon
 			* @param Log
 			* return				Context for UCsManager_Weapon
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -149,7 +147,7 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				UCsManager_Weapon.
 			*/
-			static UCsManager_Weapon* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static UCsManager_Weapon* GetSafe(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get the reference to UCsManager_Weapon from a WorldContext.
@@ -160,7 +158,7 @@ namespace NCsWeapon
 			* return				UCsManager_Weapon.
 			*/
 			template<typename T>
-			static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning)
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 			{
 				UCsManager_Weapon* O = GetSafe(Context, ContextObject, Log);
 
@@ -294,7 +292,7 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 			*/
-			static FCsWeaponClass* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static FCsWeaponClass* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
@@ -318,7 +316,7 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 			*/
-			static FCsWeaponClass* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static FCsWeaponClass* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get the Class associated with Weapon of Type.
@@ -339,7 +337,7 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				UClass associated with Type.
 			*/
-			static UClass* GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static UClass* GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely get the Class associated with WeaponClass of Type.
@@ -350,7 +348,7 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				UClass associated with Type.
 			*/
-			static UClass* GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static UClass* GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely add the Class for Type to Manager_Weapon's ClassHandler.
@@ -362,7 +360,7 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				Whether the Class was successfully added for Type.
 			*/
-			static bool SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, UObject* Class, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static bool SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, UObject* Class, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely add the Class for Class Type to Manager_Weapon's ClassHandler.
@@ -374,7 +372,7 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				Whether the Class was successfully added for Class Type.
 			*/
-			static bool SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, UObject* Class, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static bool SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, UObject* Class, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Class
 
@@ -389,7 +387,7 @@ namespace NCsWeapon
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log			(optional)
 			*/
-			static DataHandlerType* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static DataHandlerType* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Name of the weapon type.
@@ -411,7 +409,7 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				Data that implements the interface: NCsWeapon::NData::IData.
 			*/
-			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Get the Data (implements interface: NCsWeapon::NData::IData) associated with Type.
@@ -433,11 +431,24 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				Data that implements the interface: NCsWeapon::NData::IData.
 			*/
-			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Data
 		};
+	}
+}
 
+using CsWeaponManagerLibrary = NCsWeapon::NManager::FLibrary;
+
+// ModifierResourceType (NCsWeapon::NModifier::NResource::FResource)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NModifier, NResource, FResource)
+// ModifierType (NCsWeapon::NModifier::IModifier)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)
+
+namespace NCsWeapon
+{
+	namespace NManager
+	{
 		namespace NModifier
 		{
 			struct CSWP_API FLibrary final
@@ -460,7 +471,16 @@ namespace NCsWeapon
 				static ModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier);
 			};
 		}
+	}
+}
 
+// SpreadVariablesResourceType (NCsWeapon::NProjectile::NSpread::NVariables::FResource)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NSpread, NVariables, FResource)
+
+namespace NCsWeapon
+{
+	namespace NManager
+	{
 		namespace NSpread
 		{
 			namespace NVariables
@@ -483,5 +503,3 @@ namespace NCsWeapon
 		}
 	}
 }
-
-using CsWeaponManagerLibrary = NCsWeapon::NManager::FLibrary;

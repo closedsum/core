@@ -358,7 +358,7 @@ namespace NCsTrace
 			* @param Channel	
 			* return				Trace response for the given trace. NULL if result was found.
 			*/
-			static ResponseType* TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const float& Distance, const ECollisionChannel& Channel);
+			static ResponseType* TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const float& Distance, const ECollisionChannel& Channel);
 
 		#pragma endregion Screen
 

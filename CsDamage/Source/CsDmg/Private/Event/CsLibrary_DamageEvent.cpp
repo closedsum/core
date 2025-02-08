@@ -369,8 +369,8 @@ namespace NCsDamage
 					Request->Method = ECsTraceMethod::Multi;
 					Request->Query  = ECsTraceQuery::ObjectType;
 
-					Request->Start = CsMathLibrary::Convert(Hit.ImpactPoint);
-					Request->End   = CsMathLibrary::Convert(Hit.ImpactPoint);
+					Request->Start = Hit.ImpactPoint;
+					Request->End   = Hit.ImpactPoint;
 					Request->Channel = CollisionInfo.GetChannel();
 
 					Request->Shape.SetSphere(MaxRange);
@@ -411,8 +411,8 @@ namespace NCsDamage
 					Request->Method = ECsTraceMethod::Multi;
 					Request->Query  = ECsTraceQuery::ObjectType;
 
-					Request->Start = CsMathLibrary::Convert(Hit.ImpactPoint);
-					Request->End   = CsMathLibrary::Convert(Hit.ImpactPoint);
+					Request->Start = Hit.ImpactPoint;
+					Request->End   = Hit.ImpactPoint;
 					Request->Channel = CollisionInfo.GetChannel();
 
 					Request->Shape.SetSphere(MinRange);

@@ -65,8 +65,8 @@ FCsRoutine::FCsRoutine() :
 
 FCsRoutine::~FCsRoutine()
 {
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle);
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle);
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle)
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle)
 }
 
 // Time
@@ -144,8 +144,8 @@ void FCsRoutine::Init(PayloadType* Payload)
 
 	Handle.New();
 
-	CS_GET_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle, &ScopeName, NCsScopedGroup::Coroutine, NCsCVarLog::LogRoutineScopedTimer);
-	CS_GET_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle, Name, NCsScopedGroup::Coroutine, NCsCVarLog::LogCoroutineScopedTimer);
+	CS_GET_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle, &ScopeName, NCsScopedGroup::Coroutine, NCsCVarLog::LogRoutineScopedTimer)
+	CS_GET_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle, Name, NCsScopedGroup::Coroutine, NCsCVarLog::LogCoroutineScopedTimer)
 }
 
 // Update
@@ -283,8 +283,8 @@ void FCsRoutine::End(const EndReasonType& InEndReason)
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	CS_CLEAR_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle);
-	CS_CLEAR_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle);
+	CS_CLEAR_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle)
+	CS_CLEAR_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle)
 }
 
 #pragma endregion End

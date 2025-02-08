@@ -81,8 +81,8 @@ bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(const FString& Con
 	if (RequestType* Request = CsTraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
 	{
 		// Fill out Request
-		Request->Start				  = CsMathLibrary::Convert(Start);
-		Request->End				  = CsMathLibrary::Convert(End);
+		Request->Start				  = Start;
+		Request->End				  = End;
 		Request->Channel			  = Channel;
 		Request->Params.bTraceComplex = bTraceComplex;
 
@@ -120,8 +120,8 @@ bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByChannel(const FString& C
 	if (RequestType* Request = CsTraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
 	{
 		// Fill out Request
-		Request->Start				  = CsMathLibrary::Convert(Start);
-		Request->End				  = CsMathLibrary::Convert(End);
+		Request->Start				  = Start;
+		Request->End				  = End;
 		Request->Channel			  = Channel;
 		Request->Params.bTraceComplex = bTraceComplex;
 		Request->Shape.SetSphere(Radius);
@@ -162,8 +162,8 @@ bool UCsScriptLibrary_Manager_Trace::SphereTraceSingleByObjectType(const FString
 	if (RequestType* Request = CsTraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject))
 	{
 		// Fill out Request
-		Request->Start	= CsMathLibrary::Convert(Start);
-		Request->End	= CsMathLibrary::Convert(End);
+		Request->Start	= Start;
+		Request->End	= End;
 		
 		NCsCollisionObjectQueryParams::Populate(Request->ObjectParams, ObjectTypes);
 

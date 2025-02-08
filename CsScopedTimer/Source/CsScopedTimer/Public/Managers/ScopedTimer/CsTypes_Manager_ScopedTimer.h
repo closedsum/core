@@ -202,15 +202,15 @@ public:
 #pragma endregion FCsScopedGroupTimer
 
 #if !UE_BUILD_SHIPPING
-#define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, Group, CVar) Handle = FCsManager_ScopedTimer::Get().GetHandle((Name), (Group), (CVar))
-#define CS_CLEAR_SCOPED_TIMER_HANDLE(Handle) FCsManager_ScopedTimer::Get().ClearHandle(Handle)
-#define CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(Handle) FCsManager_ScopedTimer::Get().SilentClearHandle(Handle)
-#define CS_SCOPED_TIMER(Handle) FCsScopedTimerInternal __Temp_##Handle##_ScopedTimerInternal__(Handle)
-#define CS_SCOPED_TIMER_NAMESPACE_1(__Ns1, Handle) const FCsScopedTimerHandle& __Temp__##Handle##_ScopedTimerHandle = __Ns1::Handle; FCsScopedTimerInternal __Temp_##Handle##_ScopedTimerInternal__(__Temp__##Handle##_ScopedTimerHandle)
-#define CS_SCOPED_TIMER_NAMESPACE_2(__Ns1, __Ns2, Handle) const FCsScopedTimerHandle& __Temp__##Handle##_ScopedTimerHandle = __Ns1::__Ns2::Handle; FCsScopedTimerInternal __Temp_##Handle##_ScopedTimerInternal__(__Temp__##Handle##_ScopedTimerHandle)
-#define CS_SCOPED_TIMER_ONE_SHOT(Name, Group, CVar) FCsScopedTimerInternal __Temp__##Handle##_ScopedTimerInternal__(Name, Group, CVar)
-#define CS_SET_SCOPED_TIMER_HANDLE(HandleWrapper) HandleWrapper.StartTime = FPlatformTime::Seconds()
-#define CS_UPDATE_SCOPED_TIMER_HANDLE(HandleWrapper) FCsManager_ScopedTimer::Get().UpdateHandle(HandleWrapper.Handle, FPlatformTime::Seconds() - HandleWrapper.StartTime, false)
+#define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, Group, CVar) Handle = FCsManager_ScopedTimer::Get().GetHandle((Name), (Group), (CVar));
+#define CS_CLEAR_SCOPED_TIMER_HANDLE(Handle) FCsManager_ScopedTimer::Get().ClearHandle(Handle);
+#define CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(Handle) FCsManager_ScopedTimer::Get().SilentClearHandle(Handle);
+#define CS_SCOPED_TIMER(Handle) FCsScopedTimerInternal __Temp_##Handle##_ScopedTimerInternal__(Handle);
+#define CS_SCOPED_TIMER_NAMESPACE_1(__Ns1, Handle) const FCsScopedTimerHandle& __Temp__##Handle##_ScopedTimerHandle = __Ns1::Handle; FCsScopedTimerInternal __Temp_##Handle##_ScopedTimerInternal__(__Temp__##Handle##_ScopedTimerHandle);
+#define CS_SCOPED_TIMER_NAMESPACE_2(__Ns1, __Ns2, Handle) const FCsScopedTimerHandle& __Temp__##Handle##_ScopedTimerHandle = __Ns1::__Ns2::Handle; FCsScopedTimerInternal __Temp_##Handle##_ScopedTimerInternal__(__Temp__##Handle##_ScopedTimerHandle);
+#define CS_SCOPED_TIMER_ONE_SHOT(Name, Group, CVar) FCsScopedTimerInternal __Temp__##Handle##_ScopedTimerInternal__(Name, Group, CVar);
+#define CS_SET_SCOPED_TIMER_HANDLE(HandleWrapper) HandleWrapper.StartTime = FPlatformTime::Seconds();
+#define CS_UPDATE_SCOPED_TIMER_HANDLE(HandleWrapper) FCsManager_ScopedTimer::Get().UpdateHandle(HandleWrapper.Handle, FPlatformTime::Seconds() - HandleWrapper.StartTime, false);
 #else
 #define CS_GET_SCOPED_TIMER_HANDLE(Handle, Name, Group, CVar)
 #define CS_CLEAR_SCOPED_TIMER_HANDLE(Handle)

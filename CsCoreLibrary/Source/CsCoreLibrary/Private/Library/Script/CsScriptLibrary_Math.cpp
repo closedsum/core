@@ -42,7 +42,7 @@ namespace NCsScriptLibraryMath
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, Ease);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, EasePercent);
 			// Intersection
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, RayPlaneIntersection);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, RayPlaneIntersection3f);
 		}
 	}
 }
@@ -312,7 +312,7 @@ FVector UCsScriptLibrary_Math::RotationMatrix44d_UnitAxis_OnlyYaw(const FRotator
 // Ray
 #pragma region
 	
-FCsRay UCsScriptLibrary_Math::MakeRay(const FVector3f& Origin, const FVector3f& Direction, const float& Distance)
+FCsRay3f UCsScriptLibrary_Math::MakeRay3f(const FVector3f& Origin, const FVector3f& Direction, const float& Distance)
 {
 	bool DirectionIsNormalized = true;
 
@@ -320,17 +320,17 @@ FCsRay UCsScriptLibrary_Math::MakeRay(const FVector3f& Origin, const FVector3f& 
 	{
 		DirectionIsNormalized = false;
 
-		UE_LOG(LogCsCoreLibrary, Warning, TEXT("UCsScriptLibrary_Math::MakeRay: Direction is NOT normalized."));
+		UE_LOG(LogCsCoreLibrary, Warning, TEXT("UCsScriptLibrary_Math::MakeRay3f: Direction is NOT normalized."));
 	}
 
 	if (Distance <= 0.0f)
 	{
-		UE_LOG(LogCsCoreLibrary, Warning, TEXT("UCsScriptLibrary_Math::MakeRay: Distance is NOT > 0.0f."));
+		UE_LOG(LogCsCoreLibrary, Warning, TEXT("UCsScriptLibrary_Math::MakeRay3f: Distance is NOT > 0.0f."));
 	}
-	return FCsRay(Origin, Direction, Distance > 0.0f ? Distance : FCsRay::GetDefaultDistance(), DirectionIsNormalized);
+	return FCsRay3f(Origin, Direction, Distance > 0.0f ? Distance : FCsRay3f::GetDefaultDistance(), DirectionIsNormalized);
 }
 
-FCsRay UCsScriptLibrary_Math::MakeRay_OriginAndDirection(const FVector3f& Origin, const FVector3f& Direction)
+FCsRay3f UCsScriptLibrary_Math::MakeRay3f_OriginAndDirection(const FVector3f& Origin, const FVector3f& Direction)
 {
 	bool DirectionIsNormalized = true;
 
@@ -338,9 +338,9 @@ FCsRay UCsScriptLibrary_Math::MakeRay_OriginAndDirection(const FVector3f& Origin
 	{
 		DirectionIsNormalized = false;
 
-		UE_LOG(LogCsCoreLibrary, Warning, TEXT("UCsScriptLibrary_Math::MakeRay_OriginAndDirection: Direction is NOT normalized."));
+		UE_LOG(LogCsCoreLibrary, Warning, TEXT("UCsScriptLibrary_Math::MakeRay3f_OriginAndDirection: Direction is NOT normalized."));
 	}
-	return FCsRay(Origin, Direction, DirectionIsNormalized);
+	return FCsRay3f(Origin, Direction, DirectionIsNormalized);
 }
 
 #pragma endregion Ray
@@ -348,7 +348,7 @@ FCsRay UCsScriptLibrary_Math::MakeRay_OriginAndDirection(const FVector3f& Origin
 // Plane
 #pragma region
 
-FPlane4f UCsScriptLibrary_Math::MakePlane(const FVector3f& Origin, const FVector3f& Normal)
+FPlane4f UCsScriptLibrary_Math::MakePlane4f(const FVector3f& Origin, const FVector3f& Normal)
 {
 	bool NormalIsNormalized = true;
 
@@ -356,7 +356,7 @@ FPlane4f UCsScriptLibrary_Math::MakePlane(const FVector3f& Origin, const FVector
 	{
 		NormalIsNormalized = false;
 
-		UE_LOG(LogCsCoreLibrary, Warning, TEXT("UCsScriptLibrary_Math::MakeRay_OriginAndDirection: Direction is NOT normalized."));
+		UE_LOG(LogCsCoreLibrary, Warning, TEXT("UCsScriptLibrary_Math::MakePlane4f: Direction is NOT normalized."));
 	}
 	return FPlane4f(Origin, NormalIsNormalized ? Normal : Normal.GetSafeNormal());
 }
@@ -366,9 +366,9 @@ FPlane4f UCsScriptLibrary_Math::MakePlane(const FVector3f& Origin, const FVector
 // Intersection
 #pragma region
 
-bool UCsScriptLibrary_Math::RayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection)
+bool UCsScriptLibrary_Math::RayPlaneIntersection3f(const FString& Context, const FCsRay3f& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection)
 {
-	CONDITIONAL_SET_CTXT(RayPlaneIntersection);
+	CONDITIONAL_SET_CTXT(RayPlaneIntersection3f);
 
 	return CsMathLibrary::SafeRayPlaneIntersection(Context, Ray, Plane, OutT, OutIntersection);
 }

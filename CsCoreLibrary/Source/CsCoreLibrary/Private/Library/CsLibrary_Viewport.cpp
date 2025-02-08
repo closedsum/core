@@ -261,6 +261,35 @@ namespace NCsViewport
 				return false;
 			}
 
+			bool FLibrary::DeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& OutWorldPosition, FVector& OutWorldDirection)
+			{
+				check(CanDeprojectScreenToWorldChecked(Context, WorldContext));
+
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
+				UGameViewportClient* GVC  = LocalPlayer->ViewportClient;
+
+				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName()));
+
+				FViewport* Viewport = GVC->Viewport;
+
+				checkf(Viewport, TEXT("%s: Failed to get Viewport from ViewportClient: %s for LocalPlayer: %s."), *Context, *(GVC->GetName()), *(LocalPlayer->GetName()));
+
+				// Get the projection data
+				FSceneViewProjectionData ProjectionData;
+				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
+				{
+					FMatrix const InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
+
+					FSceneView::DeprojectScreenToWorld(ScreenPosition, ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ OutWorldPosition, /*out*/ OutWorldDirection);
+					return true;
+				}
+
+				// Something went wrong, zero things and return false
+				OutWorldPosition = FVector::ZeroVector;
+				OutWorldDirection = FVector::ZeroVector;
+				return false;
+			}
+
 			bool FLibrary::SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				OutWorldPosition = FVector3f::ZeroVector;
@@ -315,6 +344,58 @@ namespace NCsViewport
 
 				return SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, OutWorldPosition, OutWorldDirection);
 			}
+
+			bool FLibrary::SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& OutWorldPosition, FVector& OutWorldDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
+			{
+				OutWorldPosition = FVector::ZeroVector;
+				OutWorldDirection = FVector::ZeroVector;
+
+				if (!CanSafeDeprojectScreenToWorld(Context, WorldContext, Log))
+					return false;
+
+				ULocalPlayer* LocalPlayer = CsPlayerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
+
+				if (!LocalPlayer)
+					return false;
+
+				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
+
+				if (!GVC)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName())));
+					return false;
+				}
+
+				FViewport* Viewport = GVC->Viewport;
+
+				if (!Viewport)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Viewport from ViewportClient: %s for LocalPlayer: %s."), *Context, *(GVC->GetName()), *(LocalPlayer->GetName())));
+					return false;
+				}
+
+				// Get the projection data
+				FSceneViewProjectionData ProjectionData;
+				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
+				{
+					FMatrix const InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
+
+					FSceneView::DeprojectScreenToWorld(ScreenPosition, ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ OutWorldPosition, /*out*/ OutWorldDirection);
+					return true;
+				}
+
+				// Something went wrong, zero things and return false
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Unexpected error."), *Context));
+				return false;
+			}
+
+			bool FLibrary::SafeDeprojectScreenToWorld(const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& OutWorldPosition, FVector& OutWorldDirection)
+			{
+				SET_CONTEXT(SafeDeprojectScreenToWorld);
+
+				return SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, OutWorldPosition, OutWorldDirection);
+			}
+
 
 			FSceneViewport* FLibrary::GetViewportChecked(const FString& Context, const UObject* WorldContext)
 			{
@@ -389,8 +470,22 @@ namespace NCsViewport
 
 				checkf(Success, TEXT("%s: Failed to deproject ScreenPosition: %s."), *Context, *(ScreenPosition.ToString()));
 
-				FCsRay Ray(WorldPosition, WorldDirection, true);
+				FCsRay3f Ray(WorldPosition, WorldDirection, true);
 				float T;
+
+				return CsMathLibrary::RayPlaneIntersectionChecked(Context, Ray, Plane, T, OutIntersection);
+			}
+
+			bool FLibrary::GetScreenWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection)
+			{
+				FVector WorldPosition;
+				FVector WorldDirection;
+				bool Success = DeprojectScreenToWorldChecked(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection);
+
+				checkf(Success, TEXT("%s: Failed to deproject ScreenPosition: %s."), *Context, *(ScreenPosition.ToString()));
+
+				FCsRay Ray(WorldPosition, WorldDirection, true);
+				double T;
 
 				return CsMathLibrary::RayPlaneIntersectionChecked(Context, Ray, Plane, T, OutIntersection);
 			}
@@ -407,13 +502,38 @@ namespace NCsViewport
 					return false;
 				}
 
-				FCsRay Ray(WorldPosition, WorldDirection, true);
+				FCsRay3f Ray(WorldPosition, WorldDirection, true);
 				float T;
 
 				return CsMathLibrary::SafeRayPlaneIntersection(Context, Ray, Plane, T, OutIntersection, Log);
 			}
 
 			bool FLibrary::GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection)
+			{
+				SET_CONTEXT(GetSafeScreenWorldIntersection);
+
+				return GetSafeScreenWorldIntersection(Context, WorldContext, ScreenPosition, Plane, OutIntersection, nullptr);
+			}
+
+			bool FLibrary::GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
+			{
+				FVector WorldPosition = FVector::ZeroVector;
+				FVector WorldDirection = FVector::ZeroVector;
+				bool Success = SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection, Log);
+
+				if (!Success)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to deproject ScreenPosition: %s."), *Context, *(ScreenPosition.ToString())));
+					return false;
+				}
+
+				FCsRay Ray(WorldPosition, WorldDirection, true);
+				double T;
+
+				return CsMathLibrary::SafeRayPlaneIntersection(Context, Ray, Plane, T, OutIntersection, Log);
+			}
+
+			bool FLibrary::GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection)
 			{
 				SET_CONTEXT(GetSafeScreenWorldIntersection);
 

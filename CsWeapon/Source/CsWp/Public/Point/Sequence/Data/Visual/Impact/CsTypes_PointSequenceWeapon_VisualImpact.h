@@ -186,7 +186,9 @@ namespace NCsWeapon
 				{
 					struct CSWP_API FInfo
 					{
-					#define DirectionType NCsWeapon::NPoint::NSequence::NImpact::NVisual::EDirection
+					private:
+
+						using DirectionType = NCsWeapon::NPoint::NSequence::NImpact::NVisual::EDirection;
 
 					private:
 
@@ -230,8 +232,6 @@ namespace NCsWeapon
 
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-					#undef DirectionType
 					};
 				}
 			}

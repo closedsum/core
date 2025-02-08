@@ -113,9 +113,9 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE DataType* GetData() const { return Data; }
-
-	FORCEINLINE const FECsWeaponState& GetCurrentState() const { return CurrentState; }
+	FORCEINLINE UObject* GetWeaponOwner() const					{ return MyOwner; }
+	FORCEINLINE DataType* GetData() const						{ return Data; }
+	FORCEINLINE const FECsWeaponState& GetCurrentState() const	{ return CurrentState; }
 
 #pragma endregion ICsWeapon
 

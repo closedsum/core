@@ -174,7 +174,9 @@ namespace NCsProjectile
 			{
 				struct CSPRJ_API FInfo
 				{
-				#define DirectionType NCsProjectile::NImpact::NVisual::EDirection
+				private:
+
+					using DirectionType = NCsProjectile::NImpact::NVisual::EDirection;
 
 				private:
 
@@ -218,8 +220,6 @@ namespace NCsProjectile
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-				#undef DirectionType
 				};
 			}
 		}

@@ -11,57 +11,58 @@ namespace NCsProjectile
 {
 	namespace NData
 	{
-	#define DataType NCsProjectile::NData::IData
-
-		struct CSPRJ_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
+		namespace NLibrary
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsProjectile::FLog::Warning
+			using DataType = NCsProjectile::NData::IData;
 
-		public:
+			struct CSPRJ_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
+			{
+			#define LogLevel void(*Log)(const FString&) = &NCsProjectile::FLog::Warning
 
-			/**
-			*
-			*
-			* @param Data	Object that implements the interface: DataType (NCsProjectile::NData::IData).
-			* return
-			*/
-			static FString PrintObjectAndClass(const DataType* Data);
+			public:
 
-			/**
-			*
-			*
-			* @param Data	Object that implements the interface: DataType (NCsProjectile::NData::IData).
-			* return
-			*/
-			static FString PrintDataAndClass(const DataType* Data);
+				/**
+				*
+				*
+				* @param Data	Object that implements the interface: DataType (NCsProjectile::NData::IData).
+				* return
+				*/
+				static FString PrintObjectAndClass(const DataType* Data);
 
-			static FString Print(const DataType* Data);
+				/**
+				*
+				*
+				* @param Data	Object that implements the interface: DataType (NCsProjectile::NData::IData).
+				* return
+				*/
+				static FString PrintDataAndClass(const DataType* Data);
 
-			/**
-			*
-			*
-			* @param Context	The calling context.
-			* @param Data
-			* return
-			*/
-			static bool IsValidChecked(const FString& Context, const DataType* Data);
+				static FString Print(const DataType* Data);
 
-			/**
-			*
-			*
-			* @param Context	The calling context.
-			* @param Data
-			* @param Log		(optional)
-			* return
-			*/
-			static bool IsValid(const FString& Context, const DataType* Data, LogLevel);
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Data
+				* return
+				*/
+				static bool IsValidChecked(const FString& Context, const DataType* Data);
+
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Data
+				* @param Log		(optional)
+				* return
+				*/
+				static bool IsValid(const FString& Context, const DataType* Data, LogLevel);
 		
-		#undef LogLevel
-		};
-
-	#undef DataType
+			#undef LogLevel
+			};
+		}
 	}
 }
 
-using CsProjectileDataLibrary = NCsProjectile::NData::FLibrary;
-using CsPrjDataLibrary = NCsProjectile::NData::FLibrary;
+using CsProjectileDataLibrary = NCsProjectile::NData::NLibrary::FLibrary;
+using CsPrjDataLibrary = NCsProjectile::NData::NLibrary::FLibrary;

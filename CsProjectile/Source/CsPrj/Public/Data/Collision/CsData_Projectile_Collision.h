@@ -73,6 +73,9 @@ namespace NCsProjectile
 	}
 }
 
+using CsProjectileCollisionDataType = NCsProjectile::NData::NCollision::ICollision;
+using CsPrjCollisionDataType = NCsProjectile::NData::NCollision::ICollision;
+
 UINTERFACE(BlueprintType)
 class CSPRJ_API UCsData_Projectile_Collision : public UCsGetInterfaceMap
 {

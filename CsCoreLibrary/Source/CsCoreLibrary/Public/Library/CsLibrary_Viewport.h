@@ -136,6 +136,18 @@ namespace NCsViewport
 				static bool DeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection);
 
 				/**
+				* Transforms the given 2D screen space coordinate into a 3D world-space point and direction.
+				* 
+				* @param Context			The calling context.
+				* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ScreenPosition		2D screen space to deproject.
+				* @param OutWorldPosition	(out) Corresponding 3D position in world space.
+				* @param OutWorldDirection	(out) World space direction vector away from the camera at the given 2d point.
+				* return					Whether the deproject was successful or not.
+				*/
+				static bool DeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& OutWorldPosition, FVector& OutWorldDirection);
+
+				/**
 				* Safely transforms the given 2D screen space coordinate into a 3D world-space point and direction.
 				*
 				* @param Context			The calling context.
@@ -158,6 +170,30 @@ namespace NCsViewport
 				* return					Whether the deproject was successful or not.
 				*/
 				static bool SafeDeprojectScreenToWorld(const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection);
+
+				/**
+				* Safely transforms the given 2D screen space coordinate into a 3D world-space point and direction.
+				*
+				* @param Context			The calling context.
+				* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ScreenPosition		2D screen space to deproject.
+				* @param OutWorldPosition	(out) Corresponding 3D position in world space.
+				* @param OutWorldDirection	(out) World space direction vector away from the camera at the given 2d point.
+				* @param Log
+				* return					Whether the deproject was successful or not.
+				*/
+				static bool SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& OutWorldPosition, FVector& OutWorldDirection, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+
+				/**
+				* Safely transforms the given 2D screen space coordinate into a 3D world-space point and direction.
+				*
+				* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ScreenPosition		2D screen space to deproject.
+				* @param OutWorldPosition	(out) Corresponding 3D position in world space.
+				* @param OutWorldDirection	(out) World space direction vector away from the camera at the given 2d point.
+				* return					Whether the deproject was successful or not.
+				*/
+				static bool SafeDeprojectScreenToWorld(const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& OutWorldPosition, FVector& OutWorldDirection);
 
 				/**
 				* Get the Viewport associated with the First Local Player.
@@ -227,6 +263,19 @@ namespace NCsViewport
 				static bool GetScreenWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection);
 
 				/**
+				* Get the intersection between the de-projection of the screen position to a world ray (location and direction)
+				* with a world plane (location and normal).
+				* 
+				* @param Context			The calling context.
+				* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ScreenPosition		2D screen space to deproject.
+				* @param Plane				Location and normal in World Space.
+				* @param OutIntersection	Intersection between ray from ScreenPosition and Plane.
+				* return					Whether the intersection exists or not.
+				*/
+				static bool GetScreenWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection);
+
+				/**
 				* Safely get the intersection between the de-projection of the screen position to a world ray (location and direction)
 				* with a world plane (location and normal).
 				*
@@ -251,6 +300,31 @@ namespace NCsViewport
 				* return					Whether the intersection exists or not.
 				*/
 				static bool GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection);
+
+				/**
+				* Safely get the intersection between the de-projection of the screen position to a world ray (location and direction)
+				* with a world plane (location and normal).
+				*
+				* @param Context			The calling context.
+				* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ScreenPosition		2D screen space to deproject.
+				* @param Plane				Location and normal in World Space.
+				* @param OutIntersection	Intersection between ray from ScreenPosition and Plane.
+				* @param Log
+				* return					Whether the intersection exists or not.
+				*/
+				static bool GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+
+				/**
+				* Safely get the intersection between the de-projection of the screen position to a world ray (location and direction)
+				* with a world plane (location and normal).
+				*
+				* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ScreenPosition		2D screen space to deproject.
+				* @param OutIntersection	Intersection between ray from ScreenPosition and Plane.
+				* return					Whether the intersection exists or not.
+				*/
+				static bool GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection);
 			};
 		}
 	}

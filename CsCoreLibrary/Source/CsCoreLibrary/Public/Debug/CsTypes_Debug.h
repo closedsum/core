@@ -136,16 +136,16 @@ public:
 
 	/** Applied as a translation offset to center and / or transform matrix. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f Location;
+	FVector Location;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
 	ECsDebugDrawRotation RotationType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FRotator3f Rotation;
+	FRotator Rotation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f Extent;
+	FVector Extent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
 	FColor Color;
@@ -164,10 +164,10 @@ public:
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
-		Location(FVector3f::ZeroVector),
+		Location(FVector::ZeroVector),
 		RotationType(ECsDebugDrawRotation::Absolute),
-		Rotation(FRotator3f::ZeroRotator),
-		Extent(FVector3f::ZeroVector),
+		Rotation(FRotator::ZeroRotator),
+		Extent(FVector::ZeroVector),
 		Color(FColor::Red),
 		LifeTime(0.1f),
 		bSolid(false),
@@ -177,12 +177,15 @@ public:
 
 	bool CanDraw(const UObject* WorldContext) const;
 
+	void Draw(const UObject* WorldContext, const FTransform& Transform) const;
 	void Draw(const UObject* WorldContext, const FTransform3f& Transform) const;
 
+	void Draw(const UObject* WorldContext, const FTransform& Transform, const FVector& InExtent) const;
 	void Draw(const UObject* WorldContext, const FTransform3f& Transform, const FVector3f& InExtent) const;
 
 private:
 
+	void Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const FVector& InExtent) const;
 	void Draw_Internal(const UObject* WorldContext, const FTransform3f& Transform, const FVector3f& InExtent) const;
 };
 
@@ -221,13 +224,13 @@ public:
 
 	/** Applied as a translation offset to center and / or transform matrix. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f Location;
+	FVector Location;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
 	ECsDebugDrawRotation RotationType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FRotator3f Rotation;
+	FRotator Rotation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug", meta = (UIMin = "1.0", ClampMin = "1.0"))
 	float MinRadius;
@@ -252,9 +255,9 @@ public:
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
-		Location(FVector3f::ZeroVector),
+		Location(FVector::ZeroVector),
 		RotationType(ECsDebugDrawRotation::Absolute),
-		Rotation(FRotator3f::ZeroRotator),
+		Rotation(FRotator::ZeroRotator),
 		MinRadius(32.0f),
 		MaxRadius(32.0f),
 		Segments(16),
@@ -267,8 +270,11 @@ public:
 	bool CanDraw(const UObject* WorldContext) const;
 	bool CanDraw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar) const;
 
+	void Draw(const UObject* WorldContext, const FTransform& Transform) const;
 	void Draw(const UObject* WorldContext, const FTransform3f& Transform) const;
+	void Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
 	void Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const FVector3f& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
+	void Draw(const UObject* WorldContext, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
 	void Draw(const UObject* WorldContext, const FVector3f& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
 
 	void DrawAtLocation(AActor* Actor, const FECsCVarDraw& OtherCVar, const float& InMinRadius, const float& InMaxRadius) const;
@@ -277,7 +283,9 @@ public:
 
 private:
 
+	void Draw_Internal(const UObject* WorldContext, const FTransform& Transform) const;
 	void Draw_Internal(const UObject* WorldContext, const FTransform3f& Transform) const;
+	void Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const;
 	void Draw_Internal(const UObject* WorldContext, const FTransform3f& Transform, const float& InMinRadius, const float& InMaxRadius) const;
 };
 
@@ -309,13 +317,13 @@ public:
 
 	/** Applied as a translation offset to center and / or transform matrix. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f Location;
+	FVector Location;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
 	ECsDebugDrawRotation RotationType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FRotator3f Rotation;
+	FRotator Rotation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug", meta = (UIMin = "1.0", ClampMin = "1.0"))
 	float MinRadius;
@@ -340,9 +348,9 @@ public:
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
-		Location(FVector3f::ZeroVector),
+		Location(FVector::ZeroVector),
 		RotationType(ECsDebugDrawRotation::Absolute),
-		Rotation(FRotator3f::ZeroRotator),
+		Rotation(FRotator::ZeroRotator),
 		MinRadius(32.0f),
 		MaxRadius(32.0f),
 		Segments(16),
@@ -354,14 +362,20 @@ public:
 
 	bool CanDraw(const UObject* WorldContext) const;
 
+	void Draw(const UObject* WorldContext, const FTransform& Transform) const;
 	void Draw(const UObject* WorldContext, const FTransform3f& Transform) const;
+	void Draw(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const;
 	void Draw(const UObject* WorldContext, const FTransform3f& Transform, const float& InMinRadius, const float& InMaxRadius) const;
+	void Draw(const UObject* WorldContext, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
 	void Draw(const UObject* WorldContext, const FVector3f& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
+	void Draw(const UObject* WorldContext, const FVector& InLocation, const float& Radius) const;
 	void Draw(const UObject* WorldContext, const FVector3f& InLocation, const float& Radius) const;
 
 private:
 
+	void Draw_Internal(const UObject* WorldContext, const FTransform& Transform) const;
 	void Draw_Internal(const UObject* WorldContext, const FTransform3f& Transform) const;
+	void Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const;
 	void Draw_Internal(const UObject* WorldContext, const FTransform3f& Transform, const float& InMinRadius, const float& InMaxRadius) const;
 };
 
@@ -396,13 +410,13 @@ public:
 
 	/** Applied as a translation offset to center and / or transform matrix. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f Location;
+	FVector Location;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
 	ECsDebugDrawRotation RotationType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FRotator3f Rotation;
+	FRotator Rotation;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug", meta = (UIMin = "1.0", ClampMin = "1.0"))
 	float Angle;
@@ -427,9 +441,9 @@ public:
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
-		Location(FVector3f::ZeroVector),
+		Location(FVector::ZeroVector),
 		RotationType(ECsDebugDrawRotation::Absolute),
-		Rotation(FRotator3f::ZeroRotator),
+		Rotation(FRotator::ZeroRotator),
 		Angle(45.0f),
 		Radius(32.0f),
 		Segments(16),
@@ -442,9 +456,13 @@ public:
 	bool CanDraw(const UObject* WorldContext) const;
 	bool CanDraw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar) const;
 
+	void Draw(const UObject* WorldContext, const FTransform& Transform) const;
 	void Draw(const UObject* WorldContext, const FTransform3f& Transform) const;
+	void Draw(const UObject* WorldContext, const float& InAngle, const FTransform& Transform, const float& InRadius) const;
 	void Draw(const UObject* WorldContext, const float& InAngle, const FTransform3f& Transform, const float& InRadius) const;
+	void Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const float& InAngle, const FVector& InLocation, const float& InRadius) const;
 	void Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const float& InAngle, const FVector3f& InLocation, const float& InRadius) const;
+	void Draw(const UObject* WorldContext, const FVector& InLocation, const float& InRadius) const;
 	void Draw(const UObject* WorldContext, const FVector3f& InLocation, const float& InRadius) const;
 
 	void DrawAtLocation(AActor* Actor, const FECsCVarDraw& OtherCVar, const float& InRadius) const;
@@ -452,7 +470,9 @@ public:
 
 private:
 
+	void Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform& Transform) const;
 	void Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform3f& Transform) const;
+	void Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform& Transform, const float& InRadius) const;
 	void Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform3f& Transform, const float& InRadius) const;
 };
 
@@ -484,7 +504,7 @@ public:
 
 	/** Applied as a translation offset to Location. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f Offset;
+	FVector Offset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
@@ -506,7 +526,7 @@ public:
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
-		Offset(FVector3f::ZeroVector),
+		Offset(FVector::ZeroVector),
 		Radius(32.0f),
 		Segments(4),
 		Color(FColor::Red),
@@ -517,6 +537,7 @@ public:
 
 	bool CanDraw(UWorld* World) const;
 
+	void Draw(UWorld* World, const FVector& Location) const;
 	void Draw(UWorld* World, const FVector3f& Location) const;
 };
 
@@ -552,11 +573,11 @@ public:
 
 	/** Applied as a translation offset to Start. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f StartOffset;
+	FVector StartOffset;
 
 	/** Applied as a translation offset to End. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f EndOffset;
+	FVector EndOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
 	FColor Color;
@@ -572,8 +593,8 @@ public:
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
-		StartOffset(FVector3f::ZeroVector),
-		EndOffset(FVector3f::ZeroVector),
+		StartOffset(FVector::ZeroVector),
+		EndOffset(FVector::ZeroVector),
 		Color(FColor::Red),
 		LifeTime(0.1f),
 		Thickness(1.0f)
@@ -582,6 +603,7 @@ public:
 
 	bool CanDraw(const UObject* WorldContext) const;
 
+	void Draw(const UObject* WorldContext, const FVector& Start, const FVector& End) const;
 	void Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& End) const;
 };
 
@@ -613,11 +635,11 @@ public:
 
 	/** Applied as a translation offset to Start. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f StartOffset;
+	FVector StartOffset;
 
 	/** Applied as a translation offset to End. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f EndOffset;
+	FVector EndOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
@@ -639,8 +661,8 @@ public:
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
-		StartOffset(FVector3f::ZeroVector),
-		EndOffset(FVector3f::ZeroVector),
+		StartOffset(FVector::ZeroVector),
+		EndOffset(FVector::ZeroVector),
 		Radius(32.0f),
 		Segments(4),
 		Color(FColor::Red),
@@ -651,12 +673,16 @@ public:
 
 	bool CanDraw(UWorld* World) const;
 
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const float& InLifeTime) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const float& InLifeTime) const;
 
+	void Draw(UWorld* World, const FVector& Start, const FVector& End) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End) const;
 
+	void DrawOnlyLine(UWorld* World, const FVector& Start, const FVector& End) const;
 	void DrawOnlyLine(UWorld* World, const FVector3f& Start, const FVector3f& End) const;
 
+	void DrawOnlyPoint(UWorld* World, const FVector& Location) const;
 	void DrawOnlyPoint(UWorld* World, const FVector3f& Location) const;
 };
 
@@ -692,17 +718,17 @@ public:
 
 	/** Applied as a translation offset to Start. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f StartOffset;
+	FVector StartOffset;
 
 	/** Applied as a translation offset to End. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f EndOffset;
+	FVector EndOffset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
 	ECsDebugDrawRotation RotationType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FRotator3f Rotation;
+	FRotator Rotation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
 	FColor Color;
@@ -725,10 +751,10 @@ public:
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
-		StartOffset(FVector3f::ZeroVector),
-		EndOffset(FVector3f::ZeroVector),
+		StartOffset(FVector::ZeroVector),
+		EndOffset(FVector::ZeroVector),
 		RotationType(ECsDebugDrawRotation::Offset),
-		Rotation(FRotator3f::ZeroRotator),
+		Rotation(FRotator::ZeroRotator),
 		Color(FColor::Red),
 		LifeTime(0.1f),
 		Size(1.0f),
@@ -739,9 +765,13 @@ public:
 
 	bool CanDraw(const UObject* WorldContext) const;
 
+	void Draw(const UObject* WorldContext, const FVector& Start, const FRotator& InRotation) const;
 	void Draw(const UObject* WorldContext, const FVector3f& Start, const FRotator3f& InRotation) const;
+	void Draw(const UObject* WorldContext, const FVector& Start, const FRotator& InRotation, const float& InLength) const;
 	void Draw(const UObject* WorldContext, const FVector3f& Start, const FRotator3f& InRotation, const float& InLength) const;
+	void Draw(const UObject* WorldContext, const FVector& Start, const FVector& Direction, const float& InLength) const;
 	void Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& Direction, const float& InLength) const;
+	void Draw(const UObject* WorldContext, const FVector& Start, const FVector& Direction) const;
 	void Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& Direction) const;
 };
 
@@ -773,7 +803,7 @@ public:
 
 	/** Applied as a translation offset to Location. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
-	FVector3f Offset;
+	FVector Offset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCoreLibrary|Debug")
 	FColor Color;
@@ -792,7 +822,7 @@ public:
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
-		Offset(FVector3f::ZeroVector),
+		Offset(FVector::ZeroVector),
 		Color(FColor::Red),
 		LifeTime(0.1f),
 		bDrawShadow(false),
@@ -802,6 +832,7 @@ public:
 
 	bool CanDraw(const UObject* WorldContext) const;
 
+	void Draw(const UObject* WorldContext, const FVector& Location, const FString& Text) const;
 	void Draw(const UObject* WorldContext, const FVector3f& Location, const FString& Text) const;
 };
 
@@ -862,8 +893,10 @@ public:
 
 	bool CanDraw(const UObject* WorldContext) const;
 
+	void Draw(const UObject* WorldContext, const FVector& Start, const FVector& End, const FHitResult& Hit) const;
 	void Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& End, const FHitResult& Hit) const;
 
+	void Draw(const UObject* WorldContext, const FVector& Start, const FVector& End, const bool& BlockingHit, const FVector& ImpactPoint) const;
 	void Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& End, const bool& BlockingHit, const FVector3f& ImpactPoint) const;
 };
 
@@ -916,6 +949,7 @@ public:
 
 	bool CanDraw(UWorld* World) const;
 
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FVector& HalfSize, const FRotator& Rotation, const FHitResult& Hit) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const FVector3f& HalfSize, const FRotator3f& Rotation, const FHitResult& Hit) const;
 };
 
@@ -968,6 +1002,7 @@ public:
 
 	bool CanDraw(UWorld* World) const;
 
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const FHitResult& Hit) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const float& Radius, const FHitResult& Hit) const;
 };
 
@@ -1020,6 +1055,7 @@ public:
 
 	bool CanDraw(UWorld* World) const;
 
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const;
 };
 
@@ -1082,6 +1118,7 @@ public:
 	* @param End	End location of the trace.
 	* @param Hit	FHitResult information of the trace.
 	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FHitResult& Hit) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const FHitResult& Hit) const;
 
 	/**
@@ -1094,6 +1131,7 @@ public:
 	* @param Rotation	Orientation of the box. 
 	* @param Hit		FHitResult information of the trace.
 	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FVector& HalfSize, const FRotator& Rotation, const FHitResult& Hit) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const FVector3f& HalfSize, const FRotator3f& Rotation, const FHitResult& Hit) const;
 
 	/**
@@ -1105,6 +1143,7 @@ public:
 	* @param Radius Radius of the sphere. 
 	* @param Hit	FHitResult information of the trace.
 	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const FHitResult& Hit) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const float& Radius, const FHitResult& Hit) const;
 	
 	/**
@@ -1117,6 +1156,7 @@ public:
 	* @param HalfHeight Half height of the capsule.
 	* @param Hit		FHitResult information of the trace.
 	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const;
 
 	/**
@@ -1128,6 +1168,7 @@ public:
 	* @param Shape	Shape of the trace (Line, Box, Sphere, or Capsule). 
 	* @param Hit	FHitResult information of the trace.
 	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FCollisionShape* Shape, const FHitResult& Hit) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const FCollisionShape* Shape, const FHitResult& Hit) const;
 
 	/**
@@ -1138,6 +1179,7 @@ public:
 	* @param End	End location of the trace.
 	* @param Shape	Shape of the trace (Line, Box, Sphere, or Capsule). 
 	*/
+	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FCollisionShape* Shape) const;
 	void Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const FCollisionShape* Shape) const;
 };
 

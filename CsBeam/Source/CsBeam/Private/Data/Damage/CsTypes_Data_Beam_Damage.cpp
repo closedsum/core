@@ -19,6 +19,8 @@ void FCsBeamData_DamagePoint::SetData(PointDataProxyType* Data)
 
 #pragma endregion FCsBeamData_DamagePoint
 
+using SphereDataProxyType = NCsDamage::NData::NShape::NSphere::NProxy::FProxy;
+
 // FCsBeamData_DamageSphere
 #pragma region
 

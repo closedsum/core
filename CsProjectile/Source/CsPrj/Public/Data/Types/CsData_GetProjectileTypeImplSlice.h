@@ -32,12 +32,10 @@ public:
 	{
 	}
 
-#define SliceType NCsProjectile::NData::NType::FImplSlice
+	using SliceType = NCsProjectile::NData::NType::FImplSlice;
 
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
-
-#undef SliceType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 };
@@ -63,6 +61,10 @@ namespace NCsProjectile
 			public:
 
 				static const FName Name;
+
+			private:
+
+				using ThisType = NCsProjectile::NData::NType::FImplSlice;
 
 			private:
 
@@ -115,13 +117,11 @@ namespace NCsProjectile
 
 				static void Deconstruct(void* Ptr)
 				{
-					delete static_cast<NCsProjectile::NData::NType::FImplSlice*>(Ptr);
+					delete static_cast<ThisType*>(Ptr);
 				}
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-			#undef ParamsType
 			};
 		}
 	}

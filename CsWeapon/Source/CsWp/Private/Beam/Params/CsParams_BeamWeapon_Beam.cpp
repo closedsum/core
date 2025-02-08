@@ -298,11 +298,10 @@ namespace NCsWeapon
 		{
 			namespace NBeam
 			{
+				using DirectionMapType = NCsWeapon::NBeam::NParams::NBeam::EMDirection;
+
 				bool FDirectionInfo::IsValidChecked(const FString& Context) const
 				{
-					typedef NCsWeapon::NBeam::NParams::NBeam::EMDirection DirectionMapType;
-					typedef NCsWeapon::NBeam::NParams::NBeam::EDirection DirectionType;
-
 					// Check Type is Valid
 					check(DirectionMapType::Get().IsValidEnumChecked(Context, GetType()));
 					// BoneOrSocket is Valid
@@ -318,9 +317,6 @@ namespace NCsWeapon
 
 				bool FDirectionInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 				{
-					typedef NCsWeapon::NBeam::NParams::NBeam::EMDirection DirectionMapType;
-					typedef NCsWeapon::NBeam::NParams::NBeam::EDirection DirectionType;
-
 					// Check Type is Valid
 					CS_IS_ENUM_VALID(DirectionMapType, DirectionType, GetType())
 					// BoneOrSocket is Valid

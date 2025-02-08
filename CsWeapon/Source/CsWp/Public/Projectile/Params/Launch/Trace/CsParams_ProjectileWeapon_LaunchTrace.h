@@ -28,8 +28,16 @@ namespace NCsWeapon
 
 						virtual ~ITrace() {}
 
-					#define TraceStartType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart
-					#define TraceDirectionType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection
+					private:
+
+						// Allow clearer names without name collisions
+						struct _
+						{
+							using TraceStartType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart;
+							using TraceDirectionType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection;
+						};
+
+					public:
 
 						/**
 						*
@@ -50,14 +58,14 @@ namespace NCsWeapon
 						*
 						* return Trace Start Type
 						*/
-						virtual const TraceStartType& GetTraceStartType() const = 0;
+						virtual const _::TraceStartType& GetTraceStartType() const = 0;
 
 						/**
 						*
 						*
 						* return Trace Direction Type
 						*/
-						virtual const TraceDirectionType& GetTraceDirectionType() const = 0;
+						virtual const _::TraceDirectionType& GetTraceDirectionType() const = 0;
 
 						/**
 						*
@@ -65,9 +73,6 @@ namespace NCsWeapon
 						* return Distance
 						*/
 						virtual const float& GetTraceDistance() const = 0;
-
-					#undef TraceStartType
-					#undef TraceDirectionType
 					};
 				}
 			}

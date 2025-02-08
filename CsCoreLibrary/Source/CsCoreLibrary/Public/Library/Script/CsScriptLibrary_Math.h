@@ -185,7 +185,7 @@ public:
 	* return			Ray
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCoreLibrary|Library|Math|Ray", meta = (Keywords = "construct build", NativeMakeFunc, AutoCreateRefTerm = "Origin,Direction,Distance"))
-	static FCsRay MakeRay(const FVector3f& Origin, const FVector3f& Direction, const float& Distance);
+	static FCsRay3f MakeRay3f(const FVector3f& Origin, const FVector3f& Direction, const float& Distance);
 
 	/*
 	* Make a Ray from origin and direction.
@@ -196,7 +196,7 @@ public:
 	* return			Ray
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCoreLibrary|Library|Math|Ray", meta = (Keywords = "construct build", NativeMakeFunc, AutoCreateRefTerm = "Origin,Direction"))
-	static FCsRay MakeRay_OriginAndDirection(const FVector3f& Origin, const FVector3f& Direction);
+	static FCsRay3f MakeRay3f_OriginAndDirection(const FVector3f& Origin, const FVector3f& Direction);
 
 #pragma endregion Ray
 
@@ -212,7 +212,7 @@ public:
 	* return		Plane
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCoreLibrary|Library|Math|Plane", meta = (Keywords = "construct build", NativeMakeFunc, AutoCreateRefTerm = "Origin,Normal"))
-	static FPlane4f MakePlane(const FVector3f& Origin, const FVector3f& Normal);
+	static FPlane4f MakePlane4f(const FVector3f& Origin, const FVector3f& Normal);
 
 #pragma endregion Plane
 
@@ -231,7 +231,7 @@ public:
 	* return					True if the intersection test was successful.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCoreLibrary|Library|Math|Intersection", meta = (AutoCreateRefTerm = "Context,Ray,Plane,OutT,OutIntersection"))
-	static bool RayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection);
+	static bool RayPlaneIntersection3f(const FString& Context, const FCsRay3f& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection);
 
 #pragma endregion Intersection
 

@@ -32,6 +32,10 @@ private:
 public:
 
 	/**
+	*/
+	virtual UObject* GetWeaponOwner() const = 0;
+
+	/**
 	*
 	*
 	* return
@@ -74,6 +78,19 @@ public:
 	* @param Object		Object->GetClass() that implements the interface: ICsWeapon.
 	* return			.
 	*/
+	DECLARE_DELEGATE_RetVal_OneParam(UObject* /*WeaponOwner*/, FScript_GetWeaponOwner, UObject* /*Object*/);
+
+	/** Delegate type for . 
+		 The Data implements a script interface of type: ICsWeapon and the UClass
+		 associated with the Object have ImplementsInterface(UCsWeapon::StaticClass()) == true. */
+	FScript_GetWeaponOwner Script_GetWeaponOwner_Impl;
+
+	/**
+	* Delegate type for
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsWeapon.
+	* return			.
+	*/
 	DECLARE_DELEGATE_RetVal_OneParam(DataType* /*Data*/, FScript_GetData, UObject* /*Object*/);
 
 	/** Delegate type for . 
@@ -98,6 +115,7 @@ public:
 
 	FCsWeapon() :
 		Super(),
+		Script_GetWeaponOwner_Impl(),
 		Script_GetData_Impl(),
 		Script_GetCurrentState_Impl()
 	{
@@ -130,6 +148,8 @@ public:
 // ICsWeapon
 #pragma region
 public:
+
+	UObject* GetWeaponOwner();
 
 	DataType* GetData();
 

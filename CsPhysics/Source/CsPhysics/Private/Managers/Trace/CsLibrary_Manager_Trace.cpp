@@ -247,8 +247,8 @@ namespace NCsTrace
 				Request->Type				  = ECsTraceType::Sweep;
 				Request->Method				  = ECsTraceMethod::Single;
 				Request->Query				  = ECsTraceQuery::Channel;
-				Request->Start				  = CsMathLibrary::Convert(Start);
-				Request->End				  = CsMathLibrary::Convert(Start);
+				Request->Start				  = Start;
+				Request->End				  = Start;
 				Request->Channel			  = Params.Channel;
 				Request->Params.bTraceComplex = Params.bTraceComplex;
 				Request->Shape.SetSphere(Params.Radius);
@@ -315,8 +315,8 @@ namespace NCsTrace
 			Request->Type				  = ECsTraceType::Sweep;
 			Request->Method				  = ECsTraceMethod::Single;
 			Request->Query				  = ECsTraceQuery::Channel;
-			Request->Start				  = CsMathLibrary::Convert(Start);
-			Request->End				  = CsMathLibrary::Convert(Start);
+			Request->Start				  = Start;
+			Request->End				  = Start;
 			Request->Channel			  = Params.Channel;
 			Request->Params.bTraceComplex = Params.bTraceComplex;
 			Request->Shape.SetSphere(Params.Radius);
@@ -376,9 +376,9 @@ namespace NCsTrace
 			Request->Type	  = ECsTraceType::Sweep;
 			Request->Method   = ECsTraceMethod::Multi;
 			Request->Query	  = ECsTraceQuery::Channel;
-			Request->Start	  = CsMathLibrary::Convert(Component->GetComponentLocation());
-			Request->End	  = CsMathLibrary::Convert(Component->GetComponentLocation());
-			Request->Rotation = CsMathLibrary::Convert(Component->GetComponentRotation());
+			Request->Start	  = Component->GetComponentLocation();
+			Request->End	  = Component->GetComponentLocation();
+			Request->Rotation = Component->GetComponentRotation();
 			Request->SetShape(Component);
 			Request->Channel						  = Channel;
 			Request->Params							  = Params;
@@ -419,9 +419,9 @@ namespace NCsTrace
 			Request->Type	  = ECsTraceType::Sweep;
 			Request->Method	  = ECsTraceMethod::Multi;
 			Request->Query	  = ECsTraceQuery::Channel;
-			Request->Start	  = CsMathLibrary::Convert(Component->GetComponentLocation());
-			Request->End	  = CsMathLibrary::Convert(Component->GetComponentLocation());
-			Request->Rotation = CsMathLibrary::Convert(Component->GetComponentRotation());
+			Request->Start	  = Component->GetComponentLocation();
+			Request->End	  = Component->GetComponentLocation();
+			Request->Rotation = Component->GetComponentRotation();
 			Request->SetShape(Component);
 			Request->Channel						  = Channel;
 			Request->Params							  = Params;
@@ -483,9 +483,9 @@ namespace NCsTrace
 			Request->Type	  = ECsTraceType::Sweep;
 			Request->Method   = ECsTraceMethod::Multi;
 			Request->Query	  = ECsTraceQuery::Channel;
-			Request->Start	  = CsMathLibrary::Convert(Component->GetComponentLocation());
-			Request->End	  = CsMathLibrary::Convert(Component->GetComponentLocation());
-			Request->Rotation = CsMathLibrary::Convert(Component->GetComponentRotation());
+			Request->Start	  = Component->GetComponentLocation();
+			Request->End	  = Component->GetComponentLocation();
+			Request->Rotation = Component->GetComponentRotation();
 			Request->SetShape(Component);
 			Request->Channel = Channel;
 			Request->Params  = Params;
@@ -518,7 +518,7 @@ namespace NCsTrace
 			// Screen
 		#pragma region
 
-		ResponseType* FLibrary::TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const float& Distance, const ECollisionChannel& Channel)
+		ResponseType* FLibrary::TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const float& Distance, const ECollisionChannel& Channel)
 		{
 			USING_NS_CACHED
 
@@ -528,8 +528,8 @@ namespace NCsTrace
 
 			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
 
-			FVector3f WorldOrigin;
-			FVector3f WorldDirection;
+			FVector WorldOrigin;
+			FVector WorldDirection;
 
 			if (ViewportLibrary::DeprojectScreenToWorldChecked(Context, WorldContext, ScreenPosition, WorldOrigin, WorldDirection))
 			{

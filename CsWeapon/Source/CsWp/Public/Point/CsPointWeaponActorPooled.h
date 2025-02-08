@@ -65,12 +65,14 @@ class CSWP_API ACsPointWeaponActorPooled : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
-#define PooledCacheType NCsPooledObject::NCache::ICache
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define DataType NCsWeapon::NData::IData
-#define PointWeaponDataType NCsWeapon::NPoint::NData::IData
-#define SoundPayloadType NCsSound::NPayload::IPayload
-#define FXPayloadType NCsFX::NPayload::IPayload
+private:
+
+	using PooledCacheType = NCsPooledObject::NCache::ICache;
+	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+	using DataType = NCsWeapon::NData::IData;
+	using PointWeaponDataType = NCsWeapon::NPoint::NData::IData;
+	using SoundPayloadType = NCsSound::NPayload::IPayload;
+	using FXPayloadType = NCsFX::NPayload::IPayload;
 
 // UObject Interface
 #pragma region
@@ -174,13 +176,16 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE DataType* GetData() const { return Data; }
-
-	FORCEINLINE PointWeaponDataType* GetPointWeaponData() const { return PointWeaponData; }
-
-	FORCEINLINE const FECsWeaponState& GetCurrentState() const { return CurrentState; }
+	FORCEINLINE UObject* GetWeaponOwner() const					{ return MyOwner; }
+	FORCEINLINE DataType* GetData() const						{ return Data; }
+	FORCEINLINE const FECsWeaponState& GetCurrentState() const	{ return CurrentState; }
 
 #pragma endregion ICsWeapon
+
+// Weapon
+#pragma region
+
+#pragma endregion Weapon
 
 // ICsPointWeapon
 #pragma region
@@ -193,6 +198,14 @@ public:
 	void StopFire();
 
 #pragma endregion ICsPointWeapon
+
+// PointWeapon
+#pragma region
+public:
+
+	FORCEINLINE PointWeaponDataType* GetPointWeaponData() const { return PointWeaponData; }
+
+#pragma endregion PointWeapon
 
 // ICsWeapon_Event
 #pragma region
@@ -608,11 +621,4 @@ public:
 	FString PrintNameClassAndOwner();
 
 #pragma endregion Print
-
-#undef PooledCacheType
-#undef PooledPayloadType
-#undef DataType
-#undef PointWeaponDataType
-#undef SoundPayloadType
-#undef FXPayloadType
 };

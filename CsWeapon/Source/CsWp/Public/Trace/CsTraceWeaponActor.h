@@ -41,10 +41,12 @@ class CSWP_API ACsTraceWeaponActor : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
-#define DataType NCsWeapon::NData::IData
-#define TraceImplType NCsWeapon::NTrace::NImpl::NTrace::FImpl
-#define FXImplType NCsWeapon::NTrace::NImpl::NFX::FImpl
-#define SoundImplType NCsWeapon::NTrace::NImpl::NSound::FImpl
+private:
+
+	using DataType = NCsWeapon::NData::IData;
+	using TraceImplType = NCsWeapon::NTrace::NImpl::NTrace::FImpl;
+	using FXImplType = NCsWeapon::NTrace::NImpl::NFX::FImpl;
+	using SoundImplType = NCsWeapon::NTrace::NImpl::NSound::FImpl;
 
 // UObject Interface
 #pragma region
@@ -98,9 +100,9 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE DataType* GetData() const { return Data; }
-
-	FORCEINLINE const FECsWeaponState& GetCurrentState() const { return CurrentState; }
+	FORCEINLINE UObject* GetWeaponOwner() const					{ return MyOwner; }
+	FORCEINLINE DataType* GetData() const						{ return Data; }
+	FORCEINLINE const FECsWeaponState& GetCurrentState() const	{ return CurrentState; }
 
 #pragma endregion ICsWeapon
 
@@ -370,9 +372,4 @@ public:
 	FString PrintNameClassAndOwner();
 
 #pragma endregion Print
-
-#undef DataType
-#undef TraceImplType
-#undef FXImplType
-#undef SoundImplType
 };

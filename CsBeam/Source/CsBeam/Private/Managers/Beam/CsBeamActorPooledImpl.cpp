@@ -738,7 +738,7 @@ void ACsBeamActorPooledImpl::FCollisionImpl::PerformPass()
 
 	RequestType* Request = TraceManagerLibrary::AllocateRequestChecked(Context, Outer);
 
-	Request->Start = CsMathLibrary::Convert(Outer->GetActorLocation());
+	Request->Start = Outer->GetActorLocation();
 	
 	const FVector3f Dir = CsMathLibrary::Convert(Outer->GetActorRotation().Vector());
 	FVector3f Scale	    = FVector3f::OneVector;

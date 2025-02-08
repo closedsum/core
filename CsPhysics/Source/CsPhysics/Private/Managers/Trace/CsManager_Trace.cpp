@@ -532,8 +532,8 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 	const ECsTraceMethod& Method = Request->Method;
 	const ECsTraceQuery& Query	 = Request->Query;
 
-	const FVector3d Start	  = CsMathLibrary::Convert(Request->Start);
-	const FVector3d End		  = CsMathLibrary::Convert(Request->End);
+	const FVector Start		  = Request->Start;
+	const FVector End		  = Request->End;
 	ECollisionChannel Channel = Request->Channel;
 	const FName& ProfileName  = Request->ProfileName;
 
@@ -569,7 +569,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 	else
 	if (Type == ECsTraceType::Sweep)
 	{
-		FQuat4d Quat = CsMathLibrary::Convert(Request->Rotation.Quaternion());
+		FQuat Quat = Request->Rotation.Quaternion();
 
 		// AsyncSweepByChannel
 		if (Query == ECsTraceQuery::Channel)
@@ -593,7 +593,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 	else
 	if (Type == ECsTraceType::Overlap)
 	{
-		FQuat4d Quat = CsMathLibrary::Convert(Request->Rotation.Quaternion());
+		FQuat Quat = Request->Rotation.Quaternion();
 
 		// AsyncOverlapByChannel
 		if (Query == ECsTraceQuery::Channel)
@@ -641,8 +641,8 @@ void UCsManager_Trace::DrawRequest(const RequestType* Request) const
 		const FCsSettings_Manager_Trace_Debug& Settings = FCsSettings_Manager_Trace_Debug::Get();
 
 		const FCollisionShape& Shape = Request->Shape;
-		const FVector3f& Start		 = Request->Start;
-		const FVector3f& End		 = Request->End;
+		const FVector& Start		 = Request->Start;
+		const FVector& End			 = Request->End;
 
 		Settings.DrawRequest.Draw(GetWorld(), Start, End, &Shape);
 	}
@@ -755,8 +755,8 @@ void UCsManager_Trace::DrawResponse(const RequestType* Request, const ResponseTy
 		const FCsSettings_Manager_Trace_Debug& Settings = FCsSettings_Manager_Trace_Debug::Get();
 
 		const FCollisionShape& Shape = Request->Shape;
-		const FVector3f& Start		 = Request->Start;
-		const FVector3f& End		 = Request->End;
+		const FVector& Start		 = Request->Start;
+		const FVector& End			 = Request->End;
 
 		const FHitResult& Hit = Response->bResult ? Response->OutHits[CS_FIRST] : NCsCollision::NHit::Default;
 
@@ -825,8 +825,8 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 		const ECsTraceMethod& Method = Request->Method;
 		const ECsTraceQuery& Query	 = Request->Query;
 
-		const FVector3d Start	  = CsMathLibrary::Convert(Request->Start);
-		const FVector3d End		  = CsMathLibrary::Convert(Request->End);
+		const FVector Start		  = Request->Start;
+		const FVector End		  = Request->End;
 		ECollisionChannel Channel = Request->Channel;
 		const FName& ProfileName  = Request->ProfileName;
 
@@ -896,7 +896,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 		else
 		if (Request->Type == ECsTraceType::Sweep)
 		{
-			FQuat4d Quat = CsMathLibrary::Convert(Request->Rotation.Quaternion());
+			FQuat Quat = Request->Rotation.Quaternion();
 
 			// Test
 			if (Method == ECsTraceMethod::Test)
@@ -952,7 +952,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 		else
 		if (Request->Type == ECsTraceType::Overlap)
 		{
-			FQuat4d Quat = CsMathLibrary::Convert(Request->Rotation.Quaternion());
+			FQuat Quat = Request->Rotation.Quaternion();
 
 			// Test
 			if (Method == ECsTraceMethod::Test)
@@ -999,7 +999,7 @@ ResponseType* UCsManager_Trace::Trace(RequestType* Request)
 		else
 		if (Request->Type == ECsTraceType::OverlapBlocking)
 		{
-			FQuat4d Quat = CsMathLibrary::Convert(Request->Rotation.Quaternion());
+			FQuat Quat = Request->Rotation.Quaternion();
 
 			// Test
 			if (Method == ECsTraceMethod::Test)

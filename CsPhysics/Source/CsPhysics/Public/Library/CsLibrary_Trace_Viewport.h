@@ -48,6 +48,7 @@ namespace NCsViewport
 					* @param Distance		(optional) The distance to project outward from the Request->Start.
 					* return				Response
 					*/
+					static ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f);
 					static ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f);
 
 					/**
@@ -65,6 +66,7 @@ namespace NCsViewport
 					* @param Log			(optional)
 					* return				Response
 					*/
+					static ResponseType* SafeTrace(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning);
 					static ResponseType* SafeTrace(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f, void(*Log)(const FString&) = &NCsPhysics::FLog::Warning);
 
 					/**
@@ -80,6 +82,7 @@ namespace NCsViewport
 					* @param Distance		(optional) The distance to project outward from the Request->Start.
 					* return				Response
 					*/
+					static ResponseType* SafeTrace(const UObject* WorldContext, const FVector2D& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f);
 					static ResponseType* SafeTrace(const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f);
 
 				#pragma endregion Trace

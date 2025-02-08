@@ -90,7 +90,7 @@ namespace NCsWeapon
 
 				FImpl::~FImpl()
 				{
-					CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(TraceScopedHandle);
+					CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(TraceScopedHandle)
 				}
 
 				using DataType = NCsWeapon::NData::IData;
@@ -207,9 +207,7 @@ namespace NCsWeapon
 						// Try to get camera through the owner
 						if (Owner)
 						{
-							typedef NCsCamera::FLibrary CameraLibrary;
-
-							return CameraLibrary::GetLocationChecked(Context, Owner);
+							return CsCameraLibrary::GetLocation3fChecked(Context, Owner);
 						}
 						checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(PrintOuterNameAndClass()));
 					}
@@ -268,10 +266,10 @@ namespace NCsWeapon
 	
 						// AActor
 						if (AActor* Actor = Cast<AActor>(Owner))
-							return NCsRotationRules::GetRotation(Actor, DirectionRules).Vector();
+							return NCsRotationRules::GetRotation3f(Actor, DirectionRules).Vector();
 						// USceneComponent
 						if (USceneComponent* OwnerAsComponent = Cast<USceneComponent>(Owner))
-							return NCsRotationRules::GetRotation(OwnerAsComponent, DirectionRules).Vector();
+							return NCsRotationRules::GetRotation3f(OwnerAsComponent, DirectionRules).Vector();
 						checkf(0, TEXT("%s: Failed to get Direction from %s."), *Context, *(PrintOuterNameClassAndOwner()));
 					}
 					// Bone
@@ -289,7 +287,7 @@ namespace NCsWeapon
 					{
 						CS_IS_PTR_NULL_CHECKED(Component)
 		
-						const FRotator3f Rotation = NCsRotationRules::GetRotation(Component, DirectionRules);
+						const FRotator3f Rotation = NCsRotationRules::GetRotation3f(Component, DirectionRules);
 
 						return Rotation.Vector();
 					}
@@ -299,9 +297,7 @@ namespace NCsWeapon
 						// Try to get camera through the owner
 						if (Owner)
 						{
-							typedef NCsCamera::FLibrary CameraLibrary;
-
-							return CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
+							return CsCameraLibrary::GetDirection3fChecked(Context, Owner, DirectionRules);
 						}
 						checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(PrintOuterNameAndClass()));
 					}
@@ -313,10 +309,8 @@ namespace NCsWeapon
 						// direction the Owner's Camera is looking
 						if (Owner)
 						{
-							typedef NCsCamera::FLibrary CameraLibrary;
-
-							const FVector3f CameraStart = CameraLibrary::GetLocationChecked(Context, Owner);
-							const FVector3f Dir		  = CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
+							const FVector3f CameraStart = CsCameraLibrary::GetLocation3fChecked(Context, Owner);
+							const FVector3f Dir		  = CsCameraLibrary::GetDirection3fChecked(Context, Owner, DirectionRules);
 							const FVector3f End		  = CameraStart + TraceParams->GetDistance() * Dir;
 
 							FHitResult Hit;
@@ -432,8 +426,8 @@ namespace NCsWeapon
 					UCsManager_Trace* Manager_Trace = CsTraceManagerLibrary::GetChecked(Context, Outer);
 
 					CsTraceRequestType* Request = Manager_Trace->AllocateRequest();
-					Request->Start	= Start;
-					Request->End	= End;
+					Request->Start	= CsMathLibrary::Convert(Start);
+					Request->End	= CsMathLibrary::Convert(End);
 
 					// Get collision information related to the trace.
 					typedef NCsWeapon::NTrace::NData::IData WeaponTraceDataType;
@@ -489,8 +483,8 @@ namespace NCsWeapon
 					UCsManager_Trace* Manager_Trace = CsTraceManagerLibrary::GetChecked(Context, Outer);
 	
 					CsTraceRequestType* Request = Manager_Trace->AllocateRequest();
-					Request->Start = Start;
-					Request->End   = End;
+					Request->Start = CsMathLibrary::Convert(Start);
+					Request->End   = CsMathLibrary::Convert(End);
 
 					// Get collision information related to the trace.
 					typedef NCsWeapon::NTrace::NData::IData WeaponTraceDataType;

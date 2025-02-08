@@ -8,6 +8,7 @@
 //#include "Fire/TimeBetweenShots/CsWeapon_Fire_TimeBetweenShots.h"
 //#include "Fire/TimeBetweenShots/CsWeapon_Fire_TimeBetweenShots_Event.h"
 // Types
+#include "CsMacro_Namespace.h"
 #include "CsMacro_Cached.h"
 
 #include "CsWeapon_Fire_ProjectileImpl.generated.h"
@@ -49,7 +50,7 @@ namespace NCsWeapon
 						{
 						}
 
-						FORCEINLINE bool UseCacheLdocation() const { return bCachedLocation; }
+						FORCEINLINE bool UseCachedLocation() const { return bCachedLocation; }
 
 						FORCEINLINE void SetCachedLocation(const FVector& Value)
 						{
@@ -146,6 +147,10 @@ namespace NCsWeapon
 						}
 					};
 
+					/**
+					* Describes any information for a Projectile being "launched".
+					*  Projectile is an object that implements the interface: ICsProjectile
+					*/
 					struct FPayload
 					{
 					private:
@@ -157,6 +162,7 @@ namespace NCsWeapon
 
 						ShotType Shot;
 
+						/** Whether to use any Spread applied to the "launch". */
 						bool bSpread;
 
 						SpreadType Spread;
@@ -167,6 +173,8 @@ namespace NCsWeapon
 							Spread()
 						{
 						}
+			
+						FORCEINLINE bool HasSpread() const { return bSpread; }
 					};
 				}
 			}
@@ -198,7 +206,7 @@ private:
 	// Allow clearer names without name collisions
 	struct _
 	{
-		using LaunchPayloadType = NCsWeapon::NFire::NProjectile::NLaunch::NPayload::FPayload;
+		using PayloadType = NCsWeapon::NFire::NProjectile::NLaunch::NPayload::FPayload;
 	};
 
 public:
@@ -222,7 +230,7 @@ public:
 	* 
 	* @param Payload.
 	*/
-	virtual FVector GetLaunchLocation(const _::LaunchPayloadType& Payload) = 0;
+	virtual FVector GetLaunchLocation(const _::PayloadType& Payload) = 0;
 
 	/**
 	* Get the Location a Projectile should be "launched" from.
@@ -231,18 +239,21 @@ public:
 	virtual FVector GetLaunchLocation() = 0;
 
 
-	virtual FVector GetLaunchDirection(const _::LaunchPayloadType& LaunchPayload) = 0;
+	virtual FVector GetLaunchDirection(const _::PayloadType& LaunchPayload) = 0;
 
 
 	virtual FVector GetLaunchDirection()  = 0;
 
-	void Launch(const _::LaunchPayloadType& LaunchPayload);
+	void Launch(const _::PayloadType& LaunchPayload);
 };
 
 CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsWeapon_Fire_ProjectileImpl)
 
 class ICsWeapon;
+class ICsProjectileWeapon;
 struct FCsRoutine;
+
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILaunch)
 
 UCLASS(BlueprintType)
 class CSWP_API UCsWeapon_Fire_ProjectileImpl : public UActorComponent,
@@ -255,14 +266,15 @@ private:
 
 	CS_USING_CACHED_FUNCTION_NAME(CsWeapon_Fire_ProjectileImpl);
 
-	using LaunchPayloadType = NCsWeapon::NFire::NProjectile::NLaunch::NPayload::FPayload;
+	using PayloadType = NCsWeapon::NFire::NProjectile::NLaunch::NPayload::FPayload;
+	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::ILaunch;
 
 // ICsWeapon_Component
 #pragma region
 public:
 
-	FORCEINLINE void SetWeapon(ICsWeapon* InWeapon) { Weapon = InWeapon; }
-	FORCEINLINE ICsWeapon* GetWeapon() const		{ return Weapon; }
+	void SetWeapon(ICsWeapon* InWeapon);
+	FORCEINLINE ICsWeapon* GetWeapon() const { return Weapon; }
 
 #pragma endregion ICsWeapon_Component
 
@@ -272,6 +284,10 @@ private:
 
 	ICsWeapon* Weapon;
 
+	UObject* WeaponAsObject;
+
+	ICsProjectileWeapon* ProjectileWeapon;
+
 #pragma endregion Weapon_Component
 
 // ICsWeapon_Fire_Projectile
@@ -280,12 +296,12 @@ public:
 
 	FORCEINLINE void SetLaunchComponentLocation(USceneComponent* Component)  { ComponentLocation = Component; }
 	FORCEINLINE void SetLaunchComponentDirection(USceneComponent* Component) { ComponentDirection = Component; }
-	FVector GetLaunchLocation(const LaunchPayloadType& Payload);
-	FORCEINLINE FVector GetLaunchLocation() { return GetLaunchLocation(LaunchPayloadType()); }
-	FVector GetLaunchDirection(const LaunchPayloadType& LaunchPayload);
-	FORCEINLINE FVector GetLaunchDirection() { return GetLaunchDirection(LaunchPayloadType()); };
+	FVector GetLaunchLocation(const PayloadType& Payload);
+	FORCEINLINE FVector GetLaunchLocation() { return GetLaunchLocation(PayloadType()); }
+	FVector GetLaunchDirection(const PayloadType& LaunchPayload);
+	FORCEINLINE FVector GetLaunchDirection() { return GetLaunchDirection(PayloadType()); };
 
-	void Launch(const LaunchPayloadType& LaunchPayload);
+	void Launch(const PayloadType& LaunchPayload);
 
 #pragma endregion ICsWeapon_Fire_Projectile
 
@@ -301,5 +317,44 @@ private:
 
 	FVector CustomDirection;
 
+protected:
+
+	/** If set, calls Override_GetLaunchDirection when calling
+	    GetLaunchDirection(). 
+		This flag is intended to be set by Blueprint | script and allow a non-native 
+		path to adjust the launch direction of the projectile. */
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Fire|Projectile")
+	bool bOverride_GetLaunchDirection;
+
+	/** 
+	* Only Valid if bOverride_GetLaunchDirection == true. 
+	* This provides a non-native (Blueprint | script) path to adjust the launch direction 
+	* of the projectile. 
+	* 
+	* return Launch Direction.
+	*/
+	UFUNCTION(BlueprintImplementableEvent)
+	FVector Override_GetLaunchDirection();
+
+private:
+
+	void Log_GetLaunchDirection(const ParamsType* LaunchParams, const FVector& Direction);
+
 #pragma endregion Weapon_Fire_Projectile
+
+private:
+
+	FVector GetLaunchSpreadLocation(const FVector& InLocation, const PayloadType& Payload);
+
+	FVector GetLaunchSpreadDirection(const FVector& InDirection, const PayloadType& Payload);
+
+// Print
+#pragma region
+private:
+
+	FString PrintWeaponNameAndClass();
+
+	FString PrintWeaponNameClassAndOwner();
+
+#pragma endregion Print
 };

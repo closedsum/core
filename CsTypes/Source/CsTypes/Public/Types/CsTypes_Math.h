@@ -1213,14 +1213,14 @@ struct CSTYPES_API FCsOptionalRotatorInterval
 
 #pragma endregion FCsOptionalRotatorInterval
 
-// FCsRay
+// FCsRay3f
 #pragma region
 
 /**
 * Mimics FRay
 */
 USTRUCT(BlueprintType)
-struct CSTYPES_API FCsRay
+struct CSTYPES_API FCsRay3f
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -1241,7 +1241,7 @@ public:
 	FVector3f End;
 
 	/** Default constructor initializes ray to Zero origin and Z-axis direction */
-	FCsRay() :
+	FCsRay3f() :
 		Origin(FVector3f::ZeroVector),
 		Direction(FVector3f(0, 0, 1)),
 		Distance(1000000.0f), // TODO: have a better number for FLT_MAX without overflow
@@ -1257,7 +1257,7 @@ public:
 	  * @param InDistance
 	  * @param bDirectionIsNormalized	Direction will be normalized unless this is passed as true (default false)
 	  */
-	FCsRay(const FVector3f& InOrigin, const FVector3f& InDirection, const float& InDistance, bool bDirectionIsNormalized = false)
+	FCsRay3f(const FVector3f& InOrigin, const FVector3f& InDirection, const float& InDistance, bool bDirectionIsNormalized = false)
 	{
 		Origin = InOrigin;
 		Direction = InDirection;
@@ -1276,7 +1276,7 @@ public:
 	  * @param InDirection				Ray Direction Vector
 	  * @param bDirectionIsNormalized	Direction will be normalized unless this is passed as true (default false)
 	  */
-	FCsRay(const FVector3f& InOrigin, const FVector3f& InDirection, bool bDirectionIsNormalized = false)
+	FCsRay3f(const FVector3f& InOrigin, const FVector3f& InDirection, bool bDirectionIsNormalized = false)
 	{
 		Origin = InOrigin;
 		Direction = InDirection;
@@ -1355,6 +1355,158 @@ public:
 	}
 	
 	FORCEINLINE FVector3f CalculateEnd() const
+	{
+		return Origin + Distance * Direction;
+	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsTypes::FLog::Warning) const;
+};
+
+#pragma endregion FCsRay3f
+
+// FCsRay
+#pragma region
+
+/**
+* Mimics FRay
+*/
+USTRUCT(BlueprintType)
+struct CSTYPES_API FCsRay
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Ray origin point */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
+	FVector Origin;
+
+	/** Ray direction vector (always normalized) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
+	FVector Direction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Distance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Math")
+	FVector End;
+
+	/** Default constructor initializes ray to Zero origin and Z-axis direction */
+	FCsRay() :
+		Origin(FVector::ZeroVector),
+		Direction(FVector(0, 0, 1)),
+		Distance(1000000.0f), // TODO: have a better number for FLT_MAX without overflow
+		End(FVector::ZeroVector)
+	{
+	}
+
+	/** 
+	  * Initialize Ray with origin, direction, and distance.
+	  *
+	  * @param InOrigin					Ray Origin Point
+	  * @param InDirection				Ray Direction Vector
+	  * @param InDistance
+	  * @param bDirectionIsNormalized	Direction will be normalized unless this is passed as true (default false)
+	  */
+	FCsRay(const FVector& InOrigin, const FVector& InDirection, const double& InDistance, bool bDirectionIsNormalized = false)
+	{
+		Origin = InOrigin;
+		Direction = InDirection;
+
+		if (!bDirectionIsNormalized)
+		{
+			Direction.Normalize();
+		}
+		End = CalculateEnd();
+	}
+
+	/**
+	  * Initialize Ray with origin, direction, and distance.
+	  *
+	  * @param InOrigin					Ray Origin Point
+	  * @param InDirection				Ray Direction Vector
+	  * @param bDirectionIsNormalized	Direction will be normalized unless this is passed as true (default false)
+	  */
+	FCsRay(const FVector& InOrigin, const FVector& InDirection, bool bDirectionIsNormalized = false)
+	{
+		Origin = InOrigin;
+		Direction = InDirection;
+
+		if (!bDirectionIsNormalized)
+		{
+			Direction.Normalize();
+		}
+		Distance = GetDefaultDistance();
+		End = CalculateEnd();
+	}
+
+public:
+
+	FORCEINLINE static float GetDefaultDistance() { return 1000000.0f; }
+
+	/** 
+	 * Calculate position on ray at given distance/parameter
+	 *
+	 * @param RayParameter	Scalar distance along Ray
+	 * @return				Point on Ray
+	 */
+	FORCEINLINE FVector PointAt(double RayParameter) const
+	{
+		return Origin + RayParameter * Direction;
+	}
+
+	/**
+	 * Calculate ray parameter (distance from origin to closest point) for query Point
+	 *
+	 * @param Point Query Point
+	 * @return		Distance along ray from origin to closest point
+	 */
+	FORCEINLINE double GetParameter(const FVector& Point) const
+	{
+		return FVector::DotProduct((Point - Origin), Direction);
+	}
+
+	/**
+	 * Find minimum squared distance from query point to ray
+	 *
+	 * @param Point Query Point
+	 * @return		Squared distance to Ray
+	 */
+	FORCEINLINE double DistSquared(const FVector& Point) const
+	{
+		double RayParameter = FVector::DotProduct((Point - Origin), Direction);
+		if (RayParameter < 0)
+		{
+			return FVector::DistSquared(Origin, Point);
+		}
+		else 
+		{
+			FVector ProjectionPt = Origin + RayParameter * Direction;
+			return FVector::DistSquared(ProjectionPt, Point);
+		}
+	}
+
+	/**
+	 * Find closest point on ray to query point
+	 * 
+	 * @param Point Query point
+	 * @return		Closest point on Ray
+	 */
+	FORCEINLINE FVector ClosestPoint(const FVector& Point) const
+	{
+		double RayParameter = FVector::DotProduct((Point - Origin), Direction);
+		if (RayParameter < 0) 
+		{
+			return Origin;
+		}
+		else 
+		{
+			return Origin + RayParameter * Direction;
+		}
+	}
+	
+	FORCEINLINE FVector CalculateEnd() const
 	{
 		return Origin + Distance * Direction;
 	}

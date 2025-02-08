@@ -48,6 +48,8 @@ namespace NCsProjectile
 	}
 }
 
+using CsProjectileDataType = NCsProjectile::NData::IData;
+
 UINTERFACE(BlueprintType)
 class CSPRJ_API UCsData_Projectile : public UCsGetInterfaceMap
 {

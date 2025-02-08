@@ -423,13 +423,13 @@ void ACsProjectileWeaponActorPooled::SetUpdateGroup(const FECsUpdateGroup& Group
 void ACsProjectileWeaponActorPooled::Shutdown()
 {
 	CS_SAFE_DELETE_PTR(Cache)
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle)
 
 	TimeBetweenShotsImpl = nullptr;
 
 	if (ProjectileImpl)
 	{
-		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->LaunchScopedHandle);
+		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->LaunchScopedHandle)
 
 		delete ProjectileImpl;
 		ProjectileImpl = nullptr;
@@ -1063,7 +1063,7 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	do 
 	{
 		{
-			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle);
+			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle)
 
 			ElapsedTime.Reset();
 
@@ -1149,7 +1149,7 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= ProjectilesPerShot_Interval);
 			}
 
-			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
+			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle)
 		}
 	} while (CurrentProjectilePerShotIndex < ProjectilesPerShot);
 
@@ -1343,12 +1343,12 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 	const FVector& LocationOffset						 = LaunchParams->GetLocationOffset();
 
 	// Determine Offset
-	FVector3f Offset = LocationOffset * NCsRotationRules::GetDirection(FVector3f::OneVector, InvLocationOffsetSpaceRules);
+	FVector3f Offset = CsMathLibrary::Convert(LocationOffset) * NCsRotationRules::GetDirection(FVector3f::OneVector, InvLocationOffsetSpaceRules);
 	{
 		// None
 		if (LocationOffsetSpace == LaunchLocationOffsetSpace::None)
 		{
-			Offset = LocationOffset;
+			Offset = CsMathLibrary::Convert(LocationOffset);
 		}
 		// Owner
 		else
@@ -1372,14 +1372,14 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 			else
 			if (AActor* Actor = Cast<AActor>(TheOwner))
 			{
-				Rotation	 = NCsRotationRules::GetRotation(Actor, LocationOffsetSpaceRules);
+				Rotation	 = NCsRotationRules::GetRotation3f(Actor, LocationOffsetSpaceRules);
 				IsValidOwner = true;
 			}
 			// USceneComponent
 			else
 			if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
 			{
-				Rotation	  = NCsRotationRules::GetRotation(Component, LocationOffsetSpaceRules);
+				Rotation	  = NCsRotationRules::GetRotation3f(Component, LocationOffsetSpaceRules);
 				IsValidOwner  = true;
 			}
 
@@ -1387,7 +1387,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 			{
 				FVector3f Dir	= Rotation.Vector();
 
-				const FRotator3f RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
+				const FRotator3f RotationOffset = NCsRotationRules::GetRotation3f(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
 
 				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
@@ -1414,10 +1414,10 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 		{
 			CS_IS_PTR_NULL_CHECKED(LaunchComponentDirection)
 
-			const FRotator3f Rotation = NCsRotationRules::GetRotation(LaunchComponentDirection, LocationOffsetSpaceRules);
+			const FRotator3f Rotation = NCsRotationRules::GetRotation3f(LaunchComponentDirection, LocationOffsetSpaceRules);
 			FVector3f Dir				= Rotation.Vector();
 
-			const FRotator3f RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
+			const FRotator3f RotationOffset = NCsRotationRules::GetRotation3f(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
 
 			Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 			Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
@@ -1434,11 +1434,9 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(con
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
 			{
-				typedef NCsCamera::FLibrary CameraLibrary;
+				FVector3f Dir	= CsCameraLibrary::GetDirection3fChecked(Context, Outer, LocationOffsetSpaceRules);
 
-				FVector3f Dir	= CameraLibrary::GetDirectionChecked(Context, Outer, LocationOffsetSpaceRules);
-
-				const FRotator3f RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
+				const FRotator3f RotationOffset = NCsRotationRules::GetRotation3f(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
 
 				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
@@ -1579,7 +1577,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 
 	const LaunchLocationType& LocationType   = LaunchParams->GetLocationType();
 	const LaunchDirectionType& DirectionType = LaunchParams->GetDirectionType();
-	const FRotator3f& DirectionOffset			 = LaunchParams->GetDirectionOffset();
+	const FRotator& DirectionOffset			 = LaunchParams->GetDirectionOffset();
 	int32 DirectionScalar					 = LaunchParams->InvertDirection() ? -1.0f : 1.0f;
 	const int32& DirectionRules				 = LaunchParams->GetDirectionRules();
 
@@ -1598,10 +1596,10 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 			// AActor
 			if (AActor* Actor = Cast<AActor>(TheOwner))
 			{
-				const FRotator3f Rotation = NCsRotationRules::GetRotation(Actor, DirectionRules);
+				const FRotator3f Rotation = NCsRotationRules::GetRotation3f(Actor, DirectionRules);
 				FVector3f Dir				= Rotation.Vector();
 
-				const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
+				const FRotator3f RotationOffset = NCsRotationRules::GetRotation(CsMathLibrary::Convert(DirectionOffset), DirectionRules);
 
 				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
@@ -1612,10 +1610,10 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 			// USceneComponent
 			if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
 			{
-				const FRotator3f Rotation = NCsRotationRules::GetRotation(Component, DirectionRules);
+				const FRotator3f Rotation = NCsRotationRules::GetRotation3f(Component, DirectionRules);
 				FVector3f Dir				= Rotation.Vector();
 
-				const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
+				const FRotator3f RotationOffset = NCsRotationRules::GetRotation(CsMathLibrary::Convert(DirectionOffset), DirectionRules);
 
 				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
@@ -1634,10 +1632,10 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 	// Component
 	if (DirectionType == LaunchDirectionType::Component)
 	{
-		const FRotator3f Rotation = NCsRotationRules::GetRotation(LaunchComponentDirection, DirectionRules);
+		const FRotator3f Rotation = NCsRotationRules::GetRotation3f(LaunchComponentDirection, DirectionRules);
 		FVector3f Dir			  = Rotation.Vector();
 
-		const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
+		const FRotator3f RotationOffset = NCsRotationRules::GetRotation(CsMathLibrary::Convert(DirectionOffset), DirectionRules);
 
 		Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 		Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
@@ -1651,11 +1649,9 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 		// Try to get camera through the owner
 		if (UObject* TheOwner = Outer->GetMyOwner())
 		{
-			typedef NCsCamera::FLibrary CameraLibrary;
+			FVector3f Dir	= CsCameraLibrary::GetDirection3fChecked(Context, Outer, DirectionRules);
 
-			FVector3f Dir	= CameraLibrary::GetDirectionChecked(Context, Outer, DirectionRules);
-
-			const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
+			const FRotator3f RotationOffset = NCsRotationRules::GetRotation(CsMathLibrary::Convert(DirectionOffset), DirectionRules);
 
 			Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Dir));
 			Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
@@ -1711,9 +1707,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
 			{
-				typedef NCsCamera::FLibrary CameraLibrary;
-
-				Start = CameraLibrary::GetLocationChecked(Context, TheOwner);
+				Start = CsCameraLibrary::GetLocation3fChecked(Context, TheOwner);
 			}
 			// TODO: For now assert
 			else
@@ -1757,9 +1751,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
 			{
-				typedef NCsCamera::FLibrary CameraLibrary;
-
-				const FRotator3f Rotation = CameraLibrary::GetRotationChecked(Context, TheOwner, DirectionRules);
+				const FRotator3f Rotation = CsCameraLibrary::GetRotation3fChecked(Context, TheOwner, DirectionRules);
 
 				Dir = Rotation.Vector();
 			}
@@ -1778,8 +1770,8 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 		UCsManager_Trace* Manager_Trace = CsTraceManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 
 		CsTraceRequestType* Request = Manager_Trace->AllocateRequest();
-		Request->Start		 = Start;
-		Request->End		 = End;
+		Request->Start		 = CsMathLibrary::Convert(Start);
+		Request->End		 = CsMathLibrary::Convert(End);
 
 		// Get collision information related to the projectile to be used in the trace.
 
@@ -1818,7 +1810,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 		const FVector3f LaunchLocation  = GetLaunchLocation(LaunchPayload);
 		FVector3f LaunchDirection		  = (LookAtLocation - LaunchLocation).GetSafeNormal();
 
-		const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
+		const FRotator3f RotationOffset = NCsRotationRules::GetRotation(CsMathLibrary::Convert(DirectionOffset), DirectionRules);
 
 		LaunchDirection = LaunchDirection.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(LaunchDirection));
 		LaunchDirection = LaunchDirection.RotateAngleAxis(RotationOffset.Yaw, FVector3f::UpVector);
@@ -1837,7 +1829,7 @@ FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(co
 	// Custom
 	if (DirectionType == LaunchDirectionType::Custom)
 	{		
-		const FRotator3f RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
+		const FRotator3f RotationOffset = NCsRotationRules::GetRotation(CsMathLibrary::Convert(DirectionOffset), DirectionRules);
 		FVector3f Direction			  = NCsRotationRules::GetDirection(CustomLaunchDirection, DirectionRules);
 
 		Direction = Direction.RotateAngleAxis(RotationOffset.Pitch, CsMathLibrary::GetRightFromNormal(Direction));

@@ -135,7 +135,7 @@ void ACsTraceWeaponActor::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle)
 
 	if (TraceImpl)
 	{
@@ -511,7 +511,7 @@ char ACsTraceWeaponActor::Fire_Internal(FCsRoutine* R)
 	do 
 	{
 		{
-			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle);
+			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle)
 
 			ElapsedTime.Reset();
 
@@ -531,7 +531,7 @@ char ACsTraceWeaponActor::Fire_Internal(FCsRoutine* R)
 				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenTracesPerShot);
 			}
 
-			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
+			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle)
 		}
 	} while (CurrentTracePerShotIndex < TracesPerShot);
 

@@ -49,6 +49,13 @@ using DataType = NCsWeapon::NData::IData;
 	// ICsWeapon
 #pragma region
 
+UObject* FCsWeapon::GetWeaponOwner()
+{
+	if (bScript)
+		return Script_GetWeaponOwner_Impl.Execute(Object);
+	return Interface->GetWeaponOwner();
+}
+
 DataType* FCsWeapon::GetData()
 {
 	if (bScript)

@@ -61,8 +61,6 @@ UCsWidgetInteractionComponent::UCsWidgetInteractionComponent(const FObjectInitia
 #define USING_NS_CACHED using namespace NCsWidgetInteractionComponent::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsWidgetInteractionComponent::NCached; \
 	const FString& Context = Str::__FunctionName
-#define GameEventCoordinatorLibrary NCsGameEvent::NCoordinator::FLibrary
-#define GameInstanceLibrary NCsGameInstance::FLibrary
 
 // UObject Interface
 #pragma region
@@ -73,9 +71,9 @@ void UCsWidgetInteractionComponent::BeginDestroy()
 
 	Super::BeginDestroy();
 
-	if (UObject* GameInstance = GameInstanceLibrary::GetSafeAsObject(this))
+	if (UObject* GameInstance = CsGameInstanceLibrary::GetSafeAsObject(this))
 	{
-		if (GameEventCoordinatorLibrary::SafeIsActive(GameInstance))
+		if (CsGameEventCoordinatorLibrary::SafeIsActive(GameInstance))
 		{
 			typedef NCsGameEvent::NCoordinator::FOnProcessGameEventInfo DelegateType;
 			typedef EMCsGameEventCoordinatorGroup GroupMapType;
@@ -86,7 +84,7 @@ void UCsWidgetInteractionComponent::BeginDestroy()
 				const GroupType& Group		  = Pair.Key;
 				const FDelegateHandle& Handle = Pair.Value;
 
-				DelegateType& Delegate = GameEventCoordinatorLibrary::GetOnProcessGameEventInfo_EventChecked(Context, GameInstance, Group);
+				DelegateType& Delegate = CsGameEventCoordinatorLibrary::GetOnProcessGameEventInfo_EventChecked(Context, GameInstance, Group);
 
 				Delegate.Remove(Handle);
 			}
@@ -105,9 +103,9 @@ void UCsWidgetInteractionComponent::BeginPlay()
 
 	Super::BeginPlay();
 
-	if (UObject* GameInstance = GameInstanceLibrary::GetSafeAsObject(this))
+	if (UObject* GameInstance = CsGameInstanceLibrary::GetSafeAsObject(this))
 	{
-		if (GameEventCoordinatorLibrary::SafeIsActive(GameInstance))
+		if (CsGameEventCoordinatorLibrary::SafeIsActive(GameInstance))
 		{
 			typedef NCsGameEvent::NCoordinator::FOnProcessGameEventInfo DelegateType;
 			typedef EMCsGameEventCoordinatorGroup GroupMapType;
@@ -115,7 +113,7 @@ void UCsWidgetInteractionComponent::BeginPlay()
 
 			for (const GroupType& Group : GroupMapType::Get())
 			{
-				DelegateType& Delegate = GameEventCoordinatorLibrary::GetOnProcessGameEventInfo_EventChecked(Context, GameInstance, Group);
+				DelegateType& Delegate = CsGameEventCoordinatorLibrary::GetOnProcessGameEventInfo_EventChecked(Context, GameInstance, Group);
 
 				OnProcessGameEventInfoHandleMap.Add(Group, Delegate.AddUObject(this, &UCsWidgetInteractionComponent::OnProcessGameEventInfo));
 			}
@@ -153,15 +151,14 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 		ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
 
 		checkf(LocalPlayer, TEXT("UCsWidgetInteractionComponent::OnProcessGameEventInfo: LocalPlayer is NULL for PlayerController: %s."), *(PlayerController->GetName()));
-
 		checkf(LocalPlayer->ViewportClient, TEXT("UCsWidgetInteractionComponent::OnProcessGameEventInfo: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
 
-		FVector2d MousePosition;
+		FVector2D MousePosition;
 
 		if (LocalPlayer->ViewportClient->GetMousePosition(MousePosition))
 		{
-			FVector3d WorldOrigin;
-			FVector3d WorldDirection;
+			FVector WorldOrigin;
+			FVector WorldDirection;
 
 			if (UGameplayStatics::DeprojectScreenToWorld(PlayerController, MousePosition, WorldOrigin, WorldDirection))
 			{
@@ -176,8 +173,8 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 					Request->Type			= ECsTraceType::Line;
 					Request->Method			= ECsTraceMethod::Multi;
 					Request->Query			= ECsTraceQuery::Channel;
-					Request->Start			= CsMathLibrary::Convert(WorldOrigin);
-					Request->End			= CsMathLibrary::Convert(WorldOrigin + WorldDirection * InteractionDistance);
+					Request->Start			= WorldOrigin;
+					Request->End			= WorldOrigin + WorldDirection * InteractionDistance;
 					Request->Channel		= TraceChannel;
 
 					Internal_ComponentsToIgnoreOnTrace.Reset(Internal_ComponentsToIgnoreOnTrace.Max());
@@ -223,5 +220,3 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef GameEventCoordinatorLibrary
-#undef GameInstanceLibrary

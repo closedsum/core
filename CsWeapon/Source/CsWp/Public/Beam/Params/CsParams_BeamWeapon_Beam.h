@@ -285,7 +285,9 @@ namespace NCsWeapon
 				*/
 				struct CSWP_API FLocationInfo
 				{
-				#define LocationType NCsWeapon::NBeam::NParams::NBeam::ELocation
+				private:
+
+					using LocationType = NCsWeapon::NBeam::NParams::NBeam::ELocation;
 
 				private:
 
@@ -317,8 +319,6 @@ namespace NCsWeapon
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-				#undef LocationType
 				};
 			}
 		}
@@ -516,7 +516,9 @@ namespace NCsWeapon
 				*/
 				struct CSWP_API FDirectionInfo 
 				{
-				#define DirectionType NCsWeapon::NBeam::NParams::NBeam::EDirection
+				private:
+
+					using DirectionType = NCsWeapon::NBeam::NParams::NBeam::EDirection;
 
 				private:
 
@@ -560,8 +562,6 @@ namespace NCsWeapon
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-				#undef DirectionType
 				};
 			}
 		}

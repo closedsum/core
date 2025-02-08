@@ -21,9 +21,9 @@
 
 struct FCsInterfaceMap;
 
-// NCsDamage::NValue::IValue
+// ValueType (NCsDamage::NValue::IValue)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
-// NCsDamage::NRange::IRange
+// RangeType (NCsDamage::NRange::IRange)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 
 class UCurveFloat;
@@ -36,156 +36,146 @@ namespace NCsDamage
 		{
 			namespace NSphere
 			{
-			#define DataType NCsData::IData
-			#define DamageDataType NCsDamage::NData::IData
-			// Shape
-			#define ShapeDataType NCsDamage::NData::NShape::IShape
-			#define SphereDataType NCsDamage::NData::NShape::NSphere::ISphere
-			// Collision
-			#define CollisionDataType NCsDamage::NData::NCollision::ICollision
-
-				/**
-				*
-				*/
-				struct CSDMG_API FProxy : public DataType,
-										  public DamageDataType,
-										  // Shape
-										  public ShapeDataType,
-										  public SphereDataType,
-										  // Collision
-										  public CollisionDataType
+				namespace NProxy
 				{
-				public:
+					// Shape
+					using ShapeDataType = NCsDamage::NData::NShape::IShape;
+					using SphereDataType = NCsDamage::NData::NShape::NSphere::ISphere;
+					// Collision
+					using CollisionDataType = NCsDamage::NData::NCollision::ICollision;
 
-					static const FName Name;
+					/**
+					*
+					*/
+					struct CSDMG_API FProxy : public CsDataType,
+											  public CsDamageDataType,
+											  // Shape
+											  public ShapeDataType,
+											  public SphereDataType,
+											  // Collision
+											  public CollisionDataType
+					{
+					public:
 
-				private:
+						static const FName Name;
 
-				#define ValueType NCsDamage::NValue::IValue 
-				#define RangeType NCsDamage::NRange::IRange
+					private:
+
+						using ValueType = NCsDamage::NValue::IValue; 
+						using RangeType = NCsDamage::NRange::IRange;
+						// Collision
+						using CollisionInfoType = NCsDamage::NCollision::FInfo;
+
+					private:
+
+						UObject* Outer;
+
+					// ICsGetInterfaceMap
+
+						FCsInterfaceMap* InterfaceMap;
+
+					// DamageDataType (NCsDamage::NData::IData)
+
+						ValueType* Value;
+
+						CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageType)
+
+				// Shape
+			
+					// ShapeDataType (NCsDamage::NData::NShape::IShape)
+
+						RangeType* Range;
+						CS_DECLARE_MEMBER_WITH_PROXY(MinDamage, float)
+						CS_DECLARE_MEMBER_WITH_PROXY(MaxDamage, float)
+						CS_DECLARE_MEMBER_WITH_PROXY(MinRadius, float)
+						CS_DECLARE_MEMBER_WITH_PROXY(MaxRadius, float)
+						CS_DECLARE_MEMBER_WITH_PROXY(bInterpolate, bool)
+						CS_DECLARE_MEMBER_WITH_PROXY(InterpolationMethod, ECsInterpolatingMethod)
+						CS_DECLARE_MEMBER_WITH_PROXY(EasingType, ECsEasingType)
+						CS_DECLARE_MEMBER_WITH_PROXY(Curve, UCurveFloat*)
+
 				// Collision
-				#define CollisionInfoType NCsDamage::NCollision::FInfo
-
-					UObject* Outer;
-
-				// ICsGetInterfaceMap
-
-					FCsInterfaceMap* InterfaceMap;
-
-				// DamageDataType (NCsDamage::NData::IData)
-
-					ValueType* Value;
-
-					CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageType)
-
-			// Shape
 			
-				// ShapeDataType (NCsDamage::NData::NShape::IShape)
+					// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 
-					RangeType* Range;
-					CS_DECLARE_MEMBER_WITH_PROXY(MinDamage, float)
-					CS_DECLARE_MEMBER_WITH_PROXY(MaxDamage, float)
-					CS_DECLARE_MEMBER_WITH_PROXY(MinRadius, float)
-					CS_DECLARE_MEMBER_WITH_PROXY(MaxRadius, float)
-					CS_DECLARE_MEMBER_WITH_PROXY(bInterpolate, bool)
-					CS_DECLARE_MEMBER_WITH_PROXY(InterpolationMethod, ECsInterpolatingMethod)
-					CS_DECLARE_MEMBER_WITH_PROXY(EasingType, ECsEasingType)
-					CS_DECLARE_MEMBER_WITH_PROXY(Curve, UCurveFloat*)
+						CollisionInfoType* CollisionInfo;
 
-			// Collision
-			
-				// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
+					public:
 
-					CollisionInfoType* CollisionInfo;
+						FProxy();
+						~FProxy();
 
-				public:
+						FORCEINLINE void SetOuter(UObject* InOuter) { Outer = InOuter; }
 
-					FProxy();
-					~FProxy();
+						FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
-					FORCEINLINE void SetOuter(UObject* InOuter) { Outer = InOuter; }
+					// ICsGetInterfaceMap
+					#pragma region
+					public:
 
-					FORCEINLINE UObject* _getUObject() const { return nullptr; }
+						FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-				// ICsGetInterfaceMap
-				#pragma region
-				public:
+					#pragma endregion ICsGetInterfaceMap
 
-					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+					public:
 
-				#pragma endregion ICsGetInterfaceMap
+						FORCEINLINE void SetValue(ValueType* InValue) { Value = InValue; }
 
-				public:
+					// DamageDataType (NCsDamage::NData::IData)
+					#pragma region
+					public:
 
-					FORCEINLINE void SetValue(ValueType* InValue) { Value = InValue; }
+						FORCEINLINE const ValueType* GetValue() const { return Value; }
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageType)
 
-				// DamageDataType (NCsDamage::NData::IData)
-				#pragma region
-				public:
+					#pragma endregion DamageDataType (NCsDamage::NData::IData)
 
-					FORCEINLINE const ValueType* GetValue() const { return Value; }
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageType)
+				// Shape
 
-				#pragma endregion DamageDataType (NCsDamage::NData::IData)
+					public:
 
-			// Shape
+						FORCEINLINE void SetRange(RangeType* InValue) { Range = InValue; }
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinDamage, float)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxDamage, float)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinRadius, float)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxRadius, float)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInterpolate, bool)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(InterpolationMethod, ECsInterpolatingMethod)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(EasingType, ECsEasingType)
+						CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Curve, UCurveFloat)
 
-				public:
+					// ShapeDataType (NCsDamage::NData::NShape::IShape)
+					#pragma region
+					public:
 
-					FORCEINLINE void SetRange(RangeType* InValue) { Range = InValue; }
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinDamage, float)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxDamage, float)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinRadius, float)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxRadius, float)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInterpolate, bool)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(InterpolationMethod, ECsInterpolatingMethod)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(EasingType, ECsEasingType)
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Curve, UCurveFloat)
+						FORCEINLINE const RangeType* GetRange() const { return Range; }
 
-				// ShapeDataType (NCsDamage::NData::NShape::IShape)
-				#pragma region
-				public:
+						float CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector3f& Origin, const FVector3f& Point) const;
 
-					FORCEINLINE const RangeType* GetRange() const { return Range; }
+						bool IsInBounds(const FVector3f& Origin, const FVector3f& Point) const;
 
-					float CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector3f& Origin, const FVector3f& Point) const;
+						FORCEINLINE bool IsFacing(const FVector3f& Direction, const FVector3f& Origin, const FVector3f& Point) const { return true; }
 
-					bool IsInBounds(const FVector3f& Origin, const FVector3f& Point) const;
+					#pragma endregion ShapeDataType (NCsDamage::NData::NShape::IShape)
 
-					FORCEINLINE bool IsFacing(const FVector3f& Direction, const FVector3f& Origin, const FVector3f& Point) const { return true; }
-
-				#pragma endregion ShapeDataType (NCsDamage::NData::NShape::IShape)
-
-			// Collision
-			
-				// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
-				#pragma region
-				public:			
-
-					FORCEINLINE const CollisionInfoType& GetCollisionInfo() const { return *CollisionInfo; }
-					FORCEINLINE CollisionInfoType* GetCollisionInfoPtr() { return CollisionInfo; }
-					FORCEINLINE void SetCollisionInfo(CollisionInfoType* InValue) { CollisionInfo = InValue; }
-
-				#pragma endregion CollisionDataType (NCsDamage::NData::NCollision::ICollision)
-
-				public:
-
-					bool IsValidChecked(const FString& Context) const;
-					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
-
-				#undef ValueType
-				#undef RangeType
 				// Collision
-				#undef CollisionInfoType
-				};
+			
+					// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
+					#pragma region
+					public:			
 
-			#undef DataType
-			#undef DamageDataType
-			// Shape
-			#undef ShapeDataType
-			#undef SphereDataType
-			// Collision
-			#undef CollisionDataType
+						FORCEINLINE const CollisionInfoType& GetCollisionInfo() const { return *CollisionInfo; }
+						FORCEINLINE CollisionInfoType* GetCollisionInfoPtr() { return CollisionInfo; }
+						FORCEINLINE void SetCollisionInfo(CollisionInfoType* InValue) { CollisionInfo = InValue; }
+
+					#pragma endregion CollisionDataType (NCsDamage::NData::NCollision::ICollision)
+
+					public:
+
+						bool IsValidChecked(const FString& Context) const;
+						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
+					};
+				}
 			}
 		}
 	}
@@ -309,15 +299,18 @@ public:
 
 	static const FName Name;
 
-#define DataType NCsData::IData
-#define ValueType NCsDamage::NValue::IValue
-#define RangeType NCsDamage::NRange::IRange
-// Collision
-#define CollisionInfoType NCsDamage::NCollision::FInfo
+private:
+
+	using ValueType = NCsDamage::NValue::IValue;
+	using ValueRangeImplType = NCsDamage::NValue::NRange::FImpl;
+	using RangeType = NCsDamage::NRange::IRange;
+	using RangeImplType = NCsDamage::NRange::FImpl;
+	// Collision
+	using CollisionInfoType = NCsDamage::NCollision::FInfo;
 
 private:
 
-	DataType* DataProxy;
+	CsDataType* DataProxy;
 
 // UObject Interface
 #pragma region
@@ -352,7 +345,7 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE DataType* _getIData() const { return DataProxy; }
+	FORCEINLINE CsDataType* _getIData() const { return DataProxy; }
 
 	bool IsValid(const int32& LoadFlags);
 
@@ -371,9 +364,7 @@ public:
 
 private:
 
-#define ValueRangeImplType NCsDamage::NValue::NRange::FImpl
 	ValueRangeImplType DamageValueProxy;
-#undef ValueRangeImplType
 
 // ICsData_Damage
 #pragma region
@@ -386,9 +377,7 @@ public:
 
 private:
 
-#define RangeImplType NCsDamage::NRange::FImpl
 	RangeImplType DamageRangeProxy;
-#undef RangeImplType
 
 // ICsData_DamageSphere
 #pragma region
@@ -415,10 +404,4 @@ public:
 	const CollisionInfoType& GetCollisionInfo() const;
 
 #pragma endregion ICsData_DamageCollision
-
-#undef DataType
-#undef ValueType
-#undef RangeType
-// Collision
-#undef CollisionInfoType
 };

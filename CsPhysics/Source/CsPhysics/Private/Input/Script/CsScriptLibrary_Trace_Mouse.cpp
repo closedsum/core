@@ -31,7 +31,8 @@ UCsScriptLibrary_Trace_Mouse::UCsScriptLibrary_Trace_Mouse(const FObjectInitiali
 }
 
 #define LogError &FCsLog::Error
-#define MouseLibrary NCsInput::NMouse::NPhysics::FLibrary
+
+using MouseLibrary = NCsInput::NMouse::NPhysics::FLibrary;
 
 // Trace
 #pragma region
@@ -47,25 +48,20 @@ bool UCsScriptLibrary_Trace_Mouse::Trace(const FString& Context, const UObject* 
 	if (Req->Shape.IsLine() &&
 		Req->Start == Req->End)
 	{
-		Req->End += FVector3f(0.0f, 0.0f, 1.0f);
+		Req->End += FVector(0.0f, 0.0f, 1.0f);
 	}
 
 	if (!Request.IsValid(Ctxt))
 		return false;
 
-	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-	typedef NCsTrace::NRequest::FRequest RequestType;
-
-	RequestType* RequestPtr = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject);
+	CsTraceRequestType* RequestPtr = CsTraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject);
 
 	if (!RequestPtr)
 		return false;
 
 	Request.CopyToRequestAsValue(RequestPtr);
 
-	typedef NCsTrace::NResponse::FResponse ResponseType;
-
-	ResponseType* ResponsePtr = MouseLibrary::SafeTrace(Ctxt, WorldContextObject, RequestPtr, Distance);
+	CsTraceResponseType* ResponsePtr = MouseLibrary::SafeTrace(Ctxt, WorldContextObject, RequestPtr, Distance);
 
 	if (ResponsePtr)
 	{
@@ -73,11 +69,10 @@ bool UCsScriptLibrary_Trace_Mouse::Trace(const FString& Context, const UObject* 
 		return ResponsePtr->bResult;
 	}
 
-	TraceManagerLibrary::SafeDeallocateRequest(Ctxt, WorldContextObject, RequestPtr);
+	CsTraceManagerLibrary::SafeDeallocateRequest(Ctxt, WorldContextObject, RequestPtr);
 	return false;
 }
 
 #pragma endregion Trace
 
 #undef LogError
-#undef MouseLibrary

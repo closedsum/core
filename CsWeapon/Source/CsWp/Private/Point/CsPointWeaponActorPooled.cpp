@@ -336,7 +336,7 @@ void ACsPointWeaponActorPooled::Shutdown()
 {
 	CS_SAFE_DELETE_PTR(Cache)
 
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle)
 
 	CS_SAFE_DELETE_PTR(SoundImpl)
 	CS_SAFE_DELETE_PTR(FXImpl)
@@ -802,7 +802,7 @@ char ACsPointWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	do 
 	{
 		{
-			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle);
+			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle)
 
 			ElapsedTime.Reset();
 
@@ -828,7 +828,7 @@ char ACsPointWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= PointsPerShot_Interval);
 			}
 
-			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
+			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle)
 		}
 	} while (CurrentPointPerShotIndex < PointsPerShot);
 

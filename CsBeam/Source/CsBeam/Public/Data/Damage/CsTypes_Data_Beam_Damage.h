@@ -48,8 +48,8 @@ public:
 // FCsBeamData_DamageSphere
 #pragma region
 
-// NCsDamage::NData::NShape::NSphere::FProxy
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NShape, NSphere, FProxy)
+// NCsDamage::NData::NShape::NSphere::NProxy::FProxy
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsDamage, NData, NShape, NSphere, NProxy, FProxy)
 
 USTRUCT(BlueprintType)
 struct CSBEAM_API FCsBeamData_DamageSphere
@@ -105,7 +105,7 @@ public:
 
 private:
 
-	typedef NCsDamage::NData::NShape::NSphere::FProxy SphereDataProxyType;
+	using SphereDataProxyType = NCsDamage::NData::NShape::NSphere::NProxy::FProxy;
 
 public:
 

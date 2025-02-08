@@ -110,7 +110,7 @@ namespace NCsWeapon
 					}
 					Beams.Reset();
 
-					CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(BeamScopedHandle);
+					CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(BeamScopedHandle)
 				}
 
 				void FImpl::SetOuter(UObject* InOuter)
@@ -215,9 +215,7 @@ namespace NCsWeapon
 						// Try to get camera through the owner
 						if (Owner)
 						{
-							typedef NCsCamera::FLibrary CameraLibrary;
-
-							return CameraLibrary::GetLocationChecked(Context, Owner);
+							return CsCameraLibrary::GetLocation3fChecked(Context, Owner);
 						}
 						checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(PrintOuterNameAndClass()));
 					}
@@ -265,10 +263,10 @@ namespace NCsWeapon
 	
 						// AActor
 						if (AActor* Actor = Cast<AActor>(Owner))
-							return NCsRotationRules::GetRotation(Actor, DirectionRules).Vector();
+							return NCsRotationRules::GetRotation3f(Actor, DirectionRules).Vector();
 						// USceneComponent
 						if (USceneComponent* OwnerAsComponent = Cast<USceneComponent>(Owner))
-							return NCsRotationRules::GetRotation(OwnerAsComponent, DirectionRules).Vector();
+							return NCsRotationRules::GetRotation3f(OwnerAsComponent, DirectionRules).Vector();
 						checkf(0, TEXT("%s: Failed to get Direction from %s."), *Context, *(PrintOuterNameClassAndOwner()));
 					}
 					// Bone
@@ -286,7 +284,7 @@ namespace NCsWeapon
 					{
 						CS_IS_PTR_NULL_CHECKED(Component)
 		
-						const FRotator3f Rotation = NCsRotationRules::GetRotation(Component, DirectionRules);
+						const FRotator3f Rotation = NCsRotationRules::GetRotation3f(Component, DirectionRules);
 
 						return Rotation.Vector();
 					}
@@ -296,9 +294,7 @@ namespace NCsWeapon
 						// Try to get camera through the owner
 						if (Owner)
 						{
-							typedef NCsCamera::FLibrary CameraLibrary;
-
-							return CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
+							return CsCameraLibrary::GetDirection3fChecked(Context, Owner, DirectionRules);
 						}
 						checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(PrintOuterNameAndClass()));
 					}
@@ -310,10 +306,8 @@ namespace NCsWeapon
 						// direction the Owner's Camera is looking
 						if (Owner)
 						{
-							typedef NCsCamera::FLibrary CameraLibrary;
-
-							const FVector3f CameraStart = CameraLibrary::GetLocationChecked(Context, Owner);
-							const FVector3f Dir		  = CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
+							const FVector3f CameraStart = CsCameraLibrary::GetLocation3fChecked(Context, Owner);
+							const FVector3f Dir		  = CsCameraLibrary::GetDirection3fChecked(Context, Owner, DirectionRules);
 							// TODO: Fix
 							const FVector3f End		  = CameraStart + 10000.0f * Dir;
 							//const FVector3f End		  = CameraStart + BeamParams->GetDistance() * Dir;

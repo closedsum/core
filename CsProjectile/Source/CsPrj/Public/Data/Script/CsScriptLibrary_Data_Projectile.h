@@ -54,7 +54,7 @@ public:
 	/**
 	* Adds a data slice which implements the interface: CollisionDataType (NCsProjectile::NData::NCollision::ICollision) to
 	* data with Name.
-	* Adds slice of type: NCsProjectile::NData::NCollision::FImplSlice.
+	* Adds slice of type: NCsProjectile::NData::NCollision::NImplSlice::FImplSlice.
 	* 
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
@@ -67,7 +67,7 @@ public:
 	/**
 	* Adds a data slice which implements the interface: CollisionDataType (NCsProjectile::NData::NCollision::ICollision) to
 	* data with Name.
-	* Adds slice of type: NCsProjectile::NData::NCollision::FImplSlice.
+	* Adds slice of type: NCsProjectile::NData::NCollision::NImplSlice::FImplSlice.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).

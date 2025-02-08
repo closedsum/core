@@ -211,7 +211,7 @@ namespace NCsProjectileWeapon_LaunchTraceParams
 		if (!Params)
 			return nullptr;
 
-		CopyToParams(Params);
+		CopyToParams(This, Params);
 		return Params;
 	}
 

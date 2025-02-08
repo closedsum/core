@@ -48,7 +48,7 @@ bool UCsScriptLibrary_Trace_Viewport::Trace(const FString& Context, const UObjec
 	if (Req->Shape.IsLine() &&
 		Req->Start == Req->End)
 	{
-		Req->End += FVector3f(0.0f, 0.0f, 1.0f);
+		Req->End += FVector(0.0f, 0.0f, 1.0f);
 	}
 
 	if (!Request.IsValid(Ctxt))

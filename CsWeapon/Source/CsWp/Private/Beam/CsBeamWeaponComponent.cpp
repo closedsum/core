@@ -134,7 +134,7 @@ void UCsBeamWeaponComponent::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle)
 
 	CS_SAFE_DELETE_PTR(BeamImpl)
 	CS_SAFE_DELETE_PTR(SoundImpl)
@@ -524,7 +524,7 @@ char UCsBeamWeaponComponent::Fire_Internal(FCsRoutine* R)
 	do 
 	{
 		{
-			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle);
+			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle)
 
 			ElapsedTime.Reset();
 
@@ -546,7 +546,7 @@ char UCsBeamWeaponComponent::Fire_Internal(FCsRoutine* R)
 
 			BeamImpl->AfterBeamsPerShot();
 
-			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
+			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle)
 		}
 	} while (CurrentBeamPerShotIndex < BeamsPerShot);
 

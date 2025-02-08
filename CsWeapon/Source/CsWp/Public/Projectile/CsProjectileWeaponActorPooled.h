@@ -191,11 +191,9 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE DataType* GetData() const { return Data; }
-
-	FORCEINLINE PrjWeaponDataType* GetPrjWeaponData() const { return PrjWeaponData; }
-
-	FORCEINLINE const FECsWeaponState& GetCurrentState() const { return CurrentState; }
+	FORCEINLINE UObject* GetWeaponOwner() const					{ return MyOwner; }
+	FORCEINLINE DataType* GetData() const						{ return Data; }
+	FORCEINLINE const FECsWeaponState& GetCurrentState() const	{ return CurrentState; }
 
 #pragma endregion ICsWeapon
 
@@ -222,6 +220,14 @@ public:
 	void StopFire();
 
 #pragma endregion ICsProjectileWeapon
+
+// ProjectileWeapon
+#pragma region
+public:
+
+	FORCEINLINE PrjWeaponDataType* GetPrjWeaponData() const { return PrjWeaponData; }
+
+#pragma endregion ProjectileWeapon
 
 public:
 
@@ -564,7 +570,8 @@ public:
 			}
 		};
 
-	#define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
+		using LaunchPayloadType = ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload;
+		using LaunchParamsType = NCsWeapon::NProjectile::NParams::NLaunch::ILaunch;
 
 	protected:
 
@@ -597,10 +604,8 @@ public:
 	protected:
 
 		FVector3f GetLaunchSpreadDirection(const FVector3f& InDirection, const LaunchPayloadType& LaunchPayload);
-
-	#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
+	
 		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector3f& Direction);
-	#undef LaunchParamsType
 
 		void Launch(const LaunchPayloadType& LaunchPayload);
 
@@ -622,8 +627,6 @@ public:
 			TargetBone = NAME_None;
 			TargetID = INDEX_NONE;
 		}
-
-	#undef LaunchPayloadType
 	};
 
 	FProjectileImpl* ProjectileImpl;
@@ -675,9 +678,9 @@ public:
 
 public:
 
-#define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
+	using LaunchPayloadType = ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload;
+
 	virtual bool Projectile_SetPayload(const FString& Context, CsProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload) { return true; }
-#undef LaunchPayloadType
 
 #pragma endregion Projectile
 	
@@ -760,7 +763,7 @@ public:
 
 	protected:
 
-#define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
+		using FXDataType = NCsWeapon::NProjectile::NData::NVisual::NFire::IFire;
 
 		/**
 		*/
@@ -776,9 +779,7 @@ public:
 		*/
 		void SetPayload(const int32 CurrentProjectilePerShotIndex, CsFXPayloadType* Payload, const FCsFX& FX, const LaunchPayloadType& LaunchPayload);
 
-#undef LaunchPayloadType
 
-#define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 		/**
 		*
 		*
@@ -786,8 +787,6 @@ public:
 		* @param FXData
 		*/
 		void SetPayload(const int32 CurrentProjectilePerShotIndex, CsFXPayloadType* Payload, FXDataType* FXData);
-
-#undef FXDataType
 	};
 
 	FFXImpl* FXImpl;

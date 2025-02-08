@@ -191,11 +191,11 @@ void UCsProjectileWeaponComponent::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle)
 
 	if (ProjectileImpl)
 	{
-		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->LaunchScopedHandle);
+		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->LaunchScopedHandle)
 
 		delete ProjectileImpl;
 		ProjectileImpl = nullptr;
@@ -565,7 +565,7 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 	do 
 	{
 		{
-			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle);
+			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle)
 
 			ElapsedTime.Reset();
 
@@ -585,7 +585,7 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= ProjectilesPerShot_Interval);
 			}
 
-			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
+			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle)
 		}
 	} while (CurrentProjectilePerShotIndex < ProjectilesPerShot);
 
@@ -818,14 +818,14 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			// AActor
 			if (AActor* Actor = Cast<AActor>(TheOwner))
 			{
-				const FVector3f Dir = NCsRotationRules::GetRotation(Actor, DirectionRules).Vector();
+				const FVector3f Dir = NCsRotationRules::GetRotation3f(Actor, DirectionRules).Vector();
 				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 				return Dir;
 			}
 			// USceneComponent
 			if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
 			{
-				const FVector3f Dir = NCsRotationRules::GetRotation(Component, DirectionRules).Vector();
+				const FVector3f Dir = NCsRotationRules::GetRotation3f(Component, DirectionRules).Vector();
 				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 				return Dir;
 			}
@@ -842,7 +842,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	{
 		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."), *Context);
 		
-		const FRotator3f Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
+		const FRotator3f Rotation = NCsRotationRules::GetRotation3f(LaunchComponentTransform, DirectionRules);
 		const FVector3f Dir		  = Rotation.Vector();
 		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 		return Dir;
@@ -853,7 +853,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		// Try to get camera through the owner
 		if (UObject* TheOwner = Outer->GetMyOwner())
 		{
-			const FVector3f Dir = CsCameraLibrary::GetDirectionChecked(Context, TheOwner);
+			const FVector3f Dir = CsCameraLibrary::GetDirection3fChecked(Context, TheOwner);
 			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 			return Dir;
 		}
@@ -904,9 +904,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
 			{
-				typedef NCsCamera::FLibrary CameraLibrary;
-
-				Start = CameraLibrary::GetLocationChecked(Context, TheOwner);
+				Start = CsCameraLibrary::GetLocation3fChecked(Context, TheOwner);
 			}
 			// TODO: For now assert
 			else
@@ -939,7 +937,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		{
 			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."), *Context);
 
-			const FRotator3f Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
+			const FRotator3f Rotation = NCsRotationRules::GetRotation3f(LaunchComponentTransform, DirectionRules);
 
 			Dir = Rotation.Vector();
 		}
@@ -950,7 +948,7 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
 			{
-				Dir = CsCameraLibrary::GetDirectionChecked(Context, TheOwner, DirectionRules);
+				Dir = CsCameraLibrary::GetDirection3fChecked(Context, TheOwner, DirectionRules);
 			}
 			// TODO: For now assert
 			else
@@ -967,8 +965,8 @@ FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		UCsManager_Trace* Manager_Trace = CsTraceManagerLibrary::GetChecked(Context, Outer);
 
 		CsTraceRequestType* Request = Manager_Trace->AllocateRequest();
-		Request->Start		 = Start;
-		Request->End		 = End;
+		Request->Start		 = CsMathLibrary::Convert(Start);
+		Request->End		 = CsMathLibrary::Convert(End);
 
 		// Get collision information related to the projectile to be used in the trace.
 

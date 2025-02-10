@@ -4,6 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Managers/Level/CsTypes_Manager_Level.h"
 #include "Managers/Level/CsManager_Level_Delegates.h"
 #include "Level/CsLevel_Delegates.h"
@@ -19,12 +20,16 @@ class UWorld;
 class ULevelStreaming;
 class ACsLevel_Streaming_EventHandler;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsManager_Level)
+
 UCLASS(transient, BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSCORE_API UCsManager_Level : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
 private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsManager_Level);
 
 	using ChangeMapParamsType = NCsLevel::NManager::NChangeMap::FParams;
 	using OnChangeMapStartEventType = NCsLevel::NManager::FChangeMap_OnStart;

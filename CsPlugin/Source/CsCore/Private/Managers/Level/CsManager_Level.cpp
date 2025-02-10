@@ -41,41 +41,25 @@
 // Cached
 #pragma region
 
-namespace NCsManagerLevel
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			// Singleton
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Init);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Initialize);
-			// Persistent Level
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Check_FinishedLoadingPersistentLevel);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
-			// Change Map
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap_TransitionAsDestination);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap_TransitionAsDestination_Internal);
-			// Transition
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, GameInstance_Transition_OnFinish);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, DestroyOtherPIEWorld);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, DestroyOtherPIEWorld_Internal);
-			// Streaming
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Level_Streaming_OnAdded);
-		}
-
-		namespace Name
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
-			// Change Map
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, ChangeMap_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, ChangeMap_TransitionAsDestination_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, DestroyOtherPIEWorld_Internal);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsManager_Level)
+	// Singleton
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, Init)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, Initialize)
+	// Persistent Level
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, Check_FinishedLoadingPersistentLevel)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal)
+	// Change Map
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, ChangeMap)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, ChangeMap_Internal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, ChangeMap_TransitionAsDestination)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, ChangeMap_TransitionAsDestination_Internal)
+	// Transition
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, GameInstance_Transition_OnFinish)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, DestroyOtherPIEWorld)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, DestroyOtherPIEWorld_Internal)
+	// Streaming
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Level, Level_Streaming_OnAdded)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -104,10 +88,6 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 	Level_Streaming_OnHidden_ScriptEvent()
 {
 }
-
-#define USING_NS_CACHED using namespace NCsManagerLevel::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsManagerLevel::NCached; \
-	const FString& Context = Str::__FunctionName
 
 using ChangeMapParamsType = NCsLevel::NManager::NChangeMap::FParams;
 
@@ -161,9 +141,7 @@ using ChangeMapParamsType = NCsLevel::NManager::NChangeMap::FParams;
 
 /*static*/ void UCsManager_Level::Init(UObject* InRoot, UObject* InOuter /*= nullptr*/)
 {
-	using namespace NCsManagerLevel::NCached;
-
-	const FString& Context = Str::Init;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Init);
 
 	const FCsSettings_Manager_Level& Settings = FCsSettings_Manager_Level::Get();
 
@@ -238,7 +216,7 @@ using ChangeMapParamsType = NCsLevel::NManager::NChangeMap::FParams;
 
 void UCsManager_Level::Initialize()
 {
-	SET_CONTEXT(Initialize);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Initialize);
 
 	// Bind to Delegates
 
@@ -274,7 +252,7 @@ UObject* UCsManager_Level::GetWorldContext() const
 
 void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 {
-	SET_CONTEXT(Check_FinishedLoadingPersistentLevel);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Check_FinishedLoadingPersistentLevel);
 
 	FinishedLoadingPersistentLevelInfo.bCompleted = false;
 
@@ -312,7 +290,7 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 
 void UCsManager_Level::Check_FinishedLoadingPersistentLevel(const FString& MapPackageName)
 {
-	SET_CONTEXT(Check_FinishedLoadingPersistentLevel);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Check_FinishedLoadingPersistentLevel);
 
 	if (MapPackageName.IsEmpty())
 	{
@@ -405,7 +383,7 @@ char UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine*
 
 void UCsManager_Level::ChangeMap(const ChangeMapParamsType& Params)
 {
-	SET_CONTEXT(ChangeMap);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(ChangeMap);
 
 	CS_IS_VALID_CHECKED(Params);
 
@@ -478,7 +456,7 @@ char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
 
 void UCsManager_Level::ChangeMap_TransitionAsDestination(const ChangeMapParamsType& Params)
 {
-	SET_CONTEXT(ChangeMap_TransitionAsDestination);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(ChangeMap_TransitionAsDestination);
 
 	CS_IS_VALID_CHECKED(Params);
 
@@ -500,7 +478,7 @@ void UCsManager_Level::ChangeMap_TransitionAsDestination(const ChangeMapParamsTy
 
 char UCsManager_Level::ChangeMap_TransitionAsDestination_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT(ChangeMap_TransitionAsDestination_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(ChangeMap_TransitionAsDestination_Internal);
 
 	CS_COROUTINE_READ_STRING_START
 
@@ -536,7 +514,7 @@ char UCsManager_Level::ChangeMap_TransitionAsDestination_Internal(FCsRoutine* R)
 
 void UCsManager_Level::GameInstance_Transition_OnFinish()
 {
-	SET_CONTEXT(GameInstance_Transition_OnFinish);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GameInstance_Transition_OnFinish);
 
 	StreamingEventsByIdMap.Reset();
 
@@ -580,7 +558,7 @@ void UCsManager_Level::GameInstance_Transition_OnFinish()
 
 void UCsManager_Level::Level_Streaming_OnAdded(UWorld* World, ULevelStreaming* LevelStreaming)
 {
-	SET_CONTEXT(Level_Streaming_OnAdded);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Level_Streaming_OnAdded);
 
 	if (World == CsWorldLibrary::GetChecked(Context, GetWorldContext()))
 	{
@@ -683,7 +661,7 @@ void UCsManager_Level::OnPostWorldInitialization(UWorld* World)
 
 void UCsManager_Level::DestroyOtherPIEWorld(const FString& URL)
 {
-	SET_CONTEXT(DestroyOtherPIEWorld);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(DestroyOtherPIEWorld);
 
 	// TODO: Check URL is not Current World
 
@@ -733,6 +711,3 @@ char UCsManager_Level::DestroyOtherPIEWorld_Internal(FCsRoutine* R)
 }
 
 #endif // #if WITH_EDITOR
-
-#undef USING_NS_CACHED
-#undef SET_CONTEXT

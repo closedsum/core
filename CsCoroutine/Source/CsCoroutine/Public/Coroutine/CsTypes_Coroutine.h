@@ -803,15 +803,15 @@ namespace NCsCoroutine
 
 // Assume the following have been defined:
 //	const FString& Context 
-//  const FString& Name			= Str::__Function	(FString name of Function to call)
-//	const FName& NameInternal	= Name::__Function	(FName name of the Function to call)
+//  #include "CsMacro_Cached.h" is included by some header
+//  A "cached" function name has been setup for the name of the Coroutine Function (i.e. _CachedFunctionNameType has been defined as a type)
 
 #define CS_COROUTINE_SETUP_UOBJECT(__ClassType, __Function, __Group, __UObject, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
-	__Coroutine__Payload__->Init<__ClassType>(Context, __UObject, &__ClassType::__Function, __ContextObject, __Group, Str::__Function, Name::__Function)
+	__Coroutine__Payload__->Init<__ClassType>(Context, __UObject, &__ClassType::__Function, __ContextObject, __Group, _CachedFunctionNameType::Get_STRING_##__Function(), _CachedFunctionNameType::Get_NAME_##__Function())
 #define CS_COROUTINE_SETUP_RAW(__ClassType, __Function, __Group, __Pointer, __Owner, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
-	__Coroutine__Payload__->Init<__ClassType>(Context, __Pointer, &__ClassType::__Function, __Owner, __ContextObject, __Group, Str::__Function, Name::__Function)
+	__Coroutine__Payload__->Init<__ClassType>(Context, __Pointer, &__ClassType::__Function, __Owner, __ContextObject, __Group, _CachedFunctionNameType::Get_STRING_##__Function(), _CachedFunctionNameType::Get_NAME_##__Function())
 #define CS_COROUTINE_SETUP_STATIC(__ClassType, __Function, __Group, __Owner, __ContextObject) NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, __ContextObject, __Group); \
-	__Coroutine__Payload__->Init<__ClassType>(Context, &__ClassType::__Function, __Owner, __ContextObject, __Group, Str::__Function, Name::__Function)
+	__Coroutine__Payload__->Init<__ClassType>(Context, &__ClassType::__Function, __Owner, __ContextObject, __Group, _CachedFunctionNameType::Get_STRING_##__Function(), _CachedFunctionNameType::Get_NAME_##__Function())
 
 // Assume const FString& Context has been defined
 #define CS_COROUTINE_START(__ContextObject) CsCoroutineSchedulerLibrary::StartChecked(Context, __ContextObject, __Coroutine__Payload__)

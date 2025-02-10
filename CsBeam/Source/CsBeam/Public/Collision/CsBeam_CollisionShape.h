@@ -187,25 +187,22 @@ public:
 	{
 	}
 
-#define LineType NCsBeam::NCollision::NShape::FLine
+	using LineType = NCsBeam::NCollision::NShape::FLine;
+	using BoxType = NCsBeam::NCollision::NShape::FBox;
+	using CapsuleType = NCsBeam::NCollision::NShape::FCapsule;
+	using ShapeType = NCsBeam::NCollision::NShape::FShape;
+
 	void CopyToShape(LineType* Shape);
 	void CopyToShapeAsValue(LineType* Shape) const;
-#undef LineType
 
-#define BoxType NCsBeam::NCollision::NShape::FBox
 	void CopyToShape(BoxType* Shape);
 	void CopyToShapeAsValue(BoxType* Shape) const;
-#undef BoxType
 
-#define CapsuleType NCsBeam::NCollision::NShape::FCapsule
 	void CopyToShape(CapsuleType* Shape);
 	void CopyToShapeAsValue(CapsuleType* Shape) const;
-#undef CapsuleType
 
-#define ShapeType NCsBeam::NCollision::NShape::FShape
 	ShapeType* ConstructShape();
 	ShapeType* ConstructShapeAsValue() const;
-#undef ShapeType
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;

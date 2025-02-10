@@ -32,10 +32,12 @@ namespace NCsWeapon
 				{
 					friend class ICsBeamWeapon;
 
-				#define DataType NCsWeapon::NData::IData
-				#define BeamDataType NCsBeam::NData::IData
-				#define FXPayloadType NCsFX::NPayload::IPayload
-				#define FireVisualDataType NCsWeapon::NBeam::NData::NVisual::NFire::IFire
+				private:
+
+					using DataType = NCsWeapon::NData::IData;
+					using BeamDataType = NCsBeam::NData::IData;
+					using FXPayloadType = NCsFX::NPayload::IPayload;
+					using FireVisualDataType = NCsWeapon::NBeam::NData::NVisual::NFire::IFire;
 
 				protected:
 
@@ -86,11 +88,6 @@ namespace NCsWeapon
 					* @param Hit	Hit information from trace.
 					*/
 					void TryImpact(BeamDataType* Data, const FHitResult& Hit);
-
-				#undef DataType
-				#undef BeamDataType
-				#undef FXPayloadType
-				#undef FireVisualDataType
 				};
 			}
 		}

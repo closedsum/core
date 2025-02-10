@@ -260,6 +260,12 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	SkeletalMeshComponent->SetupAttachment(RootComponent);
 }
 
+using PooledPayloadLibrary = NCsPooledObject::NPayload::FLibrary;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+using PayloadType = NCsWeapon::NPayload::IPayload;
+using FXPayloadImplType = NCsFX::NPayload::NImpl::FImpl;
+using LaunchPayloadType = ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload;
+
 // UObject Interface
 #pragma region
 
@@ -445,11 +451,8 @@ void ACsProjectileWeaponActorPooled::Shutdown()
 // ICsPooledObject
 #pragma region
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 {
-#undef PooledPayloadType
-
 	using namespace NCsProjectileWeaponActorPooled::NCached;
 
 	const FString& Context = Str::Allocate;
@@ -458,10 +461,7 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 
 	Cache->Allocate(Payload);
 
-	typedef NCsPooledObject::NPayload::FLibrary PayloadLibrary;
-	typedef NCsWeapon::NPayload::IPayload PayloadType;
-
-	PayloadType* WeaponPayload = PayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
+	PayloadType* WeaponPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	SetWeaponType(WeaponPayload->GetType());
 	SetUpdateGroup(WeaponPayload->GetUpdateGroup());
@@ -470,10 +470,9 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	MyOwnerAsActor = Cast<AActor>(MyOwner);
 
 	// Get Data
-	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 	typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
 
-	Data		  = WeaponManagerLibrary::GetDataChecked(Context, GetWorldContext(), WeaponType);
+	Data		  = CsWeaponManagerLibrary::GetDataChecked(Context, GetWorldContext(), WeaponType);
 	PrjWeaponData = CsWeaponDataLibrary::GetInterfaceChecked<PrjWeaponDataType>(Context, Data);
 
 	ICsData_GetProjectileType* GetProjectileType = CsWeaponDataLibrary::GetInterfaceChecked<ICsData_GetProjectileType>(Context, Data);
@@ -502,7 +501,7 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 		if (AActor* Actor = Cast<AActor>(Object))
 			Parent = Actor->GetRootComponent();
 
-		const FTransform3f& Transform = WeaponPayload->GetTransform();
+		const FTransform& Transform = WeaponPayload->GetTransform();
 
 		if (Parent)
 		{
@@ -516,7 +515,7 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 		// NO Parent, set the Actor Transform
 		else
 		{
-			SetActorTransform(CsMathLibrary::Convert(Transform));
+			SetActorTransform(Transform);
 		}
 	}
 
@@ -831,9 +830,9 @@ void ACsProjectileWeaponActorPooled::Fire()
 	Fire_StartTime = TimeSinceStart.Time;
 
 	// Setup Fire Routine
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+	using CoroutinePayloadType = NCsCoroutine::NPayload::FImpl;
 
-	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	CoroutinePayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
 	#define COROUTINE Fire_Internal
 
@@ -985,8 +984,6 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	SoundImpl->Play(START);
 
-	typedef ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload LaunchPayloadType;
-
 	LaunchPayloadType LaunchPayload;
 
 	FXImpl->Play(START, LaunchPayload);
@@ -1074,8 +1071,6 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 				ConsumeAmmo();
 
 			{
-				typedef ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload LaunchPayloadType;
-
 				LaunchPayloadType LaunchPayload;
 
 				// ProjectilesPerShot
@@ -1251,10 +1246,7 @@ float ACsProjectileWeaponActorPooled::ProjectilesPerShot_GetInterval() const
 	return CsWeaponModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_ProjectilesPerShot_Interval, Value);
 }
 
-#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
-#define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
-
-bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& Context, ProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload)
+bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& Context, CsProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload)
 {
 	bool Result = true;
 
@@ -1284,9 +1276,7 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 
 		if (SliceType* Slice = CsPrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
-			typedef NCsProjectile::NModifier::IModifier PrjModifierType;
-
-			static TArray<PrjModifierType*> Modifiers;
+			static TArray<CsProjectileModifierType*> Modifiers;
 			
 			Outer->GetProjectileModifiers(Modifiers);
 			Slice->CopyAndEmptyFromModifiers(Outer, Modifiers);
@@ -1308,8 +1298,6 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 	}
 	return Outer->Projectile_SetPayload(Context, Payload, LaunchPayload);
 }
-
-#undef ProjectilePayloadType
 
 FVector3f ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const LaunchPayloadType& LaunchPayload)
 {
@@ -1893,13 +1881,11 @@ void ACsProjectileWeaponActorPooled::FProjectileImpl::Launch(const LaunchPayload
 
 	const FString& Context = Str::Launch;
 
-	typedef NCsProjectile::NPayload::IPayload PayloadType;
-
 	UCsManager_Projectile* Manager_Projectile = CsPrjManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 
 	// Get Payload
-	const FECsProjectile& PrjType = Outer->GetProjectileType();
-	PayloadType* Payload		  = Manager_Projectile->AllocatePayload(PrjType);
+	const FECsProjectile& PrjType	 = Outer->GetProjectileType();
+	CsProjectilePayloadType* Payload = Manager_Projectile->AllocatePayload(PrjType);
 
 	// Set appropriate members on Payload
 	const bool SetSuccess = SetPayload(Context, Payload, LaunchPayload);
@@ -1909,8 +1895,6 @@ void ACsProjectileWeaponActorPooled::FProjectileImpl::Launch(const LaunchPayload
 	// Spawn
 	const FCsProjectilePooled* ProjectilePooled = Manager_Projectile->Spawn(PrjType, Payload);
 }
-
-#undef LaunchPayloadType
 
 ACsProjectileWeaponActorPooled::FProjectileImpl* ACsProjectileWeaponActorPooled::ConstructProjectileImpl()
 {
@@ -2030,8 +2014,6 @@ ACsProjectileWeaponActorPooled::FSoundImpl* ACsProjectileWeaponActorPooled::Cons
 	// FX
 #pragma region
 
-#define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
-
 void ACsProjectileWeaponActorPooled::FFXImpl::Play(const int32 CurrentProjectilePerShotIndex, const LaunchPayloadType& LaunchPayload)
 {
 	using namespace NCsProjectileWeaponActorPooled::NCached::NFXImpl;
@@ -2065,9 +2047,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play(const int32 CurrentProjectile
 				// Get Manager
 				UCsManager_FX* Manager_FX = CsFXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 				// Allocate payload
-				typedef NCsFX::NPayload::IPayload PayloadType;
-
-				PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
+				CsFXPayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
 				// Set appropriate values on payload
 				SetPayload(CurrentProjectilePerShotIndex, Payload, FX, LaunchPayload);
 				SetPayload(CurrentProjectilePerShotIndex, Payload, FXData);
@@ -2095,9 +2075,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play(const int32 CurrentProjectile
 					// Get Manager
 					UCsManager_FX* Manager_FX = CsFXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 					// Allocate payload
-					typedef NCsFX::NPayload::IPayload PayloadType;
-
-					PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
+					CsFXPayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
 					// Set appropriate values on payload
 					SetPayload(CurrentProjectilePerShotIndex, Payload, FX, LaunchPayload);
 					SetPayload(CurrentProjectilePerShotIndex, Payload, FXData);
@@ -2109,19 +2087,13 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play(const int32 CurrentProjectile
 	}
 }
 
-#define FXPayloadType NCsFX::NPayload::IPayload
-void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX, const LaunchPayloadType& LaunchPayload)
+void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(const int32 CurrentProjectilePerShotIndex, CsFXPayloadType* Payload, const FCsFX& FX, const LaunchPayloadType& LaunchPayload)
 {
-#undef FXPayloadType
-
 	using namespace NCsProjectileWeaponActorPooled::NCached::NFXImpl;
 
 	const FString& Context = Str::SetPayload;
 
-	typedef NCsFX::NPayload::NImpl::FImpl PayloadImplType;
-	typedef NCsFX::NPayload::NLibrary::FLibrary PayloadLibrary;
-
-	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+	FXPayloadImplType* PayloadImpl = CsFXPayloadLibrary::PureStaticCastChecked<FXPayloadImplType>(Context, Payload);
 
 	PayloadImpl->Instigator					= Outer;
 	PayloadImpl->Owner						= Outer->GetMyOwner();
@@ -2184,13 +2156,9 @@ void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(const int32 CurrentProj
 	}
 }
 
-#undef LaunchPayloadType
-
-#define FXPayloadType NCsFX::NPayload::IPayload
 #define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
-void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData)
+void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(const int32 CurrentProjectilePerShotIndex, CsFXPayloadType* Payload, FXDataType* FXData)
 {
-#undef FXPayloadType
 #undef FXDataType
 
 	using namespace NCsProjectileWeaponActorPooled::NCached::NFXImpl;
@@ -2215,10 +2183,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(const int32 CurrentProj
 		Type = Params.GetShotParams().GetAttach();
 	}
 
-	typedef NCsFX::NPayload::NImpl::FImpl PayloadImplType;
-	typedef NCsFX::NPayload::NLibrary::FLibrary PayloadLibrary;
-
-	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+	FXPayloadImplType* PayloadImpl = CsFXPayloadLibrary::PureStaticCastChecked<FXPayloadImplType>(Context, Payload);
 
 	// None
 	if (Type == AttachType::None)

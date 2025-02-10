@@ -22,3 +22,4 @@ namespace NCsProjectile
 }
 
 using CsProjectileModifierType = NCsProjectile::NModifier::IModifier;
+using CsPrjModifierType = NCsProjectile::NModifier::IModifier;

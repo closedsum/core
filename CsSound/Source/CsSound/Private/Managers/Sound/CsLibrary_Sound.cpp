@@ -134,9 +134,7 @@ namespace NCsSound
 	{
 		// Check to get Context Root for Manager_Sound
 		{
-			typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-
-			UObject* ContextRoot = SoundManagerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
+			UObject* ContextRoot = CsSoundManagerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
 
 #if WITH_EDITOR
 			if (!ContextRoot)
@@ -219,7 +217,6 @@ namespace NCsSound
 
 				// Spawn FX
 				{
-					typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
 					typedef NCsSound::NPayload::FImpl PayloadImplType;
 
 					UObject* Owner = R->GetOwnerAsObject();
@@ -231,7 +228,7 @@ namespace NCsSound
 					Payload.VolumeMultiplier = Params->VolumeMultiplier;
 					Payload.PitchMultiplier  = Params->PitchMultiplier;
 
-					SoundManagerLibrary::SpawnChecked(Context, R->GetOwnerAsObject(), Params->Sound.Type, &Payload);
+					CsSoundManagerLibrary::SpawnChecked(Context, R->GetOwnerAsObject(), Params->Sound.Type, &Payload);
 				}
 
 				++SpawnCount;

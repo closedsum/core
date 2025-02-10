@@ -18,22 +18,20 @@ namespace NCsDamage
 	{
 		namespace NProcess
 		{
+			using ShapeDataType = NCsDamage::NData::NShape::IShape;
+			using ValueType = NCsDamage::NValue::IValue;
+			using RangeType = NCsDamage::NRange::IRange;
+
 			void FPayload::SetTypeChecked(const FString& Context, const UObject* WorldContext, const FECsDamageData& InType)
 			{
 				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, InType)
 
 				Type = InType;
-
-				typedef NCsDamage::NData::NShape::IShape ShapeDataType;
-				typedef NCsDamage::NValue::IValue ValueType;
-
 				Data  = CsDamageManagerLibrary::GetDataChecked(Context, WorldContext, Type);
 				Value = const_cast<ValueType*>(Data->GetValue());
 
 				if (ShapeDataType* ShapeData = CsDamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 				{
-					typedef NCsDamage::NRange::IRange RangeType;
-
 					RangeType* _Range = const_cast<RangeType*>(ShapeData->GetRange());
 
 					CS_IS_PTR_NULL_CHECKED(_Range)

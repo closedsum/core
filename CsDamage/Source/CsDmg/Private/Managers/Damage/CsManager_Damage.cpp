@@ -91,7 +91,7 @@ using ValueResourceType = NCsDamage::NValue::FResource;
 using ValueType = NCsDamage::NValue::IValue;
 using RangeResourceType = NCsDamage::NRange::FResource;
 using RangeType = NCsDamage::NRange::IRange;
-using RangeImplType = NCsDamage::NRange::FImpl;
+using RangeImplType = NCsDamage::NRange::NImpl::FImpl;
 using ProcessPayloadType = NCsDamage::NData::NProcess::FPayload;
 
 // Singleton

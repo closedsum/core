@@ -3,7 +3,7 @@
 #include "Data/CsData_Projectile.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
-#include "CsMacro_Misc.h"
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsPrjLog.h"
 
@@ -17,7 +17,9 @@ namespace NCsProjectile
 
 			struct CSPRJ_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
 			{
-			#define LogLevel void(*Log)(const FString&) = &NCsProjectile::FLog::Warning
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
 
 			public:
 
@@ -56,9 +58,7 @@ namespace NCsProjectile
 				* @param Log		(optional)
 				* return
 				*/
-				static bool IsValid(const FString& Context, const DataType* Data, LogLevel);
-		
-			#undef LogLevel
+				static bool IsValid(const FString& Context, const DataType* Data, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 			};
 		}
 	}

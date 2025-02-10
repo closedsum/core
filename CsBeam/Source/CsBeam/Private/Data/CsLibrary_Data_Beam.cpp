@@ -14,45 +14,40 @@ namespace NCsBeam
 {
 	namespace NData
 	{
-		#define DataType NCsBeam::NData::IData
-
-		bool FLibrary::IsValidChecked(const FString& Context, const DataType* Data)
+		namespace NLibrary
 		{
-			// CollisionDataType
-			typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
+			using CollisionDataType = NCsBeam::NData::NCollision::ICollision;
 
-			if (const CollisionDataType* CollisionData = GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+			bool FLibrary::IsValidChecked(const FString& Context, const DataType* Data)
 			{
-				CS_IS_VALID_CHECKED(CollisionData->GetCollisionPreset());
+				// CollisionDataType
+				if (const CollisionDataType* CollisionData = GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+				{
+					CS_IS_VALID_CHECKED(CollisionData->GetCollisionPreset());
 
-				check(CollisionData->GetCollisionShape()->IsValidChecked(Context));
+					check(CollisionData->GetCollisionShape()->IsValidChecked(Context));
 
-				CS_IS_VALID_CHECKED(CollisionData->GetCollisionFrequencyParams());
-
-				CS_IS_INT_GREATER_THAN_CHECKED(CollisionData->GetCollisionCount(), 0)
+					CS_IS_VALID_CHECKED(CollisionData->GetCollisionFrequencyParams());
+					CS_IS_INT_GREATER_THAN_CHECKED(CollisionData->GetCollisionCount(), 0)
+				}
+				return true;
 			}
-			return true;
-		}
 
-		bool FLibrary::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
-		{
-			// CollisionDataType
-			typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
-
-			if (const CollisionDataType* CollisionData = GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+			bool FLibrary::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
 			{
-				CS_IS_VALID(CollisionData->GetCollisionPreset());
+				// CollisionDataType
+				if (const CollisionDataType* CollisionData = GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+				{
+					CS_IS_VALID(CollisionData->GetCollisionPreset());
 
-				if (!CollisionData->GetCollisionShape()->IsValid(Context, Log))
-					return false;
+					if (!CollisionData->GetCollisionShape()->IsValid(Context, Log))
+						return false;
 
-				CS_IS_VALID(CollisionData->GetCollisionFrequencyParams());
-
-				CS_IS_INT_GREATER_THAN(CollisionData->GetCollisionCount(), 0)
+					CS_IS_VALID(CollisionData->GetCollisionFrequencyParams());
+					CS_IS_INT_GREATER_THAN(CollisionData->GetCollisionCount(), 0)
+				}
+				return true;
 			}
-			return true;
 		}
-
-		#undef DataType
 	}
 }

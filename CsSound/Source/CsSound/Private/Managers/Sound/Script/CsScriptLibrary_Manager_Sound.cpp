@@ -42,9 +42,7 @@ UObject* UCsScriptLibrary_Manager_Sound::FindObject(const FString& Context, UObj
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::FindObject : Context;
 
-	typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-
-	const FCsSoundPooled* SoundPooled = SoundManagerLibrary::FindSafeObject(Ctxt, WorldContextObject, Type, Index);
+	const FCsSoundPooled* SoundPooled = CsSoundManagerLibrary::FindSafeObject(Ctxt, WorldContextObject, Type, Index);
 
 	if (SoundPooled)
 	{
@@ -61,14 +59,12 @@ int32 UCsScriptLibrary_Manager_Sound::Spawn(const FString& Context, UObject* Wor
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Spawn : Context;
 
-	typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-
 	// Check Payload is Valid
 	if (!Payload.IsValid(Ctxt))
 		return INDEX_NONE;
 
 	// Try to allocate a native payload
-	UCsManager_Sound* Manager_Sound = SoundManagerLibrary::GetSafe(Ctxt, WorldContextObject);
+	UCsManager_Sound* Manager_Sound = CsSoundManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
 	typedef NCsSound::NPayload::FImpl PayloadImplType;
 

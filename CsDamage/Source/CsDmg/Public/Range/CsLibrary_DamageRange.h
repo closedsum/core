@@ -9,29 +9,30 @@ namespace NCsDamage
 {
 	namespace NRange
 	{
-	#define RangeType NCsDamage::NRange::IRange
-
-		/**
-		* Library for interface: RangeType (NCsDamage::NRange::IRange)
-		*/
-		struct CSDMG_API FLibrary final : public NCsInterfaceMap::TLibrary<RangeType>
+		namespace NLibrary
 		{
-			static bool IsValidChecked(const FString& Context, const RangeType* Range);
+			using RangeType = NCsDamage::NRange::IRange;
 
 			/**
-			* Copy the values from From to To with checks.
-			* Currently supports To types of:
-			*  NCsDamage::NRange::FImpl (NCsDamage::NRange::IRange)
-			*
-			* @param Context	The calling context.
-			* @param From		What to copy.
-			* @param To			What to copy to.
+			* Library for interface: RangeType (NCsDamage::NRange::IRange)
 			*/
-			static bool CopyChecked(const FString& Context, const RangeType* From, RangeType* To);
-		};
+			struct CSDMG_API FLibrary final : public NCsInterfaceMap::TLibrary<RangeType>
+			{
+				static bool IsValidChecked(const FString& Context, const RangeType* Range);
 
-	#undef RangeType
+				/**
+				* Copy the values from From to To with checks.
+				* Currently supports To types of:
+				*  NCsDamage::NRange::NImpl::FImpl (NCsDamage::NRange::IRange)
+				*
+				* @param Context	The calling context.
+				* @param From		What to copy.
+				* @param To			What to copy to.
+				*/
+				static bool CopyChecked(const FString& Context, const RangeType* From, RangeType* To);
+			};
+		}
 	}
 }
 
-using CsDamageRangeLibrary = NCsDamage::NRange::FLibrary;
+using CsDamageRangeLibrary = NCsDamage::NRange::NLibrary::FLibrary;

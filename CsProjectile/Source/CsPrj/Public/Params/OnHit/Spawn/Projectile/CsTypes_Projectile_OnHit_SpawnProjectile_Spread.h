@@ -429,25 +429,20 @@ namespace NCsProjectile
 				{
 					struct CSPRJ_API FLibrary
 					{
-					public:
+					private:
 
-					#define ShapeType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EShape
-					#define DistributionType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EDistribution
+						using ShapeType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EShape;
+						using DistributionType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EDistribution;
+						using AngleType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EAngle;
+						using AngleDistributionType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EDistribution;
+
+					public:		
 
 						static FVector3f GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const DistributionType& Distribution);
 
-					#undef ShapeType
-					#undef DistributionType
+						static void SetAnglesChecked(const FString& Context, const int32& Count, const AngleType& Type, const float& Angle, const AngleDistributionType& Distribution, TArray<float>& OutAngles);
 
-					#define SpreadAngleType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EAngle
-					#define DistributionType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EDistribution
-
-						static void SetAnglesChecked(const FString& Context, const int32& Count, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution, TArray<float>& OutAngles);
-
-						static float GetRandomAngleChecked(const FString& Context, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution);
-
-					#undef SpreadAngleType
-					#undef DistributionType
+						static float GetRandomAngleChecked(const FString& Context, const AngleType& Type, const float& Angle, const AngleDistributionType& Distribution);
 					};
 				}
 			}

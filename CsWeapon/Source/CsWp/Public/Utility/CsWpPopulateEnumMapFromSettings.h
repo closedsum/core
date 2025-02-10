@@ -62,7 +62,7 @@ public:
 	* @param Context		The calling context.
 	* @param Payload
 	*/
-#define PayloadType FCsWpPopulateEnumMapFromSettings::FFromDataTable::FPayload
+	using PayloadType = FCsWpPopulateEnumMapFromSettings::FFromDataTable::FPayload;
+
 	static void FromDataTable(const FString& Context, PayloadType& Payload);
-#undef PayloadType
 };

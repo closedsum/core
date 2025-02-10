@@ -26,12 +26,14 @@ namespace NCsDamage
 		{
 			struct CSDMG_API FPayload
 			{
-			public:
+			private:
 
-			#define ValueType NCsDamage::NValue::IValue
-			#define RangeType NCsDamage::NRange::IRange
-			#define ModifierType NCsDamage::NModifier::IModifier
-			#define DataType NCsDamage::NData::IData
+				using ValueType = NCsDamage::NValue::IValue;
+				using RangeType = NCsDamage::NRange::IRange;
+				using ModifierType = NCsDamage::NModifier::IModifier;
+				using DataType = NCsDamage::NData::IData;
+
+			public:
 
 				ValueType* Value;
 			
@@ -93,11 +95,6 @@ namespace NCsDamage
 					HitResult.Init();
 					Modifiers.Reset(Modifiers.Max());
 				}
-
-			#undef ValueType
-			#undef RangeType
-			#undef ModifierType
-			#undef DataType
 			};
 		}
 	}

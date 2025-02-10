@@ -41,25 +41,23 @@ namespace NCsWeapon
 					}
 				}
 
+				using DataType = NCsWeapon::NData::IData;
+				using BeamDataType = NCsBeam::NData::IData;
+
 				void FImpl::SetOuter(UObject* InOuter)
 				{
 					Outer = InOuter;
 					Interface = Cast<ICsBeamWeapon>(Outer);
 				}
 
-				#define DataType NCsWeapon::NData::IData
 				void FImpl::TryFire(DataType* Data)
 				{
-				#undef DataType
-
 					using namespace NCached;
 
 					const FString& Context = Str::TryFire;
 
-					// FXDataType (NCsWeapon::NBeam::NData::NVisual::NFire::IFire)
-					typedef NCsWeapon::NBeam::NData::NVisual::NFire::IFire FXDataType;
-
-					if (FXDataType* FXData = CsWeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Data))
+					// FireVisualDataType (NCsWeapon::NBeam::NData::NVisual::NFire::IFire)
+					if (FireVisualDataType* FXData = CsWeaponDataLibrary::GetSafeInterfaceChecked<FireVisualDataType>(Context, Data))
 					{
 						typedef NCsWeapon::NBeam::NData::NVisual::NFire::NParams::IParams ParamsType;
 						typedef NCsWeapon::NBeam::NData::NVisual::NFire::NParams::EAttach AttachType;
@@ -104,8 +102,6 @@ namespace NCsWeapon
 					}
 				}
 
-				#define BeamDataType NCsBeam::NData::IData
-
 				void FImpl::TryImpact(BeamDataType* Data, const FHitResult& Hit)
 				{
 					using namespace NCached;
@@ -114,9 +110,8 @@ namespace NCsWeapon
 
 					// ImpactVisualDataType (NCsBeam::NData::NVisual::NImpact::IImpact)
 					typedef NCsBeam::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
-					typedef NCsBeam::NData::FLibrary BeamDataLibrary;
 
-					if (ImpactVisualDataType* ImpactVisualData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
+					if (ImpactVisualDataType* ImpactVisualData = CsBeamDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 					{
 						// Get Physics Surface
 						EPhysicalSurface SurfaceType = NCsHitResult::GetPhysSurfaceType(Hit);
@@ -131,8 +126,6 @@ namespace NCsWeapon
 						CsFXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);
 					}
 				}
-
-				#undef BeamDataType
 			}
 		}
 	}

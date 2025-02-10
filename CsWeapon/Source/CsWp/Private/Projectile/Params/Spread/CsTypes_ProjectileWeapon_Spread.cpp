@@ -226,20 +226,21 @@ namespace NCsWeapon
 	{
 		namespace NSpread
 		{
-			#define ShapeType NCsWeapon::NProjectile::NSpread::EShape
-			#define DistributionType NCsWeapon::NProjectile::NSpread::NShape::EDistribution
+			using ShapeType = NCsWeapon::NProjectile::NSpread::EShape;
+			using ShapeMapType = NCsWeapon::NProjectile::NSpread::EMShape;
+			using ShapeDistributionType = NCsWeapon::NProjectile::NSpread::NShape::EDistribution;
+			using ShapeDistributionMapType = NCsWeapon::NProjectile::NSpread::NShape::EMDistribution;
+			using AngleType = NCsWeapon::NProjectile::NSpread::EAngle;
+			using AngleMapType = NCsWeapon::NProjectile::NSpread::EMAngle;
+			using AngleDistributionType = NCsWeapon::NProjectile::NSpread::NAngle::EDistribution;
+			using AngleDistributionMapType = NCsWeapon::NProjectile::NSpread::NAngle::EMDistribution;
 
-			FVector3f FLibrary::GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const DistributionType& Distribution)
+			FVector3f FLibrary::GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const ShapeDistributionType& Distribution)
 			{
-				typedef NCsWeapon::NProjectile::NSpread::EMShape ShapeMapType;
-
 				CS_IS_ENUM_VALID_CHECKED(ShapeMapType, Shape)
-
 				CS_IS_VECTOR_ZERO_CHECKED(Extents)
 
-				typedef NCsWeapon::NProjectile::NSpread::NShape::EMDistribution DistributionMapType;
-
-				checkf(Distribution == DistributionType::Random, TEXT("%s: Distribution (%s) != DistributionType::Random."), *Context, DistributionMapType::Get().ToChar(Distribution));
+				checkf(Distribution == ShapeDistributionType::Random, TEXT("%s: Distribution (%s) != DistributionType::Random."), *Context, ShapeDistributionMapType::Get().ToChar(Distribution));
 
 				FVector3f Offset = FVector3f::ZeroVector;
 
@@ -274,47 +275,34 @@ namespace NCsWeapon
 				return Offset;
 			}
 
-			#undef ShapeType
-			#undef DistributionType
-
-			#define SpreadAngleType NCsWeapon::NProjectile::NSpread::EAngle
-			#define DistributionType NCsWeapon::NProjectile::NSpread::NAngle::EDistribution
-
-			void FLibrary::SetAnglesChecked(const FString& Context, const int32& Count, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution, TArray<float>& OutAngles)
+			void FLibrary::SetAnglesChecked(const FString& Context, const int32& Count, const AngleType& Type, const float& Angle, const AngleDistributionType& Distribution, TArray<float>& OutAngles)
 			{
 				CS_IS_INT_GREATER_THAN_CHECKED(Count, 0)
-
-				typedef NCsWeapon::NProjectile::NSpread::EMAngle SpreadAngleMapType;
-
-				CS_IS_ENUM_VALID_CHECKED(SpreadAngleMapType, AngleType)
-
+				CS_IS_ENUM_VALID_CHECKED(AngleMapType, Type)
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Angle, 0.0f)
 				CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(Angle, 360.0f)
+				CS_IS_ENUM_VALID_CHECKED(AngleDistributionMapType, Distribution)
 
-				typedef NCsWeapon::NProjectile::NSpread::NAngle::EMDistribution DistributionMapType;
-
-				CS_IS_ENUM_VALID_CHECKED(DistributionMapType, Distribution)
-
-				checkf(Distribution != DistributionType::Random, TEXT("%s: Distribution == DistributionType::Random is NOT supported."), *Context);
+				checkf(Distribution != AngleDistributionType::Random, TEXT("%s: Distribution == DistributionType::Random is NOT supported."), *Context);
 
 				CS_IS_TARRAY_SIZE_CHECKED(OutAngles, float, Count)
 
 				float AngleBetween = Angle;
 
 				// DivideByCount
-				if (AngleType == SpreadAngleType::DivideByCount)
+				if (Type == AngleType::DivideByCount)
 				{
 					AngleBetween = Angle / Count;
 				}
 				// UniformMinMax
 				else 
-				if (AngleType == SpreadAngleType::UniformMinMax)
+				if (Type == AngleType::UniformMinMax)
 				{
 					AngleBetween = Count > 1 ? (2.0f * Angle) / Count : 0.0f;
 				}
 
 				// Ordered Clockwise
-				if (Distribution == DistributionType::OrderedClockwise)
+				if (Distribution == AngleDistributionType::OrderedClockwise)
 				{
 					for (int32 I = 0; I < Count; ++I)
 					{
@@ -323,7 +311,7 @@ namespace NCsWeapon
 				}
 				// Ordered Counter-Clockwise
 				else
-				if (Distribution == DistributionType::OrderedCounterClockwise)
+				if (Distribution == AngleDistributionType::OrderedCounterClockwise)
 				{
 					for (int32 I = 0; I < Count; ++I)
 					{
@@ -332,7 +320,7 @@ namespace NCsWeapon
 				}
 				// Ordered Ping Pong Clockwise
 				else
-				if (Distribution == DistributionType::OrderedPingPongClockwise)
+				if (Distribution == AngleDistributionType::OrderedPingPongClockwise)
 				{
 					int32 StartIndex = 0;
 
@@ -361,7 +349,7 @@ namespace NCsWeapon
 				}
 				// Ordered Ping Pong Counter-Clockwise
 				else
-				if (Distribution == DistributionType::OrderedPingPongCounterClockwise)
+				if (Distribution == AngleDistributionType::OrderedPingPongCounterClockwise)
 				{
 					int32 StartIndex = 0;
 
@@ -390,62 +378,46 @@ namespace NCsWeapon
 				}
 				// Shuffle
 				else
-				if (Distribution == DistributionType::Shuffle)
+				if (Distribution == AngleDistributionType::Shuffle)
 				{
 					for (int32 I = 0; I < Count; ++I)
 					{
 						OutAngles[I] = I * AngleBetween;
 					}
-						
-					typedef NCsArray::FLibrary ArrayLibrary;
-
-					ArrayLibrary::Shuffle<float>(OutAngles);
+					CsArrayLibrary::Shuffle<float>(OutAngles);
 				}
 			}
 
-			float FLibrary::GetRandomAngleChecked(const FString& Context, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution)
+			float FLibrary::GetRandomAngleChecked(const FString& Context, const AngleType& Type, const float& Angle, const AngleDistributionType& Distribution)
 			{
-				typedef NCsWeapon::NProjectile::NSpread::EMAngle SpreadAngleMapType;
+				CS_IS_ENUM_VALID_CHECKED(AngleMapType, Type)
 
-				CS_IS_ENUM_VALID_CHECKED(SpreadAngleMapType, AngleType)
-
-				checkf(AngleType == SpreadAngleType::UniformMinMax, TEXT("%s: AngleType (%s) != SpreadAngleType::UniformMinMax."), *Context, SpreadAngleMapType::Get().ToChar(AngleType));
+				checkf(Type == AngleType::UniformMinMax, TEXT("%s: Type (%s) != AngleType::UniformMinMax."), *Context, AngleMapType::Get().ToChar(Type));
 
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Angle, 0.0f)
 				CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(Angle, 180.0f)
+				CS_IS_ENUM_VALID_CHECKED(AngleDistributionMapType, Distribution)
 
-				typedef NCsWeapon::NProjectile::NSpread::NAngle::EMDistribution DistributionMapType;
-
-				CS_IS_ENUM_VALID_CHECKED(DistributionMapType, Distribution)
-
-				checkf(Distribution == DistributionType::Random, TEXT("%s: Distribution (%s) != DistributionType::Random."), *Context, DistributionMapType::Get().ToChar(Distribution));
+				checkf(Distribution == AngleDistributionType::Random, TEXT("%s: Distribution (%s) != AngleDistributionType::Random."), *Context, AngleDistributionMapType::Get().ToChar(Distribution));
 
 				return FMath::FRandRange(-Angle, Angle);
 			}
 
-			float FLibrary::GetRandomAngleChecked(const FString& Context, const SpreadAngleType& AngleType, const float& Min, const float& Max, const DistributionType& Distribution)
+			float FLibrary::GetRandomAngleChecked(const FString& Context, const AngleType& Type, const float& Min, const float& Max, const AngleDistributionType& Distribution)
 			{
-				typedef NCsWeapon::NProjectile::NSpread::EMAngle SpreadAngleMapType;
+				CS_IS_ENUM_VALID_CHECKED(AngleMapType, Type)
 
-				CS_IS_ENUM_VALID_CHECKED(SpreadAngleMapType, AngleType)
-
-				checkf(AngleType == SpreadAngleType::RangeMinMax, TEXT("%s: AngleType (%s) != SpreadAngleType::RangeMinMax."), *Context, SpreadAngleMapType::Get().ToChar(AngleType));
+				checkf(Type == AngleType::RangeMinMax, TEXT("%s: AngleType (%s) != AngleType::RangeMinMax."), *Context, AngleMapType::Get().ToChar(Type));
 
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Max, Min)
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Min, -180.0f)
 				CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(Max, 180.0f)
+				CS_IS_ENUM_VALID_CHECKED(AngleDistributionMapType, Distribution)
 
-				typedef NCsWeapon::NProjectile::NSpread::NAngle::EMDistribution DistributionMapType;
-
-				CS_IS_ENUM_VALID_CHECKED(DistributionMapType, Distribution)
-
-				checkf(Distribution == DistributionType::Random, TEXT("%s: Distribution (%s) != DistributionType::Random."), *Context, DistributionMapType::Get().ToChar(Distribution));
+				checkf(Distribution == AngleDistributionType::Random, TEXT("%s: Distribution (%s) != AngleDistributionType::Random."), *Context, AngleDistributionMapType::Get().ToChar(Distribution));
 
 				return FMath::FRandRange(Min, Max);
 			}
-
-			#undef SpreadAngleType
-			#undef DistributionType
 		}
 	}
 }

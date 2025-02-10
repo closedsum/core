@@ -26,11 +26,17 @@ namespace NCsProjectile
 
 				virtual ~ILaunch() {}
 
-			#define ParamsType NCsProjectile::NLaunch::FParams
+			private:
 
-				virtual const ParamsType& GetLaunchParams() const = 0;
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ParamsType = NCsProjectile::NLaunch::FParams;
+				};
 
-			#undef ParamsType
+			public:
+
+				virtual const _::ParamsType& GetLaunchParams() const = 0;
 			};
 		}
 	}
@@ -54,9 +60,13 @@ public:
 
 	static const FName Name;
 
-#define ParamsType NCsProjectile::NLaunch::FParams
+private:
 
-	virtual const ParamsType& GetLaunchParams() const = 0;
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using ParamsType = NCsProjectile::NLaunch::FParams;
+	};
 
-#undef ParamsType
+	virtual const _::ParamsType& GetLaunchParams() const = 0;
 };

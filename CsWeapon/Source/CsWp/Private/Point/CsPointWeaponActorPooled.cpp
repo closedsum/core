@@ -402,7 +402,7 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 		if (AActor* Actor = Cast<AActor>(Object))
 			Parent = Actor->GetRootComponent();
 
-		const FTransform3f& Transform = WeaponPayload->GetTransform();
+		const FTransform& Transform = WeaponPayload->GetTransform();
 
 		if (Parent)
 		{
@@ -416,7 +416,7 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 		// NO Parent, set the Actor Transform
 		else
 		{
-			SetActorTransform(CsMathLibrary::Convert(Transform));
+			SetActorTransform(Transform);
 		}
 	}
 

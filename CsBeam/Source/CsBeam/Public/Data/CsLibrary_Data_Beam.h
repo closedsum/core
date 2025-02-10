@@ -11,32 +11,35 @@ namespace NCsBeam
 {
 	namespace NData
 	{
-	#define DataType NCsBeam::NData::IData
-
-		struct CSBEAM_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
+		namespace NLibrary
 		{
-		public:
+			using DataType = NCsBeam::NData::IData;
 
-			/**
-			*
-			*
-			* @param Context	The calling context.
-			* @param Data
-			* return
-			*/
-			static bool IsValidChecked(const FString& Context, const DataType* Data);
+			struct CSBEAM_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
+			{
+			public:
 
-			/**
-			*
-			*
-			* @param Context	The calling context.
-			* @param Data
-			* @param Log		(optional)
-			* return
-			*/
-			static bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &NCsBeam::FLog::Warning);
-		};
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Data
+				* return
+				*/
+				static bool IsValidChecked(const FString& Context, const DataType* Data);
 
-	#undef DataType
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Data
+				* @param Log		(optional)
+				* return
+				*/
+				static bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &NCsBeam::FLog::Warning);
+			};
+		}
 	}
 }
+
+using CsBeamDataLibrary = NCsBeam::NData::NLibrary::FLibrary;

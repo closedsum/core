@@ -73,10 +73,13 @@ namespace NCsBeamCollisionShapeType
 
 #pragma endregion BeamCollisionShapeType
 
+using LineType = NCsBeam::NCollision::NShape::FLine;
+using BoxType = NCsBeam::NCollision::NShape::FBox;
+using CapsuleType = NCsBeam::NCollision::NShape::FCapsule;
+using ShapeType = NCsBeam::NCollision::NShape::FShape;
+
 // FCsBeamCollisionShape
 #pragma region
-
-#define LineType NCsBeam::NCollision::NShape::FLine
 
 void FCsBeamCollisionShape::CopyToShape(LineType* Shape)
 {
@@ -90,10 +93,6 @@ void FCsBeamCollisionShape::CopyToShapeAsValue(LineType* Shape) const
 	Shape->SetLength(Length);
 }
 
-#undef LineType
-
-#define BoxType NCsBeam::NCollision::NShape::FBox
-
 void FCsBeamCollisionShape::CopyToShape(BoxType* Shape)
 {
 	Shape->SetScaleType((NCsBeam::NCollision::NShape::EScale*)&ScaleType);
@@ -105,10 +104,6 @@ void FCsBeamCollisionShape::CopyToShapeAsValue(BoxType* Shape) const
 	Shape->SetScaleType((NCsBeam::NCollision::NShape::EScale)ScaleType);
 	Shape->SetHalfExtents(HalfExtents);
 }
-
-#undef BoxType
-
-#define CapsuleType NCsBeam::NCollision::NShape::FCapsule
 
 void FCsBeamCollisionShape::CopyToShape(CapsuleType* Shape)
 {
@@ -123,10 +118,6 @@ void FCsBeamCollisionShape::CopyToShapeAsValue(CapsuleType* Shape) const
 	Shape->SetRadius(Radius);
 	Shape->SetHalfHeight(HalfHeight);
 }
-
-#undef CapsuleType
-
-#define ShapeType NCsBeam::NCollision::NShape::FShape
 
 ShapeType* FCsBeamCollisionShape::ConstructShape()
 {
@@ -191,8 +182,6 @@ ShapeType* FCsBeamCollisionShape::ConstructShapeAsValue() const
 	}
 	return nullptr;
 }
-
-#undef ShapeType
 
 bool FCsBeamCollisionShape::IsValidChecked(const FString& Context) const
 {

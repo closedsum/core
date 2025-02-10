@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsLibrary_Data_Projectile.h"
 
+// Types
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Data
@@ -18,7 +20,15 @@ namespace NCsProjectile
 	{
 		namespace NLibrary
 		{
-			#define LogLevel void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/
+			using LogLevelType = NCsProjectile::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogLevelType::Warning);
+
+			using LaunchDataType = NCsProjectile::NData::NLaunch::ILaunch;
+			using TrackingDataType = NCsProjectile::NData::NTracking::ITracking;
+			using CollisionDataType = NCsProjectile::NData::NCollision::ICollision;
+			using StaticMeshVisualDataType = NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh;
+			using TrailVisualDataType = NCsProjectile::NData::NVisual::NTrail::ITrail;
 
 			FString FLibrary::PrintObjectAndClass(const DataType* Data)
 			{
@@ -46,15 +56,11 @@ namespace NCsProjectile
 				CS_IS_PTR_NULL_CHECKED(Data)
 
 				// Launch
-				typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
-
 				if (const LaunchDataType* LaunchData = GetSafeInterfaceChecked<LaunchDataType>(Context, Data))
 				{
 					CS_IS_VALID_CHECKED(LaunchData->GetLaunchParams());
 				}
 				// Tracking
-				typedef NCsProjectile::NData::NTracking::ITracking TrackingDataType;
-
 				if (const TrackingDataType* TrackingData = GetSafeInterfaceChecked<TrackingDataType>(Context, Data))
 				{
 					if (TrackingData->ShouldUseTracking())
@@ -63,8 +69,6 @@ namespace NCsProjectile
 					}
 				}
 				// Collision
-				typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
-
 				if (const CollisionDataType* CollisionData = GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 				{
 					CS_IS_VALID_CHECKED(CollisionData->GetCollisionPreset());
@@ -82,15 +86,11 @@ namespace NCsProjectile
 					}
 				}
 				// VisualStaticMesh
-				typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshVisualDataType;
-
 				if (const StaticMeshVisualDataType* StaticMeshVisualData = GetSafeInterfaceChecked<StaticMeshVisualDataType>(Context, Data))
 				{
 					CS_IS_VALID_CHECKED(StaticMeshVisualData->GetStaticMeshInfo());
 				}
 				// VisualTrail
-				typedef NCsProjectile::NData::NVisual::NTrail::ITrail TrailVisualDataType;
-
 				if (const TrailVisualDataType* TrailVisualData = GetSafeInterfaceChecked<TrailVisualDataType>(Context, Data))
 				{
 					CS_IS_VALID_CHECKED(TrailVisualData->GetTrailInfo());
@@ -103,20 +103,16 @@ namespace NCsProjectile
 				return true;
 			}
 
-			bool FLibrary::IsValid(const FString& Context, const DataType* Data, LogLevel)
+			bool FLibrary::IsValid(const FString& Context, const DataType* Data, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL(Data)
 
 				// Launch
-				typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
-
 				if (const LaunchDataType* LaunchData = GetSafeInterfaceChecked<LaunchDataType>(Context, Data))
 				{
 					CS_IS_VALID(LaunchData->GetLaunchParams())
 				}
 				// Tracking
-				typedef NCsProjectile::NData::NTracking::ITracking TrackingDataType;
-
 				if (const TrackingDataType* TrackingData = GetSafeInterfaceChecked<TrackingDataType>(Context, Data))
 				{
 					if (TrackingData->ShouldUseTracking())
@@ -125,8 +121,6 @@ namespace NCsProjectile
 					}
 				}
 				// Collision
-				typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
-
 				if (const CollisionDataType* CollisionData = GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 				{
 					CS_IS_VALID(CollisionData->GetCollisionPreset())
@@ -148,15 +142,11 @@ namespace NCsProjectile
 					}
 				}
 				// VisualStaticMesh
-				typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshVisualDataType;
-
 				if (const StaticMeshVisualDataType* StaticMeshVisualData = GetSafeInterfaceChecked<StaticMeshVisualDataType>(Context, Data))
 				{
 					CS_IS_VALID(StaticMeshVisualData->GetStaticMeshInfo())
 				}
 				// VisualTrail
-				typedef NCsProjectile::NData::NVisual::NTrail::ITrail TrailVisualDataType;
-
 				if (const TrailVisualDataType* TrailVisualData = GetSafeInterfaceChecked<TrailVisualDataType>(Context, Data))
 				{
 					CS_IS_VALID(TrailVisualData->GetTrailInfo())
@@ -168,8 +158,6 @@ namespace NCsProjectile
 				}
 				return true;
 			}
-
-			#undef LogLevel
 		}
 	}
 }

@@ -482,27 +482,22 @@ namespace NCsWeapon
 		{
 			struct CSWP_API FLibrary
 			{
+			private:
+
+				using ShapeType = NCsWeapon::NProjectile::NSpread::EShape;
+				using ShapeDistributionType = NCsWeapon::NProjectile::NSpread::NShape::EDistribution;
+				using AngleType = NCsWeapon::NProjectile::NSpread::EAngle;
+				using AngleDistributionType = NCsWeapon::NProjectile::NSpread::NAngle::EDistribution;
+
 			public:
 
-			#define ShapeType NCsWeapon::NProjectile::NSpread::EShape
-			#define DistributionType NCsWeapon::NProjectile::NSpread::NShape::EDistribution
+				static FVector3f GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const ShapeDistributionType& Distribution);
 
-				static FVector3f GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const DistributionType& Distribution);
+				static void SetAnglesChecked(const FString& Context, const int32& Count, const AngleType& Type, const float& Angle, const AngleDistributionType& Distribution, TArray<float>& OutAngles);
 
-			#undef ShapeType
-			#undef DistributionType
+				static float GetRandomAngleChecked(const FString& Context, const AngleType& Type, const float& Angle, const AngleDistributionType& Distribution);
 
-			#define SpreadAngleType NCsWeapon::NProjectile::NSpread::EAngle
-			#define DistributionType NCsWeapon::NProjectile::NSpread::NAngle::EDistribution
-
-				static void SetAnglesChecked(const FString& Context, const int32& Count, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution, TArray<float>& OutAngles);
-
-				static float GetRandomAngleChecked(const FString& Context, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution);
-
-				static float GetRandomAngleChecked(const FString& Context, const SpreadAngleType& AngleType, const float& Min, const float& Max, const DistributionType& Distribution);
-
-			#undef SpreadAngleType
-			#undef DistributionType
+				static float GetRandomAngleChecked(const FString& Context, const AngleType& Type, const float& Min, const float& Max, const AngleDistributionType& Distribution);
 			};
 		}
 	}

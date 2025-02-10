@@ -11,7 +11,27 @@
 // FCsProjectile_Launch_DelayParams
 #pragma region
 
-// NCsProjectile::NLaunch::NDelay::FParams
+struct FCsProjectile_Launch_DelayParams;
+
+// ParamsType (NCsProjectile::NLaunch::NDelay::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NLaunch, NDelay, FParams)
+
+namespace NCsProjectile_Launch_DelayParams
+{
+	using ThisType = FCsProjectile_Launch_DelayParams;
+	using ParamsType = NCsProjectile::NLaunch::NDelay::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsProjectile::NLaunch::NDelay::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NLaunch, NDelay, FParams)
 
 USTRUCT(BlueprintType)
@@ -38,10 +58,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsProjectile::NLaunch::NDelay::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsProjectile::NLaunch::NDelay::FParams;
+	using _Impl = NCsProjectile_Launch_DelayParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -85,7 +106,27 @@ namespace NCsProjectile
 // FCsProjectile_LaunchParams
 #pragma region
 
-// NCsProjectile::NLaunch::FParams
+struct FCsProjectile_LaunchParams;
+
+// ParamsType (NCsProjectile::NLaunch::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NLaunch, FParams)
+
+namespace NCsProjectile_LaunchParams
+{
+	using ThisType = FCsProjectile_LaunchParams;
+	using ParamsType = NCsProjectile::NLaunch::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsProjectile::NLaunch::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NLaunch, FParams)
 
 /**
@@ -111,10 +152,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsProjectile::NLaunch::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsProjectile::NLaunch::FParams;
+	using _Impl = NCsProjectile_LaunchParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -130,7 +172,9 @@ namespace NCsProjectile
 		*/
 		struct CSPRJ_API FParams
 		{
-		#define DelayParamsTypes NCsProjectile::NLaunch::NDelay::FParams
+		private:
+
+			using DelayParamsTypes = NCsProjectile::NLaunch::NDelay::FParams;
 
 		private:
 
@@ -156,8 +200,6 @@ namespace NCsProjectile
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-		#undef DelayParamsTypes
 		};
 	}
 }

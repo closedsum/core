@@ -75,7 +75,7 @@ bool UCsScriptLibrary_Data_Beam::AddSlice_Collision(const FString& Context, cons
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddSlice_Collision : Context;
 
-	typedef NCsBeam::NData::NCollision::FImplSlice DataSliceType;
+	typedef NCsBeam::NData::NCollision::NImplSlice::FImplSlice DataSliceType;
 
 	DataSliceType* DataSlice = Slice.AddSafeSliceAsValue(Ctxt, WorldContextObject, FName(*Name));
 
@@ -88,7 +88,7 @@ bool UCsScriptLibrary_Data_Beam::AddSliceFromObject_Collision(const FString& Con
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddSliceFromObject_Collision : Context;
 
-	typedef NCsBeam::NData::NCollision::FImplSlice DataSliceType;
+	typedef NCsBeam::NData::NCollision::NImplSlice::FImplSlice DataSliceType;
 
 	DataSliceType* DataSlice = DataSliceType::AddSafeSlice(Context, WorldContextObject, FName(*Name), Object);
 

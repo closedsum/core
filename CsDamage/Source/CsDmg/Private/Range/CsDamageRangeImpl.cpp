@@ -5,10 +5,11 @@
 
 // Types
 #include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Range/CsLibrary_DamageRange.h"
 
-const FName NCsDamage::NRange::FImpl::Name = FName("NCsDamage::NRange::FImpl");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsDamage::NRange::NImpl::FImpl);
 
 namespace NCsDamage
 {
@@ -20,59 +21,57 @@ namespace NCsDamage
 			{
 				namespace Str
 				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NRange::FImpl, Copy);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NRange::NImpl::FImpl, Copy);
 				}
 			}
+
+			FImpl::FImpl() :
+				InterfaceMap(),
+				// RangeType (NCsDamage::NRange::IRange)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(MinRange, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxRange, 0.0f)
+			{
+				InterfaceMap = &InterfaceMap_Internal;
+
+				CS_INTERFACE_MAP_SET_ROOT(FImpl);
+
+				CS_INTERFACE_MAP_ADD(RangeType);
+				CS_INTERFACE_MAP_ADD(ICsReset);
+				CS_INTERFACE_MAP_ADD(CopyType);
+
+				CS_CTOR_SET_MEMBER_PROXY(MinRange);
+				CS_CTOR_SET_MEMBER_PROXY(MaxRange);
+			}
+
+			using RangeType = NCsDamage::NRange::IRange;
+
+			// CopyType (NCsDamage::NRange::NCopy::ICopy)
+			#pragma region
+			
+			void FImpl::Copy(const RangeType* From)
+			{
+				using namespace NCsDamage::NRange::NImpl::NCached;
+
+				const FString& Context = Str::Copy;
+
+				const FImpl* FromImpl = CsDamageRangeLibrary::PureStaticCastChecked<FImpl>(Context, From);
+
+				SetMinRange(FromImpl->GetMinRange());
+				SetMaxRange(FromImpl->GetMaxRange());
+			}
+
+			#pragma endregion CopyType (NCsDamage::NRange::NCopy::ICopy)
+
+			// ICsReset
+			#pragma region
+
+			void FImpl::Reset()
+			{
+				CS_RESET_MEMBER_WITH_PROXY(MinRange, 0.0f)
+				CS_RESET_MEMBER_WITH_PROXY(MaxRange, 0.0f)
+			}
+
+			#pragma endregion ICsReset
 		}
-
-		FImpl::FImpl() :
-			InterfaceMap(),
-			// RangeType (NCsDamage::NRange::IRange)
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(MinRange, 0.0f),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxRange, 0.0f)
-		{
-			InterfaceMap.SetRoot<FImpl>(this);
-
-			typedef NCsDamage::NRange::IRange RangeType;
-			typedef NCsDamage::NRange::NCopy::ICopy CopyType;
-
-			InterfaceMap.Add<RangeType>(static_cast<RangeType*>(this));
-			InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
-			InterfaceMap.Add<CopyType>(static_cast<CopyType*>(this));
-
-			CS_CTOR_SET_MEMBER_PROXY(MinRange);
-			CS_CTOR_SET_MEMBER_PROXY(MaxRange);
-		}
-
-		// CopyType (NCsDamage::NRange::NCopy::ICopy)
-		#pragma region
-
-		#define RangeType NCsDamage::NRange::IRange
-		void FImpl::Copy(const RangeType* From)
-		{
-		#undef RangeType
-
-			using namespace NCsDamage::NRange::NImpl::NCached;
-
-			const FString& Context = Str::Copy;
-
-			const FImpl* FromImpl = CsDamageRangeLibrary::PureStaticCastChecked<FImpl>(Context, From);
-
-			SetMinRange(FromImpl->GetMinRange());
-			SetMaxRange(FromImpl->GetMaxRange());
-		}
-
-		#pragma endregion CopyType (NCsDamage::NRange::NCopy::ICopy)
-
-		// ICsReset
-		#pragma region
-
-		void FImpl::Reset()
-		{
-			CS_RESET_MEMBER_WITH_PROXY(MinRange, 0.0f)
-			CS_RESET_MEMBER_WITH_PROXY(MaxRange, 0.0f)
-		}
-
-		#pragma endregion ICsReset
 	}
 }

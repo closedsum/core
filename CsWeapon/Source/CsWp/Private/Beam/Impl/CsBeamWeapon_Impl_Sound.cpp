@@ -71,9 +71,7 @@ namespace NCsWeapon
 						const FCsSound& Sound    = Params->GetSound();
 
 						// Spawn Sound
-						typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-
-						SoundManagerLibrary::SpawnChecked(Context, Outer, &PooledPayload, Sound);
+						CsSoundManagerLibrary::SpawnChecked(Context, Outer, &PooledPayload, Sound);
 					}
 				}
 
@@ -88,10 +86,8 @@ namespace NCsWeapon
 
 					// ImpactSoundDataType (NCsBeam::NData::NSound::NImpact::IImpact)
 					typedef NCsBeam::NData::NSound::NImpact::IImpact ImpactSoundDataType;
-					typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-					typedef NCsCollision::FLibrary CollisionLibrary;
-
-					if (ImpactSoundDataType* ImpactSoundData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
+	
+					if (ImpactSoundDataType* ImpactSoundData = CsBeamDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
 					{
 						typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
 
@@ -105,13 +101,11 @@ namespace NCsWeapon
 						const FCsSound& Sound = ImpactSoundData->GetImpactSound(SurfaceType);
 
 						FTransform3f Transform = FTransform3f::Identity;
-						Transform.SetLocation(CollisionLibrary::GetLocation(Hit));
-						Transform.SetRotation(CollisionLibrary::GetImpactQuat(Hit));
+						Transform.SetLocation(CsCollisionLibrary::GetLocation(Hit));
+						Transform.SetRotation(CsCollisionLibrary::GetImpactQuat(Hit));
 
 						// Spawn Sound
-						typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-
-						SoundManagerLibrary::SpawnChecked(Context, Outer, &PooledPayload, Sound, Transform);
+						CsSoundManagerLibrary::SpawnChecked(Context, Outer, &PooledPayload, Sound, Transform);
 					}
 				}
 			}

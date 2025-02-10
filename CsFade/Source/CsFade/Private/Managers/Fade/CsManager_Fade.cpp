@@ -36,27 +36,15 @@
 // Cached
 #pragma region
 
-namespace NCsManagerFade
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			// Singleton
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, Init);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, CreateFadeWidget);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, Fade);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, Fade_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, SafeFade);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, StopFade);
-		}
-
-		namespace Name
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Fade, Fade_Internal);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsManager_Fade)
+	// Singleton
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Fade, Init)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Fade, CreateFadeWidget)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Fade, Fade)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Fade, Fade_Internal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Fade, SafeFade)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Fade, StopFade)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -74,9 +62,7 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-#define USING_NS_CACHED using namespace NCsManagerFade::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsManagerFade::NCached; \
-	const FString& Context = Str::__FunctionName
+using ParamsType = NCsFade::FParams;
 
 // Singleton
 #pragma region
@@ -128,9 +114,7 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 
 /*static*/ void UCsManager_Fade::Init(UObject* InRoot, UObject* InOuter /*= nullptr*/)
 {
-	using namespace NCsManagerFade::NCached;
-
-	const FString& Context = Str::Init;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Init);
 
 	const FCsSettings_Manager_Fade& Settings = FCsSettings_Manager_Fade::Get();
 
@@ -235,7 +219,7 @@ void UCsManager_Fade::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Fade::CreateFadeWidget()
 {
-	SET_CONTEXT(CreateFadeWidget);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(CreateFadeWidget);
 
 	if (IsValid(FadeWidget))
 	{
@@ -253,7 +237,7 @@ void UCsManager_Fade::CreateFadeWidget()
 #endif // #if !UE_BUILD_SHIPPING
 	}
 
-	typedef NCsFade::NDataRootSet::FLibrary DataRootSetLibrary;
+	using DataRootSetLibrary = NCsFade::NDataRootSet::FLibrary;
 
 	UClass* Class = DataRootSetLibrary::GetFadeWidgetClassChecked(Context, MyRoot);
 	FadeWidget	  = CreateWidget<UCsUserWidget_Fade>(Cast<UGameInstance>(MyRoot), Class);
@@ -270,11 +254,9 @@ void UCsManager_Fade::CreateFadeWidget()
 #endif // #if !UE_BUILD_SHIPPING
 }
 
-#define ParamsType NCsFade::FParams
 void UCsManager_Fade::Fade(const ParamsType& Params)
 {
-#undef ParamsType
-	SET_CONTEXT(Fade);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Fade);
 
 	CS_IS_VALID_CHECKED(Params);
 
@@ -345,7 +327,7 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 
 char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT(Fade_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Fade_Internal);
 
 	CS_COROUTINE_READ_FLAG_START
 	CS_COROUTINE_READ_FLOAT_START
@@ -410,11 +392,9 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 	CS_COROUTINE_END(R);
 }
 
-#define ParamsType NCsFade::FParams
 void UCsManager_Fade::SafeFade(const ParamsType& Params)
 {
-#undef ParamsType
-	SET_CONTEXT(SafeFade);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SafeFade);
 
 	void(*Log)(const FString&) = &NCsFade::FLog::Warning;
 
@@ -450,7 +430,7 @@ void UCsManager_Fade::SafeFade(const ParamsType& Params)
 
 void UCsManager_Fade::StopFade()
 {
-	SET_CONTEXT(StopFade);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(StopFade);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
@@ -471,6 +451,3 @@ void UCsManager_Fade::ClearFade()
 	StopFade();
 	FadeWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
-
-#undef USING_NS_CACHED
-#undef SET_CONTEXT

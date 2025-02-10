@@ -49,3 +49,5 @@ namespace NCsFade
 		};
 	}
 }
+
+using CsFadeDataRootSetLibrary = NCsFade::NDataRootSet::FLibrary;

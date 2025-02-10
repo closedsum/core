@@ -46,48 +46,30 @@
 // Cached
 #pragma region
 
+CS_START_CACHED_FUNCTION_NAME(CsManager_Playback)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Playback, SetPlaybackState);
+CS_END_CACHED_FUNCTION_NAME
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_1(NCsManager_Playback, Record)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Playback::FRecord, Start);
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Playback::FRecord, OnProcessGameEventInfo);
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Playback::FRecord, ResolveEvents);
+CS_END_CACHED_FUNCTION_NAME_NESTED_1
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_1(NCsManager_Playback, Playback)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Playback::FPlayback, PlayLatestChecked);
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Playback::FPlayback, PlayLatest_Internal);
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Playback::FPlayback, SafePlayLatest);
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Playback::FPlayback, SafePlayLatest_Internal);
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Playback::FPlayback, Start);	
+CS_END_CACHED_FUNCTION_NAME_NESTED_1
+
  namespace NCsManagerPlayback
  {
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback, SetPlaybackState);
-		}
-	}
-
-	namespace NRecord
-	{
-		namespace NCached
-		{
-			namespace Str
-			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FRecord, Start);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FRecord, OnProcessGameEventInfo);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FRecord, ResolveEvents);			
-			}
-		}
-	}
-
 	namespace NPlayback
 	{
 		namespace NCached
 		{
-			namespace Str
-			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, PlayLatestChecked);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, PlayLatest_Internal);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, SafePlayLatest);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, SafePlayLatest_Internal);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Playback::FPlayback, Start);			
-			}
-
-			namespace Name
-			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Playback::FPlayback, PlayLatest_Internal);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Playback::FPlayback, SafePlayLatest_Internal);
-			}
-
 			namespace Ext
 			{
 				const FString json = TEXT(".json");
@@ -120,9 +102,7 @@ UCsManager_Playback::UCsManager_Playback(const FObjectInitializer& ObjectInitial
 {
 }
 
-#define USING_NS_CACHED using namespace NCsManagerPlayback::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsManagerPlayback::NCached; \
-	const FString& Context = Str::__FunctionName
+using GameEventGroupType = FECsGameEventCoordinatorGroup;
 
 // Singleton
 #pragma region
@@ -368,7 +348,7 @@ void UCsManager_Playback::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Playback::SetPlaybackState(const CsPlaybackStateType& NewState)
 {
-	SET_CONTEXT(SetPlaybackState);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetPlaybackState);
 
 	if (PlaybackState == NewState)
 	{
@@ -411,11 +391,7 @@ void UCsManager_Playback::Update(const FCsDeltaTime& DeltaTime)
 }
 
 // Record
-#pragma
-
-#define USING_NS_CACHED2 using namespace NCsManagerPlayback::NRecord::NCached;
-#define SET_CONTEXT2(__FunctionName) using namespace NCsManagerPlayback::NRecord::NCached; \
-	const FString& Context = Str::__FunctionName
+#pragma region
 
 	// Task
 #pragma region
@@ -439,7 +415,7 @@ void UCsManager_Playback::FRecord::FTask::Execute()
 
 void UCsManager_Playback::FRecord::Start(const FSoftObjectPath& LevelPath)
 {
-	SET_CONTEXT2(Start);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Start);
 
 	PlaybackByEvents.Reset();
 
@@ -457,10 +433,9 @@ void UCsManager_Playback::FRecord::Stop()
 {
 }
 
-#define GameEventGroupType FECsGameEventCoordinatorGroup
 void UCsManager_Playback::FRecord::OnProcessGameEventInfo(const GameEventGroupType& Group, const FCsGameEventInfo& Info)
 {
-	SET_CONTEXT2(OnProcessGameEventInfo);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(OnProcessGameEventInfo);
 
 	if (!Outer->IsRecording())
 		return;
@@ -482,11 +457,10 @@ void UCsManager_Playback::FRecord::OnProcessGameEventInfo(const GameEventGroupTy
 
 	bProcessedGameEventInfos = true;
 }
-#undef GameEventGroupType
 
 void UCsManager_Playback::FRecord::ResolveEvents()
 {
-	SET_CONTEXT2(ResolveEvents);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(ResolveEvents);
 
 	if (bProcessedGameEventInfos ||
 		bProcessedGameEventInfos != Last_bProcessedGameEventInfos)
@@ -640,21 +614,14 @@ void UCsManager_Playback::FRecord::LogEvent(const FString& Message) const
 	}
 }
 
-#undef USING_NS_CACHED2
-#undef SET_CONTEXT2
-
 #pragma endregion Record
 
 // Playback
 #pragma region
 
-#define USING_NS_CACHED2 using namespace NCsManagerPlayback::NPlayback::NCached;
-#define SET_CONTEXT2(__FunctionName) using namespace NCsManagerPlayback::NPlayback::NCached; \
-	const FString& Context = Str::__FunctionName
-
 bool UCsManager_Playback::FPlayback::SetLatest(const FString& Context, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
 {
-	USING_NS_CACHED2
+	using namespace NCsManagerPlayback::NPlayback::NCached;
 	
 	TArray<FString> FoundFiles;
 
@@ -724,8 +691,8 @@ bool UCsManager_Playback::FPlayback::SetLatest(const FString& Context, void(*Log
 
 void UCsManager_Playback::FPlayback::PlayLatestChecked()
 {
-	SET_CONTEXT2(PlayLatestChecked);
-
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(PlayLatestChecked);
+	
 	CS_IS_DELEGATE_BOUND_CHECKED(MakeReadyImpl)
 	CS_IS_DELEGATE_BOUND_CHECKED(IsReadyImpl)
 
@@ -736,7 +703,7 @@ void UCsManager_Playback::FPlayback::PlayLatestChecked()
 
 char UCsManager_Playback::FPlayback::PlayLatest_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT2(PlayLatest_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(PlayLatest_Internal);
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -763,8 +730,6 @@ char UCsManager_Playback::FPlayback::PlayLatest_Internal(FCsRoutine* R)
 
 void UCsManager_Playback::FPlayback::SafePlayLatest(const FString& Context, void(*Log)(const FString&) /*=&NCsPlayback::FLog::Warning*/)
 {
-	using namespace NCsManagerPlayback::NPlayback::NCached;
-
 	CS_IS_DELEGATE_BOUND_EXIT(MakeReadyImpl)
 	CS_IS_DELEGATE_BOUND_EXIT(IsReadyImpl)
 
@@ -775,7 +740,7 @@ void UCsManager_Playback::FPlayback::SafePlayLatest(const FString& Context, void
 
 char UCsManager_Playback::FPlayback::SafePlayLatest_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT2(SafePlayLatest_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SafePlayLatest_Internal);
 
 	// TODO: Fix
 	static const int32 LOG	   = 0;
@@ -810,7 +775,7 @@ char UCsManager_Playback::FPlayback::SafePlayLatest_Internal(FCsRoutine* R)
 
 void UCsManager_Playback::FPlayback::Start()
 {
-	SET_CONTEXT2(Start);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Start);
 
 	checkf(!FileName.IsEmpty(), TEXT("%s: No FileName set for Playback."), *Context);
 
@@ -910,10 +875,4 @@ void UCsManager_Playback::FPlayback::LogEvent(const FCsPlaybackByEvent& Event) c
 	}
 }
 
-#undef USING_NS_CACHED2
-#undef SET_CONTEXT2
-
 #pragma endregion Playback
-
-#undef USING_NS_CACHED
-#undef SET_CONTEXT

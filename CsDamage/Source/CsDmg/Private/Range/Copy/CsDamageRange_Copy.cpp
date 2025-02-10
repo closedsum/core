@@ -3,4 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Range/Copy/CsDamageRange_Copy.h"
 
-const FName NCsDamage::NRange::NCopy::ICopy::Name = FName("NCsDamage::NRange::NCopy::ICopy");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsDamage::NRange::NCopy::ICopy);

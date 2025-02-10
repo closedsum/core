@@ -37,54 +37,37 @@
 // Cached
 #pragma region
 
-namespace NCsManagerData
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			// Maps
-				// DataTable
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, UpdateDataTableRowMap);
-				// Payload
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GenerateMaps);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AddPayload);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, DoesPayloadContain);
-			// Load
-				// Data
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadData);
-				// ScriptData
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadScriptData);
-				// DataTable
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTable);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTableRow);
-				// Payload
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadPayload);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayload);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadStartupPayload);
-					// List
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloads);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloads_Internal);
-					// By Group
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloadByGroup);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloadByGroup_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, Payload_GetPaths);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, Payload_GetPathCount);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, UnloadPayload);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AddDataCompositionObject_Loaded);
-		}
-
-		namespace Name
-		{
-			// Load
-				// Payload
-					// List
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Data, AsyncLoadPayloads_Internal);
-					// By Group
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Data, AsyncLoadPayloadByGroup_Internal);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsManager_Data)
+	// Maps
+		// DataTable
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, UpdateDataTableRowMap)
+		// Payload
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, GenerateMaps)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, AddPayload)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, DoesPayloadContain)
+	// Load
+		// Data
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, LoadData)
+		// ScriptData
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, LoadScriptData)
+		// DataTable
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, LoadDataTable)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, LoadDataTableRow)
+		// Payload
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, LoadPayload)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, AsyncLoadPayload)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, AsyncLoadStartupPayload)
+			// List
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, AsyncLoadPayloads)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, AsyncLoadPayloads_Internal)
+			// By Group
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, AsyncLoadPayloadByGroup)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, AsyncLoadPayloadByGroup_Internal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, Payload_GetPaths)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, Payload_GetPathCount)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, UnloadPayload)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Data, AddDataCompositionObject_Loaded)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion
 
@@ -157,10 +140,6 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 	DataCompositionObjectsAdded_Loaded()
 {
 }
-
-#define USING_NS_CACHED using namespace NCsManagerData::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsManagerData::NCached; \
-	const FString& Context = Str::__FunctionName
 
 using OnAsyncLoadPayloadCompleteOnceType = NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete;
 using OnAsyncLoadPayloadsCompleteOnceType = NCsData::NManager::NOnce::FOnAsyncLoadPayloadsComplete;
@@ -467,7 +446,7 @@ void UCsManager_Data::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Data::UpdateDataTableRowMap(const FName& EntryName, const FName& RowName, uint8* RowPtr)
 {
-	SET_CONTEXT(UpdateDataTableRowMap);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(UpdateDataTableRowMap);
 
 	checkf(RowPtr, TEXT("%s: RowPtr is NULL for DataTable with EntryName: %s and Row: %s."), *Context, *(EntryName.ToString()), *(RowName.ToString()));
 
@@ -510,7 +489,7 @@ void UCsManager_Data::UpdateDataTableRowMap(const FName& EntryName, const FName&
 
 void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Payload)
 {
-	SET_CONTEXT(AddPayload);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(AddPayload);
 
 	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
@@ -548,7 +527,7 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 
 bool UCsManager_Data::DoesPayloadContain(const FName& PayloadName, const TSoftObjectPtr<UDataTable>& DataTable)
 {
-	SET_CONTEXT(DoesPayloadContain);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(DoesPayloadContain);
 
 	CS_IS_NAME_NONE_CHECKED(PayloadName)
 	CS_IS_SOFT_OBJECT_PTR_VALID_CHECKED(DataTable, UDataTable)
@@ -584,7 +563,7 @@ bool UCsManager_Data::DoesPayloadContain(const FName& PayloadName, const TSoftOb
 
 void UCsManager_Data::GenerateMaps() 
 {
-	SET_CONTEXT(GenerateMaps);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GenerateMaps);
 
 	// Datas
 	if (UDataTable* Datas = DataRootSet.Get()->GetCsDataRootSet().Datas)
@@ -700,7 +679,7 @@ void UCsManager_Data::GenerateMaps()
 
 ICsData* UCsManager_Data::LoadData(const FName& EntryName)
 {
-	SET_CONTEXT(LoadData);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(LoadData);
 
 	CS_IS_NAME_NONE_CHECKED(EntryName)
 
@@ -731,7 +710,7 @@ ICsData* UCsManager_Data::LoadData(const FName& EntryName)
 
 ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 {
-	SET_CONTEXT(LoadData);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(LoadData);
 
 	CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(Path)
 
@@ -767,7 +746,7 @@ ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 
 UObject* UCsManager_Data::LoadScriptData(const FName& EntryName)
 {
-	SET_CONTEXT(LoadScriptData);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(LoadScriptData);
 
 	CS_IS_NAME_NONE_CHECKED(EntryName)
 
@@ -797,7 +776,7 @@ UObject* UCsManager_Data::LoadScriptData(const FName& EntryName)
 
 UObject* UCsManager_Data::LoadScriptData(const FSoftObjectPath& Path)
 {
-	SET_CONTEXT(LoadScriptData);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(LoadScriptData);
 
 	CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(Path)
 
@@ -832,7 +811,7 @@ UObject* UCsManager_Data::LoadScriptData(const FSoftObjectPath& Path)
 
 UDataTable* UCsManager_Data::LoadDataTable(const FName& EntryName)
 {
-	SET_CONTEXT(LoadDataTable);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(LoadDataTable);
 
 	CS_IS_NAME_NONE_CHECKED(EntryName)
 
@@ -860,7 +839,7 @@ UDataTable* UCsManager_Data::LoadDataTable(const FName& EntryName)
 
 UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 {
-	SET_CONTEXT(LoadDataTable);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(LoadDataTable);
 
 	CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(Path)
 
@@ -888,7 +867,7 @@ UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 
 uint8* UCsManager_Data::LoadDataTableRow(const FName& EntryName, const FName& RowName)
 {
-	SET_CONTEXT(LoadDataTableRow);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(LoadDataTableRow);
 
 	CS_IS_NAME_NONE_CHECKED(EntryName)
 	CS_IS_NAME_NONE_CHECKED(RowName)
@@ -930,7 +909,7 @@ uint8* UCsManager_Data::LoadDataTableRow(const FName& EntryName, const FName& Ro
 
 void UCsManager_Data::LoadPayload(const FName& PayloadName)
 {
-	SET_CONTEXT(LoadPayload);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(LoadPayload);
 
 	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
@@ -1020,7 +999,7 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 
 void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate)
 {
-	SET_CONTEXT(AsyncLoadPayload);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(AsyncLoadPayload);
 
 	const FCsSettings_Manager_Data& Settings = FCsSettings_Manager_Data::Get();
 
@@ -1110,7 +1089,7 @@ void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& P
 
 void UCsManager_Data::AsyncLoadStartupPayload(OnAsyncLoadPayloadCompleteOnceType Delegate)
 {
-	SET_CONTEXT(AsyncLoadStartupPayload);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(AsyncLoadStartupPayload);
 
 	UObject* DataRootSetObject	      = DataRootSet.GetObjectChecked(Context);
 	ICsGetDataRootSet* GetDataRootSet = DataRootSet.GetChecked(Context);
@@ -1173,19 +1152,9 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHand
 
 void UCsManager_Data::AsyncLoadPayloads(const TArray<FName>& PayloadNames, OnAsyncLoadPayloadsCompleteOnceType Delegate)
 {
-	SET_CONTEXT(AsyncLoadPayloads);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(AsyncLoadPayloads);
 
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
-
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, this, UpdateGroup);
-
-	typedef UCsManager_Data ClassType;
-	#define COROUTINE AsyncLoadPayloads_Internal
-
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
-
-	#undef COROUTINE
+	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Data, AsyncLoadPayloads_Internal, NCsUpdateGroup::GameInstance, this, this);
 
 	for (const FName& PayloadName : PayloadNames)
 	{
@@ -1199,12 +1168,12 @@ void UCsManager_Data::AsyncLoadPayloads(const TArray<FName>& PayloadNames, OnAsy
 
 	OnAsyncLoadPayloadsCompleted_Once_Event = Delegate;
 
-	CsCoroutineSchedulerLibrary::StartChecked(Context, this, Payload);
+	CS_COROUTINE_START(this);
 }
 
 char UCsManager_Data::AsyncLoadPayloads_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT(AsyncLoadPayloads_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(AsyncLoadPayloads_Internal);
 
 	CS_COROUTINE_READ_INT_START
 
@@ -1296,7 +1265,7 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloads(const FCsLoadHan
 
 void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncLoadPayloadCompleteOnceType Delegate)
 {
-	SET_CONTEXT(AsyncLoadPayloadByGroup);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(AsyncLoadPayloadByGroup);
 
 	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Data, AsyncLoadPayloadByGroup_Internal, NCsUpdateGroup::GameInstance, this, this);
 
@@ -1317,7 +1286,7 @@ void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncL
 
 char UCsManager_Data::AsyncLoadPayloadByGroup_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT(AsyncLoadPayloadByGroup_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(AsyncLoadPayloadByGroup_Internal);
 
 	CS_COROUTINE_READ_INT_START
 	CS_COROUTINE_READ_NAME_START
@@ -1395,7 +1364,7 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup(const FCsL
 
 void UCsManager_Data::UnloadPayload(const FName& PayloadName)
 {
-	SET_CONTEXT(UnloadPayload);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(UnloadPayload);
 
 	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
@@ -1427,8 +1396,8 @@ void UCsManager_Data::UnloadPayload(const FName& PayloadName)
 
 void UCsManager_Data::Payload_GetPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths) const
 {
-	SET_CONTEXT(Payload_GetPaths);
-	
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Payload_GetPaths);
+
 	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 	FCsPayload* const* PayloadPtr = PayloadMap.Find(PayloadName);
@@ -1606,7 +1575,7 @@ void UCsManager_Data::Payload_GetSafePaths(const FString& Context, const FName& 
 
 int32 UCsManager_Data::Payload_GetPathCount(const FName& PayloadName) const
 {
-	SET_CONTEXT(Payload_GetPathCount);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Payload_GetPathCount);
 
 	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
@@ -1921,7 +1890,7 @@ bool UCsManager_Data::SafeAddDataObject_Loaded(const FString& Context, const FNa
 
 void UCsManager_Data::AddDataCompositionObject_Loaded(const FName& DataName, UObject* Data, const FName& SliceName)
 {
-	SET_CONTEXT(AddDataCompositionObject_Loaded);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(AddDataCompositionObject_Loaded);
 
 	CS_IS_NAME_NONE_CHECKED(DataName)
 	CS_IS_PTR_NULL_CHECKED(Data)
@@ -1950,6 +1919,3 @@ bool UCsManager_Data::SafeRemoveDataCompositionObject_Loaded(const FString& Cont
 #pragma endregion Data
 
 #pragma endregion Add
-
-#undef USING_NS_CACHED
-#undef SET_CONTEXT

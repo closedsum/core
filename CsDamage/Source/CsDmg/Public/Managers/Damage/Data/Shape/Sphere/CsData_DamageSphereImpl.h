@@ -304,7 +304,7 @@ private:
 	using ValueType = NCsDamage::NValue::IValue;
 	using ValueRangeImplType = NCsDamage::NValue::NRange::FImpl;
 	using RangeType = NCsDamage::NRange::IRange;
-	using RangeImplType = NCsDamage::NRange::FImpl;
+	using RangeImplType = NCsDamage::NRange::NImpl::FImpl;
 	// Collision
 	using CollisionInfoType = NCsDamage::NCollision::FInfo;
 

@@ -31,6 +31,15 @@ namespace NCsBeam
 
 				static const FName Name;
 
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ShapeType = NCsBeam::NCollision::NShape::FShape;
+					using FrequencyParamsType = NCsBeam::NCollision::NParams::FFrequency;
+				};
+
 			public:
 
 				virtual ~ICollision() {}
@@ -42,24 +51,16 @@ namespace NCsBeam
 				*/
 				virtual const FCsCollisionPreset& GetCollisionPreset() const = 0;
 
-			#define ShapeType NCsBeam::NCollision::NShape::FShape
-
 				/**
 				* Get the collision shape
 				* 
 				* return Shape
 				*/
-				virtual const ShapeType* GetCollisionShape() const = 0;
-
-			#undef ShapeType
-
-			#define FrequencyParamsType NCsBeam::NCollision::NParams::FFrequency
+				virtual const _::ShapeType* GetCollisionShape() const = 0;
 
 				/**
 				*/
-				virtual const FrequencyParamsType& GetCollisionFrequencyParams() const = 0;
-
-			#undef FrequencyParamsType
+				virtual const _::FrequencyParamsType& GetCollisionFrequencyParams() const = 0;
 
 				/**
 				* Get the number of collisions before the beam
@@ -114,6 +115,17 @@ public:
 
 	static const FName Name;
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using ShapeType = NCsBeam::NCollision::NShape::FShape;
+		using FrequencyParamsType = NCsBeam::NCollision::NParams::FFrequency;
+	};
+
+public:
+
 	/**
 	* Get the collision information (i.e. response, overlap, hit events, ... etc)
 	*
@@ -121,24 +133,16 @@ public:
 	*/
 	virtual const FCsCollisionPreset& GetCollisionPreset() const = 0;
 
-#define CollisionShapeType NCsBeam::NCollision::NShape::FShape
-
 	/**
 	* Get the collision shape
 	* 
 	* return Radius
 	*/
-	virtual const CollisionShapeType* GetCollisionShape() const = 0;
-
-#undef CollisionShapeType
-
-#define FrequencyParamsType NCsBeam::NCollision::NParams::FFrequency
+	virtual const _::ShapeType* GetCollisionShape() const = 0;
 
 	/**
 	*/
-	virtual const FrequencyParamsType& GetCollisionFrequencyParams() const = 0;
-
-#undef FrequencyParamsType
+	virtual const _::FrequencyParamsType& GetCollisionFrequencyParams() const = 0;
 
 	/**
 	* Get the number of collisions before the beam

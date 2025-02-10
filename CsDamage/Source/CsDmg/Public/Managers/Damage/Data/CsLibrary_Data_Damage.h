@@ -16,56 +16,56 @@ namespace NCsDamage
 {
 	namespace NData
 	{
-	#define DataType NCsDamage::NData::IData
-
-		/**
-		* Library for interface: DataType (NCsDamage::NData::IData)
-		*/
-		struct CSDMG_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
+		namespace NLibrary
 		{
-		#define LogLevel void(*Log)(const FString&) = &NCsDamage::FLog::Warning
+			using DataType = NCsDamage::NData::IData;
 
-		public:
+			/**
+			* Library for interface: DataType (NCsDamage::NData::IData)
+			*/
+			struct CSDMG_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
+			{
+			private:
 
-			static FString PrintDataAndClass(const DataType* Data);
+				using RangeType = NCsDamage::NRange::IRange;
+
+			#define LogLevel void(*Log)(const FString&) = &NCsDamage::FLog::Warning
+
+			public:
+
+				static FString PrintDataAndClass(const DataType* Data);
 			
-			static bool IsValidChecked(const FString& Context, const DataType* Data);
+				static bool IsValidChecked(const FString& Context, const DataType* Data);
 
-			static bool IsValid(const FString& Context, const DataType* Data, LogLevel);
+				static bool IsValid(const FString& Context, const DataType* Data, LogLevel);
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Data
+				* return			
+				*/
+				static const RangeType* GetRangeChecked(const FString& Context, const DataType* Data);
 
-		#define RangeType NCsDamage::NRange::IRange
+				static const RangeType* GetSafeRange(const FString& Context, const DataType* Data, LogLevel);
 
-			/**
-			*
-			*
-			* @param Context	The calling context.
-			* @param Data
-			* return			
-			*/
-			static const RangeType* GetRangeChecked(const FString& Context, const DataType* Data);
+				/**
+				* Safely apply any Orientation related information from Data to Origin and Direction.
+				*  Orientation Data requires Data implement the interface: NCsDamage::NData::NOrientation::IOrientation.
+				* 
+				* @param Context	The calling context.
+				* @param Data
+				* @param Vector		(out)
+				* @param Direction	(out)
+				* @param Log		(optional)
+				* return
+				*/
+				static bool SafeApplyOrientation(const FString& Context, const DataType* Data, FVector3f& Origin, FVector3f& Direction, LogLevel);
 
-			static const RangeType* GetSafeRange(const FString& Context, const DataType* Data, LogLevel);
-
-		#undef RangeType
-
-			/**
-			* Safely apply any Orientation related information from Data to Origin and Direction.
-			*  Orientation Data requires Data implement the interface: NCsDamage::NData::NOrientation::IOrientation.
-			* 
-			* @param Context	The calling context.
-			* @param Data
-			* @param Vector		(out)
-			* @param Direction	(out)
-			* @param Log		(optional)
-			* return
-			*/
-			static bool SafeApplyOrientation(const FString& Context, const DataType* Data, FVector3f& Origin, FVector3f& Direction, LogLevel);
-
-		#undef LogLevel
-		};
-
-	#undef DataType
+			#undef LogLevel
+			};
+		}
 	}
 }
 
-using CsDamageDataLibrary = NCsDamage::NData::FLibrary;
+using CsDamageDataLibrary = NCsDamage::NData::NLibrary::FLibrary;

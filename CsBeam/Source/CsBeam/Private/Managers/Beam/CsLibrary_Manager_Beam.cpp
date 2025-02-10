@@ -154,10 +154,7 @@ namespace NCsBeam
 		{
 			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);
 
-			typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-
-			check(BeamDataLibrary::IsValidChecked(Context, Data));
-
+			check(CsBeamDataLibrary::IsValidChecked(Context, Data));
 			return Data;
 		}
 
@@ -167,9 +164,7 @@ namespace NCsBeam
 			{
 				DataType* Data = Manager_Beam->GetSafeData(Context, Name);
 
-				typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-
-				if (!BeamDataLibrary::IsValid(Context, Data, Log))
+				if (!CsBeamDataLibrary::IsValid(Context, Data, Log))
 					return nullptr;
 				return Data;
 			}
@@ -180,10 +175,7 @@ namespace NCsBeam
 		{
 			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Type);
 
-			typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-
-			check(BeamDataLibrary::IsValidChecked(Context, Data));
-
+			check(CsBeamDataLibrary::IsValidChecked(Context, Data));
 			return Data;
 		}
 
@@ -193,9 +185,7 @@ namespace NCsBeam
 			{
 				DataType* Data = Manager_Beam->GetSafeData(Context, Type);
 
-				typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-
-				if (!BeamDataLibrary::IsValid(Context, Data, Log))
+				if (!CsBeamDataLibrary::IsValid(Context, Data, Log))
 					return nullptr;
 				return Data;
 			}

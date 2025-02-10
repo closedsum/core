@@ -47,66 +47,35 @@
 // Cache
 #pragma region
 
-namespace NCsManagerJavascript
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, GetSafe_GetManagerJavascript);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, GetSafe);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, GetFromWorldContextObject);
-			// Entry Point
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, CreateEntryPoint);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, CreateEntryPoint_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupEntryPoint);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupEntryPoint_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunEntryPoint);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunEntryPoint_Internal);
-			// Scripts
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, CreateScriptObjects);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, CreateScriptObjects_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupScriptObjects);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupScriptObjects_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunScripts);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunScripts_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, ReloadScript);
-			// Events
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupCallbacks);
-		}
+CS_START_CACHED_FUNCTION_NAME(CsManager_Javascript)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, GetSafe_GetManagerJavascript)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, GetSafe)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, GetFromWorldContextObject)
+	// Entry Point
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, CreateEntryPoint)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, CreateEntryPoint_Internal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, SetupEntryPoint)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, SetupEntryPoint_Internal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, SetupAndRunEntryPoint)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, SetupAndRunEntryPoint_Internal)
+	// Scripts
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, CreateScriptObjects)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, CreateScriptObjects_Internal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, SetupScriptObjects)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, SetupScriptObjects_Internal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, SetupAndRunScripts)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, SetupAndRunScripts_Internal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, ReloadScript)
+	// Events
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript, SetupCallbacks)
+CS_END_CACHED_FUNCTION_NAME
 
-		namespace Name
-		{
-			// Entry Point
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, CreateEntryPoint_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupEntryPoint_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupAndRunEntryPoint_Internal);
-			// Scripts
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, CreateScriptObjects_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupScriptObjects_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupAndRunScripts_Internal);
-		}
-	}
-
-	namespace NEditorScriptImpl
-	{
-		namespace NCached
-		{
-			namespace Str
-			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, Init);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, Init_Internal);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, CreateAndRun);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, Reload);
-			}
-
-			namespace Name
-			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript::FEditorScriptImpl, Init_Internal);
-			}
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME_NESTED_1(NCsManager_Javascript, EditorScriptImpl)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript::FEditorScriptImpl, Init)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript::FEditorScriptImpl, Init_Internal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript::FEditorScriptImpl, CreateAndRun)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Javascript::FEditorScriptImpl, Reload)
+CS_END_CACHED_FUNCTION_NAME_NESTED_1
 
 #pragma endregion Cache
 
@@ -135,10 +104,6 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 	EditorScript_OnShutdown_ScriptEvent()
 {
 }
-
-#define USING_NS_CACHED using namespace NCsManagerJavascript::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsManagerJavascript::NCached; \
-	const FString& Context = Str::__FunctionName
 
 // ICsGetJavascriptIsolate
 #pragma region
@@ -288,7 +253,7 @@ TSharedPtr<FJavascriptIsolate> UCsManager_Javascript::GetSharedJavascriptIsolate
 
 /*static*/ ICsGetManagerJavascript* UCsManager_Javascript::GetSafe_GetManagerJavascript(UObject* Object)
 {
-	SET_CONTEXT(GetSafe_GetManagerJavascript);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafe_GetManagerJavascript);
 
 	return GetSafe_GetManagerJavascript(Context, Object, nullptr);
 }
@@ -302,7 +267,7 @@ TSharedPtr<FJavascriptIsolate> UCsManager_Javascript::GetSharedJavascriptIsolate
 
 /*static*/ UCsManager_Javascript* UCsManager_Javascript::GetSafe(UObject* Object)
 {
-	SET_CONTEXT(GetSafe);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafe);
 
 	return GetSafe(Context, Object, nullptr);
 }
@@ -321,7 +286,7 @@ TSharedPtr<FJavascriptIsolate> UCsManager_Javascript::GetSharedJavascriptIsolate
 
 /*static*/ UCsManager_Javascript* UCsManager_Javascript::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	SET_CONTEXT(GetFromWorldContextObject);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GetFromWorldContextObject);
 
 	return GetFromWorldContextObject(Context, WorldContextObject, nullptr);
 }
@@ -363,7 +328,7 @@ void UCsManager_Javascript::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Javascript::CreateEntryPoint()
 {
-	SET_CONTEXT(CreateEntryPoint);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(CreateEntryPoint);
 
 	const FECsUpdateGroup& Group = MyRoot == GEngine ? NCsUpdateGroup::EditorEngine : NCsUpdateGroup::GameInstance;
 
@@ -374,7 +339,7 @@ void UCsManager_Javascript::CreateEntryPoint()
 
 char UCsManager_Javascript::CreateEntryPoint_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT(CreateEntryPoint_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(CreateEntryPoint_Internal);
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -391,7 +356,7 @@ char UCsManager_Javascript::CreateEntryPoint_Internal(FCsRoutine* R)
 
 void UCsManager_Javascript::SetupEntryPoint(UGameInstance* InGameInstance /*=nullptr*/)
 {
-	SET_CONTEXT(SetupEntryPoint);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetupEntryPoint);
 
 	CS_IS_VALID_CHECKED(EntryPoint);
 
@@ -409,7 +374,7 @@ void UCsManager_Javascript::SetupEntryPoint(UGameInstance* InGameInstance /*=nul
 
 char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT(SetupEntryPoint_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetupEntryPoint_Internal);
 
 	UWorld* World						= GameInstance->GetWorld();
 	AGameStateBase* GameState			= World ? World->GetGameState() : nullptr;
@@ -490,26 +455,16 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 
 void UCsManager_Javascript::SetupAndRunEntryPoint(UGameInstance* InGameInstance /*=nullptr*/)
 {
-	SET_CONTEXT(SetupAndRunEntryPoint);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetupAndRunEntryPoint);
 
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
-
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	PayloadType* Payload			   = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
-
-	typedef UCsManager_Javascript ClassType;
-	#define COROUTINE SetupAndRunEntryPoint_Internal
-
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, MyRoot, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
-
-	#undef COROUTINE
+	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Javascript, SetupAndRunEntryPoint_Internal, NCsUpdateGroup::GameInstance, this, MyRoot);
 
 	GameInstance = InGameInstance;
 
 	if (!GameInstance)
 		GameInstance = Cast<UGameInstance>(MyRoot);
 
-	CsCoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
+	CS_COROUTINE_START(MyRoot);
 }
 
 char UCsManager_Javascript::SetupAndRunEntryPoint_Internal(FCsRoutine* R)
@@ -555,7 +510,7 @@ void UCsManager_Javascript::ShutdownEntryPoint()
 
 void UCsManager_Javascript::CreateScriptObjects()
 {
-	SET_CONTEXT(CreateScriptObjects);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(CreateScriptObjects);
 
 	const FECsUpdateGroup& Group = MyRoot == GEngine ? NCsUpdateGroup::EditorEngine : NCsUpdateGroup::GameInstance;
 
@@ -566,7 +521,7 @@ void UCsManager_Javascript::CreateScriptObjects()
 
 char UCsManager_Javascript::CreateScriptObjects_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT(CreateScriptObjects_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(CreateScriptObjects_Internal);
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -604,7 +559,7 @@ void UCsManager_Javascript::ConditionalCreateScriptObjects()
 
 void UCsManager_Javascript::SetupScriptObjects(UGameInstance* InGameInstance /*=nullptr*/)
 {
-	SET_CONTEXT(SetupScriptObjects);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetupScriptObjects);
 
 	CS_IS_VALID_CHECKED(ScriptInfo);
 
@@ -623,7 +578,7 @@ void UCsManager_Javascript::SetupScriptObjects(UGameInstance* InGameInstance /*=
 
 char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT(SetupScriptObjects_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetupScriptObjects_Internal);
 
 	CS_COROUTINE_READ_OBJECT_START
 
@@ -723,7 +678,7 @@ char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
 
 void UCsManager_Javascript::SetupAndRunScripts(UGameInstance* InGameInstance /*=nullptr*/)
 {
-	SET_CONTEXT(SetupAndRunScripts);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetupAndRunScripts);
 
 	CS_COROUTINE_SETUP_UOBJECT(UCsManager_Javascript, SetupAndRunScripts_Internal, NCsUpdateGroup::GameInstance, this, MyRoot);
 
@@ -790,7 +745,7 @@ void UCsManager_Javascript::RunScripts()
 
 void UCsManager_Javascript::ReloadScript(const int32& Index)
 {
-	SET_CONTEXT(ReloadScript);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(ReloadScript);
 
 	if (Index < 0)
 	{
@@ -920,13 +875,9 @@ void UCsManager_Javascript::ShutdownScripts()
 // Editor Scripts
 #pragma region
 
-#define USING_NS_CACHED2 using namespace NCsManagerJavascript::NEditorScriptImpl::NCached;
-#define SET_CONTEXT2(__FunctionName) using namespace NCsManagerJavascript::NEditorScriptImpl::NCached; \
-	const FString& Context = Str::__FunctionName
-
 void UCsManager_Javascript::FEditorScriptImpl::Init()
 {
-	SET_CONTEXT2(Init);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Init);
 
 	CS_COROUTINE_SETUP_RAW(UCsManager_Javascript::FEditorScriptImpl, Init_Internal, NCsUpdateGroup::EditorEngine, this, Outer, Outer->GetMyRoot());
 
@@ -935,7 +886,7 @@ void UCsManager_Javascript::FEditorScriptImpl::Init()
 
 char UCsManager_Javascript::FEditorScriptImpl::Init_Internal(FCsRoutine* R)
 {
-	SET_CONTEXT2(Init_Internal);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Init_Internal);
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -1011,7 +962,7 @@ void UCsManager_Javascript::FEditorScriptImpl::Validate()
 
 FGuid UCsManager_Javascript::FEditorScriptImpl::CreateAndRun(UObject* Owner, const FString& Path)
 {
-	SET_CONTEXT2(CreateAndRun);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(CreateAndRun);
 
 	FGuid ScriptId;
 
@@ -1075,7 +1026,7 @@ FGuid UCsManager_Javascript::FEditorScriptImpl::CreateAndRun(UObject* Owner, con
 
 void UCsManager_Javascript::FEditorScriptImpl::Reload(const FGuid& Id, const FString& Path)
 {
-	SET_CONTEXT2(Reload);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Reload);
 
 	if (!OwnerIdByIdMap.Contains(Id))
 	{
@@ -1161,9 +1112,6 @@ void UCsManager_Javascript::FEditorScriptImpl::Shutdown()
 	OwnerIdByIdMap.Reset();
 }
 
-#undef USING_NS_CACHED2
-#undef SET_CONTEXT2
-
 bool UCsManager_Javascript::EditorScript_Shutdown_ByOwner(const FString& Context, UObject* Owner)
 {
 	void(*Log)(const FString&) = &NCsJs::FLog::Warning;
@@ -1180,7 +1128,7 @@ bool UCsManager_Javascript::EditorScript_Shutdown_ByOwner(const FString& Context
  
 void UCsManager_Javascript::SetupCallbacks()
 {
-	SET_CONTEXT(SetupCallbacks);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetupCallbacks);
 
 	CS_IS_PENDING_KILL_CHECKED(WorldContext)
 
@@ -1223,6 +1171,3 @@ void UCsManager_Javascript::OnAnyKey_Pressed(const FKey& Key)
 }
 
 #pragma endregion Events
-
-#undef USING_NS_CACHED
-#undef SET_CONTEXT

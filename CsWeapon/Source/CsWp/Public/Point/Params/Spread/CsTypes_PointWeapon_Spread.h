@@ -482,27 +482,22 @@ namespace NCsWeapon
 		{
 			struct CSWP_API FLibrary
 			{
-			public:
+			private:
 
-			#define ShapeType NCsWeapon::NPoint::NSpread::EShape
-			#define DistributionType NCsWeapon::NPoint::NSpread::NShape::EDistribution
+				using ShapeType = NCsWeapon::NPoint::NSpread::EShape;
+				using DistributionType = NCsWeapon::NPoint::NSpread::NShape::EDistribution;
+				using AngleType = NCsWeapon::NPoint::NSpread::EAngle;
+				using AngleDistributionType = NCsWeapon::NPoint::NSpread::NAngle::EDistribution;
+			
+			public:
 
 				static FVector3f GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const DistributionType& Distribution);
 
-			#undef ShapeType
-			#undef DistributionType
+				static void SetAnglesChecked(const FString& Context, const int32& Count, const AngleType& Type, const float& Angle, const AngleDistributionType& Distribution, TArray<float>& OutAngles);
 
-			#define SpreadAngleType NCsWeapon::NPoint::NSpread::EAngle
-			#define DistributionType NCsWeapon::NPoint::NSpread::NAngle::EDistribution
+				static float GetRandomAngleChecked(const FString& Context, const AngleType& Type, const float& Angle, const AngleDistributionType& Distribution);
 
-				static void SetAnglesChecked(const FString& Context, const int32& Count, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution, TArray<float>& OutAngles);
-
-				static float GetRandomAngleChecked(const FString& Context, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution);
-
-				static float GetRandomAngleChecked(const FString& Context, const SpreadAngleType& AngleType, const float& Min, const float& Max, const DistributionType& Distribution);
-
-			#undef SpreadAngleType
-			#undef DistributionType
+				static float GetRandomAngleChecked(const FString& Context, const AngleType& Type, const float& Min, const float& Max, const AngleDistributionType& Distribution);
 			};
 		}
 	}

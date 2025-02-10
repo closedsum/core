@@ -9,9 +9,9 @@
 
 #include "CsData_DamageShape.generated.h"
 
-// NCsDamage::NValue::IValue
+// ValueType (NCsDamage::NValue::IValue)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
-// NCsDamage::NRange::IRange
+// RangeType (NCsDamage::NRange::IRange)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 
 namespace NCsDamage
@@ -32,8 +32,12 @@ namespace NCsDamage
 
 			private:
 
-				typedef NCsDamage::NValue::IValue ValueType;
-				typedef NCsDamage::NRange::IRange RangeType;
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ValueType = NCsDamage::NValue::IValue;
+					using RangeType = NCsDamage::NRange::IRange;
+				};
 
 			public:
 
@@ -44,7 +48,7 @@ namespace NCsDamage
 				*
 				* return
 				*/
-				virtual const RangeType* GetRange() const = 0;
+				virtual const _::RangeType* GetRange() const = 0;
 
 				/**
 				* Calculate damage given an origin and point.
@@ -56,7 +60,7 @@ namespace NCsDamage
 				* return			Damage
 				*
 				*/
-				virtual float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector3f& Origin, const FVector3f& Point) const = 0;
+				virtual float CalculateDamage(const _::ValueType* Value, const _::RangeType* Range, const FVector3f& Origin, const FVector3f& Point) const = 0;
 
 				/**
 				* Check if a given Point is within the bounds of an Origin.
@@ -87,9 +91,9 @@ class CSDMG_API UCsData_DamageShape : public UCsGetInterfaceMap
 	GENERATED_UINTERFACE_BODY()
 };
 
-// NCsDamage::NValue::IValue
+// ValueType (NCsDamage::NValue::IValue)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
-// NCsDamage::NRange::IRange
+// RangeType (NCsDamage::NRange::IRange)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 
 /**
@@ -106,8 +110,12 @@ public:
 
 private:
 
-	typedef NCsDamage::NValue::IValue ValueType;
-	typedef NCsDamage::NRange::IRange RangeType;
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using ValueType = NCsDamage::NValue::IValue;
+		using RangeType = NCsDamage::NRange::IRange;
+	};
 
 public:
 
@@ -116,7 +124,7 @@ public:
 	*
 	* return
 	*/
-	virtual const RangeType* GetRange() const = 0;
+	virtual const _::RangeType* GetRange() const = 0;
 
 	/**
 	* Calculate damage given an origin and point.
@@ -128,7 +136,7 @@ public:
 	* return			Damage
 	*
 	*/
-	virtual float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector3f& Origin, const FVector3f& Point) const = 0;
+	virtual float CalculateDamage(const _::ValueType* Value, const _::RangeType* Range, const FVector3f& Origin, const FVector3f& Point) const = 0;
 
 	/**
 	* Check if a given Point is within the bounds of an Origin.

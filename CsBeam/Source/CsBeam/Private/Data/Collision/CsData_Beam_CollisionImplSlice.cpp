@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Collision/CsData_Beam_CollisionImplSlice.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Managers/Beam/CsLibrary_Manager_Beam.h"
 #include "Library/CsLibrary_Property.h"
@@ -13,7 +15,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Beam_CollisionImplSlice)
 
-#define SliceType NCsBeam::NData::NCollision::FImplSlice
+using SliceType = NCsBeam::NData::NCollision::NImplSlice::FImplSlice;
 
 SliceType* FCsData_Beam_CollisionImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
 {
@@ -79,8 +81,6 @@ void FCsData_Beam_CollisionImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 	Slice->SetIgnoreCollidingObjectClasses(IgnoreCollidingObjectClasses);
 }
 
-#undef SliceType
-
 bool FCsData_Beam_CollisionImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
 	if (!Preset.IsValid(Context, Log))
@@ -104,7 +104,7 @@ bool FCsData_Beam_CollisionImplSlice::IsValid(const FString& Context, void(*Log)
 	return true;
 }
 
-const FName NCsBeam::NData::NCollision::FImplSlice::Name = FName("NCsBeam::NData::NCollision::FImplSlice");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsBeam::NData::NCollision::NImplSlice::FImplSlice);
 
 namespace NCsBeam
 {
@@ -128,115 +128,115 @@ namespace NCsBeam
 						const FName IgnoreCollidingObjectClasses = FName("IgnoreCollidingObjectClasses");
 					}
 				}
-			}
 
-			/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
-			{
-				using namespace NCsBeam::NData::NCollision::NImplSlice::NCached;
+				/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
+				{
+					using namespace NCsBeam::NData::NCollision::NImplSlice::NCached;
 
-				CS_IS_PTR_NULL_RET_NULL(Object)
+					CS_IS_PTR_NULL_RET_NULL(Object)
 
-				#define DataHandlerType NCsData::NManager::NHandler::TData
-				typedef NCsBeam::NData::IData DataType;
-				typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
+					#define DataHandlerType NCsData::NManager::NHandler::TData
+					typedef NCsBeam::NData::IData DataType;
+					typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
 
-				DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = CsBeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+					DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = CsBeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 				
-				#undef DataHandlerType
+					#undef DataHandlerType
 
-				if (!DataHandler)
-					return nullptr;
+					if (!DataHandler)
+						return nullptr;
 
-				typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
+					typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
 
-				FImplSlice* Slice = DataHandler->AddSafeDataSlice<FImplSlice, CollisionDataType>(Context, DataName);
+					FImplSlice* Slice = DataHandler->AddSafeDataSlice<FImplSlice, CollisionDataType>(Context, DataName);
 
-				if (!Slice)
-					return nullptr;
+					if (!Slice)
+						return nullptr;
 
-				// Check for properties matching interface: CollisionDataType (NCsBeam::NData::NCollision::ICollision)
-				typedef NCsProperty::FLibrary PropertyLibrary;
+					// Check for properties matching interface: CollisionDataType (NCsBeam::NData::NCollision::ICollision)
+					typedef NCsProperty::FLibrary PropertyLibrary;
 
-				bool Success = false;
+					bool Success = false;
 
-				// Try FCsData_Beam_CollisionImplSlice
-				typedef FCsData_Beam_CollisionImplSlice StructSliceType;
+					// Try FCsData_Beam_CollisionImplSlice
+					typedef FCsData_Beam_CollisionImplSlice StructSliceType;
 
-				if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::CollisionSlice, nullptr))
-				{
-					SliceAsStruct->CopyToSlice(Slice);
-					Success = true;
-				}
-				// Try individual properties
-				else
-				{
-					FCsCollisionPreset* CollisionPresetPtr			= PropertyLibrary::GetStructPropertyValuePtr<FCsCollisionPreset>(Context, Object, Object->GetClass(), Name::CollisionPreset, nullptr);
-					FCsBeamCollisionShape* CollisionShapePtr		= PropertyLibrary::GetStructPropertyValuePtr<FCsBeamCollisionShape>(Context, Object, Object->GetClass(), Name::CollisionShape, nullptr);
-					FCsBeamCollisionFrequencyParams* CollisionFrequencyParamsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsBeamCollisionFrequencyParams>(Context, Object, Object->GetClass(), Name::CollisionFrequencyParams, nullptr);
-					int32* CollisionCountPtr						= PropertyLibrary::GetIntPropertyValuePtr(Context, Object, Object->GetClass(), Name::CollisionCount, nullptr);
-					bool* bIgnoreCollidingObjectAfterCollisionPtr	= PropertyLibrary::GetBoolPropertyValuePtr(Context, Object, Object->GetClass(), Name::bIgnoreCollidingObjectAfterCollision, nullptr);
-
-					// TODO: Need to implement getting TArray<TSubclassOf<ClassType>>
-
-					if (CollisionPresetPtr &&
-						CollisionShapePtr &&
-						CollisionFrequencyParamsPtr &&
-						CollisionCountPtr &&
-						bIgnoreCollidingObjectAfterCollisionPtr)
+					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::CollisionSlice, nullptr))
 					{
-						Slice->SetCollisionPreset(CollisionPresetPtr);
-						Slice->ConditionalSetCollisionShape(CollisionShapePtr->ConstructShape());
-						CollisionFrequencyParamsPtr->CopyToParamsAsValue(Slice->GetCollisionFrequencyParamsPtr());
-						Slice->SetCollisionCount(CollisionCountPtr);
-						Slice->SetIgnoreCollidingObjectAfterCollision(bIgnoreCollidingObjectAfterCollisionPtr);
-
+						SliceAsStruct->CopyToSlice(Slice);
 						Success = true;
 					}
-				}
-
-				if (!Success)
-				{
-					if (Log)
+					// Try individual properties
+					else
 					{
-						Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CollisionDataType (NCsBeam::NData::NCollision::ICollision)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
-						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Beam_CollisionImplSlice with name: CollisionSlice."), *Context));
-						Log(FString::Printf(TEXT("%s: - OR"), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset."), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsBeamCollisionShape with name: CollisionShape."), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsBeamCollisionFrequencyParams with name: CollisionFrequencyParams."), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get int property with name: CollisionCount."), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bIgnoreCollidingObjectAfterCollision."), *Context));
-						// Log(FString::Printf(TEXT("%s: - Failed to get array property of type: TSubclassOf<UObject> with name: IgnoreCollidingObjectClasses."), *Context));
+						FCsCollisionPreset* CollisionPresetPtr			= PropertyLibrary::GetStructPropertyValuePtr<FCsCollisionPreset>(Context, Object, Object->GetClass(), Name::CollisionPreset, nullptr);
+						FCsBeamCollisionShape* CollisionShapePtr		= PropertyLibrary::GetStructPropertyValuePtr<FCsBeamCollisionShape>(Context, Object, Object->GetClass(), Name::CollisionShape, nullptr);
+						FCsBeamCollisionFrequencyParams* CollisionFrequencyParamsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsBeamCollisionFrequencyParams>(Context, Object, Object->GetClass(), Name::CollisionFrequencyParams, nullptr);
+						int32* CollisionCountPtr						= PropertyLibrary::GetIntPropertyValuePtr(Context, Object, Object->GetClass(), Name::CollisionCount, nullptr);
+						bool* bIgnoreCollidingObjectAfterCollisionPtr	= PropertyLibrary::GetBoolPropertyValuePtr(Context, Object, Object->GetClass(), Name::bIgnoreCollidingObjectAfterCollision, nullptr);
+
+						// TODO: Need to implement getting TArray<TSubclassOf<ClassType>>
+
+						if (CollisionPresetPtr &&
+							CollisionShapePtr &&
+							CollisionFrequencyParamsPtr &&
+							CollisionCountPtr &&
+							bIgnoreCollidingObjectAfterCollisionPtr)
+						{
+							Slice->SetCollisionPreset(CollisionPresetPtr);
+							Slice->ConditionalSetCollisionShape(CollisionShapePtr->ConstructShape());
+							CollisionFrequencyParamsPtr->CopyToParamsAsValue(Slice->GetCollisionFrequencyParamsPtr());
+							Slice->SetCollisionCount(CollisionCountPtr);
+							Slice->SetIgnoreCollidingObjectAfterCollision(bIgnoreCollidingObjectAfterCollisionPtr);
+
+							Success = true;
+						}
 					}
+
+					if (!Success)
+					{
+						if (Log)
+						{
+							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CollisionDataType (NCsBeam::NData::NCollision::ICollision)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
+							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Beam_CollisionImplSlice with name: CollisionSlice."), *Context));
+							Log(FString::Printf(TEXT("%s: - OR"), *Context));
+							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset."), *Context));
+							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsBeamCollisionShape with name: CollisionShape."), *Context));
+							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsBeamCollisionFrequencyParams with name: CollisionFrequencyParams."), *Context));
+							Log(FString::Printf(TEXT("%s: - Failed to get int property with name: CollisionCount."), *Context));
+							Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bIgnoreCollidingObjectAfterCollision."), *Context));
+							// Log(FString::Printf(TEXT("%s: - Failed to get array property of type: TSubclassOf<UObject> with name: IgnoreCollidingObjectClasses."), *Context));
+						}
+					}
+					return Slice;
 				}
-				return Slice;
-			}
 
-			bool FImplSlice::IsValidChecked(const FString& Context) const
-			{
-				CS_IS_VALID_CHECKED(GetCollisionPreset());
-				check(GetCollisionShape()->IsValidChecked(Context));
-				CS_IS_VALID_CHECKED(GetCollisionFrequencyParams());
-				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCollisionCount(), 0)
-				CS_IS_TARRAY_ANY_NULL_CHECKED(GetIgnoreCollidingObjectClasses(), UObject)
+				bool FImplSlice::IsValidChecked(const FString& Context) const
+				{
+					CS_IS_VALID_CHECKED(GetCollisionPreset());
+					check(GetCollisionShape()->IsValidChecked(Context));
+					CS_IS_VALID_CHECKED(GetCollisionFrequencyParams());
+					CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCollisionCount(), 0)
+					CS_IS_TARRAY_ANY_NULL_CHECKED(GetIgnoreCollidingObjectClasses(), UObject)
 
-				return true;
-			}
+					return true;
+				}
 
-			bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&)/*=&NCsBeam::FLog::Warning*/) const
-			{
-				CS_IS_VALID(GetCollisionPreset())
+				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&)/*=&NCsBeam::FLog::Warning*/) const
+				{
+					CS_IS_VALID(GetCollisionPreset())
 
-				if (!GetCollisionShape()->IsValid(Context, Log))
-					return false;
+					if (!GetCollisionShape()->IsValid(Context, Log))
+						return false;
 
-				CS_IS_VALID(GetCollisionFrequencyParams());
+					CS_IS_VALID(GetCollisionFrequencyParams());
 
-				CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCollisionCount(), 0)
+					CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCollisionCount(), 0)
 
-				CS_IS_TARRAY_ANY_NULL(GetIgnoreCollidingObjectClasses(), UObject)
+					CS_IS_TARRAY_ANY_NULL(GetIgnoreCollidingObjectClasses(), UObject)
 
-				return true;
+					return true;
+				}
 			}
 		}
 	}

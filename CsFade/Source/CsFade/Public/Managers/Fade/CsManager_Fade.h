@@ -4,6 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Managers/Fade/CsTypes_Fade.h"
 #include "Managers/Fade/CsManager_Fade_Delegates.h"
@@ -14,11 +15,19 @@ class ICsGetManagerFade;
 struct FCsRoutine;
 class UCsUserWidget_Fade;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsManager_Fade)
+
 UCLASS(transient, BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSFADE_API UCsManager_Fade : public UObject
 {
 	GENERATED_UCLASS_BODY()
-public:
+
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsManager_Fade);
+
+	using ParamsType = NCsFade::FParams;
+	using OnCompleteEventType = NCsFade::NManager::NFade::FOnComplete;
 
 // Singleton
 #pragma region
@@ -94,8 +103,6 @@ public:
 
 	void CreateFadeWidget();
 
-#define ParamsType NCsFade::FParams
-
 	void Fade(const ParamsType& Params);
 private:
 	char Fade_Internal(FCsRoutine* R);
@@ -106,13 +113,9 @@ public:
 
 	void SafeFade(const ParamsType& Params);
 
-#define OnCompleteEventType NCsFade::NManager::NFade::FOnComplete
-
 	OnCompleteEventType OnFadeComplete_Event;
 
 	FORCEINLINE OnCompleteEventType& GetOnFadeComplete_Event() { return OnFadeComplete_Event; }
-
-#undef OnCompleteEventType
 
 	UPROPERTY(BlueprintAssignable)
 	FCsManagerFade_OnFadeComplete OnFadeComplete_ScriptEvent;
@@ -129,6 +132,4 @@ public:
 
 	void StopFade();
 	void ClearFade();
-
-#undef ParamsType
 };

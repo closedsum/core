@@ -2,132 +2,134 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Interface
 #include "Managers/Pool/Cache/CsCache_PooledObject.h"
 #include "Cache/CsCache_Beam.h"
+// Container
 #include "Containers/CsWeakObjectPtr.h"
 
 class UObject;
 struct FCsInterfaceMap;
 
-// NCsPooledObject::NPayload::IPayload
+// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
-// NCsBeam::NData::IData
+// DataType (NCsBeam::NData::IData)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NData, IData)
 
 namespace NCsBeam
 {
 	namespace NCache
 	{
-	#define PooledCacheType NCsPooledObject::NCache::ICache
-	#define BeamCacheType NCsBeam::NCache::ICache
-
-		struct CSBEAM_API FImpl final : public PooledCacheType,
-									    public BeamCacheType
+		namespace NImpl
 		{
-		public:
+			using PooledCacheType = NCsPooledObject::NCache::ICache;
+			using CacheType = NCsBeam::NCache::ICache;
 
-			static const FName Name;
+			struct CSBEAM_API FImpl final : public PooledCacheType,
+											public CacheType
+			{
+			public:
 
-		#define DataType NCsBeam::NData::IData
-		#define PayloadType NCsPooledObject::NPayload::IPayload
+				static const FName Name;
 
-		private:
+			private:
+
+				using DataType = NCsBeam::NData::IData;
+				using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+				using StateType = NCsPooledObject::EState;
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				// PooledCacheType (NCsPooledObject::NCache::ICache)
+
+				int32 Index;
+
+				bool bAllocated;
+
+				bool bQueueDeallocate;
+
+				StateType State;
+
+				NCsPooledObject::EUpdate UpdateType;
+
+				TCsWeakObjectPtr<UObject> Instigator;
+
+				TCsWeakObjectPtr<UObject> Owner;
+
+				TCsWeakObjectPtr<UObject> Parent;
+
+				float WarmUpTime;
+
+				float LifeTime;
+
+				FCsTime StartTime;
+
+				FCsDeltaTime ElapsedTime;
+
+				DataType* Data;
+
+			public:
+
+				FImpl();
+				~FImpl();
+
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+
+			#pragma endregion ICsGetInterfaceMap
 
 			// PooledCacheType (NCsPooledObject::NCache::ICache)
+			#pragma region
+			public:
 
-			int32 Index;
+				FORCEINLINE void Init(const int32& InIndex){ Index = InIndex; }
+				FORCEINLINE const int32& GetIndex() const { return Index; }
 
-			bool bAllocated;
+				void Allocate(PooledPayloadType* Payload);
 
-			bool bQueueDeallocate;
+				FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
 
-			NCsPooledObject::EState State;
+				void Deallocate();
 
-			NCsPooledObject::EUpdate UpdateType;
+				FORCEINLINE void QueueDeallocate(){ bQueueDeallocate = true; }
+				FORCEINLINE bool ShouldDeallocate() const { return bQueueDeallocate; }
+				FORCEINLINE const StateType& GetState() const { return State; }
+				FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
+				FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
+				FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }
+				FORCEINLINE UObject* GetParent() const { return Parent.Get(); }
+				FORCEINLINE const float& GetWarmUpTime() const { return WarmUpTime; }
+				FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+				FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
+				FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
 
-			TCsWeakObjectPtr<UObject> Instigator;
+				bool HasLifeTimeExpired() const;
 
-			TCsWeakObjectPtr<UObject> Owner;
+				void Reset();
 
-			TCsWeakObjectPtr<UObject> Parent;
+			#pragma endregion PooledCacheType (NCsPooledObject::NCache::ICache)
 
-			float WarmUpTime;
+			// CacheType (NCsBeam::NCache::ICache)
+			#pragma region
+			public:
 
-			float LifeTime;
+			#pragma endregion CacheType (NCsBeam::NCache::ICache)
 
-			FCsTime StartTime;
+			public:
 
-			FCsDeltaTime ElapsedTime;
+				void Update(const FCsDeltaTime& DeltaTime);
 
-			DataType* Data;
-
-		public:
-
-			FImpl();
-			~FImpl();
-
-			FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
-
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
-
-		#pragma endregion ICsGetInterfaceMap
-
-		// PooledCacheType (NCsPooledObject::NCache::ICache)
-		#pragma region
-		public:
-
-			FORCEINLINE void Init(const int32& InIndex){ Index = InIndex; }
-			FORCEINLINE const int32& GetIndex() const { return Index; }
-
-			void Allocate(PayloadType* Payload);
-
-			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
-
-			void Deallocate();
-
-			FORCEINLINE void QueueDeallocate(){ bQueueDeallocate = true; }
-			FORCEINLINE bool ShouldDeallocate() const { return bQueueDeallocate; }
-			FORCEINLINE const NCsPooledObject::EState& GetState() const { return State; }
-			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
-			FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
-			FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }
-			FORCEINLINE UObject* GetParent() const { return Parent.Get(); }
-			FORCEINLINE const float& GetWarmUpTime() const { return WarmUpTime; }
-			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
-			FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
-			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
-
-			bool HasLifeTimeExpired() const;
-
-			void Reset();
-
-		#pragma endregion PooledCacheType (NCsPooledObject::NCache::ICache)
-
-		// BeamCacheType (NCsBeam::NCache::ICache)
-		#pragma region
-		public:
-
-		#pragma endregion BeamCacheType (NCsBeam::NCache::ICache)
-
-		public:
-
-			void Update(const FCsDeltaTime& DeltaTime);
-
-			void SetData(DataType* InData);
-
-		#undef DataType
-		#undef PayloadType
-		};
-
-	#undef PooledCacheType
-	#undef BeamCacheType
+				void SetData(DataType* InData);
+			};
+		}
 	}
 }

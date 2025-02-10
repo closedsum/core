@@ -11,41 +11,28 @@
 // FCsProjectileWeapon_Spread_ShapeParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NSpread::NShape::FParams
-
-void FCsProjectileWeapon_Spread_ShapeParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Spread_ShapeParams
 {
-	typedef NCsWeapon::NProjectile::NSpread::EShape ShapeType;
+	using ShapeType = NCsWeapon::NProjectile::NSpread::EShape;
+	using AxisType = NCsWeapon::NProjectile::NSpread::NShape::EAxis;
+	using DistributionType = NCsWeapon::NProjectile::NSpread::NShape::EDistribution;
 
-	Params->SetShape((ShapeType*)(&Shape));
-	Params->SetExtents(&Extents);
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Shape, ShapeType);
+		CS_THIS_COPY_TO_PROXY(Params, Extents);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Axis, AxisType);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Distribution, DistributionType);
+	}
 
-	typedef NCsWeapon::NProjectile::NSpread::NShape::EAxis AxisType;
-
-	Params->SetAxis((AxisType*)(&Axis));
-
-	typedef NCsWeapon::NProjectile::NSpread::NShape::EDistribution DistributionType;
-
-	Params->SetDistribution((DistributionType*)(&Distribution));
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Shape, ShapeType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Extents);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Axis, AxisType);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Distribution, DistributionType);
+	}
 }
-
-void FCsProjectileWeapon_Spread_ShapeParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	typedef NCsWeapon::NProjectile::NSpread::EShape ShapeType;
-
-	Params->SetShape((ShapeType)Shape);
-	Params->SetExtents(Extents);
-
-	typedef NCsWeapon::NProjectile::NSpread::NShape::EAxis AxisType;
-
-	Params->SetAxis((AxisType)Axis);
-
-	typedef NCsWeapon::NProjectile::NSpread::NShape::EDistribution DistributionType;
-
-	Params->SetDistribution((DistributionType)Distribution);
-}
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Spread_ShapeParams::IsValidChecked(const FString& Context) const
 {
@@ -137,39 +124,24 @@ namespace NCsWeapon
 		{
 			namespace NShape
 			{
+				using ShapeMapType = NCsWeapon::NProjectile::NSpread::EMShape;
+				using AxisMapType = NCsWeapon::NProjectile::NSpread::NShape::EMAxis;
+				using DistributionMapType = NCsWeapon::NProjectile::NSpread::NShape::EMDistribution;
+
 				bool FParams::IsValidChecked(const FString& Context) const
 				{
-					typedef NCsWeapon::NProjectile::NSpread::EMShape ShapeMapType;
-
 					CS_IS_ENUM_VALID_CHECKED(ShapeMapType, GetShape())
 					CS_IS_VECTOR_ZERO_CHECKED(GetExtents())
-
-					typedef NCsWeapon::NProjectile::NSpread::NShape::EMAxis AxisMapType;
-
 					CS_IS_ENUM_VALID_CHECKED(AxisMapType, GetAxis())
-
-					typedef NCsWeapon::NProjectile::NSpread::NShape::EMDistribution DistributionMapType;
-
 					CS_IS_ENUM_VALID_CHECKED(DistributionMapType, GetDistribution())
 					return true;
 				}
 
 				bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 				{
-					typedef NCsWeapon::NProjectile::NSpread::EMShape ShapeMapType;
-					typedef NCsWeapon::NProjectile::NSpread::EShape ShapeType;
-
 					CS_IS_ENUM_VALID(ShapeMapType, ShapeType, GetShape())
 					CS_IS_VECTOR_ZERO(GetExtents())
-
-					typedef NCsWeapon::NProjectile::NSpread::NShape::EMAxis AxisMapType;
-					typedef NCsWeapon::NProjectile::NSpread::NShape::EAxis AxisType;
-
 					CS_IS_ENUM_VALID(AxisMapType, AxisType, GetAxis())
-
-					typedef NCsWeapon::NProjectile::NSpread::NShape::EMDistribution DistributionMapType;
-					typedef NCsWeapon::NProjectile::NSpread::NShape::EDistribution DistributionType;
-
 					CS_IS_ENUM_VALID(DistributionMapType, DistributionType, GetDistribution())
 					return true;
 				}

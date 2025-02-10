@@ -171,6 +171,9 @@ ACsBeamActorPooledImpl::ACsBeamActorPooledImpl(const FObjectInitializer& ObjectI
 	SetReplicatingMovement(false);
 }
 
+using CacheImplType = NCsBeam::NCache::NImpl::FImpl;
+using PooledPayloadImplType = NCsPooledObject::NPayload::FImplSlice;
+
 // UObject Interface
 #pragma region
 
@@ -261,8 +264,6 @@ void ACsBeamActorPooledImpl::Shutdown()
 
 void ACsBeamActorPooledImpl::ConstructCache()
 {
-	typedef NCsBeam::NCache::FImpl CacheImplType;
-
 	CacheImpl = new CacheImplType();
 	Cache	  = CacheImpl;
 }
@@ -296,10 +297,9 @@ void ACsBeamActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	Data = CsBeamManagerLibrary::GetDataChecked(Context, this, Type);
 
 	// Cache collision related data
-	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
 	typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
 
-	CollisionDataType* CollisionData = BeamDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data);
+	CollisionDataType* CollisionData = CsBeamDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data);
 
 	if (CollisionData)
 	{
@@ -414,13 +414,11 @@ using namespace NCsBeamActorPooledImpl::NCached;
 
 	SetActorHiddenInGame(false);
 
-	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-
 	// VisualDataType (NCsBeam::NData::NVisual::NStaticMesh::IStaticMesh)
 	{
 		typedef NCsBeam::NData::NVisual::NStaticMesh::IStaticMesh VisualDataType;
 
-		if (VisualDataType* VisualData = BeamDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+		if (VisualDataType* VisualData = CsBeamDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
 		{
 			// TODO: MAYBE? Allocate Static Mesh Actor and get Static Mesh Component
 
@@ -826,27 +824,22 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 #endif // #if !UE_BUILD_SHIPPING
 
 	// Get Physics Surface
-	EPhysicalSurface SurfaceType	= NCsHitResult::GetPhysSurfaceType(Hit);
-
-	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-	typedef NCsCollision::FLibrary CollisionLibrary;
+	EPhysicalSurface SurfaceType = NCsHitResult::GetPhysSurfaceType(Hit);
 
 	// ImpactVisualDataType (NCsBeam::NData::NVisual::NImpact::IImpact)
 	{
 		typedef NCsBeam::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
 
-		if (ImpactVisualDataType* ImpactVisualData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
+		if (ImpactVisualDataType* ImpactVisualData = CsBeamDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 		{
-			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-			PayloadImplType Payload;
+			PooledPayloadImplType Payload;
 			Payload.Instigator = Cache->GetInstigator();
 
 			const FCsFX& ImpactFX = ImpactVisualData->GetImpactFX(SurfaceType);
 
 			FTransform3f Transform = FTransform3f::Identity;
-			Transform.SetLocation(CollisionLibrary::GetLocation(Hit));
-			Transform.SetRotation(CollisionLibrary::GetImpactQuat(Hit));
+			Transform.SetLocation(CsCollisionLibrary::GetLocation(Hit));
+			Transform.SetRotation(CsCollisionLibrary::GetImpactQuat(Hit));
 
 			CsFXManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactFX, Transform);
 		}
@@ -855,21 +848,18 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 	{
 		typedef NCsBeam::NData::NSound::NImpact::IImpact ImpactSoundDataType;
 
-		if (ImpactSoundDataType* ImpactSoundData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
+		if (ImpactSoundDataType* ImpactSoundData = CsBeamDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
 		{
-			typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-			PayloadImplType Payload;
+			PooledPayloadImplType Payload;
 			Payload.Instigator = Cache->GetInstigator();
 
 			const FCsSound& ImpactSound = ImpactSoundData->GetImpactSound(SurfaceType);
 
 			FTransform3f Transform = FTransform3f::Identity;
-			Transform.SetLocation(CollisionLibrary::GetLocation(Hit));
-			Transform.SetRotation(CollisionLibrary::GetImpactQuat(Hit));
+			Transform.SetLocation(CsCollisionLibrary::GetLocation(Hit));
+			Transform.SetRotation(CsCollisionLibrary::GetImpactQuat(Hit));
 
-			SoundManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactSound, Transform);
+			CsSoundManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactSound, Transform);
 		}
 	}
 	// DamageDataType (NCsBeam::NData::NDamage::IDamage)

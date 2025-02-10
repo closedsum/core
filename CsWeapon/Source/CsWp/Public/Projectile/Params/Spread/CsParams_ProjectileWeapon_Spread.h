@@ -12,7 +12,27 @@
 // FCsProjectileWeapon_Spread_ShapeParams
 #pragma region
 
-// NCsWeapon::NProjectile::NSpread::NShape::FParams
+struct FCsProjectileWeapon_Spread_ShapeParams;
+
+// ParamsType (NCsWeapon::NProjectile::NSpread::NShape::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NSpread, NShape, FParams)
+
+namespace NCsProjectileWeapon_Spread_ShapeParams
+{
+	using ThisType = FCsProjectileWeapon_Spread_ShapeParams;
+	using ParamsType = NCsWeapon::NProjectile::NSpread::NShape::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NSpread::NShape::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NSpread, NShape, FParams)
 
 /**
@@ -65,10 +85,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NSpread::NShape::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsWeapon::NProjectile::NSpread::NShape::FParams;
+	using _Impl = NCsProjectileWeapon_Spread_ShapeParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -88,9 +109,11 @@ namespace NCsWeapon
 				*/
 				struct CSWP_API FParams
 				{
-				#define ShapeType NCsWeapon::NProjectile::NSpread::EShape
-				#define AxisType NCsWeapon::NProjectile::NSpread::NShape::EAxis
-				#define DistributionType NCsWeapon::NProjectile::NSpread::NShape::EDistribution
+				private:
+
+					using ShapeType = NCsWeapon::NProjectile::NSpread::EShape;
+					using AxisType = NCsWeapon::NProjectile::NSpread::NShape::EAxis;
+					using DistributionType = NCsWeapon::NProjectile::NSpread::NShape::EDistribution;
 
 				private:
 
@@ -152,10 +175,6 @@ namespace NCsWeapon
 					{
 						return NCsWeapon::NProjectile::NSpread::FLibrary::GetRandomOffsetChecked(Context, GetShape(), GetExtents(), GetDistribution());
 					}
-
-				#undef ShapeType
-				#undef AxisType
-				#undef DistributionType
 				};
 			}
 		}
@@ -238,8 +257,10 @@ namespace NCsWeapon
 				*/
 				struct CSWP_API FParams
 				{
-				#define SpreadAngleType NCsWeapon::NProjectile::NSpread::EAngle
-				#define DistributionType NCsWeapon::NProjectile::NSpread::NAngle::EDistribution
+				private:
+
+					using SpreadAngleType = NCsWeapon::NProjectile::NSpread::EAngle;
+					using DistributionType = NCsWeapon::NProjectile::NSpread::NAngle::EDistribution;
 
 				private:
 
@@ -297,9 +318,6 @@ namespace NCsWeapon
 						// RangeMinMax
 						return NCsWeapon::NProjectile::NSpread::FLibrary::GetRandomAngleChecked(Context, GetAngleType(), GetMin(), GetMax(), GetDistribution());
 					}
-
-				#undef SpreadAngleType
-				#undef DistributionType
 				};
 			}
 		}
@@ -382,8 +400,10 @@ namespace NCsWeapon
 			*/
 			struct CSWP_API FParams
 			{
-			#define ShapeParamsType NCsWeapon::NProjectile::NSpread::NShape::FParams
-			#define AngleParamsType NCsWeapon::NProjectile::NSpread::NAngle::FParams
+			private:
+
+				using ShapeParamsType = NCsWeapon::NProjectile::NSpread::NShape::FParams;
+				using AngleParamsType = NCsWeapon::NProjectile::NSpread::NAngle::FParams;
 
 			private:
 
@@ -427,9 +447,6 @@ namespace NCsWeapon
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-			#undef ShapeParamsType
-			#undef AngleParamsType
 			};
 		}
 	}

@@ -12,74 +12,75 @@ namespace NCsWeapon
 {
 	namespace NPayload
 	{
-	#define PayloadType NCsWeapon::NPayload::IPayload
-
-		/**
-		* Basic implementation of the interface: PayloadType (NCsWeapon::NPayload::IPayload).
-		*/
-		struct CSWP_API FImplSlice : public PayloadType,
-									 public ICsReset
+		namespace NImplSlice
 		{
-		public:
+			using PayloadType = NCsWeapon::NPayload::IPayload;
 
-			static const FName Name;
+			/**
+			* Basic implementation of the interface: PayloadType (NCsWeapon::NPayload::IPayload).
+			*/
+			struct CSWP_API FImplSlice : public PayloadType,
+										 public ICsReset
+			{
+			public:
 
-		private:
+				static const FName Name;
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+			public:
+
+				// PayloadType (NCsWeapon::NPayload::IPayload)
+
+				FECsWeapon Type;
+
+				FECsUpdateGroup UpdateGroup;
+
+				FTransform Transform;
+
+			public:
+
+				FImplSlice();
+				~FImplSlice(){}
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-		public:
+			#pragma endregion ICsGetInterfaceMap
+
+			public:
+
+				void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
 			// PayloadType (NCsWeapon::NPayload::IPayload)
+			#pragma region
+			public:
 
-			FECsWeapon Type;
+				FORCEINLINE const FECsWeapon& GetType() const { return Type; }
+				FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const { return UpdateGroup; }
+				FORCEINLINE const FTransform& GetTransform() const { return Transform; }
 
-			FECsUpdateGroup UpdateGroup;
+			#pragma endregion PayloadType (NCsWeapon::NPayload::IPayload)
 
-			FTransform3f Transform;
+			// ICsReset
+			#pragma region
+			public:
 
-		public:
+				void Reset();
 
-			FImplSlice();
-			~FImplSlice(){}
+			#pragma endregion ICsReset
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
+			public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
-
-		#pragma endregion ICsGetInterfaceMap
-
-		public:
-
-			void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
-
-		// PayloadType (NCsWeapon::NPayload::IPayload)
-		#pragma region
-		public:
-
-			FORCEINLINE const FECsWeapon& GetType() const { return Type; }
-			FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const { return UpdateGroup; }
-			FORCEINLINE const FTransform3f& GetTransform() const { return Transform; }
-
-		#pragma endregion PayloadType (NCsWeapon::NPayload::IPayload)
-
-		// ICsReset
-		#pragma region
-		public:
-
-			void Reset();
-
-		#pragma endregion ICsReset
-
-		public:
-
-			bool CopyFrom(const FImplSlice* From);
-		};
-
-	#undef PayloadType
+				bool CopyFrom(const FImplSlice* From);
+			};
+		}
 	}
 }

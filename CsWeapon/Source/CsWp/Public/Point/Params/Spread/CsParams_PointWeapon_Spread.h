@@ -88,9 +88,11 @@ namespace NCsWeapon
 				*/
 				struct CSWP_API FParams
 				{
-				#define ShapeType NCsWeapon::NPoint::NSpread::EShape
-				#define AxisType NCsWeapon::NPoint::NSpread::NShape::EAxis
-				#define DistributionType NCsWeapon::NPoint::NSpread::NShape::EDistribution
+				private:
+
+					using ShapeType = NCsWeapon::NPoint::NSpread::EShape;
+					using AxisType = NCsWeapon::NPoint::NSpread::NShape::EAxis;
+					using DistributionType = NCsWeapon::NPoint::NSpread::NShape::EDistribution;
 
 				private:
 
@@ -152,10 +154,6 @@ namespace NCsWeapon
 					{
 						return NCsWeapon::NPoint::NSpread::FLibrary::GetRandomOffsetChecked(Context, GetShape(), GetExtents(), GetDistribution());
 					}
-
-				#undef ShapeType
-				#undef AxisType
-				#undef DistributionType
 				};
 			}
 		}
@@ -238,8 +236,10 @@ namespace NCsWeapon
 				*/
 				struct CSWP_API FParams
 				{
-				#define SpreadAngleType NCsWeapon::NPoint::NSpread::EAngle
-				#define DistributionType NCsWeapon::NPoint::NSpread::NAngle::EDistribution
+				private:
+
+					using SpreadAngleType = NCsWeapon::NPoint::NSpread::EAngle;
+					using DistributionType = NCsWeapon::NPoint::NSpread::NAngle::EDistribution;
 
 				private:
 
@@ -297,9 +297,6 @@ namespace NCsWeapon
 						// RangeMinMax
 						return NCsWeapon::NPoint::NSpread::FLibrary::GetRandomAngleChecked(Context, GetAngleType(), GetMin(), GetMax(), GetDistribution());
 					}
-
-				#undef SpreadAngleType
-				#undef DistributionType
 				};
 			}
 		}
@@ -367,8 +364,10 @@ namespace NCsWeapon
 			*/
 			struct CSWP_API FParams
 			{
-			#define ShapeParamsType NCsWeapon::NPoint::NSpread::NShape::FParams
-			#define AngleParamsType NCsWeapon::NPoint::NSpread::NAngle::FParams
+			private:
+
+				using ShapeParamsType = NCsWeapon::NPoint::NSpread::NShape::FParams;
+				using AngleParamsType = NCsWeapon::NPoint::NSpread::NAngle::FParams;
 
 			private:
 
@@ -397,9 +396,6 @@ namespace NCsWeapon
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-			#undef ShapeParamsType
-			#undef AngleParamsType
 			};
 		}
 	}

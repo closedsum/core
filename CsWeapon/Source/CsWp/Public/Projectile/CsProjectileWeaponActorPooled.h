@@ -88,6 +88,7 @@ private:
 	using CsProjectilePayloadType = NCsProjectile::NPayload::IPayload;
 	using CsFXPayloadType = NCsFX::NPayload::IPayload;
 	using CsWeaponModifierType = NCsWeapon::NModifier::IModifier;
+	using CsProjectileModifierType = NCsProjectile::NModifier::IModifier;
 
 // UObject Interface
 #pragma region
@@ -672,9 +673,7 @@ protected:
 
 public:
 
-#define PrjModifierType NCsProjectile::NModifier::IModifier
-	virtual void GetProjectileModifiers(TArray<PrjModifierType*>& OutModifiers) const {}
-#undef PrjModifierType
+	virtual void GetProjectileModifiers(TArray<CsProjectileModifierType*>& OutModifiers) const {}
 
 public:
 

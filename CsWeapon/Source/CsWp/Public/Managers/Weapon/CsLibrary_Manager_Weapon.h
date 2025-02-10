@@ -13,8 +13,8 @@ struct FCsWeaponPooled;
 
 // NCsWeapon::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NPayload, IPayload)
-// NCsWeapon::NPayload::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NPayload, FImpl)
+// NCsWeapon::NPayload::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NPayload, NImpl, FImpl)
 
 struct FCsWeapon;
 class ICsWeapon;
@@ -54,7 +54,7 @@ namespace NCsWeapon
 			using DataInterfaceMapType = NCsWeapon::NData::FInterfaceMap;
 			using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_WeaponPtr, DataInterfaceMapType>;
 			using PayloadType = NCsWeapon::NPayload::IPayload;
-			using PayloadImplType = NCsWeapon::NPayload::FImpl;
+			using PayloadImplType = NCsWeapon::NPayload::NImpl::FImpl;
 
 		// Print
 		#pragma region

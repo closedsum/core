@@ -42,7 +42,7 @@ namespace NCsWeapon
 		using DataInterfaceMapType = NCsWeapon::NData::FInterfaceMap;
 		using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_WeaponPtr, DataInterfaceMapType>;
 		using PayloadType = NCsWeapon::NPayload::IPayload;
-		using PayloadImplType = NCsWeapon::NPayload::FImpl;
+		using PayloadImplType = NCsWeapon::NPayload::NImpl::FImpl;
 
 		// Print
 		#pragma region

@@ -12,33 +12,32 @@ namespace NCsDamage
 {
 	namespace NRange
 	{
-		#define RangeType NCsDamage::NRange::IRange
-
-		bool FLibrary::IsValidChecked(const FString& Context, const RangeType* Range)
+		namespace NLibrary
 		{
-			CS_IS_PTR_NULL_CHECKED(Range)
+			using CopyType = NCsDamage::NRange::NCopy::ICopy;
 
-			const float& MinRange = Range->GetMinRange();
-			const float& MaxRange = Range->GetMaxRange();
+			bool FLibrary::IsValidChecked(const FString& Context, const RangeType* Range)
+			{
+				CS_IS_PTR_NULL_CHECKED(Range)
 
-			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MinRange, 0.0f)
-			CS_IS_FLOAT_GREATER_THAN_CHECKED(MaxRange, MinRange)
-			return true;
-		}
+				const float& MinRange = Range->GetMinRange();
+				const float& MaxRange = Range->GetMaxRange();
+
+				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MinRange, 0.0f)
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(MaxRange, MinRange)
+				return true;
+			}
 
 		
-		bool FLibrary::CopyChecked(const FString& Context, const RangeType* From, RangeType* To)
-		{
-			typedef NCsDamage::NRange::NCopy::ICopy CopyType;
+			bool FLibrary::CopyChecked(const FString& Context, const RangeType* From, RangeType* To)
+			{
+				CopyType* ToC = GetInterfaceChecked<CopyType>(Context, To);
 
-			CopyType* ToC = GetInterfaceChecked<CopyType>(Context, To);
+				check(ImplementsChecked<CopyType>(Context, From));
 
-			check(ImplementsChecked<CopyType>(Context, From));
-
-			ToC->Copy(From);
-			return true;
+				ToC->Copy(From);
+				return true;
 		}
-
-		#undef RangeType
+		}
 	}
 }

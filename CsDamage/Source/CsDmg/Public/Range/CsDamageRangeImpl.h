@@ -15,70 +15,71 @@ namespace NCsDamage
 {
 	namespace NRange
 	{
-	#define RangeType NCsDamage::NRange::IRange
-	#define CopyType NCsDamage::NRange::NCopy::ICopy
-
-		/**
-		* Basic implementation of the interface: RangeType (NCsDamage::NRange::IRange)
-		*/
-		struct CSDMG_API FImpl : public RangeType,
-								 public CopyType,
-								 public ICsReset
+		namespace NImpl
 		{
-		public:
+			using RangeType = NCsDamage::NRange::IRange;
+			using CopyType = NCsDamage::NRange::NCopy::ICopy;
 
-			static const FName Name;
+			/**
+			* Basic implementation of the interface: RangeType (NCsDamage::NRange::IRange)
+			*/
+			struct CSDMG_API FImpl : public RangeType,
+									 public CopyType,
+									 public ICsReset
+			{
+			public:
 
-		private:
+				static const FName Name;
 
-			FCsInterfaceMap InterfaceMap;
+			private:
 
-		// RangeType (NCsDamage::NRange::IRange)
+				FCsInterfaceMap* InterfaceMap;
+				FCsInterfaceMap InterfaceMap_Internal;
 
-			CS_DECLARE_MEMBER_WITH_PROXY(MinRange, float)
-			CS_DECLARE_MEMBER_WITH_PROXY(MaxRange, float)
+			// RangeType (NCsDamage::NRange::IRange)
 
-		public:
+				CS_DECLARE_MEMBER_WITH_PROXY(MinRange, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(MaxRange, float)
 
-			FImpl();
+			public:
 
-			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+				FImpl();
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return const_cast<FCsInterfaceMap*>(&InterfaceMap); }
+			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-		#pragma endregion ICsGetInterfaceMap
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-		// RangeType (NCsDamage::NRange::IRange)
-		#pragma region
-		public:
+			#pragma endregion ICsGetInterfaceMap
 
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinRange, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxRange, float)
+			// RangeType (NCsDamage::NRange::IRange)
+			#pragma region
+			public:
 
-		#pragma endregion RangeType (NCsDamage::NRange::IRange)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinRange, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxRange, float)
 
-		// CopyType (NCsDamage::NRange::NCopy::ICopy)
-		#pragma region
-		public:
+			#pragma endregion RangeType (NCsDamage::NRange::IRange)
 
-			void Copy(const RangeType* From);
+			// CopyType (NCsDamage::NRange::NCopy::ICopy)
+			#pragma region
+			public:
 
-		#pragma endregion CopyType (NCsDamage::NRange::NCopy::ICopy)
+				void Copy(const RangeType* From);
 
-		// ICsReset
-		#pragma region
-		public:
+			#pragma endregion CopyType (NCsDamage::NRange::NCopy::ICopy)
 
-			void Reset();
+			// ICsReset
+			#pragma region
+			public:
 
-		#pragma endregion ICsReset
-		};
+				void Reset();
 
-	#undef RangeType
-	#undef CopyType
+			#pragma endregion ICsReset
+			};
+		}
 	}
 }

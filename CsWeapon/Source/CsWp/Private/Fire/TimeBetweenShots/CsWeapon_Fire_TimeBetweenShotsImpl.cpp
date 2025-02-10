@@ -35,14 +35,7 @@ void UCsWeapon_Fire_TimeBetweenShotsImpl::Evaluate()
 {
 	CS_SET_CONTEXT_AS_FUNCTION_NAME(Evaluate);
 
-	//#define CS_COROUTINE_SETUP_UOBJECT(__ClassType, __Function, __Group, __UObject, __ContextObject)
-	using ClassType = UCsWeapon_Fire_TimeBetweenShotsImpl;
-	const FECsUpdateGroup& Group = NCsUpdateGroup::GameState;
-	const FString& FunctionName = _CachedFunctionNameType::Get_STRING_Evaluate_Internal();
-	const FName& FunctionFName = _CachedFunctionNameType::Get_NAME_Evaluate_Internal();
-
-	NCsCoroutine::NPayload::FImpl* __Coroutine__Payload__ = CsCoroutineSchedulerLibrary::AllocatePayloadChecked(Context, this, Group);
-	__Coroutine__Payload__->Init<ClassType>(Context, this, &ClassType::Evaluate_Internal, this, Group, FunctionName, FunctionFName);
+	CS_COROUTINE_SETUP_UOBJECT(UCsWeapon_Fire_TimeBetweenShotsImpl, Evaluate_Internal, NCsUpdateGroup::GameState, this, this);
 
 	CS_COROUTINE_PAYLOAD_PASS_FLOAT_START
 

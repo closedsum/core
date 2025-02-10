@@ -70,7 +70,6 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 
 	const FString& Context = Str::Notify;
 
-	typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
 	typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadImplType;
 
 #if WITH_EDITOR
@@ -84,7 +83,7 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 		PooledPayload.Owner		 = MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent());
 		PooledPayload.Parent	 = MeshComp;
 
-		SoundManagerLibrary::SpawnChecked(Context, MeshComp, &PooledPayload, Sound);
+		CsSoundManagerLibrary::SpawnChecked(Context, MeshComp, &PooledPayload, Sound);
 	}
 	else
 	{
@@ -106,7 +105,7 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 	PooledPayload.Owner		 = MeshComp->GetOwner() ? Cast<UObject>(MeshComp->GetOwner()) : Cast<UObject>(MeshComp->GetAttachParent());
 	PooledPayload.Parent	 = MeshComp;
 
-	SoundManagerLibrary::SpawnChecked(Context, MeshComp, &PooledPayload, Sound);
+	CsSoundManagerLibrary::SpawnChecked(Context, MeshComp, &PooledPayload, Sound);
 #endif // #if WITH_EDITOR
 
 }

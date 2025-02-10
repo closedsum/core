@@ -14,8 +14,8 @@
 
 class UObject;
 
-// NCsBeam::NData::NCollision::FImplSlice
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NData, NCollision, FImplSlice)
+// NCsBeam::NData::NCollision::NImplSlice::FImplSlice
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsBeam, NData, NCollision, NImplSlice, FImplSlice)
 
 /**
 * Represents a "slice" of data, CollisionDataType (NCsBeam::NData::NCollision::ICollision).
@@ -69,8 +69,8 @@ public:
 		IgnoreCollidingObjectClasses()
 	{
 	}
-
-#define SliceType NCsBeam::NData::NCollision::FImplSlice
+	
+	using SliceType = NCsBeam::NData::NCollision::NImplSlice::FImplSlice;
 
 	SliceType* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsBeam::FLog::Warning);
 	SliceType* AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
@@ -84,8 +84,6 @@ public:
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 
-#undef SliceType
-
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
 };
 
@@ -98,135 +96,136 @@ namespace NCsBeam
 	{
 		namespace NCollision
 		{
-		#define CollisionDataType NCsBeam::NData::NCollision::ICollision
-
-			/**
-			* Represents a "slice" of data, CollisionDataType (NCsBeam::NData::NCollision::ICollision).
-			* 
-			* If members are set via points to an "owning" data, then
-			* "Emulates" CollisionDataType (NCsBeam::NData::NCollision::ICollision) by mimicking 
-			* the interfaces and having pointers to the appropriate members. 
-			* 
-			* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
-			* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
-			*/
-			struct CSBEAM_API FImplSlice final : public CollisionDataType
+			namespace NImplSlice
 			{
-			public:
+				using CollisionDataType = NCsBeam::NData::NCollision::ICollision;
 
-				static const FName Name;
+				/**
+				* Represents a "slice" of data, CollisionDataType (NCsBeam::NData::NCollision::ICollision).
+				* 
+				* If members are set via points to an "owning" data, then
+				* "Emulates" CollisionDataType (NCsBeam::NData::NCollision::ICollision) by mimicking 
+				* the interfaces and having pointers to the appropriate members. 
+				* 
+				* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
+				* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
+				*/
+				struct CSBEAM_API FImplSlice final : public CollisionDataType
+				{
+				public:
 
-			#define ShapeType NCsBeam::NCollision::NShape::FShape
-			#define FrequencyParamsType NCsBeam::NCollision::NParams::FFrequency
+					static const FName Name;
 
-			private:
+				private:
+
+					using ThisType = NCsBeam::NData::NCollision::NImplSlice::FImplSlice;
+					using ShapeType = NCsBeam::NCollision::NShape::FShape;
+					using FrequencyParamsType = NCsBeam::NCollision::NParams::FFrequency;
+
+				private:
 			
-				// ICsGetInterfaceMap
+					// ICsGetInterfaceMap
 
-				/** Pointer to the "root" object for all "Impl Slices". That object acts as the hub for the separate objects (via composition) 
-					that describe the data. */
-				FCsInterfaceMap* InterfaceMap;
+					/** Pointer to the "root" object for all "Impl Slices". That object acts as the hub for the separate objects (via composition) 
+						that describe the data. */
+					FCsInterfaceMap* InterfaceMap;
+
+					// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
+
+					CS_DECLARE_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
+					CS_DECLARE_MEMBER_WITH_PROXY(CollisionShape, ShapeType*)
+
+					FrequencyParamsType CollisionFrequencyParams;
+
+					CS_DECLARE_MEMBER_WITH_PROXY(CollisionCount, int32)
+					CS_DECLARE_MEMBER_WITH_PROXY(bIgnoreCollidingObjectAfterCollision, bool)
+					CS_DECLARE_MEMBER_WITH_PROXY(IgnoreCollidingObjectClasses, TArray<TSubclassOf<UObject>>)
+
+				public:
+
+					FImplSlice() :
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(CollisionPreset),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionShape, nullptr),
+						CollisionFrequencyParams(),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionCount, 0),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(bIgnoreCollidingObjectAfterCollision, false),
+						CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(IgnoreCollidingObjectClasses)
+					{
+						CS_CTOR_SET_MEMBER_PROXY(CollisionPreset);
+						CS_CTOR_SET_MEMBER_PROXY(CollisionShape);
+						CS_CTOR_SET_MEMBER_PROXY(CollisionCount);
+						CS_CTOR_SET_MEMBER_PROXY(bIgnoreCollidingObjectAfterCollision);
+						CS_CTOR_SET_MEMBER_PROXY(IgnoreCollidingObjectClasses);
+					}
+
+					~FImplSlice()
+					{
+						delete CollisionShape;
+					}
+
+					FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+				public:
+
+					FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map) { InterfaceMap = Map; }
+
+				// ICsGetInterfaceMap
+				#pragma region
+				public:
+
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+
+				#pragma endregion ICsGetInterfaceMap
+
+				public:
+
+					FORCEINLINE void ConditionalSetCollisionShape(ShapeType* Shape)
+					{
+						if (CollisionShape)
+							delete CollisionShape;
+
+						CollisionShape = Shape;
+						CollisionShape_Proxy = &CollisionShape;
+					}
+
+					FORCEINLINE FrequencyParamsType* GetCollisionFrequencyParamsPtr() { return &CollisionFrequencyParams; }
+					FORCEINLINE void SetIgnoreCollidingObjectAfterCollision(const bool& Value)
+					{
+						bIgnoreCollidingObjectAfterCollision = Value;
+						bIgnoreCollidingObjectAfterCollision_Proxy = &bIgnoreCollidingObjectAfterCollision;
+					}
+					FORCEINLINE void SetIgnoreCollidingObjectAfterCollision(bool* Value) { check(Value); bIgnoreCollidingObjectAfterCollision_Proxy = Value; }
 
 				// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
+				#pragma region
+				public:
 
-				CS_DECLARE_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
-				CS_DECLARE_MEMBER_WITH_PROXY(CollisionShape, ShapeType*)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
 
-				FrequencyParamsType CollisionFrequencyParams;
+					FORCEINLINE const ShapeType* GetCollisionShape() const { return *CollisionShape_Proxy; }
+					FORCEINLINE const FrequencyParamsType& GetCollisionFrequencyParams() const { return CollisionFrequencyParams; }
 
-				CS_DECLARE_MEMBER_WITH_PROXY(CollisionCount, int32)
-				CS_DECLARE_MEMBER_WITH_PROXY(bIgnoreCollidingObjectAfterCollision, bool)
-				CS_DECLARE_MEMBER_WITH_PROXY(IgnoreCollidingObjectClasses, TArray<TSubclassOf<UObject>>)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionCount, int32)
 
-			public:
+					FORCEINLINE const bool& IgnoreCollidingObjectAfterCollision() const { return *bIgnoreCollidingObjectAfterCollision_Proxy; }
 
-				FImplSlice() :
-					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(CollisionPreset),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionShape, nullptr),
-					CollisionFrequencyParams(),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionCount, 0),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(bIgnoreCollidingObjectAfterCollision, false),
-					CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(IgnoreCollidingObjectClasses)
-				{
-					CS_CTOR_SET_MEMBER_PROXY(CollisionPreset);
-					CS_CTOR_SET_MEMBER_PROXY(CollisionShape);
-					CS_CTOR_SET_MEMBER_PROXY(CollisionCount);
-					CS_CTOR_SET_MEMBER_PROXY(bIgnoreCollidingObjectAfterCollision);
-					CS_CTOR_SET_MEMBER_PROXY(IgnoreCollidingObjectClasses);
-				}
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(IgnoreCollidingObjectClasses, TArray<TSubclassOf<UObject>>)
 
-				~FImplSlice()
-				{
-					delete CollisionShape;
-				}
+				#pragma endregion CollisionDataType (NCsBeam::NData::NCollision::ICollision)
 
-				FORCEINLINE UObject* _getUObject() const { return nullptr; }
+				public:
 
-			public:
+					static void Deconstruct(void* Ptr)
+					{
+						delete static_cast<ThisType*>(Ptr);
+					}
 
-				FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map) { InterfaceMap = Map; }
+					static FImplSlice* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) = &NCsBeam::FLog::Warning);
 
-			// ICsGetInterfaceMap
-			#pragma region
-			public:
-
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
-
-			#pragma endregion ICsGetInterfaceMap
-
-			public:
-
-				FORCEINLINE void ConditionalSetCollisionShape(ShapeType* Shape)
-				{
-					if (CollisionShape)
-						delete CollisionShape;
-
-					CollisionShape = Shape;
-					CollisionShape_Proxy = &CollisionShape;
-				}
-
-				FORCEINLINE FrequencyParamsType* GetCollisionFrequencyParamsPtr() { return &CollisionFrequencyParams; }
-				FORCEINLINE void SetIgnoreCollidingObjectAfterCollision(const bool& Value)
-				{
-					bIgnoreCollidingObjectAfterCollision = Value;
-					bIgnoreCollidingObjectAfterCollision_Proxy = &bIgnoreCollidingObjectAfterCollision;
-				}
-				FORCEINLINE void SetIgnoreCollidingObjectAfterCollision(bool* Value) { check(Value); bIgnoreCollidingObjectAfterCollision_Proxy = Value; }
-
-			// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
-			#pragma region
-			public:
-
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
-
-				FORCEINLINE const ShapeType* GetCollisionShape() const { return *CollisionShape_Proxy; }
-				FORCEINLINE const FrequencyParamsType& GetCollisionFrequencyParams() const { return CollisionFrequencyParams; }
-
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionCount, int32)
-
-				FORCEINLINE const bool& IgnoreCollidingObjectAfterCollision() const { return *bIgnoreCollidingObjectAfterCollision_Proxy; }
-
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(IgnoreCollidingObjectClasses, TArray<TSubclassOf<UObject>>)
-
-			#pragma endregion CollisionDataType (NCsBeam::NData::NCollision::ICollision)
-
-			public:
-
-				static void Deconstruct(void* Ptr)
-				{
-					delete static_cast<NCsBeam::NData::NCollision::FImplSlice*>(Ptr);
-				}
-
-				static FImplSlice* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) = &NCsBeam::FLog::Warning);
-
-				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
-
-			#undef ShapeType
-			#undef FrequencyParamsType
-			};
-
-		#undef CollisionDataType
+					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
+				};
+			}
 		}
 	}
 }

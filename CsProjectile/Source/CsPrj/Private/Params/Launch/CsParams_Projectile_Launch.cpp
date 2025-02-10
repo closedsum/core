@@ -9,21 +9,20 @@
 // FCsProjectile_Launch_DelayParams
 #pragma region
 
-#define ParamsType NCsProjectile::NLaunch::NDelay::FParams
-
-void FCsProjectile_Launch_DelayParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectile_Launch_DelayParams
 {
-	Params->SetbCollision(&bCollision);
-	Params->SetbTracking(&bTracking);
-}
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, bCollision);
+		CS_THIS_COPY_TO_PROXY(Params, bTracking);
+	}
 
-void FCsProjectile_Launch_DelayParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->SetbCollision(bCollision);
-	Params->SetbTracking(bTracking);
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bCollision);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bTracking);
+	}
 }
-
-#undef ParamsType
 
 bool FCsProjectile_Launch_DelayParams::IsValidChecked(const FString& Context) const
 {
@@ -59,21 +58,20 @@ namespace NCsProjectile
 // FCsProjectile_LaunchParams
 #pragma region
 
-#define ParamsType NCsProjectile::NLaunch::FParams
-
-void FCsProjectile_LaunchParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectile_LaunchParams
 {
-	Params->SetDelay(&Delay);
-	DelayParams.CopyToParams(Params->GetDelayParamsPtr());
-}
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, Delay);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, DelayParams);
+	}
 
-void FCsProjectile_LaunchParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->SetDelay(Delay);
-	DelayParams.CopyToParamsAsValue(Params->GetDelayParamsPtr());
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Delay);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, DelayParams);
+	}
 }
-
-#undef ParamsType
 
 bool FCsProjectile_LaunchParams::IsValidChecked(const FString& Context) const
 {

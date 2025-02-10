@@ -5,6 +5,7 @@
 #include "UObject/Object.h"
 // Types
 #include "CsMacro_Namespace.h"
+#include "CsMacro_Cached.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/Playback/CsTypes_Playback.h"
 // Utility
@@ -23,10 +24,20 @@ struct FCsRoutine;
 // NCsPlayback::NManager::FConsoleCommand
 CS_FWD_DECLARE_CLASS_NAMESPACE_2(NCsPlayback, NManager, FConsoleCommand)
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsManager_Playback)
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_1(NCsManager_Playback, Record)
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_1(NCsManager_Playback, Playback)
+
 UCLASS(transient)
 class CSPLAYBACK_API UCsManager_Playback : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsManager_Playback);
+
+	using ConsoleCommandManagerType = NCsPlayback::NManager::FConsoleCommand;
 
 // Singleton
 #pragma region
@@ -115,9 +126,7 @@ public:
 #pragma region
 private:
 
-#define ConsoleCommandManagerType NCsPlayback::NManager::FConsoleCommand
 	ConsoleCommandManagerType* Manager_ConsoleCommand;
-#undef ConsoleCommandManagerType
 
 #pragma endregion Console Command
 
@@ -161,6 +170,12 @@ private:
 
 	private:
 
+		CS_USING_CACHED_FUNCTION_NAME_NESTED_1(NCsManager_Playback, Record);
+
+		using GameEventGroupType = FECsGameEventCoordinatorGroup;
+
+	private:
+
 		UCsManager_Playback* Outer;
 
 		FCsPlaybackByEvents PlaybackByEvents;
@@ -184,7 +199,9 @@ private:
 		{
 			friend struct FRecord;
 
-		#define OnCompleteType NCsRunnable::NTask::FOnComplete
+		private:
+
+			using OnCompleteType = NCsRunnable::NTask::FOnComplete;
 
 		private:
 
@@ -266,8 +283,6 @@ private:
 			}
 
 		#pragma endregion NCsRunnable::NTask::ITask
-
-		#undef OnCompleteType
 		};
 
 		FTask* Task;
@@ -308,9 +323,7 @@ private:
 
 		void Stop();
 
-	#define GameEventGroupType FECsGameEventCoordinatorGroup
 		void OnProcessGameEventInfo(const GameEventGroupType& Group, const FCsGameEventInfo& Info);
-	#undef GameEventGroupType
 
 		void ResolveEvents();
 
@@ -347,6 +360,10 @@ private:
 	struct FPlayback
 	{
 		friend class UCsManager_Playback;
+
+	private:
+
+		CS_USING_CACHED_FUNCTION_NAME_NESTED_1(NCsManager_Playback, Playback);
 
 	private:
 

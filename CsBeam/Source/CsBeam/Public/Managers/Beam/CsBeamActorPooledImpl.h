@@ -32,8 +32,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NData, IData)
 
 // NCsPooledObject::NCache::ICache
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
-// NCsBeam::NCache::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NCache, FImpl)
+// CacheImplType (NCsBeam::NCache::NImpl::FImpl)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCache, NImpl, FImpl)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsBeam::NPayload::IPayload
@@ -66,8 +66,11 @@ class CSBEAM_API ACsBeamActorPooledImpl : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
 #define DataType NCsBeam::NData::IData
 #define PooledCacheType NCsPooledObject::NCache::ICache
+	using CacheImplType = NCsBeam::NCache::NImpl::FImpl;
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define PayloadType NCsBeam::NPayload::IPayload
 
@@ -145,9 +148,7 @@ protected:
 
 	PooledCacheType* Cache;
 
-#define CacheImplType NCsBeam::NCache::FImpl
 	CacheImplType* CacheImpl;
-#undef CacheImplType
 
 	virtual void ConstructCache();
 

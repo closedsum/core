@@ -6,7 +6,7 @@
 // Types
 #include "CsMacro_Namespace.h"
 
-// NCsDamage::NRange::IRange
+// RangeType (NCsDamage::NRange::IRange)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 
 namespace NCsDamage
@@ -25,15 +25,19 @@ namespace NCsDamage
 
 				static const FName Name;
 
-			#define RangeType NCsDamage::NRange::IRange
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using RangeType = NCsDamage::NRange::IRange;
+				};
 
 			public:
 
 				virtual ~ICopy(){}
 
-				virtual void Copy(const RangeType* From) = 0;
-
-			#undef RangeType
+				virtual void Copy(const _::RangeType* From) = 0;
 			};
 		}
 	}

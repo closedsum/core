@@ -7,6 +7,7 @@
 #include "Instance/CsGetJavascriptInstance.h"
 #include "Isolate/CsGetJavascriptIsolate.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "CsTypes_Javascript.h"
 #include "EntryPoint/CsTypes_ScriptEntryPointInfo.h"
 #include "Script/CsTypes_ScriptInfo.h"
@@ -60,12 +61,19 @@ class ICsGetManagerJavascript;
 struct FCsRoutine;
 class UGameInstance;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsManager_Javascript)
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_1(NCsManager_Javascript, EditorScriptImpl)
+
 UCLASS()
 class CSJS_API UCsManager_Javascript : public UObject,
 									   public ICsGetJavascriptInstance,
 									   public ICsGetJavascriptIsolate
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsManager_Javascript);
 
 // ICsGetJavascriptInstance
 #pragma region
@@ -361,13 +369,17 @@ public:
 
 	private:
 
+		CS_USING_CACHED_FUNCTION_NAME_NESTED_1(NCsManager_Javascript, EditorScriptImpl);
+
+		using ObjectManagerType = NCsJs::NFileObject::FManager;
+
+	private:
+
 		UCsManager_Javascript* Outer;
 
 	public:
 
-	#define ObjectManagerType NCsJs::NFileObject::FManager
 		ObjectManagerType Manager_Objects;
-	#undef ObjectManagerType
 
 		// <Owner Id, Owner>
 		TMap<int32, UObject*> OwnerByOwnerIdMap;

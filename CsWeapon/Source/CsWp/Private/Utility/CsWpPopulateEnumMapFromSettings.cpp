@@ -11,18 +11,17 @@ const FCsWpDataRootSet* FCsWpPopulateEnumMapFromSettings::GetDataRootSet(const F
 	return CsEnumStructPopulateLibrary::GetDataRootSet<FCsWpDataRootSet, ICsWpGetDataRootSet, &ICsWpGetDataRootSet::GetCsWpDataRootSet>(Context, ContextRoot);
 }
 
-#define PayloadType FCsWpPopulateEnumMapFromSettings::FFromDataTable::FPayload
+using PayloadType = FCsWpPopulateEnumMapFromSettings::FFromDataTable::FPayload;
+
 void FCsWpPopulateEnumMapFromSettings::FromDataTable(const FString& Context, PayloadType& Payload)
 {
-#undef PayloadType
-
 	const FCsWpDataRootSet* DataRootSet = GetDataRootSet(Context, Payload.ContextRoot);
 
 	if (!DataRootSet)
 		return;
 
-	typedef CsEnumStructPopulateLibrary::FFromDataTable::FPayload PayloadType;
-	PayloadType P;
+	using BasePayloadType = CsEnumStructPopulateLibrary::FFromDataTable::FPayload;
+	BasePayloadType P;
 
 	P.ContextRoot			= Payload.ContextRoot;
 	P.DataTableSoftObject	= DataRootSet->GetDataTableSoftObjectChecked(Context, Payload.DataTableName);

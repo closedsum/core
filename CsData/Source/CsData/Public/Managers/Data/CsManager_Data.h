@@ -7,6 +7,7 @@
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Types
 #include "CsMacro_Misc.h"
+#include "CsMacro_Cached.h"
 #include "Data/CsTypes_DataEntry.h"
 #include "Data/CsTypes_Payload.h"
 #include "Load/CsStreamableHandle.h"
@@ -84,12 +85,16 @@ class UScriptStruct;
 
 struct FCsRoutine;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsManager_Data)
+
 UCLASS(transient)
 class CSDATA_API UCsManager_Data : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
 private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsManager_Data);
 
 	using OnAsyncLoadPayloadCompleteOnceType = NCsData::NManager::NOnce::FOnAsyncLoadPayloadComplete;
 	using OnAsyncLoadPayloadsCompleteOnceType = NCsData::NManager::NOnce::FOnAsyncLoadPayloadsComplete;

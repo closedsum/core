@@ -286,6 +286,7 @@ using DataType = NCsProjectile::NData::IData;
 using PooledCacheType = NCsPooledObject::NCache::ICache;
 using CacheImplType = NCsProjectile::NCache::NImpl::FImpl;
 using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+using PooledPayloadImplType = NCsPooledObject::NPayload::FImplSlice;
 using PayloadType = NCsProjectile::NPayload::IPayload;
 using HitResultType = NCsProjectile::NCollision::NHit::FResult;
 using CollisionDataType = NCsProjectile::NData::NCollision::ICollision;
@@ -857,9 +858,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 			if (VisualDataType* VisualData = CsPrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
 			{
-				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-				PayloadImplType PayloadImpl;
+				PooledPayloadImplType PayloadImpl;
 				PayloadImpl.Owner  = this;
 
 				if (MeshComponent->GetStaticMesh())
@@ -1252,9 +1251,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 
 			if (Info.GetbSound())
 			{
-				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-				PayloadImplType Payload;
+				PooledPayloadImplType Payload;
 				Payload.Instigator = Cache->GetInstigator();
 
 				FTransform3f Transform = FTransform3f::Identity;
@@ -1952,9 +1949,7 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 
 				if (FXInfo.GetbFX())
 				{
-					typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-					PayloadImplType Payload;
+					PooledPayloadImplType Payload;
 					Payload.Instigator = Cache->GetInstigator();
 
 					FTransform3f Transform = FTransform3f::Identity;

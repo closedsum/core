@@ -68,7 +68,7 @@ using LocationType = NCsWeapon::NProjectile::NParams::NLaunch::ELocation;
 using LocationOffsetSpaceType = NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace;
 using DirectionMapType = NCsWeapon::NProjectile::NParams::NLaunch::EMDirection;
 using DirectionType = NCsWeapon::NProjectile::NParams::NLaunch::EDirection;
-
+// Trace
 
 // ICsWeapon_Component
 #pragma region
@@ -456,7 +456,7 @@ FVector UCsWeapon_Fire_ProjectileImpl::GetLaunchDirection(const PayloadType& Pay
 		// Direction
 		using TraceDirectionType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection;
 
-		const TraceDirectionType& TraceDirection  = TraceParams->GetTraceDirectionType();
+		const TraceDirectionType& TraceDirection = TraceParams->GetTraceDirectionType();
 
 		FVector Dir = FVector::ZeroVector;
 
@@ -634,9 +634,24 @@ FVector UCsWeapon_Fire_ProjectileImpl::GetLaunchSpreadLocation(const FVector& In
 	return Location;
 }
 
-FVector UCsWeapon_Fire_ProjectileImpl::GetLaunchSpreadDirection(const FVector& Direction, const PayloadType& Payload)
+FVector UCsWeapon_Fire_ProjectileImpl::GetLaunchSpreadDirection(const FVector& InDirection, const PayloadType& Payload)
 {
-	return FVector::ZeroVector;
+	FVector Direction = InDirection;
+
+	if (Payload.bSpread)
+	{
+		// Yaw
+		if (Payload.Spread.HasYaw())
+		{
+			Direction = Direction.RotateAngleAxis(Payload.Spread.Yaw, FVector::UpVector);
+		}
+		// Pitch
+		if (Payload.Spread.HasPitch())
+		{
+			Direction = CsMathLibrary::RotateNormalAngleRight(Direction, Payload.Spread.Pitch);
+		}
+	}
+	return Direction;
 }
 
 // Print

@@ -682,12 +682,12 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 
 ValueType* UCsManager_Damage::ConstructValue(const FECsDamageValue& Type)
 {
-	// Point | NCsDamage::NValue::NPoint::IPoint (NCsDamage::NValue::NPoint::FImpl)
+	// Point | NCsDamage::NValue::NPoint::IPoint (NCsDamage::NValue::NPoint::NImpl::FImpl)
 	if (Type == NCsDamageValue::Point)
-		return new NCsDamage::NValue::NPoint::FImpl();
-	// Range | NCsDamage::NValue::NRange::IRange (NCsDamage::NValue::NRange::FImpl)
+		return new NCsDamage::NValue::NPoint::NImpl::FImpl();
+	// Range | NCsDamage::NValue::NRange::IRange (NCsDamage::NValue::NRange::NImpl::FImpl)
 	if (Type == NCsDamageValue::Range)
-		return new NCsDamage::NValue::NRange::FImpl();
+		return new NCsDamage::NValue::NRange::NImpl::FImpl();
 	return nullptr;
 }
 

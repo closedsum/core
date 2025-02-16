@@ -68,7 +68,7 @@ namespace NCsDamage
 				private:
 
 					using ValueType = NCsDamage::NValue::IValue;
-					using ValueImplType = NCsDamage::NValue::NPoint::FImpl;
+					using ValueImplType = NCsDamage::NValue::NPoint::NImpl::FImpl;
 
 				private:
 

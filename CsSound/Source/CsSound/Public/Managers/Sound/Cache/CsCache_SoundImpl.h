@@ -21,139 +21,140 @@ namespace NCsSound
 {
 	namespace NCache
 	{
-#define PooledCacheType NCsPooledObject::NCache::ICache
-#define SoundCacheType NCsSound::NCache::ICache
-
-		/**
-		* Basic implementation for Cache implementing the interfaces:
-		* PooledCacheType (NCsPooledObject::NCache::ICache) and 
-		* SoundCacheType (NCsSound::NCache::ICache). This only supports 
-		* a bare minimum functionality. For custom functionality create
-		* another implementation
-		*/
-		struct CSSOUND_API FImpl final : public PooledCacheType,
-										 public SoundCacheType
+		namespace NImpl
 		{
-		public:
+			using PooledCacheType = NCsPooledObject::NCache::ICache;
+			using CacheType = NCsSound::NCache::ICache;
 
-			static const FName Name;
+			/**
+			* Basic implementation for Cache implementing the interfaces:
+			* PooledCacheType (NCsPooledObject::NCache::ICache) and 
+			* SoundCacheType (NCsSound::NCache::ICache). This only supports 
+			* a bare minimum functionality. For custom functionality create
+			* another implementation
+			*/
+			struct CSSOUND_API FImpl final : public PooledCacheType,
+											 public CacheType
+			{
+			public:
 
-#define PayloadType NCsPooledObject::NPayload::IPayload
+				static const FName Name;
 
-		private:
+			private:
+
+				using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+				using StateType = NCsPooledObject::EState;
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				// PooledCacheType (CsPooledObject::NCache::ICache)
+
+				int32 Index;
+
+				bool bAllocated;
+
+				bool bQueueDeallocate;
+
+				StateType State;
+
+				NCsPooledObject::EUpdate UpdateType;
+
+				TCsWeakObjectPtr<UObject> Instigator;
+
+				TCsWeakObjectPtr<UObject> Owner;
+
+				TCsWeakObjectPtr<UObject> Parent;
+
+				float WarmUpTime;
+
+				float LifeTime;
+
+				FCsTime StartTime;
+
+				FCsDeltaTime ElapsedTime;
+
+				// SoundCacheType (NCsSound::NCache::ICache)
+
+				UAudioComponent* AudioComponent;
+
+				EDeallocateMethod DeallocateMethod;
+
+				float QueuedLifeTime;
+
+			public:
+
+				FImpl();
+
+				~FImpl();
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+				{
+					return InterfaceMap;
+				}
+
+			#pragma endregion ICsGetInterfaceMap
 
 			// PooledCacheType (CsPooledObject::NCache::ICache)
+			#pragma region
+			public:
 
-			int32 Index;
+				FORCEINLINE void Init(const int32& InIndex) { Index = InIndex; }
+				FORCEINLINE const int32& GetIndex() const { return Index; }
 
-			bool bAllocated;
+				void Allocate(PooledPayloadType* Payload);
 
-			bool bQueueDeallocate;
+				FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
 
-			NCsPooledObject::EState State;
+				void Deallocate();
 
-			NCsPooledObject::EUpdate UpdateType;
+				void QueueDeallocate();
 
-			TCsWeakObjectPtr<UObject> Instigator;
+				bool ShouldDeallocate() const;
 
-			TCsWeakObjectPtr<UObject> Owner;
+				FORCEINLINE const StateType& GetState() const { return State; }
+				FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
+				FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
+				FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }
+				FORCEINLINE UObject* GetParent() const { return Parent.Get(); }
+				FORCEINLINE const float& GetWarmUpTime() const { return WarmUpTime; }
+				FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+				FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
+				FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
 
-			TCsWeakObjectPtr<UObject> Parent;
+				bool HasLifeTimeExpired() const;
 
-			float WarmUpTime;
+				void Reset();
 
-			float LifeTime;
+			#pragma endregion PooledCacheType (CsPooledObject::NCache::ICache)
 
-			FCsTime StartTime;
+			public:
 
-			FCsDeltaTime ElapsedTime;
+				FORCEINLINE void SetLifeTime(const float& InLifeTime) { LifeTime = InLifeTime; }
 
 			// SoundCacheType (NCsSound::NCache::ICache)
+			#pragma region
+			public:
 
-			UAudioComponent* AudioComponent;
+				FORCEINLINE UAudioComponent* GetAudioComponent() const { return AudioComponent; }
 
-			EDeallocateMethod DeallocateMethod;
+			#pragma endregion SoundCacheType (NCsSound::NCache::ICache)
 
-			float QueuedLifeTime;
+			public:
 
-		public:
+				FORCEINLINE void SetAudioComponent(UAudioComponent* InAudioComponent) { AudioComponent = InAudioComponent; }
 
-			FImpl();
+			public:
 
-			~FImpl();
-
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
-
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
-
-		#pragma endregion ICsGetInterfaceMap
-
-		// PooledCacheType (CsPooledObject::NCache::ICache)
-		#pragma region
-		public:
-
-			FORCEINLINE void Init(const int32& InIndex) { Index = InIndex; }
-			FORCEINLINE const int32& GetIndex() const { return Index; }
-
-			void Allocate(PayloadType* Payload);
-
-			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
-
-			void Deallocate();
-
-			void QueueDeallocate();
-
-			bool ShouldDeallocate() const;
-
-			FORCEINLINE const NCsPooledObject::EState& GetState() const { return State; }
-			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
-			FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
-			FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }
-			FORCEINLINE UObject* GetParent() const { return Parent.Get(); }
-			FORCEINLINE const float& GetWarmUpTime() const { return WarmUpTime; }
-			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
-			FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
-			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
-
-			bool HasLifeTimeExpired() const;
-
-			void Reset();
-
-		#pragma endregion PooledCacheType (CsPooledObject::NCache::ICache)
-
-		public:
-
-			FORCEINLINE void SetLifeTime(const float& InLifeTime) { LifeTime = InLifeTime; }
-
-		// SoundCacheType (NCsSound::NCache::ICache)
-		#pragma region
-		public:
-
-			FORCEINLINE UAudioComponent* GetAudioComponent() const { return AudioComponent; }
-
-		#pragma endregion SoundCacheType (NCsSound::NCache::ICache)
-
-		public:
-
-			FORCEINLINE void SetAudioComponent(UAudioComponent* InAudioComponent) { AudioComponent = InAudioComponent; }
-
-		public:
-
-			void Update(const FCsDeltaTime& DeltaTime);
-
-#undef PayloadType
-		};
-
-#undef PooledCacheType
-#undef SoundCacheType
+				void Update(const FCsDeltaTime& DeltaTime);
+			};
+		}
 	}
 }

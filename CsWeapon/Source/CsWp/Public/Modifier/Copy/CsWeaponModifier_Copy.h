@@ -22,15 +22,19 @@ namespace NCsWeapon
 
 				static const FName Name;
 
-			#define ModifierType NCsWeapon::NModifier::IModifier
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ModifierType = NCsWeapon::NModifier::IModifier;
+				};
 
 			public:
 
 				virtual ~ICopy() {}
 
-				virtual void Copy(const ModifierType* From) = 0;
-
-			#undef ModifierType
+				virtual void Copy(const _::ModifierType* From) = 0;
 			};
 		}
 	}

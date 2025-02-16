@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Cache/CsCache_WeaponImpl.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Data
 #include "Data/CsData_Weapon.h"
 // Pool
@@ -8,92 +10,91 @@
 // Container
 #include "Containers/CsInterfaceMap.h"
 
-const FName NCsWeapon::NCache::FImpl::Name = FName("NCsWeapon::NCache::FImpl");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsWeapon::NCache::NImpl::FImpl);
 
 namespace NCsWeapon
 {
 	namespace NCache
 	{
-		FImpl::FImpl() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			// PooledCacheType (NCsPooledObject::NCache::ICache)
-			Index(INDEX_NONE),
-			bAllocated(false),
-			bQueueDeallocate(false),
-			State(NCsPooledObject::EState::Inactive),
-			UpdateType(NCsPooledObject::EUpdate::Owner),
-			Instigator(),
-			Owner(),
-			Parent(),
-			WarmUpTime(0.0f),
-			LifeTime(0.0f),
-			StartTime(),
-			ElapsedTime()
+		namespace NImpl
 		{
-			InterfaceMap = new FCsInterfaceMap();
+			FImpl::FImpl() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				// PooledCacheType (NCsPooledObject::NCache::ICache)
+				Index(INDEX_NONE),
+				bAllocated(false),
+				bQueueDeallocate(false),
+				State(StateType::Inactive),
+				UpdateType(NCsPooledObject::EUpdate::Owner),
+				Instigator(),
+				Owner(),
+				Parent(),
+				WarmUpTime(0.0f),
+				LifeTime(0.0f),
+				StartTime(),
+				ElapsedTime()
+			{
+				InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRoot<FImpl>(this);
+				CS_INTERFACE_MAP_SET_ROOT(FImpl);
 
-			typedef NCsPooledObject::NCache::ICache PooledCacheType;
-			typedef NCsWeapon::NCache::ICache WeaponCacheType;
+				CS_INTERFACE_MAP_ADD(PooledCacheType);
+				CS_INTERFACE_MAP_ADD(CacheType);
+			}
 
-			InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
-			InterfaceMap->Add<WeaponCacheType>(static_cast<WeaponCacheType*>(this));
-		}
+			FImpl::~FImpl()
+			{
+				delete InterfaceMap;
+			}
 
-		FImpl::~FImpl()
-		{
-			delete InterfaceMap;
-		}
+			using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 
-		// PooledCacheType (NCsPooledObject::NCache::ICache)s
-		#pragma region
+			// PooledCacheType (NCsPooledObject::NCache::ICache)s
+			#pragma region
+			
+			void FImpl::Allocate(PooledPayloadType* Payload)
+			{
+				bAllocated = true;
+				State	   = StateType::Active;
+				UpdateType = Payload->GetUpdateType();
+				Instigator = Payload->GetInstigator();
+				Owner	   = Payload->GetOwner();
+				Parent	   = Payload->GetParent();
+				StartTime  = Payload->GetTime();
+			}
 
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-		void FImpl::Allocate(PooledPayloadType* Payload)
-		{
-		#undef PooledPayloadType
+			void FImpl::Deallocate()
+			{
+				Reset();
+			}
 
-			bAllocated = true;
-			State	   = NCsPooledObject::EState::Active;
-			UpdateType = Payload->GetUpdateType();
-			Instigator = Payload->GetInstigator();
-			Owner	   = Payload->GetOwner();
-			Parent	   = Payload->GetParent();
-			StartTime  = Payload->GetTime();
-		}
+			bool FImpl::HasLifeTimeExpired() const
+			{
+				return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
+			}
 
-		void FImpl::Deallocate()
-		{
-			Reset();
-		}
+			void FImpl::Reset()
+			{
+				bAllocated = false;
+				bQueueDeallocate = false;
+				State = StateType::Inactive;
+				UpdateType = NCsPooledObject::EUpdate::Owner;
+				Instigator.Reset();
+				Owner.Reset();
+				Parent.Reset();
+				WarmUpTime = 0.0f;
+				LifeTime = 0.0f;
+				StartTime.Reset();
+				ElapsedTime.Reset();
+			}
 
-		bool FImpl::HasLifeTimeExpired() const
-		{
-			return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
-		}
+			#pragma endregion PooledCacheType (NCsPooledObject::NCache::ICache)
 
-		void FImpl::Reset()
-		{
-			bAllocated = false;
-			bQueueDeallocate = false;
-			State = NCsPooledObject::EState::Inactive;
-			UpdateType = NCsPooledObject::EUpdate::Owner;
-			Instigator.Reset();
-			Owner.Reset();
-			Parent.Reset();
-			WarmUpTime = 0.0f;
-			LifeTime = 0.0f;
-			StartTime.Reset();
-			ElapsedTime.Reset();
-		}
-
-		#pragma endregion PooledCacheType (NCsPooledObject::NCache::ICache)
-
-		void FImpl::Update(const FCsDeltaTime& DeltaTime)
-		{
-			ElapsedTime += DeltaTime;
+			void FImpl::Update(const FCsDeltaTime& DeltaTime)
+			{
+				ElapsedTime += DeltaTime;
+			}
 		}
 	}
 }

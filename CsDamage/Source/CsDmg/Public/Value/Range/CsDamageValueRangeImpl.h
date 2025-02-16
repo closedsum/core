@@ -10,8 +10,11 @@
 #include "Reset/CsReset.h"
 // Types
 #include "CsMacro_Proxy.h"
+#include "CsMacro_Cached.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_4(NCsDamage, NValue, NRange, NImpl, Impl)
 
 namespace NCsDamage
 {
@@ -19,92 +22,96 @@ namespace NCsDamage
 	{
 		namespace NRange
 		{
-		#define ValueType NCsDamage::NValue::IValue
-		#define RangeValueType NCsDamage::NValue::NRange::IRange
-		#define CopyType NCsDamage::NValue::NCopy::ICopy
-
-			/**
-			* Basic implementation of the interface: NCsDamage::NValue::IValue
-			*/
-			struct CSDMG_API FImpl : public ValueType,
-									 public RangeValueType,
-									 public ICsGetDamageValueType,
-									 public CopyType,
-									 public ICsReset
+			namespace NImpl
 			{
-			public:
+				using ValueType = NCsDamage::NValue::IValue;
+				using RangeValueType = NCsDamage::NValue::NRange::IRange;
+				using CopyType = NCsDamage::NValue::NCopy::ICopy;
 
-				static const FName Name;
+				/**
+				* Basic implementation of the interface: NCsDamage::NValue::IValue
+				*/
+				struct CSDMG_API FImpl : public ValueType,
+										 public RangeValueType,
+										 public ICsGetDamageValueType,
+										 public CopyType,
+										 public ICsReset
+				{
+				public:
 
-			private:
+					static const FName Name;
 
-				FCsInterfaceMap InterfaceMap;
+				private:
 
-			public:
+					CS_USING_CACHED_FUNCTION_NAME_NESTED_4(NCsDamage, NValue, NRange, NImpl, Impl);
 
-				CS_DECLARE_MEMBER_WITH_PROXY(MinValue, float)
-				CS_DECLARE_MEMBER_WITH_PROXY(MaxValue, float)
+				private:
 
-			public:
+					FCsInterfaceMap* InterfaceMap;
+					FCsInterfaceMap InterfaceMap_Internal;
 
-				FImpl();
+				public:
 
-				FImpl(const FImpl&) = delete;
-				FImpl& operator = (const FImpl&) = delete;
+					CS_DECLARE_MEMBER_WITH_PROXY(MinValue, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(MaxValue, float)
 
-				FORCEINLINE UObject* _getUObject() const { return nullptr; }
+				public:
 
-			// ICsGetInterfaceMap
-			#pragma region
-			public:
+					FImpl();
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return const_cast<FCsInterfaceMap*>(&InterfaceMap); }
+					FImpl(const FImpl&) = delete;
+					FImpl& operator = (const FImpl&) = delete;
 
-			#pragma endregion ICsGetInterfaceMap
+					FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
-			// ValueType (NCsDamage::NValue::IValue)
-			#pragma region
-			public:
+				// ICsGetInterfaceMap
+				#pragma region
+				public:
 
-			#pragma endregion ValueType (NCsDamage::NValue::IValue)
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-			// RangeValueType (NCsDamage::NValue::NRange::IRange)
-			#pragma region
-			public:
+				#pragma endregion ICsGetInterfaceMap
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinValue, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxValue, float)
+				// ValueType (NCsDamage::NValue::IValue)
+				#pragma region
+				public:
 
-			#pragma endregion RangeValueType (NCsDamage::NValue::NRange::IRange)
+				#pragma endregion ValueType (NCsDamage::NValue::IValue)
 
-			// ICsGetDamageValueType
-			#pragma region
-			public:
+				// RangeValueType (NCsDamage::NValue::NRange::IRange)
+				#pragma region
+				public:
 
-				FORCEINLINE const FECsDamageValue& GetDamageValueType() const { return NCsDamageValue::Range; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinValue, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxValue, float)
 
-			#pragma endregion ICsGetDamageValueType
+				#pragma endregion RangeValueType (NCsDamage::NValue::NRange::IRange)
 
-			// CopyType (NCsDamage::NValue::NCopy::ICopy)
-			#pragma region
-			public:
+				// ICsGetDamageValueType
+				#pragma region
+				public:
 
-				void Copy(const ValueType* From);
+					FORCEINLINE const FECsDamageValue& GetDamageValueType() const { return NCsDamageValue::Range; }
 
-			#pragma endregion CopyType (NCsDamage::NValue::NCopy::ICopy)
+				#pragma endregion ICsGetDamageValueType
 
-			// ICsReset
-			#pragma region
-			public:
+				// CopyType (NCsDamage::NValue::NCopy::ICopy)
+				#pragma region
+				public:
 
-				void Reset();
+					void Copy(const ValueType* From);
 
-			#pragma endregion ICsReset
-			};
+				#pragma endregion CopyType (NCsDamage::NValue::NCopy::ICopy)
 
-		#undef ValueType
-		#undef RangeValueType
-		#undef CopyType
+				// ICsReset
+				#pragma region
+				public:
+
+					void Reset();
+
+				#pragma endregion ICsReset
+				};
+			}
 		}
 	}
 }

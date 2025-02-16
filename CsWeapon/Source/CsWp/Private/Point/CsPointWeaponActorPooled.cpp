@@ -519,7 +519,7 @@ void ACsPointWeaponActorPooled::Deallocate()
 
 void ACsPointWeaponActorPooled::ConstructCache()
 {
-	typedef NCsWeapon::NCache::FImpl CacheImplType;
+	typedef NCsWeapon::NCache::NImpl::FImpl CacheImplType;
 
 	Cache = new CacheImplType();
 }

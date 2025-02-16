@@ -25,8 +25,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsSound::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
-// NCsSound::NCache::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NCache, FImpl)
+// NCsSound::NCache::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSound, NCache, NImpl, FImpl)
 
 struct FCsRoutine;
 
@@ -44,7 +44,7 @@ class CSSOUND_API ACsSoundPooledImpl : public AActor,
 	GENERATED_UCLASS_BODY()
 
 using CacheType = NCsPooledObject::NCache::ICache;
-using CacheImplType = NCsSound::NCache::FImpl;
+using CacheImplType = NCsSound::NCache::NImpl::FImpl;
 using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 using SoundPayloadType = NCsSound::NPayload::IPayload;
 

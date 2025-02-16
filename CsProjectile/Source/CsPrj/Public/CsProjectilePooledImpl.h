@@ -81,10 +81,10 @@ class USkeletalMeshComponent;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
-// NCsDamage::NValue::NPoint::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NPoint, FImpl)
-// NCsDamage::NValue::NRange::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NRange, FImpl)
+// NCsDamage::NValue::NPoint::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NValue, NPoint, NImpl, FImpl)
+// NCsDamage::NValue::NRange::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NValue, NRange, NImpl, FImpl)
 // NCsDamage::NRange::IRange
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 // NCsDamage::NModifier::IModifier
@@ -778,8 +778,8 @@ public:
 
 		ACsProjectilePooledImpl* Outer;
 		
-		using PointImplType = NCsDamage::NValue::NPoint::FImpl;
-		using RangeImplType = NCsDamage::NValue::NRange::FImpl;
+		using PointImplType = NCsDamage::NValue::NPoint::NImpl::FImpl;
+		using RangeImplType = NCsDamage::NValue::NRange::NImpl::FImpl;
 		using DamageDataType = NCsDamage::NData::IData;
 		using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
 

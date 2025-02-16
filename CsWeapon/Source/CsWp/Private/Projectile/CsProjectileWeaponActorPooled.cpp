@@ -635,7 +635,7 @@ void ACsProjectileWeaponActorPooled::Deallocate()
 
 void ACsProjectileWeaponActorPooled::ConstructCache()
 {
-	typedef NCsWeapon::NCache::FImpl CacheImplType;
+	typedef NCsWeapon::NCache::NImpl::FImpl CacheImplType;
 
 	Cache = new CacheImplType();
 }

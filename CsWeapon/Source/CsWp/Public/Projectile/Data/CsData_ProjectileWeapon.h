@@ -30,9 +30,17 @@ namespace NCsWeapon
 
 				virtual ~IData(){}
 
-			#define ProjectilesPerShotParamsType NCsWeapon::NProjectile::NShot::NProjectile::FParams
-			#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-			#define SpreadParamsType NCsWeapon::NProjectile::NSpread::FParams
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ProjectilesPerShotParamsType = NCsWeapon::NProjectile::NShot::NProjectile::FParams;
+					using LaunchParamsType = NCsWeapon::NProjectile::NParams::NLaunch::ILaunch;
+					using SpreadParamsType = NCsWeapon::NProjectile::NSpread::FParams;
+				};
+
+			public:
 
 				/**
 				* Get whether to perform a Fire action on input pressed or released.
@@ -85,7 +93,7 @@ namespace NCsWeapon
 				*
 				* return
 				*/
-				virtual const ProjectilesPerShotParamsType& GetProjectilesPerShotParams() const = 0;
+				virtual const _::ProjectilesPerShotParamsType& GetProjectilesPerShotParams() const = 0;
 
 				/**
 				* Get any information related to Launching a Projectile using a Trace.
@@ -93,7 +101,7 @@ namespace NCsWeapon
 				*
 				* return
 				*/
-				virtual const LaunchParamsType* GetLaunchParams() const = 0;
+				virtual const _::LaunchParamsType* GetLaunchParams() const = 0;
 
 				/**
 				* Get whether to use Spread Params or not.
@@ -108,11 +116,7 @@ namespace NCsWeapon
 				*
 				* return
 				*/
-				virtual const SpreadParamsType& GetSpreadParams() const = 0;
-
-			#undef ProjectilesPerShotParamsType
-			#undef LaunchParamsType
-			#undef SpreadParamsType
+				virtual const _::SpreadParamsType& GetSpreadParams() const = 0;
 			};
 		}
 	}
@@ -140,11 +144,17 @@ public:
 
 	static const FName Name;
 
-public:
+private:
 
-#define ProjectilesPerShotParamsType NCsWeapon::NProjectile::NShot::NProjectile::FParams
-#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-#define SpreadParamsType NCsWeapon::NProjectile::NSpread::FParams
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using ProjectilesPerShotParamsType = NCsWeapon::NProjectile::NShot::NProjectile::FParams;
+		using LaunchParamsType = NCsWeapon::NProjectile::NParams::NLaunch::ILaunch;
+		using SpreadParamsType = NCsWeapon::NProjectile::NSpread::FParams;
+	};
+
+public:
 
 	/**
 	* Get whether to perform a Fire action on input pressed or released.
@@ -197,7 +207,7 @@ public:
 	* 
 	* return
 	*/
-	virtual const ProjectilesPerShotParamsType& GetProjectilesPerShotParams() const = 0;
+	virtual const _::ProjectilesPerShotParamsType& GetProjectilesPerShotParams() const = 0;
 
 	/**
 	* Get any information related to Launching a Projectile using a Trace.
@@ -205,7 +215,7 @@ public:
 	*
 	* return
 	*/
-	virtual const LaunchParamsType* GetLaunchParams() const = 0;
+	virtual const _::LaunchParamsType* GetLaunchParams() const = 0;
 
 	/**
 	* Get whether to use Spread Params or not.
@@ -220,9 +230,5 @@ public:
 	* 
 	* return
 	*/
-	virtual const SpreadParamsType& GetSpreadParams() const = 0;
-
-#undef ProjectilesPerShotParamsType
-#undef LaunchParamsType
-#undef SpreadParamsType
+	virtual const _::SpreadParamsType& GetSpreadParams() const = 0;
 };

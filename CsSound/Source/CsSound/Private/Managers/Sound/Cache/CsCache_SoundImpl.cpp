@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Sound/Cache/CsCache_SoundImpl.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool
@@ -14,176 +16,178 @@
 // Component
 #include "Components/SceneComponent.h"
 
-const FName NCsSound::NCache::FImpl::Name = FName("NCsSound::NCache::FImpl");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsSound::NCache::NImpl::FImpl);
 
 namespace NCsSound
 {
 	namespace NCache
 	{
-		namespace NImplCached
+		namespace NImpl
 		{
-			namespace Str
+			namespace NCached
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSound::NCache::FImpl, Allocate);
-			}
-		}
-
-		FImpl::FImpl() :
-			InterfaceMap(nullptr),
-			// PooledPayloadType (NCsPooledObject::NCache::ICache)
-			Index(INDEX_NONE),
-			bAllocated(false),
-			bQueueDeallocate(false),
-			State(NCsPooledObject::EState::Inactive),
-			UpdateType(NCsPooledObject::EUpdate::Manager),
-			Instigator(),
-			Owner(),
-			Parent(),
-			WarmUpTime(0.0f),
-			LifeTime(0.0f),
-			StartTime(),
-			ElapsedTime(),
-			// SoundCacheType (NCsSound::NCache::ICache)
-			AudioComponent(nullptr),
-			DeallocateMethod(EDeallocateMethod::Complete),
-			QueuedLifeTime(0.0f)
-		{
-			InterfaceMap = new FCsInterfaceMap();
-
-			InterfaceMap->SetRoot<FImpl>(this);
-
-			typedef NCsPooledObject::NCache::ICache PooledCacheType;
-			typedef NCsSound::NCache::ICache SoundCacheType;
-
-			InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
-			InterfaceMap->Add<SoundCacheType>(static_cast<SoundCacheType*>(this));
-		}
-
-		FImpl::~FImpl()
-		{
-			delete InterfaceMap;
-		}
-
-		// PooledPayloadType (NCsPooledObject::NCache::ICache)
-		#pragma region
-
-		#define PayloadType NCsPooledObject::NPayload::IPayload
-		void FImpl::Allocate(PayloadType* Payload)
-		{
-		#undef PayloadType
-			using namespace NImplCached;
-
-			// PooledPayloadType (NCsPooledObject::NCache::ICache)
-			bAllocated = true;
-			UpdateType = Payload->GetUpdateType();
-			State	   = NCsPooledObject::EState::Active;
-			Instigator = Payload->GetInstigator();
-			Owner	   = Payload->GetOwner();
-			Parent	   = Payload->GetParent();
-			StartTime  = Payload->GetTime();
-
-			// SoundCacheType (NCsSound::NCache::ICache)
-			typedef NCsSound::NPayload::IPayload SoundPayloadType;
-			typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-
-			SoundPayloadType* SoundPayload = PooledPayloadLibrary::GetInterfaceChecked<SoundPayloadType>(Str::Allocate, Payload);
-
-			DeallocateMethod = SoundPayload->GetDeallocateMethod();
-			LifeTime		 = SoundPayload->GetLifeTime();
-
-			if (USoundBase* Sound = SoundPayload->GetSound())
-			{
-				if (DeallocateMethod == EDeallocateMethod::Complete)
+				namespace Str
 				{
-					LifeTime = SoundPayload->GetDurationMultiplier() * Sound->GetDuration();
+					CS_DEFINE_CACHED_STRING(Allocate, "Allocate");
 				}
 			}
-		}
 
-		void FImpl::Deallocate()
-		{
-			Reset();
-		}
-
-		void FImpl::QueueDeallocate()
-		{
-			bQueueDeallocate = true;
-			// Deactivate Audio Component
-			checkf(AudioComponent, TEXT("NCsSound::NCache::FImpl::QueueDeallocate: AudioComponent is NULL."));
-
-			/*
-			AudioComponent->Deactivate();
-
-			// LifeTime
-			if (DeallocateMethod == EDeallocateMethod::LifeTime)
+			FImpl::FImpl() :
+				InterfaceMap(nullptr),
+				// PooledPayloadType (NCsPooledObject::NCache::ICache)
+				Index(INDEX_NONE),
+				bAllocated(false),
+				bQueueDeallocate(false),
+				State(StateType::Inactive),
+				UpdateType(NCsPooledObject::EUpdate::Manager),
+				Instigator(),
+				Owner(),
+				Parent(),
+				WarmUpTime(0.0f),
+				LifeTime(0.0f),
+				StartTime(),
+				ElapsedTime(),
+				// SoundCacheType (NCsSound::NCache::ICache)
+				AudioComponent(nullptr),
+				DeallocateMethod(EDeallocateMethod::Complete),
+				QueuedLifeTime(0.0f)
 			{
-				// Reset ElapsedTime
-				ElapsedTime.Reset();
-				// Set LifeTime
-				LifeTime = QueuedLifeTime;
+				InterfaceMap = new FCsInterfaceMap();
+
+				InterfaceMap->SetRoot<FImpl>(this);
+
+				typedef NCsPooledObject::NCache::ICache PooledCacheType;
+				typedef NCsSound::NCache::ICache SoundCacheType;
+
+				InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
+				InterfaceMap->Add<SoundCacheType>(static_cast<SoundCacheType*>(this));
 			}
-			*/
-		}
 
-		bool FImpl::ShouldDeallocate() const
-		{
-			if (bQueueDeallocate)
+			FImpl::~FImpl()
 			{
-				// LifeTime, let HasLifeTimeExpired handle deallocation
+				delete InterfaceMap;
+			}
+
+			using PooledPayloadLibrary = NCsPooledObject::NPayload::FLibrary;
+			using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+			using PayloadType = NCsSound::NPayload::IPayload;
+
+			// PooledPayloadType (NCsPooledObject::NCache::ICache)
+			#pragma region
+
+			void FImpl::Allocate(PooledPayloadType* Payload)
+			{
+				using namespace NCsSound::NCache::NImpl::NCached;
+
+				// PooledPayloadType (NCsPooledObject::NCache::ICache)
+				bAllocated = true;
+				UpdateType = Payload->GetUpdateType();
+				State	   = StateType::Active;
+				Instigator = Payload->GetInstigator();
+				Owner	   = Payload->GetOwner();
+				Parent	   = Payload->GetParent();
+				StartTime  = Payload->GetTime();
+
+				// SoundCacheType (NCsSound::NCache::ICache)
+				PayloadType* SoundPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Str::Allocate, Payload);
+
+				DeallocateMethod = SoundPayload->GetDeallocateMethod();
+				LifeTime		 = SoundPayload->GetLifeTime();
+
+				if (USoundBase* Sound = SoundPayload->GetSound())
+				{
+					if (DeallocateMethod == EDeallocateMethod::Complete)
+					{
+						LifeTime = SoundPayload->GetDurationMultiplier() * Sound->GetDuration();
+					}
+				}
+			}
+
+			void FImpl::Deallocate()
+			{
+				Reset();
+			}
+
+			void FImpl::QueueDeallocate()
+			{
+				bQueueDeallocate = true;
+				// Deactivate Audio Component
+				checkf(AudioComponent, TEXT("NCsSound::NCache::NImpl::FImpl::QueueDeallocate: AudioComponent is NULL."));
+
+				/*
+				AudioComponent->Deactivate();
+
+				// LifeTime
 				if (DeallocateMethod == EDeallocateMethod::LifeTime)
 				{
-					return false;
+					// Reset ElapsedTime
+					ElapsedTime.Reset();
+					// Set LifeTime
+					LifeTime = QueuedLifeTime;
 				}
-				// Complete
-				if (DeallocateMethod == EDeallocateMethod::Complete)
-				{ 
-					/*
-					checkf(SoundComponent, TEXT("NCsSound::NCache::FImpl::ShouldDeallocate: SoundComponent is NULL."));
-
-					FNiagaraSystemInstance* SystemInstance = FXComponent->GetSystemInstance();
-
-					checkf(SystemInstance, TEXT("NCsSound::NCache::FImpl::ShouldDeallocate: SystemInstance is NULL on FXComponent: %s."), *(FXComponent->GetName()));
-
-					const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
-
-					return ExecutionState == ENiagaraExecutionState::Inactive ||
-						   ExecutionState == ENiagaraExecutionState::Complete ||
-						   ExecutionState == ENiagaraExecutionState::Disabled;
-						   */
-				}
+				*/
 			}
-			return false;
-		}
 
-		bool FImpl::HasLifeTimeExpired() const
-		{
-			return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
-		}
+			bool FImpl::ShouldDeallocate() const
+			{
+				if (bQueueDeallocate)
+				{
+					// LifeTime, let HasLifeTimeExpired handle deallocation
+					if (DeallocateMethod == EDeallocateMethod::LifeTime)
+					{
+						return false;
+					}
+					// Complete
+					if (DeallocateMethod == EDeallocateMethod::Complete)
+					{ 
+						/*
+						checkf(SoundComponent, TEXT("NCsSound::NCache::NImpl::FImpl::ShouldDeallocate: SoundComponent is NULL."));
 
-		void FImpl::Reset()
-		{
-			// PooledPayloadType (NCsPooledObject::NCache::ICache)
-			bAllocated = false;
-			bQueueDeallocate = false;
-			State = NCsPooledObject::EState::Inactive;
-			UpdateType = NCsPooledObject::EUpdate::Manager;
-			Instigator.Reset();
-			Owner.Reset();
-			Parent.Reset();
-			WarmUpTime = 0.0f;
-			LifeTime = 0.0f;
-			StartTime.Reset();
-			ElapsedTime.Reset();
-			// SoundCacheType (NCsSound::NCache::ICache)
-			DeallocateMethod = EDeallocateMethod::Complete;
-			QueuedLifeTime = 0.0f;
-		}
+						FNiagaraSystemInstance* SystemInstance = FXComponent->GetSystemInstance();
 
-		#pragma endregion PooledPayloadType (NCsPooledObject::NCache::ICache)
+						checkf(SystemInstance, TEXT("NCsSound::NCache::NImpl::FImpl::ShouldDeallocate: SystemInstance is NULL on FXComponent: %s."), *(FXComponent->GetName()));
 
-		void FImpl::Update(const FCsDeltaTime& DeltaTime)
-		{
-			ElapsedTime += DeltaTime;
+						const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
+
+						return ExecutionState == ENiagaraExecutionState::Inactive ||
+							   ExecutionState == ENiagaraExecutionState::Complete ||
+							   ExecutionState == ENiagaraExecutionState::Disabled;
+							   */
+					}
+				}
+				return false;
+			}
+
+			bool FImpl::HasLifeTimeExpired() const
+			{
+				return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
+			}
+
+			void FImpl::Reset()
+			{
+				// PooledPayloadType (NCsPooledObject::NCache::ICache)
+				bAllocated = false;
+				bQueueDeallocate = false;
+				State = StateType::Inactive;
+				UpdateType = NCsPooledObject::EUpdate::Manager;
+				Instigator.Reset();
+				Owner.Reset();
+				Parent.Reset();
+				WarmUpTime = 0.0f;
+				LifeTime = 0.0f;
+				StartTime.Reset();
+				ElapsedTime.Reset();
+				// SoundCacheType (NCsSound::NCache::ICache)
+				DeallocateMethod = EDeallocateMethod::Complete;
+				QueuedLifeTime = 0.0f;
+			}
+
+			#pragma endregion PooledPayloadType (NCsPooledObject::NCache::ICache)
+
+			void FImpl::Update(const FCsDeltaTime& DeltaTime)
+			{
+				ElapsedTime += DeltaTime;
+			}
 		}
 	}
 }

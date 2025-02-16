@@ -13,21 +13,25 @@ namespace NCsWeapon
 	{
 		namespace NModifier
 		{
-		#define ModifierType NCsWeapon::NProjectile::NModifier::IModifier
+			namespace NLibrary
+			{
+				using ModifierType = NCsWeapon::NProjectile::NModifier::IModifier;
 
-		/**
-		* Library for interface: ModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
-		*/
-		struct CSWP_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
-		{
-		public:
+				/**
+				* Library for interface: ModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
+				*/
+				struct CSWP_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
+				{
+				public:
 
-			static bool IsValidChecked(const FString& Context, const ModifierType* Modifier);
+					static bool IsValidChecked(const FString& Context, const ModifierType* Modifier);
 
-			static bool IsValid(const FString& Context, const ModifierType* Modifier, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
-		};
-
-		#undef ModifierType
+					static bool IsValid(const FString& Context, const ModifierType* Modifier, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+				};
+			}
 		}
 	}
 }
+
+using CsProjectileWeaponModifieryLibrary = NCsWeapon::NProjectile::NModifier::NLibrary::FLibrary;
+using CsPrjWeaponModifierLibrary = NCsWeapon::NProjectile::NModifier::NLibrary::FLibrary;

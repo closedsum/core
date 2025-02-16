@@ -224,6 +224,13 @@ ACsPointSequenceWeaponActorPooled::ACsPointSequenceWeaponActorPooled(const FObje
 	SkeletalMeshComponent->SetupAttachment(RootComponent);
 }
 
+using PooledPayloadLibrary = NCsPooledObject::NPayload::FLibrary;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+using PayloadType = NCsWeapon::NPayload::IPayload;
+using CsFXPayloadType = NCsFX::NPayload::IPayload;
+using CacheImplType = NCsWeapon::NCache::NImpl::FImpl;
+using FXDataType = NCsWeapon::NPoint::NSequence::NData::NVisual::NFire::IFire;
+
 // UObject Interface
 #pragma region
 
@@ -350,11 +357,8 @@ void ACsPointSequenceWeaponActorPooled::Shutdown()
 // ICsPooledObject
 #pragma region
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 void ACsPointSequenceWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 {
-#undef PooledPayloadType
-
 	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::Allocate;
@@ -363,10 +367,7 @@ void ACsPointSequenceWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 
 	Cache->Allocate(Payload);
 
-	typedef NCsPooledObject::NPayload::FLibrary PayloadLibrary;
-	typedef NCsWeapon::NPayload::IPayload PayloadType;
-
-	PayloadType* WeaponPayload = PayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
+	PayloadType* WeaponPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	SetWeaponType(WeaponPayload->GetType());
 	SetUpdateGroup(WeaponPayload->GetUpdateGroup());
@@ -375,10 +376,9 @@ void ACsPointSequenceWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	MyOwnerAsActor = Cast<AActor>(MyOwner);
 
 	// Get Data
-	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 	typedef NCsWeapon::NPoint::NSequence::NData::IData PointSequenceWeaponDataType;
 
-	Data					= WeaponManagerLibrary::GetDataChecked(Context, GetWorldContext(), WeaponType);
+	Data					= CsWeaponManagerLibrary::GetDataChecked(Context, GetWorldContext(), WeaponType);
 	PointSequenceWeaponData = CsWeaponDataLibrary::GetInterfaceChecked<PointSequenceWeaponDataType>(Context, Data);
 
 	SetActorHiddenInGame(false);
@@ -520,8 +520,6 @@ void ACsPointSequenceWeaponActorPooled::Deallocate()
 
 void ACsPointSequenceWeaponActorPooled::ConstructCache()
 {
-	typedef NCsWeapon::NCache::FImpl CacheImplType;
-
 	Cache = new CacheImplType();
 }
 
@@ -587,9 +585,7 @@ void ACsPointSequenceWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime
 
 	const FString& Context = Str::OnUpdate_HandleStates;
 
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
-
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointSequenceState))
@@ -722,9 +718,9 @@ void ACsPointSequenceWeaponActorPooled::Fire()
 	Fire_StartTime = TimeSinceStart.Time;
 
 	// Setup Fire Routine
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+	typedef NCsCoroutine::NPayload::FImpl CoroutinePayloadType;
 
-	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	CoroutinePayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
 	#define COROUTINE Fire_Internal
 
@@ -868,9 +864,9 @@ void ACsPointSequenceWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 	UCsCoroutineScheduler* Scheduler = CsCoroutineSchedulerLibrary::GetChecked(Context, Outer->GetWorldContext());
 
 	// Setup Routine
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+	typedef NCsCoroutine::NPayload::FImpl CoroutinePayloadType;
 
-	PayloadType* Payload = Scheduler->AllocatePayload(Outer->GetUpdateGroup());
+	CoroutinePayloadType* Payload = Scheduler->AllocatePayload(Outer->GetUpdateGroup());
 
 	#define COROUTINE OnElapsedTime_Internal
 
@@ -928,9 +924,7 @@ float ACsPointSequenceWeaponActorPooled::GetTimeBetweenShots() const
 
 	const FString& Context = Str::GetTimeBetweenShots;
 
-	typedef NCsWeapon::NModifier::IModifier ModifierType;
-
-	static TArray<ModifierType*> Modifiers;
+	static TArray<CsWeaponModifierType*> Modifiers;
 
 	GetWeaponModifiers(Modifiers);
 
@@ -949,9 +943,7 @@ int32 ACsPointSequenceWeaponActorPooled::Sequence_GetCount() const
 
 	const FString& Context = Str::Sequence_GetCount;
 
-	typedef NCsWeapon::NModifier::IModifier ModifierType;
-
-	static TArray<ModifierType*> Modifiers;
+	static TArray<CsWeaponModifierType*> Modifiers;
 
 	GetWeaponModifiers(Modifiers);
 
@@ -967,9 +959,7 @@ float ACsPointSequenceWeaponActorPooled::Sequence_GetInterval() const
 
 	const FString& Context = Str::SequencesPerShot_GetInterval;
 
-	typedef NCsWeapon::NModifier::IModifier ModifierType;
-
-	static TArray<ModifierType*> Modifiers;
+	static TArray<CsWeaponModifierType*> Modifiers;
 
 	GetWeaponModifiers(Modifiers);
 
@@ -985,9 +975,7 @@ int32 ACsPointSequenceWeaponActorPooled::SequencesPerShot_GetCount() const
 
 	const FString& Context = Str::SequencesPerShot_GetCount;
 
-	typedef NCsWeapon::NModifier::IModifier ModifierType;
-
-	static TArray<ModifierType*> Modifiers;
+	static TArray<CsWeaponModifierType*> Modifiers;
 
 	GetWeaponModifiers(Modifiers);
 
@@ -1003,9 +991,7 @@ float ACsPointSequenceWeaponActorPooled::SequencesPerShot_GetInterval() const
 
 	const FString& Context = Str::SequencesPerShot_GetInterval;
 
-	typedef NCsWeapon::NModifier::IModifier ModifierType;
-
-	static TArray<ModifierType*> Modifiers;
+	static TArray<CsWeaponModifierType*> Modifiers;
 
 	GetWeaponModifiers(Modifiers);
 
@@ -1049,9 +1035,8 @@ void ACsPointSequenceWeaponActorPooled::FSoundImpl::Play()
 			Payload.Instigator = Weapon;
 			Payload.Owner	   = Weapon->GetMyOwner();
 
-			typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
 			// TODO: Make sure Outer is defined
-			SoundManagerLibrary::SpawnChecked(Context, Weapon, &Payload, Sound);
+			CsSoundManagerLibrary::SpawnChecked(Context, Weapon, &Payload, Sound);
 		}
 	}
 }
@@ -1089,9 +1074,7 @@ void ACsPointSequenceWeaponActorPooled::FFXImpl::Play()
 			// Get Manager
 			UCsManager_FX* Manager_FX = CsFXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 			// Allocate payload
-			typedef NCsFX::NPayload::IPayload PayloadType;
-
-			PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
+			CsFXPayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
 			// Set appropriate values on payload
 			SetPayload(Payload, FXData);
 
@@ -1100,13 +1083,8 @@ void ACsPointSequenceWeaponActorPooled::FFXImpl::Play()
 	}
 }
 
-#define FXPayloadType NCsFX::NPayload::IPayload
-#define FXDataType NCsWeapon::NPoint::NSequence::NData::NVisual::NFire::IFire
-void ACsPointSequenceWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, FXDataType* FXData)
+void ACsPointSequenceWeaponActorPooled::FFXImpl::SetPayload(CsFXPayloadType* Payload, FXDataType* FXData)
 {
-#undef FXPayloadType
-#undef FXDataType
-
 	using namespace NCsPointSequenceWeaponActorPooled::NCached::NFXImpl;
 
 	const FString& Context = Str::SetPayload;
@@ -1118,10 +1096,7 @@ void ACsPointSequenceWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Paylo
 	const FCsFX& FX			 = Params.GetFX();
 	const AttachType& Type	 = Params.GetAttach();
 
-	typedef NCsFX::NPayload::NImpl::FImpl PayloadImplType;
-	typedef NCsFX::NPayload::NLibrary::FLibrary PayloadLibrary;
-
-	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+	CsFXPayloadImplType* PayloadImpl = CsFXPayloadLibrary::PureStaticCastChecked<CsFXPayloadImplType>(Context, Payload);
 
 	PayloadImpl->Instigator					= Outer;
 	PayloadImpl->Owner						= Outer->GetMyOwner();
@@ -1132,6 +1107,8 @@ void ACsPointSequenceWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Paylo
 	PayloadImpl->Bone						= FX.Bone;
 	PayloadImpl->TransformRules				= FX.TransformRules;
 	PayloadImpl->Transform					= FX.Transform;
+
+	using ParamsLibrary = NCsFX::NManager::NParameter::FLibrary;
 
 	// None
 	if (Type == AttachType::None)
@@ -1150,10 +1127,9 @@ void ACsPointSequenceWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Paylo
 		// Distance
 		if (Params.GetbDistanceParameter())
 		{
-			typedef NCsFX::NManager::NParameter::FLibrary ParameterLibrary;
-			typedef NCsFX::NParameter::NFloat::FFloatType FloatParameterType;
+			using FloatParamsType = NCsFX::NParameter::NFloat::FFloatType;
 
-			FloatParameterType* FloatParameter = ParameterLibrary::AllocateFloatChecked(Context, Outer->GetWorldContext());
+			FloatParamsType* FloatParameter = ParamsLibrary::AllocateFloatChecked(Context, Outer->GetWorldContext());
 
 			FloatParameter->SetName(Params.GetDistanceParameter());
 			FloatParameter->SetValue(Outer->PointImpl.CalculateDistance());
@@ -1163,10 +1139,9 @@ void ACsPointSequenceWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Paylo
 		// Orientation
 		if (Params.GetbOrientationParameter())
 		{
-			typedef NCsFX::NManager::NParameter::FLibrary ParameterLibrary;
-			typedef NCsFX::NParameter::NVector::FVectorType VectorParameterType;
+			using VectorParamsType = NCsFX::NParameter::NVector::FVectorType;
 
-			VectorParameterType* VectorParameter = ParameterLibrary::AllocateVectorChecked(Context, Outer->GetWorldContext());
+			VectorParamsType* VectorParameter = ParamsLibrary::AllocateVectorChecked(Context, Outer->GetWorldContext());
 
 			VectorParameter->SetName(Params.GetOrientationParameter());
 

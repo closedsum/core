@@ -1195,13 +1195,13 @@ ModifierType* UCsManager_Weapon::ConstructModifier(const ModifierImplType& ImplT
 {
 	// Int
 	if (ImplType == ModifierImplType::Int)
-		return new NCsWeapon::NModifier::FInt();
+		return new NCsWeapon::NModifier::NInt::FInt();
 	// Float
 	if (ImplType == ModifierImplType::Float)
-		return new NCsWeapon::NModifier::FFloat();
+		return new NCsWeapon::NModifier::NFloat::FFloat();
 	// Toggle
 	if (ImplType == ModifierImplType::Toggle)
-		return new NCsWeapon::NModifier::FToggle();
+		return new NCsWeapon::NModifier::NToggle::FToggle();
 	check(0);
 	return nullptr;
 }

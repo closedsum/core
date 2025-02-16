@@ -43,9 +43,7 @@ class USkeletalMeshComponent;
 class UStaticMeshComponent;
 class UPrimitiveComponent;
 
-// NCsSound::NPayload::IPayload
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
-// NCsFX::NPayload::IPayload
+// CsFXPayloadType (NCsFX::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
 
 // NCsWeapon::NModifier::IModifier
@@ -65,12 +63,14 @@ class CSWP_API ACsPointSequenceWeaponActorPooled : public AActor,
 {
 	GENERATED_UCLASS_BODY()
 
-#define PooledCacheType NCsPooledObject::NCache::ICache
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define DataType NCsWeapon::NData::IData
-#define PointSequenceWeaponDataType NCsWeapon::NPoint::NSequence::NData::IData
-#define SoundPayloadType NCsSound::NPayload::IPayload
-#define FXPayloadType NCsFX::NPayload::IPayload
+private:
+
+	using PooledCacheType = NCsPooledObject::NCache::ICache;
+	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+	using DataType = NCsWeapon::NData::IData;
+	using PointSequenceWeaponDataType = NCsWeapon::NPoint::NSequence::NData::IData;
+	using CsFXPayloadType = NCsFX::NPayload::IPayload;
+	using CsWeaponModifierType = NCsWeapon::NModifier::IModifier;
 
 // UObject Interface
 #pragma region
@@ -290,9 +290,7 @@ protected:
 
 protected:
 
-#define WeaponModifierType NCsWeapon::NModifier::IModifier
-	virtual void GetWeaponModifiers(TArray<WeaponModifierType*>& OutModifiers) const {}
-#undef WeaponModifierType
+	virtual void GetWeaponModifiers(TArray<CsWeaponModifierType*>& OutModifiers) const {}
 
 // Ammo
 #pragma region
@@ -552,6 +550,10 @@ public:
 	{
 		friend class ACsPointSequenceWeaponActorPooled;
 
+	private:
+
+		using FXDataType = NCsWeapon::NPoint::NSequence::NData::NVisual::NFire::IFire;
+
 	protected:
 
 		ACsPointSequenceWeaponActorPooled* Outer;
@@ -583,9 +585,7 @@ public:
 	
 	public:
 
-	#define FXDataType NCsWeapon::NPoint::NSequence::NData::NVisual::NFire::IFire
-		void SetPayload(FXPayloadType* Payload, FXDataType* FXData);
-	#undef FXDataType
+		void SetPayload(CsFXPayloadType* Payload, FXDataType* FXData);
 	};
 
 	FFXImpl* FXImpl;
@@ -618,11 +618,4 @@ public:
 	FString PrintNameClassAndOwner();
 
 #pragma endregion Print
-
-#undef PooledCacheType
-#undef PooledPayloadType
-#undef DataType
-#undef PointSequenceWeaponDataType
-#undef SoundPayloadType
-#undef FXPayloadType
 };

@@ -97,7 +97,7 @@ ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializ
 }
 
 using CacheType = NCsPooledObject::NCache::ICache;
-using CacheImplType = NCsSound::NCache::FImpl;
+using CacheImplType = NCsSound::NCache::NImpl::FImpl;
 using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 using SoundPayloadType = NCsSound::NPayload::IPayload;
 
@@ -200,7 +200,7 @@ void ACsSoundPooledImpl::Shutdown()
 
 void ACsSoundPooledImpl::ConstructCache()
 {
-	typedef NCsSound::NCache::FImpl CacheImplType;
+	typedef NCsSound::NCache::NImpl::FImpl CacheImplType;
 
 	Cache	  = new CacheImplType();
 	CacheImpl = (CacheImplType*)Cache;

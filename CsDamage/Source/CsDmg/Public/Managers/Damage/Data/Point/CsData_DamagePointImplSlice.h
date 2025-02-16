@@ -90,7 +90,7 @@ namespace NCsDamage
 			
 					using ThisType = NCsDamage::NData::NPoint::NImplSlice::FImplSlice;
 					using ValueType = NCsDamage::NValue::IValue;
-					using ValueImplType = NCsDamage::NValue::NPoint::FImpl;
+					using ValueImplType = NCsDamage::NValue::NPoint::NImpl::FImpl;
 
 					// ICsGetInterfaceMap
 

@@ -19,15 +19,19 @@ namespace NCsProjectile
 
 				static const FName Name;
 
-			#define ModifierType NCsProjectile::NModifier::IModifier
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ModifierType = NCsProjectile::NModifier::IModifier;
+				};
 
 			public:
 
 				virtual ~ICopy() {}
 
-				virtual void Copy(const ModifierType* From) = 0;
-
-			#undef ModifierType 
+				virtual void Copy(const _::ModifierType* From) = 0;
 			};
 		}
 	}

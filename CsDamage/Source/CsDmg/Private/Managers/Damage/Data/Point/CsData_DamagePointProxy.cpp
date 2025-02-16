@@ -23,7 +23,7 @@ namespace NCsDamage
 		{
 			namespace NProxy
 			{
-				using ValuePointImplType = NCsDamage::NValue::NPoint::FImpl;
+				using ValuePointImplType = NCsDamage::NValue::NPoint::NImpl::FImpl;
 
 				FProxy::FProxy() :
 					Outer(nullptr),

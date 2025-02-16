@@ -2,7 +2,7 @@
 #include "Modifier/CsWeaponModifierImpl.h"
 
 // Types
-#include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Modifier/CsLibrary_WeaponModifier.h"
 #include "Library/CsLibrary_Valid.h"
@@ -14,29 +14,24 @@
 // FCsWeaponModifier_Int
 #pragma region
 
-#define ModifierType NCsWeapon::NModifier::FInt
-
-void FCsWeaponModifier_Int::CopyToModifier(ModifierType* Modifier)
+namespace NCsWeaponModifier_Int
 {
-	Modifier->SetType(&Type);
-	Modifier->SetValue(&Value);
+	using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
 
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+	void FImpl::CopyToModifier(ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY(Modifier, Application, ApplicationType);
+	}
 
-	Modifier->SetApplication((ApplicationType*)(&Application));
+	void FImpl::CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Modifier, Application, ApplicationType);
+	}
 }
-
-void FCsWeaponModifier_Int::CopyToModifierAsValue(ModifierType* Modifier) const
-{
-	Modifier->SetType(Type);
-	Modifier->SetValue(Value);
-
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-	Modifier->SetApplication((ApplicationType)Application);
-}
-
-#undef ModifierType
 
 bool FCsWeaponModifier_Int::IsValidChecked(const FString& Context) const
 {
@@ -58,7 +53,17 @@ bool FCsWeaponModifier_Int::IsValid(const FString& Context, void(*Log)(const FSt
 	return true;
 }
 
-const FName NCsWeapon::NModifier::FInt::Name = FName("NCsWeapon::NModifier::FInt");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsWeapon::NModifier::NInt::FInt);
+
+	// NCsWeapon::NModifier::NInt::NInt
+	//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsWeapon, NModifier, NInt, Int)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsWeapon::NModifier::NInt::FInt, Copy)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
+
+#pragma endregion Cached
 
 namespace NCsWeapon
 {
@@ -66,98 +71,79 @@ namespace NCsWeapon
 	{
 		namespace NInt
 		{
-			namespace NCached
+			FInt::FInt() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
 			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NModifier::FInt, Copy);
-				}
-			}
-		}
-
-		FInt::FInt() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
-		{
-			InterfaceMap = new FCsInterfaceMap();
+				InterfaceMap = new FCsInterfaceMap();
 			
-			InterfaceMap->SetRoot<FInt>(this);
+				CS_INTERFACE_MAP_SET_ROOT(FInt);
 
-			typedef NCsWeapon::NModifier::IModifier WeaponModifierType;
-			typedef NCsWeapon::NModifier::NCopy::ICopy CopyType;
+				CS_INTERFACE_MAP_ADD(CsModifierType);
+				CS_INTERFACE_MAP_ADD(CsIntModifierType);
+				CS_INTERFACE_MAP_ADD(CsWeaponModifierType);
+				CS_INTERFACE_MAP_ADD(ICsGetWeaponModifierType);
+				CS_INTERFACE_MAP_ADD(ICsIsValid);
+				CS_INTERFACE_MAP_ADD(CopyType);
+				CS_INTERFACE_MAP_ADD(ICsReset);
 
-			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
-			InterfaceMap->Add<CsIntModifierType>(static_cast<CsIntModifierType*>(this));
-			InterfaceMap->Add<WeaponModifierType>(static_cast<WeaponModifierType*>(this));
-			InterfaceMap->Add<ICsGetWeaponModifierType>(static_cast<ICsGetWeaponModifierType*>(this));
-			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
-			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
-			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(Value);
+				CS_CTOR_SET_MEMBER_PROXY(Application);
+			}
 
-			CS_CTOR_SET_MEMBER_PROXY(Type);
-			CS_CTOR_SET_MEMBER_PROXY(Value);
-			CS_CTOR_SET_MEMBER_PROXY(Application);
+			FInt::~FInt()
+			{
+				// ICsGetInterfaceMap
+				delete InterfaceMap;
+			}
+
+			using ApplicationMapType = NCsModifier::NValue::NNumeric::EMApplication;
+
+			// ICsIsValid
+			#pragma region
+
+			bool FInt::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+
+				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
+				return true;
+			}
+
+			bool FInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsWeaponModifier, FECsWeaponModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+
+				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
+				return true;
+			}
+
+			#pragma endregion ICsIsValid
+
+			// CopyType (NCsWeapon::NModifier::NCopy::ICopy)
+			#pragma region
+
+			void FInt::Copy(const CsWeaponModifierType* From)
+			{
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
+
+				const FInt* FromImpl = CsWeaponModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
+
+				SetType(FromImpl->GetType());
+				SetValue(FromImpl->GetValue());
+				SetApplication(FromImpl->GetApplication());
+			}
+
+			#pragma endregion CopyType (NCsWeapon::NModifier::NCopy::ICopy)
 		}
-
-		FInt::~FInt()
-		{
-			// ICsGetInterfaceMap
-			delete InterfaceMap;
-		}
-
-		// ICsIsValid
-		#pragma region
-
-		bool FInt::IsValidChecked(const FString& Context) const
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-
-			CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
-			return true;
-		}
-
-		bool FInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsWeaponModifier, FECsWeaponModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-			CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
-			return true;
-		}
-
-		#pragma endregion ICsIsValid
-
-		// CopyType (NCsWeapon::NModifier::NCopy::ICopy)
-		#pragma region
-
-		#define WeaponModifierType NCsWeapon::NModifier::IModifier
-		void FInt::Copy(const WeaponModifierType* From)
-		{
-		#undef WeaponModifierType
-
-			using namespace NCsWeapon::NModifier::NInt::NCached;
-
-			const FString& Context = Str::Copy;
-
-			const FInt* FromImpl = CsWeaponModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
-
-			SetType(FromImpl->GetType());
-			SetValue(FromImpl->GetValue());
-			SetApplication(FromImpl->GetApplication());
-		}
-
-		#pragma endregion CopyType (NCsWeapon::NModifier::NCopy::ICopy)
 	}
 }
 
@@ -166,29 +152,24 @@ namespace NCsWeapon
 // FCsWeaponModifier_Float
 #pragma region
 
-#define ModifierType NCsWeapon::NModifier::FFloat
-
-void FCsWeaponModifier_Float::CopyToModifier(ModifierType* Modifier)
+namespace NCsWeaponModifier_Float
 {
-	Modifier->SetType(&Type);
-	Modifier->SetValue(&Value);
+	using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
 
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+	void FImpl::CopyToModifier(ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY(Modifier, Application, ApplicationType);
+	}
 
-	Modifier->SetApplication((ApplicationType*)(&Application));
+	void FImpl::CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Modifier, Application, ApplicationType);
+	}
 }
-
-void FCsWeaponModifier_Float::CopyToModifierAsValue(ModifierType* Modifier) const
-{
-	Modifier->SetType(Type);
-	Modifier->SetValue(Value);
-
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-	Modifier->SetApplication((ApplicationType)Application);
-}
-
-#undef ModifierType
 
 bool FCsWeaponModifier_Float::IsValidChecked(const FString& Context) const
 {
@@ -210,7 +191,17 @@ bool FCsWeaponModifier_Float::IsValid(const FString& Context, void(*Log)(const F
 	return true;
 }
 
-const FName NCsWeapon::NModifier::FFloat::Name = FName("NCsWeapon::NModifier::FFloat");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsWeapon::NModifier::NFloat::FFloat);
+
+	// NCsWeapon::NModifier::NFloat::NFloat
+	//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsWeapon, NModifier, NFloat, Float)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsWeapon::NModifier::NFloat::FFloat, Copy)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
+
+#pragma endregion Cached
 
 namespace NCsWeapon
 {
@@ -218,98 +209,79 @@ namespace NCsWeapon
 	{
 		namespace NFloat
 		{
-			namespace NCached
+			FFloat::FFloat() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
 			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NModifier::FFloat, Copy);
-				}
+				InterfaceMap = new FCsInterfaceMap();
+
+				CS_INTERFACE_MAP_SET_ROOT(FFloat);
+
+				CS_INTERFACE_MAP_ADD(CsModifierType);
+				CS_INTERFACE_MAP_ADD(CsFloatModifierType);
+				CS_INTERFACE_MAP_ADD(CsWeaponModifierType);
+				CS_INTERFACE_MAP_ADD(ICsGetWeaponModifierType);
+				CS_INTERFACE_MAP_ADD(ICsIsValid);
+				CS_INTERFACE_MAP_ADD(CopyType);
+				CS_INTERFACE_MAP_ADD(ICsReset);
+
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(Value);
+				CS_CTOR_SET_MEMBER_PROXY(Application);
 			}
+
+			FFloat::~FFloat()
+			{
+				// ICsGetInterfaceMap
+				delete InterfaceMap;
+			}
+
+			using ApplicationMapType = NCsModifier::NValue::NNumeric::EMApplication;
+
+			// ICsIsValid
+			#pragma region
+
+			bool FFloat::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+
+				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
+				return true;
+			}
+
+			bool FFloat::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsWeaponModifier, FECsWeaponModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+
+				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
+				return true;
+			}
+
+			#pragma endregion ICsIsValid
+
+			// CopyType (NCsWeapon::NModifier::NCopy::ICopy)
+			#pragma region
+
+			void FFloat::Copy(const CsWeaponModifierType* From)
+			{
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
+
+				const FFloat* FromImpl = CsWeaponModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
+
+				SetType(FromImpl->GetType());
+				SetValue(FromImpl->GetValue());
+				SetApplication(FromImpl->GetApplication());
+			}
+
+			#pragma endregion CopyType (NCsWeapon::NModifier::NCopy::ICopy)
 		}
-
-		FFloat::FFloat() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
-		{
-			InterfaceMap = new FCsInterfaceMap();
-
-			InterfaceMap->SetRoot<FFloat>(this);
-
-			typedef NCsWeapon::NModifier::IModifier WeaponModifierType;
-			typedef NCsWeapon::NModifier::NCopy::ICopy CopyType;
-
-			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
-			InterfaceMap->Add<CsFloatModifierType>(static_cast<CsFloatModifierType*>(this));
-			InterfaceMap->Add<WeaponModifierType>(static_cast<WeaponModifierType*>(this));
-			InterfaceMap->Add<ICsGetWeaponModifierType>(static_cast<ICsGetWeaponModifierType*>(this));
-			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
-			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
-			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
-
-			CS_CTOR_SET_MEMBER_PROXY(Type);
-			CS_CTOR_SET_MEMBER_PROXY(Value);
-			CS_CTOR_SET_MEMBER_PROXY(Application);
-		}
-
-		FFloat::~FFloat()
-		{
-			// ICsGetInterfaceMap
-			delete InterfaceMap;
-		}
-
-		// ICsIsValid
-		#pragma region
-
-		bool FFloat::IsValidChecked(const FString& Context) const
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-
-			CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
-			return true;
-		}
-
-		bool FFloat::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsWeaponModifier, FECsWeaponModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-			CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
-			return true;
-		}
-
-		#pragma endregion ICsIsValid
-
-		// CopyType (NCsWeapon::NModifier::NCopy::ICopy)
-		#pragma region
-
-		#define WeaponModifierType NCsWeapon::NModifier::IModifier
-		void FFloat::Copy(const WeaponModifierType* From)
-		{
-		#undef WeaponModifierType
-
-			using namespace NCsWeapon::NModifier::NFloat::NCached;
-
-			const FString& Context = Str::Copy;
-
-			const FFloat* FromImpl = CsWeaponModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
-
-			SetType(FromImpl->GetType());
-			SetValue(FromImpl->GetValue());
-			SetApplication(FromImpl->GetApplication());
-		}
-
-		#pragma endregion CopyType (NCsWeapon::NModifier::NCopy::ICopy)
 	}
 }
 
@@ -318,21 +290,20 @@ namespace NCsWeapon
 // FCsWeaponModifier_Toggle
 #pragma region
 
-#define ModifierType NCsWeapon::NModifier::FToggle
-
-void FCsWeaponModifier_Toggle::CopyToModifier(ModifierType* Modifier)
+namespace NCsWeaponModifier_Toggle
 {
-	Modifier->SetType(&Type);
-	Modifier->SetbEnable(&bEnable);
-}
+	void FImpl::CopyToModifier(ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY(Modifier, bEnable);
+	}
 
-void FCsWeaponModifier_Toggle::CopyToModifierAsValue(ModifierType* Modifier) const
-{
-	Modifier->SetType(Type);
-	Modifier->SetbEnable(bEnable);
+	void FImpl::CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, bEnable);
+	}
 }
-
-#undef ModifierType
 
 bool FCsWeaponModifier_Toggle::IsValidChecked(const FString& Context) const
 {
@@ -346,7 +317,17 @@ bool FCsWeaponModifier_Toggle::IsValid(const FString& Context, void(*Log)(const 
 	return true;
 }
 
-const FName NCsWeapon::NModifier::FToggle::Name = FName("NCsWeapon::NModifier::FToggle");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsWeapon::NModifier::NToggle::FToggle);
+
+	// NCsWeapon::NModifier::NToggle::NToggle
+	//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsWeapon, NModifier, NToggle, Toggle)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsWeapon::NModifier::NToggle::FToggle, Copy)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
+
+#pragma endregion Cached
 
 namespace NCsWeapon
 {
@@ -354,82 +335,66 @@ namespace NCsWeapon
 	{
 		namespace NToggle
 		{
-			namespace NCached
+			FToggle::FToggle() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(bEnable, false)
 			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NModifier::FToggle, Copy);
-				}
+				InterfaceMap = new FCsInterfaceMap();
+
+				CS_INTERFACE_MAP_SET_ROOT(FToggle);
+
+				CS_INTERFACE_MAP_ADD(CsModifierType);
+				CS_INTERFACE_MAP_ADD(CsToggleModifierType);
+				CS_INTERFACE_MAP_ADD(CsWeaponModifierType);
+				CS_INTERFACE_MAP_ADD(ICsGetWeaponModifierType);
+				CS_INTERFACE_MAP_ADD(ICsIsValid);
+				CS_INTERFACE_MAP_ADD(CopyType);
+				CS_INTERFACE_MAP_ADD(ICsReset);
+
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(bEnable);
 			}
+
+			FToggle::~FToggle()
+			{
+				// ICsGetInterfaceMap
+				delete InterfaceMap;
+			}
+
+			// ICsIsValid
+			#pragma region
+
+			bool FToggle::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponModifier, GetType())
+				return true;
+			}
+
+			bool FToggle::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsWeaponModifier, FECsWeaponModifier, GetType())
+				return true;
+			}
+
+			#pragma endregion ICsIsValid
+
+			// CopyType (NCsWeapon::NModifier::NCopy::ICopy)
+			#pragma region
+
+			void FToggle::Copy(const CsWeaponModifierType* From)
+			{
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
+
+				const FToggle* FromImpl = CsWeaponModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
+
+				SetType(FromImpl->GetType());
+				SetbEnable(FromImpl->GetbEnable());
+			}
+
+			#pragma endregion CopyType (NCsWeapon::NModifier::NCopy::ICopy)
 		}
-
-		FToggle::FToggle() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(bEnable, false)
-		{
-			InterfaceMap = new FCsInterfaceMap();
-
-			InterfaceMap->SetRoot<FToggle>(this);
-
-			typedef NCsWeapon::NModifier::IModifier WeaponModifierType;
-			typedef NCsWeapon::NModifier::NCopy::ICopy CopyType;
-
-			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
-			InterfaceMap->Add<CsToggleModifierType>(static_cast<CsToggleModifierType*>(this));
-			InterfaceMap->Add<WeaponModifierType>(static_cast<WeaponModifierType*>(this));
-			InterfaceMap->Add<ICsGetWeaponModifierType>(static_cast<ICsGetWeaponModifierType*>(this));
-			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
-			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
-			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
-
-			CS_CTOR_SET_MEMBER_PROXY(Type);
-			CS_CTOR_SET_MEMBER_PROXY(bEnable);
-		}
-
-		FToggle::~FToggle()
-		{
-			// ICsGetInterfaceMap
-			delete InterfaceMap;
-		}
-
-		// ICsIsValid
-		#pragma region
-
-		bool FToggle::IsValidChecked(const FString& Context) const
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponModifier, GetType())
-			return true;
-		}
-
-		bool FToggle::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsWeaponModifier, FECsWeaponModifier, GetType())
-			return true;
-		}
-
-		#pragma endregion ICsIsValid
-
-		// CopyType (NCsWeapon::NModifier::NCopy::ICopy)
-		#pragma region
-
-		#define WeaponModifierType NCsWeapon::NModifier::IModifier
-		void FToggle::Copy(const WeaponModifierType* From)
-		{
-		#undef WeaponModifierType
-
-			using namespace NCsWeapon::NModifier::NFloat::NCached;
-
-			const FString& Context = Str::Copy;
-
-			const FToggle* FromImpl = CsWeaponModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
-
-			SetType(FromImpl->GetType());
-			SetbEnable(FromImpl->GetbEnable());
-		}
-
-		#pragma endregion CopyType (NCsWeapon::NModifier::NCopy::ICopy)
 	}
 }
 
@@ -438,79 +403,68 @@ namespace NCsWeapon
 // FCsWeaponModifierInfo
 #pragma region
 
-#define InfoType NCsWeapon::NModifier::FInfo
-
-void FCsWeaponModifierInfo::CopyToInfo(InfoType* Info)
+namespace NCsWeaponModifierInfo
 {
-	// Ints
-	typedef NCsWeapon::NModifier::FInt IntModifierType;
+	using IntModifierType = NCsWeapon::NModifier::NInt::FInt;
+	using FloatModifierType = NCsWeapon::NModifier::NFloat::FFloat;
+	using ToggleModifierType = NCsWeapon::NModifier::NToggle::FToggle;
 
-	Info->Ints.Reset(Ints.Num());
-
-	for (FCsWeaponModifier_Int& From : Ints)
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
 	{
-		IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
-		From.CopyToModifier(&To);
+		Info->Ints.Reset(This->Ints.Num());
+
+		for (FCsWeaponModifier_Int& From : This->Ints)
+		{
+			IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+			From.CopyToModifier(&To);
+		}
+		// Floats
+		Info->Floats.Reset(This->Floats.Num());
+
+		for (FCsWeaponModifier_Float& From : This->Floats)
+		{
+			FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+			From.CopyToModifier(&To);
+		}
+		// Toggles
+		Info->Toggles.Reset(This->Toggles.Num());
+
+		for (FCsWeaponModifier_Toggle& From : This->Toggles)
+		{
+			ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
+			From.CopyToModifier(&To);
+		}
+		Info->PopulateModifiers();
 	}
-	// Floats
-	typedef NCsWeapon::NModifier::FFloat FloatModifierType;
 
-	Info->Floats.Reset(Floats.Num());
-
-	for (FCsWeaponModifier_Float& From : Floats)
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
 	{
-		FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
-		From.CopyToModifier(&To);
-	}
-	// Toggles
-	typedef NCsWeapon::NModifier::FToggle ToggleModifierType;
+		Info->Ints.Reset(This->Ints.Num());
 
-	Info->Toggles.Reset(Toggles.Num());
+		for (const FCsWeaponModifier_Int& From : This->Ints)
+		{
+			IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+			From.CopyToModifierAsValue(&To);
+		}
+		// Floats
+		Info->Floats.Reset(This->Floats.Num());
 
-	for (FCsWeaponModifier_Toggle& From : Toggles)
-	{
-		ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
-		From.CopyToModifier(&To);
+		for (const FCsWeaponModifier_Float& From : This->Floats)
+		{
+			FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+			From.CopyToModifierAsValue(&To);
+		}
+		// Toggles
+		Info->Toggles.Reset(This->Toggles.Num());
+
+		for (const FCsWeaponModifier_Toggle& From : This->Toggles)
+		{
+			ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
+			From.CopyToModifierAsValue(&To);
+		}
+		Info->PopulateModifiers();
 	}
-	Info->PopulateModifiers();
 }
-
-void FCsWeaponModifierInfo::CopyToInfoAsValue(InfoType* Info)
-{
-	// Ints
-	typedef NCsWeapon::NModifier::FInt IntModifierType;
-
-	Info->Ints.Reset(Ints.Num());
-
-	for (const FCsWeaponModifier_Int& From : Ints)
-	{
-		IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
-		From.CopyToModifierAsValue(&To);
-	}
-	// Floats
-	typedef NCsWeapon::NModifier::FFloat FloatModifierType;
-
-	Info->Floats.Reset(Floats.Num());
-
-	for (const FCsWeaponModifier_Float& From : Floats)
-	{
-		FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
-		From.CopyToModifierAsValue(&To);
-	}
-	// Toggles
-	typedef NCsWeapon::NModifier::FToggle ToggleModifierType;
-
-	Info->Toggles.Reset(Toggles.Num());
-
-	for (const FCsWeaponModifier_Toggle& From : Toggles)
-	{
-		ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
-		From.CopyToModifierAsValue(&To);
-	}
-	Info->PopulateModifiers();
-}
-
-#undef InfoType
 
 bool FCsWeaponModifierInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
@@ -535,28 +489,20 @@ namespace NCsWeapon
 	{
 		bool FInfo::IsValidChecked(const FString& Context) const
 		{
-			typedef NCsWeapon::NModifier::FInt IntModifierType;
-
 			for (const IntModifierType& Modifier : Ints)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
-
-			typedef NCsWeapon::NModifier::FFloat FloatModifierType;
 
 			for (const FloatModifierType& Modifier : Floats)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
 
-			typedef NCsWeapon::NModifier::FToggle ToggleModifierType;
-
 			for (const ToggleModifierType& Modifier : Toggles)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
-
-			typedef NCsWeapon::NModifier::IModifier ModifierType;
 
 			const int32 Total = Ints.Num() + Floats.Num() + Toggles.Num();
 
@@ -567,28 +513,20 @@ namespace NCsWeapon
 
 		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 		{
-			typedef NCsWeapon::NModifier::FInt IntModifierType;
-
 			for (const IntModifierType& Modifier : Ints)
 			{
 				CS_IS_VALID(Modifier)
 			}
-
-			typedef NCsWeapon::NModifier::FFloat FloatModifierType;
 
 			for (const FloatModifierType& Modifier : Floats)
 			{
 				CS_IS_VALID(Modifier)
 			}
 
-			typedef NCsWeapon::NModifier::FToggle ToggleModifierType;
-
 			for (const ToggleModifierType& Modifier : Toggles)
 			{
 				CS_IS_VALID(Modifier)
 			}
-
-			typedef NCsWeapon::NModifier::IModifier ModifierType;
 
 			const int32 Total = Ints.Num() + Floats.Num() + Toggles.Num();
 

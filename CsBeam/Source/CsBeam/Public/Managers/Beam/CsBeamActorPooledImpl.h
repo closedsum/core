@@ -52,10 +52,10 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FShape)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
-// NCsDamage::NValue::NPoint::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NPoint, FImpl)
-// NCsDamage::NValue::NRange::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NRange, FImpl)
+// NCsDamage::NValue::NPoint::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NValue, NPoint, NImpl, FImpl)
+// NCsDamage::NValue::NRange::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NValue, NRange, NImpl, FImpl)
 
 UCLASS(Blueprintable)
 class CSBEAM_API ACsBeamActorPooledImpl : public AActor,
@@ -68,11 +68,11 @@ class CSBEAM_API ACsBeamActorPooledImpl : public AActor,
 
 private:
 
-#define DataType NCsBeam::NData::IData
-#define PooledCacheType NCsPooledObject::NCache::ICache
+	using DataType = NCsBeam::NData::IData;
+	using PooledCacheType = NCsPooledObject::NCache::ICache;
 	using CacheImplType = NCsBeam::NCache::NImpl::FImpl;
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define PayloadType NCsBeam::NPayload::IPayload
+	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+	using PayloadType = NCsBeam::NPayload::IPayload;
 
 // UObject Interface
 #pragma region
@@ -224,9 +224,11 @@ protected:
 	{
 		friend class ACsBeamActorPooledImpl;
 
-	#define CollisionDataType NCsBeam::NData::NCollision::ICollision
-	#define CollisionFrequencyParamsType NCsBeam::NCollision::NParams::FFrequency
-	#define CollisionShapeType NCsBeam::NCollision::NShape::FShape
+	private:
+
+		using CollisionDataType = NCsBeam::NData::NCollision::ICollision;
+		using CollisionFrequencyParamsType = NCsBeam::NCollision::NParams::FFrequency;
+		using CollisionShapeType = NCsBeam::NCollision::NShape::FShape;
 
 	private:
 		
@@ -288,10 +290,6 @@ protected:
 		void PerformPass();
 
 		void Shutdown();
-
-	#undef CollisionDataType
-	#undef CollisionFrequencyParamsType
-	#undef CollisionShapeType
 	};
 
 	FCollisionImpl CollisionImpl;
@@ -319,35 +317,31 @@ public:
 
 	private:
 
+		using ValueType = NCsDamage::NValue::IValue;
+		using ValuePointImplType = NCsDamage::NValue::NPoint::NImpl::FImpl;
+		using ValueRangeImplType = NCsDamage::NValue::NRange::NImpl::FImpl;
+		using AllocateModifierType = NCsDamage::NModifier::FAllocated;
+		using CsDamageDataType = NCsDamage::NData::IData;
+
+	private:
+
 		ACsBeamActorPooledImpl* Outer;
 
 		FECsDamageValue Type;
 
-	#define PointType NCsDamage::NValue::NPoint::FImpl
-	#define RangeType NCsDamage::NValue::NRange::FImpl
-	#define AllocateModifierType NCsDamage::NModifier::FAllocated
-
-		PointType* ValuePoint;
-		RangeType* ValueRange;
+		ValuePointImplType* ValuePoint;
+		ValueRangeImplType* ValueRange;
 
 		TArray<AllocateModifierType> Modifiers;
-		
-	#undef PointType
-	#undef RangeType
-	#undef AllocatedModifierType
 
 	public:
 
 		FDamageImpl();
 		virtual ~FDamageImpl();
 
-	#define DamageDataType NCsDamage::NData::IData
-		void SetValue(DamageDataType* InData);
-	#undef DamageDataType
+		void SetValue(CsDamageDataType* InData);
 
-	#define ValueType NCsDamage::NValue::IValue
 		ValueType* GetValue();
-	#undef ValueType
 
 		void ResetValue();
 		void Reset();
@@ -356,9 +350,4 @@ public:
 	FDamageImpl DamageImpl;
 
 #pragma endregion Damage
-
-#undef DataType
-#undef PooledCacheType
-#undef PooledPayloadType
-#undef PayloadType
 };

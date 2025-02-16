@@ -172,7 +172,13 @@ ACsBeamActorPooledImpl::ACsBeamActorPooledImpl(const FObjectInitializer& ObjectI
 }
 
 using CacheImplType = NCsBeam::NCache::NImpl::FImpl;
+using PooledPayloadLibrary = NCsPooledObject::NPayload::FLibrary;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 using PooledPayloadImplType = NCsPooledObject::NPayload::FImplSlice;
+using PayloadLibrary = NCsBeam::NPayload::FLibrary;
+using PayloadType = NCsBeam::NPayload::IPayload;
+using DamageValueLibrary = NCsDamage::NValue::FLibrary;
+using ValueType = NCsDamage::NValue::IValue;
 
 // UObject Interface
 #pragma region
@@ -271,11 +277,8 @@ void ACsBeamActorPooledImpl::ConstructCache()
 // ICsPooledObject
 #pragma region
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 void ACsBeamActorPooledImpl::Allocate(PooledPayloadType* Payload)
 {
-#undef PooledPayloadType
-
 	using namespace NCsBeamActorPooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
@@ -283,9 +286,7 @@ void ACsBeamActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	CS_IS_PTR_NULL_CHECKED(Payload)
 
 	// Set Type
-	typedef NCsBeam::NPayload::IPayload PayloadType;
-	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-
+	
 	PayloadType* BeamPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	Type = BeamPayload->GetType();
@@ -345,9 +346,7 @@ void ACsBeamActorPooledImpl::Deallocate_Internal()
 	CollisionImpl.Shutdown();
 
 	// Mesh
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	MaterialLibrary::ClearOverrideChecked(Context, MeshComponent);
+	CsMaterialLibrary::ClearOverrideChecked(Context, MeshComponent);
 	MeshComponent->SetStaticMesh(nullptr);
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);
@@ -399,8 +398,6 @@ UObject* ACsBeamActorPooledImpl::GetInstigator() const
 	// On
 #pragma region
 
-#define PayloadType NCsBeam::NPayload::IPayload
-
 void ACsBeamActorPooledImpl::PrepareOn(PayloadType* Payload)
 {
 using namespace NCsBeamActorPooledImpl::NCached;
@@ -437,10 +434,7 @@ using namespace NCsBeamActorPooledImpl::NCached;
 		}
 	}
 	
-	typedef NCsBeam::NPayload::FLibrary BeamPayloadLibrary;
-	typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
-
-	PooledPayloadType* PooledPayload = BeamPayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
+	PooledPayloadType* PooledPayload = PayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
 
 	// Handle Orientation
 	{
@@ -552,7 +546,6 @@ void ACsBeamActorPooledImpl::OnPrepareOn_SetModifiers(PayloadType* Payload)
 
 	// NCsBeam::NPayload::NModifier::NDamage::IDamage
 	{
-		typedef NCsBeam::NPayload::FLibrary PayloadLibrary;
 		typedef NCsBeam::NPayload::NModifier::NDamage::IDamage ModDamagePayloadType;
 
 		if (ModDamagePayloadType* DmgModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModDamagePayloadType>(Context, Payload))
@@ -563,8 +556,6 @@ void ACsBeamActorPooledImpl::OnPrepareOn_SetModifiers(PayloadType* Payload)
 		}
 	}
 }
-
-#undef PayloadType
 
 #pragma endregion On
 
@@ -627,18 +618,16 @@ void ACsBeamActorPooledImpl::FCollisionImpl::Emit()
 
 	const FString& Context = Str::Emit;
 
-	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+	typedef NCsCoroutine::NPayload::FImpl CoroutinePayloadType;
 
 	UCsCoroutineScheduler* Scheduler  = CsCoroutineSchedulerLibrary::GetChecked(Context, Outer);
 	const FECsUpdateGroup& Group	  = Outer->GetUpdateGroup();
-	PayloadType* Payload			  = Scheduler->AllocatePayload(Group);
-
-	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+	CoroutinePayloadType* Payload	  = Scheduler->AllocatePayload(Group);
 
 	#define COROUTINE Emit_Internal
 
 	Payload->CoroutineImpl.BindRaw(this, &ACsBeamActorPooledImpl::FCollisionImpl::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer, Group);
+	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, Outer, Group);
 	Payload->Owner.SetObject(Outer);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -731,10 +720,7 @@ void ACsBeamActorPooledImpl::FCollisionImpl::PerformPass()
 
 	void(*Log)(const FString&) = NCsBeam::FLog::Warning;
 
-	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-	typedef NCsTrace::NRequest::FRequest RequestType;
-
-	RequestType* Request = TraceManagerLibrary::AllocateRequestChecked(Context, Outer);
+	CsTraceRequestType* Request = CsTraceManagerLibrary::AllocateRequestChecked(Context, Outer);
 
 	Request->Start = Outer->GetActorLocation();
 	
@@ -920,11 +906,8 @@ ACsBeamActorPooledImpl::FDamageImpl::FDamageImpl() :
 	ValueRange(nullptr),
 	Modifiers()
 {
-	typedef NCsDamage::NValue::NPoint::FImpl PointType;
-	typedef NCsDamage::NValue::NRange::FImpl RangeType;
-
-	ValuePoint = new PointType();
-	ValueRange = new RangeType();
+	ValuePoint = new ValuePointImplType();
+	ValueRange = new ValueRangeImplType();
 }
 
 ACsBeamActorPooledImpl::FDamageImpl::~FDamageImpl()
@@ -938,17 +921,11 @@ ACsBeamActorPooledImpl::FDamageImpl::~FDamageImpl()
 	Modifiers.Reset();
 }
 
-#define DamageDataType NCsDamage::NData::IData
-void ACsBeamActorPooledImpl::FDamageImpl::SetValue(DamageDataType* InData)
+void ACsBeamActorPooledImpl::FDamageImpl::SetValue(CsDamageDataType* InData)
 {
-#undef DamageDataType
-
 	using namespace NCsBeamActorPooledImpl::NDamageImpl::NCached;
 
 	const FString& Context = Str::SetValue;
-
-	typedef NCsDamage::NValue::FLibrary DamageValueLibrary;
-	typedef NCsDamage::NValue::IValue ValueType;
 
 	const ValueType* Value = InData->GetValue();
 	Type				   = DamageValueLibrary::GetTypeChecked(Context, Value);
@@ -957,11 +934,8 @@ void ACsBeamActorPooledImpl::FDamageImpl::SetValue(DamageDataType* InData)
 	DamageValueLibrary::CopyChecked(Context, Value, GetValue());
 }
 
-#define ValueType NCsDamage::NValue::IValue
 ValueType* ACsBeamActorPooledImpl::FDamageImpl::GetValue()
 {
-#undef ValueType
-
 	// Point
 	if (Type == NCsDamageValue::Point)
 		return ValuePoint;

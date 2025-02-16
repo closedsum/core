@@ -2,24 +2,26 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 // Projectile
 #include "Payload/CsPayload_ProjectileImpl.h"
 
 #include "CsScriptLibrary_Manager_Projectile.generated.h"
 
-// Delegates
-#pragma region
-
-#pragma endregion Delegates
-
 class UCsManager_Projectile;
 class ICsProjectile;
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_Manager_Projectile)
 
 UCLASS()
 class CSPRJ_API UCsScriptLibrary_Manager_Projectile : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_Manager_Projectile);
 
 // Get
 #pragma region

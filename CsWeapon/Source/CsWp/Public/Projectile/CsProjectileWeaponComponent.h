@@ -367,7 +367,7 @@ public:
 		*
 		* Currently supports To types of:
 		*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
-		*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
+		*  NCsProjectile::NPayload::NImplSlice::FImplSlice (NCsProjectile::NPayload::IPayload)
 		*
 		* @param Context	The calling context.
 		* @param Payload	The payload to set.
@@ -379,7 +379,7 @@ public:
 		* Copy the slice of values from From to To with checks.
 		* Currently supports To types of:
 		*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
-		*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
+		*  NCsProjectile::NPayload::NImplSlice::FImplSlice (NCsProjectile::NPayload::IPayload)
 		*
 		* @param Context	The calling context.
 		* @param From		What to copy.

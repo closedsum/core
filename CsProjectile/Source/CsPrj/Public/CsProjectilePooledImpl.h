@@ -17,6 +17,7 @@
 	// Tracking
 #include "Tracking/CsProjectile_Tracking.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Types/CsTypes_Projectile.h"
 #include "Types/CsTypes_Projectile_Tracking.h"
 #include "Types/CsTypes_Damage.h"
@@ -89,6 +90,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 // NCsDamage::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsProjectilePooledImpl)
+
 UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 										  public ICsUpdate,
@@ -122,6 +125,8 @@ private:
 	using CollisionDataType = NCsProjectile::NData::NCollision::ICollision;
 	using ValueType = NCsDamage::NValue::IValue;
 	using RangeType = NCsDamage::NRange::IRange;
+
+	CS_USING_CACHED_FUNCTION_NAME(CsProjectilePooledImpl);
 
 // UObject Interface
 #pragma region
@@ -312,7 +317,7 @@ private:
 
 	struct FLaunch_Delayed_Payload
 	{
-		FVector3f Direction;
+		FVector Direction;
 	};
 
 	void Launch_Delayed(const FLaunch_Delayed_Payload& Payload);
@@ -757,7 +762,7 @@ protected:
 
 	void ApplyHitCountModifiers(const FString& Context, const CollisionDataType* CollisionData);
 
-	void StartMovementFromModifiers(const FString& Context, const FVector3f& Direction);
+	void StartMovementFromModifiers(const FString& Context, const FVector& Direction);
 
 #pragma endregion Modifier
 

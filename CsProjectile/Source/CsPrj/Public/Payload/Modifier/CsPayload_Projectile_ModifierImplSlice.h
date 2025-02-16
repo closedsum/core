@@ -3,14 +3,18 @@
 // Interfaces
 #include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
 #include "Reset/CsReset.h"
+// Types
+#include "CsMacro_Cached.h"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"
 
 class UObject;
 struct FCsInterfaceMap;
 
-// NCsDamage::NModifier::IModifier
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
+// ModifierType (NCsProjectile::NModifier::IModifier)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, IModifier)
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NPayload, NModifier, ImplSlice)
 
 namespace NCsProjectile
 {
@@ -28,8 +32,13 @@ namespace NCsProjectile
 
 				static const FName Name;
 
-			#define ModifierType NCsProjectile::NModifier::IModifier
-			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+			private:
+			
+				using ThisType = NCsProjectile::NPayload::NModifier::FImplSlice;
+				using ModifierType = NCsProjectile::NModifier::IModifier;
+				using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
+
+				CS_USING_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NPayload, NModifier, ImplSlice);
 
 			private:
 
@@ -97,11 +106,8 @@ namespace NCsProjectile
 
 				FORCEINLINE static void Deconstruct(void* Ptr)
 				{
-					delete static_cast<NCsProjectile::NPayload::NModifier::FImplSlice*>(Ptr);
+					delete static_cast<ThisType*>(Ptr);
 				}
-
-			#undef ModifierType
-			#undef AllocatedModifierType
 			};
 		}
 	}

@@ -25,6 +25,13 @@ namespace NCsModifier
 	*/
 	struct CSMODIFIER_API FLibrary final : public NCsInterfaceMap::TLibrary<CsModifierType>
 	{
+	private:
+
+		using CsIntModifierType = NCsModifier::NInt::IInt;
+		using CsIntRangeModifierType = NCsModifier::NInt::NRange::IRange;
+		using CsFloatModifierType = NCsModifier::NFloat::IFloat;
+		using CsFloatRangeModifierType = NCsModifier::NFloat::NRange::IRange;
+
 	public:
 
 		static void CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<CsModifierType*>& To);
@@ -33,21 +40,15 @@ namespace NCsModifier
 	#pragma region
 	public:
 
-	#define CsIntModifierType NCsModifier::NInt::IInt
-
 		static int32 ModifyIntChecked(const FString& Context, const CsIntModifierType* Modifier, const int32& Value);
 
 		static int32 ModifyIntChecked(const FString& Context, const TArray<CsIntModifierType*>& Modifiers, const int32& Value);
-
-	#undef CsIntModifierType
 
 	#pragma endregion Int
 
 	// Int Range
 	#pragma region
 	public:
-
-	#define CsIntRangeModifierType NCsModifier::NInt::NRange::IRange
 
 		static int32 ModifyIntMinChecked(const FString& Context, const CsIntRangeModifierType* Modifier, const int32& Value);
 
@@ -57,15 +58,11 @@ namespace NCsModifier
 
 		static int32 ModifyIntMaxChecked(const FString& Context, const TArray<CsIntRangeModifierType*>& Modifiers, const int32& Value);
 
-	#undef CsIntRangeModifierType
-
 	#pragma endregion Int Range
 
 	// Float
 	#pragma region
 	public:
-
-	#define CsFloatModifierType NCsModifier::NFloat::IFloat
 
 		static float ModifyFloatChecked(const FString& Context, const CsFloatModifierType* Modifier, const float& Value);
 
@@ -79,15 +76,11 @@ namespace NCsModifier
 
 		static float ModifyFloatPercentAndEmptyChecked(const FString& Context, TArray<CsFloatModifierType*>& Modifiers, const float& Value);
 
-	#undef CsFloatModifierType
-
 	#pragma endregion Float
 
 	// Float Range
 	#pragma region
 	public:
-
-	#define CsFloatRangeModifierType NCsModifier::NFloat::NRange::IRange
 
 		static float ModifyFloatMinChecked(const FString& Context, const CsFloatRangeModifierType* Modifier, const float& Value);
 
@@ -112,8 +105,6 @@ namespace NCsModifier
 		static float ModifyFloatMaxPercentChecked(const FString& Context, const TArray<CsFloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
 
 		static float ModifyFloatMaxPercentAndEmptyChecked(const FString& Context, TArray<CsFloatRangeModifierType*>& Modifiers, const float& Value);
-
-	#undef CsFloatRangeModifierType
 
 	#pragma endregion Float Range
 	};

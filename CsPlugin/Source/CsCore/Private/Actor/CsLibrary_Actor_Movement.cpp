@@ -171,11 +171,11 @@ namespace NCsActor
 			const float& Time				   = Params->GetTime();
 
 			static const int32 CURRENT= 0;
-			FVector3f& Current		  = R->GetValue_Vector(CURRENT);
+			FVector3f& Current		  = R->GetValue_Vector3f(CURRENT);
 
 			// Set End Location
 			static const int32 END = 1;
-			FVector3f& End		   = R->GetValue_Vector(END);
+			FVector3f& End		   = R->GetValue_Vector3f(END);
 			End					   = Params->GetEndLocation();
 
 			static const int32 INTERP_SPEED = 0;

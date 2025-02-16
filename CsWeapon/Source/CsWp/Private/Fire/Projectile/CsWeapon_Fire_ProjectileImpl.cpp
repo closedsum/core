@@ -17,6 +17,8 @@
 #include "Data/CsLibrary_Data_Projectile.h"
 	// Weapon
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
+	// Projectile
+#include "Payload/CsLibrary_Payload_Projectile.h"
 	// Common
 #include "Camera/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Math.h"
@@ -26,6 +28,8 @@
 #include "Data/Collision/CsData_Projectile_Collision.h"
 // Trace
 #include "Managers/Trace/CsTraceRequest.h"
+// Pool
+#include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Weapon
 #include "CsWeapon.h"
 #include "Projectile/CsProjectileWeapon.h"
@@ -33,6 +37,10 @@
 #include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTrace.h"
 // Projectile
 #include "Types/CsGetProjectileType.h"
+#include "Payload/CsPayload_ProjectileImplSlice.h"
+#include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
+#include "Payload/Target/CsPayload_Projectile_TargetImplSlice.h"
+#include "Modifier/CsProjectileModifier.h"
 // Interface
 #include "Object/Orientation/CsObject_Orientation.h"
 
@@ -50,6 +58,8 @@ UCsWeapon_Fire_Projectile::UCsWeapon_Fire_Projectile(const FObjectInitializer& O
 CS_START_CACHED_FUNCTION_NAME(CsWeapon_Fire_ProjectileImpl)
 	// ICsWeapon_Component
 	CS_DEFINE_CACHED_FUNCTION_NAME(UCsWeapon_Fire_ProjectileImpl, SetWeapon)
+	// ICsWeapon_Fire_Projectile
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsWeapon_Fire_ProjectileImpl, Launch)
 	// Weapon_Fire_Projectile
 	CS_DEFINE_CACHED_FUNCTION_NAME(UCsWeapon_Fire_ProjectileImpl, GetLaunchLocation)
 	CS_DEFINE_CACHED_FUNCTION_NAME(UCsWeapon_Fire_ProjectileImpl, GetLaunchDirection)
@@ -68,7 +78,6 @@ using LocationType = NCsWeapon::NProjectile::NParams::NLaunch::ELocation;
 using LocationOffsetSpaceType = NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace;
 using DirectionMapType = NCsWeapon::NProjectile::NParams::NLaunch::EMDirection;
 using DirectionType = NCsWeapon::NProjectile::NParams::NLaunch::EDirection;
-// Trace
 
 // ICsWeapon_Component
 #pragma region
@@ -80,6 +89,7 @@ void UCsWeapon_Fire_ProjectileImpl::SetWeapon(ICsWeapon* InWeapon)
 	Weapon		   = InWeapon;
 	WeaponAsObject = Weapon->_getUObject();
 	ProjectileWeapon = CS_INTERFACE_CAST_CHECKED(WeaponAsObject, UObject, ICsProjectileWeapon);
+	GetProjectileType  = CS_INTERFACE_CAST_CHECKED(WeaponAsObject, UObject, ICsGetProjectileType);
 }
 
 #pragma endregion ICsWeapon_Component
@@ -399,11 +409,12 @@ FVector UCsWeapon_Fire_ProjectileImpl::GetLaunchDirection(const PayloadType& Pay
 		}
 		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *PrintWeaponNameAndClass());
 	}
-	// ITrace | Get Launch Trace Params
+	// TraceParamsType | Get Launch Trace Params
 	if (DirType == DirectionType::Trace)
 	{
 		using TraceParamsType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace;
 		using TraceStartType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart;
+		using TraceDirectionType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection;
 
 		const TraceParamsType* TraceParams = ParamsLibrary::GetInterfaceChecked<TraceParamsType>(Context, Params);
 		
@@ -454,8 +465,6 @@ FVector UCsWeapon_Fire_ProjectileImpl::GetLaunchDirection(const PayloadType& Pay
 		}
 
 		// Direction
-		using TraceDirectionType = NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection;
-
 		const TraceDirectionType& TraceDirection = TraceParams->GetTraceDirectionType();
 
 		FVector Dir = FVector::ZeroVector;
@@ -509,7 +518,6 @@ FVector UCsWeapon_Fire_ProjectileImpl::GetLaunchDirection(const PayloadType& Pay
 		Request->End		 = End;
 
 		// Get collision information related to the projectile to be used in the trace.
-		ICsGetProjectileType* GetProjectileType  = CS_INTERFACE_CAST_CHECKED(WeaponAsObject, UObject, ICsGetProjectileType);
 		CsProjectileDataType* PrjData		     = CsPrjManagerLibrary::GetDataChecked(Context, this, GetProjectileType->GetProjectileType());	
 		CsPrjCollisionDataType* PrjCollisionData = CsProjectileDataLibrary::GetInterfaceChecked<CsPrjCollisionDataType>(Context, PrjData);
 
@@ -578,12 +586,78 @@ FVector UCsWeapon_Fire_ProjectileImpl::GetLaunchDirection(const PayloadType& Pay
 
 void UCsWeapon_Fire_ProjectileImpl::Launch(const PayloadType& LaunchPayload) 
 {
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Launch);
+
+	CS_SCOPED_TIMER(LaunchScopedHandle);
+
+	// Get Payload
+	const FECsProjectile& PrjType			 = GetProjectileType->GetProjectileType();
+	CsProjectilePayloadType* Payload		 = CsPrjManagerLibrary::AllocatePayloadChecked(Context, this, PrjType);
+
+	// Set appropriate members on Payload
+	const bool SetSuccess = SetPayload(Context, Payload, LaunchPayload);
+
+	checkf(SetSuccess, TEXT("%s: Failed to set Payload."), *Context);
+
+	// Spawn
+	CsPrjManagerLibrary::SpawnChecked(Context, this, Payload);
 }
 
 #pragma endregion ICsWeapon_Fire_Projectile
 
 // Weapon_Fire_Projectile
 #pragma region
+
+bool UCsWeapon_Fire_ProjectileImpl::SetPayload(const FString& Context, CsProjectilePayloadType* Payload, const PayloadType& LaunchPayload)
+{
+	// PooledObject
+	{
+		using SliceType = NCsPooledObject::NPayload::FImplSlice;
+		using SliceInterfaceType = NCsPooledObject::NPayload::IPayload;
+
+		SliceType* Slice = CsPrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
+		Slice->Instigator = Weapon->GetWeaponOwner();
+		Slice->Owner	  = WeaponAsObject;
+	}
+	// Projectile
+	{
+		using SliceType = NCsProjectile::NPayload::NImplSlice::FImplSlice;
+		using SliceInterfaceType = NCsProjectile::NPayload::IPayload;
+
+		SliceType* Slice = CsPrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
+		Slice->Type		 = GetProjectileType->GetProjectileType();
+		//Slice->Location  = GetLaunchLocation(LaunchPayload);
+		//Slice->Direction = GetLaunchDirection(LaunchPayload);
+	}
+	// Projectile Modifiers
+	{
+		using SliceType = NCsProjectile::NPayload::NModifier::FImplSlice;
+		using SliceInterfaceType = NCsProjectile::NPayload::NModifier::IModifier;
+
+		if (SliceType* Slice = CsPrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		{
+			static TArray<CsProjectileModifierType*> Modifiers;
+			
+			//Outer->GetProjectileModifiers(Modifiers);
+			//Slice->CopyAndEmptyFromModifiers(Outer, Modifiers);
+		}
+	}
+	// Projectile Target
+	{
+		using SliceType = NCsProjectile::NPayload::NTarget::FImplSlice;
+		using SliceInterfaceType = NCsProjectile::NPayload::NTarget::ITarget;
+
+		if (SliceType* Slice = CsPrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		{
+			Slice->bTarget	= bTarget;
+			Slice->Component = TargetComponent;
+			//Slice->Location = TargetLocation;
+			Slice->Bone		= TargetBone;
+			Slice->ID		= TargetID;
+		}
+	}
+	return true;//Outer->Projectile_SetPayload(Context, Payload, LaunchPayload);
+}
 
 void UCsWeapon_Fire_ProjectileImpl::Log_GetLaunchDirection(const ParamsType* LaunchParams, const FVector& Direction)
 {

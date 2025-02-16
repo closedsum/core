@@ -26,7 +26,15 @@ namespace NCsModifier
 
 				virtual ~IRange(){}
 
-			#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+				};
+
+			public:
 
 				/**
 				* Modifies the minimum value InValue
@@ -35,7 +43,7 @@ namespace NCsModifier
 				*/
 				virtual float ModifyMin(const float& InValue) const = 0;
 
-				virtual const ApplicationType& GetMinApplication() const = 0;
+				virtual const _::ApplicationType& GetMinApplication() const = 0;
 
 				/**
 				* Modifies the maximum value InValue
@@ -44,9 +52,7 @@ namespace NCsModifier
 				*/
 				virtual float ModifyMax(const float& InValue) const = 0;
 
-				virtual const ApplicationType& GetMaxApplication() const = 0;
-
-			#undef ApplicationType
+				virtual const _::ApplicationType& GetMaxApplication() const = 0;
 			};
 		}
 	}

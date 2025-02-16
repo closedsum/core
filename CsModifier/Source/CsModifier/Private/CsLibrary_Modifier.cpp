@@ -15,7 +15,7 @@
 
 namespace NCsModifier
 {
-	#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
+	using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
 
 	void FLibrary::CopyChecked(const FString& Context, const TArray<CsModifierType*>& From, TArray<CsModifierType*>& To)
 	{
@@ -760,6 +760,4 @@ namespace NCsModifier
 	}
 
 	#pragma endregion Float Rnage
-
-	#undef ApplicationType
 }

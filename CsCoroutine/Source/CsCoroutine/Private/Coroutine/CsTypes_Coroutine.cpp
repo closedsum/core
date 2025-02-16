@@ -459,10 +459,22 @@ namespace NCsCoroutine
 			Vectors.AddDefaulted(CS_ROUTINE_VECTOR_SIZE);
 			UsedValues[(uint8)EValueType::Vector].AddDefaulted(Vectors.Max());
 
-			for (FVector3f& V : Vectors)
+			for (FVector& V : Vectors)
+			{
+				V = FVector::ZeroVector;
+				Values[(uint8)EValueType::Vector].Add(&V);
+			}
+
+				// Vector3f
+			Values.AddDefaulted();
+			UsedValues.AddDefaulted();
+			Vector3fs.AddDefaulted(CS_ROUTINE_VECTOR_SIZE);
+			UsedValues[(uint8)EValueType::Vector3f].AddDefaulted(Vector3fs.Max());
+
+			for (FVector3f& V : Vector3fs)
 			{
 				V = FVector3f::ZeroVector;
-				Values[(uint8)EValueType::Vector].Add(&V);
+				Values[(uint8)EValueType::Vector3f].Add(&V);
 			}
 
 				// Rotator
@@ -471,10 +483,22 @@ namespace NCsCoroutine
 			Rotators.AddDefaulted(CS_ROUTINE_ROTATOR_SIZE);
 			UsedValues[(uint8)EValueType::Rotator].AddDefaulted(Rotators.Max());
 
-			for (FRotator3f& R : Rotators)
+			for (FRotator& R : Rotators)
+			{
+				R = FRotator::ZeroRotator;
+				Values[(uint8)EValueType::Rotator].Add(&R);
+			}
+
+				// Rotator3f
+			Values.AddDefaulted();
+			UsedValues.AddDefaulted();
+			Rotator3fs.AddDefaulted(CS_ROUTINE_ROTATOR_SIZE);
+			UsedValues[(uint8)EValueType::Rotator3f].AddDefaulted(Rotator3fs.Max());
+
+			for (FRotator3f& R : Rotator3fs)
 			{
 				R = FRotator3f::ZeroRotator;
-				Values[(uint8)EValueType::Rotator].Add(&R);
+				Values[(uint8)EValueType::Rotator3f].Add(&R);
 			}
 
 				// Color

@@ -24,7 +24,15 @@ namespace NCsModifier
 
 			virtual ~IFloat(){}
 
-		#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
+		private:
+
+			// Allow clearer names without name collisions
+			struct _
+			{
+				using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+			};
+
+		public:
 
 			/**
 			* Modifies the value InValue
@@ -33,9 +41,7 @@ namespace NCsModifier
 			*/
 			virtual float Modify(const float& InValue) const = 0;
 
-			virtual const ApplicationType& GetApplication() const = 0;
-
-		#undef ApplicationType
+			virtual const _::ApplicationType& GetApplication() const = 0;
 		};
 	}
 }

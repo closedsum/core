@@ -405,16 +405,13 @@ namespace NCsProjectile
 			{
 				UCsManager_Projectile* Manager_Projectile = CsPrjManagerLibrary::GetChecked(Context, WorldContext);
 
-				typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
-
-				const FECsProjectileModifier& Type  = PrjModifierLibrary::GetTypeChecked(Context, Modifier);
+				const FECsProjectileModifier& Type  = CsProjectileModifierLibrary::GetTypeChecked(Context, Modifier);
 				ModifierResourceType* Container		= Manager_Projectile->AllocateModifier(Type);
 				ModifierType* Copy					= Container->Get();
 
-				typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 				typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
 
-				CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+				CopyType* ICopy = CsProjectileModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
 				ICopy->Copy(Modifier);
 
@@ -432,16 +429,13 @@ namespace NCsProjectile
 			{
 				UCsManager_Projectile* Manager_Projectile = CsPrjManagerLibrary::GetChecked(Context, WorldContext);
 
-				typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
-
-				OutType				= PrjModifierLibrary::GetTypeChecked(Context, Modifier);
+				OutType				= CsProjectileModifierLibrary::GetTypeChecked(Context, Modifier);
 				OutContainer		= Manager_Projectile->AllocateModifier(OutType);
 				ModifierType* Copy	= OutContainer->Get();
 
-				typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 				typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
 
-				CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+				CopyType* ICopy = CsProjectileModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
 				ICopy->Copy(Modifier);
 			}

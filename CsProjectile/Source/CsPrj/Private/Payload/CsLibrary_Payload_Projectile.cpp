@@ -10,29 +10,28 @@ namespace NCsProjectile
 {
 	namespace NPayload
 	{
-		#define PayloadType NCsProjectile::NPayload::IPayload
-		bool FLibrary::CopyChecked(const FString& Context, const PayloadType* From, PayloadType* To)
+		namespace NLibrary
 		{
-		#undef PayloadType
-
-			bool Result = false;
-
-			// PooledObject
+			bool FLibrary::CopyChecked(const FString& Context, const PayloadType* From, PayloadType* To)
 			{
-				typedef NCsPooledObject::NPayload::FImplSlice SliceType;
-				typedef NCsPooledObject::NPayload::IPayload PayloadInterfaceType;
+				bool Result = false;
 
-				Result |= CopySliceChecked<SliceType, PayloadInterfaceType>(Context, From, To);
+				// PooledObject
+				{
+					using SliceType = NCsPooledObject::NPayload::FImplSlice;
+					using PayloadInterfaceType = NCsPooledObject::NPayload::IPayload;
+
+					Result |= CopySliceChecked<SliceType, PayloadInterfaceType>(Context, From, To);
+				}
+				// Projectile
+				{
+					using SliceType = NCsProjectile::NPayload::NImplSlice::FImplSlice;
+					using PayloadInterfaceType = NCsProjectile::NPayload::IPayload;
+
+					Result |= CopySliceChecked<SliceType, PayloadInterfaceType>(Context, From, To);
+				}
+				return Result;
 			}
-			// Projectile
-			{
-				typedef NCsProjectile::NPayload::FImplSlice SliceType;
-				typedef NCsProjectile::NPayload::IPayload PayloadInterfaceType;
-
-				Result |= CopySliceChecked<SliceType, PayloadInterfaceType>(Context, From, To);
-			}
-
-			return Result;
 		}
 	}
 }

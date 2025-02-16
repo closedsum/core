@@ -2,6 +2,7 @@
 #pragma once
 // Types
 #include "CsMacro_Proxy.h"
+#include "CsMacro_Cached.h"
 #include "CsTypes_Modifier.h"
 #include "Modifier/Types/CsTypes_ProjectileModifier.h"
 // Interface
@@ -24,8 +25,28 @@
 // FCsProjectileModifier_Int
 #pragma region
 
-// NCsProjectile::NModifier::FInt
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, FInt)
+struct FCsProjectileModifier_Int;
+
+// ModifierType (NCsProjectile::NModifier::NInt::FInt)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NInt, FInt)
+
+namespace NCsProjectileModifier_Int
+{
+	using ThisType = FCsProjectileModifier_Int;
+	using ModifierType = NCsProjectile::NModifier::NInt::FInt;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToModifier(ThisType* This, ModifierType* Modifier);
+		static void CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier);
+	};
+}
+
+// NCsProjectile::NModifier::NInt::FInt
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NInt, FInt)
 
 /**
 * Describes how to modify any int properties on a Projectile.
@@ -56,10 +77,11 @@ public:
 	{
 	}
 
-#define ModifierType NCsProjectile::NModifier::FInt
-	void CopyToModifier(ModifierType* Modifier);
-	void CopyToModifierAsValue(ModifierType* Modifier) const;
-#undef ModifierType
+	using ModifierType = NCsProjectile::NModifier::NInt::FInt;
+	using _Impl = NCsProjectileModifier_Int::FImpl;
+
+	FORCEINLINE void CopyToModifier(ModifierType* Modifier)					{ _Impl::CopyToModifier(this, Modifier); }
+	FORCEINLINE void CopyToModifierAsValue(ModifierType* Modifier) const	{ _Impl::CopyToModifierAsValue(this, Modifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -68,116 +90,120 @@ public:
 struct FCsInterfaceMap;
 class UObject;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NModifier, NInt, Int)
+
 namespace NCsProjectile
 {
 	namespace NModifier
 	{
-	#define PrjModifierType NCsProjectile::NModifier::IModifier
-	#define CopyType NCsProjectile::NModifier::NCopy::ICopy
-
-		/**
-		* Describes how to modify any int properties on a Projectile.
-		*  Projectile is an object that implements the interface: ICsProjectile.
-		*/
-		struct CSPRJ_API FInt : public CsModifierType,
-								public CsIntModifierType,
-								public PrjModifierType,
-								public ICsGetProjectileModifierType,
-								public ICsIsValid,
-								public CopyType,
-								public ICsReset
+		namespace NInt
 		{
-		public:
+			using PrjModifierType = NCsProjectile::NModifier::IModifier;
+			using CopyType = NCsProjectile::NModifier::NCopy::ICopy;
 
-			static const FName Name;
+			/**
+			* Describes how to modify any int properties on a Projectile.
+			*  Projectile is an object that implements the interface: ICsProjectile.
+			*/
+			struct CSPRJ_API FInt : public CsModifierType,
+									public CsIntModifierType,
+									public PrjModifierType,
+									public ICsGetProjectileModifierType,
+									public ICsIsValid,
+									public CopyType,
+									public ICsReset
+			{
+			public:
 
-		#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
+				static const FName Name;
 
-		private:
+			private:
+
+				using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+
+				CS_USING_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NModifier, NInt, Int);
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, int32)
+				CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
+
+			public:
+
+				FInt();
+				~FInt();
+
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-			CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
-			CS_DECLARE_MEMBER_WITH_PROXY(Value, int32)
-			CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
+			#pragma endregion ICsGetInterfaceMap
 
-		public:
+			// CsIntModifierType (NCsModifier::NInt::IInt)
+			#pragma region
+			public:
 
-			FInt();
-			~FInt();
+				FORCEINLINE int32 Modify(const int32& InValue) const
+				{
+					return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
+				}
 
-			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+			#pragma endregion CsIntModifierType (NCsModifier::NInt::IInt)
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
+			// ICsGetProjectileModifierType
+			#pragma region
+			public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+				FORCEINLINE const FECsProjectileModifier& GetProjectileModifierType() const { return GetType(); }
 
-		#pragma endregion ICsGetInterfaceMap
+			#pragma endregion ICsGetProjectileModifierType
 
-		// CsIntModifierType (NCsModifier::NInt::IInt)
-		#pragma region
-		public:
+			// ICsIsValid
+			#pragma region
+			public:
 
-			FORCEINLINE int32 Modify(const int32& InValue) const
-			{
-				return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
-			}
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
-		#pragma endregion CsIntModifierType (NCsModifier::NInt::IInt)
+			#pragma endregion ICsIsValid
 
-		// ICsGetProjectileModifierType
-		#pragma region
-		public:
+			// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+			#pragma region
+			public:
 
-			FORCEINLINE const FECsProjectileModifier& GetProjectileModifierType() const { return GetType(); }
+				void Copy(const PrjModifierType* From);
 
-		#pragma endregion ICsGetProjectileModifierType
+			#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 
-		// ICsIsValid
-		#pragma region
-		public:
+			// ICsReset
+			#pragma region
+			public:
 
-			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+				FORCEINLINE void Reset()
+				{
+					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsProjectileModifier::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_PROXY(Value, 0)
+					CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
+				}
 
-		#pragma endregion ICsIsValid
+			#pragma endregion ICsReset
 
-		// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
-		#pragma region
-		public:
+			public:
 
-			void Copy(const PrjModifierType* From);
-
-		#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
-
-		// ICsReset
-		#pragma region
-		public:
-
-			FORCEINLINE void Reset()
-			{
-				CS_RESET_MEMBER_WITH_PROXY(Type, EMCsProjectileModifier::Get().GetMAX())
-				CS_RESET_MEMBER_WITH_PROXY(Value, 0)
-				CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
-			}
-
-		#pragma endregion ICsReset
-
-		public:
-
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
-
-		#undef ApplicationType
-		};
-
-	#undef PrjModifierType
-	#undef CopyType
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
+			};
+		}
 	}
 }
 
@@ -186,8 +212,28 @@ namespace NCsProjectile
 // FCsProjectileModifier_Float
 #pragma region
 
-// NCsProjectile::NModifier::FFloat
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, FFloat)
+struct FCsProjectileModifier_Float;
+
+// ModifierType (NCsProjectile::NModifier::NFloat::FFloat)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NFloat, FFloat)
+
+namespace NCsProjectileModifier_Float
+{
+	using ThisType = FCsProjectileModifier_Float;
+	using ModifierType = NCsProjectile::NModifier::NFloat::FFloat;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToModifier(ThisType* This, ModifierType* Modifier);
+		static void CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier);
+	};
+}
+
+// ModifierType (NCsProjectile::NModifier::NFloat::FFloat)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NFloat, FFloat)
 
 /**
 * Describes how to modify any float properties on a Projectile.
@@ -218,10 +264,11 @@ public:
 	{
 	}
 
-#define ModifierType NCsProjectile::NModifier::FFloat
-	void CopyToModifier(ModifierType* Modifier);
-	void CopyToModifierAsValue(ModifierType* Modifier) const;
-#undef ModifierType
+	using ModifierType = NCsProjectile::NModifier::NFloat::FFloat;
+	using _Impl = NCsProjectileModifier_Float::FImpl;
+
+	FORCEINLINE void CopyToModifier(ModifierType* Modifier)					{ _Impl::CopyToModifier(this, Modifier); }
+	FORCEINLINE void CopyToModifierAsValue(ModifierType* Modifier) const	{ _Impl::CopyToModifierAsValue(this, Modifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -230,117 +277,121 @@ public:
 struct FCsInterfaceMap;
 class UObject;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NModifier, NFloat, Float)
+
 namespace NCsProjectile
 {
 	namespace NModifier
 	{
-	#define PrjModifierType NCsProjectile::NModifier::IModifier
-	#define CopyType NCsProjectile::NModifier::NCopy::ICopy
-
-		/**
-		* Describes how to modify any float properties on a Projectile.
-		*  Projectile is an object that implements the interface: ICsProjectile.
-		*/
-		struct CSPRJ_API FFloat : public CsModifierType,
-								  public CsFloatModifierType,
-								  public PrjModifierType,
-								  public ICsGetProjectileModifierType,
-								  public ICsIsValid,
-								  public CopyType,
-								  public ICsReset
+		namespace NFloat
 		{
-		public:
+			using PrjModifierType = NCsProjectile::NModifier::IModifier;
+			using CopyType = NCsProjectile::NModifier::NCopy::ICopy;
 
-			static const FName Name;
+			/**
+			* Describes how to modify any float properties on a Projectile.
+			*  Projectile is an object that implements the interface: ICsProjectile.
+			*/
+			struct CSPRJ_API FFloat : public CsModifierType,
+									  public CsFloatModifierType,
+									  public PrjModifierType,
+									  public ICsGetProjectileModifierType,
+									  public ICsIsValid,
+									  public CopyType,
+									  public ICsReset
+			{
+			public:
 
-		#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
+				static const FName Name;
 
-		private:
+			private:
+
+				using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+
+				CS_USING_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NModifier, NFloat, Float);
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
+
+			public:
+
+				FFloat();
+				~FFloat();
+
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-			CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
-			CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
-			CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
+			#pragma endregion ICsGetInterfaceMap
 
-		public:
+			// CsFloatModifierType (NCsModifier::NFloat::IFloat)
+			#pragma region
+			public:
 
-			FFloat();
-			~FFloat();
+				FORCEINLINE float Modify(const float& InValue) const
+				{
+					return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
+				}
 
-			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
+			#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+			// ICsGetProjectileModifierType
+			#pragma region
+			public:
 
-		#pragma endregion ICsGetInterfaceMap
+				FORCEINLINE const FECsProjectileModifier& GetProjectileModifierType() const { return GetType(); }
 
-		// CsFloatModifierType (NCsModifier::NFloat::IFloat)
-		#pragma region
-		public:
+			#pragma endregion ICsGetProjectileModifierType
 
-			FORCEINLINE float Modify(const float& InValue) const
-			{
-				return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
-			}
+			// ICsIsValid
+			#pragma region
+			public:
 
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
-		#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
+			#pragma endregion ICsIsValid
 
-		// ICsGetProjectileModifierType
-		#pragma region
-		public:
+			// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+			#pragma region
+			public:
 
-			FORCEINLINE const FECsProjectileModifier& GetProjectileModifierType() const { return GetType(); }
+				void Copy(const PrjModifierType* From);
 
-		#pragma endregion ICsGetProjectileModifierType
+			#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 
-		// ICsIsValid
-		#pragma region
-		public:
+			// ICsReset
+			#pragma region
+			public:
 
-			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+				FORCEINLINE void Reset()
+				{
+					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsProjectileModifier::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_PROXY(Value, 0.0)
+					CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
+				}
 
-		#pragma endregion ICsIsValid
+			#pragma endregion ICsREset
 
-		// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
-		#pragma region
-		public:
+			public:
 
-			void Copy(const PrjModifierType* From);
-
-		#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
-
-		// ICsReset
-		#pragma region
-		public:
-
-			FORCEINLINE void Reset()
-			{
-				CS_RESET_MEMBER_WITH_PROXY(Type, EMCsProjectileModifier::Get().GetMAX())
-				CS_RESET_MEMBER_WITH_PROXY(Value, 0.0)
-				CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
-			}
-
-		#pragma endregion ICsREset
-
-		public:
-
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
-
-		#undef ApplicationType
-		};
-
-	#undef PrjModifierType
-	#undef CopyType
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
+			};
+		}
 	}
 }
 
@@ -349,8 +400,28 @@ namespace NCsProjectile
 // FCsProjectileModifier_Toggle
 #pragma region
 
-// NCsProjectile::NModifier::FToggle
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, FToggle)
+struct FCsProjectileModifier_Toggle;
+
+// ModifierType (NCsProjectile::NModifier::NToggel::FToggle)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NToggle, FToggle)
+
+namespace NCsProjectileModifier_Toggle
+{
+	using ThisType = FCsProjectileModifier_Toggle;
+	using ModifierType = NCsProjectile::NModifier::NToggle::FToggle;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToModifier(ThisType* This, ModifierType* Modifier);
+		static void CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier);
+	};
+}
+
+// ModifierType (NCsProjectile::NModifier::NToggel::FToggle)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NToggle, FToggle)
 
 /**
 * Describes whether to toggle any properties on a Projectile.
@@ -376,10 +447,11 @@ public:
 	{
 	}
 
-#define ModifierType NCsProjectile::NModifier::FToggle
-	void CopyToModifier(ModifierType* Modifier);
-	void CopyToModifierAsValue(ModifierType* Modifier) const;
-#undef ModifierType
+	using ModifierType = NCsProjectile::NModifier::NToggle::FToggle;
+	using _Impl = NCsProjectileModifier_Toggle::FImpl;
+
+	FORCEINLINE void CopyToModifier(ModifierType* Modifier)					{ _Impl::CopyToModifier(this, Modifier); }
+	FORCEINLINE void CopyToModifierAsValue(ModifierType* Modifier) const	{ _Impl::CopyToModifierAsValue(this, Modifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -388,110 +460,114 @@ public:
 struct FCsInterfaceMap;
 class UObject;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NModifier, NToggle, Toggle)
+
 namespace NCsProjectile
 {
 	namespace NModifier
 	{
-	#define PrjModifierType NCsProjectile::NModifier::IModifier
-	#define CopyType NCsProjectile::NModifier::NCopy::ICopy
-
-		/**
-		* Describes whether to toggle any properties on a Projectile.
-		*  Projectile is an object that implements the interface: ICsProjectile.
-		*/
-		struct CSPRJ_API FToggle : public CsModifierType,
-								   public CsToggleModifierType,
-								   public PrjModifierType,
-								   public ICsGetProjectileModifierType,
-								   public ICsIsValid,
-								   public CopyType,
-								   public ICsReset
+		namespace NToggle
 		{
-		public:
+			using PrjModifierType = NCsProjectile::NModifier::IModifier;
+			using CopyType = NCsProjectile::NModifier::NCopy::ICopy;
 
-			static const FName Name;
+			/**
+			* Describes whether to toggle any properties on a Projectile.
+			*  Projectile is an object that implements the interface: ICsProjectile.
+			*/
+			struct CSPRJ_API FToggle : public CsModifierType,
+									   public CsToggleModifierType,
+									   public PrjModifierType,
+									   public ICsGetProjectileModifierType,
+									   public ICsIsValid,
+									   public CopyType,
+									   public ICsReset
+			{
+			public:
 
-		#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
+				static const FName Name;
 
-		private:
+			private:
+
+				using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+
+				CS_USING_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NModifier, NToggle, Toggle);
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
+				CS_DECLARE_MEMBER_WITH_PROXY(bEnable, bool)
+
+			public:
+
+				FToggle();
+				~FToggle();
+
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-			CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
-			CS_DECLARE_MEMBER_WITH_PROXY(bEnable, bool)
+			#pragma endregion ICsGetInterfaceMap
 
-		public:
+			// CsToggleModifierType (NCsModifier::NToggle::IToggle)
+			#pragma region
+			public:
 
-			FToggle();
-			~FToggle();
+				FORCEINLINE bool IsEnabled() const { return GetbEnable(); }
 
-			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+			#pragma endregion CsToggleModifierType (NCsModifier::NToggle::IToggle)
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
+			// ICsGetProjectileModifierType
+			#pragma region
+			public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+				FORCEINLINE const FECsProjectileModifier& GetProjectileModifierType() const { return GetType(); }
 
-		#pragma endregion ICsGetInterfaceMap
+			#pragma endregion ICsGetProjectileModifierType
 
-		// CsToggleModifierType (NCsModifier::NToggle::IToggle)
-		#pragma region
-		public:
+			// ICsIsValid
+			#pragma region
+			public:
 
-			FORCEINLINE bool IsEnabled() const { return GetbEnable(); }
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
-		#pragma endregion CsToggleModifierType (NCsModifier::NToggle::IToggle)
+			#pragma endregion ICsIsValid
 
-		// ICsGetProjectileModifierType
-		#pragma region
-		public:
+			// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+			#pragma region
+			public:
 
-			FORCEINLINE const FECsProjectileModifier& GetProjectileModifierType() const { return GetType(); }
+				void Copy(const PrjModifierType* From);
 
-		#pragma endregion ICsGetProjectileModifierType
+			#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 
-		// ICsIsValid
-		#pragma region
-		public:
+			// ICsReset
+			#pragma region
+			public:
 
-			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+				FORCEINLINE void Reset()
+				{
+					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsProjectileModifier::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_PROXY(bEnable, false)
+				}
 
-		#pragma endregion ICsIsValid
+			#pragma endregion ICsREset
 
-		// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
-		#pragma region
-		public:
+			public:
 
-			void Copy(const PrjModifierType* From);
-
-		#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
-
-		// ICsReset
-		#pragma region
-		public:
-
-			FORCEINLINE void Reset()
-			{
-				CS_RESET_MEMBER_WITH_PROXY(Type, EMCsProjectileModifier::Get().GetMAX())
-				CS_RESET_MEMBER_WITH_PROXY(bEnable, false)
-			}
-
-		#pragma endregion ICsREset
-
-		public:
-
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bEnable, bool)
-
-		#undef ApplicationType
-		};
-
-	#undef PrjModifierType
-	#undef CopyType
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bEnable, bool)
+			};
+		}
 	}
 }
 
@@ -500,7 +576,27 @@ namespace NCsProjectile
 // FCsProjectileModifierInfo
 #pragma region
 
-// NCsProjectile::NModifier::FInfo
+struct FCsProjectileModifierInfo;
+
+// InfoType (NCsProjectile::NModifier::FInfo)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, FInfo)
+
+namespace NCsProjectileModifierInfo
+{
+	using ThisType = FCsProjectileModifierInfo;
+	using InfoType = NCsProjectile::NModifier::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
+// InfoType (NCsProjectile::NModifier::FInfo)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, FInfo)
 
 USTRUCT(BlueprintType)
@@ -524,10 +620,11 @@ struct CSPRJ_API FCsProjectileModifierInfo
 	{
 	}
 
-#define InfoType NCsProjectile::NModifier::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsProjectile::NModifier::FInfo;
+	using _Impl = NCsProjectileModifierInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)					{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -539,10 +636,12 @@ namespace NCsProjectile
 	{
 		struct CSPRJ_API FInfo
 		{
-		#define IntModifierType NCsProjectile::NModifier::FInt
-		#define FloatModifierType NCsProjectile::NModifier::FFloat
-		#define ToggleModifierType NCsProjectile::NModifier::FToggle
-		#define ModifierType NCsProjectile::NModifier::IModifier
+		private:
+
+			using IntModifierType = NCsProjectile::NModifier::NInt::FInt;
+			using FloatModifierType = NCsProjectile::NModifier::NFloat::FFloat;
+			using ToggleModifierType = NCsProjectile::NModifier::NToggle::FToggle;
+			using ModifierType = NCsProjectile::NModifier::IModifier;
 
 		public:
 
@@ -593,11 +692,6 @@ namespace NCsProjectile
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-		#undef IntModifierType
-		#undef FloatModifierType
-		#undef ToggleModifierType
-		#undef ModifierType
 		};
 	}
 }
@@ -607,7 +701,27 @@ namespace NCsProjectile
 // FCsProjectileModifier_Create_Int
 #pragma region
 
-// NCsProjectile::NModifier::NCreate::FInt
+struct FCsProjectileModifier_Create_Int;
+
+// CreateModifierType (NCsProjectile::NModifier::NCreate::FInt)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NCreate, FInt)
+
+namespace NCsProjectileModifier_Create_Int
+{
+	using ThisType = FCsProjectileModifier_Create_Int;
+	using CreateModifierType = NCsProjectile::NModifier::NCreate::FInt;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToCreateModifier(ThisType* This, CreateModifierType* CreateModifier);
+		static void CopyToCreateModifierAsValue(const ThisType* This, CreateModifierType* CreateModifier);
+	};
+}
+
+// CreateModifierType (NCsProjectile::NModifier::NCreate::FInt)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NCreate, FInt)
 
 /**
@@ -638,10 +752,11 @@ public:
 	{
 	}
 
-#define CreateModifierType NCsProjectile::NModifier::NCreate::FInt
-	void CopyToCreateModifier(CreateModifierType* CreateModifier);
-	void CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const;
-#undef CreateModifierType
+	using CreateModifierType = NCsProjectile::NModifier::NCreate::FInt;
+	using _Impl = NCsProjectileModifier_Create_Int::FImpl;
+
+	FORCEINLINE void CopyToCreateModifier(CreateModifierType* CreateModifier)				{ _Impl::CopyToCreateModifier(this, CreateModifier); }
+	FORCEINLINE void CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const	{ _Impl::CopyToCreateModifierAsValue(this, CreateModifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -657,8 +772,11 @@ namespace NCsProjectile
 		{
 			struct CSPRJ_API FInt
 			{
-			#define CreateType NCsModifier::NValue::NNumeric::ECreate
-			#define ModifierType NCsProjectile::NModifier::FInt
+			private:
+
+				using CreateType = NCsModifier::NValue::NNumeric::ECreate;
+				using ModifierType = NCsProjectile::NModifier::NInt::FInt;
+				using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
 
 			private:
 
@@ -681,16 +799,11 @@ namespace NCsProjectile
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, CreateType)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
 				FORCEINLINE ModifierType* GetModifierPtr() { return &Modifier; }
-
-			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+	
 				void CreateChecked(const FString& Context, const UObject* WorldContext, const int32& InValue, AllocatedModifierType& OutModifier);
-			#undef AllocatedModifierType
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-			#undef CreateType
-			#undef ModifierType
 			};
 		}
 	}
@@ -701,7 +814,27 @@ namespace NCsProjectile
 // FCsProjectileModifier_Create_Float
 #pragma region
 
-// NCsProjectile::NModifier::NCreate::FFloat
+struct FCsProjectileModifier_Create_Float;
+
+// CreateModifierType (NCsProjectile::NModifier::NCreate::FFloat)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NCreate, FFloat)
+
+namespace NCsProjectileModifier_Create_Float
+{
+	using ThisType = FCsProjectileModifier_Create_Float;
+	using CreateModifierType = NCsProjectile::NModifier::NCreate::FFloat;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToCreateModifier(ThisType* This, CreateModifierType* CreateModifier);
+		static void CopyToCreateModifierAsValue(const ThisType* This, CreateModifierType* CreateModifier);
+	};
+}
+
+// CreateModifierType (NCsProjectile::NModifier::NCreate::FFloat)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NCreate, FFloat)
 
 /**
@@ -732,10 +865,11 @@ public:
 	{
 	}
 
-#define CreateModifierType NCsProjectile::NModifier::NCreate::FFloat
-	void CopyToCreateModifier(CreateModifierType* CreateModifier);
-	void CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const;
-#undef CreateModifierType
+	using CreateModifierType = NCsProjectile::NModifier::NCreate::FFloat;
+	using _Impl = NCsProjectileModifier_Create_Float::FImpl;
+
+	FORCEINLINE void CopyToCreateModifier(CreateModifierType* CreateModifier)				{ _Impl::CopyToCreateModifier(this, CreateModifier); }
+	FORCEINLINE void CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const	{ _Impl::CopyToCreateModifierAsValue(this, CreateModifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -751,8 +885,11 @@ namespace NCsProjectile
 		{
 			struct CSPRJ_API FFloat
 			{
-			#define CreateType NCsModifier::NValue::NNumeric::ECreate
-			#define ModifierType NCsProjectile::NModifier::FFloat
+			private:
+
+				using CreateType = NCsModifier::NValue::NNumeric::ECreate;
+				using ModifierType = NCsProjectile::NModifier::NFloat::FFloat;
+				using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
 
 			private:
 
@@ -775,16 +912,11 @@ namespace NCsProjectile
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, CreateType)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
 				FORCEINLINE ModifierType* GetModifierPtr() { return &Modifier; }
-
-			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+			
 				void CreateChecked(const FString& Context, const UObject* WorldContext, const float& InValue, AllocatedModifierType& OutModifier);
-			#undef AllocatedModifierType
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-			#undef CreateType
-			#undef ModifierType
 			};
 		}
 	}
@@ -795,7 +927,27 @@ namespace NCsProjectile
 // FCsProjectileModifier_CreateInfo
 #pragma region
 
-// NCsProjectile::NModifier::NCreate::FInfo
+struct FCsProjectileModifier_CreateInfo;
+
+// InfoType (NCsProjectile::NModifier::NCreate::FInfo)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NCreate, FInfo)
+
+namespace NCsProjectileModifier_CreateInfo
+{
+	using ThisType = FCsProjectileModifier_CreateInfo;
+	using InfoType = NCsProjectile::NModifier::NCreate::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSPRJ_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
+// InfoType (NCsProjectile::NModifier::NCreate::FInfo)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NCreate, FInfo)
 
 USTRUCT(BlueprintType)
@@ -815,10 +967,11 @@ struct CSPRJ_API FCsProjectileModifier_CreateInfo
 	{
 	}
 
-#define InfoType NCsProjectile::NModifier::NCreate::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsProjectile::NModifier::NCreate::FInfo;
+	using _Impl = NCsProjectileModifier_CreateInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)					{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -832,8 +985,11 @@ namespace NCsProjectile
 		{
 			struct CSPRJ_API FInfo
 			{
-			#define CreateIntModifierType NCsProjectile::NModifier::NCreate::FInt
-			#define CreateFloatModifierType NCsProjectile::NModifier::NCreate::FFloat
+			private:
+
+				using CreateIntModifierType = NCsProjectile::NModifier::NCreate::FInt;
+				using CreateFloatModifierType = NCsProjectile::NModifier::NCreate::FFloat;
+				using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
 
 			public:
 
@@ -850,17 +1006,12 @@ namespace NCsProjectile
 				}
 
 				FORCEINLINE int32 GetTotalSize() const { return Ints.Num() + Floats.Num(); }
-
-			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+			
 				void CreateChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers);
 				void AddChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers);
-			#undef AllocatedModifierType
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-			#undef CreateIntModifierType
-			#undef CreateFloatModifierType
 			};
 		}
 	}

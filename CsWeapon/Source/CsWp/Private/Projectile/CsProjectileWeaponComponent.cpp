@@ -679,13 +679,13 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 	}
 	// Projectile
 	{
-		typedef NCsProjectile::NPayload::FImplSlice SliceType;
+		using SliceType = NCsProjectile::NPayload::NImplSlice::FImplSlice;
 		typedef NCsProjectile::NPayload::IPayload SliceInterfaceType;
 
 		SliceType* Slice = CsProjectilePayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
 		Slice->Type		 = Outer->GetProjectileType();
-		Slice->Location  = GetLaunchLocation();
-		Slice->Direction = GetLaunchDirection();
+		Slice->Location  = CsMathLibrary::Convert(GetLaunchLocation());
+		Slice->Direction = CsMathLibrary::Convert(GetLaunchDirection());
 	}
 	// Projectile Modifiers
 	{

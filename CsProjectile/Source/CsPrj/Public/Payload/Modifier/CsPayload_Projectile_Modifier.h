@@ -4,7 +4,7 @@
 // Types
 #include "CsMacro_Namespace.h"
 
-// NCsProjectile::NModifier::IModifier
+// ModifierType (NCsProjectile::NModifier::IModifier)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, IModifier)
 
 namespace NCsProjectile
@@ -21,15 +21,19 @@ namespace NCsProjectile
 
 				static const FName Name;
 
-			#define ModifierType NCsProjectile::NModifier::IModifier
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ModifierType = NCsProjectile::NModifier::IModifier;
+				};
 
 			public:
 
 				virtual ~IModifier(){}
 
-				virtual const TArray<ModifierType*>& GetModifiers() const = 0;
-
-			#undef ModifierType
+				virtual const TArray<_::ModifierType*>& GetModifiers() const = 0;
 			};
 		}
 	}

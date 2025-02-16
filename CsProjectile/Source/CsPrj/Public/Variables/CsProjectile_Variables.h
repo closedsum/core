@@ -71,6 +71,10 @@ namespace NCsProjectile
 		{
 		private:
 
+			using StateType = NCsProjectile::EState;
+
+		private:
+
 			NCsProjectile::NVariables::FManager* Outer;
 
 		public:
@@ -122,6 +126,11 @@ namespace NCsProjectile
 
 			private:
 
+				using TrackingStateType = NCsProjectile::NTracking::EState;
+				using DestinationType = NCsProjectile::NTracking::EDestination;
+
+			private:
+
 				NCsProjectile::NVariables::FVariables* Outer;
 
 			public:
@@ -140,15 +149,11 @@ namespace NCsProjectile
 				FORCEINLINE const int32& GetID() const { return Outer->GetID(); }
 
 				const float& GetDelay() const;
-				float& GetDelay();
-			#define TrackingStateType NCsProjectile::NTracking::EState
+				float& GetDelay();			
 				const TrackingStateType& GetState() const;
-				TrackingStateType& GetState();
-			#undef TrackingStateType
-			#define DestinationType NCsProjectile::NTracking::EDestination
+				TrackingStateType& GetState();	
 				const DestinationType& GetDestinationType() const;
 				DestinationType& GetDestinationType();
-			#undef DestinationType
 				const uint32& GetDestinationMask() const;
 				uint32& GetDestinationMask();
 				const USceneComponent* GetComponent() const;
@@ -247,11 +252,9 @@ namespace NCsProjectile
 			FORCEINLINE const int32& GetID() const { return ID; }
 
 			const FECsProjectile& GetType() const;
-			FECsProjectile& GetType();
-		#define StateType NCsProjectile::EState
+			FECsProjectile& GetType();	
 			const StateType& GetState() const;
 			StateType& GetState();
-		#undef StateType
 			const int32& GetGeneration() const;
 			int32& GetGeneration();
 			const FVector3f& GetLastLocation() const;

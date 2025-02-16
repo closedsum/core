@@ -22,10 +22,12 @@ namespace NCsProjectile
 				{
 					struct CSPRJ_API FVariables
 					{
-					public:
+					private:
 
-					#define SpawnProjectileOnHitDataType NCsProjectile::NData::NOnHit::NSpawn::NProjectile::IProjectile
-					#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+						using SpawnProjectileOnHitDataType = NCsProjectile::NData::NOnHit::NSpawn::NProjectile::IProjectile;
+						using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
+
+					public:
 
 						int32 Generation;
 
@@ -71,9 +73,6 @@ namespace NCsProjectile
 
 							Modifiers.Reset(Modifiers.Max());
 						}
-
-					#undef SpawnProjectileOnHitDataType
-					#undef AllocatedModifierType
 					};
 
 					struct CSPRJ_API FResource final : public TCsResourceContainer<FVariables>

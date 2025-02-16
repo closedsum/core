@@ -25,9 +25,9 @@ namespace NCsProjectile
 
 			virtual const int32& GetGeneration() const = 0;
 
-			virtual const FVector3f& GetDirection() const = 0;
+			virtual const FVector& GetDirection() const = 0;
 
-			virtual const FVector3f& GetLocation() const = 0;
+			virtual const FVector& GetLocation() const = 0;
 		};
 	}
 }
@@ -51,8 +51,8 @@ namespace NCsProjectile
 			void* Root;
 
 			const FECsProjectile&(*__GetType)(const void*);
-			const FVector3f&(*__GetDirection)(const void*);
-			const FVector3f&(*__GetLocation)(const void*);
+			const FVector&(*__GetDirection)(const void*);
+			const FVector&(*__GetLocation)(const void*);
 
 		public:
 
@@ -65,14 +65,14 @@ namespace NCsProjectile
 			}
 
 			FORCEINLINE void Set__GetType(const FECsProjectile& (*Fn)(const void*)) { __GetType = Fn; }
-			FORCEINLINE void Set__GetDirection(const FVector3f& (*Fn)(const void*)) { __GetDirection = Fn; }
-			FORCEINLINE void Set__GetLocation(const FVector3f& (*Fn)(const void*)) { __GetLocation = Fn; }
+			FORCEINLINE void Set__GetDirection(const FVector& (*Fn)(const void*)) { __GetDirection = Fn; }
+			FORCEINLINE void Set__GetLocation(const FVector& (*Fn)(const void*)) { __GetLocation = Fn; }
 
 			FORCEINLINE const FECsProjectile& GetType() const { check(Root); check(__GetType); return __GetType(Root); }
 
-			FORCEINLINE const FVector3f& GetDirection() const { check(Root); check(__GetDirection); return __GetDirection(Root); }
+			FORCEINLINE const FVector& GetDirection() const { check(Root); check(__GetDirection); return __GetDirection(Root); }
 
-			FORCEINLINE const FVector3f& GetLocation() const { check(Root); check(__GetLocation); return __GetLocation(Root); }
+			FORCEINLINE const FVector& GetLocation() const { check(Root); check(__GetLocation); return __GetLocation(Root); }
 		};
 
 		template<typename T>
@@ -81,8 +81,8 @@ namespace NCsProjectile
 		private:
 
 			const FECsProjectile&(T::*GetType)() const;
-			const FVector3f&(T::*GetDirection)() const;
-			const FVector3f&(T::*GetLocation)() const;
+			const FVector&(T::*GetDirection)() const;
+			const FVector&(T::*GetLocation)() const;
 
 		public:
 

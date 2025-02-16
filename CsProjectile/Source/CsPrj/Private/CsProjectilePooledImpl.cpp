@@ -98,6 +98,31 @@
 // Cached
 #pragma region
 
+CS_START_CACHED_FUNCTION_NAME(CsProjectilePooledImpl)
+	// AActor Interface
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, PostInitializeComponents)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, SetType)
+	// ICsPooledObject
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, Allocate)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, Deallocate)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, Deallocate_Internal)
+	// Launch
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, Launch)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, OnLaunch_SetModifiers)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, Launch_Delayed)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, Launch_Delayed_Internal)
+	// ICsProjectile_Hit
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, Hit)
+	// ICsProjectile_Tracking
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, Tracking_GetDestination)
+	// Variables
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, AllocateVariables)
+	// Collision
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, OnHit)
+	// Modifier
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectilePooledImpl, ApplyMovementModifiers)
+CS_END_CACHED_FUNCTION_NAME
+
 namespace NCsProjectilePooledImpl
 {
 	namespace NCached
@@ -774,9 +799,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		float LifeTime = Cache->GetLifeTime();
 		float Delay	   = ShouldDelayLaunch ? LaunchParams->GetDelay() : 0.0f;
 
-		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-
-		LifeTime = ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsProjectileModifier::LifeTime, LifeTime);
+		LifeTime = CsProjectileModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsProjectileModifier::LifeTime, LifeTime);
 
 		// TODO: Add Modifier for Delay
 		CsProjectileCacheLibrary::SetLifeTimeChecked(Context, Cache, LifeTime + Delay);
@@ -819,10 +842,10 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)
 	{
-		const FVector3d Direction = CsMathLibrary::Convert(Payload->GetDirection());
-		FRotator3d Rotation		  = Direction.Rotation();
+		const FVector Direction = Payload->GetDirection();
+		FRotator Rotation		= Direction.Rotation();
 
-		TeleportTo(CsMathLibrary::Convert(Payload->GetLocation()), Rotation, false, true);
+		TeleportTo(Payload->GetLocation(), Rotation, false, true);
 	}
 
 	// Real Visible
@@ -1046,67 +1069,46 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 
 void ACsProjectilePooledImpl::Launch_Delayed(const FLaunch_Delayed_Payload& Payload)
 {
-	using namespace NCsProjectilePooledImpl::NCached;
-
-	const FString& Context = Str::Launch_Delayed;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Launch_Delayed);
 
 	// TODO: NOTE: Need a way UpdateGroup is passed via Payload
 
-	UCsCoroutineScheduler* Scheduler   = CsCoroutineSchedulerLibrary::GetChecked(Context, GetWorldContext());
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
+	CS_COROUTINE_SETUP_UOBJECT(ACsProjectilePooledImpl, Launch_Delayed_Internal, NCsUpdateGroup::GameState, this, GetWorldContext());
 
-	typedef NCsCoroutine::NPayload::FImpl CoroutinePayloadType;
-
-	CoroutinePayloadType* CoroutinePayload = Scheduler->AllocatePayload(UpdateGroup);
-
-	#define COROUTINE Launch_Delayed_Internal
-
-	CoroutinePayload->CoroutineImpl.BindUObject(this, &ACsProjectilePooledImpl::COROUTINE);
-	CoroutinePayload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
-	CoroutinePayload->Owner.SetObject(this);
-	CoroutinePayload->SetName(Str::COROUTINE);
-	CoroutinePayload->SetFName(Name::COROUTINE);
-
-	#undef COROUTINE
-
-	typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
-	typedef NCsProjectile::NLaunch::FParams LaunchParamsType;
+	using LaunchDataType = NCsProjectile::NData::NLaunch::ILaunch ;
+	using LaunchParamsType = NCsProjectile::NLaunch::FParams;
 
 	LaunchDataType* LaunchData			 = CsPrjDataLibrary::GetSafeInterfaceChecked<LaunchDataType>(Context, Data);
 	const LaunchParamsType& LaunchParams = LaunchData->GetLaunchParams();
 
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT_START
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR_START
+	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
+
 	// Delay
-	static const int32 DELAY = 0;
-	CoroutinePayload->SetValue_Float(DELAY, LaunchParams.GetDelay());
-
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(LaunchParams.GetDelay());
 	// Direction
-	static const int32 DIRECTION = 0;
-	CoroutinePayload->SetValue_Vector(DIRECTION, Payload.Direction);
-
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR(Payload.Direction);
 	// Should Update Collision
-	static const int32 SHOULD_UPDATE_COLLISION = 0;
-	CoroutinePayload->SetValue_Flag(SHOULD_UPDATE_COLLISION, LaunchParams.GetDelayParams().GetbCollision());
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(LaunchParams.GetDelayParams().GetbCollision());
 
-	Launch_Delayed_Handle = Scheduler->Start(CoroutinePayload);
+	Launch_Delayed_Handle = CS_COROUTINE_START(GetWorldContext());
 }
 
 char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 {
-	using namespace NCsProjectilePooledImpl::NCached;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Launch_Delayed_Internal);
 
-	const FString& Context = Str::Launch_Delayed_Internal;
-
-	// Delay
-	static const int32 DELAY = 0;
-	const float& Delay = R->GetValue_Float(DELAY);
-
-	// Direction
-	static const int32 DIRECTION = 0;
-	const FVector3f& Direction = R->GetValue_Vector(DIRECTION);
+	CS_COROUTINE_READ_FLOAT_START
+	CS_COROUTINE_READ_VECTOR_START
+	CS_COROUTINE_READ_FLAG_START
 	
+	// Delay
+	CS_COROUTINE_READ_FLOAT_CONST_REF(R, Delay);
+	// Direction
+	CS_COROUTINE_READ_VECTOR_CONST_REF(R, Direction);
 	// Should Update Collision
-	static const int32 SHOULD_UPDATE_COLLISION = 0;
-	const bool& ShouldUpdateCollision = R->GetValue_Flag(SHOULD_UPDATE_COLLISION);
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, ShouldUpdateCollision);
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -1119,6 +1121,8 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 	// Collision
 	if (ShouldUpdateCollision)
 	{
+		using namespace NCsProjectilePooledImpl::NCached;
+
 		const FString& ScopeName		   = ScopedTimer::SetCollision;
 		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
 		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogProjectileScopedTimerLaunchSetCollision;
@@ -1514,8 +1518,8 @@ void ACsProjectilePooledImpl::AllocateVariables(const PayloadType* Payload)
 	VariablesPayloadType VariablesPayload;
 	VariablesPayload.Projectile	= this;
 	VariablesPayload.Type		= Type;
-	VariablesPayload.Location	= Payload->GetLocation();
-	VariablesPayload.Direction  = Payload->GetDirection();
+	VariablesPayload.Location	= CsMathLibrary::Convert(Payload->GetLocation());
+	VariablesPayload.Direction  = CsMathLibrary::Convert(Payload->GetDirection());
 
 	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
 
@@ -1563,9 +1567,7 @@ float ACsProjectilePooledImpl::FMovementImpl::CalculateInitialSpeed(const EStart
 			float InitialSpeed = Outer->GetData()->GetInitialSpeed();
 
 			// Check to apply any Movement Modifiers
-			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-
-			InitialSpeed = ModifierLibrary::ModifyFloatChecked(Context, Outer->GetModifiers(), NCsProjectileModifier::InitialSpeed, InitialSpeed);
+			InitialSpeed = CsProjectileModifierLibrary::ModifyFloatChecked(Context, Outer->GetModifiers(), NCsProjectileModifier::InitialSpeed, InitialSpeed);
 			return InitialSpeed;
 		}
 	}
@@ -1603,9 +1605,7 @@ float ACsProjectilePooledImpl::FMovementImpl::CalculateMaxSpeed(const EStart& St
 			float MaxSpeed = Outer->GetData()->GetMaxSpeed();
 
 			// Check to apply any Movement Modifiers
-			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-
-			MaxSpeed = ModifierLibrary::ModifyFloatChecked(Context, Outer->GetModifiers(), NCsProjectileModifier::MaxSpeed, MaxSpeed);
+			MaxSpeed = CsProjectileModifierLibrary::ModifyFloatChecked(Context, Outer->GetModifiers(), NCsProjectileModifier::MaxSpeed, MaxSpeed);
 			return MaxSpeed;
 		}
 	}
@@ -2022,13 +2022,10 @@ void ACsProjectilePooledImpl::SetTrailFXPooled(const FString& Context, const FEC
 void ACsProjectilePooledImpl::ApplyHitCountModifiers(const FString& Context, const CollisionDataType* CollisionData)
 {
 	HitCount = CollisionData->GetHitCount();
-
-	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-
-	HitCount = ModifierLibrary::ModifyIntChecked(Context, Modifiers, NCsProjectileModifier::HitCount, HitCount);
+	HitCount = CsProjectileModifierLibrary::ModifyIntChecked(Context, Modifiers, NCsProjectileModifier::HitCount, HitCount);
 }
 
-void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context, const FVector3f& Direction)
+void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context, const FVector& Direction)
 {
 	typedef ACsProjectilePooledImpl::FMovementImpl::EStart StartType;
 
@@ -2039,8 +2036,8 @@ void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context,
 		MovementInfo.GetInitialSpeed() = MovementInfo.GetMaxSpeed();
 
 	MovementInfo.GetSpeed()		   = MovementInfo.GetInitialSpeed();
-	MovementInfo.GetDirection()	   = Direction;
-	MovementInfo.GetVelocity()	   = MovementInfo.GetInitialSpeed() * Direction;
+	MovementInfo.GetDirection()	   = CsMathLibrary::Convert(Direction);
+	MovementInfo.GetVelocity()	   = CsMathLibrary::Convert(MovementInfo.GetInitialSpeed() * Direction);
 	MovementInfo.GetGravityScale() = Data->GetGravityScale();
 
 	MovementComponent->InitialSpeed			  = MovementInfo.GetInitialSpeed();

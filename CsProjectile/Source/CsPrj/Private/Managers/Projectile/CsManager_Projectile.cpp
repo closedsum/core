@@ -151,7 +151,7 @@ using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 using PoolParamsType = NCsPooledObject::NManager::FPoolParams;
 using PayloadType = NCsProjectile::NPayload::IPayload;
 using DataType = NCsProjectile::NData::IData;
-using ModifierLibrary = NCsProjectile::NModifier::FLibrary;
+using ModifierLibrary = NCsProjectile::NModifier::NLibrary::FLibrary;
 using ModifierManagerType = NCsProjectile::NModifier::NResource::FManager;
 using ModifierResourceType = NCsProjectile::NModifier::NResource::FResource;
 using ModifierType = NCsProjectile::NModifier::IModifier;
@@ -993,7 +993,7 @@ PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 
 	// Projectile (NCsProjectile::NPayload::FImplSice)
 	{
-		typedef NCsProjectile::NPayload::FImplSlice SliceType;
+		using SliceType = NCsProjectile::NPayload::NImplSlice::FImplSlice;
 
 		SliceType* Slice = new SliceType();
 
@@ -1372,13 +1372,13 @@ ModifierType* UCsManager_Projectile::ConstructModifier(const ModifierImplType& I
 {
 	// Int
 	if (ImplType == ModifierImplType::Int)
-		return new NCsProjectile::NModifier::FInt();
+		return new NCsProjectile::NModifier::NInt::FInt();
 	// Float
 	if (ImplType == ModifierImplType::Float)
-		return new NCsProjectile::NModifier::FFloat();
+		return new NCsProjectile::NModifier::NFloat::FFloat();
 	// Toggle
 	if (ImplType == ModifierImplType::Toggle)
-		return new NCsProjectile::NModifier::FToggle();
+		return new NCsProjectile::NModifier::NToggle::FToggle();
 	check(0);
 	return nullptr;
 }

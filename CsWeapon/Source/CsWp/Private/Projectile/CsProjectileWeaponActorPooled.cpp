@@ -103,11 +103,27 @@
 //	Cached 
 #pragma region
 
-
 CS_START_CACHED_FUNCTION_NAME(CsProjectileWeaponActorPooled)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, SetUpdateGroup)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, Allocate)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, SetWeaponType)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, SetProjectileType)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, Init)
 	// AActor Interface
 	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, BeginPlay)
 	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, PostInitializeComponents)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, OnUpdate_HandleStates)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, CanFire)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, Fire)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, Fire_Internal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, Fire_Internal_OnEnd)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, GetTimeBetweenShots)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, ProjectilesPerShot_GetCount)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, ProjectilesPerShot_GetInterval)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, FireProjectile)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, SetProjectilePayload)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, LaunchProjectile)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsProjectileWeaponActorPooled, UseSpreadParams)
 CS_END_CACHED_FUNCTION_NAME
 
 namespace NCsProjectileWeaponActorPooled
@@ -820,112 +836,90 @@ bool ACsProjectileWeaponActorPooled::CanFire() const
 
 void ACsProjectileWeaponActorPooled::Fire()
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Fire);
 
-	const FString& Context = Str::Fire;
+	CS_COROUTINE_SETUP_UOBJECT(ACsProjectileWeaponActorPooled, Fire_Internal, UpdateGroup, this, GetWorldContext());
 
-	UCsCoroutineScheduler* Scheduler   = CsCoroutineSchedulerLibrary::GetChecked(Context, GetWorldContext());
 	const FCsDeltaTime& TimeSinceStart = CsTimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 	Fire_StartTime = TimeSinceStart.Time;
-
-	// Setup Fire Routine
-	using CoroutinePayloadType = NCsCoroutine::NPayload::FImpl;
-
-	CoroutinePayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
-
-	#define COROUTINE Fire_Internal
-
-	Payload->CoroutineImpl.BindUObject(this, &ACsProjectileWeaponActorPooled::COROUTINE);
-	Payload->StartTime = CsTimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
-	Payload->Owner.SetObject(this);
-	Payload->SetName(Str::COROUTINE);
-	Payload->SetFName(Name::COROUTINE);
-	Payload->OnEnds.AddDefaulted();
-	Payload->OnEnds.Last().BindUObject(this, &ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd);
-	Payload->AbortMessages.Add(Name::Abort_Fire_Internal);
-
-	#undef COROUTINE
 
 	const FGuid FireGuid = FGuid::NewGuid();
 	uint32 FireID		 = GetTypeHash(FireGuid);
 
 	FireIDs.Add(FireID);
 
-	static const int32 FIRE_ID = 0;
-	Payload->SetValue_UnsignedInt(FIRE_ID, FireID);
+	CS_COROUTINE_PAYLOAD_PASS_UNSIGNED_INT_START
+	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
+	CS_COROUTINE_PAYLOAD_PASS_INT_START
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT_START
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR3F_START
+	CS_COROUTINE_PAYLOAD_PASS_VOID_START
+
+	CS_COROUTINE_PAYLOAD_PASS_UNSIGNED_INT(FireID);
 
 	Fire_PreStart(FireID);
 	OnFire_PreStart_Event.Broadcast(this, FireID);
 
-	Payload->SetValue_Flag(CS_FIRST, PrjWeaponData->HasInfiniteAmmo());
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(PrjWeaponData->HasInfiniteAmmo());
 
 	// ProjectilePerShot
-	static const int32 PROJECTILES_PER_SHOT = 0;
 	int32 ProjectilesPerShot = ProjectilesPerShot_GetCount();
-	Payload->SetValue_Int(PROJECTILES_PER_SHOT, ProjectilesPerShot);
+	CS_COROUTINE_PAYLOAD_PASS_INT(ProjectilesPerShot);
 
-	static const int32 PROJECTILES_PER_SHOT_INTERVAL = 0;
-	Payload->SetValue_Float(PROJECTILES_PER_SHOT_INTERVAL, ProjectilesPerShot_GetInterval());
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(ProjectilesPerShot_GetInterval());
 
 		// Cache Launch Location
 	const bool UseCachedLaunchLocation = !PrjWeaponData->GetProjectilesPerShotParams().GetbCurrentLaunchLocation();
-	static const int32 USE_CACHED_LAUNCH_LOCATION = 0;
-	Payload->SetValue_Flag(USE_CACHED_LAUNCH_LOCATION, UseCachedLaunchLocation);
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(UseCachedLaunchLocation);
 
 	if (UseCachedLaunchLocation)
 	{
-		static const int32 CACHED_LAUNCH_LOCATION = 0;
-		Payload->SetValue_Vector(CACHED_LAUNCH_LOCATION, ProjectileImpl->GetLaunchLocation());
+		CS_COROUTINE_PAYLOAD_PASS_VECTOR3F(ProjectileImpl->GetLaunchLocation());
 	}
 		// Cache Launch Direction
 	const bool UseCachedLaunchDirection = !PrjWeaponData->GetProjectilesPerShotParams().GetbCurrentLaunchDirection();
-	static const int32 USE_CACHED_LAUNCH_DIRECTION = 1;
-	Payload->SetValue_Flag(USE_CACHED_LAUNCH_DIRECTION, UseCachedLaunchDirection);
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(UseCachedLaunchDirection);
 
 	if (UseCachedLaunchDirection)
 	{
-		static const int32 CACHED_LAUNCH_DIRECTION = 1;
-		Payload->SetValue_Vector(CACHED_LAUNCH_DIRECTION, ProjectileImpl->GetLaunchDirection());
+		CS_COROUTINE_PAYLOAD_PASS_VECTOR3F(ProjectileImpl->GetLaunchDirection());
 	}
 
 	// Spread
-	static const int32 SPREAD_SHAPE_RANDOM = 2;
-	Payload->SetValue_Flag(SPREAD_SHAPE_RANDOM, false);
-	static const int32 SPREAD_YAW_RANDOM = 3;
-	Payload->SetValue_Flag(SPREAD_YAW_RANDOM, false);
-	static const int32 SPREAD_PITCH_RANDOM = 4;
-	Payload->SetValue_Flag(SPREAD_PITCH_RANDOM, false);
-
 	if (UseSpreadParams())
 	{
-		typedef NCsWeapon::NProjectile::NSpread::FParams SpreadParamsType;
+		using SpreadParamsType = NCsWeapon::NProjectile::NSpread::FParams;
+		using SpreadShapeParamsType = NCsWeapon::NProjectile::NSpread::NShape::FParams;
+		using SpreadAngleParamsType = NCsWeapon::NProjectile::NSpread::NAngle::FParams;
+		using SpreadVariablesLibrary = NCsWeapon::NManager::NSpread::NVariables::FLibrary;
+		using SpreadVariablesResourceType = NCsWeapon::NProjectile::NSpread::NVariables::FResource;
+		using SpreadVariablesType = NCsWeapon::NProjectile::NSpread::NVariables::FVariables;
 
 		const SpreadParamsType& SpreadParams = PrjWeaponData->GetSpreadParams();
 
 		CS_IS_VALID_CHECKED(SpreadParams);
-
-		typedef NCsWeapon::NProjectile::NSpread::NAngle::FParams SpreadAngleParamsType;
-		typedef NCsWeapon::NProjectile::NSpread::NVariables::FResource SpreadVariablesResourceType;
-		typedef NCsWeapon::NProjectile::NSpread::NVariables::FVariables SpreadVariablesType;
 
 		SpreadVariablesResourceType* Resource = nullptr;
 
 		// Shape
 		if (SpreadParams.GetbShape())
 		{
-			typedef NCsWeapon::NProjectile::NSpread::NShape::FParams SpreadShapeParamsType;
-
 			const SpreadShapeParamsType& ShapeParams = SpreadParams.GetShapeParams();
 
 			if (ShapeParams.ShouldPrecalculate())
 			{
 				// TODO:
+				CS_COROUTINE_PAYLOAD_PASS_FLAG(false);
 			}
 			else
 			{
-				Payload->SetValue_Flag(SPREAD_SHAPE_RANDOM, true);
+				CS_COROUTINE_PAYLOAD_PASS_FLAG(true);
 			}
+		}
+		else
+		{
+			CS_COROUTINE_PAYLOAD_PASS_FLAG(false);
 		}
 		// Yaw
 		if (SpreadParams.GetbYaw())
@@ -934,18 +928,22 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 			if (YawParams.ShouldPrecalculate())
 			{
-				typedef NCsWeapon::NManager::NSpread::NVariables::FLibrary VariablesLibrary;
-				
-				Resource					   = VariablesLibrary::Allocate(Context, GetWorldContext());
+				Resource					   = SpreadVariablesLibrary::Allocate(Context, GetWorldContext());
 				SpreadVariablesType* Variables = Resource->Get();
 
 				Variables->SetSizeAndAddDefaulted(ProjectilesPerShot);
 				YawParams.SetAnglesChecked(Context, ProjectilesPerShot, Variables->Yaws);
+
+				CS_COROUTINE_PAYLOAD_PASS_FLAG(false);
 			}
 			else
 			{
-				Payload->SetValue_Flag(SPREAD_YAW_RANDOM, true);
+				CS_COROUTINE_PAYLOAD_PASS_FLAG(true);
 			}
+		}
+		else
+		{
+			CS_COROUTINE_PAYLOAD_PASS_FLAG(false);
 		}
 		// Pitch
 		if (SpreadParams.GetbPitch())
@@ -954,28 +952,40 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 			if (PitchParams.ShouldPrecalculate())
 			{
-				typedef NCsWeapon::NManager::NSpread::NVariables::FLibrary VariablesLibrary;
-				
 				if (!Resource)
 				{
-					Resource = VariablesLibrary::Allocate(Context, GetWorldContext());
+					Resource = SpreadVariablesLibrary::Allocate(Context, GetWorldContext());
 				}
 				SpreadVariablesType* Variables = Resource->Get();
 
 				Variables->SetSizeAndAddDefaulted(ProjectilesPerShot);
 				PitchParams.SetAnglesChecked(Context, ProjectilesPerShot, Variables->Pitches);
+
+				CS_COROUTINE_PAYLOAD_PASS_FLAG(false);
 			}
 			else
 			{
-				Payload->SetValue_Flag(SPREAD_PITCH_RANDOM, true);
+				CS_COROUTINE_PAYLOAD_PASS_FLAG(true);
 			}
+		}
+		else
+		{
+			CS_COROUTINE_PAYLOAD_PASS_FLAG(false);
 		}
 
 		if (Resource)
 		{
-			static const int32 SPREAD_VARIABLES = 0;
-			Payload->SetValue_Void(SPREAD_VARIABLES, Resource);
+			CS_COROUTINE_PAYLOAD_PASS_VOID(Resource);
 		}
+	}
+	else
+	{
+		// Shape
+		CS_COROUTINE_PAYLOAD_PASS_FLAG(false);
+		// Yaw
+		CS_COROUTINE_PAYLOAD_PASS_FLAG(false);
+		// Pitch
+		CS_COROUTINE_PAYLOAD_PASS_FLAG(false);
 	}
 
 	bHasFired = true;
@@ -988,7 +998,7 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	FXImpl->Play(START, LaunchPayload);
 
-	FCsRoutineHandle Handle = Scheduler->Start(Payload);
+	FCsRoutineHandle Handle = CS_COROUTINE_START(GetWorldContext());
 
 	if (Handle.IsValid())
 		FireHandles.Add(Handle);
@@ -1000,56 +1010,51 @@ void ACsProjectileWeaponActorPooled::Fire_PreStart(const uint32& FireID)
 
 char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Fire_Internal);
 
-	const FString& Context = Str::Fire_Internal;
+	CS_COROUTINE_READ_UNSIGNED_INT_START
+	CS_COROUTINE_READ_FLAG_START
+	CS_COROUTINE_READ_INT_START
+	CS_COROUTINE_READ_FLOAT_START
+	CS_COROUTINE_READ_VECTOR3F_START
+	CS_COROUTINE_READ_VOID_START
+	CS_COROUTINE_READ_DELTA_TIME_START
 
-	static const int32 FIRE_ID = 0;
-	const uint32& FireID = R->GetValue_UnsignedInt(FIRE_ID);
+	CS_COROUTINE_READ_UNSIGNED_INT_CONST_REF(R, FireID);
 
 	// bInfiniteAmmo
-	const bool& bInfiniteAmmo = R->GetValue_Flag(CS_FIRST);
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, bInfiniteAmmo);
 	// ProjectilesPerShot
-	static const int32 PROJECTILES_PER_SHOT = 0;
-	const int32& ProjectilesPerShot			= R->GetValue_Int(PROJECTILES_PER_SHOT);
+	CS_COROUTINE_READ_INT_CONST_REF(R, ProjectilesPerShot);
 		// ProjectilesPerShot.Interval
-	static const int32 PROJECTILES_PER_SHOT_INTERVAL = 0;
-	const float& ProjectilesPerShot_Interval = R->GetValue_Float(PROJECTILES_PER_SHOT_INTERVAL);
+	CS_COROUTINE_READ_FLOAT_CONST_REF(R, ProjectilesPerShot_Interval);
 
-	static const int32 CURRENT_PROJECTIVE_PER_SHOT_INDEX = 1;
-	int32& CurrentProjectilePerShotIndex = R->GetValue_Int(CURRENT_PROJECTIVE_PER_SHOT_INDEX);
+	CS_COROUTINE_READ_INT_REF(R, CurrentProjectilePerShotIndex);
 		// bLaunchLocation
-	static const int32 USE_CACHED_LAUNCH_LOCATION = 0;
-	const bool& UseCachedLaunchLocation = R->GetValue_Flag(USE_CACHED_LAUNCH_LOCATION);
-	static const int32 CACHED_LAUNCH_LOCATION = 0;
-	const FVector3f& CachedLaunchLocation = R->GetValue_Vector(CACHED_LAUNCH_LOCATION);
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, UseCachedLaunchLocation);
+	CS_COROUTINE_READ_VECTOR3F_CONST_REF(R, CachedLaunchLocation);
 		// bLaunchDirection
-	static const int32 USE_CACHED_LAUNCH_DIRECTION = 1;
-	const bool& UseCachedLaunchDirection = R->GetValue_Flag(USE_CACHED_LAUNCH_DIRECTION);
-	static const int32 CACHED_LAUNCH_DIRECTION = 1;
-	const FVector3f& CachedLaunchDirection = R->GetValue_Vector(CACHED_LAUNCH_DIRECTION);
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, UseCachedLaunchDirection);
+	CS_COROUTINE_READ_VECTOR3F_CONST_REF(R, CachedLaunchDirection);
 
 	// Spread
-	typedef NCsWeapon::NProjectile::NSpread::NVariables::FResource SpreadVariablesResourceType;
-	typedef NCsWeapon::NProjectile::NSpread::NVariables::FVariables SpreadVariablesType;
+	using SpreadParamsType = NCsWeapon::NProjectile::NSpread::FParams;
+	using SpreadVariablesResourceType = NCsWeapon::NProjectile::NSpread::NVariables::FResource;
+	using SpreadVariablesType = NCsWeapon::NProjectile::NSpread::NVariables::FVariables;
 
 	static const int32 SPREAD_VARIABLES_RESOURCE = 0;
 	SpreadVariablesResourceType* SpreadVariablesResource = R->GetValue_Void<SpreadVariablesResourceType>(SPREAD_VARIABLES_RESOURCE);
 	SpreadVariablesType* SpreadVariables				 = SpreadVariablesResource ? SpreadVariablesResource->Get() : nullptr;
 
-	static const int32 SPREAD_INDEX = 2;
-	int32& SpreadIndex = R->GetValue_Int(SPREAD_INDEX);
+	CS_COROUTINE_READ_INT_REF(R, SpreadIndex);
 		// Shape
-	static const int32 SPREAD_SHAPE_RANDOM = 2;
-	const bool& IsSpreadShapeRandom = R->GetValue_Flag(SPREAD_SHAPE_RANDOM);
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, IsSpreadShapeRandom);
 		// Yaw
-	static const int32 SPREAD_YAW_RANDOM = 3;
-	const bool& IsSpreadYawRandom = R->GetValue_Flag(SPREAD_YAW_RANDOM);
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, IsSpreadYawRandom);
 		// Pitch
-	static const int32 SPREAD_PITCH_RANDOM = 4;
-	const bool& IsSpreadPitchRandom = R->GetValue_Flag(SPREAD_PITCH_RANDOM);
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, IsSpreadPitchRandom);
 
-	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
+	CS_COROUTINE_READ_DELTA_TIME_REF(R, ElapsedTime);
 
 	ElapsedTime += R->GetDeltaTime();
 	
@@ -1096,8 +1101,6 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 					// Shape
 				if (IsSpreadShapeRandom)
 				{
-					typedef NCsWeapon::NProjectile::NSpread::FParams SpreadParamsType;
-
 					LaunchPayload.bSpread = true;
 
 					const SpreadParamsType& SpreadParams = PrjWeaponData->GetSpreadParams();
@@ -1108,8 +1111,6 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 					// Yaw
 				if (IsSpreadYawRandom)
 				{
-					typedef NCsWeapon::NProjectile::NSpread::FParams SpreadParamsType;
-
 					LaunchPayload.bSpread = true;
 
 					const SpreadParamsType& SpreadParams = PrjWeaponData->GetSpreadParams();
@@ -1119,8 +1120,6 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 					// Pitch
 				if (IsSpreadPitchRandom)
 				{
-					typedef NCsWeapon::NProjectile::NSpread::FParams SpreadParamsType;
-
 					LaunchPayload.bSpread = true;
 
 					const SpreadParamsType& SpreadParams = PrjWeaponData->GetSpreadParams();
@@ -1261,13 +1260,13 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 	}
 	// Projectile
 	{
-		typedef NCsProjectile::NPayload::FImplSlice SliceType;
+		using SliceType = NCsProjectile::NPayload::NImplSlice::FImplSlice;
 		typedef NCsProjectile::NPayload::IPayload SliceInterfaceType;
 
 		SliceType* Slice = CsPrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
 		Slice->Type		 = Outer->GetProjectileType();
-		Slice->Location  = GetLaunchLocation(LaunchPayload);
-		Slice->Direction = GetLaunchDirection(LaunchPayload);
+		Slice->Location  = CsMathLibrary::Convert(GetLaunchLocation(LaunchPayload));
+		Slice->Direction = CsMathLibrary::Convert(GetLaunchDirection(LaunchPayload));
 	}
 	// Projectile Modifiers
 	{

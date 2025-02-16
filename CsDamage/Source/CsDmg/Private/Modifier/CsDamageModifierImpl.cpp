@@ -4,7 +4,7 @@
 #include "Modifier/CsDamageModifierImpl.h"
 
 // Types
-#include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Modifier/CsLibrary_DamageModifier.h"
 #include "Library/CsLibrary_Valid.h"
@@ -16,31 +16,24 @@
 // FCsDamageModifier_Int
 #pragma region
 
-#define ModifierType NCsDamage::NModifier::FInt
-
-void FCsDamageModifier_Int::CopyToModifier(ModifierType* Modifier)
+namespace NCsDamageModifier_Int
 {
-	Modifier->SetType(&Type);
-	Modifier->SetValue(&Value);
+	using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
 
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+	void FImpl::CopyToModifier(ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY(Modifier, Application, ApplicationType);
+	}
 
-	Modifier->SetApplication((ApplicationType*)(&Application));
-	Modifier->SetWhitelistByDataTypeSet(&WhitelistByDataTypeSet);
+	void FImpl::CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Modifier, Application, ApplicationType);
+	}
 }
-
-void FCsDamageModifier_Int::CopyToModifierAsValue(ModifierType* Modifier) const
-{
-	Modifier->SetType(Type);
-	Modifier->SetValue(Value);
-
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-	Modifier->SetApplication((ApplicationType)Application);
-	Modifier->SetWhitelistByDataTypeSet(WhitelistByDataTypeSet);
-}
-
-#undef ModifierType
 
 bool FCsDamageModifier_Int::IsValidChecked(const FString& Context) const
 {
@@ -64,7 +57,17 @@ bool FCsDamageModifier_Int::IsValid(const FString& Context, void(*Log)(const FSt
 	return true;
 }
 
-const FName NCsDamage::NModifier::FInt::Name = FName("NCsDamage::NModifier::FInt");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsDamage::NModifier::NInt::FInt);
+
+	// NCsDamage::NModifier::NInt::NInt
+	//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsDamage, NModifier, NInt, Int)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NModifier::NInt::FInt, Copy)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
+
+#pragma endregion Cached
 
 namespace NCsDamage
 {
@@ -72,102 +75,82 @@ namespace NCsDamage
 	{
 		namespace NInt
 		{
-			namespace NCached
+			FInt::FInt() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, ApplicationType::Multiply),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
 			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::FInt, Copy);
-				}
-			}
-		}
-
-		FInt::FInt() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
-		{
-			InterfaceMap = new FCsInterfaceMap();
+				InterfaceMap = new FCsInterfaceMap();
 			
-			InterfaceMap->SetRoot<FInt>(this);
+				CS_INTERFACE_MAP_SET_ROOT(FInt);
 
-			typedef NCsDamage::NModifier::IModifier DmgModifierType;
-			typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
+				CS_INTERFACE_MAP_ADD(CsModifierType);
+				CS_INTERFACE_MAP_ADD(CsIntModifierType);
+				CS_INTERFACE_MAP_ADD(CsDamageModifierType);
+				CS_INTERFACE_MAP_ADD(ICsGetDamageModifierType);
+				CS_INTERFACE_MAP_ADD(ICsIsValid);
+				CS_INTERFACE_MAP_ADD(CopyType);
+				CS_INTERFACE_MAP_ADD(ICsReset);
 
-			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
-			InterfaceMap->Add<CsIntModifierType>(static_cast<CsIntModifierType*>(this));
-			InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
-			InterfaceMap->Add<ICsGetDamageModifierType>(static_cast<ICsGetDamageModifierType*>(this));
-			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
-			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
-			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(Value);
+				CS_CTOR_SET_MEMBER_PROXY(Application);
+			}
 
-			CS_CTOR_SET_MEMBER_PROXY(Type);
-			CS_CTOR_SET_MEMBER_PROXY(Value);
-			CS_CTOR_SET_MEMBER_PROXY(Application);
+			FInt::~FInt()
+			{
+				// ICsGetInterfaceMap
+				delete InterfaceMap;
+			}
+			
+			using ApplicationMapType = NCsModifier::NValue::NNumeric::EMApplication;
+
+			// ICsIsValid
+			#pragma region
+
+			bool FInt::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+
+				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
+				CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
+				return true;
+			}
+
+			bool FInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsDamageModifier, FECsDamageModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+
+				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
+				CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
+				return true;
+			}
+
+			#pragma endregion ICsIsValid
+
+			// CopyType (NCsDamage::NModifier::NCopy::ICopy)
+			#pragma region
+			void FInt::Copy(const CsDamageModifierType* From)
+			{
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
+
+				const FInt* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
+
+				SetType(FromImpl->GetType());
+				SetValue(FromImpl->GetValue());
+				SetApplication(FromImpl->GetApplication());
+				SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
+			}
+
+			#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 		}
-
-		FInt::~FInt()
-		{
-			// ICsGetInterfaceMap
-			delete InterfaceMap;
-		}
-
-		// ICsIsValid
-		#pragma region
-
-		bool FInt::IsValidChecked(const FString& Context) const
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-
-			CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
-			CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
-			return true;
-		}
-
-		bool FInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsDamageModifier, FECsDamageModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-			CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
-			CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
-			return true;
-		}
-
-		#pragma endregion ICsIsValid
-
-		// CopyType (NCsDamage::NModifier::NCopy::ICopy)
-		#pragma region
-
-		#define DmgModifierType NCsDamage::NModifier::IModifier
-		void FInt::Copy(const DmgModifierType* From)
-		{
-		#undef DmgModifierType
-
-			using namespace NCsDamage::NModifier::NInt::NCached;
-
-			const FString& Context = Str::Copy;
-
-			const FInt* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
-
-			SetType(FromImpl->GetType());
-			SetValue(FromImpl->GetValue());
-			SetApplication(FromImpl->GetApplication());
-			SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
-		}
-
-		#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 	}
 }
 
@@ -176,31 +159,26 @@ namespace NCsDamage
 // FCsDamageModifier_Float
 #pragma region
 
-#define ModifierType NCsDamage::NModifier::FFloat
-
-void FCsDamageModifier_Float::CopyToModifier(ModifierType* Modifier)
+namespace NCsDamageModifier_Float
 {
-	Modifier->SetType(&Type);
-	Modifier->SetValue(&Value);
+	using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
 
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+	void FImpl::CopyToModifier(ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY(Modifier, Application, ApplicationType);
+		CS_THIS_COPY_TO_PROXY(Modifier, WhitelistByDataTypeSet);
+	}
 
-	Modifier->SetApplication((ApplicationType*)(&Application));
-	Modifier->SetWhitelistByDataTypeSet(&WhitelistByDataTypeSet);
+	void FImpl::CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Modifier, Application, ApplicationType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, WhitelistByDataTypeSet);
+	}
 }
-
-void FCsDamageModifier_Float::CopyToModifierAsValue(ModifierType* Modifier) const
-{
-	Modifier->SetType(Type);
-	Modifier->SetValue(Value);
-
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-	Modifier->SetApplication((ApplicationType)Application);
-	Modifier->SetWhitelistByDataTypeSet(WhitelistByDataTypeSet);
-}
-
-#undef ModifierType
 
 bool FCsDamageModifier_Float::IsValidChecked(const FString& Context) const
 {
@@ -224,7 +202,17 @@ bool FCsDamageModifier_Float::IsValid(const FString& Context, void(*Log)(const F
 	return true;
 }
 
-const FName NCsDamage::NModifier::FFloat::Name = FName("NCsDamage::NModifier::FFloat");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsDamage::NModifier::NFloat::FFloat);
+
+	// NCsDamage::NModifier::NFloat::NFloat
+	//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsDamage, NModifier, NFloat, Float)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NModifier::NFloat::FFloat, Copy)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
+
+#pragma endregion Cached
 
 namespace NCsDamage
 {
@@ -232,103 +220,83 @@ namespace NCsDamage
 	{
 		namespace NFloat
 		{
-			namespace NCached
+			FFloat::FFloat() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
 			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::FFloat, Copy);
-				}
+				InterfaceMap = new FCsInterfaceMap();
+
+				CS_INTERFACE_MAP_SET_ROOT(FFloat);
+
+				CS_INTERFACE_MAP_ADD(CsModifierType);
+				CS_INTERFACE_MAP_ADD(CsFloatModifierType);
+				CS_INTERFACE_MAP_ADD(CsDamageModifierType);
+				CS_INTERFACE_MAP_ADD(ICsGetDamageModifierType);
+				CS_INTERFACE_MAP_ADD(ICsIsValid);
+				CS_INTERFACE_MAP_ADD(CopyType);
+				CS_INTERFACE_MAP_ADD(ICsReset);
+
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(Value);
+				CS_CTOR_SET_MEMBER_PROXY(Application);
+				CS_CTOR_SET_MEMBER_PROXY(WhitelistByDataTypeSet);
 			}
+
+			FFloat::~FFloat()
+			{
+				// ICsGetInterfaceMap
+				delete InterfaceMap;
+			}
+
+			using ApplicationMapType = NCsModifier::NValue::NNumeric::EMApplication;
+
+			// ICsIsValid
+			#pragma region
+
+			bool FFloat::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
+				CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
+				return true;
+			}
+
+			bool FFloat::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsDamageModifier, FECsDamageModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+
+				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
+				CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
+				return true;
+			}
+
+			#pragma endregion ICsIsValid
+
+			// CopyType (NCsDamage::NModifier::NCopy::ICopy)
+			#pragma region
+
+			void FFloat::Copy(const CsDamageModifierType* From)
+			{
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
+
+				const FFloat* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
+
+				SetType(FromImpl->GetType());
+				SetValue(FromImpl->GetValue());
+				SetApplication(FromImpl->GetApplication());
+				SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
+			}
+
+			#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 		}
-
-		FFloat::FFloat() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
-		{
-			InterfaceMap = new FCsInterfaceMap();
-
-			InterfaceMap->SetRoot<FFloat>(this);
-
-			typedef NCsDamage::NModifier::IModifier DmgModifierType;
-			typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
-
-			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
-			InterfaceMap->Add<CsFloatModifierType>(static_cast<CsFloatModifierType*>(this));
-			InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
-			InterfaceMap->Add<ICsGetDamageModifierType>(static_cast<ICsGetDamageModifierType*>(this));
-			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
-			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
-			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
-
-			CS_CTOR_SET_MEMBER_PROXY(Type);
-			CS_CTOR_SET_MEMBER_PROXY(Value);
-			CS_CTOR_SET_MEMBER_PROXY(Application);
-			CS_CTOR_SET_MEMBER_PROXY(WhitelistByDataTypeSet);
-		}
-
-		FFloat::~FFloat()
-		{
-			// ICsGetInterfaceMap
-			delete InterfaceMap;
-		}
-
-		// ICsIsValid
-		#pragma region
-
-		bool FFloat::IsValidChecked(const FString& Context) const
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-
-			CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
-			CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
-			return true;
-		}
-
-		bool FFloat::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsDamageModifier, FECsDamageModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-			CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
-			CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
-			return true;
-		}
-
-		#pragma endregion ICsIsValid
-
-		// CopyType (NCsDamage::NModifier::NCopy::ICopy)
-		#pragma region
-
-		#define DmgModifierType NCsDamage::NModifier::IModifier
-		void FFloat::Copy(const DmgModifierType* From)
-		{
-		#undef DmgModifierType
-
-			using namespace NCsDamage::NModifier::NFloat::NCached;
-
-			const FString& Context = Str::Copy;
-
-			const FFloat* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
-
-			SetType(FromImpl->GetType());
-			SetValue(FromImpl->GetValue());
-			SetApplication(FromImpl->GetApplication());
-			SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
-		}
-
-		#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 	}
 }
 
@@ -337,35 +305,30 @@ namespace NCsDamage
 // FCsDamageModifier_Float_Range
 #pragma region
 
-#define ModifierType NCsDamage::NModifier::NFloat::FRange
-
-void FCsDamageModifier_Float_Range::CopyToModifier(ModifierType* Modifier)
+namespace NCsDamageModifier_Float_Range
 {
-	Modifier->SetType(&Type);
-	Modifier->SetMin(&Min);
-	Modifier->SetMax(&Max);
+	using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
 
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+	void FImpl::CopyToModifier(ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY(Modifier, Min);
+		CS_THIS_COPY_TO_PROXY(Modifier, Max);
+		CS_THIS_COPY_TYPE_TO_PROXY(Modifier, MinApplication, ApplicationType);
+		CS_THIS_COPY_TYPE_TO_PROXY(Modifier, MaxApplication, ApplicationType);
+		CS_THIS_COPY_TO_PROXY(Modifier, WhitelistByDataTypeSet);
+	}
 
-	Modifier->SetMinApplication((ApplicationType*)(&MinApplication));
-	Modifier->SetMaxApplication((ApplicationType*)(&MaxApplication));
-	Modifier->SetWhitelistByDataTypeSet(&WhitelistByDataTypeSet);
+	void FImpl::CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Min);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Max);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Modifier, MinApplication, ApplicationType);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Modifier, MaxApplication, ApplicationType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, WhitelistByDataTypeSet);
+	}
 }
-
-void FCsDamageModifier_Float_Range::CopyToModifierAsValue(ModifierType* Modifier) const
-{
-	Modifier->SetType(Type);
-	Modifier->SetMin(Min);
-	Modifier->SetMax(Max);
-
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-	Modifier->SetMinApplication((ApplicationType)MinApplication);
-	Modifier->SetMaxApplication((ApplicationType)MaxApplication);
-	Modifier->SetWhitelistByDataTypeSet(WhitelistByDataTypeSet);
-}
-
-#undef ModifierType
 
 bool FCsDamageModifier_Float_Range::IsValidChecked(const FString& Context) const
 {
@@ -391,7 +354,17 @@ bool FCsDamageModifier_Float_Range::IsValid(const FString& Context, void(*Log)(c
 	return true;
 }
 
-const FName NCsDamage::NModifier::NFloat::FRange::Name = FName("NCsDamage::NModifier::NFloat::FRange");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsDamage::NModifier::NFloat::NRange::FRange);
+
+	// NCsDamage::NModifier::NFloat::NRange::NRange
+	//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_4(NCsDamage, NModifier, NFloat, NRange, Range)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NModifier::NFloat::NRange::FRange, Copy)
+CS_END_CACHED_FUNCTION_NAME_NESTED_4
+
+#pragma endregion Cached
 
 namespace NCsDamage
 {
@@ -401,111 +374,93 @@ namespace NCsDamage
 		{
 			namespace NRange
 			{
-				namespace NCached
+
+				FRange::FRange() :
+					// ICsGetInterfaceMap
+					InterfaceMap(nullptr),
+					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Min, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(MinApplication, NCsModifier::NValue::NNumeric::EApplication::Multiply),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Max, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxApplication, NCsModifier::NValue::NNumeric::EApplication::Multiply),
+					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
 				{
-					namespace Str
-					{
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::NFloat::FRange, Copy);
-					}
+					InterfaceMap = new FCsInterfaceMap();
+			
+					CS_INTERFACE_MAP_SET_ROOT(FRange);
+
+					CS_INTERFACE_MAP_ADD(CsModifierType);
+					CS_INTERFACE_MAP_ADD(CsFloatRangeModifierType);
+					CS_INTERFACE_MAP_ADD(CsDamageModifierType);
+					CS_INTERFACE_MAP_ADD(ICsGetDamageModifierType);
+					CS_INTERFACE_MAP_ADD(ICsIsValid);
+					CS_INTERFACE_MAP_ADD(CopyType);
+					CS_INTERFACE_MAP_ADD(ICsReset);
+
+					CS_CTOR_SET_MEMBER_PROXY(Type);
+					CS_CTOR_SET_MEMBER_PROXY(Min);
+					CS_CTOR_SET_MEMBER_PROXY(MinApplication);
+					CS_CTOR_SET_MEMBER_PROXY(Max);
+					CS_CTOR_SET_MEMBER_PROXY(MaxApplication);
+					CS_CTOR_SET_MEMBER_PROXY(WhitelistByDataTypeSet);
 				}
+
+				FRange::~FRange()
+				{
+					// ICsGetInterfaceMap
+					delete InterfaceMap;
+				}
+
+				using ApplicationMapType = NCsModifier::NValue::NNumeric::EMApplication;
+
+				// ICsIsValid
+				#pragma region
+
+				bool FRange::IsValidChecked(const FString& Context) const
+				{
+					CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, GetType())
+
+					// TODO: FUTURE: Check Modifier Type and do appropriate checks
+
+					CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetMinApplication())
+					CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetMaxApplication())
+					CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
+					return true;
+				}
+
+				bool FRange::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
+				{
+					CS_IS_ENUM_STRUCT_VALID(EMCsDamageModifier, FECsDamageModifier, GetType())
+
+					// TODO: FUTURE: Check Modifier Type and do appropriate checks
+
+					CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetMinApplication())
+					CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetMaxApplication())
+					CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
+					return true;
+				}
+
+				#pragma endregion ICsIsValid
+
+				// CopyType (NCsDamage::NModifier::NCopy::ICopy)
+				#pragma region
+
+				void FRange::Copy(const CsDamageModifierType* From)
+				{
+					CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
+
+					const FRange* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FRange>(Context, From);
+
+					SetType(FromImpl->GetType());
+					SetMin(FromImpl->GetMin());
+					SetMinApplication(FromImpl->GetMinApplication());
+					SetMax(FromImpl->GetMax());
+					SetMaxApplication(FromImpl->GetMaxApplication());
+					SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
+				}
+
+				#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 			}
-
-			FRange::FRange() :
-				// ICsGetInterfaceMap
-				InterfaceMap(nullptr),
-				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(Min, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(MinApplication, NCsModifier::NValue::NNumeric::EApplication::Multiply),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(Max, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxApplication, NCsModifier::NValue::NNumeric::EApplication::Multiply),
-				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
-			{
-				InterfaceMap = new FCsInterfaceMap();
-
-				InterfaceMap->SetRoot<FRange>(this);
-
-				typedef NCsDamage::NModifier::IModifier DmgModifierType;
-				typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
-
-				InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
-				InterfaceMap->Add<CsFloatRangeModifierType>(static_cast<CsFloatRangeModifierType*>(this));
-				InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
-				InterfaceMap->Add<ICsGetDamageModifierType>(static_cast<ICsGetDamageModifierType*>(this));
-				InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
-				InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
-				InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
-
-				CS_CTOR_SET_MEMBER_PROXY(Type);
-				CS_CTOR_SET_MEMBER_PROXY(Min);
-				CS_CTOR_SET_MEMBER_PROXY(MinApplication);
-				CS_CTOR_SET_MEMBER_PROXY(Max);
-				CS_CTOR_SET_MEMBER_PROXY(MaxApplication);
-				CS_CTOR_SET_MEMBER_PROXY(WhitelistByDataTypeSet);
-			}
-
-			FRange::~FRange()
-			{
-				// ICsGetInterfaceMap
-				delete InterfaceMap;
-			}
-
-			// ICsIsValid
-			#pragma region
-
-			bool FRange::IsValidChecked(const FString& Context) const
-			{
-				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, GetType())
-
-				// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-				typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-
-				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetMinApplication())
-				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetMaxApplication())
-				CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
-				return true;
-			}
-
-			bool FRange::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
-			{
-				CS_IS_ENUM_STRUCT_VALID(EMCsDamageModifier, FECsDamageModifier, GetType())
-
-				// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-				typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-				typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetMinApplication())
-				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetMaxApplication())
-				CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
-				return true;
-			}
-
-			#pragma endregion ICsIsValid
-
-			// CopyType (NCsDamage::NModifier::NCopy::ICopy)
-			#pragma region
-
-			#define DmgModifierType NCsDamage::NModifier::IModifier
-			void FRange::Copy(const DmgModifierType* From)
-			{
-			#undef DmgModifierType
-
-				using namespace NCsDamage::NModifier::NFloat::NCached;
-
-				const FString& Context = Str::Copy;
-
-				const FRange* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FRange>(Context, From);
-
-				SetType(FromImpl->GetType());
-				SetMin(FromImpl->GetMin());
-				SetMinApplication(FromImpl->GetMinApplication());
-				SetMax(FromImpl->GetMax());
-				SetMaxApplication(FromImpl->GetMaxApplication());
-				SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
-			}
-
-			#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 		}
 	}
 }
@@ -515,23 +470,24 @@ namespace NCsDamage
 // FCsDamageModifier_Toggle
 #pragma region
 
-#define ModifierType NCsDamage::NModifier::FToggle
-
-void FCsDamageModifier_Toggle::CopyToModifier(ModifierType* Modifier)
+namespace NCsDamageModifier_Toggle
 {
-	Modifier->SetType(&Type);
-	Modifier->SetbEnable(&bEnable);
-	Modifier->SetWhitelistByDataTypeSet(&WhitelistByDataTypeSet);
-}
+	using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
 
-void FCsDamageModifier_Toggle::CopyToModifierAsValue(ModifierType* Modifier) const
-{
-	Modifier->SetType(Type);
-	Modifier->SetbEnable(bEnable);
-	Modifier->SetWhitelistByDataTypeSet(WhitelistByDataTypeSet);
-}
+	void FImpl::CopyToModifier(ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY(Modifier, bEnable);
+		CS_THIS_COPY_TO_PROXY(Modifier, WhitelistByDataTypeSet);
+	}
 
-#undef ModifierType
+	void FImpl::CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, bEnable);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, WhitelistByDataTypeSet);
+	}
+}
 
 bool FCsDamageModifier_Toggle::IsValidChecked(const FString& Context) const
 {
@@ -547,7 +503,17 @@ bool FCsDamageModifier_Toggle::IsValid(const FString& Context, void(*Log)(const 
 	return true;
 }
 
-const FName NCsDamage::NModifier::FToggle::Name = FName("NCsDamage::NModifier::FToggle");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsDamage::NModifier::NToggle::FToggle);
+
+	// NCsDamage::NModifier::NToggle::FToggle
+	//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsDamage, NModifier, NToggle, Toggle)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsDamage::NModifier::NToggle::FToggle, Copy)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
+
+#pragma endregion Cached
 
 namespace NCsDamage
 {
@@ -555,87 +521,71 @@ namespace NCsDamage
 	{
 		namespace NToggle
 		{
-			namespace NCached
+			FToggle::FToggle() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(bEnable, false),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
 			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::FToggle, Copy);
-				}
+				InterfaceMap = new FCsInterfaceMap();
+
+				CS_INTERFACE_MAP_SET_ROOT(FToggle);
+
+				CS_INTERFACE_MAP_ADD(CsModifierType);
+				CS_INTERFACE_MAP_ADD(CsToggleModifierType);
+				CS_INTERFACE_MAP_ADD(CsDamageModifierType);
+				CS_INTERFACE_MAP_ADD(ICsGetDamageModifierType);
+				CS_INTERFACE_MAP_ADD(ICsIsValid);
+				CS_INTERFACE_MAP_ADD(CopyType);
+				CS_INTERFACE_MAP_ADD(ICsReset);
+
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(bEnable);
+				CS_CTOR_SET_MEMBER_PROXY(WhitelistByDataTypeSet);
 			}
+
+			FToggle::~FToggle()
+			{
+				// ICsGetInterfaceMap
+				delete InterfaceMap;
+			}
+
+			// ICsIsValid
+			#pragma region
+
+			bool FToggle::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, GetType())
+				CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
+				return true;
+			}
+
+			bool FToggle::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsDamageModifier, FECsDamageModifier, GetType())
+				CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
+				return true;
+			}
+
+			#pragma endregion ICsIsValid
+
+			// CopyType (NCsDamage::NModifier::NCopy::ICopy)
+			#pragma region
+
+			void FToggle::Copy(const CsDamageModifierType* From)
+			{
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
+
+				const FToggle* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
+
+				SetType(FromImpl->GetType());
+				SetbEnable(FromImpl->GetbEnable());
+				SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
+			}
+
+			#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 		}
-
-		FToggle::FToggle() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(bEnable, false),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
-		{
-			InterfaceMap = new FCsInterfaceMap();
-
-			InterfaceMap->SetRoot<FToggle>(this);
-
-			typedef NCsDamage::NModifier::IModifier DmgModifierType;
-			typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
-
-			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
-			InterfaceMap->Add<CsToggleModifierType>(static_cast<CsToggleModifierType*>(this));
-			InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
-			InterfaceMap->Add<ICsGetDamageModifierType>(static_cast<ICsGetDamageModifierType*>(this));
-			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
-			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
-			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
-
-			CS_CTOR_SET_MEMBER_PROXY(Type);
-			CS_CTOR_SET_MEMBER_PROXY(bEnable);
-			CS_CTOR_SET_MEMBER_PROXY(WhitelistByDataTypeSet);
-		}
-
-		FToggle::~FToggle()
-		{
-			// ICsGetInterfaceMap
-			delete InterfaceMap;
-		}
-
-		// ICsIsValid
-		#pragma region
-
-		bool FToggle::IsValidChecked(const FString& Context) const
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, GetType())
-			CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
-			return true;
-		}
-
-		bool FToggle::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsDamageModifier, FECsDamageModifier, GetType())
-			CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
-			return true;
-		}
-
-		#pragma endregion ICsIsValid
-
-		// CopyType (NCsDamage::NModifier::NCopy::ICopy)
-		#pragma region
-
-		#define DmgModifierType NCsDamage::NModifier::IModifier
-		void FToggle::Copy(const DmgModifierType* From)
-		{
-		#undef DmgModifierType
-
-			using namespace NCsDamage::NModifier::NFloat::NCached;
-
-			const FString& Context = Str::Copy;
-
-			const FToggle* FromImpl = CsDamageModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
-
-			SetType(FromImpl->GetType());
-			SetbEnable(FromImpl->GetbEnable());
-			SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
-		}
-
-		#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 	}
 }
 
@@ -644,99 +594,87 @@ namespace NCsDamage
 // FCsDamageModifierInfo
 #pragma region
 
-#define InfoType NCsDamage::NModifier::FInfo
-
-void FCsDamageModifierInfo::CopyToInfo(InfoType* Info)
+namespace NCsDamageModifierInfo
 {
-	// Ints
-	typedef NCsDamage::NModifier::FInt IntModifierType;
+	using IntModifierType = NCsDamage::NModifier::NInt::FInt;
+	using FloatModifierType = NCsDamage::NModifier::NFloat::FFloat;
+	using FloatRangeModifierType = NCsDamage::NModifier::NFloat::NRange::FRange;
+	using ToggleModifierType = NCsDamage::NModifier::NToggle::FToggle;
 
-	Info->Ints.Reset(Ints.Num());
-
-	for (FCsDamageModifier_Int& From : Ints)
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
 	{
-		IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
-		From.CopyToModifier(&To);
+		// Ints
+		Info->Ints.Reset(This->Ints.Num());
+
+		for (FCsDamageModifier_Int& From : This->Ints)
+		{
+			IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+			From.CopyToModifier(&To);
+		}
+		// Floats
+		Info->Floats.Reset(This->Floats.Num());
+
+		for (FCsDamageModifier_Float& From : This->Floats)
+		{
+			FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+			From.CopyToModifier(&To);
+		}
+		// Floats
+		Info->FloatRanges.Reset(This->FloatRanges.Num());
+
+		for (FCsDamageModifier_Float_Range& From : This->FloatRanges)
+		{
+			FloatRangeModifierType& To = Info->FloatRanges.AddDefaulted_GetRef();
+			From.CopyToModifier(&To);
+		}
+		// Toggles
+		Info->Toggles.Reset(This->Toggles.Num());
+
+		for (FCsDamageModifier_Toggle& From : This->Toggles)
+		{
+			ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
+			From.CopyToModifier(&To);
+		}
+		Info->PopulateModifiers();
 	}
-	// Floats
-	typedef NCsDamage::NModifier::FFloat FloatModifierType;
 
-	Info->Floats.Reset(Floats.Num());
-
-	for (FCsDamageModifier_Float& From : Floats)
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
 	{
-		FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
-		From.CopyToModifier(&To);
+		// Ints
+		Info->Ints.Reset(This->Ints.Num());
+
+		for (const FCsDamageModifier_Int& From : This->Ints)
+		{
+			IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+			From.CopyToModifierAsValue(&To);
+		}
+		// Floats
+		Info->Floats.Reset(This->Floats.Num());
+
+		for (const FCsDamageModifier_Float& From : This->Floats)
+		{
+			FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+			From.CopyToModifierAsValue(&To);
+		}
+		// Floats
+		Info->FloatRanges.Reset(This->FloatRanges.Num());
+
+		for (const FCsDamageModifier_Float_Range& From : This->FloatRanges)
+		{
+			FloatRangeModifierType& To = Info->FloatRanges.AddDefaulted_GetRef();
+			From.CopyToModifierAsValue(&To);
+		}
+		// Toggles
+		Info->Toggles.Reset(This->Toggles.Num());
+
+		for (const FCsDamageModifier_Toggle& From : This->Toggles)
+		{
+			ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
+			From.CopyToModifierAsValue(&To);
+		}
+		Info->PopulateModifiers();
 	}
-	// Floats
-	typedef NCsDamage::NModifier::NFloat::FRange FloatRangeModifierType;
-
-	Info->FloatRanges.Reset(FloatRanges.Num());
-
-	for (FCsDamageModifier_Float_Range& From : FloatRanges)
-	{
-		FloatRangeModifierType& To = Info->FloatRanges.AddDefaulted_GetRef();
-		From.CopyToModifier(&To);
-	}
-	// Toggles
-	typedef NCsDamage::NModifier::FToggle ToggleModifierType;
-
-	Info->Toggles.Reset(Toggles.Num());
-
-	for (FCsDamageModifier_Toggle& From : Toggles)
-	{
-		ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
-		From.CopyToModifier(&To);
-	}
-	Info->PopulateModifiers();
 }
-
-void FCsDamageModifierInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	// Ints
-	typedef NCsDamage::NModifier::FInt IntModifierType;
-
-	Info->Ints.Reset(Ints.Num());
-
-	for (const FCsDamageModifier_Int& From : Ints)
-	{
-		IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
-		From.CopyToModifierAsValue(&To);
-	}
-	// Floats
-	typedef NCsDamage::NModifier::FFloat FloatModifierType;
-
-	Info->Floats.Reset(Floats.Num());
-
-	for (const FCsDamageModifier_Float& From : Floats)
-	{
-		FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
-		From.CopyToModifierAsValue(&To);
-	}
-	// Float Ranges
-	typedef NCsDamage::NModifier::NFloat::FRange FloatRangeModifierType;
-
-	Info->FloatRanges.Reset(FloatRanges.Num());
-
-	for (const FCsDamageModifier_Float_Range& From : FloatRanges)
-	{
-		FloatRangeModifierType& To = Info->FloatRanges.AddDefaulted_GetRef();
-		From.CopyToModifierAsValue(&To);
-	}
-	// Toggles
-	typedef NCsDamage::NModifier::FToggle ToggleModifierType;
-
-	Info->Toggles.Reset(Toggles.Num());
-
-	for (const FCsDamageModifier_Toggle& From : Toggles)
-	{
-		ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
-		From.CopyToModifierAsValue(&To);
-	}
-	Info->PopulateModifiers();
-}
-
-#undef InfoType
 
 bool FCsDamageModifierInfo::IsValidChecked(const FString& Context) const
 {
@@ -786,35 +724,25 @@ namespace NCsDamage
 	{
 		bool FInfo::IsValidChecked(const FString& Context) const
 		{
-			typedef NCsDamage::NModifier::FInt IntModifierType;
-
 			for (const IntModifierType& Modifier : Ints)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
-
-			typedef NCsDamage::NModifier::FFloat FloatModifierType;
 
 			for (const FloatModifierType& Modifier : Floats)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
 
-			typedef NCsDamage::NModifier::NFloat::FRange FloatRangeModifierType;
-
 			for (const FloatRangeModifierType& Modifier : FloatRanges)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
 
-			typedef NCsDamage::NModifier::FToggle ToggleModifierType;
-
 			for (const ToggleModifierType& Modifier : Toggles)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
-
-			typedef NCsDamage::NModifier::IModifier ModifierType;
 
 			const int32 Total = Ints.Num() + Floats.Num() + FloatRanges.Num() + Toggles.Num();
 
@@ -825,35 +753,25 @@ namespace NCsDamage
 
 		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
 		{
-			typedef NCsDamage::NModifier::FInt IntModifierType;
-
 			for (const IntModifierType& Modifier : Ints)
 			{
 				CS_IS_VALID(Modifier)
 			}
-
-			typedef NCsDamage::NModifier::FFloat FloatModifierType;
 
 			for (const FloatModifierType& Modifier : Floats)
 			{
 				CS_IS_VALID(Modifier)
 			}
 
-			typedef NCsDamage::NModifier::NFloat::FRange FloatRangeModifierType;
-
 			for (const FloatRangeModifierType& Modifier : FloatRanges)
 			{
 				CS_IS_VALID(Modifier)
 			}
 
-			typedef NCsDamage::NModifier::FToggle ToggleModifierType;
-
 			for (const ToggleModifierType& Modifier : Toggles)
 			{
 				CS_IS_VALID(Modifier)
 			}
-
-			typedef NCsDamage::NModifier::IModifier ModifierType;
 
 			const int32 Total = Ints.Num() + Floats.Num() + FloatRanges.Num() + Toggles.Num();
 
@@ -869,27 +787,24 @@ namespace NCsDamage
 // FCsDamageModifier_Create_Int
 #pragma region
 
-#define CreateModifierType NCsDamage::NModifier::NCreate::FInt
-
-void FCsDamageModifier_Create_Int::CopyToCreateModifier(CreateModifierType* CreateModifier)
+namespace NCsDamageModifier_Create_Int
 {
-	typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
+	using CreateType = NCsModifier::NValue::NNumeric::ECreate;
 
-	CreateModifier->SetType((CreateType*)(&Type));
-	CreateModifier->SetValue(&Value);
-	Modifier.CopyToModifier(CreateModifier->GetModifierPtr());
+	void FImpl::CopyToCreateModifier(ThisType* This, CreateModifierType* CreateModifier)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(CreateModifier, Type, CreateType);
+		CS_THIS_COPY_TO_PROXY(CreateModifier, Value);
+		This->Modifier.CopyToModifier(CreateModifier->GetModifierPtr());
+	}
+
+	void FImpl::CopyToCreateModifierAsValue(const ThisType* This, CreateModifierType* CreateModifier)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(CreateModifier, Type, CreateType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(CreateModifier, Value);
+		This->Modifier.CopyToModifierAsValue(CreateModifier->GetModifierPtr());
+	}
 }
-
-void FCsDamageModifier_Create_Int::CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const
-{
-	typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
-
-	CreateModifier->SetType((CreateType)Type);
-	CreateModifier->SetValue(Value);
-	Modifier.CopyToModifierAsValue(CreateModifier->GetModifierPtr());
-}
-
-#undef CreateModifierType
 
 bool FCsDamageModifier_Create_Int::IsValidChecked(const FString& Context) const
 {
@@ -911,25 +826,21 @@ namespace NCsDamage
 	{
 		namespace NCreate
 		{
-			#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+			using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
+			using CreateMapType = NCsModifier::NValue::NNumeric::EMCreate;
+
 			void FInt::CreateChecked(const FString& Context, const UObject* WorldContext, const int32& InValue, AllocatedModifierType& OutModifier)
 			{
-			#undef AllocatedModifierType
-				
 				const int32 OldValue = Modifier.GetValue();
 				const int32 NewValue = NCsModifier::NValue::NNumeric::NCreate::GetNewValue(GetType(), InValue, GetValue());
 
 				Modifier.SetValue(NewValue);
-
 				OutModifier.Copy(WorldContext, &Modifier);
-
 				Modifier.SetValue(OldValue);
 			}
 
 			bool FInt::IsValidChecked(const FString& Context) const
 			{
-				typedef NCsModifier::NValue::NNumeric::EMCreate CreateMapType;
-
 				CS_IS_ENUM_VALID_CHECKED(CreateMapType, GetType())
 				CS_IS_VALID_CHECKED(Modifier);
 				return true;
@@ -937,9 +848,6 @@ namespace NCsDamage
 
 			bool FInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
 			{
-				typedef NCsModifier::NValue::NNumeric::EMCreate CreateMapType;
-				typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
-
 				CS_IS_ENUM_VALID(CreateMapType, CreateType, GetType())
 				CS_IS_VALID(Modifier)
 				return true;
@@ -953,27 +861,24 @@ namespace NCsDamage
 // FCsDamageModifier_Create_Float
 #pragma region
 
-#define CreateModifierType NCsDamage::NModifier::NCreate::FFloat
-
-void FCsDamageModifier_Create_Float::CopyToCreateModifier(CreateModifierType* CreateModifier)
+namespace NCsDamageModifier_Create_Float
 {
-	typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
+	using CreateType = NCsModifier::NValue::NNumeric::ECreate;
 
-	CreateModifier->SetType((CreateType*)(&Type));
-	CreateModifier->SetValue(&Value);
-	Modifier.CopyToModifier(CreateModifier->GetModifierPtr());
+	void FImpl::CopyToCreateModifier(ThisType* This, CreateModifierType* CreateModifier)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(CreateModifier, Type, CreateType);
+		CS_THIS_COPY_TO_PROXY(CreateModifier, Value);
+		This->Modifier.CopyToModifier(CreateModifier->GetModifierPtr());
+	}
+
+	void FImpl::CopyToCreateModifierAsValue(const ThisType* This, CreateModifierType* CreateModifier)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(CreateModifier, Type, CreateType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(CreateModifier, Value);
+		This->Modifier.CopyToModifierAsValue(CreateModifier->GetModifierPtr());
+	}
 }
-
-void FCsDamageModifier_Create_Float::CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const
-{
-	typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
-
-	CreateModifier->SetType((CreateType)Type);
-	CreateModifier->SetValue(Value);
-	Modifier.CopyToModifierAsValue(CreateModifier->GetModifierPtr());
-}
-
-#undef CreateModifierType
 
 bool FCsDamageModifier_Create_Float::IsValidChecked(const FString& Context) const
 {
@@ -995,11 +900,11 @@ namespace NCsDamage
 	{
 		namespace NCreate
 		{
-			#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+			using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
+			using CreateMapType = NCsModifier::NValue::NNumeric::EMCreate;
+
 			void FFloat::CreateChecked(const FString& Context, const UObject* WorldContext, const float& InValue, AllocatedModifierType& OutModifier)
 			{
-			#undef AllocatedModifierType
-				
 				const float OldValue = Modifier.GetValue();
 				const float NewValue = NCsModifier::NValue::NNumeric::NCreate::GetNewValue(GetType(), InValue, GetValue());
 
@@ -1012,8 +917,6 @@ namespace NCsDamage
 
 			bool FFloat::IsValidChecked(const FString& Context) const
 			{
-				typedef NCsModifier::NValue::NNumeric::EMCreate CreateMapType;
-
 				CS_IS_ENUM_VALID_CHECKED(CreateMapType, GetType())
 				CS_IS_VALID_CHECKED(Modifier);
 				return true;
@@ -1021,9 +924,6 @@ namespace NCsDamage
 
 			bool FFloat::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
 			{
-				typedef NCsModifier::NValue::NNumeric::EMCreate CreateMapType;
-				typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
-
 				CS_IS_ENUM_VALID(CreateMapType, CreateType, GetType())
 				CS_IS_VALID(Modifier)
 				return true;
@@ -1037,57 +937,51 @@ namespace NCsDamage
 // FCsDamageModifier_CreateInfo
 #pragma region
 
-#define InfoType NCsDamage::NModifier::NCreate::FInfo
-
-void FCsDamageModifier_CreateInfo::CopyToInfo(InfoType* Info)
+namespace NCsDamageModifier_CreateInfo
 {
-	// Int
-	typedef NCsDamage::NModifier::NCreate::FInt CreateIntModifierType;
+	using CreateIntModifierType = NCsDamage::NModifier::NCreate::FInt;
+	using CreateFloatModifierType = NCsDamage::NModifier::NCreate::FFloat;
 
-	Info->Ints.Reset(Ints.Num());
-
-	for (FCsDamageModifier_Create_Int& From : Ints)
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
 	{
-		CreateIntModifierType& To = Info->Ints.AddDefaulted_GetRef();
-		From.CopyToCreateModifier(&To);
+		// Int
+		Info->Ints.Reset(This->Ints.Num());
+
+		for (FCsDamageModifier_Create_Int& From : This->Ints)
+		{
+			CreateIntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+			From.CopyToCreateModifier(&To);
+		}
+		// Float
+		Info->Floats.Reset(This->Floats.Num());
+
+		for (FCsDamageModifier_Create_Float& From : This->Floats)
+		{
+			CreateFloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+			From.CopyToCreateModifier(&To);
+		}
 	}
-	// Float
-	typedef NCsDamage::NModifier::NCreate::FFloat CreateFloatModifierType;
 
-	Info->Floats.Reset(Floats.Num());
-
-	for (FCsDamageModifier_Create_Float& From : Floats)
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
 	{
-		CreateFloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
-		From.CopyToCreateModifier(&To);
+		// Int
+		Info->Ints.Reset(This->Ints.Num());
+
+		for (const FCsDamageModifier_Create_Int& From : This->Ints)
+		{
+			CreateIntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+			From.CopyToCreateModifierAsValue(&To);
+		}
+		// Float
+		Info->Floats.Reset(This->Floats.Num());
+
+		for (const FCsDamageModifier_Create_Float& From : This->Floats)
+		{
+			CreateFloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+			From.CopyToCreateModifierAsValue(&To);
+		}
 	}
 }
-
-void FCsDamageModifier_CreateInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	// Int
-	typedef NCsDamage::NModifier::NCreate::FInt CreateIntModifierType;
-
-	Info->Ints.Reset(Ints.Num());
-
-	for (const FCsDamageModifier_Create_Int& From : Ints)
-	{
-		CreateIntModifierType& To = Info->Ints.AddDefaulted_GetRef();
-		From.CopyToCreateModifierAsValue(&To);
-	}
-	// Float
-	typedef NCsDamage::NModifier::NCreate::FFloat CreateFloatModifierType;
-
-	Info->Floats.Reset(Floats.Num());
-
-	for (const FCsDamageModifier_Create_Float& From : Floats)
-	{
-		CreateFloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
-		From.CopyToCreateModifierAsValue(&To);
-	}
-}
-
-#undef InfoType
 
 bool FCsDamageModifier_CreateInfo::IsValidChecked(const FString& Context) const
 {
@@ -1125,7 +1019,9 @@ namespace NCsDamage
 	{
 		namespace NCreate
 		{
-			#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+			using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
+			using CreateIntModifierType = NCsDamage::NModifier::NCreate::FInt;
+			using CreateFloatModifierType = NCsDamage::NModifier::NCreate::FFloat;
 
 			void FInfo::CreateChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers)
 			{
@@ -1146,8 +1042,6 @@ namespace NCsDamage
 				{
 					const int32 Count = Ints.Num();
 
-					typedef NCsDamage::NModifier::NCreate::FInt CreateIntModifierType;
-
 					for (int32 I = 0; I < Count; ++I)
 					{
 						CreateIntModifierType& Int				 = Ints[I];
@@ -1160,8 +1054,6 @@ namespace NCsDamage
 				{
 					const int32 Count = Floats.Num();
 
-					typedef NCsDamage::NModifier::NCreate::FFloat CreateFloatModifierType;
-
 					for (int32 I = 0; I < Count; ++I)
 					{
 						CreateFloatModifierType& Float			 = Floats[I];
@@ -1172,20 +1064,14 @@ namespace NCsDamage
 				}
 			}
 
-			#undef AllocatedModifierType
-
 			bool FInfo::IsValidChecked(const FString& Context) const
 			{
 				// Int
-				typedef NCsDamage::NModifier::NCreate::FInt CreateIntModifierType;
-
 				for (const CreateIntModifierType& CreateModifier : Ints)
 				{
 					CS_IS_VALID_CHECKED(CreateModifier);
 				}
 				// Float
-				typedef NCsDamage::NModifier::NCreate::FFloat CreateFloatModifierType;
-
 				for (const CreateFloatModifierType& CreateModifier : Floats)
 				{
 					CS_IS_VALID_CHECKED(CreateModifier);
@@ -1196,15 +1082,11 @@ namespace NCsDamage
 			bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
 			{
 				// Int
-				typedef NCsDamage::NModifier::NCreate::FInt CreateIntModifierType;
-
 				for (const CreateIntModifierType& CreateModifier : Ints)
 				{
 					CS_IS_VALID(CreateModifier)
 				}
 				// Float
-				typedef NCsDamage::NModifier::NCreate::FFloat CreateFloatModifierType;
-
 				for (const CreateFloatModifierType& CreateModifier : Floats)
 				{
 					CS_IS_VALID(CreateModifier)

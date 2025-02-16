@@ -807,13 +807,13 @@ ModifierType* UCsManager_Damage::ConstructModifier(const ModifierImplType& ImplT
 {
 	// Int
 	if (ImplType == ModifierImplType::Int)
-		return new NCsDamage::NModifier::FInt();
+		return new NCsDamage::NModifier::NInt::FInt();
 	// Float
 	if (ImplType == ModifierImplType::Float)
-		return new NCsDamage::NModifier::FFloat();
+		return new NCsDamage::NModifier::NFloat::FFloat();
 	// Toggle
 	if (ImplType == ModifierImplType::Toggle)
-		return new NCsDamage::NModifier::FToggle();
+		return new NCsDamage::NModifier::NToggle::FToggle();
 	// TODO: Float Range
 	check(0);
 	return nullptr;

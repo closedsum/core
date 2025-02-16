@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Payload/CsPayload_ProjectileImpl.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Payload/CsLibrary_Payload_Projectile.h"
 // Containers
@@ -12,10 +14,11 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsPayload_ProjectileImpl)
 
+using PayloadType = NCsProjectile::NPayload::IPayload;
+
 // FCsPayload_Projectile
 #pragma region
 
-#define PayloadType NCsProjectile::NPayload::IPayload
 void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const
 {
 	if (CsPrjPayloadLibrary::HasUniqueBasedSlices(Context, Payload))
@@ -30,7 +33,7 @@ void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, 
 		//PooledPayloadSlice->Time = Time;
 		PooledPayloadSlice->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
 
-		typedef NCsProjectile::NPayload::FImplSlice PayloadSliceType;
+		using PayloadSliceType = NCsProjectile::NPayload::NImplSlice::FImplSlice;
 
 		PayloadSliceType* PayloadSlice = CsPrjPayloadLibrary::StaticCastChecked<PayloadSliceType, PayloadType>(Context, Payload);
 
@@ -41,7 +44,7 @@ void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, 
 	}
 	else
 	{
-		typedef NCsProjectile::NPayload::FImpl PayloadImplType;
+		using PayloadImplType = NCsProjectile::NPayload::NImpl::FImpl;
 
 		PayloadImplType* PayloadImpl = CsPrjPayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 		PayloadImpl->Instigator = Instigator;
@@ -56,7 +59,6 @@ void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, 
 		PayloadImpl->Direction	= Direction;
 	}
 }
-#undef PayloadType
 
 bool FCsPayload_Projectile::IsValidChecked(const FString& Context) const
 {
@@ -70,66 +72,66 @@ bool FCsPayload_Projectile::IsValid(const FString& Context, void(*Log)(const FSt
 
 #pragma endregion FCsPayload_Projectile
 
-const FName NCsProjectile::NPayload::FImpl::Name = FName("NCsProjectile::NPayload::FImpl");;
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsProjectile::NPayload::NImpl::FImpl);
 
 namespace NCsProjectile
 {
 	namespace NPayload
 	{
-		FImpl::FImpl() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
+		namespace NImpl
+		{
+			FImpl::FImpl() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+				bAllocated(false),
+				UpdateType(NCsPooledObject::EUpdate::Manager),
+				Instigator(nullptr),
+				Owner(nullptr),
+				Parent(nullptr),
+				Time(),
+				PreserveChangesFromDefaultMask(0),
+				// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
+				Type(),
+				Generation(0),
+				Direction(0.0f),
+				Location(0.0f)
+			{
+				InterfaceMap = new FCsInterfaceMap();
+
+				CS_INTERFACE_MAP_SET_ROOT(FImpl);
+
+				CS_INTERFACE_MAP_ADD(PooledPayloadType);
+				CS_INTERFACE_MAP_ADD(PayloadType);
+			}
+
+			FImpl::~FImpl()
+			{
+				// ICsGetInterfaceMap
+				delete InterfaceMap;
+			}
+
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-			bAllocated(false),
-			UpdateType(NCsPooledObject::EUpdate::Manager),
-			Instigator(nullptr),
-			Owner(nullptr),
-			Parent(nullptr),
-			Time(),
-			PreserveChangesFromDefaultMask(0),
-			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
-			Type(),
-			Generation(0),
-			Direction(0.0f),
-			Location(0.0f)
-		{
-			InterfaceMap = new FCsInterfaceMap();
+			#pragma region
 
-			InterfaceMap->SetRoot<FImpl>(this);
+			void FImpl::Reset()
+			{
+				// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+				bAllocated	= false;
+				UpdateType	= NCsPooledObject::EUpdate::Manager;
+				Instigator	= nullptr;
+				Owner		= nullptr;
+				Parent		= nullptr;
 
-			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
-			typedef NCsProjectile::NPayload::IPayload ProjectilePayloadType;
+				Time.Reset();
+				// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
+				Type		= EMCsProjectile::Get().GetMAX();
+				Generation	= 0;
+				Direction	= FVector::ZeroVector;
+				Location	= FVector::ZeroVector;
+			}
 
-			InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
-			InterfaceMap->Add<ProjectilePayloadType>(static_cast<ProjectilePayloadType*>(this));
+			#pragma endregion NCsPooledObject::NPayload::IPayload
 		}
-
-		FImpl::~FImpl()
-		{
-			// ICsGetInterfaceMap
-			delete InterfaceMap;
-		}
-
-		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-		#pragma region
-
-		void FImpl::Reset()
-		{
-			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-			bAllocated	= false;
-			UpdateType	= NCsPooledObject::EUpdate::Manager;
-			Instigator	= nullptr;
-			Owner		= nullptr;
-			Parent		= nullptr;
-
-			Time.Reset();
-			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
-			Type		= EMCsProjectile::Get().GetMAX();
-			Generation	= 0;
-			Direction	= FVector3f::ZeroVector;
-			Location	= FVector3f::ZeroVector;
-		}
-
-		#pragma endregion NCsPooledObject::NPayload::IPayload
 	}
 }

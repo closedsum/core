@@ -2,7 +2,7 @@
 #include "Modifier/CsProjectileModifierImpl.h"
 
 // Types
-#include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Library/CsLibrary_Valid.h"
@@ -14,29 +14,24 @@
 // FCsProjectileModifier_Int
 #pragma region
 
-#define ModifierType NCsProjectile::NModifier::FInt
-
-void FCsProjectileModifier_Int::CopyToModifier(ModifierType* Modifier)
+namespace NCsProjectileModifier_Int
 {
-	Modifier->SetType(&Type);
-	Modifier->SetValue(&Value);
+	using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
 
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+	void FImpl::CopyToModifier(ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY(Modifier, Application, ApplicationType);
+	}
 
-	Modifier->SetApplication((ApplicationType*)(&Application));
+	void FImpl::CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Modifier, Application, ApplicationType);
+	}
 }
-
-void FCsProjectileModifier_Int::CopyToModifierAsValue(ModifierType* Modifier) const
-{
-	Modifier->SetType(Type);
-	Modifier->SetValue(Value);
-
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-	Modifier->SetApplication((ApplicationType)Application);
-}
-
-#undef ModifierType
 
 bool FCsProjectileModifier_Int::IsValidChecked(const FString& Context) const
 {
@@ -58,7 +53,17 @@ bool FCsProjectileModifier_Int::IsValid(const FString& Context, void(*Log)(const
 	return true;
 }
 
-const FName NCsProjectile::NModifier::FInt::Name = FName("NCsProjectile::NModifier::FInt");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsProjectile::NModifier::NInt::FInt);
+
+	// NCsProjectile::NModifier::NInt::NInt
+	//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NModifier, NInt, Int)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsProjectile::NModifier::NInt::FInt, Copy)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
+
+#pragma endregion Cached
 
 namespace NCsProjectile
 {
@@ -66,100 +71,78 @@ namespace NCsProjectile
 	{
 		namespace NInt
 		{
-			namespace NCached
+			FInt::FInt() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
 			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::FInt, Copy);
-				}
-			}
-		}
-
-		FInt::FInt() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
-		{
-			InterfaceMap = new FCsInterfaceMap();
+				InterfaceMap = new FCsInterfaceMap();
 			
-			InterfaceMap->SetRoot<FInt>(this);
+				CS_INTERFACE_MAP_SET_ROOT(FInt);
 
-			typedef NCsProjectile::NModifier::IModifier PrjModifierType;
-			typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
+				CS_INTERFACE_MAP_ADD(CsModifierType);
+				CS_INTERFACE_MAP_ADD(CsIntModifierType);
+				CS_INTERFACE_MAP_ADD(PrjModifierType);
+				CS_INTERFACE_MAP_ADD(ICsGetProjectileModifierType);
+				CS_INTERFACE_MAP_ADD(ICsIsValid);
+				CS_INTERFACE_MAP_ADD(CopyType);
+				CS_INTERFACE_MAP_ADD(ICsReset);
 
-			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
-			InterfaceMap->Add<CsIntModifierType>(static_cast<CsIntModifierType*>(this));
-			InterfaceMap->Add<PrjModifierType>(static_cast<PrjModifierType*>(this));
-			InterfaceMap->Add<ICsGetProjectileModifierType>(static_cast<ICsGetProjectileModifierType*>(this));
-			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
-			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
-			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(Value);
+				CS_CTOR_SET_MEMBER_PROXY(Application);
+			}
 
-			CS_CTOR_SET_MEMBER_PROXY(Type);
-			CS_CTOR_SET_MEMBER_PROXY(Value);
-			CS_CTOR_SET_MEMBER_PROXY(Application);
+			FInt::~FInt()
+			{
+				// ICsGetInterfaceMap
+				delete InterfaceMap;
+			}
+
+			using ApplicationMapType = NCsModifier::NValue::NNumeric::EMApplication;
+			using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+
+			// ICsIsValid
+			#pragma region
+
+			bool FInt::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectileModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
+				return true;
+			}
+
+			bool FInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsProjectileModifier, FECsProjectileModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
+				return true;
+			}
+
+			#pragma endregion ICsIsValid
+
+			// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+			#pragma region
+
+			void FInt::Copy(const PrjModifierType* From)
+			{
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
+
+				const FInt* FromImpl = CsProjectileModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
+
+				SetType(FromImpl->GetType());
+				SetValue(FromImpl->GetValue());
+				SetApplication(FromImpl->GetApplication());
+			}
+
+			#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 		}
-
-		FInt::~FInt()
-		{
-			// ICsGetInterfaceMap
-			delete InterfaceMap;
-		}
-
-		// ICsIsValid
-		#pragma region
-
-		bool FInt::IsValidChecked(const FString& Context) const
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectileModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-
-			CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
-			return true;
-		}
-
-		bool FInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsProjectileModifier, FECsProjectileModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-			CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
-			return true;
-		}
-
-		#pragma endregion ICsIsValid
-
-		// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
-		#pragma region
-
-		#define PrjModifierType NCsProjectile::NModifier::IModifier
-		void FInt::Copy(const PrjModifierType* From)
-		{
-		#undef PrjModifierType
-
-			using namespace NCsProjectile::NModifier::NInt::NCached;
-
-			const FString& Context = Str::Copy;
-
-			typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
-
-			const FInt* FromImpl = PrjModifierLibrary::PureStaticCastChecked<FInt>(Context, From);
-
-			SetType(FromImpl->GetType());
-			SetValue(FromImpl->GetValue());
-			SetApplication(FromImpl->GetApplication());
-		}
-
-		#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 	}
 }
 
@@ -168,29 +151,24 @@ namespace NCsProjectile
 // FCsProjectileModifier_Float
 #pragma region
 
-#define ModifierType NCsProjectile::NModifier::FFloat
-
-void FCsProjectileModifier_Float::CopyToModifier(ModifierType* Modifier)
+namespace NCsProjectileModifier_Float
 {
-	Modifier->SetType(&Type);
-	Modifier->SetValue(&Value);
+	using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
 
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+	void FImpl::CopyToModifier(ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY(Modifier, Application, ApplicationType);
+	}
 
-	Modifier->SetApplication((ApplicationType*)(&Application));
+	void FImpl::CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Value);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Modifier, Application, ApplicationType);
+	}
 }
-
-void FCsProjectileModifier_Float::CopyToModifierAsValue(ModifierType* Modifier) const
-{
-	Modifier->SetType(Type);
-	Modifier->SetValue(Value);
-
-	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-	Modifier->SetApplication((ApplicationType)Application);
-}
-
-#undef ModifierType
 
 bool FCsProjectileModifier_Float::IsValidChecked(const FString& Context) const
 {
@@ -212,7 +190,17 @@ bool FCsProjectileModifier_Float::IsValid(const FString& Context, void(*Log)(con
 	return true;
 }
 
-const FName NCsProjectile::NModifier::FFloat::Name = FName("NCsProjectile::NModifier::FFloat");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsProjectile::NModifier::NFloat::FFloat);
+
+	// NCsProjectile::NModifier::NFloat::NFloat
+	//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NModifier, NFloat, Float)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsProjectile::NModifier::NFloat::FFloat, Copy)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
+
+#pragma endregion Cached
 
 namespace NCsProjectile
 {
@@ -220,100 +208,78 @@ namespace NCsProjectile
 	{
 		namespace NFloat
 		{
-			namespace NCached
+			FFloat::FFloat() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
 			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::FFloat, Copy);
-				}
+				InterfaceMap = new FCsInterfaceMap();
+
+				CS_INTERFACE_MAP_SET_ROOT(FFloat);
+
+				CS_INTERFACE_MAP_ADD(CsModifierType);
+				CS_INTERFACE_MAP_ADD(CsFloatModifierType);
+				CS_INTERFACE_MAP_ADD(PrjModifierType);
+				CS_INTERFACE_MAP_ADD(ICsGetProjectileModifierType);
+				CS_INTERFACE_MAP_ADD(ICsIsValid);
+				CS_INTERFACE_MAP_ADD(CopyType);
+				CS_INTERFACE_MAP_ADD(ICsReset);
+
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(Value);
+				CS_CTOR_SET_MEMBER_PROXY(Application);
 			}
+
+			FFloat::~FFloat()
+			{
+				// ICsGetInterfaceMap
+				delete InterfaceMap;
+			}
+
+			using ApplicationMapType = NCsModifier::NValue::NNumeric::EMApplication;
+			using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+
+			// ICsIsValid
+			#pragma region
+
+			bool FFloat::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectileModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
+				return true;
+			}
+
+			bool FFloat::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsProjectileModifier, FECsProjectileModifier, GetType())
+
+				// TODO: FUTURE: Check Modifier Type and do appropriate checks
+				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
+				return true;
+			}
+
+			#pragma endregion ICsIsValid
+
+			// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+			#pragma region
+
+			void FFloat::Copy(const PrjModifierType* From)
+			{
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
+
+				const FFloat* FromImpl = CsProjectileModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
+
+				SetType(FromImpl->GetType());
+				SetValue(FromImpl->GetValue());
+				SetApplication(FromImpl->GetApplication());
+			}
+
+			#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 		}
-
-		FFloat::FFloat() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
-		{
-			InterfaceMap = new FCsInterfaceMap();
-
-			InterfaceMap->SetRoot<FFloat>(this);
-
-			typedef NCsProjectile::NModifier::IModifier PrjModifierType;
-			typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
-
-			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
-			InterfaceMap->Add<CsFloatModifierType>(static_cast<CsFloatModifierType*>(this));
-			InterfaceMap->Add<PrjModifierType>(static_cast<PrjModifierType*>(this));
-			InterfaceMap->Add<ICsGetProjectileModifierType>(static_cast<ICsGetProjectileModifierType*>(this));
-			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
-			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
-			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
-
-			CS_CTOR_SET_MEMBER_PROXY(Type);
-			CS_CTOR_SET_MEMBER_PROXY(Value);
-			CS_CTOR_SET_MEMBER_PROXY(Application);
-		}
-
-		FFloat::~FFloat()
-		{
-			// ICsGetInterfaceMap
-			delete InterfaceMap;
-		}
-
-		// ICsIsValid
-		#pragma region
-
-		bool FFloat::IsValidChecked(const FString& Context) const
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectileModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-
-			CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
-			return true;
-		}
-
-		bool FFloat::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsProjectileModifier, FECsProjectileModifier, GetType())
-
-			// TODO: FUTURE: Check Modifier Type and do appropriate checks
-
-			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
-			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
-
-			CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
-			return true;
-		}
-
-		#pragma endregion ICsIsValid
-
-		// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
-		#pragma region
-
-		#define PrjModifierType NCsProjectile::NModifier::IModifier
-		void FFloat::Copy(const PrjModifierType* From)
-		{
-		#undef PrjModifierType
-
-			using namespace NCsProjectile::NModifier::NFloat::NCached;
-
-			const FString& Context = Str::Copy;
-
-			typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
-
-			const FFloat* FromImpl = PrjModifierLibrary::PureStaticCastChecked<FFloat>(Context, From);
-
-			SetType(FromImpl->GetType());
-			SetValue(FromImpl->GetValue());
-			SetApplication(FromImpl->GetApplication());
-		}
-
-		#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 	}
 }
 
@@ -322,21 +288,20 @@ namespace NCsProjectile
 // FCsProjectileModifier_Toggle
 #pragma region
 
-#define ModifierType NCsProjectile::NModifier::FToggle
-
-void FCsProjectileModifier_Toggle::CopyToModifier(ModifierType* Modifier)
+namespace NCsProjectileModifier_Toggle
 {
-	Modifier->SetType(&Type);
-	Modifier->SetbEnable(&bEnable);
-}
+	void FImpl::CopyToModifier(ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY(Modifier, bEnable);
+	}
 
-void FCsProjectileModifier_Toggle::CopyToModifierAsValue(ModifierType* Modifier) const
-{
-	Modifier->SetType(Type);
-	Modifier->SetbEnable(bEnable);
+	void FImpl::CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, Type);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Modifier, bEnable);
+	}
 }
-
-#undef ModifierType
 
 bool FCsProjectileModifier_Toggle::IsValidChecked(const FString& Context) const
 {
@@ -350,7 +315,17 @@ bool FCsProjectileModifier_Toggle::IsValid(const FString& Context, void(*Log)(co
 	return true;
 }
 
-const FName NCsProjectile::NModifier::FToggle::Name = FName("NCsProjectile::NModifier::FToggle");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsProjectile::NModifier::NToggle::FToggle);
+
+	// NCsProjectile::NModifier::NToggle::NToggle
+	//	Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsProjectile, NModifier, NToggle, Toggle)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsProjectile::NModifier::NToggle::FToggle, Copy)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
+
+#pragma endregion Cached
 
 namespace NCsProjectile
 {
@@ -358,84 +333,66 @@ namespace NCsProjectile
 	{
 		namespace NToggle
 		{
-			namespace NCached
+			FToggle::FToggle() :
+				// ICsGetInterfaceMap
+				InterfaceMap(nullptr),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(bEnable, false)
 			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::FToggle, Copy);
-				}
+				InterfaceMap = new FCsInterfaceMap();
+
+				CS_INTERFACE_MAP_SET_ROOT(FToggle);
+
+				CS_INTERFACE_MAP_ADD(CsModifierType);
+				CS_INTERFACE_MAP_ADD(CsToggleModifierType);
+				CS_INTERFACE_MAP_ADD(PrjModifierType);
+				CS_INTERFACE_MAP_ADD(ICsGetProjectileModifierType);
+				CS_INTERFACE_MAP_ADD(ICsIsValid);
+				CS_INTERFACE_MAP_ADD(CopyType);
+				CS_INTERFACE_MAP_ADD(ICsReset);
+
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(bEnable);
 			}
+
+			FToggle::~FToggle()
+			{
+				// ICsGetInterfaceMap
+				delete InterfaceMap;
+			}
+
+			// ICsIsValid
+			#pragma region
+
+			bool FToggle::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectileModifier, GetType())
+				return true;
+			}
+
+			bool FToggle::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsProjectileModifier, FECsProjectileModifier, GetType())
+				return true;
+			}
+
+			#pragma endregion ICsIsValid
+
+			// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+			#pragma region
+
+			void FToggle::Copy(const PrjModifierType* From)
+			{
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Copy);
+
+				const FToggle* FromImpl = CsProjectileModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
+
+				SetType(FromImpl->GetType());
+				SetbEnable(FromImpl->GetbEnable());
+			}
+
+			#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 		}
-
-		FToggle::FToggle() :
-			// ICsGetInterfaceMap
-			InterfaceMap(nullptr),
-			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(bEnable, false)
-		{
-			InterfaceMap = new FCsInterfaceMap();
-
-			InterfaceMap->SetRoot<FToggle>(this);
-
-			typedef NCsProjectile::NModifier::IModifier PrjModifierType;
-			typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
-
-			InterfaceMap->Add<CsModifierType>(static_cast<CsModifierType*>(this));
-			InterfaceMap->Add<CsToggleModifierType>(static_cast<CsToggleModifierType*>(this));
-			InterfaceMap->Add<PrjModifierType>(static_cast<PrjModifierType*>(this));
-			InterfaceMap->Add<ICsGetProjectileModifierType>(static_cast<ICsGetProjectileModifierType*>(this));
-			InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
-			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
-			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
-
-			CS_CTOR_SET_MEMBER_PROXY(Type);
-			CS_CTOR_SET_MEMBER_PROXY(bEnable);
-		}
-
-		FToggle::~FToggle()
-		{
-			// ICsGetInterfaceMap
-			delete InterfaceMap;
-		}
-
-		// ICsIsValid
-		#pragma region
-
-		bool FToggle::IsValidChecked(const FString& Context) const
-		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectileModifier, GetType())
-			return true;
-		}
-
-		bool FToggle::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsProjectileModifier, FECsProjectileModifier, GetType())
-			return true;
-		}
-
-		#pragma endregion ICsIsValid
-
-		// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
-		#pragma region
-
-		#define PrjModifierType NCsProjectile::NModifier::IModifier
-		void FToggle::Copy(const PrjModifierType* From)
-		{
-		#undef PrjModifierType
-
-			using namespace NCsProjectile::NModifier::NFloat::NCached;
-
-			const FString& Context = Str::Copy;
-
-			typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
-
-			const FToggle* FromImpl = PrjModifierLibrary::PureStaticCastChecked<FToggle>(Context, From);
-
-			SetType(FromImpl->GetType());
-			SetbEnable(FromImpl->GetbEnable());
-		}
-
-		#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 	}
 }
 
@@ -444,79 +401,70 @@ namespace NCsProjectile
 // FCsProjectileModifierInfo
 #pragma region
 
-#define InfoType NCsProjectile::NModifier::FInfo
-
-void FCsProjectileModifierInfo::CopyToInfo(InfoType* Info)
+namespace NCsProjectileModifierInfo
 {
-	// Ints
-	typedef NCsProjectile::NModifier::FInt IntModifierType;
+	using IntModifierType = NCsProjectile::NModifier::NInt::FInt;
+	using FloatModifierType = NCsProjectile::NModifier::NFloat::FFloat;
+	using ToggleModifierType = NCsProjectile::NModifier::NToggle::FToggle;
 
-	Info->Ints.Reset(Ints.Num());
-
-	for (FCsProjectileModifier_Int& From : Ints)
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
 	{
-		IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
-		From.CopyToModifier(&To);
+		// Ints
+		Info->Ints.Reset(This->Ints.Num());
+
+		for (FCsProjectileModifier_Int& From : This->Ints)
+		{
+			IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+			From.CopyToModifier(&To);
+		}
+		// Floats
+		Info->Floats.Reset(This->Floats.Num());
+
+		for (FCsProjectileModifier_Float& From : This->Floats)
+		{
+			FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+			From.CopyToModifier(&To);
+		}
+		// Toggles
+		Info->Toggles.Reset(This->Toggles.Num());
+
+		for (FCsProjectileModifier_Toggle& From : This->Toggles)
+		{
+			ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
+			From.CopyToModifier(&To);
+		}
+		Info->PopulateModifiers();
 	}
-	// Floats
-	typedef NCsProjectile::NModifier::FFloat FloatModifierType;
 
-	Info->Floats.Reset(Floats.Num());
-
-	for (FCsProjectileModifier_Float& From : Floats)
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
 	{
-		FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
-		From.CopyToModifier(&To);
-	}
-	// Toggles
-	typedef NCsProjectile::NModifier::FToggle ToggleModifierType;
+		// Ints
+		Info->Ints.Reset(This->Ints.Num());
 
-	Info->Toggles.Reset(Toggles.Num());
+		for (const FCsProjectileModifier_Int& From : This->Ints)
+		{
+			IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+			From.CopyToModifierAsValue(&To);
+		}
+		// Floats
+		Info->Floats.Reset(This->Floats.Num());
 
-	for (FCsProjectileModifier_Toggle& From : Toggles)
-	{
-		ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
-		From.CopyToModifier(&To);
+		for (const FCsProjectileModifier_Float& From : This->Floats)
+		{
+			FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+			From.CopyToModifierAsValue(&To);
+		}
+		// Toggles
+		Info->Toggles.Reset(This->Toggles.Num());
+
+		for (const FCsProjectileModifier_Toggle& From : This->Toggles)
+		{
+			ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
+			From.CopyToModifierAsValue(&To);
+		}
+		Info->PopulateModifiers();
 	}
-	Info->PopulateModifiers();
 }
-
-void FCsProjectileModifierInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	// Ints
-	typedef NCsProjectile::NModifier::FInt IntModifierType;
-
-	Info->Ints.Reset(Ints.Num());
-
-	for (const FCsProjectileModifier_Int& From : Ints)
-	{
-		IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
-		From.CopyToModifierAsValue(&To);
-	}
-	// Floats
-	typedef NCsProjectile::NModifier::FFloat FloatModifierType;
-
-	Info->Floats.Reset(Floats.Num());
-
-	for (const FCsProjectileModifier_Float& From : Floats)
-	{
-		FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
-		From.CopyToModifierAsValue(&To);
-	}
-	// Toggles
-	typedef NCsProjectile::NModifier::FToggle ToggleModifierType;
-
-	Info->Toggles.Reset(Toggles.Num());
-
-	for (const FCsProjectileModifier_Toggle& From : Toggles)
-	{
-		ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
-		From.CopyToModifierAsValue(&To);
-	}
-	Info->PopulateModifiers();
-}
-
-#undef InfoType
 
 bool FCsProjectileModifierInfo::IsValidChecked(const FString& Context) const
 {
@@ -556,30 +504,27 @@ namespace NCsProjectile
 {
 	namespace NModifier
 	{
+		using IntModifierType = NCsProjectile::NModifier::NInt::FInt;
+		using FloatModifierType = NCsProjectile::NModifier::NFloat::FFloat;
+		using ToggleModifierType = NCsProjectile::NModifier::NToggle::FToggle;
+		using ModifierType = NCsProjectile::NModifier::IModifier;
+
 		bool FInfo::IsValidChecked(const FString& Context) const
 		{
-			typedef NCsProjectile::NModifier::FInt IntModifierType;
-
 			for (const IntModifierType& Modifier : Ints)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
-
-			typedef NCsProjectile::NModifier::FFloat FloatModifierType;
 
 			for (const FloatModifierType& Modifier : Floats)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
 
-			typedef NCsProjectile::NModifier::FToggle ToggleModifierType;
-
 			for (const ToggleModifierType& Modifier : Toggles)
 			{
 				CS_IS_VALID_CHECKED(Modifier);
 			}
-
-			typedef NCsProjectile::NModifier::IModifier ModifierType;
 
 			const int32 Total = Ints.Num() + Floats.Num() + Toggles.Num();
 
@@ -590,28 +535,20 @@ namespace NCsProjectile
 
 		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 		{
-			typedef NCsProjectile::NModifier::FInt IntModifierType;
-
 			for (const IntModifierType& Modifier : Ints)
 			{
 				CS_IS_VALID(Modifier)
 			}
-
-			typedef NCsProjectile::NModifier::FFloat FloatModifierType;
 
 			for (const FloatModifierType& Modifier : Floats)
 			{
 				CS_IS_VALID(Modifier)
 			}
 
-			typedef NCsProjectile::NModifier::FToggle ToggleModifierType;
-
 			for (const ToggleModifierType& Modifier : Toggles)
 			{
 				CS_IS_VALID(Modifier)
 			}
-
-			typedef NCsProjectile::NModifier::IModifier ModifierType;
 
 			const int32 Total = Ints.Num() + Floats.Num() + Toggles.Num();
 
@@ -627,27 +564,24 @@ namespace NCsProjectile
 // FCsProjectileModifier_Create_Int
 #pragma region
 
-#define CreateModifierType NCsProjectile::NModifier::NCreate::FInt
-
-void FCsProjectileModifier_Create_Int::CopyToCreateModifier(CreateModifierType* CreateModifier)
+namespace NCsProjectileModifier_Create_Int
 {
-	typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
+	using CreateType = NCsModifier::NValue::NNumeric::ECreate;
 
-	CreateModifier->SetType((CreateType*)(&Type));
-	CreateModifier->SetValue(&Value);
-	Modifier.CopyToModifier(CreateModifier->GetModifierPtr());
+	void FImpl::CopyToCreateModifier(ThisType* This, CreateModifierType* CreateModifier)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(CreateModifier, Type, CreateType);
+		CS_THIS_COPY_TO_PROXY(CreateModifier, Value);
+		This->Modifier.CopyToModifier(CreateModifier->GetModifierPtr());
+	}
+
+	void FImpl::CopyToCreateModifierAsValue(const ThisType* This, CreateModifierType* CreateModifier)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(CreateModifier, Type, CreateType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(CreateModifier, Value);
+		This->Modifier.CopyToModifierAsValue(CreateModifier->GetModifierPtr());
+	}
 }
-
-void FCsProjectileModifier_Create_Int::CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const
-{
-	typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
-
-	CreateModifier->SetType((CreateType)Type);
-	CreateModifier->SetValue(Value);
-	Modifier.CopyToModifierAsValue(CreateModifier->GetModifierPtr());
-}
-
-#undef CreateModifierType
 
 bool FCsProjectileModifier_Create_Int::IsValidChecked(const FString& Context) const
 {
@@ -669,25 +603,22 @@ namespace NCsProjectile
 	{
 		namespace NCreate
 		{
-			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+			using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
+			using CreateMapType = NCsModifier::NValue::NNumeric::EMCreate;
+			using CreateType = NCsModifier::NValue::NNumeric::ECreate;
+
 			void FInt::CreateChecked(const FString& Context, const UObject* WorldContext, const int32& InValue, AllocatedModifierType& OutModifier)
 			{
-			#undef AllocatedModifierType
-				
 				const int32 OldValue = Modifier.GetValue();
 				const int32 NewValue = NCsModifier::NValue::NNumeric::NCreate::GetNewValue(GetType(), InValue, GetValue());
 
 				Modifier.SetValue(NewValue);
-
 				OutModifier.Copy(WorldContext, &Modifier);
-
 				Modifier.SetValue(OldValue);
 			}
 
 			bool FInt::IsValidChecked(const FString& Context) const
 			{
-				typedef NCsModifier::NValue::NNumeric::EMCreate CreateMapType;
-
 				CS_IS_ENUM_VALID_CHECKED(CreateMapType, GetType())
 				CS_IS_VALID_CHECKED(Modifier);
 				return true;
@@ -695,9 +626,6 @@ namespace NCsProjectile
 
 			bool FInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 			{
-				typedef NCsModifier::NValue::NNumeric::EMCreate CreateMapType;
-				typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
-
 				CS_IS_ENUM_VALID(CreateMapType, CreateType, GetType())
 				CS_IS_VALID(Modifier)
 				return true;
@@ -711,27 +639,24 @@ namespace NCsProjectile
 // FCsProjectileModifier_Create_Float
 #pragma region
 
-#define CreateModifierType NCsProjectile::NModifier::NCreate::FFloat
-
-void FCsProjectileModifier_Create_Float::CopyToCreateModifier(CreateModifierType* CreateModifier)
+namespace NCsProjectileModifier_Create_Float
 {
-	typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
+	using CreateType = NCsModifier::NValue::NNumeric::ECreate;
 
-	CreateModifier->SetType((CreateType*)(&Type));
-	CreateModifier->SetValue(&Value);
-	Modifier.CopyToModifier(CreateModifier->GetModifierPtr());
+	void FImpl::CopyToCreateModifier(ThisType* This, CreateModifierType* CreateModifier)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY(CreateModifier, Type, CreateType);
+		CS_THIS_COPY_TO_PROXY(CreateModifier, Value);
+		This->Modifier.CopyToModifier(CreateModifier->GetModifierPtr());
+	}
+
+	void FImpl::CopyToCreateModifierAsValue(const ThisType* This, CreateModifierType* CreateModifier)
+	{
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(CreateModifier, Type, CreateType);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(CreateModifier, Value);
+		This->Modifier.CopyToModifierAsValue(CreateModifier->GetModifierPtr());
+	}
 }
-
-void FCsProjectileModifier_Create_Float::CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const
-{
-	typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
-
-	CreateModifier->SetType((CreateType)Type);
-	CreateModifier->SetValue(Value);
-	Modifier.CopyToModifierAsValue(CreateModifier->GetModifierPtr());
-}
-
-#undef CreateModifierType
 
 bool FCsProjectileModifier_Create_Float::IsValidChecked(const FString& Context) const
 {
@@ -753,11 +678,12 @@ namespace NCsProjectile
 	{
 		namespace NCreate
 		{
-			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+			using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
+			using CreateMapType = NCsModifier::NValue::NNumeric::EMCreate;
+			using CreateType = NCsModifier::NValue::NNumeric::ECreate;
+
 			void FFloat::CreateChecked(const FString& Context, const UObject* WorldContext, const float& InValue, AllocatedModifierType& OutModifier)
 			{
-			#undef AllocatedModifierType
-				
 				const float OldValue = Modifier.GetValue();
 				const float NewValue = NCsModifier::NValue::NNumeric::NCreate::GetNewValue(GetType(), InValue, GetValue());
 
@@ -770,8 +696,6 @@ namespace NCsProjectile
 
 			bool FFloat::IsValidChecked(const FString& Context) const
 			{
-				typedef NCsModifier::NValue::NNumeric::EMCreate CreateMapType;
-
 				CS_IS_ENUM_VALID_CHECKED(CreateMapType, GetType())
 				CS_IS_VALID_CHECKED(Modifier);
 				return true;
@@ -779,9 +703,6 @@ namespace NCsProjectile
 
 			bool FFloat::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 			{
-				typedef NCsModifier::NValue::NNumeric::EMCreate CreateMapType;
-				typedef NCsModifier::NValue::NNumeric::ECreate CreateType;
-
 				CS_IS_ENUM_VALID(CreateMapType, CreateType, GetType())
 				CS_IS_VALID(Modifier)
 				return true;
@@ -795,57 +716,51 @@ namespace NCsProjectile
 // FCsProjectileModifier_CreateInfo
 #pragma region
 
-#define InfoType NCsProjectile::NModifier::NCreate::FInfo
-
-void FCsProjectileModifier_CreateInfo::CopyToInfo(InfoType* Info)
+namespace NCsProjectileModifier_CreateInfo
 {
-	// Int
-	typedef NCsProjectile::NModifier::NCreate::FInt CreateIntModifierType;
+	using CreateIntModifierType = NCsProjectile::NModifier::NCreate::FInt;
+	using CreateFloatModifierType = NCsProjectile::NModifier::NCreate::FFloat;
 
-	Info->Ints.Reset(Ints.Num());
-
-	for (FCsProjectileModifier_Create_Int& From : Ints)
+	void FImpl::CopyToInfo(ThisType* This, InfoType* Info)
 	{
-		CreateIntModifierType& To = Info->Ints.AddDefaulted_GetRef();
-		From.CopyToCreateModifier(&To);
+		// Int
+		Info->Ints.Reset(This->Ints.Num());
+
+		for (FCsProjectileModifier_Create_Int& From : This->Ints)
+		{
+			CreateIntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+			From.CopyToCreateModifier(&To);
+		}
+		// Float
+		Info->Floats.Reset(This->Floats.Num());
+
+		for (FCsProjectileModifier_Create_Float& From : This->Floats)
+		{
+			CreateFloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+			From.CopyToCreateModifier(&To);
+		}
 	}
-	// Float
-	typedef NCsProjectile::NModifier::NCreate::FFloat CreateFloatModifierType;
 
-	Info->Floats.Reset(Floats.Num());
-
-	for (FCsProjectileModifier_Create_Float& From : Floats)
+	void FImpl::CopyToInfoAsValue(const ThisType* This, InfoType* Info)
 	{
-		CreateFloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
-		From.CopyToCreateModifier(&To);
+		// Int
+		Info->Ints.Reset(This->Ints.Num());
+
+		for (const FCsProjectileModifier_Create_Int& From : This->Ints)
+		{
+			CreateIntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+			From.CopyToCreateModifierAsValue(&To);
+		}
+		// Float
+		Info->Floats.Reset(This->Floats.Num());
+
+		for (const FCsProjectileModifier_Create_Float& From : This->Floats)
+		{
+			CreateFloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+			From.CopyToCreateModifierAsValue(&To);
+		}
 	}
 }
-
-void FCsProjectileModifier_CreateInfo::CopyToInfoAsValue(InfoType* Info) const
-{
-	// Int
-	typedef NCsProjectile::NModifier::NCreate::FInt CreateIntModifierType;
-
-	Info->Ints.Reset(Ints.Num());
-
-	for (const FCsProjectileModifier_Create_Int& From : Ints)
-	{
-		CreateIntModifierType& To = Info->Ints.AddDefaulted_GetRef();
-		From.CopyToCreateModifierAsValue(&To);
-	}
-	// Float
-	typedef NCsProjectile::NModifier::NCreate::FFloat CreateFloatModifierType;
-
-	Info->Floats.Reset(Floats.Num());
-
-	for (const FCsProjectileModifier_Create_Float& From : Floats)
-	{
-		CreateFloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
-		From.CopyToCreateModifierAsValue(&To);
-	}
-}
-
-#undef InfoType
 
 bool FCsProjectileModifier_CreateInfo::IsValidChecked(const FString& Context) const
 {
@@ -883,7 +798,9 @@ namespace NCsProjectile
 	{
 		namespace NCreate
 		{
-			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+			using AllocatedModifierType = NCsProjectile::NModifier::FAllocated;
+			using CreateIntModifierType = NCsProjectile::NModifier::NCreate::FInt;
+			using CreateFloatModifierType = NCsProjectile::NModifier::NCreate::FFloat;
 
 			void FInfo::CreateChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers)
 			{
@@ -894,17 +811,13 @@ namespace NCsProjectile
 			void FInfo::AddChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers)
 			{
 				check(IsValidChecked(Context));
-
 				checkf(Ints.Num() == IntValues.Num(), TEXT("%s: Mismatch between Ints.Num() != IntValues.Num() (%d != %d)."), *Context, Ints.Num(), IntValues.Num());
-				checkf(Floats.Num() == FloatValues.Num(), TEXT("%s: Mismatch between Floats.Num() != FloatValues.Num() (%d != %d)."), *Context, Floats.Num(), FloatValues.Num());
-			
+				checkf(Floats.Num() == FloatValues.Num(), TEXT("%s: Mismatch between Floats.Num() != FloatValues.Num() (%d != %d)."), *Context, Floats.Num(), FloatValues.Num());		
 				checkf(OutModifiers.Max() - OutModifiers.Num() >= GetTotalSize(), TEXT("%s: OutModifiers does not have enough space."), *Context);
 
 				// Ints
 				{
 					const int32 Count = Ints.Num();
-
-					typedef NCsProjectile::NModifier::NCreate::FInt CreateIntModifierType;
 
 					for (int32 I = 0; I < Count; ++I)
 					{
@@ -918,8 +831,6 @@ namespace NCsProjectile
 				{
 					const int32 Count = Floats.Num();
 
-					typedef NCsProjectile::NModifier::NCreate::FFloat CreateFloatModifierType;
-
 					for (int32 I = 0; I < Count; ++I)
 					{
 						CreateFloatModifierType& Float			 = Floats[I];
@@ -930,20 +841,14 @@ namespace NCsProjectile
 				}
 			}
 
-			#undef AllocatedModifierType
-
 			bool FInfo::IsValidChecked(const FString& Context) const
 			{
 				// Int
-				typedef NCsProjectile::NModifier::NCreate::FInt CreateIntModifierType;
-
 				for (const CreateIntModifierType& CreateModifier : Ints)
 				{
 					CS_IS_VALID_CHECKED(CreateModifier);
 				}
 				// Float
-				typedef NCsProjectile::NModifier::NCreate::FFloat CreateFloatModifierType;
-
 				for (const CreateFloatModifierType& CreateModifier : Floats)
 				{
 					CS_IS_VALID_CHECKED(CreateModifier);
@@ -954,15 +859,11 @@ namespace NCsProjectile
 			bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 			{
 				// Int
-				typedef NCsProjectile::NModifier::NCreate::FInt CreateIntModifierType;
-
 				for (const CreateIntModifierType& CreateModifier : Ints)
 				{
 					CS_IS_VALID(CreateModifier)
 				}
 				// Float
-				typedef NCsProjectile::NModifier::NCreate::FFloat CreateFloatModifierType;
-
 				for (const CreateFloatModifierType& CreateModifier : Floats)
 				{
 					CS_IS_VALID(CreateModifier)

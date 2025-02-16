@@ -10,6 +10,7 @@
 // Types
 #include "CsMacro_Namespace.h"
 #include "CsMacro_Cached.h"
+#include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
 #include "CsWeapon_Fire_ProjectileImpl.generated.h"
 
@@ -251,8 +252,10 @@ CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsWeapon_Fire_ProjectileImpl)
 
 class ICsWeapon;
 class ICsProjectileWeapon;
+class ICsGetProjectileType;
 struct FCsRoutine;
 
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILaunch)
 
 UCLASS(BlueprintType)
@@ -267,6 +270,7 @@ private:
 	CS_USING_CACHED_FUNCTION_NAME(CsWeapon_Fire_ProjectileImpl);
 
 	using PayloadType = NCsWeapon::NFire::NProjectile::NLaunch::NPayload::FPayload;
+	using CsProjectilePayloadType = NCsProjectile::NPayload::IPayload;
 	using ParamsType = NCsWeapon::NProjectile::NParams::NLaunch::ILaunch;
 
 // ICsWeapon_Component
@@ -287,6 +291,8 @@ private:
 	UObject* WeaponAsObject;
 
 	ICsProjectileWeapon* ProjectileWeapon;
+
+	ICsGetProjectileType* GetProjectileType;
 
 #pragma endregion Weapon_Component
 
@@ -317,6 +323,8 @@ private:
 
 	FVector CustomDirection;
 
+	FCsScopedTimerHandle LaunchScopedHandle;
+
 protected:
 
 	/** If set, calls Override_GetLaunchDirection when calling
@@ -338,15 +346,47 @@ protected:
 
 private:
 
+	/**
+	*
+	* Currently supports To types of:
+	*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
+	*  NCsProjectile::NPayload::NImplSlice::FImplSlice (NCsProjectile::NPayload::IPayload)
+	*
+	* @param Context	The calling context.
+	* @param Payload	The payload to set.
+	* return			Whether the payload was successfully set.
+	*/
+	bool SetPayload(const FString& Context, CsProjectilePayloadType* Payload, const PayloadType& LaunchPayload);
+
 	void Log_GetLaunchDirection(const ParamsType* LaunchParams, const FVector& Direction);
 
 #pragma endregion Weapon_Fire_Projectile
 
+// Spread
+#pragma region
 private:
 
 	FVector GetLaunchSpreadLocation(const FVector& InLocation, const PayloadType& Payload);
 
 	FVector GetLaunchSpreadDirection(const FVector& InDirection, const PayloadType& Payload);
+
+#pragma endregion Spread
+
+// Target
+#pragma region
+private:
+
+	bool bTarget;
+
+	USceneComponent* TargetComponent;
+
+	FVector TargetLocation;
+
+	FName TargetBone;
+
+	int32 TargetID;
+
+#pragma endregion Target
 
 // Print
 #pragma region

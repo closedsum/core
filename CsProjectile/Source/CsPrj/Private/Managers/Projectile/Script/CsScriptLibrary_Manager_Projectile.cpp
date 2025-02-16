@@ -5,6 +5,8 @@
 // Library
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Payload/CsLibrary_Payload_Projectile.h"
+	// Common
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Projectile/CsManager_Projectile.h"
 // Projectile
@@ -16,28 +18,21 @@
 // Cached
 #pragma region
 
-namespace NCsScriptLibraryManagerProjectile
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, Get);
-			// Settings
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, GetTypeToSetAsArray);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, SetTypeMapKeyValue);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, AddPoolParams);
-			// Allocate / Deallocate
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, QueueDeallocateAll);
-			// Pool
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, FindObject);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, HasPool);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, GetPool);
-			// Spawn
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, Spawn);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsScriptLibrary_Manager_Projectile)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_Projectile, Get)
+	// Settings
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_Projectile, GetTypeToSetAsArray)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_Projectile, SetTypeMapKeyValue)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_Projectile, AddPoolParams)
+	// Allocate / Deallocate
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_Projectile, QueueDeallocateAll)
+	// Pool
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_Projectile, FindObject)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_Projectile, HasPool)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_Projectile, GetPool)
+	// Spawn
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_Projectile, Spawn)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -51,9 +46,7 @@ UCsScriptLibrary_Manager_Projectile::UCsScriptLibrary_Manager_Projectile(const F
 
 UCsManager_Projectile* UCsScriptLibrary_Manager_Projectile::Get(const FString& Context, const UObject* WorldContextObject)
 {
-	using namespace NCsScriptLibraryManagerProjectile::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::Get : Context;
+	CS_SET_CTXT_AS_FUNCTION_NAME(Get);
 
 	return CsPrjManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 }
@@ -65,9 +58,7 @@ UCsManager_Projectile* UCsScriptLibrary_Manager_Projectile::Get(const FString& C
 
 bool UCsScriptLibrary_Manager_Projectile::GetTypeToSetAsArray(const FString& Context, const UObject* WorldContextObject, TArray<FECsProjectile>& OutTypes)
 {
-	using namespace NCsScriptLibraryManagerProjectile::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetTypeToSetAsArray : Context;
+	CS_SET_CTXT_AS_FUNCTION_NAME(GetTypeToSetAsArray);
 
 	UCsManager_Projectile* Manager_Projectile = CsPrjManagerLibrary::GetSafe(Context, WorldContextObject);
 
@@ -87,18 +78,14 @@ bool UCsScriptLibrary_Manager_Projectile::GetTypeToSetAsArray(const FString& Con
 
 void UCsScriptLibrary_Manager_Projectile::SetTypeMapKeyValue(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Key, const FECsProjectile& Value)
 {
-	using namespace NCsScriptLibraryManagerProjectile::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetTypeMapKeyValue : Context;
+	CS_SET_CTXT_AS_FUNCTION_NAME(SetTypeMapKeyValue);
 
 	CsPrjManagerLibrary::SafeSetAndAddTypeMapKeyValue(Context, WorldContextObject, Key, Value);
 }
 
 bool UCsScriptLibrary_Manager_Projectile::AddPoolParams(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type, const FCsSettings_Manager_Projectile_PoolParams& PoolParams)
 {
-	using namespace NCsScriptLibraryManagerProjectile::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::AddPoolParams : Context;
+	CS_SET_CTXT_AS_FUNCTION_NAME(AddPoolParams);
 
 	return CsPrjManagerLibrary::SafeAddPoolParams(Ctxt, WorldContextObject, Type, PoolParams);
 }
@@ -110,9 +97,7 @@ bool UCsScriptLibrary_Manager_Projectile::AddPoolParams(const FString& Context, 
 
 bool UCsScriptLibrary_Manager_Projectile::QueueDeallocateAll(const FString& Context, const UObject* WorldContextObject)
 {
-	using namespace NCsScriptLibraryManagerProjectile::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::QueueDeallocateAll : Context;
+	CS_SET_CTXT_AS_FUNCTION_NAME(QueueDeallocateAll);
 
 	return CsPrjManagerLibrary::SafeQueueDeallocateAll(Ctxt, WorldContextObject);
 }
@@ -124,9 +109,7 @@ bool UCsScriptLibrary_Manager_Projectile::QueueDeallocateAll(const FString& Cont
 
 UObject* UCsScriptLibrary_Manager_Projectile::FindObject(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type, const int32& Index)
 {
-	using namespace NCsScriptLibraryManagerProjectile::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::FindObject : Context;
+	CS_SET_CTXT_AS_FUNCTION_NAME(FindObject);
 
 	UObject* ContextRoot = CsPrjManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
 
@@ -135,6 +118,7 @@ UObject* UCsScriptLibrary_Manager_Projectile::FindObject(const FString& Context,
 		return nullptr;
 #endif // #if WITH_EDITOR
 
+	//CS_IS_ENUM_STRUCT_VALID_RET_NULL(EMCsProjectile, FECsProjectile, Type)
 	if (!EMCsProjectile::Get().IsValidEnum(Type))
 	{
 		UE_LOG(LogCsPrj, Warning, TEXT("%s: Type: %s is NOT Valid."), *Ctxt, Type.ToChar());
@@ -160,18 +144,14 @@ UObject* UCsScriptLibrary_Manager_Projectile::FindObject(const FString& Context,
 
 bool UCsScriptLibrary_Manager_Projectile::HasPool(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type)
 {
-	using namespace NCsScriptLibraryManagerProjectile::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::HasPool : Context;
+	CS_SET_CTXT_AS_FUNCTION_NAME(HasPool);
 
 	return CsPrjManagerLibrary::SafeHasPool(Ctxt, WorldContextObject, Type);
 }
 
 bool UCsScriptLibrary_Manager_Projectile::GetPool(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type, TArray<UObject*>& OutPool)
 {
-	using namespace NCsScriptLibraryManagerProjectile::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetPool : Context;
+	CS_SET_CTXT_AS_FUNCTION_NAME(GetPool);
 
 	return CsPrjManagerLibrary::GetSafePool(Ctxt, WorldContextObject, Type, OutPool);
 }
@@ -183,9 +163,7 @@ bool UCsScriptLibrary_Manager_Projectile::GetPool(const FString& Context, const 
 
 UObject* UCsScriptLibrary_Manager_Projectile::Spawn(const FString& Context, const UObject* WorldContextObject, const FCsPayload_Projectile& Payload, int32& OutIndex)
 {
-	using namespace NCsScriptLibraryManagerProjectile::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::Spawn : Context;
+	CS_SET_CTXT_AS_FUNCTION_NAME(Spawn);
 
 	OutIndex = INDEX_NONE;
 
@@ -199,18 +177,18 @@ UObject* UCsScriptLibrary_Manager_Projectile::Spawn(const FString& Context, cons
 	if (!Manager_Projectile)
 		return nullptr;
 
-	typedef NCsProjectile::NPayload::IPayload PayloadType;
-	typedef NCsProjectile::NPayload::FImpl PayloadImplType;
-	typedef NCsProjectile::NPayload::FImplSlice PayloadSliceType;
+	using PayloadType = NCsProjectile::NPayload::IPayload;
+	using PayloadImplType = NCsProjectile::NPayload::NImpl::FImpl;
+	using PayloadSliceType = NCsProjectile::NPayload::NImplSlice::FImplSlice;
 
 	const FECsProjectile& Type	= Payload.Type;
 
-	PayloadType* IPayload = Manager_Projectile->AllocatePayload(Type);
+	PayloadType* P = CsPrjManagerLibrary::AllocatePayloadChecked(Ctxt, WorldContextObject, Type);
 
 	// Copy script payload to native payload
-	Payload.CopyToPayloadAsValueChecked(Ctxt, WorldContextObject, IPayload);
+	Payload.CopyToPayloadAsValueChecked(Ctxt, WorldContextObject, P);
 
-	const FCsProjectilePooled* PrjPooled = Manager_Projectile->Spawn(Type, IPayload);
+	const FCsProjectilePooled* PrjPooled = CsPrjManagerLibrary::SpawnChecked(Type, WorldContextObject, P);
 
 	UObject* O = PrjPooled->GetSafeObject();
 

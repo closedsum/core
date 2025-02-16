@@ -280,7 +280,9 @@ namespace NCsCoroutine
 			Float,
 			Double,
 			Vector,
+			Vector3f,
 			Rotator,
+			Rotator3f,
 			Color,
 			Name,
 			String,
@@ -309,7 +311,9 @@ namespace NCsCoroutine
 				extern CSCOROUTINE_API const Type Float;
 				extern CSCOROUTINE_API const Type Double;
 				extern CSCOROUTINE_API const Type Vector;
+				extern CSCOROUTINE_API const Type Vector3f;
 				extern CSCOROUTINE_API const Type Rotator;
+				extern CSCOROUTINE_API const Type Rotator3f;
 				extern CSCOROUTINE_API const Type Color;
 				extern CSCOROUTINE_API const Type Name;
 				extern CSCOROUTINE_API const Type String;
@@ -394,8 +398,10 @@ namespace NCsCoroutine
 			TArray<uint32, TFixedAllocator<CS_ROUTINE_INT_SIZE>> UnsignedInts;
 			TArray<float, TFixedAllocator<CS_ROUTINE_FLOAT_SIZE>> Floats;
 			TArray<double, TFixedAllocator<CS_ROUTINE_DOUBLE_SIZE>> Doubles;
-			TArray<FVector3f, TFixedAllocator<CS_ROUTINE_VECTOR_SIZE>> Vectors;
-			TArray<FRotator3f, TFixedAllocator<CS_ROUTINE_ROTATOR_SIZE>> Rotators;
+			TArray<FVector, TFixedAllocator<CS_ROUTINE_VECTOR_SIZE>> Vectors;
+			TArray<FVector3f, TFixedAllocator<CS_ROUTINE_VECTOR_SIZE>> Vector3fs;
+			TArray<FRotator, TFixedAllocator<CS_ROUTINE_ROTATOR_SIZE>> Rotators;
+			TArray<FRotator3f, TFixedAllocator<CS_ROUTINE_ROTATOR_SIZE>> Rotator3fs;
 			TArray<FLinearColor, TFixedAllocator<CS_ROUTINE_COLOR_SIZE>> Colors;
 			TArray<FName, TFixedAllocator<CS_ROUTINE_NAME_SIZE>> Names;
 			TArray<FString, TFixedAllocator<CS_ROUTINE_STRING_SIZE>> Strings;
@@ -466,16 +472,28 @@ namespace NCsCoroutine
 				Doubles[InIndex] = Value;
 			}
 
-			FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector3f& Value)
+			FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value)
 			{
 				SetUsedValue(EValueType::Vector, InIndex);
 				Vectors[InIndex] = Value;
 			}
 
-			FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator3f& Value)
+			FORCEINLINE void SetValue_Vector3f(const int32& InIndex, const FVector3f& Value)
+			{
+				SetUsedValue(EValueType::Vector3f, InIndex);
+				Vector3fs[InIndex] = Value;
+			}
+
+			FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator& Value)
 			{
 				SetUsedValue(EValueType::Rotator, InIndex);
 				Rotators[InIndex] = Value;
+			}
+
+			FORCEINLINE void SetValue_Rotator3f(const int32& InIndex, const FRotator3f& Value)
+			{
+				SetUsedValue(EValueType::Rotator3f, InIndex);
+				Rotator3fs[InIndex] = Value;
 			}
 
 			FORCEINLINE void SetValue_Color(const int32& InIndex, const FLinearColor& Value)
@@ -513,6 +531,7 @@ namespace NCsCoroutine
 				SetUsedValue(EValueType::Void, InIndex);
 				VoidPointers[InIndex] = Value;
 			}
+
 			#pragma endregion Set
 
 			// Get
@@ -561,16 +580,28 @@ namespace NCsCoroutine
 					return Doubles[InIndex];
 				}
 
-				FORCEINLINE FVector3f& GetValue_Vector(const int32& InIndex)
+				FORCEINLINE FVector& GetValue_Vector(const int32& InIndex)
 				{
 					SetUsedValue(EValueType::Vector, InIndex);
 					return Vectors[InIndex];
 				}
 
-				FORCEINLINE FRotator3f& GetValue_Rotator(const int32& InIndex)
+				FORCEINLINE FVector3f& GetValue_Vector3f(const int32& InIndex)
+				{
+					SetUsedValue(EValueType::Vector3f, InIndex);
+					return Vector3fs[InIndex];
+				}
+
+				FORCEINLINE FRotator& GetValue_Rotator(const int32& InIndex)
 				{
 					SetUsedValue(EValueType::Rotator, InIndex);
 					return Rotators[InIndex];
+				}
+
+				FORCEINLINE FRotator3f& GetValue_Rotator3f(const int32& InIndex)
+				{
+					SetUsedValue(EValueType::Rotator3f, InIndex);
+					return Rotator3fs[InIndex];
 				}
 
 				FORCEINLINE FLinearColor& GetValue_Color(const int32& InIndex)
@@ -624,6 +655,7 @@ namespace NCsCoroutine
 				}
 
 			#pragma endregion Get
+
 		public:
 
 			void Reset();
@@ -751,8 +783,10 @@ namespace NCsCoroutine
 			FORCEINLINE void SetValue_UnsignedInt(const int32& InIndex, const uint32& Value){		RegisterMap.SetValue_UnsignedInt(InIndex, Value); }
 			FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value){				RegisterMap.SetValue_Float(InIndex, Value); }
 			FORCEINLINE void SetValue_Double(const int32& InIndex, const double& Value){			RegisterMap.SetValue_Double(InIndex, Value); }
-			FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector3f& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }
-			FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator3f& Value){			RegisterMap.SetValue_Rotator(InIndex, Value); }
+			FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }
+			FORCEINLINE void SetValue_Vector3f(const int32& InIndex, const FVector3f& Value){		RegisterMap.SetValue_Vector3f(InIndex, Value); }
+			FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator& Value){			RegisterMap.SetValue_Rotator(InIndex, Value); }
+			FORCEINLINE void SetValue_Rotator3f(const int32& InIndex, const FRotator3f& Value){		RegisterMap.SetValue_Rotator3f(InIndex, Value); }
 			FORCEINLINE void SetValue_Color(const int32& InIndex, const FLinearColor& Value){		RegisterMap.SetValue_Color(InIndex, Value); }
 			FORCEINLINE void SetValue_Name(const int32& InIndex, const FName& Value){				RegisterMap.SetValue_Name(InIndex, Value); }
 			FORCEINLINE void SetValue_String(const int32& InIndex, const FString& Value){			RegisterMap.SetValue_String(InIndex, Value); }
@@ -840,14 +874,22 @@ namespace NCsCoroutine
 #define CS_COROUTINE_PAYLOAD_PASS_FLOAT_START int32 __Coroutine__Payload__Float__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_FLOAT(__Value) __Coroutine__Payload__->SetValue_Float(__Coroutine__Payload__Float__Counter__, __Value); \
 	++__Coroutine__Payload__Float__Counter__
-// Vector (FVector3f)
+// Vector
 #define CS_COROUTINE_PAYLOAD_PASS_VECTOR_START int32 __Coroutine__Payload__Vector__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_VECTOR(__Value) __Coroutine__Payload__->SetValue_Vector(__Coroutine__Payload__Vector__Counter__, __Value); \
 	++__Coroutine__Payload__Vector__Counter__
-// Rotator (FRotator3f)
+// Vector3f
+#define CS_COROUTINE_PAYLOAD_PASS_VECTOR3F_START int32 __Coroutine__Payload__Vector3f__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_VECTOR3F(__Value) __Coroutine__Payload__->SetValue_Vector3f(__Coroutine__Payload__Vector3f__Counter__, __Value); \
+	++__Coroutine__Payload__Vector3f__Counter__
+// Rotator
 #define CS_COROUTINE_PAYLOAD_PASS_ROTATOR_START int32 __Coroutine__Payload__Rotator__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_ROTATOR(__Value) __Coroutine__Payload__->SetValue_Rotator(__Coroutine__Payload__Rotator__Counter__, __Value); \
 	++__Coroutine__Payload__Rotator__Counter__
+// Rotator3f
+#define CS_COROUTINE_PAYLOAD_PASS_ROTATOR3F_START int32 __Coroutine__Payload__Rotator3f__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_ROTATOR3F(__Value) __Coroutine__Payload__->SetValue_Rotator3f(__Coroutine__Payload__Rotator3f__Counter__, __Value); \
+	++__Coroutine__Payload__Rotator3f__Counter__
 // Color (FLinearColor)
 #define CS_COROUTINE_PAYLOAD_PASS_COLOR_START int32 __Coroutine__Payload__Color__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_COLOR(__Value) __Coroutine__Payload__->SetValue_Color(__Coroutine__Payload__Color__Counter__, __Value); \
@@ -884,12 +926,18 @@ namespace NCsCoroutine
 // Float
 #define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_FLOAT(__Payload, __Value) __Payload->SetValue_Float(__Coroutine__Payload__Float__Counter__, __Value); \
 	++__Coroutine__Payload__Float__Counter__
-// Vector (FVector3f)
+// Vector
 #define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_VECTOR(__Payload, __Value) __Payload->SetValue_Vector(__Coroutine__Payload__Vector__Counter__, __Value); \
 	++__Coroutine__Payload__Vector__Counter__
-// Rotator (FRotator3f)
+// Vector3f
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_VECTOR3F(__Payload, __Value) __Payload->SetValue_Vector3f(__Coroutine__Payload__Vector3f__Counter__, __Value); \
+	++__Coroutine__Payload__Vector3f__Counter__
+// Rotator
 #define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_ROTATOR(__Payload, __Value) __Payload->SetValue_Rotator(__Coroutine__Payload__Rotator__Counter__, __Value); \
 	++__Coroutine__Payload__Rotator__Counter__
+// Rotator3f
+#define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_ROTATOR3F(__Payload, __Value) __Payload->SetValue_Rotator3f(__Coroutine__Payload__Rotator3f__Counter__, __Value); \
+	++__Coroutine__Payload__Rotator3f__Counter__
 // Color (FLinearColor)
 #define CS_COROUTINE_PAYLOAD_EXPLICIT_PASS_COLOR(__Payload, __Value) __Payload->SetValue_Color(__Coroutine__Payload__Color__Counter__, __Value); \
 	++__Coroutine__Payload__Color__Counter__
@@ -971,26 +1019,46 @@ namespace NCsCoroutine
 	++__Coroutine__Read__Float__Counter__
 #define CS_COROUTINE_READ_FLOAT_CONST_REF(__R, __VariableName) const float& __VariableName = __R->GetValue_Float(__Coroutine__Read__Float__Counter__); \
 	++__Coroutine__Read__Float__Counter__
-// Vector (FVector3f)
+// Vector
 #define CS_COROUTINE_READ_VECTOR_START int32 __Coroutine__Read__Vector__Counter__ = 0;
-#define CS_COROUTINE_READ_VECTOR(__R, __VariableName) FVector3f __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+#define CS_COROUTINE_READ_VECTOR(__R, __VariableName) FVector __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
-#define CS_COROUTINE_READ_VECTOR_REF(__R, __VariableName) FVector3f& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+#define CS_COROUTINE_READ_VECTOR_REF(__R, __VariableName) FVector& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
-#define CS_COROUTINE_READ_VECTOR_CONST(__R, __VariableName) const FVector3f __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+#define CS_COROUTINE_READ_VECTOR_CONST(__R, __VariableName) const FVector __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
-#define CS_COROUTINE_READ_VECTOR_CONST_REF(__R, __VariableName) const FVector3f& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+#define CS_COROUTINE_READ_VECTOR_CONST_REF(__R, __VariableName) const FVector& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
-// Rotator (FRotator3f)
+// Vector3f
+#define CS_COROUTINE_READ_VECTOR3F_START int32 __Coroutine__Read__Vector3f__Counter__ = 0;
+#define CS_COROUTINE_READ_VECTOR3F(__R, __VariableName) FVector3f __VariableName = __R->GetValue_Vector3f(__Coroutine__Read__Vector3f__Counter__); \
+	++__Coroutine__Read__Vector3f__Counter__
+#define CS_COROUTINE_READ_VECTOR3F_REF(__R, __VariableName) FVector3f& __VariableName = __R->GetValue_Vector3f(__Coroutine__Read__Vector3f__Counter__); \
+	++__Coroutine__Read__Vector3f__Counter__
+#define CS_COROUTINE_READ_VECTOR3F_CONST(__R, __VariableName) const FVector3f __VariableName = __R->GetValue_Vector3f(__Coroutine__Read__Vector3f__Counter__); \
+	++__Coroutine__Read__Vector3f__Counter__
+#define CS_COROUTINE_READ_VECTOR3F_CONST_REF(__R, __VariableName) const FVector3f& __VariableName = __R->GetValue_Vector3f(__Coroutine__Read__Vector3f__Counter__); \
+	++__Coroutine__Read__Vector3f__Counter__
+// Rotator
 #define CS_COROUTINE_READ_ROTATOR_START int32 __Coroutine__Read__Rotator__Counter__ = 0;
-#define CS_COROUTINE_READ_ROTATOR(__R, __VariableName) FRotator3f __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
+#define CS_COROUTINE_READ_ROTATOR(__R, __VariableName) FRotator __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
 	++__Coroutine__Read__Rotator__Counter__
-#define CS_COROUTINE_READ_ROTATOR_REF(__R, __VariableName) FRotator3f& __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
+#define CS_COROUTINE_READ_ROTATOR_REF(__R, __VariableName) FRotator& __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
 	++__Coroutine__Read__Rotator__Counter__
-#define CS_COROUTINE_READ_ROTATOR_CONST(__R, __VariableName) const FRotator3f __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
+#define CS_COROUTINE_READ_ROTATOR_CONST(__R, __VariableName) const FRotator __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
 	++__Coroutine__Read__Rotator__Counter__
-#define CS_COROUTINE_READ_ROTATOR_CONST_REF(__R, __VariableName) const FRotator3f& __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
+#define CS_COROUTINE_READ_ROTATOR_CONST_REF(__R, __VariableName) const FRotator& __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
 	++__Coroutine__Read__Rotator__Counter__
+// Rotator3f
+#define CS_COROUTINE_READ_ROTATOR3F_START int32 __Coroutine__Read__Rotator3f__Counter__ = 0;
+#define CS_COROUTINE_READ_ROTATOR3F(__R, __VariableName) FRotator3f __VariableName = __R->GetValue_Rotator3f(__Coroutine__Read__Rotator3f__Counter__); \
+	++__Coroutine__Read__Rotator3f__Counter__
+#define CS_COROUTINE_READ_ROTATOR3F_REF(__R, __VariableName) FRotator3f& __VariableName = __R->GetValue_Rotator3f(__Coroutine__Read__Rotator3f__Counter__); \
+	++__Coroutine__Read__Rotator3f__Counter__
+#define CS_COROUTINE_READ_ROTATOR3F_CONST(__R, __VariableName) const FRotator3f __VariableName = __R->GetValue_Rotator3f(__Coroutine__Read__Rotator3f__Counter__); \
+	++__Coroutine__Read__Rotator3f__Counter__
+#define CS_COROUTINE_READ_ROTATOR3F_CONST_REF(__R, __VariableName) const FRotator3f& __VariableName = __R->GetValue_Rotator3f(__Coroutine__Read__Rotator3f__Counter__); \
+	++__Coroutine__Read__Rotator3f__Counter__
 // Color (FLinearColor)
 #define CS_COROUTINE_READ_COLOR_START int32 __Coroutine__Read__Color__Counter__ = 0;
 #define CS_COROUTINE_READ_COLOR(__R, __VariableName) FLinearColor __VariableName = __R->GetValue_Color(__Coroutine__Read__Color__Counter__); \

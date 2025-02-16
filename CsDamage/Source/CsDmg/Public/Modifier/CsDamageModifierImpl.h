@@ -3,6 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Cached.h"
 #include "CsTypes_Modifier.h"
 #include "Modifier/Types/CsTypes_DamageModifier.h"
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
@@ -27,8 +28,28 @@
 // FCsDamageModifier_Int
 #pragma region
 
-// NCsDamage::NModifier::FInt
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FInt)
+struct FCsDamageModifier_Int;
+
+// ModifierType (NCsDamage::NModifier::NInt::FInt)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NInt, FInt)
+
+namespace NCsDamageModifier_Int
+{
+	using ThisType = FCsDamageModifier_Int;
+	using ModifierType = NCsDamage::NModifier::NInt::FInt;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSDMG_API FImpl
+	{
+	public:
+
+		static void CopyToModifier(ThisType* This, ModifierType* Modifier);
+		static void CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier);
+	};
+}
+
+// ModifierType (NCsDamage::NModifier::NInt::FInt)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NInt, FInt)
 
 /**
 * Describes how to modify any int properties on a Damage.
@@ -65,10 +86,11 @@ public:
 	{
 	}
 
-#define ModifierType NCsDamage::NModifier::FInt
-	void CopyToModifier(ModifierType* Modifier);
-	void CopyToModifierAsValue(ModifierType* Modifier) const;
-#undef ModifierType
+	using ModifierType = NCsDamage::NModifier::NInt::FInt;
+	using _Impl = NCsDamageModifier_Int::FImpl;
+
+	FORCEINLINE void CopyToModifier(ModifierType* Modifier)					{ _Impl::CopyToModifier(this, Modifier); }
+	FORCEINLINE void CopyToModifierAsValue(ModifierType* Modifier) const	{ _Impl::CopyToModifierAsValue(this, Modifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
@@ -77,119 +99,122 @@ public:
 struct FCsInterfaceMap;
 class UObject;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_3(NCsDamage, NModifier, NInt, Int)
+
 namespace NCsDamage
 {
 	namespace NModifier
 	{
-	#define DmgModifierType NCsDamage::NModifier::IModifier
-	#define CopyType NCsDamage::NModifier::NCopy::ICopy
-
-		/**
-		* Describes how to modify any int properties on a Damage.
-		*  Damage is an object that implements the interface: ICsDamage.
-		*/
-		struct CSDMG_API FInt : public CsModifierType,
-								public CsIntModifierType,
-								public DmgModifierType,
-								public ICsGetDamageModifierType,
-								public ICsIsValid,
-								public CopyType,
-								public ICsReset
+		namespace NInt
 		{
-		public:
+			using CopyType = NCsDamage::NModifier::NCopy::ICopy;
 
-			static const FName Name;
+			/**
+			* Describes how to modify any int properties on a Damage.
+			*  Damage is an object that implements the interface: ICsDamage.
+			*/
+			struct CSDMG_API FInt : public CsModifierType,
+									public CsIntModifierType,
+									public CsDamageModifierType,
+									public ICsGetDamageModifierType,
+									public ICsIsValid,
+									public CopyType,
+									public ICsReset
+			{
+			public:
 
-		#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
+				static const FName Name;
 
-		private:
+			private:
+
+				using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+
+				CS_USING_CACHED_FUNCTION_NAME_NESTED_3(NCsDamage, NModifier, NInt, Int);
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, int32)
+				CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
+				CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+
+			public:
+
+				FInt();
+				~FInt();
+
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-			CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
-			CS_DECLARE_MEMBER_WITH_PROXY(Value, int32)
-			CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
-			CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+			#pragma endregion ICsGetInterfaceMap
 
-		public:
+			// CsIntModifierType (NCsModifier::NInt::IInt)
+			#pragma region
+			public:
 
-			FInt();
-			~FInt();
+				FORCEINLINE int32 Modify(const int32& InValue) const
+				{
+					return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
+				}
 
-			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+			#pragma endregion CsIntModifierType (NCsModifier::NInt::IInt)
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
+			// ICsGetDamageModifierType
+			#pragma region
+			public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+				FORCEINLINE const FECsDamageModifier& GetDamageModifierType() const { return GetType(); }
 
-		#pragma endregion ICsGetInterfaceMap
+			#pragma endregion ICsGetDamageModifierType
 
-		// CsIntModifierType (NCsModifier::NInt::IInt)
-		#pragma region
-		public:
+			// ICsIsValid
+			#pragma region
+			public:
 
-			FORCEINLINE int32 Modify(const int32& InValue) const
-			{
-				return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
-			}
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
 
-		#pragma endregion CsIntModifierType (NCsModifier::NInt::IInt)
+			#pragma endregion ICsIsValid
 
-		// ICsGetDamageModifierType
-		#pragma region
-		public:
+			// CopyType (NCsDamage::NModifier::NCopy::ICopy)
+			#pragma region
+			public:
 
-			FORCEINLINE const FECsDamageModifier& GetDamageModifierType() const { return GetType(); }
+				void Copy(const CsDamageModifierType* From);
 
-		#pragma endregion ICsGetDamageModifierType
+			#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 
-		// ICsIsValid
-		#pragma region
-		public:
+			// ICsReset
+			#pragma region
+			public:
 
-			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
+				FORCEINLINE void Reset()
+				{
+					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_PROXY(Value, 0)
+					CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
+					CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
+				}
 
-		#pragma endregion ICsIsValid
+			#pragma endregion ICsReset
 
-		// CopyType (NCsDamage::NModifier::NCopy::ICopy)
-		#pragma region
-		public:
+			public:
 
-			void Copy(const DmgModifierType* From);
-
-		#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
-
-		// ICsReset
-		#pragma region
-		public:
-
-			FORCEINLINE void Reset()
-			{
-				CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
-				CS_RESET_MEMBER_WITH_PROXY(Value, 0)
-				CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
-				CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
-			}
-
-		#pragma endregion ICsReset
-
-		public:
-
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
-
-		#undef ApplicationType
-		};
-
-	#undef DmgModifierType
-	#undef CopyType
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+			};
+		}
 	}
 }
 
@@ -198,8 +223,28 @@ namespace NCsDamage
 // FCsDamageModifier_Float
 #pragma region
 
-// NCsDamage::NModifier::FFloat
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FFloat)
+struct FCsDamageModifier_Float;
+
+// ModifierType (NCsDamage::NModifier::NFloat::FFloat)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NFloat, FFloat)
+
+namespace NCsDamageModifier_Float
+{
+	using ThisType = FCsDamageModifier_Float;
+	using ModifierType = NCsDamage::NModifier::NFloat::FFloat;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSDMG_API FImpl
+	{
+	public:
+
+		static void CopyToModifier(ThisType* This, ModifierType* Modifier);
+		static void CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier);
+	};
+}
+
+// ModifierType (NCsDamage::NModifier::NFloat::FFloat)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NFloat, FFloat)
 
 /**
 * Describes how to modify any float properties on a Damage.
@@ -236,10 +281,11 @@ public:
 	{
 	}
 
-#define ModifierType NCsDamage::NModifier::FFloat
-	void CopyToModifier(ModifierType* Modifier);
-	void CopyToModifierAsValue(ModifierType* Modifier) const;
-#undef ModifierType
+	using ModifierType = NCsDamage::NModifier::NFloat::FFloat;
+	using _Impl = NCsDamageModifier_Float::FImpl;
+
+	FORCEINLINE void CopyToModifier(ModifierType* Modifier)					{ _Impl::CopyToModifier(this, Modifier); }
+	FORCEINLINE void CopyToModifierAsValue(ModifierType* Modifier) const	{ _Impl::CopyToModifierAsValue(this, Modifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
@@ -248,120 +294,123 @@ public:
 struct FCsInterfaceMap;
 class UObject;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_3(NCsDamage, NModifier, NFloat, Float)
+
 namespace NCsDamage
 {
 	namespace NModifier
 	{
-	#define DmgModifierType NCsDamage::NModifier::IModifier
-	#define CopyType NCsDamage::NModifier::NCopy::ICopy
-
-		/**
-		* Describes how to modify any float properties on a Damage.
-		*  Damage is an object that implements the interface: ICsDamage.
-		*/
-		struct CSDMG_API FFloat : public CsModifierType,
-								  public CsFloatModifierType,
-								  public DmgModifierType,
-								  public ICsGetDamageModifierType,
-								  public ICsIsValid,
-								  public CopyType,
-								  public ICsReset
+		namespace NFloat
 		{
-		public:
+			using CopyType = NCsDamage::NModifier::NCopy::ICopy;
 
-			static const FName Name;
+			/**
+			* Describes how to modify any float properties on a Damage.
+			*  Damage is an object that implements the interface: ICsDamage.
+			*/
+			struct CSDMG_API FFloat : public CsModifierType,
+									  public CsFloatModifierType,
+									  public CsDamageModifierType,
+									  public ICsGetDamageModifierType,
+									  public ICsIsValid,
+									  public CopyType,
+									  public ICsReset
+			{
+			public:
 
-		#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
+				static const FName Name;
 
-		private:
+			private:
+
+				using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+
+				CS_USING_CACHED_FUNCTION_NAME_NESTED_3(NCsDamage, NModifier, NFloat, Float);
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
+				CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+
+			public:
+
+				FFloat();
+				~FFloat();
+
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-			CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
-			CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
-			CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
-			CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+			#pragma endregion ICsGetInterfaceMap
 
-		public:
+			// CsFloatModifierType (NCsModifier::NFloat::IFloat)
+			#pragma region
+			public:
 
-			FFloat();
-			~FFloat();
+				FORCEINLINE float Modify(const float& InValue) const
+				{
+					return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
+				}
 
-			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
+			#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+			// ICsGetDamageModifierType
+			#pragma region
+			public:
 
-		#pragma endregion ICsGetInterfaceMap
+				FORCEINLINE const FECsDamageModifier& GetDamageModifierType() const { return GetType(); }
 
-		// CsFloatModifierType (NCsModifier::NFloat::IFloat)
-		#pragma region
-		public:
+			#pragma endregion ICsGetDamageModifierType
 
-			FORCEINLINE float Modify(const float& InValue) const
-			{
-				return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
-			}
+			// ICsIsValid
+			#pragma region
+			public:
 
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
 
-		#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
+			#pragma endregion ICsIsValid
 
-		// ICsGetDamageModifierType
-		#pragma region
-		public:
+			// CopyType (NCsDamage::NModifier::NCopy::ICopy)
+			#pragma region
+			public:
 
-			FORCEINLINE const FECsDamageModifier& GetDamageModifierType() const { return GetType(); }
+				void Copy(const CsDamageModifierType* From);
 
-		#pragma endregion ICsGetDamageModifierType
+			#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 
-		// ICsIsValid
-		#pragma region
-		public:
+			// ICsReset
+			#pragma region
+			public:
 
-			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
+				FORCEINLINE void Reset()
+				{
+					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_PROXY(Value, 0.0)
+					CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
+					CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
+				}
 
-		#pragma endregion ICsIsValid
+			#pragma endregion ICsREset
 
-		// CopyType (NCsDamage::NModifier::NCopy::ICopy)
-		#pragma region
-		public:
+			public:
 
-			void Copy(const DmgModifierType* From);
-
-		#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
-
-		// ICsReset
-		#pragma region
-		public:
-
-			FORCEINLINE void Reset()
-			{
-				CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
-				CS_RESET_MEMBER_WITH_PROXY(Value, 0.0)
-				CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
-				CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
-			}
-
-		#pragma endregion ICsREset
-
-		public:
-
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
-
-		#undef ApplicationType
-		};
-
-	#undef DmgModifierType
-	#undef CopyType
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+			};
+		}
 	}
 }
 
@@ -370,8 +419,28 @@ namespace NCsDamage
 // FCsDamageModifier_Float_Range
 #pragma region
 
-// NCsDamage::NModifier::NFloat::FRange
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NFloat, FRange)
+struct FCsDamageModifier_Float_Range;
+
+// ModifierType (NCsDamage::NModifier::NFloat::NRange::FRange)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NModifier, NFloat, NRange, FRange)
+
+namespace NCsDamageModifier_Float_Range
+{
+	using ThisType = FCsDamageModifier_Float_Range;
+	using ModifierType = NCsDamage::NModifier::NFloat::NRange::FRange;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSDMG_API FImpl
+	{
+	public:
+
+		static void CopyToModifier(ThisType* This, ModifierType* Modifier);
+		static void CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier);
+	};
+}
+
+// ModifierType (NCsDamage::NModifier::NFloat::NRange::FRange)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NModifier, NFloat, NRange, FRange)
 
 /**
 * Describes how to modify any float properties on a Damage.
@@ -418,10 +487,11 @@ public:
 	{
 	}
 
-#define ModifierType NCsDamage::NModifier::NFloat::FRange
-	void CopyToModifier(ModifierType* Modifier);
-	void CopyToModifierAsValue(ModifierType* Modifier) const;
-#undef ModifierType
+	using ModifierType = NCsDamage::NModifier::NFloat::NRange::FRange;
+	using _Impl = NCsDamageModifier_Float_Range::FImpl;
+
+	FORCEINLINE void CopyToModifier(ModifierType* Modifier)					{ _Impl::CopyToModifier(this, Modifier); }
+	FORCEINLINE void CopyToModifierAsValue(ModifierType* Modifier) const	{ _Impl::CopyToModifierAsValue(this, Modifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
@@ -430,134 +500,137 @@ public:
 struct FCsInterfaceMap;
 class UObject;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_4(NCsDamage, NModifier, NFloat, NRange, Range)
+
 namespace NCsDamage
 {
 	namespace NModifier
 	{
 		namespace NFloat
 		{
-		#define DmgModifierType NCsDamage::NModifier::IModifier
-		#define CopyType NCsDamage::NModifier::NCopy::ICopy
-
-			/**
-			* Describes how to modify any float properties on a Damage.
-			*  Damage is an object that implements the interface: ICsDamage.
-			*/
-			struct CSDMG_API FRange : public CsModifierType,
-									  public CsFloatRangeModifierType,
-									  public DmgModifierType,
-									  public ICsGetDamageModifierType,
-									  public ICsIsValid,
-									  public CopyType,
-									  public ICsReset
+			namespace NRange
 			{
-			public:
+				using CopyType = NCsDamage::NModifier::NCopy::ICopy;
 
-				static const FName Name;
+				/**
+				* Describes how to modify any float properties on a Damage.
+				*  Damage is an object that implements the interface: ICsDamage.
+				*/
+				struct CSDMG_API FRange : public CsModifierType,
+										  public CsFloatRangeModifierType,
+										  public CsDamageModifierType,
+										  public ICsGetDamageModifierType,
+										  public ICsIsValid,
+										  public CopyType,
+										  public ICsReset
+				{
+				public:
 
-			#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
+					static const FName Name;
 
-			private:
+				private:
+
+					using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+
+					CS_USING_CACHED_FUNCTION_NAME_NESTED_4(NCsDamage, NModifier, NFloat, NRange, Range);
+					
+				private:
+
+					// ICsGetInterfaceMap
+
+					FCsInterfaceMap* InterfaceMap;
+
+					CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
+					CS_DECLARE_MEMBER_WITH_PROXY(Min, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(MinApplication, ApplicationType)
+					CS_DECLARE_MEMBER_WITH_PROXY(Max, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(MaxApplication, ApplicationType)
+					CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+
+				public:
+
+					FRange();
+					~FRange();
+
+					FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 				// ICsGetInterfaceMap
+				#pragma region
+				public:
 
-				FCsInterfaceMap* InterfaceMap;
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
-				CS_DECLARE_MEMBER_WITH_PROXY(Min, float)
-				CS_DECLARE_MEMBER_WITH_PROXY(MinApplication, ApplicationType)
-				CS_DECLARE_MEMBER_WITH_PROXY(Max, float)
-				CS_DECLARE_MEMBER_WITH_PROXY(MaxApplication, ApplicationType)
-				CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+				#pragma endregion ICsGetInterfaceMap
 
-			public:
+				// CsFloatModifierType (NCsModifier::NFloat::IFloat)
+				#pragma region
+				public:
 
-				FRange();
-				~FRange();
+					FORCEINLINE float ModifyMin(const float& InValue) const
+					{
+						return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetMin(), GetMinApplication());
+					}
 
-				FORCEINLINE UObject* _getUObject() const { return nullptr; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinApplication, ApplicationType)
 
-			// ICsGetInterfaceMap
-			#pragma region
-			public:
+					FORCEINLINE float ModifyMax(const float& InValue) const
+					{
+						return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetMax(), GetMaxApplication());
+					}
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxApplication, ApplicationType)
 
-			#pragma endregion ICsGetInterfaceMap
+				#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
 
-			// CsFloatModifierType (NCsModifier::NFloat::IFloat)
-			#pragma region
-			public:
+				// ICsGetDamageModifierType
+				#pragma region
+				public:
 
-				FORCEINLINE float ModifyMin(const float& InValue) const
-				{
-					return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetMin(), GetMinApplication());
-				}
+					FORCEINLINE const FECsDamageModifier& GetDamageModifierType() const { return GetType(); }
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinApplication, ApplicationType)
+				#pragma endregion ICsGetDamageModifierType
 
-				FORCEINLINE float ModifyMax(const float& InValue) const
-				{
-					return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetMax(), GetMaxApplication());
-				}
+				// ICsIsValid
+				#pragma region
+				public:
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxApplication, ApplicationType)
+					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
 
-			#pragma endregion CsFloatModifierType (NCsModifier::NFloat::IFloat)
+				#pragma endregion ICsIsValid
 
-			// ICsGetDamageModifierType
-			#pragma region
-			public:
+				// CopyType (NCsDamage::NModifier::NCopy::ICopy)
+				#pragma region
+				public:
 
-				FORCEINLINE const FECsDamageModifier& GetDamageModifierType() const { return GetType(); }
+					void Copy(const CsDamageModifierType* From);
 
-			#pragma endregion ICsGetDamageModifierType
+				#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 
-			// ICsIsValid
-			#pragma region
-			public:
+				// ICsReset
+				#pragma region
+				public:
 
-				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
+					FORCEINLINE void Reset()
+					{
+						CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
+						CS_RESET_MEMBER_WITH_PROXY(Min, 0.0)
+						CS_RESET_MEMBER_WITH_PROXY(MinApplication, ApplicationType::EApplication_MAX)
+						CS_RESET_MEMBER_WITH_PROXY(Max, 0.0)
+						CS_RESET_MEMBER_WITH_PROXY(MaxApplication, ApplicationType::EApplication_MAX)
+						CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
+					}
 
-			#pragma endregion ICsIsValid
+				#pragma endregion ICsREset
 
-			// CopyType (NCsDamage::NModifier::NCopy::ICopy)
-			#pragma region
-			public:
+				public:
 
-				void Copy(const DmgModifierType* From);
-
-			#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
-
-			// ICsReset
-			#pragma region
-			public:
-
-				FORCEINLINE void Reset()
-				{
-					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
-					CS_RESET_MEMBER_WITH_PROXY(Min, 0.0)
-					CS_RESET_MEMBER_WITH_PROXY(MinApplication, ApplicationType::EApplication_MAX)
-					CS_RESET_MEMBER_WITH_PROXY(Max, 0.0)
-					CS_RESET_MEMBER_WITH_PROXY(MaxApplication, ApplicationType::EApplication_MAX)
-					CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
-				}
-
-			#pragma endregion ICsREset
-
-			public:
-
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Min, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Max, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
-
-			#undef ApplicationType
-			};
-
-		#undef DmgModifierType
-		#undef CopyType
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Min, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Max, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+				};
+			}
 		}
 	}
 }
@@ -567,8 +640,28 @@ namespace NCsDamage
 // FCsDamageModifier_Toggle
 #pragma region
 
-// NCsDamage::NModifier::FToggle
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FToggle)
+struct FCsDamageModifier_Toggle;
+
+// ModifierType (NCsDamage::NModifier::NToggle::FToggle)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NToggle, FToggle)
+
+namespace NCsDamageModifier_Toggle
+{
+	using ThisType = FCsDamageModifier_Toggle;
+	using ModifierType = NCsDamage::NModifier::NToggle::FToggle;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSDMG_API FImpl
+	{
+	public:
+
+		static void CopyToModifier(ThisType* This, ModifierType* Modifier);
+		static void CopyToModifierAsValue(const ThisType* This, ModifierType* Modifier);
+	};
+}
+
+// ModifierType (NCsDamage::NModifier::NToggle::FToggle)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NToggle, FToggle)
 
 /**
 * Describes whether to toggle any properties on a Damage.
@@ -600,10 +693,11 @@ public:
 	{
 	}
 
-#define ModifierType NCsDamage::NModifier::FToggle
-	void CopyToModifier(ModifierType* Modifier);
-	void CopyToModifierAsValue(ModifierType* Modifier) const;
-#undef ModifierType
+	using ModifierType = NCsDamage::NModifier::NToggle::FToggle;
+	using _Impl = NCsDamageModifier_Toggle::FImpl;
+
+	FORCEINLINE void CopyToModifier(ModifierType* Modifier)					{ _Impl::CopyToModifier(this, Modifier); }
+	FORCEINLINE void CopyToModifierAsValue(ModifierType* Modifier) const	{ _Impl::CopyToModifierAsValue(this, Modifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
@@ -612,113 +706,116 @@ public:
 struct FCsInterfaceMap;
 class UObject;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_3(NCsDamage, NModifier, NToggle, Toggle)
+
 namespace NCsDamage
 {
 	namespace NModifier
 	{
-	#define DmgModifierType NCsDamage::NModifier::IModifier
-	#define CopyType NCsDamage::NModifier::NCopy::ICopy
-
-		/**
-		* Describes whether to toggle any properties on a Damage.
-		*  Damage is an object that implements the interface: ICsDamage.
-		*/
-		struct CSDMG_API FToggle : public CsModifierType,
-								   public CsToggleModifierType,
-								   public DmgModifierType,
-								   public ICsGetDamageModifierType,
-								   public ICsIsValid,
-								   public CopyType,
-								   public ICsReset
+		namespace NToggle
 		{
-		public:
+			using CopyType = NCsDamage::NModifier::NCopy::ICopy;
 
-			static const FName Name;
+			/**
+			* Describes whether to toggle any properties on a Damage.
+			*  Damage is an object that implements the interface: ICsDamage.
+			*/
+			struct CSDMG_API FToggle : public CsModifierType,
+									   public CsToggleModifierType,
+									   public CsDamageModifierType,
+									   public ICsGetDamageModifierType,
+									   public ICsIsValid,
+									   public CopyType,
+									   public ICsReset
+			{
+			public:
 
-		#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
+				static const FName Name;
 
-		private:
+			private:
+
+				using ApplicationType = NCsModifier::NValue::NNumeric::EApplication;
+
+				CS_USING_CACHED_FUNCTION_NAME_NESTED_3(NCsDamage, NModifier, NToggle, Toggle);
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
+				CS_DECLARE_MEMBER_WITH_PROXY(bEnable, bool)
+				CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+
+			public:
+
+				FToggle();
+				~FToggle();
+
+				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-			CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
-			CS_DECLARE_MEMBER_WITH_PROXY(bEnable, bool)
-			CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+			#pragma endregion ICsGetInterfaceMap
 
-		public:
+			// CsToggleModifierType (NCsModifier::NToggle::IToggle)
+			#pragma region
+			public:
 
-			FToggle();
-			~FToggle();
+				FORCEINLINE bool IsEnabled() const { return GetbEnable(); }
 
-			FORCEINLINE UObject* _getUObject() const { return nullptr; }
+			#pragma endregion CsToggleModifierType (NCsModifier::NToggle::IToggle)
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
+			// ICsGetDamageModifierType
+			#pragma region
+			public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+				FORCEINLINE const FECsDamageModifier& GetDamageModifierType() const { return GetType(); }
 
-		#pragma endregion ICsGetInterfaceMap
+			#pragma endregion ICsGetDamageModifierType
 
-		// CsToggleModifierType (NCsModifier::NToggle::IToggle)
-		#pragma region
-		public:
+			// ICsIsValid
+			#pragma region
+			public:
 
-			FORCEINLINE bool IsEnabled() const { return GetbEnable(); }
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
 
-		#pragma endregion CsToggleModifierType (NCsModifier::NToggle::IToggle)
+			#pragma endregion ICsIsValid
 
-		// ICsGetDamageModifierType
-		#pragma region
-		public:
+			// CopyType (NCsDamage::NModifier::NCopy::ICopy)
+			#pragma region
+			public:
 
-			FORCEINLINE const FECsDamageModifier& GetDamageModifierType() const { return GetType(); }
+				void Copy(const CsDamageModifierType* From);
 
-		#pragma endregion ICsGetDamageModifierType
+			#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
 
-		// ICsIsValid
-		#pragma region
-		public:
+			// ICsReset
+			#pragma region
+			public:
 
-			bool IsValidChecked(const FString& Context) const;
-			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
+				FORCEINLINE void Reset()
+				{
+					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_PROXY(bEnable, false)
+					CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
+				}
 
-		#pragma endregion ICsIsValid
+			#pragma endregion ICsREset
 
-		// CopyType (NCsDamage::NModifier::NCopy::ICopy)
-		#pragma region
-		public:
+			public:
 
-			void Copy(const DmgModifierType* From);
-
-		#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
-
-		// ICsReset
-		#pragma region
-		public:
-
-			FORCEINLINE void Reset()
-			{
-				CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
-				CS_RESET_MEMBER_WITH_PROXY(bEnable, false)
-				CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
-			}
-
-		#pragma endregion ICsREset
-
-		public:
-
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bEnable, bool)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
-
-		#undef ApplicationType
-		};
-
-	#undef DmgModifierType
-	#undef CopyType
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bEnable, bool)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
+			};
+		}
 	}
 }
 
@@ -727,7 +824,27 @@ namespace NCsDamage
 // FCsDamageModifierInfo
 #pragma region
 
-// NCsDamage::NModifier::FInfo
+struct FCsDamageModifierInfo;
+
+// InfoType (NCsDamage::NModifier::FInfo)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FInfo)
+
+namespace NCsDamageModifierInfo
+{
+	using ThisType = FCsDamageModifierInfo;
+	using InfoType = NCsDamage::NModifier::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSDMG_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
+// InfoType (NCsDamage::NModifier::FInfo)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FInfo)
 
 USTRUCT(BlueprintType)
@@ -755,10 +872,11 @@ struct CSDMG_API FCsDamageModifierInfo
 	{
 	}
 
-#define InfoType NCsDamage::NModifier::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsDamage::NModifier::FInfo;
+	using _Impl = NCsDamageModifierInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)					{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
@@ -770,11 +888,13 @@ namespace NCsDamage
 	{
 		struct CSDMG_API FInfo
 		{
-		#define IntModifierType NCsDamage::NModifier::FInt
-		#define FloatModifierType NCsDamage::NModifier::FFloat
-		#define FloatRangeModifierType NCsDamage::NModifier::NFloat::FRange
-		#define ToggleModifierType NCsDamage::NModifier::FToggle
-		#define ModifierType NCsDamage::NModifier::IModifier
+		private:
+
+			using IntModifierType = NCsDamage::NModifier::NInt::FInt;
+			using FloatModifierType = NCsDamage::NModifier::NFloat::FFloat;
+			using FloatRangeModifierType = NCsDamage::NModifier::NFloat::NRange::FRange;
+			using ToggleModifierType = NCsDamage::NModifier::NToggle::FToggle;
+			using ModifierType = NCsDamage::NModifier::IModifier;
 
 		public:
 
@@ -833,12 +953,6 @@ namespace NCsDamage
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
-
-		#undef IntModifierType
-		#undef FloatModifierType
-		#undef FloatRangeModifierType
-		#undef ToggleModifierType
-		#undef ModifierType
 		};
 	}
 }
@@ -848,7 +962,27 @@ namespace NCsDamage
 // FCsDamageModifier_Create_Int
 #pragma region
 
-// NCsDamage::NModifier::NCreate::FInt
+struct FCsDamageModifier_Create_Int;
+
+// CreateModifierType (NCsDamage::NModifier::NCreate::FInt)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NCreate, FInt)
+
+namespace NCsDamageModifier_Create_Int
+{
+	using ThisType = FCsDamageModifier_Create_Int;
+	using CreateModifierType = NCsDamage::NModifier::NCreate::FInt;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSDMG_API FImpl
+	{
+	public:
+
+		static void CopyToCreateModifier(ThisType* This, CreateModifierType* CreateModifier);
+		static void CopyToCreateModifierAsValue(const ThisType* This, CreateModifierType* CreateModifier);
+	};
+}
+
+// CreateModifierType (NCsDamage::NModifier::NCreate::FInt)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NCreate, FInt)
 
 /**
@@ -879,10 +1013,11 @@ public:
 	{
 	}
 
-#define CreateModifierType NCsDamage::NModifier::NCreate::FInt
-	void CopyToCreateModifier(CreateModifierType* CreateModifier);
-	void CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const;
-#undef CreateModifierType
+	using CreateModifierType = NCsDamage::NModifier::NCreate::FInt;
+	using _Impl = NCsDamageModifier_Create_Int::FImpl;
+
+	FORCEINLINE void CopyToCreateModifier(CreateModifierType* CreateModifier)				{ _Impl::CopyToCreateModifier(this, CreateModifier); }
+	FORCEINLINE void CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const	{ _Impl::CopyToCreateModifierAsValue(this, CreateModifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
@@ -898,8 +1033,11 @@ namespace NCsDamage
 		{
 			struct CSDMG_API FInt
 			{
-			#define CreateType NCsModifier::NValue::NNumeric::ECreate
-			#define ModifierType NCsDamage::NModifier::FInt
+			private:
+
+				using CreateType = NCsModifier::NValue::NNumeric::ECreate;
+				using ModifierType = NCsDamage::NModifier::NInt::FInt;
+				using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
 
 			private:
 
@@ -923,15 +1061,10 @@ namespace NCsDamage
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
 				FORCEINLINE ModifierType* GetModifierPtr() { return &Modifier; }
 
-			#define AllocatedModifierType NCsDamage::NModifier::FAllocated
 				void CreateChecked(const FString& Context, const UObject* WorldContext, const int32& InValue, AllocatedModifierType& OutModifier);
-			#undef AllocatedModifierType
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
-
-			#undef CreateType
-			#undef ModifierType
 			};
 		}
 	}
@@ -942,7 +1075,27 @@ namespace NCsDamage
 // FCsDamageModifier_Create_Float
 #pragma region
 
-// NCsDamage::NModifier::NCreate::FFloat
+struct FCsDamageModifier_Create_Float;
+
+// CreateModifierType (NCsDamage::NModifier::NCreate::FFloat)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NCreate, FFloat)
+
+namespace NCsDamageModifier_Create_Float
+{
+	using ThisType = FCsDamageModifier_Create_Float;
+	using CreateModifierType = NCsDamage::NModifier::NCreate::FFloat;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSDMG_API FImpl
+	{
+	public:
+
+		static void CopyToCreateModifier(ThisType* This, CreateModifierType* CreateModifier);
+		static void CopyToCreateModifierAsValue(const ThisType* This, CreateModifierType* CreateModifier);
+	};
+}
+
+// CreateModifierType (NCsDamage::NModifier::NCreate::FFloat)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NCreate, FFloat)
 
 /**
@@ -973,10 +1126,11 @@ public:
 	{
 	}
 
-#define CreateModifierType NCsDamage::NModifier::NCreate::FFloat
-	void CopyToCreateModifier(CreateModifierType* CreateModifier);
-	void CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const;
-#undef CreateModifierType
+	using CreateModifierType = NCsDamage::NModifier::NCreate::FFloat;
+	using _Impl = NCsDamageModifier_Create_Float::FImpl;
+
+	FORCEINLINE void CopyToCreateModifier(CreateModifierType* CreateModifier)				{ _Impl::CopyToCreateModifier(this, CreateModifier); }
+	FORCEINLINE void CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const	{ _Impl::CopyToCreateModifierAsValue(this, CreateModifier); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
@@ -992,8 +1146,11 @@ namespace NCsDamage
 		{
 			struct CSDMG_API FFloat
 			{
-			#define CreateType NCsModifier::NValue::NNumeric::ECreate
-			#define ModifierType NCsDamage::NModifier::FFloat
+			private:
+
+				using CreateType = NCsModifier::NValue::NNumeric::ECreate;
+				using ModifierType = NCsDamage::NModifier::NFloat::FFloat;
+				using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
 
 			private:
 
@@ -1016,16 +1173,11 @@ namespace NCsDamage
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, CreateType)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
 				FORCEINLINE ModifierType* GetModifierPtr() { return &Modifier; }
-
-			#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+		
 				void CreateChecked(const FString& Context, const UObject* WorldContext, const float& InValue, AllocatedModifierType& OutModifier);
-			#undef AllocatedModifierType
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
-
-			#undef CreateType
-			#undef ModifierType
 			};
 		}
 	}
@@ -1036,7 +1188,27 @@ namespace NCsDamage
 // FCsDamageModifier_CreateInfo
 #pragma region
 
-// NCsDamage::NModifier::NCreate::FInfo
+struct FCsDamageModifier_CreateInfo;
+
+// InfoType (NCsDamage::NModifier::NCreate::FInfo)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NCreate, FInfo)
+
+namespace NCsDamageModifier_CreateInfo
+{
+	using ThisType = FCsDamageModifier_CreateInfo;
+	using InfoType = NCsDamage::NModifier::NCreate::FInfo;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSDMG_API FImpl
+	{
+	public:
+
+		static void CopyToInfo(ThisType* This, InfoType* Info);
+		static void CopyToInfoAsValue(const ThisType* This, InfoType* Info);
+	};
+}
+
+// InfoType (NCsDamage::NModifier::NCreate::FInfo)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NModifier, NCreate, FInfo)
 
 USTRUCT(BlueprintType)
@@ -1056,10 +1228,11 @@ struct CSDMG_API FCsDamageModifier_CreateInfo
 	{
 	}
 
-#define InfoType NCsDamage::NModifier::NCreate::FInfo
-	void CopyToInfo(InfoType* Info);
-	void CopyToInfoAsValue(InfoType* Info) const;
-#undef InfoType
+	using InfoType = NCsDamage::NModifier::NCreate::FInfo;
+	using _Impl = NCsDamageModifier_CreateInfo::FImpl;
+
+	FORCEINLINE void CopyToInfo(InfoType* Info)					{ _Impl::CopyToInfo(this, Info); }
+	FORCEINLINE void CopyToInfoAsValue(InfoType* Info) const	{ _Impl::CopyToInfoAsValue(this, Info); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
@@ -1073,8 +1246,11 @@ namespace NCsDamage
 		{
 			struct CSDMG_API FInfo
 			{
-			#define CreateIntModifierType NCsDamage::NModifier::NCreate::FInt
-			#define CreateFloatModifierType NCsDamage::NModifier::NCreate::FFloat
+			private:
+
+				using CreateIntModifierType = NCsDamage::NModifier::NCreate::FInt;
+				using CreateFloatModifierType = NCsDamage::NModifier::NCreate::FFloat;
+				using AllocatedModifierType = NCsDamage::NModifier::FAllocated;
 
 			public:
 
@@ -1091,17 +1267,13 @@ namespace NCsDamage
 				}
 
 				FORCEINLINE int32 GetTotalSize() const { return Ints.Num() + Floats.Num(); }
-
-			#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+	
 				void CreateChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers);
 				void AddChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers);
-			#undef AllocatedModifierType
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
 
-			#undef CreateIntModifierType
-			#undef CreateFloatModifierType
 			};
 		}
 	}

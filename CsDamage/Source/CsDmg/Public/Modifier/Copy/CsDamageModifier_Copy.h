@@ -6,7 +6,7 @@
 // Types
 #include "CsMacro_Namespace.h"
 
-// NCsDamage::NModifier::IModifier
+// ModifierType (NCsDamage::NModifier::IModifier)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
 namespace NCsDamage
@@ -21,15 +21,19 @@ namespace NCsDamage
 
 				static const FName Name;
 
-			#define ModifierType NCsDamage::NModifier::IModifier
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ModifierType = NCsDamage::NModifier::IModifier;
+				};
 
 			public:
 
 				virtual ~ICopy() {}
 
-				virtual void Copy(const ModifierType* From) = 0;
-
-			#undef ModifierType 
+				virtual void Copy(const _::ModifierType* From) = 0;
 			};
 		}
 	}

@@ -34,3 +34,5 @@ namespace NCsDamage
 		};
 	}
 }
+
+using CsDamageModifierType = NCsDamage::NModifier::IModifier;

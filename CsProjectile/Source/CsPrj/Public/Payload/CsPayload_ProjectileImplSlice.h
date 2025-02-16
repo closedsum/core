@@ -12,73 +12,76 @@ namespace NCsProjectile
 {
 	namespace NPayload
 	{
-		/**
-		* Basic implementation of the interface: NCsProjectile::NPayload::IPayload.
-		*/
-		struct CSPRJ_API FImplSlice : public IPayload,
-									  public ICsReset
+		namespace NImplSlice
 		{
-		public:
+			/**
+			* Basic implementation of the interface: NCsProjectile::NPayload::IPayload.
+			*/
+			struct CSPRJ_API FImplSlice : public IPayload,
+										  public ICsReset
+			{
+			public:
 
-			static const FName Name;
+				static const FName Name;
 
-		private:
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+			public:
+
+				// ICsPayload_Projectile
+
+				FECsProjectile Type;
+
+				int32 Generation;
+
+				FVector Direction;
+
+				FVector Location;
+
+			public:
+
+				FImplSlice();
+				~FImplSlice(){}
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-		public:
+			#pragma endregion ICsGetInterfaceMap
 
-			// ICsPayload_Projectile
+			public:
 
-			FECsProjectile Type;
+				void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
-			int32 Generation;
+			// IPayload
+			#pragma region
+			public:
 
-			FVector3f Direction;
+				FORCEINLINE const FECsProjectile& GetType() const { return Type; }
+				FORCEINLINE const int32& GetGeneration() const { return Generation; }
+				FORCEINLINE const FVector& GetDirection() const { return Direction; }
+				FORCEINLINE const FVector& GetLocation() const { return Location; }
 
-			FVector3f Location;
+			#pragma endregion IPayload
 
-		public:
+			// ICsReset
+			#pragma region
+			public:
 
-			FImplSlice();
-			~FImplSlice(){}
+				void Reset();
 
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
+			#pragma endregion ICsReset
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+			public:
 
-		#pragma endregion ICsGetInterfaceMap
-
-		public:
-
-			void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
-
-		// IPayload
-		#pragma region
-		public:
-
-			FORCEINLINE const FECsProjectile& GetType() const { return Type; }
-			FORCEINLINE const int32& GetGeneration() const { return Generation; }
-			FORCEINLINE const FVector3f& GetDirection() const { return Direction; }
-			FORCEINLINE const FVector3f& GetLocation() const { return Location; }
-
-		#pragma endregion IPayload
-
-		// ICsReset
-		#pragma region
-		public:
-
-			void Reset();
-
-		#pragma endregion ICsReset
-
-		public:
-
-			bool CopyFrom(const FImplSlice* From);
-		};
+				bool CopyFrom(const FImplSlice* From);
+			};
+		}
 	}
 }

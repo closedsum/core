@@ -59,10 +59,10 @@ public:
 	int32 Generation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
-	FVector3f Location;
+	FVector Location;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
-	FVector3f Direction;
+	FVector Direction;
 
 	FCsPayload_Projectile() :
 		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
@@ -79,9 +79,9 @@ public:
 	{
 	}
 
-#define PayloadType NCsProjectile::NPayload::IPayload
+	using PayloadType = NCsProjectile::NPayload::IPayload;
+
 	void CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const;
-#undef PayloadType
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -96,114 +96,114 @@ namespace NCsProjectile
 {
 	namespace NPayload
 	{
-	#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-	#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
-
-		/**
-		* Basic implementation of the interfaces: 
-		*  PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-		*  ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
-		*/
-		struct CSPRJ_API FImpl : public PooledPayloadType,
-								 public ProjectilePayloadType
+		namespace NImpl
 		{
-		public:
+			using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+			using PayloadType = NCsProjectile::NPayload::IPayload;
 
-			static const FName Name;
+			/**
+			* Basic implementation of the interfaces: 
+			*  PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+			*  ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
+			*/
+			struct CSPRJ_API FImpl : public PooledPayloadType,
+									 public PayloadType
+			{
+			public:
 
-		private:
+				static const FName Name;
+
+			private:
+
+				// ICsGetInterfaceMap
+
+				FCsInterfaceMap* InterfaceMap;
+
+				// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+
+				bool bAllocated;
+
+			public:
+
+				NCsPooledObject::EUpdate UpdateType;
+
+				UObject* Instigator;
+
+				UObject* Owner;
+
+				UObject* Parent;
+	
+				FCsTime Time;
+
+				uint32 PreserveChangesFromDefaultMask;
+
+				// PayloadType (NCsProjectile::NPayload::IPayload)
+
+				FECsProjectile Type;
+
+				int32 Generation;
+
+				FVector Direction;
+
+				FVector Location;
+
+			public:
+
+				FImpl();
+				~FImpl();
 
 			// ICsGetInterfaceMap
+			#pragma region
+			public:
 
-			FCsInterfaceMap* InterfaceMap;
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+				{
+					return InterfaceMap;
+				}
+
+			#pragma endregion ICsGetInterfaceMap
 
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+			#pragma region
+			public:
 
-			bool bAllocated;
+				FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+				FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
+				FORCEINLINE UObject* GetInstigator() const { return Instigator; }
+				FORCEINLINE UObject* GetOwner() const { return Owner; }
+				FORCEINLINE UObject* GetParent() const { return Parent; }
+				FORCEINLINE const FCsTime& GetTime() const { return Time; }
+				FORCEINLINE void Allocate() { bAllocated = true; }
 
-		public:
+				void Reset();
 
-			NCsPooledObject::EUpdate UpdateType;
+				FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
 
-			UObject* Instigator;
+			#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
-			UObject* Owner;
+			public:
 
-			UObject* Parent;
-	
-			FCsTime Time;
+				template<typename T>
+				FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
 
-			uint32 PreserveChangesFromDefaultMask;
+				template<typename T>
+				FORCEINLINE T* GetOwner() const { return Cast<T>(GetOwner()); }
 
-			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
+				template<typename T>
+				FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
-			FECsProjectile Type;
+			// PayloadType (NCsProjectile::NPayload::IPayload)
+			#pragma region
+			public:
 
-			int32 Generation;
+				FORCEINLINE const FECsProjectile& GetType() const { return Type; }
+				FORCEINLINE const int32& GetGeneration() const { return Generation; }
+				FORCEINLINE const FVector& GetDirection() const { return Direction; }
+				FORCEINLINE const FVector& GetLocation() const { return Location; }
 
-			FVector3f Direction;
-
-			FVector3f Location;
-
-		public:
-
-			FImpl();
-			~FImpl();
-
-		// ICsGetInterfaceMap
-		#pragma region
-		public:
-
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
-
-		#pragma endregion ICsGetInterfaceMap
-
-		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-		#pragma region
-		public:
-
-			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
-			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
-			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
-			FORCEINLINE UObject* GetOwner() const { return Owner; }
-			FORCEINLINE UObject* GetParent() const { return Parent; }
-			FORCEINLINE const FCsTime& GetTime() const { return Time; }
-			FORCEINLINE void Allocate() { bAllocated = true; }
-
-			void Reset();
-
-			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
-
-		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-
-		public:
-
-			template<typename T>
-			FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
-
-			template<typename T>
-			FORCEINLINE T* GetOwner() const { return Cast<T>(GetOwner()); }
-
-			template<typename T>
-			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
-
-		// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
-		#pragma region
-		public:
-
-			FORCEINLINE const FECsProjectile& GetType() const { return Type; }
-			FORCEINLINE const int32& GetGeneration() const { return Generation; }
-			FORCEINLINE const FVector3f& GetDirection() const { return Direction; }
-			FORCEINLINE const FVector3f& GetLocation() const { return Location; }
-
-		#pragma endregion ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
-		};
-
-	#undef PooledPayloadType
-	#undef ProjectilePayloadType
+			#pragma endregion PayloadType (NCsProjectile::NPayload::IPayload)
+			};
+		}
 	}
 }
 

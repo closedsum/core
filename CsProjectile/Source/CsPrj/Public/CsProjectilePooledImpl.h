@@ -443,21 +443,25 @@ public:
 		{
 		}
 
-		FORCEINLINE const VariablesProxyType& GetProxy() const { return Outer->GetVariables()->MovementInfo; }
-		FORCEINLINE VariablesProxyType& GetProxy() { return Outer->GetVariables()->MovementInfo; }
+		FORCEINLINE const VariablesProxyType& GetProxy() const	{ return Outer->GetVariables()->MovementInfo; }
+		FORCEINLINE VariablesProxyType& GetProxy()				{ return Outer->GetVariables()->MovementInfo; }
 
-		FORCEINLINE const float& GetInitialSpeed() const { return GetProxy().GetInitialSpeed(); }
-		FORCEINLINE float& GetInitialSpeed() { return GetProxy().GetInitialSpeed(); }
-		FORCEINLINE const float& GetMaxSpeed() const { return GetProxy().GetMaxSpeed(); }
-		FORCEINLINE float& GetMaxSpeed() { return GetProxy().GetMaxSpeed(); }
-		FORCEINLINE const FVector3f& GetDirection() const { return GetProxy().GetDirection(); }
-		FORCEINLINE FVector3f& GetDirection() { return GetProxy().GetDirection(); }
-		FORCEINLINE const FVector3f& GetVelocity() const { return GetProxy().GetVelocity(); }
-		FORCEINLINE FVector3f& GetVelocity() { return GetProxy().GetVelocity(); }
-		FORCEINLINE const float& GetSpeed() const { return GetProxy().GetSpeed(); }
-		FORCEINLINE float& GetSpeed() { return GetProxy().GetSpeed(); }
-		FORCEINLINE const float& GetGravityScale() const { return GetProxy().GetGravityScale(); }
-		FORCEINLINE float& GetGravityScale() { return GetProxy().GetGravityScale(); }
+		FORCEINLINE const float& GetInitialSpeed() const	{ return GetProxy().GetInitialSpeed(); }
+		FORCEINLINE float& GetInitialSpeed()				{ return GetProxy().GetInitialSpeed(); }
+		FORCEINLINE const float& GetMaxSpeed() const		{ return GetProxy().GetMaxSpeed(); }
+		FORCEINLINE float& GetMaxSpeed()					{ return GetProxy().GetMaxSpeed(); }
+		FORCEINLINE const FVector& GetDirection() const		{ return GetProxy().GetDirection(); }
+		FORCEINLINE FVector& GetDirection()					{ return GetProxy().GetDirection(); }
+		FORCEINLINE const FVector3f& GetDirection3f() const { return GetProxy().GetDirection3f(); }
+		FORCEINLINE FVector3f& GetDirection3f()				{ return GetProxy().GetDirection3f(); }
+		FORCEINLINE const FVector& GetVelocity() const		{ return GetProxy().GetVelocity(); }
+		FORCEINLINE FVector& GetVelocity()					{ return GetProxy().GetVelocity(); }
+		FORCEINLINE const FVector3f& GetVelocity3f() const	{ return GetProxy().GetVelocity3f(); }
+		FORCEINLINE FVector3f& GetVelocity3f()				{ return GetProxy().GetVelocity3f(); }
+		FORCEINLINE const float& GetSpeed() const			{ return GetProxy().GetSpeed(); }
+		FORCEINLINE float& GetSpeed()						{ return GetProxy().GetSpeed(); }
+		FORCEINLINE const float& GetGravityScale() const	{ return GetProxy().GetGravityScale(); }
+		FORCEINLINE float& GetGravityScale()				{ return GetProxy().GetGravityScale(); }
 	};
 
 	FMovementInfo MovementInfo;
@@ -559,41 +563,45 @@ public:
 		{
 		}
 
-		FORCEINLINE const VariablesProxyType& GetProxy() const { return Outer->GetVariables()->TrackingInfo; }
-		FORCEINLINE VariablesProxyType& GetProxy() { return Outer->GetVariables()->TrackingInfo; }
+		FORCEINLINE const VariablesProxyType& GetProxy() const	{ return Outer->GetVariables()->TrackingInfo; }
+		FORCEINLINE VariablesProxyType& GetProxy()				{ return Outer->GetVariables()->TrackingInfo; }
 
-		FORCEINLINE const float& GetDelay() const { return GetProxy().GetDelay(); }
-		FORCEINLINE float& GetDelay() { return GetProxy().GetDelay(); }
+		FORCEINLINE const float& GetDelay() const									{ return GetProxy().GetDelay(); }
+		FORCEINLINE float& GetDelay()												{ return GetProxy().GetDelay(); }
 		FORCEINLINE const NCsProjectile::NTracking::EState& GetCurrentState() const { return GetProxy().GetState(); }
-		FORCEINLINE NCsProjectile::NTracking::EState& GetCurrentState() { return GetProxy().GetState(); }
+		FORCEINLINE NCsProjectile::NTracking::EState& GetCurrentState()				{ return GetProxy().GetState(); }
 	
-		FORCEINLINE const DestinationType& GetDestinationType() const { return GetProxy().GetDestinationType(); }
-		FORCEINLINE DestinationType& GetDestinationType() { return GetProxy().GetDestinationType(); }
+		FORCEINLINE const DestinationType& GetDestinationType() const	{ return GetProxy().GetDestinationType(); }
+		FORCEINLINE DestinationType& GetDestinationType()				{ return GetProxy().GetDestinationType(); }
 
-		FORCEINLINE const uint32& GetDestinationMask() const { return GetProxy().GetDestinationMask(); }
-		FORCEINLINE uint32& GetDestinationMask() { return GetProxy().GetDestinationMask(); }
-		FORCEINLINE const USceneComponent* GetComponent() const { return GetProxy().GetComponent(); }
-		FORCEINLINE USceneComponent*& GetComponent() { return GetProxy().GetComponent(); }
-		FORCEINLINE const USkeletalMeshComponent* GetMeshComponent() const { return GetProxy().GetMeshComponent(); }
-		FORCEINLINE USkeletalMeshComponent*& GetMeshComponent() { return GetProxy().GetMeshComponent(); }
-		FORCEINLINE const FName& GetBone() const { return GetProxy().GetBone(); }
-		FORCEINLINE FName& GetBone() { return GetProxy().GetBone(); }
-		FORCEINLINE const FVector3f& GetLocation() const { return GetProxy().GetDestination(); }
-		FORCEINLINE FVector3f& GetLocation() { return GetProxy().GetDestination(); }
-		FORCEINLINE const int32& GetID() const { return GetProxy().GetTargetID(); }
-		FORCEINLINE int32& GetID() { return GetProxy().GetTargetID(); }
-		FORCEINLINE const float& GetDuration() const { return GetProxy().GetDuration(); }
-		FORCEINLINE float& GetDuration() { return GetProxy().GetDuration(); }
-		FORCEINLINE const float& GetElapsedTime() const { return GetProxy().GetElapsedTime(); }
-		FORCEINLINE float& GetElapsedTime() { return GetProxy().GetElapsedTime(); }
-		FORCEINLINE const FVector3f& GetOffset() const { return GetProxy().GetOffset(); }
-		FORCEINLINE FVector3f& GetOffset() { return GetProxy().GetOffset(); }
-		FORCEINLINE const float& GetMinDotThreshold() const { return GetProxy().GetMinDotThreshold(); }
-		FORCEINLINE float& GetMinDotThreshold() { return GetProxy().GetMinDotThreshold(); }
-		FORCEINLINE const float& GetMaxDotBeforeUsingPitch() const { return GetProxy().GetMaxDotBeforeUsingPitch(); }
-		FORCEINLINE float& GetMaxDotBeforeUsingPitch() { return GetProxy().GetMaxDotBeforeUsingPitch(); }
-		FORCEINLINE const float& GetRotationRate() const { return GetProxy().GetRotationRate(); }
-		FORCEINLINE float& GetRotationRate() { return GetProxy().GetRotationRate(); }
+		FORCEINLINE const uint32& GetDestinationMask() const				{ return GetProxy().GetDestinationMask(); }
+		FORCEINLINE uint32& GetDestinationMask()							{ return GetProxy().GetDestinationMask(); }
+		FORCEINLINE const USceneComponent* GetComponent() const				{ return GetProxy().GetComponent(); }
+		FORCEINLINE USceneComponent*& GetComponent()						{ return GetProxy().GetComponent(); }
+		FORCEINLINE const USkeletalMeshComponent* GetMeshComponent() const	{ return GetProxy().GetMeshComponent(); }
+		FORCEINLINE USkeletalMeshComponent*& GetMeshComponent()				{ return GetProxy().GetMeshComponent(); }
+		FORCEINLINE const FName& GetBone() const							{ return GetProxy().GetBone(); }
+		FORCEINLINE FName& GetBone()										{ return GetProxy().GetBone(); }
+		FORCEINLINE const FVector& GetLocation() const						{ return GetProxy().GetDestination(); }
+		FORCEINLINE FVector& GetLocation()									{ return GetProxy().GetDestination(); }
+		FORCEINLINE const FVector3f& GetLocation3f() const					{ return GetProxy().GetDestination3f(); }
+		FORCEINLINE FVector3f& GetLocation3f()								{ return GetProxy().GetDestination3f(); }
+		FORCEINLINE const int32& GetID() const								{ return GetProxy().GetTargetID(); }
+		FORCEINLINE int32& GetID()											{ return GetProxy().GetTargetID(); }
+		FORCEINLINE const float& GetDuration() const						{ return GetProxy().GetDuration(); }
+		FORCEINLINE float& GetDuration()									{ return GetProxy().GetDuration(); }
+		FORCEINLINE const float& GetElapsedTime() const						{ return GetProxy().GetElapsedTime(); }
+		FORCEINLINE float& GetElapsedTime()									{ return GetProxy().GetElapsedTime(); }
+		FORCEINLINE const FVector& GetOffset() const						{ return GetProxy().GetOffset(); }
+		FORCEINLINE FVector& GetOffset()									{ return GetProxy().GetOffset(); }
+		FORCEINLINE const FVector3f& GetOffset3f() const					{ return GetProxy().GetOffset3f(); }
+		FORCEINLINE FVector3f& GetOffset3f()								{ return GetProxy().GetOffset3f(); }
+		FORCEINLINE const float& GetMinDotThreshold() const					{ return GetProxy().GetMinDotThreshold(); }
+		FORCEINLINE float& GetMinDotThreshold()								{ return GetProxy().GetMinDotThreshold(); }
+		FORCEINLINE const float& GetMaxDotBeforeUsingPitch() const			{ return GetProxy().GetMaxDotBeforeUsingPitch(); }
+		FORCEINLINE float& GetMaxDotBeforeUsingPitch()						{ return GetProxy().GetMaxDotBeforeUsingPitch(); }
+		FORCEINLINE const float& GetRotationRate() const					{ return GetProxy().GetRotationRate(); }
+		FORCEINLINE float& GetRotationRate()								{ return GetProxy().GetRotationRate(); }
 
 		FORCEINLINE void DestinationMask_SetReacquire() { GetProxy().DestinationMask_SetReacquire(); }
 		FORCEINLINE void DestinationMask_MarkReacquire() { GetProxy().DestinationMask_MarkReacquire(); }

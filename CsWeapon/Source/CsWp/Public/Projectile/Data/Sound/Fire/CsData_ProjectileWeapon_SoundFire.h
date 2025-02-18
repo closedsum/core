@@ -24,20 +24,26 @@ namespace NCsWeapon
 
 						static const FName Name;
 
-					#define FireSoundParamsType NCsWeapon::NProjectile::NFire::NSound::FParams
-
 					public:
 
 						virtual ~IFire(){}
+
+					private:
+
+						// Allow clearer names without name collisions
+						struct _
+						{
+							using FireSoundParamsType = NCsWeapon::NProjectile::NFire::NSound::FParams;
+						};
+
+					public:
 
 						/**
 						* Get any Sound information related to the Fire action.
 						*
 						* return Fire Sound Params
 						*/
-						virtual const FireSoundParamsType& GetFireSoundParams() const = 0;
-
-					#undef FireSoundParamsType
+						virtual const _::FireSoundParamsType& GetFireSoundParams() const = 0;
 					};
 				}
 			}
@@ -62,7 +68,13 @@ public:
 
 	static const FName Name;
 
-#define FireSoundParamsType NCsWeapon::NProjectile::NFire::NSound::FParams
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using FireSoundParamsType = NCsWeapon::NProjectile::NFire::NSound::FParams;
+	};
 
 public:
 
@@ -71,7 +83,5 @@ public:
 	*
 	* return Fire Sound Params
 	*/
-	virtual const FireSoundParamsType& GetFireSoundParams() const = 0;
-
-#undef FireSoundParamsType
+	virtual const _::FireSoundParamsType& GetFireSoundParams() const = 0;
 };

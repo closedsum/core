@@ -17,7 +17,7 @@ namespace NCsProjectile
 			FImplSlice::FImplSlice() :
 				// ICsGetInterfaceMap
 				InterfaceMap(nullptr),
-				// IPayload
+				// PaylaodType (NCsProjectile::NPayload::IPayload)
 				Type(),
 				Generation(0),
 				Direction(0.0f),
@@ -32,7 +32,7 @@ namespace NCsProjectile
 
 				InterfaceMap = InInterfaceMap;
 
-				InterfaceMap->Add<IPayload>(FImplSlice::Name, static_cast<IPayload*>(this));
+				InterfaceMap->Add<PayloadType>(FImplSlice::Name, static_cast<PayloadType*>(this));
 			}
 
 
@@ -41,7 +41,7 @@ namespace NCsProjectile
 
 			void FImplSlice::Reset()
 			{
-				// IPayload
+				// PaylaodType (NCsProjectile::NPayload::IPayload)
 				Type		= EMCsProjectile::Get().GetMAX();
 				Generation  = 0;
 				Direction	= FVector::ZeroVector;

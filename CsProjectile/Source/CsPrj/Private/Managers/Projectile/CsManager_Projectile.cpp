@@ -1045,10 +1045,10 @@ PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 		// Add to map
 		PayloadInterfaceMap->AddDeconstruct(SliceType::Name, &SliceType::Deconstruct);
 	}
-	// Target (NCsProjectile::NPayload::NTarget::FImplSlice)
+	// Target (NCsProjectile::NPayload::NTarget::NImplSlice::FImplSlice)
 	if (PayloadTypes.Contains(NCsProjectilePayload::ProjectileTarget))
 	{
-		typedef NCsProjectile::NPayload::NTarget::FImplSlice SliceType;
+		typedef NCsProjectile::NPayload::NTarget::NImplSlice::FImplSlice SliceType;
 
 		SliceType* Slice = new SliceType();
 

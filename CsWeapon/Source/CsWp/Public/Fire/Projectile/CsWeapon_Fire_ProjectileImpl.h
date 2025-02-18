@@ -189,6 +189,9 @@ class CSWP_API UCsWeapon_Fire_Projectile : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
+// PayloadType (NCsWeapon::NFire::NProjectile::NLaunch::NPayload::FPayload)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NFire, NProjectile, NLaunch, NPayload, FPayload)
+
 class USceneComponent;
 
 /**
@@ -245,7 +248,9 @@ public:
 
 	virtual FVector GetLaunchDirection()  = 0;
 
-	void Launch(const _::PayloadType& LaunchPayload);
+	virtual void Launch(const _::PayloadType& LaunchPayload) = 0;
+
+	virtual void Clear() = 0;
 };
 
 CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsWeapon_Fire_ProjectileImpl)
@@ -308,6 +313,8 @@ public:
 	FORCEINLINE FVector GetLaunchDirection() { return GetLaunchDirection(PayloadType()); };
 
 	void Launch(const PayloadType& LaunchPayload);
+
+	void Clear(){}
 
 #pragma endregion ICsWeapon_Fire_Projectile
 

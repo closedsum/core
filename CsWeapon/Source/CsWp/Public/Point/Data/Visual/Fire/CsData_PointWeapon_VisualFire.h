@@ -34,7 +34,15 @@ namespace NCsWeapon
 
 						virtual ~IFire(){}
 
-					#define FireVisualParamsType NCsWeapon::NPoint::NFire::NVisual::FParams
+					private:
+
+						// Allow clearer names without name collisions
+						struct _
+						{
+							using FireVisualParamsType = NCsWeapon::NPoint::NFire::NVisual::FParams;
+						};
+					
+					public:
 
 						/**
 						* Get whether to use the Fire Visual Params or not.
@@ -48,9 +56,7 @@ namespace NCsWeapon
 						*
 						* return Fire Visual Params
 						*/
-						virtual const FireVisualParamsType& GetFireVisualParams() const = 0;
-
-					#undef FireVisualParamsType
+						virtual const _::FireVisualParamsType& GetFireVisualParams() const = 0;
 					};
 				}
 			}
@@ -78,9 +84,15 @@ public:
 
 	static const FName Name;
 
-public:
+private:
 
-#define FireVisualParamsType NCsWeapon::NPoint::NFire::NVisual::FParams
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using FireVisualParamsType = NCsWeapon::NPoint::NFire::NVisual::FParams;
+	};
+
+public:
 
 	/**
 	* Get whether to use the Fire Visual Params or not.
@@ -94,7 +106,5 @@ public:
 	*
 	* return Fire Visual Params
 	*/
-	virtual const FireVisualParamsType& GetFireVisualParams() const = 0;
-
-#undef FireVisualParamsType
+	virtual const _::FireVisualParamsType& GetFireVisualParams() const = 0;
 };

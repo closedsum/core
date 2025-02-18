@@ -50,10 +50,14 @@ namespace NCsProjectile
 		float& PROXY::GetInitialSpeed() { return GET_BASE.InitialSpeeds[GetID()]; }
 		const float& PROXY::GetMaxSpeed() const { return GET_BASE.MaxSpeeds[GetID()]; }
 		float& PROXY::GetMaxSpeed() { return GET_BASE.MaxSpeeds[GetID()]; }
-		const FVector3f& PROXY::GetDirection() const { return GET_BASE.Directions[GetID()]; }
-		FVector3f& PROXY::GetDirection() { return GET_BASE.Directions[GetID()]; }
-		const FVector3f& PROXY::GetVelocity() const { return GET_BASE.Velocities[GetID()]; }
-		FVector3f& PROXY::GetVelocity() { return GET_BASE.Velocities[GetID()]; }
+		const FVector& PROXY::GetDirection() const { return GET_BASE.Directions[GetID()]; }
+		FVector& PROXY::GetDirection() { return GET_BASE.Directions[GetID()]; }
+		const FVector3f& PROXY::GetDirection3f() const { return GET_BASE.Direction3fs[GetID()]; }
+		FVector3f& PROXY::GetDirection3f() { return GET_BASE.Direction3fs[GetID()]; }
+		const FVector& PROXY::GetVelocity() const { return GET_BASE.Velocities[GetID()]; }
+		FVector& PROXY::GetVelocity() { return GET_BASE.Velocities[GetID()]; }
+		const FVector3f& PROXY::GetVelocity3f() const { return GET_BASE.Velocity3fs[GetID()]; }
+		FVector3f& PROXY::GetVelocity3f() { return GET_BASE.Velocity3fs[GetID()]; }
 		const float& PROXY::GetSpeed() const { return GET_BASE.Speeds[GetID()]; }
 		float& PROXY::GetSpeed() { return GET_BASE.Speeds[GetID()]; }
 		const float& PROXY::GetGravityScale() const { return GET_BASE.GravityScales[GetID()]; }
@@ -91,10 +95,14 @@ namespace NCsProjectile
 		float& PROXY::GetDuration() { return GET_BASE.Durations[GetID()]; }
 		const float& PROXY::GetElapsedTime() const { return GET_BASE.ElapsedTimes[GetID()]; }
 		float& PROXY::GetElapsedTime() { return GET_BASE.ElapsedTimes[GetID()]; }
-		const FVector3f& PROXY::GetDestination() const { return GET_BASE.Destinations[GetID()]; }
-		FVector3f& PROXY::GetDestination() { return GET_BASE.Destinations[GetID()]; }
-		const FVector3f& PROXY::GetOffset() const { return GET_BASE.Offsets[GetID()]; }
-		FVector3f& PROXY::GetOffset() { return GET_BASE.Offsets[GetID()]; }
+		const FVector& PROXY::GetDestination() const { return GET_BASE.Destinations[GetID()]; }
+		FVector& PROXY::GetDestination() { return GET_BASE.Destinations[GetID()]; }
+		const FVector3f& PROXY::GetDestination3f() const { return GET_BASE.Destination3fs[GetID()]; }
+		FVector3f& PROXY::GetDestination3f() { return GET_BASE.Destination3fs[GetID()]; }
+		const FVector& PROXY::GetOffset() const { return GET_BASE.Offsets[GetID()]; }
+		FVector& PROXY::GetOffset() { return GET_BASE.Offsets[GetID()]; }
+		const FVector3f& PROXY::GetOffset3f() const { return GET_BASE.Offset3fs[GetID()]; }
+		FVector3f& PROXY::GetOffset3f() { return GET_BASE.Offset3fs[GetID()]; }
 		const float& PROXY::GetMinDotThreshold() const { return GET_BASE.MinDotThresholds[GetID()]; }
 		float& PROXY::GetMinDotThreshold() { return GET_BASE.MinDotThresholds[GetID()]; }
 		const float& PROXY::GetMaxDotBeforeUsingPitch() const { return GET_BASE.MaxDotBeforeUsingPitches[GetID()]; }
@@ -134,14 +142,22 @@ namespace NCsProjectile
 		#undef StateType
 		const int32& FVariables::GetGeneration() const { return Outer->Generations[ID]; }
 		int32& FVariables::GetGeneration() { return Outer->Generations[ID]; }
-		const FVector3f& FVariables::GetLastLocation() const { return Outer->Last_Locations[ID]; }
-		FVector3f& FVariables::GetLastLocation() { return Outer->Last_Locations[ID]; }
-		const FVector3f& FVariables::GetLocation() const { return Outer->Locations[ID]; }
-		FVector3f& FVariables::GetLocation() { return Outer->Locations[ID]; }
-		const FRotator3f& FVariables::GetRotation() const { return Outer->Rotations[ID]; }
-		FRotator3f& FVariables::GetRotation() { return Outer->Rotations[ID]; }
-		const FQuat4f& FVariables::GetOrientation() const { return Outer->Orientations[ID]; }
-		FQuat4f& FVariables::GetOrientation() { return Outer->Orientations[ID]; }
+		const FVector& FVariables::GetLastLocation() const { return Outer->Last_Locations[ID]; }
+		FVector& FVariables::GetLastLocation() { return Outer->Last_Locations[ID]; }
+		const FVector3f& FVariables::GetLastLocation3f() const { return Outer->Last_Location3fs[ID]; }
+		FVector3f& FVariables::GetLastLocation3f() { return Outer->Last_Location3fs[ID]; }
+		const FVector& FVariables::GetLocation() const { return Outer->Locations[ID]; }
+		FVector& FVariables::GetLocation() { return Outer->Locations[ID]; }
+		const FVector3f& FVariables::GetLocation3f() const { return Outer->Location3fs[ID]; }
+		FVector3f& FVariables::GetLocation3f() { return Outer->Location3fs[ID]; }
+		const FRotator& FVariables::GetRotation() const { return Outer->Rotations[ID]; }
+		FRotator& FVariables::GetRotation() { return Outer->Rotations[ID]; }
+		const FRotator3f& FVariables::GetRotation3f() const { return Outer->Rotation3fs[ID]; }
+		FRotator3f& FVariables::GetRotation3f() { return Outer->Rotation3fs[ID]; }
+		const FQuat& FVariables::GetOrientation() const { return Outer->Orientations[ID]; }
+		FQuat& FVariables::GetOrientation() { return Outer->Orientations[ID]; }
+		const FQuat4f& FVariables::GetOrientation4f() const { return Outer->Orientation4fs[ID]; }
+		FQuat4f& FVariables::GetOrientation4f() { return Outer->Orientation4fs[ID]; }
 	}
 }
 
@@ -193,6 +209,9 @@ namespace NCsProjectile
 			}
 		}
 
+		using VariablesType = NCsProjectile::NVariables::FVariables;
+		using VariablesPayloadType = NCsProjectile::NVariables::NAllocate::FPayload;
+
 		void FManager::FMovementInfos::Update(const FCsDeltaTime& DeltaTime)
 		{
 			using namespace NCsProjectile::NVariables::NManager::NMovementInfos::NCached;
@@ -209,16 +228,16 @@ namespace NCsProjectile
 				TArray<ICsProjectile*>& _Projectiles = Outer->Projectiles;
 				const int32& _AliveCount	     = Outer->AliveCount;
 				const TArray<int32>& _AliveIDs   = Outer->AliveIDs;
-				TArray<FRotator3f>& _Rotations	 = Outer->Rotations;
-				TArray<FQuat4f>& _Orientations	 = Outer->Orientations;
+				TArray<FRotator3f>& _Rotation3fs	 = Outer->Rotation3fs;
+				TArray<FQuat4f>& _Orientation4fs	 = Outer->Orientation4fs;
 
 				// Resolve Rotation and Orientation
 				for (int32 I = 0; I < _AliveCount; ++I)
 				{
 					const int32& ID = _AliveIDs[I];
 
-					_Rotations[ID]	  = Directions[ID].Rotation();
-					_Orientations[ID] = _Rotations[ID].Quaternion();
+					_Rotation3fs[ID]	  = Direction3fs[ID].Rotation();
+					_Orientation4fs[ID] = _Rotation3fs[ID].Quaternion();
 				}
 
 				const TArray<StateType>& _States = Outer->States;
@@ -240,13 +259,13 @@ namespace NCsProjectile
 						// LaunchDelay
 						if (_States[ID] == StateType::LaunchDelay)
 						{
-							Movement->Movement_SetRotation(_Rotations[ID]);
+							Movement->Movement_SetRotation(_Rotation3fs[ID]);
 						}
 						else
 						{
 							Velocities[ID] = Speeds[ID] * Directions[ID];
 
-							Movement->Movement_SetVelocity(Velocities[ID]);
+							Movement->Movement_SetVelocity(Velocity3fs[ID]);
 						}
 					}
 				}
@@ -256,17 +275,15 @@ namespace NCsProjectile
 
 		void FManager::FTrackingInfos::SetupIDs(const int32& ID)
 		{
-			typedef NCsProjectile::NTracking::EState StateType;
-
 			// Delay
-			if (States[ID] == StateType::Delay)
+			if (States[ID] == TrackingStateType::Delay)
 			{
 				DelayIDs[DelayCount] = ID;
 				++DelayCount;
 			}
 			// Active
 			else
-			if (States[ID] == StateType::Active)
+			if (States[ID] == TrackingStateType::Active)
 			{
 				ActiveIDs[ActiveCount] = ID;
 				++ActiveCount;
@@ -360,7 +377,7 @@ namespace NCsProjectile
 			}
 
 			// FManager::FMovementInfos = Outer->MovementInfos
-			TArray<FVector3f>& _Directions = Outer->MovementInfos.Directions;
+			TArray<FVector3f>& _Direction3fs = Outer->MovementInfos.Direction3fs;
 
 			// Get Destinations
 			for (int32 I = 0; I < ActiveCount; ++I)
@@ -370,14 +387,14 @@ namespace NCsProjectile
 				ICsProjectile* Projectile		 = _Projectiles[ID];
 				ICsProjectile_Tracking* Tracking = CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(Projectile, ICsProjectile, ICsProjectile_Tracking);
 
-				Destinations[ID] = Tracking->Tracking_GetDestination();
+				Destination3fs[ID] = Tracking->Tracking_GetDestination();
 			}
 
 			// FManager = Outer
 			typedef NCsProjectile::EState StateType;
 
 			const TArray<StateType>& _States  = Outer->States;
-			const TArray<FVector3f>& _Locations = Outer->Locations;
+			const TArray<FVector3f>& _Location3fs = Outer->Location3fs;
 
 			// Get Directions
 			{
@@ -388,11 +405,11 @@ namespace NCsProjectile
 				{
 					const int32& ID = ActiveIDs[I];
 
-					NewDirection = (Destinations[ID] - _Locations[ID]).GetSafeNormal();
+					NewDirection = (Destination3fs[ID] - _Location3fs[ID]).GetSafeNormal();
 
 					const float& MinDotThreshold = MinDotThresholds[ID];
 			
-					Dot = FVector3f::DotProduct(_Directions[ID], NewDirection);
+					Dot = FVector3f::DotProduct(_Direction3fs[ID], NewDirection);
 
 					if (Dot >= MinDotThreshold)
 					{
@@ -401,12 +418,12 @@ namespace NCsProjectile
 						// Ignore Pitch / Z
 						if (Dot <= MaxDotBeforeUsingPitch)
 						{
-							Destinations[ID].Z = _Locations[ID].Z;
+							Destinations[ID].Z = _Location3fs[ID].Z;
 						}
 
-						Destinations[ID] += Offsets[ID];
-						NewDirection      = (Destinations[ID] - _Locations[ID]).GetSafeNormal();
-						_Directions[ID]   = CsMathLibrary::VInterpNormalRotationTo(_Directions[ID], NewDirection, DeltaTime.Time, RotationRates[ID]);
+						Destination3fs[ID] += Offset3fs[ID];
+						NewDirection      = (Destination3fs[ID] - _Location3fs[ID]).GetSafeNormal();
+						_Direction3fs[ID]   = CsMathLibrary::VInterpNormalRotationTo(_Direction3fs[ID], NewDirection, DeltaTime.Time, RotationRates[ID]);
 					}
 				}
 			}
@@ -470,7 +487,7 @@ namespace NCsProjectile
 				{
 					const int32& ID = Last_DeallocatedIDs[I];
 
-					Last_Locations[ID] = FVector3f::ZeroVector;
+					Last_Location3fs[ID] = FVector3f::ZeroVector;
 
 					Last_DeallocatedIDs.RemoveAt(I, 1, false);
 				}
@@ -481,7 +498,7 @@ namespace NCsProjectile
 				{
 					const int32& ID = AllocatedIDs[I];
 
-					BoundsWorld.Insert(ID, Locations[ID].X, Locations[ID].Y, CollisionInfos.HalfHeights[ID]);
+					BoundsWorld.Insert(ID, Location3fs[ID].X, Location3fs[ID].Y, CollisionInfos.HalfHeights[ID]);
 				}
 			}
 
@@ -489,10 +506,7 @@ namespace NCsProjectile
 			MovementInfos.Update(DeltaTime);
 			CollisionInfos.Update(DeltaTime);
 		}
-
-		#define VariablesType NCsProjectile::NVariables::FVariables
-
-		#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
+		
 		VariablesType* FManager::AllocateChecked(const FString& Context, const VariablesPayloadType& Payload)
 		{
 			const int32& ID = Manager_ID.AllocateResourceRef();
@@ -521,9 +535,9 @@ namespace NCsProjectile
 
 			MovementInfos.Directions[ID] = Payload.Direction;
 
-			Rotations[ID]	   = MovementInfos.Directions[ID].Rotation();
-			Last_Rotations[ID] = Rotations[ID];
-			Orientations[ID]   = Rotations[ID].Quaternion();
+			Rotation3fs[ID]	      = MovementInfos.Direction3fs[ID].Rotation();
+			Last_Rotation3fs[ID] = Rotation3fs[ID];
+			Orientation4fs[ID]   = Rotation3fs[ID].Quaternion();
 
 			CollisionInfos.Radii[ID]	   = Payload.CollisionRadius;
 			CollisionInfos.HalfHeights[ID] = Payload.CollisionHalfHeight;
@@ -552,8 +566,6 @@ namespace NCsProjectile
 			Last_DeallocatedIDs.Add(ID);
 			Reset(ID);
 		}
-
-		#undef VariablesPayloadType
 	}
 }
 

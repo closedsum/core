@@ -31,16 +31,22 @@ namespace NCsWeapon
 
 						virtual ~IFire(){}
 
-					#define FireVisualParamsType NCsWeapon::NProjectile::NFire::NVisual::FParams
+					private:
+
+						// Allow clearer names without name collisions
+						struct _
+						{
+							using FireVisualParamsType = NCsWeapon::NProjectile::NFire::NVisual::FParams;
+						};
+
+					public:
 
 						/**
 						*
 						*
 						* return
 						*/
-						virtual const FireVisualParamsType& GetFireVisualParams() const = 0;
-
-					#undef FireVisualParamsType
+						virtual const _::FireVisualParamsType& GetFireVisualParams() const = 0;
 					};
 				}
 			}
@@ -65,16 +71,20 @@ public:
 
 	static const FName Name;
 
-public:
+private:
 
-#define FireVisualParamsType NCsWeapon::NProjectile::NFire::NVisual::FParams
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using FireVisualParamsType = NCsWeapon::NProjectile::NFire::NVisual::FParams;
+	};
+
+public:
 
 	/**
 	*
 	*
 	* return
 	*/
-	virtual const FireVisualParamsType& GetFireVisualParams() const = 0;
-
-#undef FireVisualParamsType
+	virtual const _::FireVisualParamsType& GetFireVisualParams() const = 0;
 };

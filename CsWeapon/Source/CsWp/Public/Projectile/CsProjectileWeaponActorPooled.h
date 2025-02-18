@@ -48,6 +48,8 @@ class UPrimitiveComponent;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 // CsFXPayloadType (NCsFX::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
+// LaunchPayloadType (NCsWeapon::NFire::NProjectile::NLaunch::NPayload::FPayload)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NFire, NProjectile, NLaunch, NPayload, FPayload)
 
 // NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire, IFire)
@@ -64,6 +66,7 @@ class USceneComponent;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILaunch)
 
 class ICsWeapon_Fire_TimeBetweenShots;
+class ICsWeapon_Fire_Projectile;
 
 CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsProjectileWeaponActorPooled)
 
@@ -87,6 +90,7 @@ private:
 	using PrjWeaponDataType = NCsWeapon::NProjectile::NData::IData;
 	using CsProjectilePayloadType = NCsProjectile::NPayload::IPayload;
 	using CsFXPayloadType = NCsFX::NPayload::IPayload;
+	using LaunchPayloadType = NCsWeapon::NFire::NProjectile::NLaunch::NPayload::FPayload;
 	using CsWeaponModifierType = NCsWeapon::NModifier::IModifier;
 	using CsProjectileModifierType = NCsProjectile::NModifier::IModifier;
 
@@ -393,248 +397,12 @@ protected:
 
 public:
 
-	/**
-	*/
-	struct CSWP_API FProjectileImpl
-	{
-		friend class ACsProjectileWeaponActorPooled;
-
-	protected:
-
-		ACsProjectileWeaponActorPooled* Outer;
-
-	// Launch
-	protected:
-
-		USceneComponent* LaunchComponentLocation;
-
-		USceneComponent* LaunchComponentDirection;
-
-		FCsScopedTimerHandle LaunchScopedHandle;
-
-	public:
-
-		FVector3f CustomLaunchLocation;
-
-		FVector3f CustomLaunchDirection;
-
-	// Target
-	public:
-
-		bool bTarget;
-
-		USceneComponent* TargetComponent;
-
-		FVector3f TargetLocation;
-
-		FName TargetBone;
-
-		int32 TargetID;
-
-	public:
-
-		FProjectileImpl() :
-			Outer(nullptr),
-			// Launch
-			LaunchComponentLocation(nullptr),
-			LaunchComponentDirection(nullptr),
-			LaunchScopedHandle(),
-			CustomLaunchLocation(FVector3f::ZeroVector),
-			CustomLaunchDirection(FVector3f::ZeroVector),
-			// Target
-			bTarget(false),
-			TargetComponent(nullptr),
-			TargetLocation(0.0f),
-			TargetBone(NAME_None),
-			TargetID(INDEX_NONE)
-		{
-		}
-		virtual ~FProjectileImpl(){}
-
-	public:
-
-		FORCEINLINE void SetLaunchComponentLocation(USceneComponent* Component) { LaunchComponentLocation = Component; }
-		FORCEINLINE void SetLaunchComponentDirection(USceneComponent* Component) { LaunchComponentDirection = Component; }
-
-	public:
-
-		struct FLaunchPayload
-		{
-		public:
-
-			struct FShot
-			{
-			public:
-
-				bool bCachedLaunchLocation;
-				FVector3f CachedLaunchLocation;
-
-				bool bCachedLaunchDirection;
-				FVector3f CachedLaunchDirection;
-
-				FShot() :
-					bCachedLaunchLocation(false),
-					CachedLaunchLocation(0.0f),
-					bCachedLaunchDirection(false),
-					CachedLaunchDirection(0.0f)
-				{
-				}
-
-				FORCEINLINE bool UseCachedLaunchLocation() const { return bCachedLaunchLocation; }
-
-				FORCEINLINE void SetCachedLaunchLocation(const FVector3f& Value)
-				{
-					CachedLaunchLocation = Value;
-					bCachedLaunchLocation = true;
-				}
-
-				FORCEINLINE bool UseCachedLaunchDirection() const { return bCachedLaunchDirection; }
-
-				FORCEINLINE void SetCachedLaunchDirection(const FVector3f& Value)
-				{
-					CachedLaunchDirection = Value;
-					bCachedLaunchDirection = true;
-				}
-			};
-
-			FShot Shot;
-
-			bool bSpread;
-
-			struct FSpread
-			{
-			public:
-	
-				bool bOffset;
-				FVector3f Offset;
-
-				int32 Axis;
-
-				bool bYaw;
-				float Yaw;
-
-				bool bPitch;
-				float Pitch;
-
-				FSpread() :
-					bOffset(false),
-					Offset(0.0f),
-					Axis(0),
-					bYaw(false),
-					Yaw(0.0f),
-					bPitch(false),
-					Pitch(0.0f)
-				{
-				}
-
-				FORCEINLINE bool HasOffset() const { return bOffset; }
-				
-				FORCEINLINE void SetOffset(const FVector3f& Value)
-				{
-					if (Value != FVector3f::ZeroVector)
-					{
-						Offset = Value;
-						bOffset = true;
-					}
-				}
-
-				FORCEINLINE bool HasYaw() const { return bYaw; }
-
-				FORCEINLINE void SetYaw(const float& Value)
-				{
-					if (Value != 0.0f)
-					{
-						Yaw = Value;
-						bYaw = true;
-					}
-				}
-
-				FORCEINLINE bool HasPitch() const { return bPitch; }
-
-				FORCEINLINE void SetPitch(const float& Value)
-				{
-					if (Value != 0.0f)
-					{
-						Pitch = Value;
-						bPitch = true;
-					}
-				}
-			};
-
-			FSpread Spread;
-
-			FLaunchPayload() :
-				Shot(),
-				bSpread(false),
-				Spread()
-			{
-			}
-		};
-
-		using LaunchPayloadType = ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload;
-		using LaunchParamsType = NCsWeapon::NProjectile::NParams::NLaunch::ILaunch;
-
-	protected:
-
-		/**
-		*
-		* Currently supports To types of:
-		*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
-		*  NCsProjectile::NPayload::NImplSlice::FImplSlice (NCsProjectile::NPayload::IPayload)
-		*
-		* @param Context	The calling context.
-		* @param Payload	The payload to set.
-		* return			Whether the payload was successfully set.
-		*/
-		virtual bool SetPayload(const FString& Context, CsProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload);
-
-	public:
-
-		virtual FVector3f GetLaunchLocation(const LaunchPayloadType& LaunchPayload);
-		FORCEINLINE FVector3f GetLaunchLocation() { return GetLaunchLocation(LaunchPayloadType()); }
-
-	protected:
-
-		FVector3f GetLaunchSpreadLocation(const FVector3f& InLocation, const LaunchPayloadType& LaunchPayload);
-
-	public:
-
-		virtual FVector3f GetLaunchDirection(const LaunchPayloadType& LaunchPayload);
-		FORCEINLINE FVector3f GetLaunchDirection() { return GetLaunchDirection(LaunchPayloadType()); }
-
-	protected:
-
-		FVector3f GetLaunchSpreadDirection(const FVector3f& InDirection, const LaunchPayloadType& LaunchPayload);
-	
-		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector3f& Direction);
-
-		void Launch(const LaunchPayloadType& LaunchPayload);
-
-		FORCEINLINE void Reset()
-		{
-			LaunchComponentLocation = nullptr;
-			LaunchComponentDirection = nullptr;
-			CustomLaunchLocation = FVector3f::ZeroVector;
-			CustomLaunchDirection = FVector3f::ZeroVector;
-
-			ResetTarget();
-		}
-
-		FORCEINLINE void ResetTarget()
-		{
-			bTarget = false;
-			TargetComponent = nullptr;
-			TargetLocation = FVector3f::ZeroVector;
-			TargetBone = NAME_None;
-			TargetID = INDEX_NONE;
-		}
-	};
-
-	FProjectileImpl* ProjectileImpl;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Fire|Projectile", meta = (MustImplement = "/Script.CsWp.CsWeapon_Fire_Projectile"))
+	TSoftClassPtr<UObject> ProjectileClass;
 
 protected:
 
-	virtual FProjectileImpl* ConstructProjectileImpl();
+	ICsWeapon_Fire_Projectile* ProjectileImpl;
 
 public:
 
@@ -676,8 +444,6 @@ public:
 	virtual void GetProjectileModifiers(TArray<CsProjectileModifierType*>& OutModifiers) const {}
 
 public:
-
-	using LaunchPayloadType = ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload;
 
 	virtual bool Projectile_SetPayload(const FString& Context, CsProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload) { return true; }
 

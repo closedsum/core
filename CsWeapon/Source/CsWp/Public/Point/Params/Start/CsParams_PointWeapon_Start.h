@@ -72,8 +72,10 @@ namespace NCsWeapon
 			*/
 			struct CSWP_API FParams
 			{
-			#define StartType NCsWeapon::NPoint::EStart
-			#define SpreadParamsType NCsWeapon::NPoint::NSpread::FParams
+			private:
+
+				using StartType = NCsWeapon::NPoint::EStart;
+				using SpreadParamsType = NCsWeapon::NPoint::NSpread::FParams;
 
 			private:
 
@@ -106,9 +108,6 @@ namespace NCsWeapon
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-			#undef StartType
-			#undef SpreadParamsType
 			};
 		}
 	}

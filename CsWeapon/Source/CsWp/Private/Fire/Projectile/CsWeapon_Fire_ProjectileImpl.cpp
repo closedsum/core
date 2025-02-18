@@ -626,8 +626,8 @@ bool UCsWeapon_Fire_ProjectileImpl::SetPayload(const FString& Context, CsProject
 
 		SliceType* Slice = CsPrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
 		Slice->Type		 = GetProjectileType->GetProjectileType();
-		//Slice->Location  = GetLaunchLocation(LaunchPayload);
-		//Slice->Direction = GetLaunchDirection(LaunchPayload);
+		Slice->Location  = GetLaunchLocation(LaunchPayload);
+		Slice->Direction = GetLaunchDirection(LaunchPayload);
 	}
 	// Projectile Modifiers
 	{
@@ -644,14 +644,14 @@ bool UCsWeapon_Fire_ProjectileImpl::SetPayload(const FString& Context, CsProject
 	}
 	// Projectile Target
 	{
-		using SliceType = NCsProjectile::NPayload::NTarget::FImplSlice;
+		using SliceType = NCsProjectile::NPayload::NTarget::NImplSlice::FImplSlice;
 		using SliceInterfaceType = NCsProjectile::NPayload::NTarget::ITarget;
 
 		if (SliceType* Slice = CsPrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
 			Slice->bTarget	= bTarget;
 			Slice->Component = TargetComponent;
-			//Slice->Location = TargetLocation;
+			Slice->Location = TargetLocation;
 			Slice->Bone		= TargetBone;
 			Slice->ID		= TargetID;
 		}

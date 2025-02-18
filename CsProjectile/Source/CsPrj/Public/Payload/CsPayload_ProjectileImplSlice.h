@@ -14,10 +14,12 @@ namespace NCsProjectile
 	{
 		namespace NImplSlice
 		{
+			using PayloadType = NCsProjectile::NPayload::IPayload;
+
 			/**
-			* Basic implementation of the interface: NCsProjectile::NPayload::IPayload.
+			* Basic implementation of the interface: PaylaodType (NCsProjectile::NPayload::IPayload).
 			*/
-			struct CSPRJ_API FImplSlice : public IPayload,
+			struct CSPRJ_API FImplSlice : public PayloadType,
 										  public ICsReset
 			{
 			public:
@@ -59,7 +61,7 @@ namespace NCsProjectile
 
 				void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
-			// IPayload
+			// PaylaodType (NCsProjectile::NPayload::IPayload)
 			#pragma region
 			public:
 
@@ -68,7 +70,7 @@ namespace NCsProjectile
 				FORCEINLINE const FVector& GetDirection() const { return Direction; }
 				FORCEINLINE const FVector& GetLocation() const { return Location; }
 
-			#pragma endregion IPayload
+			#pragma endregion PaylaodType (NCsProjectile::NPayload::IPayload)
 
 			// ICsReset
 			#pragma region

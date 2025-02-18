@@ -61,10 +61,10 @@ namespace NCsWeapon
 	{
 		namespace NStart
 		{
+			using StartMapType = NCsWeapon::NPoint::EMStart;
+
 			bool FParams::IsValidChecked(const FString& Context) const
 			{
-				typedef NCsWeapon::NPoint::EMStart StartMapType;
-
 				CS_IS_ENUM_VALID_CHECKED(StartMapType, Type)
 
 				if (GetbSpreadParams())
@@ -76,9 +76,6 @@ namespace NCsWeapon
 
 			bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 			{
-				typedef NCsWeapon::NPoint::EMStart StartMapType;
-				typedef NCsWeapon::NPoint::EStart StartType;
-
 				CS_IS_ENUM_VALID(StartMapType, StartType, Type)
 
 				if (GetbSpreadParams())

@@ -14,79 +14,90 @@ namespace NCsProjectile
 	{
 		namespace NTarget
 		{
-			/**
-			* 
-			*/
-			struct CSPRJ_API FImplSlice : public ITarget,
-										  public ICsReset
+			namespace NImplSlice
 			{
-			public:
+				using TargetPayloadType = NCsProjectile::NPayload::NTarget::ITarget;
 
-				static const FName Name;
+				/**
+				* 
+				*/
+				struct CSPRJ_API FImplSlice : public TargetPayloadType,
+											  public ICsReset
+				{
+				public:
 
-			private:
+					static const FName Name;
+
+				private:
+
+					using ThisType = NCsProjectile::NPayload::NTarget::NImplSlice::FImplSlice;
+
+				private:
+
+					// ICsGetInterfaceMap
+
+					FCsInterfaceMap* InterfaceMap;
+
+					// TargetPayloadType (NCsProjectile::NPayload::NTarget::ITarget)
+
+				public:
+
+					bool bTarget;
+
+					USceneComponent* Component;
+
+					FVector Location;
+
+					FName Bone;
+				
+					int32 ID;
+
+				public:
+
+					FImplSlice();
+
+				public:
+
+					FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+					void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
 				// ICsGetInterfaceMap
+				#pragma region
+				public:
 
-				FCsInterfaceMap* InterfaceMap;
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
-			public:
+				#pragma endregion ICsGetInterfaceMap
 
-				bool bTarget;
+				// TargetPayloadType (NCsProjectile::NPayload::NTarget::ITarget)
+				#pragma region
+				public:
 
-				USceneComponent* Component;
+					FORCEINLINE const bool& HasTarget() const { return bTarget; }
+					FORCEINLINE USceneComponent* GetTargetComponent() const { return Component; }
+					FORCEINLINE const FVector& GetTargetLocation() const { return Location; }
+					FORCEINLINE const FName& GetTargetBone() const { return Bone; }
+					FORCEINLINE const int32& GetTargetID() const { return ID; }
 
-				FVector3f Location;
+				#pragma endregion TargetPayloadType (NCsProjectile::NPayload::NTarget::ITarget)
 
-				FName Bone;
-				
-				int32 ID;
+				// ICsReset
+				#pragma region
+				public:
 
-			public:
+					void Reset();
 
-				FImplSlice();
+				#pragma endregion ICsReset
 
-			public:
+				public:
 
-				FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-				void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
-
-			// ICsGetInterfaceMap
-			#pragma region
-			public:
-
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
-
-			#pragma endregion ICsGetInterfaceMap
-
-			// ITarget
-			#pragma region
-			public:
-
-				FORCEINLINE const bool& HasTarget() const { return bTarget; }
-				FORCEINLINE USceneComponent* GetTargetComponent() const { return Component; }
-				FORCEINLINE const FVector3f& GetTargetLocation() const { return Location; }
-				FORCEINLINE const FName& GetTargetBone() const { return Bone; }
-				FORCEINLINE const int32& GetTargetID() const { return ID; }
-
-			#pragma endregion ITarget
-
-			// ICsReset
-			#pragma region
-			public:
-
-				void Reset();
-
-			#pragma endregion ICsReset
-
-			public:
-
-				FORCEINLINE static void Deconstruct(void* Ptr)
-				{
-					delete static_cast<NCsProjectile::NPayload::NTarget::FImplSlice*>(Ptr);
-				}
-			};
+					FORCEINLINE static void Deconstruct(void* Ptr)
+					{
+						delete static_cast<ThisType*>(Ptr);
+					}
+				};
+			}
 		}
 	}
 }

@@ -44,5 +44,5 @@ public:
 	* return					Index to spawned Sound in pool.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Sound", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Payload,Transform"))
-	static int32 Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_Sound& Payload, const FTransform3f& Transform);
+	static int32 Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_Sound& Payload, const FTransform& Transform);
 };

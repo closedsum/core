@@ -125,7 +125,7 @@ namespace NCsFX
 			*
 			* return Transform
 			*/
-			virtual const FTransform3f& GetTransform() const = 0;
+			virtual const FTransform& GetTransform() const = 0;
 
 			/** 
 			* Get whether RelativeLocation should be considered relative to the world, rather than the parent.

@@ -550,6 +550,12 @@ namespace NCsValid
 				return true;
 			}
 
+			FORCEINLINE static bool IsZeroChecked(const FString& Context, const FVector& V, const FString& VName)
+			{
+				checkf(V != FVector::ZeroVector, TEXT("%s: %s == (0.0, 0.0, 0.0) or ZeroVector is NOT Valid."), *Context, *VName);
+				return true;
+			}
+
 			FORCEINLINE static bool IsZero(const FString& Context, const FVector3f& V, const FString& VName, void(*Log)(const FString&))
 			{
 				if (V == FVector3f::ZeroVector)
@@ -561,7 +567,26 @@ namespace NCsValid
 				return true;
 			}
 
+			FORCEINLINE static bool IsZero(const FString& Context, const FVector& V, const FString& VName, void(*Log)(const FString&))
+			{
+				if (V == FVector::ZeroVector)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s == (0.0, 0.0, 0.0) or ZeroVector is NOT Valid."), *Context, *VName));
+					return false;
+				}
+				return true;
+			}
+
 			FORCEINLINE static bool ComponentsGreaterThanChecked(const FString& Context, const FVector3f& V, const FString& VName, const float& A, const FString& AName)
+			{
+				checkf(V.X > A, TEXT("%s: %s.X: %f is NOT > %s: %f."), *Context, *VName, V.X, *AName, A);
+				checkf(V.Y > A, TEXT("%s: %s.Y: %f is NOT > %s: %f."), *Context, *VName, V.Y, *AName, A);
+				checkf(V.Z > A, TEXT("%s: %s.Z: %f is NOT > %s: %f."), *Context, *VName, V.Z, *AName, A);
+				return true;
+			}
+
+			FORCEINLINE static bool ComponentsGreaterThanChecked(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName)
 			{
 				checkf(V.X > A, TEXT("%s: %s.X: %f is NOT > %s: %f."), *Context, *VName, V.X, *AName, A);
 				checkf(V.Y > A, TEXT("%s: %s.Y: %f is NOT > %s: %f."), *Context, *VName, V.Y, *AName, A);
@@ -592,6 +617,29 @@ namespace NCsValid
 				return true;
 			}
 
+			FORCEINLINE static bool ComponentsGreaterThan(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (V.X <= A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.X: %f is NOT > %s: %f."), *Context, *VName, V.X, *AName, A));
+					return false;
+				}
+				if (V.Y <= A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Y: %f is NOT > %s: %f."), *Context, *VName, V.Y, *AName, A));
+					return false;
+				}
+				if (V.Z <= A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Z: %f is NOT > %s: %f."), *Context, *VName, V.Z, *AName, A));
+					return false;
+				}
+				return true;
+			}
+
 			FORCEINLINE static bool ComponentsGreaterThanOrEqualChecked(const FString& Context, const FVector3f& V, const FString& VName, const float& A, const FString& AName)
 			{
 				checkf(V.X >= A, TEXT("%s: %s.X: %f is NOT >= %s: %f."), *Context, *VName, V.X, *AName, A);
@@ -600,7 +648,38 @@ namespace NCsValid
 				return true;
 			}
 
+			FORCEINLINE static bool ComponentsGreaterThanOrEqualChecked(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName)
+			{
+				checkf(V.X >= A, TEXT("%s: %s.X: %f is NOT >= %s: %f."), *Context, *VName, V.X, *AName, A);
+				checkf(V.Y >= A, TEXT("%s: %s.Y: %f is NOT >= %s: %f."), *Context, *VName, V.Y, *AName, A);
+				checkf(V.Z >= A, TEXT("%s: %s.Z: %f is NOT >= %s: %f."), *Context, *VName, V.Z, *AName, A);
+				return true;
+			}
+
 			FORCEINLINE static bool ComponentsGreaterThanOrEqual(const FString& Context, const FVector3f& V, const FString& VName, const float& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (V.X < A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.X: %f is NOT >= %s: %f."), *Context, *VName, V.X, *AName, A));
+					return false;
+				}
+				if (V.Y < A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Y: %f is NOT >= %s: %f."), *Context, *VName, V.Y, *AName, A));
+					return false;
+				}
+				if (V.Z < A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Z: %f is NOT >= %s: %f."), *Context, *VName, V.Z, *AName, A));
+					return false;
+				}
+				return true;
+			}
+
+			FORCEINLINE static bool ComponentsGreaterThanOrEqual(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName, void(*Log)(const FString&))
 			{
 				if (V.X < A)
 				{

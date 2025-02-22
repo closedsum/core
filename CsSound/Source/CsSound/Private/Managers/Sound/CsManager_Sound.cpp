@@ -115,6 +115,14 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 {
 }
 
+using ManagerParamsType = NCsSound::FManager::FParams;
+using PoolParamsType = NCsPooledObject::NManager::FPoolParams;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PayloadLibrary = NCsSound::NPayload::NLibrary::FLibrary;
+using PayloadType = NCsSound::NPayload::IPayload;
+using PayloadImplType = NCsSound::NPayload::NImpl::FImpl;
+
+
 // Singleton
 #pragma region
 
@@ -354,9 +362,7 @@ void UCsManager_Sound::SetupInternal()
 	const FString& Context = Str::SetupInternal;
 
 	// Populate EnumMaps
-	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-	UObject* ContextObject = GameInstanceLibrary::GetSafeAsObject(Context, MyRoot, nullptr);
+	UObject* ContextObject = CsGameInstanceLibrary::GetSafeAsObject(Context, MyRoot, nullptr);
 
 	NCsSound::PopulateEnumMapFromSettings(Context, ContextObject);
 
@@ -425,8 +431,6 @@ void UCsManager_Sound::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsSound::FManager::FParams ManagerParamsType;
-
 		ManagerParamsType ManagerParams;
 
 		ManagerParams.Name  = TEXT("UCsManager_Sound::NCsSound::FManager");
@@ -436,8 +440,6 @@ void UCsManager_Sound::InitInternalFromSettings()
 		{
 			const FECsSound& Type							   = Pair.Key;
 			const FCsSettings_Manager_Sound_PoolParams& Params = Pair.Value;
-
-			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
@@ -471,14 +473,11 @@ void UCsManager_Sound::InitInternalFromSettings()
 	}
 }
 
-#define ManagerParamsType NCsSound::FManager::FParams
 void UCsManager_Sound::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
 	{
 		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
-
-		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 		for (TPair<FECsSound, PoolParamsType>& Pair : P.ObjectParams)
 		{
@@ -500,7 +499,6 @@ void UCsManager_Sound::InitInternal(const ManagerParamsType& Params)
 	}
 	Internal.Init(Params);
 }
-#undef ManagerParamsType
 
 void UCsManager_Sound::Clear()
 {
@@ -532,10 +530,8 @@ FCsSoundPooled* UCsManager_Sound::ConstructContainer(const FECsSound& Type)
 	return new FCsSoundPooled();
 }
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 TMulticastDelegate<void(const FCsSoundPooled*, const ConstructParamsType&)>& UCsManager_Sound::GetOnConstructObject_Event(const FECsSound& Type)
 {
-#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 
@@ -733,20 +729,12 @@ void UCsManager_Sound::ConstructPayloads(const FECsSound& Type, const int32& Siz
 	Internal.ConstructPayloads(Type, Size);
 }
 
-#define PayloadType NCsSound::NPayload::IPayload
 PayloadType* UCsManager_Sound::ConstructPayload(const FECsSound& Type)
 {
-#undef PayloadType
-
-	typedef NCsSound::NPayload::FImpl PayloadImplType;
-
 	return new PayloadImplType();
 }
-
-#define PayloadType NCsSound::NPayload::IPayload
 PayloadType* UCsManager_Sound::AllocatePayload(const FECsSound& Type)
 {
-#undef PayloadType
 	return Internal.AllocatePayload(Type);
 }
 
@@ -755,11 +743,8 @@ PayloadType* UCsManager_Sound::AllocatePayload(const FECsSound& Type)
 	// Spawn
 #pragma region
 
-#define PayloadType NCsSound::NPayload::IPayload
 const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, PayloadType* Payload)
 {
-#undef PayloadType
-
 	using namespace NCsManagerSound::NCached;
 
 	const FString& Context = Str::Spawn;
@@ -777,8 +762,6 @@ const FCsSoundPooled* UCsManager_Sound::Spawn(const FECsSound& Type, PayloadType
 
 		Internal.Destroy(Type, AllocatedHead);
 	}
-
-	typedef NCsSound::NPayload::FLibrary PayloadLibrary;
 
 	check(PayloadLibrary::IsValidChecked(Context, Payload));
 

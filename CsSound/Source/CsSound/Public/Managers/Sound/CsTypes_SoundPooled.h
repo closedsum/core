@@ -146,7 +146,7 @@ public:
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
-	FTransform3f Transform;
+	FTransform Transform;
 
 public:
 
@@ -165,7 +165,7 @@ public:
 		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform3f::Identity)
+		Transform(FTransform::Identity)
 	{
 	}
 	

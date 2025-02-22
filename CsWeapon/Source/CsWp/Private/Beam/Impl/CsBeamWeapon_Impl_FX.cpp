@@ -118,9 +118,9 @@ namespace NCsWeapon
 
 						const FCsFX& FX = ImpactVisualData->GetImpactFX(SurfaceType);
 
-						FTransform3f Transform;
-						Transform.SetLocation(CsMathLibrary::Convert(Hit.Location));
-						Transform.SetRotation(CsMathLibrary::Convert(Hit.ImpactNormal.Rotation().Quaternion()));
+						FTransform Transform;
+						Transform.SetLocation(Hit.Location);
+						Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
 
 						// Spawn FX
 						CsFXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);

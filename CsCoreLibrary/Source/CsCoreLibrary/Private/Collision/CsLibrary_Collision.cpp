@@ -23,7 +23,7 @@
 
 namespace NCsCollision
 {
-	bool FLibrary::FindUVChecked(const FString& Context, const FHitResult& Hit, const int32& UVChannel, FVector2f& OutUV)
+	bool FLibrary::FindUVChecked(const FString& Context, const FHitResult& Hit, const int32& UVChannel, FVector2D& OutUV)
 	{
 		checkf(UPhysicsSettings::Get()->bSupportUVFromHitResults, TEXT("%s: 'Support UV From Hit Results' is NOT enabled in project settings. This is required for finding UV for collision results."), *Context);
 
@@ -35,17 +35,42 @@ namespace NCsCollision
 
 		CS_IS_PTR_NULL_CHECKED(BodySetup)
 
-		const FVector3d LocalHitPos = Component->GetComponentToWorld().InverseTransformPosition(Hit.Location);
+		const FVector LocalHitPos = Component->GetComponentToWorld().InverseTransformPosition(Hit.Location);
 
 		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(UVChannel, 0)
 
 	#if WITH_EDITOR
-		FVector2d UV;
+		const bool Result = UGameplayStatics::FindCollisionUV(Hit, UVChannel, OutUV);
+		return Result;
+	#else
+		const bool Result = BodySetup->CalcUVAtLocation(LocalHitPos, Hit.FaceIndex, UVChannel, OutUV);
+		return Result;
+	#endif // #if WITH_EDITOR
+	}
+
+	bool FLibrary::FindUV2fChecked(const FString& Context, const FHitResult& Hit, const int32& UVChannel, FVector2f& OutUV)
+	{
+		checkf(UPhysicsSettings::Get()->bSupportUVFromHitResults, TEXT("%s: 'Support UV From Hit Results' is NOT enabled in project settings. This is required for finding UV for collision results."), *Context);
+
+		UPrimitiveComponent* Component = Hit.Component.Get();
+
+		CS_IS_PTR_NULL_CHECKED(Component)
+
+		UBodySetup* BodySetup = Component->GetBodySetup();
+
+		CS_IS_PTR_NULL_CHECKED(BodySetup)
+
+		const FVector LocalHitPos = Component->GetComponentToWorld().InverseTransformPosition(Hit.Location);
+
+		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(UVChannel, 0)
+
+	#if WITH_EDITOR
+		FVector2D UV;
 		const bool Result = UGameplayStatics::FindCollisionUV(Hit, UVChannel, UV);
 		OutUV = CsMathLibrary::Convert(UV);
 		return Result;
 	#else
-		FVector2d UV;
+		FVector2D UV;
 		const bool Result = BodySetup->CalcUVAtLocation(LocalHitPos, Hit.FaceIndex, UVChannel, UV);
 		OutUV = CsMathLibrary::Convert(UV);
 		return Result;
@@ -55,17 +80,17 @@ namespace NCsCollision
 	// HitResult
 	#pragma region
 
-	FVector3f FLibrary::GetLocation(const FHitResult& Hit)
+	FVector3f FLibrary::GetLocation3f(const FHitResult& Hit)
 	{
 		return CsMathLibrary::Convert(Hit.Location);
 	}
 
-	FRotator3f FLibrary::GetImpactRotation(const FHitResult& Hit)
+	FRotator3f FLibrary::GetImpactRotation3f(const FHitResult& Hit)
 	{
 		return CsMathLibrary::Convert(Hit.ImpactNormal.Rotation());
 	}
 
-	FQuat4f FLibrary::GetImpactQuat(const FHitResult& Hit)
+	FQuat4f FLibrary::GetImpactQuat3f(const FHitResult& Hit)
 	{
 		return CsMathLibrary::Convert(Hit.ImpactNormal.ToOrientationQuat());
 	}

@@ -1291,12 +1291,12 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProj
 	// None
 	if (Type == AttachType::None)
 	{
-		const FVector3f Location = Outer->ProjectileImpl->GetLaunchLocation();
+		const FVector Location = CsMathLibrary::Convert(Outer->ProjectileImpl->GetLaunchLocation());
 		PayloadImpl->Transform.SetTranslation(Location);
 
 		const FVector3f Direction = Outer->ProjectileImpl->GetLaunchDirection();
-		FQuat4f Rotation			= FX.Transform.GetRotation();
-		PayloadImpl->Transform.SetRotation(Direction.ToOrientationQuat() * Rotation);
+		FQuat4f Rotation	      = CsMathLibrary::Convert(FX.Transform.GetRotation());
+		PayloadImpl->Transform.SetRotation(CsMathLibrary::Convert(Direction.ToOrientationQuat() * Rotation));
 	}
 	// Owner
 	else

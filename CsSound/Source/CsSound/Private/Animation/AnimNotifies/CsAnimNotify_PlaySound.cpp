@@ -70,7 +70,7 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 
 	const FString& Context = Str::Notify;
 
-	typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadImplType;
+	using PooledPayloadImplType = NCsPooledObject::NPayload::FImplSlice;
 
 #if WITH_EDITOR
 	UWorld* CurrentWorld = MeshComp->GetWorld();
@@ -91,7 +91,7 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 		{
 			if (Sound.Bone != NAME_None)
 			{
-				UGameplayStatics::SpawnSoundAttached(S, MeshComp, Sound.Bone, CsMathLibrary::Convert(Sound.Transform.GetLocation()), EAttachLocation::KeepRelativeOffset, false, 1.0f, 1.0f);
+				UGameplayStatics::SpawnSoundAttached(S, MeshComp, Sound.Bone, Sound.Transform.GetLocation(), EAttachLocation::KeepRelativeOffset, false, 1.0f, 1.0f);
 			}
 			else
 			{

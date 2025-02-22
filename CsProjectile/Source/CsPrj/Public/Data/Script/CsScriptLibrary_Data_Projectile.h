@@ -80,7 +80,7 @@ public:
 	/**
 	* Adds a data slice which implements the interface: StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh) to
 	* data with Name.
-	* Adds slice of type: NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice.
+	* Adds slice of type: NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::FImplSlice.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
@@ -93,7 +93,7 @@ public:
 	/**
 	* Adds a data slice which implements the interface: StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 	* to data with Name.
-	* Adds slice of type: NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice.
+	* Adds slice of type: NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::FImplSlice.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).

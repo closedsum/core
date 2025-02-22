@@ -823,9 +823,9 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 
 			const FCsFX& ImpactFX = ImpactVisualData->GetImpactFX(SurfaceType);
 
-			FTransform3f Transform = FTransform3f::Identity;
-			Transform.SetLocation(CsCollisionLibrary::GetLocation(Hit));
-			Transform.SetRotation(CsCollisionLibrary::GetImpactQuat(Hit));
+			FTransform Transform = FTransform::Identity;
+			Transform.SetLocation(Hit.Location);
+			Transform.SetRotation(Hit.ImpactNormal.ToOrientationQuat());
 
 			CsFXManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactFX, Transform);
 		}
@@ -841,9 +841,9 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 
 			const FCsSound& ImpactSound = ImpactSoundData->GetImpactSound(SurfaceType);
 
-			FTransform3f Transform = FTransform3f::Identity;
-			Transform.SetLocation(CsCollisionLibrary::GetLocation(Hit));
-			Transform.SetRotation(CsCollisionLibrary::GetImpactQuat(Hit));
+			FTransform Transform = FTransform::Identity;
+			Transform.SetLocation(Hit.Location);
+			Transform.SetRotation(Hit.ImpactNormal.ToOrientationQuat());
 
 			CsSoundManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactSound, Transform);
 		}

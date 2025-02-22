@@ -1114,11 +1114,11 @@ void ACsPointSequenceWeaponActorPooled::FFXImpl::SetPayload(CsFXPayloadType* Pay
 	if (Type == AttachType::None)
 	{
 		// Spawn Location
-		FVector3f Location = Params.GetbDestinationAsStart() ? Outer->PointImpl.Destination : Outer->PointImpl.Start;
+		FVector Location = CsMathLibrary::Convert(Params.GetbDestinationAsStart() ? Outer->PointImpl.Destination : Outer->PointImpl.Start);
 
-		FTransform3f Transform  = PayloadImpl->Transform;
-		FVector3f Translation   = Transform.GetTranslation();
-		Translation			   += Location;
+		FTransform Transform  = PayloadImpl->Transform;
+		FVector Translation   = Transform.GetTranslation();
+		Translation			 += Location;
 
 		Transform.SetTranslation(Translation);
 

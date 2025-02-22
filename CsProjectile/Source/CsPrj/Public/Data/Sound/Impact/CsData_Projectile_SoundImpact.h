@@ -23,19 +23,23 @@ namespace NCsProjectile
 
 					static const FName Name;
 
+				private:
+
+					// Allow clearer names without name collisions
+					struct _
+					{
+						using ImpactSoundInfoType = NCsProjectile::NImpact::NSound::FInfo;
+					};
+
 				public:
 
-				#define ImpactSoundInfoType NCsProjectile::NImpact::NSound::FInfo
-				
 					/**
 					* Get the Visual Impact information associated with the given SurfaceType.
 					*
 					* @param SurfaceType	Physics Surface type.
 					* return				Visual Impact information associated with the given SurfaceType
 					*/
-					virtual const ImpactSoundInfoType& GetImpactSoundInfo(const EPhysicalSurface& SurfaceType) const = 0;
-
-				#undef ImpactSoundInfoType
+					virtual const _::ImpactSoundInfoType& GetImpactSoundInfo(const EPhysicalSurface& SurfaceType) const = 0;
 				};
 			}
 		}
@@ -58,9 +62,15 @@ public:
 
 	static const FName Name;
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using ImpactSoundInfoType = NCsProjectile::NImpact::NSound::FInfo;
+	};
+
 public:
-	
-#define ImpactSoundInfoType NCsProjectile::NImpact::NSound::FInfo
 
 	/**
 	* Get the Visual Impact information associated with the given SurfaceType.
@@ -68,7 +78,5 @@ public:
 	* @param SurfaceType	Physics Surface type.
 	* return				Visual Impact information associated with the given SurfaceType
 	*/
-	virtual const ImpactSoundInfoType& GetImpactSoundInfo(const EPhysicalSurface& SurfaceType) const = 0;
-
-#undef ImpactSoundInfoType
+	virtual const _::ImpactSoundInfoType& GetImpactSoundInfo(const EPhysicalSurface& SurfaceType) const = 0;
 };

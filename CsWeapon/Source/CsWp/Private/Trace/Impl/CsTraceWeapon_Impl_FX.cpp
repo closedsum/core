@@ -170,7 +170,7 @@ namespace NCsWeapon
 
 						// Set Transform based on TransformType.
 						// NOTE: This is only valid if AttachType == None.
-						FTransform3f Transform = FTransform3f::Identity;
+						FTransform Transform = FTransform::Identity;
 
 						if (AType == AttachType::None)
 						{
@@ -188,10 +188,10 @@ namespace NCsWeapon
 							if (TType == TransformType::Owner)
 							{
 								if (AActor* Actor = Cast<AActor>(Owner))
-									Transform = CsMathLibrary::Convert(Actor->GetActorTransform());
+									Transform = Actor->GetActorTransform();
 								else
 								if (USceneComponent* C = Cast<USceneComponent>(Owner))
-									Transform = CsMathLibrary::Convert(C->GetComponentTransform());
+									Transform = C->GetComponentTransform();
 							}
 							// Component
 							else
@@ -199,7 +199,7 @@ namespace NCsWeapon
 							{
 								CS_IS_PTR_NULL_CHECKED(Component)
 
-								Transform = CsMathLibrary::Convert(Component->GetComponentTransform());
+								Transform = Component->GetComponentTransform();
 							}
 							// Custom
 							else
@@ -251,9 +251,9 @@ namespace NCsWeapon
 
 						const FCsFX& FX = ImpactVisualData->GetImpactFX(SurfaceType);
 
-						FTransform3f Transform;
-						Transform.SetLocation(CsMathLibrary::Convert(Hit.Location));
-						Transform.SetRotation(CsMathLibrary::Convert(Hit.ImpactNormal.Rotation().Quaternion()));
+						FTransform Transform = FTransform::Identity;
+						Transform.SetLocation(Hit.Location);
+						Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
 
 						// Spawn FX
 						CsFXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);

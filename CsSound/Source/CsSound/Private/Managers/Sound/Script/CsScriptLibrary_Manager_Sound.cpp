@@ -53,7 +53,7 @@ UObject* UCsScriptLibrary_Manager_Sound::FindObject(const FString& Context, UObj
 
 #pragma endregion Pool
 
-int32 UCsScriptLibrary_Manager_Sound::Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_Sound& Payload, const FTransform3f& Transform)
+int32 UCsScriptLibrary_Manager_Sound::Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_Sound& Payload, const FTransform& Transform)
 {
 	using namespace NCsScriptLibraryManagerSound::NCached;
 
@@ -66,14 +66,14 @@ int32 UCsScriptLibrary_Manager_Sound::Spawn(const FString& Context, UObject* Wor
 	// Try to allocate a native payload
 	UCsManager_Sound* Manager_Sound = CsSoundManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
-	typedef NCsSound::NPayload::FImpl PayloadImplType;
+	typedef NCsSound::NPayload::NImpl::FImpl PayloadImplType;
 
 	const FECsSound& Type		 = Payload.Sound.Type;
 	PayloadImplType* PayloadImpl = Manager_Sound->AllocatePayload<PayloadImplType>(Type);
 	// Copy script payload to native payload
 	Payload.CopyToPayloadAsValueChecked(Ctxt, WorldContextObject, PayloadImpl);
 
-	const FTransform3f& T = PayloadImpl->Transform;
+	const FTransform& T = PayloadImpl->Transform;
 
 	PayloadImpl->Transform.SetTranslation(Transform.GetTranslation() + T.GetTranslation());
 	PayloadImpl->Transform.SetRotation(Transform.GetRotation() + T.GetRotation());

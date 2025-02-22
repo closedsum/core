@@ -46,11 +46,6 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsWeapon_Fire_ProjectileImpl)
 
-UCsWeapon_Fire_Projectile::UCsWeapon_Fire_Projectile(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
-
 // UCsWeapon_Fire_ProjectileImpl
 //	Cached
 #pragma region

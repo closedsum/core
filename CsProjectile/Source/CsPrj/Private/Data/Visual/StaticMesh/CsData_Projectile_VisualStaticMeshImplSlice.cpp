@@ -1,6 +1,8 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/Visual/StaticMesh/CsData_Projectile_VisualStaticMeshImplSlice.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Library/CsLibrary_Property.h"
@@ -10,7 +12,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Projectile_VisualStaticMeshImplSlice)
 
-#define SliceType NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice
+using SliceType = NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::FImplSlice;
 
 SliceType* FCsData_Projectile_VisualStaticMeshImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 {
@@ -66,8 +68,6 @@ void FCsData_Projectile_VisualStaticMeshImplSlice::CopyToSliceAsValue(SliceType*
 	Mesh.CopyToInfoAsValue(Slice->GetStaticMeshInfoPtr());
 }
 
-#undef SliceType
-
 bool FCsData_Projectile_VisualStaticMeshImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
 	if (!Mesh.IsValid(Context, Log))
@@ -75,7 +75,7 @@ bool FCsData_Projectile_VisualStaticMeshImplSlice::IsValid(const FString& Contex
 	return true;
 }
 
-const FName NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice::Name = FName("NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice");
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::FImplSlice);
 
 namespace NCsProjectile
 {
@@ -96,80 +96,80 @@ namespace NCsProjectile
 							const FName StaticMesh = FName("StaticMesh");
 						}
 					}
-				}
 
-				/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
-				{
-					using namespace NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::NCached;
+					/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+					{
+						using namespace NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::NCached;
 
-					CS_IS_PTR_NULL_RET_NULL(Object)
+						CS_IS_PTR_NULL_RET_NULL(Object)
 
-					#define DataHandlerType NCsData::NManager::NHandler::TData
-					typedef NCsProjectile::NData::IData DataType;
-					typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+						#define DataHandlerType NCsData::NManager::NHandler::TData
+						typedef NCsProjectile::NData::IData DataType;
+						typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
 
-					DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = CsPrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+						DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = CsPrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 				
-					#undef DataHandlerType
+						#undef DataHandlerType
 
-					if (!DataHandler)
-						return nullptr;
+						if (!DataHandler)
+							return nullptr;
 
-					typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshVisualDataType;
+						typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshVisualDataType;
 
-					FImplSlice* Slice = DataHandler->AddSafeDataSlice<FImplSlice, StaticMeshVisualDataType>(Context, DataName);
+						FImplSlice* Slice = DataHandler->AddSafeDataSlice<FImplSlice, StaticMeshVisualDataType>(Context, DataName);
 
-					if (!Slice)
-						return nullptr;
+						if (!Slice)
+							return nullptr;
 
-					// Check for properties matching interface: ProjectileDataType (NCsProjectile::NData::IData)
-					typedef NCsProperty::FLibrary PropertyLibrary;
+						// Check for properties matching interface: ProjectileDataType (NCsProjectile::NData::IData)
+						typedef NCsProperty::FLibrary PropertyLibrary;
 
-					bool Success = false;
+						bool Success = false;
 
-					// Try FCsData_Projectile_VisualStaticMeshImplSlice
-					typedef FCsData_Projectile_VisualStaticMeshImplSlice StructSliceType;
+						// Try FCsData_Projectile_VisualStaticMeshImplSlice
+						typedef FCsData_Projectile_VisualStaticMeshImplSlice StructSliceType;
 
-					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualStaticMeshSlice, nullptr))
-					{
-						SliceAsStruct->CopyToSlice(Slice);
-						Success = true;
-					}
-					// Try individual properties
-					else
-					{
-						FCsPrjStaticMesh* StaticMeshPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsPrjStaticMesh>(Context, Object, Object->GetClass(), Name::StaticMesh, nullptr);
-
-						if (StaticMeshPtr)
+						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualStaticMeshSlice, nullptr))
 						{
-							StaticMeshPtr->CopyToInfo(Slice->GetStaticMeshInfoPtr());
+							SliceAsStruct->CopyToSlice(Slice);
 							Success = true;
 						}
-					}
-
-					if (!Success)
-					{
-						if (Log)
+						// Try individual properties
+						else
 						{
-							Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh.")));
-							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Projectile_VisualStaticMeshImplSlice with name: VisualStaticMeshSlice.")));
-							Log(FString::Printf(TEXT("%s: - OR")));
-							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsPrjStaticMesh with name: StaticMesh.")));
+							FCsPrjStaticMesh* StaticMeshPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsPrjStaticMesh>(Context, Object, Object->GetClass(), Name::StaticMesh, nullptr);
+
+							if (StaticMeshPtr)
+							{
+								StaticMeshPtr->CopyToInfo(Slice->GetStaticMeshInfoPtr());
+								Success = true;
+							}
 						}
+
+						if (!Success)
+						{
+							if (Log)
+							{
+								Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh.")));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Projectile_VisualStaticMeshImplSlice with name: VisualStaticMeshSlice.")));
+								Log(FString::Printf(TEXT("%s: - OR")));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsPrjStaticMesh with name: StaticMesh.")));
+							}
+						}
+						return Slice;
 					}
-					return Slice;
-				}
 
-				bool FImplSlice::IsValidChecked(const FString& Context) const
-				{
-					CS_IS_VALID_CHECKED(GetStaticMeshInfo());
-					return true;
-				}
+					bool FImplSlice::IsValidChecked(const FString& Context) const
+					{
+						CS_IS_VALID_CHECKED(GetStaticMeshInfo());
+						return true;
+					}
 
-				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
-				{
-					CS_IS_VALID(GetStaticMeshInfo())
-					return true;
+					bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+					{
+						CS_IS_VALID(GetStaticMeshInfo())
+						return true;
+					}
 				}
 			}
 		}

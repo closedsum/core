@@ -140,7 +140,7 @@ namespace NCsFX
 				return true;
 			}
 
-			void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
+			void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 			{
 				CS_IS_PTR_NULL_CHECKED(Payload)
 				CS_IS_VALID_CHECKED(FX);
@@ -156,7 +156,7 @@ namespace NCsFX
 
 				Payload->Transform.SetTranslation(Transform.GetTranslation() + FX.Transform.GetTranslation());
 
-				FRotator3f Rotation = Transform.GetRotation().Rotator() + FX.Transform.GetRotation().Rotator();
+				FRotator Rotation = Transform.GetRotation().Rotator() + FX.Transform.GetRotation().Rotator();
 
 				Payload->Transform.SetRotation(Rotation.Quaternion());
 				Payload->Transform.SetScale3D(Transform.GetScale3D() * FX.Transform.GetScale3D());
@@ -167,7 +167,7 @@ namespace NCsFX
 				Payload->bApplyTransformScale = FX.bApplyTransformScale;
 			}
 
-			void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
+			void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL_EXIT(Payload)
 				CS_IS_VALID_EXIT(FX);
@@ -175,7 +175,7 @@ namespace NCsFX
 				SetChecked(Context, Payload, FX, Transform);
 			}
 
-			void FLibrary::SetSafe(PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
+			void FLibrary::SetSafe(PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 			{
 				using namespace NCsFX::NPayload::NLibrary::NCached;
 
@@ -184,7 +184,7 @@ namespace NCsFX
 				SetSafe(Context, Payload, FX, Transform, nullptr);
 			}
 
-			void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, const FTransform3f& Transform)
+			void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, const FTransform& Transform)
 			{
 				// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
 				PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
@@ -192,13 +192,13 @@ namespace NCsFX
 				PayloadImpl->Transform = Transform;
 			}
 
-			void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
+			void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 			{
 				SetChecked(Context, Payload, FX, Transform);
 				SetChecked(Context, Payload, PooledPayload);
 			}
 
-			void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
+			void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				CS_IS_PTR_NULL_EXIT(Payload)
 				CS_IS_PTR_NULL_EXIT(PooledPayload)
@@ -207,7 +207,7 @@ namespace NCsFX
 				SetChecked(Context, Payload, PooledPayload, FX, Transform);
 			}
 
-			void FLibrary::SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
+			void FLibrary::SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 			{
 				using namespace NCsFX::NPayload::NLibrary::NCached;
 
@@ -216,7 +216,7 @@ namespace NCsFX
 				SetSafe(Context, Payload, PooledPayload, FX, Transform, nullptr);
 			}
 
-			void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
+			void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 			{
 				// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
 				PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
@@ -244,14 +244,14 @@ namespace NCsFX
 				SetChecked(Context, PayloadImpl, PooledPayload);
 			}
 
-			void FLibrary::ApplyAsOffsetChecked(const FString& Context, PayloadType* Payload, const FTransform3f& Transform)
+			void FLibrary::ApplyAsOffsetChecked(const FString& Context, PayloadType* Payload, const FTransform& Transform)
 			{
 				// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
 				PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
 
 				PayloadImpl->Transform.SetTranslation(Transform.GetTranslation() + PayloadImpl->Transform.GetTranslation());
 
-				FRotator3f Rotation = Transform.GetRotation().Rotator() + PayloadImpl->Transform.GetRotation().Rotator();
+				FRotator Rotation = Transform.GetRotation().Rotator() + PayloadImpl->Transform.GetRotation().Rotator();
 
 				PayloadImpl->Transform.SetRotation(Rotation.Quaternion());
 

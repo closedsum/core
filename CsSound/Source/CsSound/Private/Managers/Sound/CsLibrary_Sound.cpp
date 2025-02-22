@@ -57,7 +57,9 @@ namespace NCsSound
 	#define USING_NS_CACHED using namespace NCsSound::NLibrary::NCached;
 	#define SET_CONTEXT(__FunctionName) using namespace NCsSound::NLibrary::NCached; \
 		const FString& Context = Str::__FunctionName
-	#define GameInstanceLibrary NCsGameInstance::FLibrary
+	
+	using ParamsResourceType = NCsSound::NSpawn::NParams::FResource;
+	using ParamsType = NCsSound::NSpawn::NParams::FParams;
 
 	// Load
 	#pragma region
@@ -76,9 +78,6 @@ namespace NCsSound
 
 	// Spawn
 	#pragma region
-
-	#define ParamsResourceType NCsSound::NSpawn::NParams::FResource
-	#define ParamsType NCsSound::NSpawn::NParams::FParams
 
 	FCsRoutineHandle FLibrary::SpawnChecked(const FString& Context, UObject* WorldContext, ParamsResourceType* Params)
 	{
@@ -217,11 +216,9 @@ namespace NCsSound
 
 				// Spawn FX
 				{
-					typedef NCsSound::NPayload::FImpl PayloadImplType;
-
 					UObject* Owner = R->GetOwnerAsObject();
 
-					PayloadImplType Payload;
+					CsSoundPayloadImplType Payload;
 					Payload.Instigator		 = Owner;
 					Payload.Parent			 = Params->GetObject();
 					Payload.Sound			 = Params->Sound.GetChecked(Context);
@@ -277,9 +274,6 @@ namespace NCsSound
 		Get().Manager_SpawnParams.Deallocate(Resource);
 	}
 
-	#undef ParamsResourceType
-	#undef ParamsType
-
 	#pragma endregion Spawn
 
 	bool FLibrary::CanPlayChecked(const FString& Context, const UObject* WorldContext)
@@ -294,7 +288,7 @@ namespace NCsSound
 		if (!WorldContext)
 			return false;
 
-		UEngine* Engine = GameInstanceLibrary::GetSafeEngine(Context, WorldContext);
+		UEngine* Engine = CsGameInstanceLibrary::GetSafeEngine(Context, WorldContext);
 
 		if (!Engine)
 			return false;
@@ -321,8 +315,7 @@ namespace NCsSound
 	{
 		check(CanPlayChecked(Context, WorldContext));
 
-		CS_IS_PTR_NULL_CHECKED(SoundMix)
-		
+		CS_IS_PTR_NULL_CHECKED(SoundMix)	
 		CS_IS_PTR_NULL_CHECKED(SoundClass)
 
 		UWorld* World				   = WorldContext->GetWorld();
@@ -348,7 +341,6 @@ namespace NCsSound
 		check(CanPlayChecked(Context, WorldContext));
 
 		CS_IS_PTR_NULL_CHECKED(SoundMix)
-
 		CS_IS_PTR_NULL_CHECKED(SoundClass)
 
 		UWorld* World				   = WorldContext->GetWorld();
@@ -360,5 +352,4 @@ namespace NCsSound
 
 	#undef USING_NS_CACHED
 	#undef SET_CONTEXT
-	#undef GameInstanceLibrary
 }

@@ -6,10 +6,10 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsParams_Projectile_Tracking)
 
+using ParamsType = NCsProjectile::NTracking::FParams;
+
 // FCsProjectile_TrackingParams
 #pragma region
-
-#define ParamsType NCsProjectile::NTracking::FParams
 
 void FCsProjectile_TrackingParams::CopyToParams(ParamsType* Params)
 {
@@ -38,8 +38,6 @@ void FCsProjectile_TrackingParams::CopyToParamsAsValue(ParamsType* Params) const
 	Params->SetMinDotThreshold(MinDotThreshold);
 	Params->SetMaxDotBeforeUsingPitch(MaxDotBeforeUsingPitch);
 }
-
-#undef ParamsType
 
 bool FCsProjectile_TrackingParams::IsValidChecked(const FString& Context) const
 {
@@ -71,10 +69,10 @@ namespace NCsProjectile
 {
 	namespace NTracking
 	{
+		using DestinationMapType = NCsProjectile::NTracking::EMDestination;
+
 		bool FParams::IsValidChecked(const FString& Context) const
 		{
-			typedef NCsProjectile::NTracking::EMDestination DestinationMapType;
-
 			CS_IS_ENUM_VALID_CHECKED(DestinationMapType, GetDestination())
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetDelay(), 0.0f)
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetDuration(), 0.0f)
@@ -88,9 +86,6 @@ namespace NCsProjectile
 
 		bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 		{
-			typedef NCsProjectile::NTracking::EDestination DestinationType;
-			typedef NCsProjectile::NTracking::EMDestination DestinationMapType;
-
 			CS_IS_ENUM_VALID(DestinationMapType, DestinationType, GetDestination())
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetDelay(), 0.0f)
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetDuration(), 0.0f)

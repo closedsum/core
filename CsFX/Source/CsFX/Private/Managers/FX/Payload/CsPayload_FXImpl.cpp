@@ -13,20 +13,16 @@
 
 CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsFX::NPayload::NImpl::FImpl);
 
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsFX, NPayload, NImpl, Impl)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsFX::NPayload::NImpl, Reset)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
+
 namespace NCsFX
 {
 	namespace NPayload
 	{
 		namespace NImpl
 		{
-			namespace NCached
-			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFX::NPayload::NImpl, Reset);
-				}
-			}
-
 			using ParameterLibrary = NCsFX::NManager::NParameter::FLibrary;
 
 			FImpl::FImpl() :
@@ -50,7 +46,7 @@ namespace NCsFX
 				AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 				Bone(NAME_None),
 				TransformRules(0),
-				Transform(FTransform3f::Identity),
+				Transform(FTransform::Identity),
 				bAbsoluteLocation(false),
 				bAbsoluteRotation(false),
 				bAbsoluteScale(false),
@@ -61,10 +57,10 @@ namespace NCsFX
 			{
 				InterfaceMap = new FCsInterfaceMap();
 
-				InterfaceMap->SetRoot<FImpl>(this);
-
-				InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
-				InterfaceMap->Add<PayloadType>(static_cast<PayloadType*>(this));
+				CS_INTERFACE_MAP_SET_ROOT(FImpl);
+				
+				CS_INTERFACE_MAP_ADD(PooledPayloadType);
+				CS_INTERFACE_MAP_ADD(PayloadType);
 			}
 
 			FImpl::~FImpl()
@@ -77,9 +73,7 @@ namespace NCsFX
 
 			void FImpl::Reset()
 			{
-				using namespace NCsFX::NPayload::NImpl::NCached;
-
-				const FString& Context = Str::Reset;
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Reset);
 
 				// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 				bAllocated = false;
@@ -101,7 +95,7 @@ namespace NCsFX
 				AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 				Bone = NAME_None;
 				TransformRules = 0;
-				Transform = FTransform3f::Identity;
+				Transform = FTransform::Identity;
 				bAbsoluteLocation = false;
 				bAbsoluteRotation = false;
 				bAbsoluteScale = false;

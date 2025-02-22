@@ -12,7 +12,7 @@
 // FCsProjectile_TrackingParams
 #pragma region
 
-// NCsProjectile::NTracking::FParams
+// ParamsType (NCsProjectile::NTracking::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NTracking, FParams)
 
 /**
@@ -41,7 +41,7 @@ public:
 			the offset is applied in the direction of the Bone's world space orientation. 
 			(i.e. Offset.X = Forward, Offset.Y = Right, Offset.Z = Up) */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CImpl|Projectile|Tracking")
-	FVector3f Offset;
+	FVector Offset;
 
 	/** Time before Tracking starts. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CImpl|Projectile|Tracking", meta = (UIMin = "0.0", ClampMin = "0.0"))
@@ -80,10 +80,10 @@ public:
 	{
 	}
 
-#define ParamsType NCsProjectile::NTracking::FParams
+	using ParamsType = NCsProjectile::NTracking::FParams;
+
 	void CopyToParams(ParamsType* Params);
 	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -99,7 +99,9 @@ namespace NCsProjectile
 		*/
 		struct CSPRJ_API FParams
 		{
-		#define DestinationType NCsProjectile::NTracking::EDestination
+		private:
+
+			using DestinationType = NCsProjectile::NTracking::EDestination;
 
 		private:
 
@@ -115,7 +117,7 @@ namespace NCsProjectile
 				If Destination == ECsProjectileTrackingDestination::Bone,
 					the offset is applied in the direction of the Bone's world space orientation. 
 					(i.e. Offset.X = Forward, Offset.Y = Right, Offset.Z = Up) */
-			CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector3f)
+			CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
 
 			/** Time before Tracking starts. */
 			CS_DECLARE_MEMBER_WITH_PROXY(Delay, float)
@@ -161,7 +163,7 @@ namespace NCsProjectile
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Destination, DestinationType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bReacquireDestination, bool)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector3f)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Delay, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Duration, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(RotationRate, float)
@@ -170,8 +172,6 @@ namespace NCsProjectile
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-		#undef DestinationType
 		};
 	}
 }

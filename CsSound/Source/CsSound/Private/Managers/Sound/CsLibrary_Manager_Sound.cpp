@@ -37,6 +37,11 @@ namespace NCsSound
 			}
 		}
 
+		using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+		using PayloadLibrary = NCsSound::NPayload::NLibrary::FLibrary;
+		using PayloadType = NCsSound::NPayload::IPayload;
+		using PayloadImplType = NCsSound::NPayload::NImpl::FImpl;
+
 		// Print
 		#pragma region
 
@@ -60,10 +65,7 @@ namespace NCsSound
 
 				return GetManagerSingleton->_getUObject();
 			}
-
-			typedef NCsGameState::FLibrary GameStateLibrary;
-
-			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
+			return CsGameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsSound::FLog::Warning*/)
@@ -76,10 +78,7 @@ namespace NCsSound
 				}
 				return nullptr;
 			}
-
-			typedef NCsGameState::FLibrary GameStateLibrary;
-
-			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
+			return CsGameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
@@ -165,9 +164,6 @@ namespace NCsSound
 		// Payload
 		#pragma region
 
-		#define PayloadType NCsSound::NPayload::IPayload
-		#define PayloadImplType NCsSound::NPayload::FImpl
-
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsSound& Type)
 		{
 			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
@@ -189,9 +185,6 @@ namespace NCsSound
 			return GetChecked(Context, WorldContext)->AllocatePayload<PayloadImplType>(Type);
 		}
 
-		#undef PayloadType
-		#undef PayloadImplType
-
 		#pragma endregion Payload
 
 		// Spawn
@@ -203,9 +196,6 @@ namespace NCsSound
 
 			UCsManager_Sound* Manager_Sound = GetChecked(Context, WorldContext);
 
-			typedef NCsSound::NPayload::FLibrary PayloadLibrary;
-			typedef NCsSound::NPayload::IPayload PayloadType;
-
 			// Allocate Payload
 			PayloadType* Payload = Manager_Sound->AllocatePayload(Sound.Type);
 			// Set Payload
@@ -214,25 +204,18 @@ namespace NCsSound
 			return Manager_Sound->Spawn(Sound.Type, Payload);
 		}
 		
-		#define PayloadType NCsSound::NPayload::IPayload
 		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsSound& Type, PayloadType* Payload)
 		{
-		#undef PayloadType
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsSound, Type)
 
 			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
 		}
 
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-
-		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform /*=FTransform3f::Identity*/)
+		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			CS_IS_VALID_CHECKED(Sound);
 
 			UCsManager_Sound* Manager_Sound = GetChecked(Context, WorldContext);
-
-			typedef NCsSound::NPayload::FLibrary PayloadLibrary;
-			typedef NCsSound::NPayload::IPayload PayloadType;
 
 			// Allocate Payload
 			PayloadType* Payload = Manager_Sound->AllocatePayload(Sound.Type);
@@ -248,9 +231,6 @@ namespace NCsSound
 
 			if (UCsManager_Sound* Manager_Sound = GetSafe(Context, WorldContext, Log))
 			{
-				typedef NCsSound::NPayload::FLibrary PayloadLibrary;
-				typedef NCsSound::NPayload::IPayload PayloadType;
-
 				// Allocate Payload
 				PayloadType* Payload = Manager_Sound->AllocatePayload(Sound.Type);
 				// Set Payload
@@ -261,8 +241,6 @@ namespace NCsSound
 			}
 			return nullptr;
 		}
-
-		#undef PooledPayloadType
 
 		#pragma endregion Spawn
 	}

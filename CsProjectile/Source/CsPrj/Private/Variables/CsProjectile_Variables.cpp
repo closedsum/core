@@ -228,16 +228,16 @@ namespace NCsProjectile
 				TArray<ICsProjectile*>& _Projectiles = Outer->Projectiles;
 				const int32& _AliveCount	     = Outer->AliveCount;
 				const TArray<int32>& _AliveIDs   = Outer->AliveIDs;
-				TArray<FRotator3f>& _Rotation3fs	 = Outer->Rotation3fs;
-				TArray<FQuat4f>& _Orientation4fs	 = Outer->Orientation4fs;
+				TArray<FRotator>& _Rotations	 = Outer->Rotations;
+				TArray<FQuat>& _Orientations	 = Outer->Orientations;
 
 				// Resolve Rotation and Orientation
 				for (int32 I = 0; I < _AliveCount; ++I)
 				{
 					const int32& ID = _AliveIDs[I];
 
-					_Rotation3fs[ID]	  = Direction3fs[ID].Rotation();
-					_Orientation4fs[ID] = _Rotation3fs[ID].Quaternion();
+					_Rotations[ID]	  = Directions[ID].Rotation();
+					_Orientations[ID] = _Rotations[ID].Quaternion();
 				}
 
 				const TArray<StateType>& _States = Outer->States;
@@ -247,25 +247,24 @@ namespace NCsProjectile
 				{
 					const int32& ID = _AliveIDs[I];
 
-					ICsProjectile* Projectile = _Projectiles[ID];
-
+					ICsProjectile* Projectile		 = _Projectiles[ID];
 					ICsProjectile_Movement* Movement = CS_INTERFACE_TO_INTERFACE_CAST(Projectile, ICsProjectile, ICsProjectile_Movement);
 
 					if (Movement)
 					{
 						// NOTE: Currently Location is updated by Actor's Location
-						Movement->Movement_SetLocation(FVector3f::ZeroVector);
+						Movement->Movement_SetLocation(FVector::ZeroVector);
 
 						// LaunchDelay
 						if (_States[ID] == StateType::LaunchDelay)
 						{
-							Movement->Movement_SetRotation(_Rotation3fs[ID]);
+							Movement->Movement_SetRotation(_Rotations[ID]);
 						}
 						else
 						{
 							Velocities[ID] = Speeds[ID] * Directions[ID];
 
-							Movement->Movement_SetVelocity(Velocity3fs[ID]);
+							Movement->Movement_SetVelocity(Velocities[ID]);
 						}
 					}
 				}
@@ -377,7 +376,7 @@ namespace NCsProjectile
 			}
 
 			// FManager::FMovementInfos = Outer->MovementInfos
-			TArray<FVector3f>& _Direction3fs = Outer->MovementInfos.Direction3fs;
+			TArray<FVector>& _Directions = Outer->MovementInfos.Directions;
 
 			// Get Destinations
 			for (int32 I = 0; I < ActiveCount; ++I)
@@ -387,29 +386,29 @@ namespace NCsProjectile
 				ICsProjectile* Projectile		 = _Projectiles[ID];
 				ICsProjectile_Tracking* Tracking = CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(Projectile, ICsProjectile, ICsProjectile_Tracking);
 
-				Destination3fs[ID] = Tracking->Tracking_GetDestination();
+				Destinations[ID] = Tracking->Tracking_GetDestination();
 			}
 
 			// FManager = Outer
 			typedef NCsProjectile::EState StateType;
 
 			const TArray<StateType>& _States  = Outer->States;
-			const TArray<FVector3f>& _Location3fs = Outer->Location3fs;
+			const TArray<FVector>& _Locations = Outer->Locations;
 
 			// Get Directions
 			{
-				FVector3f NewDirection;
+				FVector NewDirection;
 				float Dot;
 
 				for (int32 I = 0; I < ActiveCount; ++I)
 				{
 					const int32& ID = ActiveIDs[I];
 
-					NewDirection = (Destination3fs[ID] - _Location3fs[ID]).GetSafeNormal();
+					NewDirection = (Destinations[ID] - _Locations[ID]).GetSafeNormal();
 
 					const float& MinDotThreshold = MinDotThresholds[ID];
 			
-					Dot = FVector3f::DotProduct(_Direction3fs[ID], NewDirection);
+					Dot = FVector::DotProduct(_Directions[ID], NewDirection);
 
 					if (Dot >= MinDotThreshold)
 					{
@@ -418,12 +417,12 @@ namespace NCsProjectile
 						// Ignore Pitch / Z
 						if (Dot <= MaxDotBeforeUsingPitch)
 						{
-							Destinations[ID].Z = _Location3fs[ID].Z;
+							Destinations[ID].Z = _Locations[ID].Z;
 						}
 
-						Destination3fs[ID] += Offset3fs[ID];
-						NewDirection      = (Destination3fs[ID] - _Location3fs[ID]).GetSafeNormal();
-						_Direction3fs[ID]   = CsMathLibrary::VInterpNormalRotationTo(_Direction3fs[ID], NewDirection, DeltaTime.Time, RotationRates[ID]);
+						Destinations[ID] += Offsets[ID];
+						NewDirection      = (Destinations[ID] - _Locations[ID]).GetSafeNormal();
+						_Directions[ID]   = CsMathLibrary::VInterpNormalRotationTo(_Directions[ID], NewDirection, DeltaTime.Time, RotationRates[ID]);
 					}
 				}
 			}
@@ -487,7 +486,7 @@ namespace NCsProjectile
 				{
 					const int32& ID = Last_DeallocatedIDs[I];
 
-					Last_Location3fs[ID] = FVector3f::ZeroVector;
+					Last_Locations[ID] = FVector::ZeroVector;
 
 					Last_DeallocatedIDs.RemoveAt(I, 1, false);
 				}
@@ -535,9 +534,9 @@ namespace NCsProjectile
 
 			MovementInfos.Directions[ID] = Payload.Direction;
 
-			Rotation3fs[ID]	      = MovementInfos.Direction3fs[ID].Rotation();
-			Last_Rotation3fs[ID] = Rotation3fs[ID];
-			Orientation4fs[ID]   = Rotation3fs[ID].Quaternion();
+			Rotations[ID]	   = MovementInfos.Directions[ID].Rotation();
+			Last_Rotations[ID] = Rotations[ID];
+			Orientations[ID]   = Rotations[ID].Quaternion();
 
 			CollisionInfos.Radii[ID]	   = Payload.CollisionRadius;
 			CollisionInfos.HalfHeights[ID] = Payload.CollisionHalfHeight;

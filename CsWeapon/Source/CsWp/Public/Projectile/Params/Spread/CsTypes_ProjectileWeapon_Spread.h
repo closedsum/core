@@ -491,7 +491,7 @@ namespace NCsWeapon
 
 			public:
 
-				static FVector3f GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const ShapeDistributionType& Distribution);
+				static FVector GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector& Extents, const ShapeDistributionType& Distribution);
 
 				static void SetAnglesChecked(const FString& Context, const int32& Count, const AngleType& Type, const float& Angle, const AngleDistributionType& Distribution, TArray<float>& OutAngles);
 

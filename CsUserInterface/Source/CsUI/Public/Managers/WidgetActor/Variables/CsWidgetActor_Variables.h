@@ -162,8 +162,11 @@ namespace NCsWidgetActor
 		{
 			friend class UCManager_Character;
 
-		#define IDManagerType NCsResource::NManager::NValue::NFixed::NInt32::FManager
-		#define VariablesType NCsWidgetActor::NVariables::FVariables
+		private:
+
+			using IDManagerType = NCsResource::NManager::NValue::NFixed::NInt32::FManager;
+			using VariablesType = NCsWidgetActor::NVariables::FVariables;
+			using VariablesPayloadType = NCsWidgetActor::NVariables::NAllocate::FPayload;
 
 		private:
 
@@ -349,9 +352,7 @@ namespace NCsWidgetActor
 
 			FORCEINLINE bool IsValid(const int32& Index) const { return Variables[Index].IsValid(); }
 
-		#define VariablesPayloadType NCsWidgetActor::NVariables::NAllocate::FPayload
 			VariablesType* AllocateChecked(const FString& Context, const VariablesPayloadType& Payload);
-		#undef VariablesPayloadType
 
 			void DeallocateChecked(const FString& Context, VariablesType* Variables);
 
@@ -366,9 +367,6 @@ namespace NCsWidgetActor
 				CameraInfos.Reset(Index);
 				Manager_ID.DeallocateAt(Index);
 			}
-
-		#undef IDManagerType
-		#undef VariablesType
 		};
 	}
 }
@@ -388,13 +386,17 @@ class CSUI_API ICsWidgetActor_Variables
 {
 	GENERATED_IINTERFACE_BODY()
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using VariablesType = NCsWidgetActor::NVariables::FVariables;
+	};
+
 public:
 
-#define VariablesType NCsWidgetActor::NVariables::FVariables
+	virtual const _::VariablesType* GetVariables() const = 0;
 
-	virtual const VariablesType* GetVariables() const = 0;
-
-	virtual VariablesType* GetVariables() = 0;
-
-#undef VariablesType
+	virtual _::VariablesType* GetVariables() = 0;
 };

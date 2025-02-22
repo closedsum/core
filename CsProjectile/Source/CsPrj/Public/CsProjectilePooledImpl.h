@@ -359,13 +359,13 @@ private:
 #pragma region
 public:
 
-	void Movement_SetLocation(const FVector3f& Location);
+	void Movement_SetLocation(const FVector& Location);
 
-	FVector3f Movement_GetLocation() const;
+	FVector Movement_GetLocation() const;
 
-	void Movement_SetRotation(const FRotator3f& Rotation);
+	void Movement_SetRotation(const FRotator& Rotation);
 
-	void Movement_SetVelocity(const FVector3f& Velocity);
+	void Movement_SetVelocity(const FVector& Velocity);
 
 #pragma endregion ICsProjectile_Movement
 
@@ -393,7 +393,7 @@ public:
 
 	virtual bool Tracking_ReacquireDestination() { return false; }
 
-	virtual FVector3f Tracking_GetDestination() const;
+	virtual FVector Tracking_GetDestination() const;
 
 #pragma endregion ICsProjectile_Tracking
 
@@ -538,7 +538,7 @@ public:
 
 protected:
 
-	void StartMovementFromData(const FVector3f& Direction);
+	void StartMovementFromData(const FVector& Direction);
 
 	// Tracking
 #pragma region
@@ -719,11 +719,11 @@ protected:
 	int32 HitCount;
 
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& Hit);
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& Hit) {}
+	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {}
 
-	void OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& Hit);
+	void OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 #pragma endregion Collision
 

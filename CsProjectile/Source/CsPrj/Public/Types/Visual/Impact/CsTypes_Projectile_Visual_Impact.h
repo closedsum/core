@@ -274,7 +274,9 @@ namespace NCsProjectile
 		{
 			struct CSPRJ_API FInfo
 			{
-			#define ImpactFXInfoType NCsProjectile::NImpact::NVisual::NFX::FInfo
+			private:
+
+				using ImpactFXInfoType = NCsProjectile::NImpact::NVisual::NFX::FInfo;
 
 			private:
 
@@ -307,8 +309,6 @@ namespace NCsProjectile
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
-			#undef ImpactFXInfoType
 			};
 		}
 	}

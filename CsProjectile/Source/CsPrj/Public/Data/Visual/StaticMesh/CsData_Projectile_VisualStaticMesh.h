@@ -29,11 +29,17 @@ namespace NCsProjectile
 
 					virtual ~IStaticMesh(){}
 
-				#define StaticMeshInfoType NCsProjectile::NVisual::NStaticMesh::FInfo
+				private:
 
-					virtual const StaticMeshInfoType& GetStaticMeshInfo() const = 0;
+					// Allow clearer names without name collisions
+					struct _
+					{
+						using StaticMeshInfoType = NCsProjectile::NVisual::NStaticMesh::FInfo;
+					};
 
-				#undef StaticMeshInfoType
+				public:
+
+					virtual const _::StaticMeshInfoType& GetStaticMeshInfo() const = 0;
 				};
 			}
 		}
@@ -59,11 +65,15 @@ public:
 
 	static const FName Name;
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using StaticMeshInfoType = NCsProjectile::NVisual::NStaticMesh::FInfo;
+	};
+
 public:
 
-#define StaticMeshInfoType NCsProjectile::NVisual::NStaticMesh::FInfo
-
-	virtual const StaticMeshInfoType& GetStaticMeshInfo() const = 0;
-
-#undef StaticMeshInfoType
+	virtual const _::StaticMeshInfoType& GetStaticMeshInfo() const = 0;
 };

@@ -33,7 +33,7 @@ UCsScriptLibrary_Data_Projectile::UCsScriptLibrary_Data_Projectile(const FObject
 
 using DataSliceType = NCsProjectile::NData::FImplSlice;
 using CollisionDataSliceType = NCsProjectile::NData::NCollision::NImplSlice::FImplSlice;
-using StaticMeshDataSliceType = NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice;
+using StaticMeshDataSliceType = NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::FImplSlice;
 using ImpactDataSliceType = NCsProjectile::NData::NVisual::NImpact::FImplSlice;
 using DamageDataSliceType = NCsProjectile::NData::NDamage::NPoint::FImplSlice;
 

@@ -660,7 +660,7 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 	// Check DeathTime is Valid
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(DeathTime, 0.0f)
 
-	if (!Transform.Equals(FTransform3f::Identity))
+	if (!Transform.Equals(FTransform::Identity))
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
 	}
@@ -733,7 +733,7 @@ bool FCsFX::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsFX
 	// Check DeathTime is Valid
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(DeathTime, 0.0f)
 
-	if (!Transform.Equals(FTransform3f::Identity) &&
+	if (!Transform.Equals(FTransform::Identity) &&
 		TransformRules == 0)
 	{
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString())));
@@ -798,7 +798,7 @@ void FCsFX::Reset()
 	AttachmentTransformRules = FCsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 	Bone = NAME_None;
 	TransformRules =7; // NCsTransformRules::All
-	Transform = FTransform3f::Identity;
+	Transform = FTransform::Identity;
 	OrientationRules.Reset();
 	bApplyTransformScale = false;
 	IntParameters.Reset(IntParameters.Max());

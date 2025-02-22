@@ -1080,10 +1080,7 @@ void ACsPointWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, FXDa
 	const FCsFX& FX			 = Params.GetFX();
 	const AttachType& Type	 = Params.GetAttach();
 
-	typedef NCsFX::NPayload::NImpl::FImpl PayloadImplType;
-	typedef NCsFX::NPayload::NLibrary::FLibrary PayloadLibrary;
-
-	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+	CsFXPayloadImplType* PayloadImpl = CsFXPayloadLibrary::PureStaticCastChecked<CsFXPayloadImplType>(Context, Payload);
 
 	PayloadImpl->Instigator					= Outer;
 	PayloadImpl->Owner						= Outer->GetMyOwner();
@@ -1101,9 +1098,9 @@ void ACsPointWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, FXDa
 		// Spawn Location
 		FVector3f Location = Params.GetbDestinationAsStart() ? Outer->PointImpl.Destination : Outer->PointImpl.Start;
 
-		FTransform3f Transform  = PayloadImpl->Transform;
-		FVector3f Translation   = Transform.GetTranslation();
-		Translation			 += Location;
+		FTransform Transform  = PayloadImpl->Transform;
+		FVector Translation   = Transform.GetTranslation();
+		Translation			 += CsMathLibrary::Convert(Location);
 
 		Transform.SetTranslation(Translation);
 

@@ -1323,7 +1323,7 @@ public:
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsFX|FX")
-	FTransform3f Transform;
+	FTransform Transform;
 
 	/** Describes Rules for orienting each component of Rotation (Pitch, Yaw, Roll).	
 		 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for Rotation
@@ -1375,7 +1375,7 @@ public:
 		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform3f::Identity),
+		Transform(FTransform::Identity),
 		OrientationRules(),
 		bApplyTransformScale(false),
 		IntParameters(),

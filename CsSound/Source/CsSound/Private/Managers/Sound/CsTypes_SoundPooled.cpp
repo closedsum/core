@@ -167,7 +167,7 @@ bool FCsSound::IsValidChecked(const FString& Context) const
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(LifeTime, FadeInTime)
 	}
 
-	if (!Transform.Equals(FTransform3f::Identity))
+	if (!Transform.Equals(FTransform::Identity))
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
 	}
@@ -203,7 +203,7 @@ bool FCsSound::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FC
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(LifeTime, FadeInTime)
 	}
 
-	if (!Transform.Equals(FTransform3f::Identity) &&
+	if (!Transform.Equals(FTransform::Identity) &&
 		TransformRules == 0)
 	{
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString())));
@@ -227,7 +227,7 @@ void FCsSound::Reset()
 	AttachmentTransformRules = FCsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 	Bone = NAME_None;
 	TransformRules = 7; // NCsTransformRules::All
-	Transform = FTransform3f::Identity;
+	Transform = FTransform::Identity;
 }
 
 #pragma endregion FCsSound

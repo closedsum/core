@@ -446,11 +446,11 @@ void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Paylo
 	if (AActor* Actor = Cast<AActor>(Object))
 		Parent = Actor->GetRootComponent();
 
-	FTransform3f Transform = FXPayload->GetTransform();
+	FTransform Transform = FXPayload->GetTransform();
 
 	if (!FXPayload->ShouldApplyTransformScale())
 	{
-		Transform.SetScale3D(FVector3f::OneVector);
+		Transform.SetScale3D(FVector::OneVector);
 	}
 
 	const int32& TransformRules = FXPayload->GetTransformRules();
@@ -701,7 +701,7 @@ void UCsFXActorPooledImpl::Handle_ClearAttachAndTransform()
 			FXComponent->SetUsingAbsoluteScale(false);
 
 			FX->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			FX->SetActorRelativeTransform(FTransform3d::Identity);
+			FX->SetActorRelativeTransform(FTransform::Identity);
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 			AttachToBone = NAME_None;
@@ -718,7 +718,7 @@ void UCsFXActorPooledImpl::Handle_ClearAttachAndTransform()
 	}
 	else
 	{
-		FX->SetActorRelativeTransform(FTransform3d::Identity);
+		FX->SetActorRelativeTransform(FTransform::Identity);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 		ChangeCounter::Get().AddCleared();
 	}

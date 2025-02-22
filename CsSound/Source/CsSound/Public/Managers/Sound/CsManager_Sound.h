@@ -68,12 +68,12 @@ class CSSOUND_API UCsManager_Sound : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-public:	
+private:	
 
-#define ManagerType NCsSound::FManager
-#define ManagerParamsType NCsSound::FManager::FParams
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-#define PayloadType NCsSound::NPayload::IPayload
+	using ManagerType = NCsSound::FManager;
+	using ManagerParamsType = NCsSound::FManager::FParams;
+	using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+	using PayloadType = NCsSound::NPayload::IPayload;
 
 // Singleton
 #pragma region
@@ -740,9 +740,4 @@ private:
 	TArray<UDataTable*> DataTables;
 
 #pragma endregion Data
-
-#undef ManagerType
-#undef ManagerParamsType
-#undef ConstructParamsType
-#undef PayloadType
 };

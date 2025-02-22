@@ -1129,6 +1129,27 @@ namespace NCsMath
 			}
 			return Target;
 		}
+		FORCEINLINE static FVector VInterpNormalRotationTo(const FVector& Current, const FVector& Target, float DeltaTime, float RotationSpeedDegrees)
+		{
+			// Find delta rotation between both normals.
+			FQuat DeltaQuat = FQuat::FindBetween(Current, Target);
+
+			// Decompose into an axis and angle for rotation
+			FVector DeltaAxis(0.f);
+			FQuat::FReal DeltaAngle = 0.f;
+			DeltaQuat.ToAxisAndAngle(DeltaAxis, DeltaAngle);
+
+			// Find rotation step for this frame
+			const float RotationStepRadians = RotationSpeedDegrees * (UE_PI / 180) * DeltaTime;
+
+			if (FMath::Abs(DeltaAngle) > RotationStepRadians)
+			{
+				DeltaAngle = FMath::Clamp<FQuat::FReal>(DeltaAngle, -RotationStepRadians, RotationStepRadians);
+				DeltaQuat = FQuat(DeltaAxis, DeltaAngle);
+				return DeltaQuat.RotateVector(Current);
+			}
+			return Target;
+		}
 
 		/** 
 		* Interpolate vector from Current to Target with constant step 
@@ -1144,6 +1165,26 @@ namespace NCsMath
 				if (MaxStep > 0.f)
 				{
 					const FVector3f DeltaN = Delta / DeltaM;
+					return Current + DeltaN * MaxStep;
+				}
+				else
+				{
+					return Current;
+				}
+			}
+			return Target;
+		}
+		FORCEINLINE static FVector VInterpConstantTo(const FVector& Current, const FVector& Target, const float& DeltaTime, const float& InterpSpeed)
+		{
+			const FVector Delta		     = Target - Current;
+			const FVector::FReal DeltaM  = Delta.Size();
+			const FVector::FReal MaxStep = InterpSpeed * DeltaTime;
+
+			if (DeltaM > MaxStep)
+			{
+				if (MaxStep > 0.f)
+				{
+					const FVector DeltaN = Delta / DeltaM;
 					return Current + DeltaN * MaxStep;
 				}
 				else

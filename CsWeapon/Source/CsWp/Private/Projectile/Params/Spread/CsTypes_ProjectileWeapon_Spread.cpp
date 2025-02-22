@@ -235,14 +235,14 @@ namespace NCsWeapon
 			using AngleDistributionType = NCsWeapon::NProjectile::NSpread::NAngle::EDistribution;
 			using AngleDistributionMapType = NCsWeapon::NProjectile::NSpread::NAngle::EMDistribution;
 
-			FVector3f FLibrary::GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const ShapeDistributionType& Distribution)
+			FVector FLibrary::GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector& Extents, const ShapeDistributionType& Distribution)
 			{
 				CS_IS_ENUM_VALID_CHECKED(ShapeMapType, Shape)
 				CS_IS_VECTOR_ZERO_CHECKED(Extents)
 
 				checkf(Distribution == ShapeDistributionType::Random, TEXT("%s: Distribution (%s) != DistributionType::Random."), *Context, ShapeDistributionMapType::Get().ToChar(Distribution));
 
-				FVector3f Offset = FVector3f::ZeroVector;
+				FVector Offset = FVector::ZeroVector;
 
 				// Line
 				if (Shape == ShapeType::Line)

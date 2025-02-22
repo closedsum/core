@@ -293,7 +293,9 @@ namespace NCsWeapon
 				{
 					struct CSWP_API FInfo
 					{
-					#define ImpactFXInfoType NCsWeapon::NPoint::NSequence::NImpact::NVisual::NFX::FInfo
+					private:
+
+						using ImpactFXInfoType = NCsWeapon::NPoint::NSequence::NImpact::NVisual::NFX::FInfo;
 
 					private:
 
@@ -324,8 +326,6 @@ namespace NCsWeapon
 
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-					#undef ImpactFXInfoType
 					};
 				}
 			}

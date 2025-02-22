@@ -2,8 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Interface
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Managers/FX/Payload/CsPayload_FX.h"
+// Types
+#include "CsMacro_Cached.h"
 
 class UObject;
 struct FCsInterfaceMap;
@@ -15,6 +18,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
 // NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NDataInterface, NSkeletalMesh, FSkeletalMeshType)
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_3(NCsFX, NPayload, NImpl, Impl)
 
 namespace NCsFX
 {
@@ -34,10 +39,12 @@ namespace NCsFX
 
 				static const FName Name;
 
-			using DeallocateMethodType = NCsFX::EDeallocateMethod;
-			using ParameterType = NCsFX::NParameter::IParameter;
-			using ScaledParameterType = NCsFX::NParameter::NScaled::IScaled;
-			using SkeletalMeshParameterType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType;
+				using DeallocateMethodType = NCsFX::EDeallocateMethod;
+				using ParameterType = NCsFX::NParameter::IParameter;
+				using ScaledParameterType = NCsFX::NParameter::NScaled::IScaled;
+				using SkeletalMeshParameterType = NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType;
+
+				CS_USING_CACHED_FUNCTION_NAME_NESTED_3(NCsFX, NPayload, NImpl, Impl);
 
 			private:
 
@@ -83,7 +90,7 @@ namespace NCsFX
 
 				int32 TransformRules;
 
-				FTransform3f Transform;
+				FTransform Transform;
 
 				bool bAbsoluteLocation;
 
@@ -158,7 +165,7 @@ namespace NCsFX
 				FORCEINLINE const FAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 				FORCEINLINE const FName& GetBone() const { return Bone; }
 				FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
-				FORCEINLINE const FTransform3f& GetTransform() const { return Transform; }
+				FORCEINLINE const FTransform& GetTransform() const { return Transform; }
 				FORCEINLINE const bool& GetbAbsoluteLocation() const { return bAbsoluteLocation; }
 				FORCEINLINE const bool& GetbAbsoluteRotation() const { return bAbsoluteRotation; }
 				FORCEINLINE const bool& GetbAbsoluteScale() const { return bAbsoluteScale; }

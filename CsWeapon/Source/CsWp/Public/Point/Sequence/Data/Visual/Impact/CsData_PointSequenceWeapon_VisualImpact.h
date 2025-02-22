@@ -27,9 +27,15 @@ namespace NCsWeapon
 
 							static const FName Name;
 
-						public:
+						private:
 
-						#define ImpactVisualInfoType NCsWeapon::NPoint::NSequence::NImpact::NVisual::FInfo
+							// Allow clearer names without name collisions
+							struct _
+							{
+								using ImpactVisualInfoType = NCsWeapon::NPoint::NSequence::NImpact::NVisual::FInfo;
+							};
+
+						public:
 
 							/**
 							* Get the Visual Impact information associated with the given SurfaceType.
@@ -37,9 +43,7 @@ namespace NCsWeapon
 							* @param SurfaceType	Physics Surface type.
 							* return				Visual Impact information associated with the given SurfaceType
 							*/
-							virtual const ImpactVisualInfoType& GetImpactVisualInfo(const EPhysicalSurface& SurfaceType) const = 0;
-
-						#undef ImpactVisualInfoType
+							virtual const _::ImpactVisualInfoType& GetImpactVisualInfo(const EPhysicalSurface& SurfaceType) const = 0;
 						};
 					}
 				}
@@ -64,17 +68,21 @@ public:
 
 	static const FName Name;
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using ImpactVisualInfoType = NCsWeapon::NPoint::NSequence::NImpact::NVisual::FInfo;
+	};
+
 public:
 	
-#define ImpactVisualInfoType NCsWeapon::NPoint::NSequence::NImpact::NVisual::FInfo
-
 	/**
 	* Get the Visual Impact information associated with the given SurfaceType.
 	*
 	* @param SurfaceType	Physics Surface type.
 	* return				Visual Impact information associated with the given SurfaceType
 	*/
-	virtual const ImpactVisualInfoType& GetImpactVisualInfo(const EPhysicalSurface& SurfaceType) const = 0;
-
-#undef ImpactVisualInfoType
+	virtual const _::ImpactVisualInfoType& GetImpactVisualInfo(const EPhysicalSurface& SurfaceType) const = 0;
 };

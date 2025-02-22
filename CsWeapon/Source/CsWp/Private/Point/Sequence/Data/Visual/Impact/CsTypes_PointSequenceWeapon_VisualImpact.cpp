@@ -128,14 +128,13 @@ namespace NCsWeapon
 			{
 				namespace NFX
 				{
+					using DirectionMapType = NCsWeapon::NPoint::NSequence::NImpact::NVisual::EMDirection;
+
 					bool FInfo::IsValidChecked(const FString& Context) const
 					{
 						if (GetbFX())
 						{
 							CS_IS_VALID_CHECKED(GetFX());
-
-							typedef NCsWeapon::NPoint::NSequence::NImpact::NVisual::EMDirection DirectionMapType;
-
 							CS_IS_ENUM_VALID_CHECKED(DirectionMapType, Direction)
 						}
 						return true;
@@ -146,10 +145,6 @@ namespace NCsWeapon
 						if (GetbFX())
 						{
 							CS_IS_VALID(GetFX())
-
-							typedef NCsWeapon::NPoint::NSequence::NImpact::NVisual::EMDirection DirectionMapType;
-							typedef NCsWeapon::NPoint::NSequence::NImpact::NVisual::EDirection DirectionType;
-
 							CS_IS_ENUM_VALID(DirectionMapType, DirectionType, Direction)
 						}
 						return true;

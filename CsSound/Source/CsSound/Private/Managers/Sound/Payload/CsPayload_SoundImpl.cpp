@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Container
@@ -10,11 +12,10 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsPayload_SoundImpl)
 
-#define PayloadType NCsSound::NPayload::FImpl
+using PayloadType = NCsSound::NPayload::NImpl::FImpl;
+
 void FCsPayload_Sound::CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadType* Payload) const
 {
-#undef PayloadType
-	
 	Payload->Instigator = Instigator;
 	Payload->Owner		= Owner;
 	Payload->Parent		= Parent;
@@ -49,80 +50,80 @@ bool FCsPayload_Sound::IsValid(const FString& Context, void(*Log)(const FString&
 	return true;
 }
 
-const FName NCsSound::NPayload::FImpl::Name = FName("NCsSound::NPayload::FImpl");;
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsSound::NPayload::NImpl::FImpl);
 
 namespace NCsSound
 {
 	namespace NPayload
 	{
-		FImpl::FImpl() :
-			InterfaceMap(nullptr),
+		namespace NImpl
+		{
+			FImpl::FImpl() :
+				InterfaceMap(nullptr),
+				// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+				bAllocated(false),
+				UpdateType(NCsPooledObject::EUpdate::Manager),
+				Instigator(nullptr),
+				Owner(nullptr),
+				Parent(nullptr),
+				Time(),
+				// PayloadType (NCsSound::NPayload::IPayload)
+				Sound(nullptr),
+				SoundAttenuation(nullptr),
+				DeallocateMethod(EDeallocateMethod::Complete),
+				LifeTime(0.0f),
+				DurationMultiplier(1.0f),
+				FadeInTime(0.0f),
+				AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
+				Bone(NAME_None),
+				TransformRules(0),
+				Transform(FTransform::Identity),
+				VolumeMultiplier(1.0f),
+				PitchMultiplier(1.0f)
+			{
+				InterfaceMap = new FCsInterfaceMap();
+
+				CS_INTERFACE_MAP_SET_ROOT(FImpl);
+
+				CS_INTERFACE_MAP_ADD(PooledPayloadType);
+				CS_INTERFACE_MAP_ADD(PayloadType);
+			}
+
+			FImpl::~FImpl()
+			{
+				delete InterfaceMap;
+			}
+
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-			bAllocated(false),
-			UpdateType(NCsPooledObject::EUpdate::Manager),
-			Instigator(nullptr),
-			Owner(nullptr),
-			Parent(nullptr),
-			Time(),
-			// SoundPayloadType (NCsSound::NPayload::IPayload)
-			Sound(nullptr),
-			SoundAttenuation(nullptr),
-			DeallocateMethod(EDeallocateMethod::Complete),
-			LifeTime(0.0f),
-			DurationMultiplier(1.0f),
-			FadeInTime(0.0f),
-			AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
-			Bone(NAME_None),
-			TransformRules(0),
-			Transform(FTransform3f::Identity),
-			VolumeMultiplier(1.0f),
-			PitchMultiplier(1.0f)
-		{
-			InterfaceMap = new FCsInterfaceMap();
+			#pragma region
 
-			InterfaceMap->SetRoot<FImpl>(this);
+			void FImpl::Reset()
+			{
+				// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+				bAllocated = false;
+				UpdateType = NCsPooledObject::EUpdate::Manager;
+				Instigator = nullptr;
+				Owner = nullptr;
+				Parent = nullptr;
 
-			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
-			typedef NCsSound::NPayload::IPayload SoundPayloadType;
+				Time.Reset();
 
-			InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
-			InterfaceMap->Add<SoundPayloadType>(static_cast<SoundPayloadType*>(this));
+				// SoundPayloadType (NCsSound::NPayload::IPayload)
+				Sound = nullptr;
+				SoundAttenuation = nullptr;
+				DeallocateMethod = EDeallocateMethod::Complete;
+				LifeTime = 0.0f;
+				DurationMultiplier = 1.0f;
+				FadeInTime = 0.0f;
+				AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
+				Bone = NAME_None;
+				TransformRules = 0;
+				Transform = FTransform::Identity;
+				VolumeMultiplier = 1.0f;
+				PitchMultiplier = 1.0f;
+			}
+
+			#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		}
-
-		FImpl::~FImpl()
-		{
-			delete InterfaceMap;
-		}
-
-		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-		#pragma region
-
-		void FImpl::Reset()
-		{
-			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-			bAllocated = false;
-			UpdateType = NCsPooledObject::EUpdate::Manager;
-			Instigator = nullptr;
-			Owner = nullptr;
-			Parent = nullptr;
-
-			Time.Reset();
-
-			// SoundPayloadType (NCsSound::NPayload::IPayload)
-			Sound = nullptr;
-			SoundAttenuation = nullptr;
-			DeallocateMethod = EDeallocateMethod::Complete;
-			LifeTime = 0.0f;
-			DurationMultiplier = 1.0f;
-			FadeInTime = 0.0f;
-			AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
-			Bone = NAME_None;
-			TransformRules = 0;
-			Transform = FTransform3f::Identity;
-			VolumeMultiplier = 1.0f;
-			PitchMultiplier = 1.0f;
-		}
-
-		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 	}
 }

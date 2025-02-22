@@ -1306,11 +1306,14 @@ void ACsProjectileWeaponActorPooled::FSoundImpl::Play(const int32 CurrentProject
 	const FString& Context = Str::Play;
 
 	// SoundDataType (NCsWeapon::NProjectile::NData::NSound::NFire::IFire)
-	typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire SoundDataType;
+	using SoundDataType = NCsWeapon::NProjectile::NData::NSound::NFire::IFire;
 
 	if (SoundDataType* SoundData = CsWeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Outer->GetData()))
 	{
-		typedef NCsWeapon::NProjectile::NFire::NSound::FParams ParamsType;
+		using ParamsType = NCsWeapon::NProjectile::NFire::NSound::FParams;
+		using StartParamsType = NCsWeapon::NProjectile::NFire::NSound::NStart::FParams;
+		using ShotParamsType = NCsWeapon::NProjectile::NFire::NSound::NShot::FParams;
+		using PayloadImplType = NCsPooledObject::NPayload::FImplSlice;
 
 		const ParamsType& Params = SoundData->GetFireSoundParams();
 
@@ -1321,21 +1324,15 @@ void ACsProjectileWeaponActorPooled::FSoundImpl::Play(const int32 CurrentProject
 		{
 			if (Params.GetbStartParams())
 			{
-				typedef NCsWeapon::NProjectile::NFire::NSound::NStart::FParams StartParamsType;
-
 				const StartParamsType& StartParams = Params.GetStartParams();
-
-				const FCsSound& Sound = StartParams.GetSound();
-
-				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+				const FCsSound& Sound			   = StartParams.GetSound();
 
 				PayloadImplType Payload;
 				Payload.Instigator = Outer;
 				Payload.Owner	   = Outer->GetMyOwner();
 
-				typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
 				// TODO: Make sure Outer is defined
-				SoundManagerLibrary::SpawnChecked(Context, Outer->GetWorldContext(), &Payload, Sound);
+				CsSoundManagerLibrary::SpawnChecked(Context, Outer->GetWorldContext(), &Payload, Sound);
 			}
 		}
 		// Shot
@@ -1343,8 +1340,6 @@ void ACsProjectileWeaponActorPooled::FSoundImpl::Play(const int32 CurrentProject
 		{
 			if (Params.GetbShotParams())
 			{
-				typedef NCsWeapon::NProjectile::NFire::NSound::NShot::FParams ShotParamsType;
-
 				const ShotParamsType& ShotParams = Params.GetShotParams();
 
 				// Either Skip First or Always
@@ -1353,15 +1348,12 @@ void ACsProjectileWeaponActorPooled::FSoundImpl::Play(const int32 CurrentProject
 				{
 					const FCsSound& Sound = ShotParams.GetSound();
 
-					typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
 					PayloadImplType Payload;
 					Payload.Instigator = Outer;
 					Payload.Owner	   = Outer->GetMyOwner();
 
-					typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
 					// TODO: Make sure Outer is defined
-					SoundManagerLibrary::SpawnChecked(Context, Outer->GetWorldContext(), &Payload, Sound);
+					CsSoundManagerLibrary::SpawnChecked(Context, Outer->GetWorldContext(), &Payload, Sound);
 				}
 			}
 		}

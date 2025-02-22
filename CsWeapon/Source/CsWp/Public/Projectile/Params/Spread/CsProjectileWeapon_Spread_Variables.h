@@ -14,7 +14,7 @@ namespace NCsWeapon
 				{
 				public:
 
-					TArray<FVector3f> Offsets;
+					TArray<FVector> Offsets;
 
 					TArray<float> Yaws;
 					TArray<float> Pitches;
@@ -34,7 +34,7 @@ namespace NCsWeapon
 
 						for (int32 I = 0; I < Size; ++I)
 						{
-							Offsets.Add(FVector3f::ZeroVector);
+							Offsets.Add(FVector::ZeroVector);
 							Yaws.Add(0.0f);
 							Pitches.Add(0.0f);
 						}

@@ -310,6 +310,7 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 using DataType = NCsProjectile::NData::IData;
 using PooledCacheType = NCsPooledObject::NCache::ICache;
 using CacheImplType = NCsProjectile::NCache::NImpl::FImpl;
+using PooledPayloadLibrary = NCsPooledObject::NPayload::FLibrary;
 using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 using PooledPayloadImplType = NCsPooledObject::NPayload::FImplSlice;
 using PayloadType = NCsProjectile::NPayload::IPayload;
@@ -565,7 +566,7 @@ void ACsProjectilePooledImpl::Shutdown()
 		Cache = nullptr;
 	}
 
-	typedef NCsProjectile::NModifier::FAllocated AllocateModifierType;
+	using AllocateModifierType = NCsProjectile::NModifier::FAllocated;
 
 	for (AllocateModifierType& Modifier : Modifiers)
 	{
@@ -596,9 +597,6 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 	CS_IS_PTR_NULL_CHECKED(Payload)
 
 	// Set Type
-	typedef NCsProjectile::NPayload::IPayload PayloadType;
-	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-
 	PayloadType* ProjectilePayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	Type = ProjectilePayload->GetType();
@@ -670,9 +668,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	if (TrailFXPooled)
 	{
 		// Deactivate the Trail FX
-		typedef NCsPooledObject::NCache::ICache CacheType;
-
-		CacheType* FXCache = TrailFXPooled->GetCache();
+		PooledCacheType* FXCache = TrailFXPooled->GetCache();
 
 		FXCache->QueueDeallocate();
 
@@ -710,9 +706,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	// Deallocate attachments
 
 	// Mesh
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	MaterialLibrary::ClearOverrideChecked(Context, MeshComponent);
+	CsMaterialLibrary::ClearOverrideChecked(Context, MeshComponent);
 	MeshComponent->SetStaticMesh(nullptr);
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);
@@ -728,7 +722,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	DamageImpl.Reset();
 
 	// Variables
-	typedef NCsProjectile::NManager::NVariables::FLibrary VariablesLibrary;
+	using VariablesLibrary = NCsProjectile::NManager::NVariables::FLibrary;
 
 	if (Variables)
 	{
@@ -777,7 +771,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	// Set Additional Datas
 	{
 		// Damage
-		typedef NCsProjectile::NPayload::NDamage::IDamage DmgPayloadType;
+		using DmgPayloadType = NCsProjectile::NPayload::NDamage::IDamage;
 
 		if (const DmgPayloadType* DmgPayload = CsPrjPayloadLibrary::GetSafeInterfaceChecked<DmgPayloadType>(Context, Payload))
 		{
@@ -786,8 +780,8 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	}
 
 	// Launch Params
-	typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
-	typedef NCsProjectile::NLaunch::FParams LaunchParamsType;
+	using LaunchDataType = NCsProjectile::NData::NLaunch::ILaunch;
+	using LaunchParamsType = NCsProjectile::NLaunch::FParams;
 
 	LaunchDataType* LaunchData			 = CsPrjDataLibrary::GetSafeInterfaceChecked<LaunchDataType>(Context, Data);
 	const LaunchParamsType* LaunchParams = LaunchData ? &(LaunchData->GetLaunchParams()) : nullptr;
@@ -813,16 +807,16 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 	// VisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 	{
-		typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh VisualDataType;
+		using VisualDataType = NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh;
 
 		if (VisualDataType* VisualData = CsPrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
 		{
 			// TODO: Allocate Static Mesh Actor and get Static Mesh Component
 
 			MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
-			MeshComponent->SetRelativeLocation(FVector3d::ZeroVector);
+			MeshComponent->SetRelativeLocation(FVector::ZeroVector);
 
-			typedef NCsProjectile::NVisual::NStaticMesh::FInfo StaticMeshInfoType;
+			using StaticMeshInfoType = NCsProjectile::NVisual::NStaticMesh::FInfo;
 
 			const StaticMeshInfoType& StaticMeshInfo = VisualData->GetStaticMeshInfo();
 
@@ -877,7 +871,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		else
 #endif // #if WITH_EDITOR
 		{
-			typedef NCsProjectile::NData::NVisual::NTrail::ITrail VisualDataType;
+			using VisualDataType = NCsProjectile::NData::NVisual::NTrail::ITrail;
 
 			if (VisualDataType* VisualData = CsPrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
 			{
@@ -889,7 +883,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 				else
 					PayloadImpl.Parent = CollisionComponent;
 
-				typedef NCsProjectile::NVisual::NTrail::FInfo TrailInfoType;
+				using TrailInfoType = NCsProjectile::NVisual::NTrail::FInfo;
 
 				const TrailInfoType& TrailInfo = VisualData->GetTrailInfo();
 
@@ -908,7 +902,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
-		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+		using CollisionDataType = NCsProjectile::NData::NCollision::ICollision;
 
 		if (CollisionDataType* CollisionData = CsPrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
@@ -916,8 +910,6 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 			if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
 			{
-				typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
-
 				PooledPayloadType* PooledPayload = CsPrjPayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
 
 				// Instigator
@@ -942,7 +934,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 					CollisionComponent->MoveIgnoreActors.Add(Actor);
 				}
 
-				typedef NCsProjectile::NPayload::NCollision::ICollision CollisionPayloadType;
+				using CollisionPayloadType = NCsProjectile::NPayload::NCollision::ICollision;
 
 				CollisionPayloadType* CollisionPayload = CsPrjPayloadLibrary::GetInterfaceChecked<CollisionPayloadType>(Context, Payload);
 
@@ -1045,23 +1037,21 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 
 	// ModifierPayloadType (NCsProjectile::NPayload::NModifier::IModifier)
 	{
-		typedef NCsProjectile::NPayload::NModifier::IModifier ModifierPayloadType;
+		using PrjModifierLibrary = NCsProjectile::NManager::NModifier::FLibrary;
+		using ModifierPayloadType = NCsProjectile::NPayload::NModifier::IModifier;
 
 		if (const ModifierPayloadType* ModifierPayload = CsPrjPayloadLibrary::GetSafeInterfaceChecked<ModifierPayloadType>(Context, Payload))
 		{
-			typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
-
 			PrjModifierLibrary::CopyChecked(Context, GetWorldContext(), ModifierPayload->GetModifiers(), Modifiers);
 		}
 	}
 	// DmgModifierPayloadType (NCsProjectile::NPayload::NModifier::NDamage::IDamage)
 	{
-		typedef NCsProjectile::NPayload::NModifier::NDamage::IDamage DmgModifierPayloadType;
+		using DmgModifierLibrary = NCsDamage::NManager::NModifier::FLibrary;
+		using DmgModifierPayloadType = NCsProjectile::NPayload::NModifier::NDamage::IDamage;
 
 		if (const DmgModifierPayloadType* DmgModifierPayload = CsPrjPayloadLibrary::GetSafeInterfaceChecked<DmgModifierPayloadType>(Context, Payload))
 		{
-			typedef NCsDamage::NManager::NModifier::FLibrary DmgModifierLibrary;
-
 			DmgModifierLibrary::CopyChecked(Context, GetWorldContext(), DmgModifierPayload->GetDamageModifiers(), DamageImpl.Modifiers);
 		}
 	}
@@ -1161,24 +1151,24 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 // ICsProjectile_Movement
 #pragma region
 
-void ACsProjectilePooledImpl::Movement_SetLocation(const FVector3f& Location)
+void ACsProjectilePooledImpl::Movement_SetLocation(const FVector& Location)
 {
-	Variables->GetLocation() = CsMathLibrary::Convert(GetActorLocation());
+	Variables->GetLocation() = GetActorLocation();
 }
 
-FVector3f ACsProjectilePooledImpl::Movement_GetLocation() const
+FVector ACsProjectilePooledImpl::Movement_GetLocation() const
 {
 	return Variables->GetLocation();
 }
 
-void ACsProjectilePooledImpl::Movement_SetRotation(const FRotator3f& Rotation)
+void ACsProjectilePooledImpl::Movement_SetRotation(const FRotator& Rotation)
 {
-	SetActorRotation(CsMathLibrary::Convert(Rotation));
+	SetActorRotation(Rotation);
 }
 
-void ACsProjectilePooledImpl::Movement_SetVelocity(const FVector3f& Velocity)
+void ACsProjectilePooledImpl::Movement_SetVelocity(const FVector& Velocity)
 {
-	MovementComponent->Velocity = CsMathLibrary::Convert(Velocity);
+	MovementComponent->Velocity = Velocity;
 }
 
 #pragma endregion ICsProjectile_Movement
@@ -1245,12 +1235,11 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 	OnHit_TryImpactVisual(Context, HitComponent, OtherActor, OtherComp, CsMathLibrary::Convert(NormalImpulse), HitResult);
 	// ImpactSoundDataType (NCsProjectile::NData::NSound::NImpact::IImpact)
 	{
-		typedef NCsProjectile::NData::NSound::NImpact::IImpact ImpactSoundDataType;
+		using ImpactSoundDataType = NCsProjectile::NData::NSound::NImpact::IImpact;
+		using ImpactSoundInfoType = NCsProjectile::NImpact::NSound::FInfo;
 
 		if (ImpactSoundDataType* ImpactSoundData = CsPrjDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
 		{
-			typedef NCsProjectile::NImpact::NSound::FInfo ImpactSoundInfoType;
-
 			const ImpactSoundInfoType& Info = ImpactSoundData->GetImpactSoundInfo(SurfaceType);
 
 			if (Info.GetbSound())
@@ -1258,9 +1247,9 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				PooledPayloadImplType Payload;
 				Payload.Instigator = Cache->GetInstigator();
 
-				FTransform3f Transform = FTransform3f::Identity;
-				Transform.SetLocation(CsMathLibrary::Convert(HitResult.Location));
-				Transform.SetRotation(CsMathLibrary::Convert(HitResult.ImpactNormal.Rotation().Quaternion()));
+				FTransform Transform = FTransform::Identity;
+				Transform.SetLocation(HitResult.Location);
+				Transform.SetRotation(HitResult.ImpactNormal.Rotation().Quaternion());
 
 				CsSoundManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, Info.GetSound(), Transform);
 			}
@@ -1270,7 +1259,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 
 		// TODO: Deprecate
 	{
-		typedef NCsProjectile::NData::NDamage::IDamage PrjDamageDataType;
+		using PrjDamageDataType = NCsProjectile::NData::NDamage::IDamage;
 
 		if (PrjDamageDataType* PrjDamageData = CsPrjDataLibrary::GetSafeInterfaceChecked<PrjDamageDataType>(Context, Data))
 		{
@@ -1296,7 +1285,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				// Apply Modifiers
 				DamageImpl.SetValue(DamageData);
 
-				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
+				using ProcessPayloadType = NCsDamage::NData::NProcess::FPayload;
 
 				static ProcessPayloadType ProcessPayload;
 
@@ -1345,7 +1334,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				// Apply Modifiers
 				DamageImpl.SetValue(DamageData);
 
-				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
+				using ProcessPayloadType = NCsDamage::NData::NProcess::FPayload;
 
 				static ProcessPayloadType ProcessPayload;
 
@@ -1392,7 +1381,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				// Apply Modifiers
 				DamageImpl.SetValue(DamageData);
 
-				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
+				using ProcessPayloadType = NCsDamage::NData::NProcess::FPayload;
 
 				static ProcessPayloadType ProcessPayload;
 
@@ -1417,7 +1406,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 	}
 
 	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
-	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+	using CollisionDataType = NCsProjectile::NData::NCollision::ICollision;
 
 	if (CollisionDataType* CollisionData = CsPrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 	{
@@ -1461,23 +1450,23 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 // ICsProjectile_Tracking
 #pragma region
 
-FVector3f ACsProjectilePooledImpl::Tracking_GetDestination() const
+FVector ACsProjectilePooledImpl::Tracking_GetDestination() const
 {
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::Tracking_GetDestination;
 
-	typedef NCsProjectile::NTracking::EDestination TrackingDestinationType;
+	using TrackingDestinationType = NCsProjectile::NTracking::EDestination;
 
 	// Component
 	if (TrackingInfo.GetDestinationType() == TrackingDestinationType::Object)
 	{
-		return CsMathLibrary::Convert(TrackingInfo.GetComponent()->GetComponentLocation());
+		return TrackingInfo.GetComponent()->GetComponentLocation();
 	}
 	// Bone
 	if (TrackingInfo.GetDestinationType() == TrackingDestinationType::Bone)
 	{
-		return CsMathLibrary::Convert(TrackingInfo.GetMeshComponent()->GetSocketLocation(TrackingInfo.GetBone()));
+		return TrackingInfo.GetMeshComponent()->GetSocketLocation(TrackingInfo.GetBone());
 	}
 	// Location
 	if (TrackingInfo.GetDestinationType() == TrackingDestinationType::Location)
@@ -1485,7 +1474,7 @@ FVector3f ACsProjectilePooledImpl::Tracking_GetDestination() const
 		return TrackingInfo.GetLocation();
 	}
 	check(0);
-	return FVector3f::ZeroVector;
+	return FVector::ZeroVector;
 }
 
 #pragma endregion ICsProjectile_Tracking
@@ -1512,16 +1501,16 @@ void ACsProjectilePooledImpl::AllocateVariables(const PayloadType* Payload)
 
 	const FString& Context = Str::AllocateVariables;
 
-	typedef NCsProjectile::NManager::NVariables::FLibrary VariablesLibrary;
-	typedef NCsProjectile::NVariables::NAllocate::FPayload VariablesPayloadType;
+	using VariablesLibrary = NCsProjectile::NManager::NVariables::FLibrary;
+	using VariablesPayloadType = NCsProjectile::NVariables::NAllocate::FPayload;
 
 	VariablesPayloadType VariablesPayload;
 	VariablesPayload.Projectile	= this;
 	VariablesPayload.Type		= Type;
-	VariablesPayload.Location	= CsMathLibrary::Convert(Payload->GetLocation());
-	VariablesPayload.Direction  = CsMathLibrary::Convert(Payload->GetDirection());
+	VariablesPayload.Location	= Payload->GetLocation();
+	VariablesPayload.Direction  = Payload->GetDirection();
 
-	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+	using CollisionDataType = NCsProjectile::NData::NCollision::ICollision;
 
 	if (CollisionDataType* CollisionData = CsPrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 	{
@@ -1613,9 +1602,9 @@ float ACsProjectilePooledImpl::FMovementImpl::CalculateMaxSpeed(const EStart& St
 	return 0.0f;
 }
 
-void ACsProjectilePooledImpl::StartMovementFromData(const FVector3f& Direction)
+void ACsProjectilePooledImpl::StartMovementFromData(const FVector& Direction)
 {
-	typedef ACsProjectilePooledImpl::FMovementImpl::EStart StartType;
+	using StartType = ACsProjectilePooledImpl::FMovementImpl::EStart;
 
 	MovementInfo.GetInitialSpeed() = MovementImpl.CalculateInitialSpeed(StartType::FromData);
 	MovementInfo.GetMaxSpeed()	   = MovementImpl.CalculateMaxSpeed(StartType::FromData);
@@ -1630,7 +1619,7 @@ void ACsProjectilePooledImpl::StartMovementFromData(const FVector3f& Direction)
 
 	MovementComponent->InitialSpeed			  = MovementInfo.GetInitialSpeed();
 	MovementComponent->MaxSpeed				  = MovementInfo.GetMaxSpeed();
-	MovementComponent->Velocity				  = CsMathLibrary::Convert(MovementInfo.GetVelocity());
+	MovementComponent->Velocity				  = MovementInfo.GetVelocity();
 	MovementComponent->ProjectileGravityScale = MovementInfo.GetGravityScale();
 }
 
@@ -1643,22 +1632,22 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 
 	const FString& Context = Str::Init;
 
-	typedef NCsProjectile::NPayload::NTarget::ITarget TargetPayloadType;
+	using TargetPayloadType = NCsProjectile::NPayload::NTarget::ITarget;
 
 	TargetPayloadType* TargetPayload = CsPrjPayloadLibrary::GetInterfaceChecked<TargetPayloadType>(Context, Payload);
 
 	if (!TargetPayload->HasTarget())
 		return;
 
-	typedef NCsProjectile::NData::NTracking::ITracking TrackingDataType;
+	using TrackingDataType = NCsProjectile::NData::NTracking::ITracking;
 
 	TrackingData = CsPrjDataLibrary::GetSafeInterfaceChecked<TrackingDataType>(Context, Outer->GetData());
 
 	if (TrackingData &&
 		TrackingData->ShouldUseTracking())
 	{
-		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
-		typedef NCsProjectile::NTracking::EDestination TrackingDestinationType;
+		using TrackingParamsType = NCsProjectile::NTracking::FParams;
+		using TrackingDestinationType = NCsProjectile::NTracking::EDestination;
 
 		const TrackingParamsType& TrackingParams = TrackingData->GetTrackingParams();
 		Outer->TrackingInfo.GetDelay()		= TrackingParams.GetDelay();
@@ -1683,9 +1672,7 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 			{
 				Outer->TrackingInfo.GetMeshComponent() = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
 
-				typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-				check(SkeletalMeshLibrary::IsBoneValidChecked(Context, Outer->TrackingInfo.GetMeshComponent(), Bone));
+				check(CsSkeletalMeshLibrary::IsBoneValidChecked(Context, Outer->TrackingInfo.GetMeshComponent(), Bone));
 
 				Outer->TrackingInfo.GetBone()			 = Bone;
 				Outer->TrackingInfo.GetDestinationType() = TrackingDestinationType::Bone;
@@ -1902,9 +1889,9 @@ void ACsProjectilePooledImpl::ClearIgnored()
 	}
 }
 
-void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& HitResult)
+void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
 {
-	typedef NCsProjectile::NCollision::NHit::FResult HitResultType;
+	using HitResultType = NCsProjectile::NCollision::NHit::FResult;
 
 	HitResultType Result;
 	Result.MyComponent	 = HitComponent;
@@ -1916,7 +1903,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	Hit(Result);
 }
 
-void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& HitResult)
+void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
 {
 #if WITH_EDITOR
 	if (bOverride_ImpactFX)
@@ -1937,12 +1924,12 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 
 		// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
 		{
-			typedef NCsProjectile::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
+			using ImpactVisualDataType = NCsProjectile::NData::NVisual::NImpact::IImpact;
 
 			if (ImpactVisualDataType* ImpactVisualData = CsPrjDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 			{	
-				typedef NCsProjectile::NImpact::NVisual::FInfo ImpactVisualInfoType;
-				typedef NCsProjectile::NImpact::NVisual::NFX::FInfo ImpactFXInfoType;
+				using ImpactVisualInfoType = NCsProjectile::NImpact::NVisual::FInfo;
+				using ImpactFXInfoType = NCsProjectile::NImpact::NVisual::NFX::FInfo;
 				
 				const ImpactVisualInfoType& Info = ImpactVisualData->GetImpactVisualInfo(SurfaceType);
 				const ImpactFXInfoType& FXInfo   = Info.GetFXInfo();
@@ -1952,28 +1939,28 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 					PooledPayloadImplType Payload;
 					Payload.Instigator = Cache->GetInstigator();
 
-					FTransform3f Transform = FTransform3f::Identity;
-					Transform.SetLocation(CsMathLibrary::Convert(HitResult.Location));
+					FTransform Transform = FTransform::Identity;
+					Transform.SetLocation(HitResult.Location);
 
-					typedef NCsProjectile::NImpact::NVisual::EDirection DirectionType;
+					using DirectionType = NCsProjectile::NImpact::NVisual::EDirection;
 
 					const DirectionType& Direction = FXInfo.GetDirection();
 					// Normal
 					if (Direction == DirectionType::Normal)
 					{
-						Transform.SetRotation(CsMathLibrary::Convert(HitResult.ImpactNormal.Rotation().Quaternion()));
+						Transform.SetRotation(HitResult.ImpactNormal.Rotation().Quaternion());
 					}
 					// Inverse Normal
 					else
 					if (Direction == DirectionType::Normal)
 					{
-						Transform.SetRotation(CsMathLibrary::Convert((-HitResult.ImpactNormal).Rotation().Quaternion()));
+						Transform.SetRotation((-HitResult.ImpactNormal).Rotation().Quaternion());
 					}
 					// Velocity
 					else
 					if (Direction == DirectionType::Velocity)
 					{
-						const FVector3f Normal = CsMathLibrary::Convert(MovementComponent->Velocity.GetSafeNormal());
+						const FVector Normal = MovementComponent->Velocity.GetSafeNormal();
 
 						Transform.SetRotation(Normal.Rotation().Quaternion());
 					}
@@ -1981,7 +1968,7 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 					else
 					if (Direction == DirectionType::InverseVelocity)
 					{
-						const FVector3f Normal = -1.0f * CsMathLibrary::Convert(MovementComponent->Velocity.GetSafeNormal());
+						const FVector Normal = -1.0f * MovementComponent->Velocity.GetSafeNormal();
 
 						Transform.SetRotation(Normal.Rotation().Quaternion());
 					}
@@ -1990,7 +1977,7 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 					{
 						float MaxRange = GetMaxDamageRangeChecked(Context);
 
-						Transform.SetScale3D(MaxRange * FVector3f::OneVector);
+						Transform.SetScale3D(MaxRange * FVector::OneVector);
 					}
 
 					CsFXManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, FXInfo.GetFX(), Transform);
@@ -2027,7 +2014,7 @@ void ACsProjectilePooledImpl::ApplyHitCountModifiers(const FString& Context, con
 
 void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context, const FVector& Direction)
 {
-	typedef ACsProjectilePooledImpl::FMovementImpl::EStart StartType;
+	using StartType = ACsProjectilePooledImpl::FMovementImpl::EStart;
 
 	MovementInfo.GetInitialSpeed() = MovementImpl.CalculateInitialSpeed(StartType::FromModifiers);
 	MovementInfo.GetMaxSpeed()	   = MovementImpl.CalculateMaxSpeed(StartType::FromModifiers);
@@ -2036,13 +2023,13 @@ void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context,
 		MovementInfo.GetInitialSpeed() = MovementInfo.GetMaxSpeed();
 
 	MovementInfo.GetSpeed()		   = MovementInfo.GetInitialSpeed();
-	MovementInfo.GetDirection()	   = CsMathLibrary::Convert(Direction);
-	MovementInfo.GetVelocity()	   = CsMathLibrary::Convert(MovementInfo.GetInitialSpeed() * Direction);
+	MovementInfo.GetDirection()	   = Direction;
+	MovementInfo.GetVelocity()	   = MovementInfo.GetInitialSpeed() * Direction;
 	MovementInfo.GetGravityScale() = Data->GetGravityScale();
 
 	MovementComponent->InitialSpeed			  = MovementInfo.GetInitialSpeed();
 	MovementComponent->MaxSpeed				  = MovementInfo.GetMaxSpeed();
-	MovementComponent->Velocity				  = CsMathLibrary::Convert(MovementInfo.GetVelocity());
+	MovementComponent->Velocity				  = MovementInfo.GetVelocity();
 	MovementComponent->ProjectileGravityScale = MovementInfo.GetGravityScale();
 }
 
@@ -2071,7 +2058,7 @@ ACsProjectilePooledImpl::FDamageImpl::~FDamageImpl()
 	delete ValueRange;
 	ValueRange = nullptr;
 
-	typedef NCsDamage::NModifier::FAllocated AllocateModifierType;
+	using AllocateModifierType = NCsDamage::NModifier::FAllocated;
 
 	for (AllocateModifierType& Modifier : Modifiers)
 	{
@@ -2122,14 +2109,14 @@ void ACsProjectilePooledImpl::FDamageImpl::Reset()
 
 const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& Context)
 {
-	typedef NCsDamage::NData::NShape::IShape DmgShapeDataType;
+	using DmgShapeDataType = NCsDamage::NData::NShape::IShape;
 
 	// NOTE: For now assume the ONLY way to get RangeType is from a Damage Shape.
 	//		  Damage Shape is an object that implements the interface: DmgShapeDataType (NCsDamage::NData::NShape::IShape)
 	
 	// PrjDmgDataType (NCsProjectile::NData::NDamage::IDamage)
 	{
-		typedef NCsProjectile::NData::NDamage::IDamage PrjDmgDataType;
+		using PrjDmgDataType = NCsProjectile::NData::NDamage::IDamage;
 
 		if (const PrjDmgDataType* PrjDmgData = CsPrjDataLibrary::GetSafeInterfaceChecked<PrjDmgDataType>(Context, Data))
 		{

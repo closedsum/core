@@ -111,14 +111,13 @@ namespace NCsProjectile
 		{
 			namespace NFX
 			{
+				using DirectionMapType = NCsProjectile::NImpact::NVisual::EMDirection;
+
 				bool FInfo::IsValidChecked(const FString& Context) const
 				{
 					if (GetbFX())
 					{
 						CS_IS_VALID_CHECKED(GetFX());
-
-						typedef NCsProjectile::NImpact::NVisual::EMDirection DirectionMapType;
-
 						CS_IS_ENUM_VALID_CHECKED(DirectionMapType, GetDirection())
 					}
 					return true;
@@ -129,10 +128,6 @@ namespace NCsProjectile
 					if (GetbFX())
 					{
 						CS_IS_VALID(GetFX())
-
-						typedef NCsProjectile::NImpact::NVisual::EMDirection DirectionMapType;
-						typedef NCsProjectile::NImpact::NVisual::EDirection DirectionType;
-
 						CS_IS_ENUM_VALID(DirectionMapType, DirectionType, GetDirection())
 					}
 					return true;

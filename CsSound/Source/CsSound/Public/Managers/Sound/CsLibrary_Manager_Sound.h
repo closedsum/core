@@ -11,13 +11,13 @@ class UObject;
 class UCsManager_Sound;
 struct FCsSoundPooled;
 
-// NCsPooledObject::NPayload::IPayload
+// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
-// NCsSound::NPayload::IPayload
+// PayloadType (NCsSound::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
-// NCsSound::NPayload::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, FImpl)
+// PayloadImplType (NCsSound::NPayload::NImpl::FImpl)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSound, NPayload, NImpl, FImpl)
 
 namespace NCsSound
 {
@@ -25,6 +25,12 @@ namespace NCsSound
 	{
 		struct CSSOUND_API FLibrary final
 		{
+		private:
+
+			using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+			using PayloadType = NCsSound::NPayload::IPayload;
+			using PayloadImplType = NCsSound::NPayload::NImpl::FImpl;
+
 		// Print
 		#pragma region
 		public:
@@ -181,9 +187,6 @@ namespace NCsSound
 		#pragma region
 		public:
 
-		#define PayloadType NCsSound::NPayload::IPayload
-		#define PayloadImplType NCsSound::NPayload::FImpl
-
 			/*
 			* Allocate a Payload (used to Spawn a Sound from Manager_Sound).
 			* 
@@ -215,9 +218,6 @@ namespace NCsSound
 			*/
 			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FECsSound& Type);
 
-		#undef PayloadType
-		#undef PayloadImplType
-
 		#pragma endregion Payload
 
 		// Spawn
@@ -234,8 +234,6 @@ namespace NCsSound
 			*/
 			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsSound& Sound);
 		
-		#define PayloadType NCsSound::NPayload::IPayload
-
 			/**
 			* Spawn a sound for UCsManager_Sound from Sound.
 			*
@@ -245,10 +243,6 @@ namespace NCsSound
 			* return				Spawned Sound in a pooled container.
 			*/
 			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsSound& Type, PayloadType* Payload);
-
-		#undef PayloadType
-
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 			/**
 			* Spawn a sound for UCsManager_Sound from PooledPayload and Sound.
@@ -260,9 +254,7 @@ namespace NCsSound
 			*						Sound.Transform is applied as an "offset".
 			* return				Spawned Sound in a pooled container.
 			*/
-			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform = FTransform3f::Identity);
-
-		#undef PooledPayloadType
+			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Safely spawn a sound for UCsManager_Sound from Sound.

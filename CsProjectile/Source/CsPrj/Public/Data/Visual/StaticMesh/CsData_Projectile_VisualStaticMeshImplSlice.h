@@ -10,8 +10,8 @@
 #include "CsData_Projectile_VisualStaticMeshImplSlice.generated.h"
 #pragma once
 
-// NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsProjectile, NData, NVisual, NStaticMesh, FImplSlice)
+// NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::FImplSlice
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsProjectile, NData, NVisual, NStaticMesh, NImplSlice, FImplSlice)
 
 /**
 * Represents a "slice" of data, StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh).
@@ -35,7 +35,7 @@ public:
 	{
 	}
 
-#define SliceType NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice
+	using SliceType = NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::FImplSlice;
 
 	SliceType* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 	SliceType* AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -48,8 +48,6 @@ public:
 
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
-
-#undef SliceType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 };
@@ -65,91 +63,95 @@ namespace NCsProjectile
 		{
 			namespace NStaticMesh
 			{
-			#define StaticMeshVisualDataType NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh
-
-				/**
-				* Represents a "slice" of data, StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh).
-				* 
-				* If members are set via points to an "owning" data, then
-				* "Emulates" StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh) by mimicking 
-				* the interfaces and having pointers to the appropriate members.
-				*
-				* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
-				* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
-				*/
-				struct CSPRJ_API FImplSlice final : public StaticMeshVisualDataType
+				namespace NImplSlice
 				{
-				#define StaticMeshInfoType NCsProjectile::NVisual::NStaticMesh::FInfo
+					using StaticMeshVisualDataType = NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh;
 
-				public:
+					/**
+					* Represents a "slice" of data, StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh).
+					* 
+					* If members are set via points to an "owning" data, then
+					* "Emulates" StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh) by mimicking 
+					* the interfaces and having pointers to the appropriate members.
+					*
+					* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
+					* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
+					*/
+					struct CSPRJ_API FImplSlice final : public StaticMeshVisualDataType
+					{
+				
 
-					static const FName Name;
+					public:
 
-				private:
+						static const FName Name;
+
+					private:
+
+						using ThisType = NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::FImplSlice;
+						using StaticMeshInfoType = NCsProjectile::NVisual::NStaticMesh::FInfo;
+
+					private:
+
+						// ICsGetInterfaceMap
+
+						/** Pointer to the "root" object for all "Impl Slices". That object acts as the hub for the separate objects (via composition)
+							that describe the data. */
+						FCsInterfaceMap* InterfaceMap;
+
+						// StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
+
+						StaticMeshInfoType StaticMeshInfo;
+
+					public:
+
+						FImplSlice() :
+							InterfaceMap(nullptr),
+							StaticMeshInfo()
+						{
+						}
+
+						~FImplSlice()
+						{
+						}
+
+					public:
+
+						FORCEINLINE UObject* _getUObject() const { return nullptr; }
+
+					public:
+
+						FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map) { InterfaceMap = Map; }
 
 					// ICsGetInterfaceMap
+					#pragma region
+					public:
 
-					/** Pointer to the "root" object for all "Impl Slices". That object acts as the hub for the separate objects (via composition)
-						that describe the data. */
-					FCsInterfaceMap* InterfaceMap;
+						FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+
+					#pragma endregion ICsGetInterfaceMap
 
 					// StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
+					#pragma region
+					public:
 
-					StaticMeshInfoType StaticMeshInfo;
+						FORCEINLINE const StaticMeshInfoType& GetStaticMeshInfo() const { return StaticMeshInfo; }
+						FORCEINLINE StaticMeshInfoType* GetStaticMeshInfoPtr() { return &StaticMeshInfo; }
 
-				public:
+					#pragma endregion StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 
-					FImplSlice() :
-						InterfaceMap(nullptr),
-						StaticMeshInfo()
-					{
-					}
+					public:
 
-					~FImplSlice()
-					{
-					}
+						static void Deconstruct(void* Ptr)
+						{
+							delete static_cast<ThisType*>(Ptr);
+						}
 
-				public:
+						static FImplSlice* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 
-					FORCEINLINE UObject* _getUObject() const { return nullptr; }
-
-				public:
-
-					FORCEINLINE void SetInterfaceMap(FCsInterfaceMap* Map) { InterfaceMap = Map; }
-
-				// ICsGetInterfaceMap
-				#pragma region
-				public:
-
-					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
-
-				#pragma endregion ICsGetInterfaceMap
-
-				// StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
-				#pragma region
-				public:
-
-					FORCEINLINE const StaticMeshInfoType& GetStaticMeshInfo() const { return StaticMeshInfo; }
-					FORCEINLINE StaticMeshInfoType* GetStaticMeshInfoPtr() { return &StaticMeshInfo; }
-
-				#pragma endregion StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
-
-				public:
-
-					static void Deconstruct(void* Ptr)
-					{
-						delete static_cast<NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice*>(Ptr);
-					}
-
-					static FImplSlice* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
-
-					bool IsValidChecked(const FString& Context) const;
-					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-					
-				#undef StaticMeshInfoType
-				};
-
-			#undef StaticMeshVisualDataType
+						bool IsValidChecked(const FString& Context) const;
+						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+					};
+				}
 			}
 		}
 	}

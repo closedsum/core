@@ -438,7 +438,7 @@ void ACsSoundPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload
 	if (AActor* Actor = Cast<AActor>(Object))
 		Parent = Actor->GetRootComponent();
 
-	const FTransform3f& Transform = SoundPayload->GetTransform();
+	const FTransform& Transform = SoundPayload->GetTransform();
 	const int32& TransformRules   = SoundPayload->GetTransformRules();
 
 	typedef NCsSound::NPayload::EChange ChangeType;

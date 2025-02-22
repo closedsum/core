@@ -235,7 +235,7 @@ namespace NCsFX
 			* @param Transform		(optional)
 			* return				Payload
 			*/
-			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Allocate a Payload given the FX information
@@ -247,7 +247,7 @@ namespace NCsFX
 			* @param Location		
 			* return				Payload
 			*/
-			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector3f& Location);
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location);
 
 			/**
 			* Allocate a Payload given the FX information
@@ -258,7 +258,7 @@ namespace NCsFX
 			* @param Transform		(optional)
 			* return				Payload
 			*/
-			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Allocate a Payload given the FX information
@@ -270,7 +270,7 @@ namespace NCsFX
 			* @param Transform		(optional)
 			* return				Payload
 			*/
-			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Allocate a Payload given the FX information
@@ -282,7 +282,7 @@ namespace NCsFX
 			* @param Location		
 			* return				Payload
 			*/
-			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector3f& Location);
+			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location);
 
 			/**
 			* Allocate a Payload given the FX information
@@ -293,7 +293,7 @@ namespace NCsFX
 			* @param Transform		(optional)
 			* return				Payload
 			*/
-			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			*
@@ -321,7 +321,7 @@ namespace NCsFX
 			*						FX.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Safely spawn an FX with the given payload.
@@ -335,7 +335,7 @@ namespace NCsFX
 			* @param Log			(optional)
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			static const FCsFXActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely spawn an FX with the given payload.
@@ -347,7 +347,7 @@ namespace NCsFX
 			*						FX.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SafeSpawn(const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static const FCsFXActorPooled* SafeSpawn(const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Spawn an FX with the given payload.
@@ -360,7 +360,7 @@ namespace NCsFX
 			*						FX.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector3f& Location);
+			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location);
 
 			/**
 			* Spawn an FX with the given Type and Payload.
@@ -383,7 +383,7 @@ namespace NCsFX
 			*						FX.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Safely spawn an FX with the given payload.
@@ -396,7 +396,7 @@ namespace NCsFX
 			* @param Log			(optional)
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+			static const FCsFXActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			/**
 			* Safely spawn an FX with the given payload.
@@ -407,7 +407,7 @@ namespace NCsFX
 			*						FX.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
-			static const FCsFXActorPooled* SafeSpawn(const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
+			static const FCsFXActorPooled* SafeSpawn(const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 		#pragma endregion Spawn
 		};

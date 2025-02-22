@@ -103,9 +103,9 @@ namespace NCsWeapon
 
 						const FCsSound& Sound = ImpactSoundData->GetImpactSound(SurfaceType);
 
-						FTransform3f Transform = FTransform3f::Identity;
-						Transform.SetLocation(CsCollisionLibrary::GetLocation(Hit));
-						Transform.SetRotation(CsCollisionLibrary::GetImpactQuat(Hit));
+						FTransform Transform = FTransform::Identity;
+						Transform.SetLocation(Hit.Location);
+						Transform.SetRotation(Hit.ImpactNormal.ToOrientationQuat());
 
 						// Spawn Sound
 						CsSoundManagerLibrary::SpawnChecked(Context, Outer, &PooledPayload, Sound, Transform);

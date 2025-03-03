@@ -4,7 +4,7 @@
 #pragma once
 #include "Engine/StaticMeshActor.h"
 // Interfaces
-#include "Managers/Time/CsUpdate.h"
+#include "Update/CsUpdate.h"
 #include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/StaticMesh/CsStaticMeshActor.h"
@@ -14,12 +14,12 @@
 
 #include "CsStaticMeshActorPooledImpl.generated.h"
 
-// NCsPooledObject::NPayload::IPayload
+// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
-// NCsStaticMeshActor::NPayload::IPayload
+// PayloadType (NCsStaticMeshActor::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NPayload, IPayload)
-// NCsStaticMeshActor::NCache::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NCache, FImpl)
+// CacheImplType (NCsStaticMeshActor::NCache::NImpl::FImpl)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsStaticMeshActor, NCache, NImpl, FImpl)
 
 class UMaterialInstanceDynamic;
 
@@ -28,17 +28,19 @@ class UMaterialInstanceDynamic;
 */
 UCLASS()
 class CSSTATICMESH_API ACsStaticMeshActorPooledImpl : public AStaticMeshActor,
-											    public ICsUpdate,
-												public ICsShutdown,
-												public ICsPooledObject,
-												public ICsStaticMeshActor
+													  public ICsUpdate,
+													  public ICsShutdown,
+													  public ICsPooledObject,
+													  public ICsStaticMeshActor
 {
 	GENERATED_UCLASS_BODY()
 
-#define CacheType NCsPooledObject::NCache::ICache
-#define CacheImplType NCsStaticMeshActor::NCache::FImpl
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define StaticMeshPayloadType NCsStaticMeshActor::NPayload::IPayload
+private:
+
+	using CacheType = NCsPooledObject::NCache::ICache;
+	using CacheImplType = NCsStaticMeshActor::NCache::NImpl::FImpl;
+	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+	using PayloadType = NCsStaticMeshActor::NPayload::IPayload;
 
 // UObject Interface
 #pragma region
@@ -144,16 +146,16 @@ protected:
 #pragma region
 protected:
 
-	void Handle_SetStaticMesh(StaticMeshPayloadType* Payload);
-	void Log_SetStaticMesh(StaticMeshPayloadType* Payload);
+	void Handle_SetStaticMesh(PayloadType* Payload);
+	void Log_SetStaticMesh(PayloadType* Payload);
 
-	void Handle_SetMaterials(StaticMeshPayloadType* Payload);
-	void Log_SetMaterials(StaticMeshPayloadType* Payload);
+	void Handle_SetMaterials(PayloadType* Payload);
+	void Log_SetMaterials(PayloadType* Payload);
 
 	FName AttachToBone;
 
-	void Handle_AttachAndSetTransform(PooledPayloadType* Payload, StaticMeshPayloadType* SkeletalMeshPayload);
-	void Log_AttachAndSetTransform(PooledPayloadType* Payload, StaticMeshPayloadType* SkeletalMeshPayload);
+	void Handle_AttachAndSetTransform(PooledPayloadType* Payload, PayloadType* SkeletalMeshPayload);
+	void Log_AttachAndSetTransform(PooledPayloadType* Payload, PayloadType* SkeletalMeshPayload);
 
 	void Handle_ClearStaticMesh();
 	void Handle_ClearAttachAndTransform();
@@ -161,9 +163,4 @@ protected:
 	void LogChangeCounter();
 
 #pragma endregion Set / Clear Changes
-
-#undef CacheType
-#undef CacheImplType
-#undef PooledPayloadType
-#undef StaticMeshPayloadType
 };

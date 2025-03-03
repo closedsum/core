@@ -3,4 +3,7 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActor.h"
 
-const FName NCsStaticMeshActor::NPayload::IPayload::Name = FName("NCsStaticMeshActor::NPayload::IPayload");
+// Types
+#include "CsMacro_Interface.h"
+
+CS_INTERFACE_DEFINE_STATIC_CONST_FNAME(NCsStaticMeshActor::NPayload::IPayload);

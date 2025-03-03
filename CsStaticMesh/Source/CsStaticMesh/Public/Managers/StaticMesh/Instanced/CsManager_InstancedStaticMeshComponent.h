@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "GameFramework/Actor.h"
+// Types
+#include "CsMacro_Cached.h"
 // Instanced Static Mesh
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Managers/StaticMesh/Instanced/CsInstancedStaticMeshComponentPooled.h"
@@ -13,12 +15,19 @@ class ICsGetManagerInstancedStaticMeshComponent;
 class UInstancedStaticMeshComponent;
 class USceneComponent;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsManager_InstancedStaticMeshComponent)
+
 UCLASS()
 class CSSTATICMESH_API ACsManager_InstancedStaticMeshComponent : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-public:	
+private:	
+
+	using ManagerType = NCsStaticMesh::NInstanced::NComponent::FManager;
+	using ResourceType = NCsStaticMesh::NInstanced::NComponent::FResource;
+
+	CS_USING_CACHED_FUNCTION_NAME(CsManager_InstancedStaticMeshComponent);
 
 // UObject Interface
 #pragma region
@@ -96,15 +105,11 @@ private:
 	UPROPERTY()
 	TArray<UInstancedStaticMeshComponent*> Components;
 
-#define ManagerType NCsStaticMesh::NInstanced::NComponent::FManager
 	ManagerType Internal;
-#undef ManagerType
 
 public:
 
-#define ResourceType NCsStaticMesh::NInstanced::NComponent::FResource
 	FORCEINLINE const ResourceType* Allocate() { return Internal.Allocate(); }
-#undef ResourceType
 
 	FORCEINLINE void Deallocate(const int32& ID) { Internal.DeallocateAt(ID); }
 

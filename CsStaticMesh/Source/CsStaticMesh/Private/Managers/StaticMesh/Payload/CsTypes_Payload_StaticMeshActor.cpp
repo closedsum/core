@@ -14,19 +14,17 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_Payload_StaticMeshActor)
 
+using PooledPayloadSliceType = NCsPooledObject::NPayload::FImplSlice;
+using PayloadImplType = NCsStaticMeshActor::NPayload::NImpl::FImpl;
+
 // FCsPayload_StaticMesh
 #pragma region
 
-#define PayloadType NCsStaticMeshActor::NPayload::FImpl
-void FCsPayload_StaticMesh::CopyToPayloadAsValueChecked(const FString& Context, PayloadType* Payload) const
+void FCsPayload_StaticMesh::CopyToPayloadAsValueChecked(const FString& Context, PayloadImplType* Payload) const
 {
-#undef PayloadType
-
 	CS_IS_PTR_NULL_CHECKED(Payload)
 
-	typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
-
-	PooledPayloadType PooledPayload;
+	PooledPayloadSliceType PooledPayload;
 	PooledPayload.UpdateType					 = (NCsPooledObject::EUpdate)UpdateType;
 	PooledPayload.Instigator					 = Instigator;
 	PooledPayload.Owner							 = Owner;
@@ -38,9 +36,7 @@ void FCsPayload_StaticMesh::CopyToPayloadAsValueChecked(const FString& Context, 
 
 	if (!Mesh.Materials.Materials.IsEmpty())
 	{
-		typedef NCsArray::FLibrary ArrayLibrary;
-
-		ArrayLibrary::Copy<UMaterialInterface>(Payload->Materials, Mesh.Materials.GetChecked(Context));
+		CsArrayLibrary::Copy<UMaterialInterface>(Payload->Materials, Mesh.Materials.GetChecked(Context));
 	}
 
 	Payload->DeallocateMethod			= Mesh.GetDeallocateMethod();
@@ -53,9 +49,7 @@ void FCsPayload_StaticMesh::CopyToPayloadAsValueChecked(const FString& Context, 
 	Payload->bReceivesDecals			= Mesh.bReceivesDecals;
 	Payload->bUseAsOccluder				= Mesh.bUseAsOccluder;
 
-	typedef NCsStaticMeshActor::NPayload::FLibrary StaticMeshPayloadLibrary;
-
-	StaticMeshPayloadLibrary::SetChecked(Context, Payload, &PooledPayload);
+	CsStaticMeshActorPayloadLibrary::SetChecked(Context, Payload, &PooledPayload);
 }
 
 bool FCsPayload_StaticMesh::IsValidChecked(const FString& Context) const

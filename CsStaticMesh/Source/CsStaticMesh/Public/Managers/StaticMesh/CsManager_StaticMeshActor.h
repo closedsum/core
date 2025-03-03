@@ -2,8 +2,10 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Object.h"
+// Types
+#include "CsMacro_Cached.h"
+// Managers
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 // StaticMeshActor
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
@@ -28,30 +30,32 @@ class ICsStaticMeshActor;
 
 namespace NCsStaticMeshActor
 {
-#define ManagerMapType NCsPooledObject::NManager::TTMap
-#define PayloadType NCsStaticMeshActor::NPayload::IPayload
-
-	class CSSTATICMESH_API FManager : public ManagerMapType<ICsStaticMeshActor, FCsStaticMeshActorPooled, PayloadType, FECsStaticMeshActor>
+	namespace NManager
 	{
-	private:
-
-		typedef ManagerMapType<ICsStaticMeshActor, FCsStaticMeshActorPooled, PayloadType, FECsStaticMeshActor> Super;
-
-	public:
-
-		FManager();
-
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsStaticMeshActor& Type) const override
+		using PayloadType = NCsStaticMeshActor::NPayload::IPayload;
+		using ManagerMapType = NCsPooledObject::NManager::TTMap<ICsStaticMeshActor, FCsStaticMeshActorPooled, PayloadType, FECsStaticMeshActor>;
+		
+		class CSSTATICMESH_API FManager : public ManagerMapType
 		{
-			return Type.GetName();
-		}
+		private:
 
-		FORCEINLINE virtual bool IsValidKey(const FECsStaticMeshActor& Type) const override
-		{
-			return EMCsStaticMeshActor::Get().IsValidEnum(Type);
-		}
-	};
-#undef PayloadType
+			using Super = ManagerMapType;
+
+		public:
+
+			FManager();
+
+			FORCEINLINE virtual const FString& KeyTypeToString(const FECsStaticMeshActor& Type) const override
+			{
+				return Type.GetName();
+			}
+
+			FORCEINLINE virtual bool IsValidKey(const FECsStaticMeshActor& Type) const override
+			{
+				return EMCsStaticMeshActor::Get().IsValidEnum(Type);
+			}
+		};
+	}
 }
 
 #pragma endregion Internal
@@ -60,17 +64,21 @@ class ICsGetManagerStaticMeshActor;
 class ICsData_StaticMeshActor;
 class UDataTable;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsManager_StaticMeshActor)
+
 UCLASS()
 class CSSTATICMESH_API UCsManager_StaticMeshActor : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define ManagerType NCsStaticMeshActor::FManager
-#define ManagerParamsType NCsStaticMeshActor::FManager::FParams
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-#define PayloadType NCsStaticMeshActor::NPayload::IPayload
+private:
 
-public:	
+	using ManagerType = NCsStaticMeshActor::NManager::FManager;
+	using ManagerParamsType = NCsStaticMeshActor::NManager::FManager::FParams;
+	using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+	using PayloadType = NCsStaticMeshActor::NPayload::IPayload;
+
+	CS_USING_CACHED_FUNCTION_NAME(CsManager_StaticMeshActor);
 
 // Singleton
 #pragma region
@@ -667,9 +675,4 @@ private:
 	TMap<FECsStaticMeshActor, UClass*> ClassMap;
 
 #pragma endregion Class
-
-#undef ManagerType
-#undef ManagerParamsType
-#undef ConstructParamsType
-#undef PayloadType
 };

@@ -59,21 +59,20 @@ using AttachMapType = NCsWeapon::NProjectile::NFire::NVisual::EMAttach;
 // FCsProjectileWeapon_Fire_Visual_StartParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams
-
-void FCsProjectileWeapon_Fire_Visual_StartParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Fire_Visual_StartParams
 {
-	Params->SetFX(&FX);
-	Params->SetAttach((AttachType*)(&Attach));
-}
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, FX);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Attach, AttachType);
+	}
 
-void FCsProjectileWeapon_Fire_Visual_StartParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->SetFX(FX);
-	Params->SetAttach((AttachType)Attach);
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, FX);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Attach, AttachType);
+	}
 }
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Fire_Visual_StartParams::IsValidChecked(const FString& Context) const
 {
@@ -123,28 +122,26 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Fire_Visual_ShotParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NVisual::NShot::FParams
-
-void FCsProjectileWeapon_Fire_Visual_ShotParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Fire_Visual_ShotParams
 {
-	Params->SetbSkipFirst(&bSkipFirst);
-	Params->SetFX(&FX);
-	Params->SetAttach((AttachType*)(&Attach));
-}
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, bSkipFirst);
+		CS_THIS_COPY_TO_PROXY(Params, FX);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Attach, AttachType);
+	}
 
-void FCsProjectileWeapon_Fire_Visual_ShotParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->SetbSkipFirst(bSkipFirst);
-	Params->SetFX(FX);
-	Params->SetAttach((AttachType)Attach);
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bSkipFirst);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, FX);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Attach, AttachType);
+	}
 }
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Fire_Visual_ShotParams::IsValidChecked(const FString& Context) const
 {
 	CS_IS_VALID_CHECKED(FX);
-
 	CS_IS_ENUM_VALID_CHECKED(EMCsProjectileWeaponFireVisualAttach, Attach)
 	return true;
 }
@@ -152,7 +149,6 @@ bool FCsProjectileWeapon_Fire_Visual_ShotParams::IsValidChecked(const FString& C
 bool FCsProjectileWeapon_Fire_Visual_ShotParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	CS_IS_VALID(FX)
-
 	CS_IS_ENUM_VALID(EMCsProjectileWeaponFireVisualAttach, ECsProjectileWeaponFireVisualAttach, Attach)
 	return true;
 }
@@ -191,25 +187,24 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Fire_VisualParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NVisual::FParams
-
-void FCsProjectileWeapon_Fire_VisualParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Fire_VisualParams
 {
-	Params->SetbStartParams(&bStartParams);
-	StartParams.CopyToParams(Params->GetStartParamsPtr());
-	Params->SetbShotParams(&bShotParams);
-	ShotParams.CopyToParams(Params->GetShotParamsPtr());
-}
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, bStartParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, StartParams);
+		CS_THIS_COPY_TO_PROXY(Params, bShotParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, ShotParams);
+	}
 
-void FCsProjectileWeapon_Fire_VisualParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->SetbStartParams(bStartParams);
-	StartParams.CopyToParamsAsValue(Params->GetStartParamsPtr());
-	Params->SetbShotParams(bShotParams);
-	ShotParams.CopyToParamsAsValue(Params->GetShotParamsPtr());
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bStartParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, StartParams);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bShotParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, ShotParams);
+	}
 }
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Fire_VisualParams::IsValidChecked(const FString& Context) const
 {

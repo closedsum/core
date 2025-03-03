@@ -16,17 +16,19 @@ namespace NCsStaticMesh
 		{
 			struct CSSTATICMESH_API FLibrary final
 			{
+			private:
+
+				using AttachmentType = NCsStaticMesh::NAttachment::FAttachment;
+
 			public:
 
 				static FCsStaticMeshActorPooled* AttachChecked(const FString& Context, const FCsStaticMeshAttachment& Attachment, const UObject* WorldContext, USceneComponent* Parent);
-
-			#define AttachmentType NCsStaticMesh::NAttachment::FAttachment
-
 				static FCsStaticMeshActorPooled* AttachChecked(const FString& Context, const AttachmentType& Attachment, const UObject* WorldContext, USceneComponent* Parent, const TArray<UMaterialInterface*>& OtherMaterials);
 				static FCsStaticMeshActorPooled* AttachChecked(const FString& Context, const AttachmentType& Attachment, const UObject* WorldContext, USceneComponent* Parent);
-
-			#undef AttachmentType
 			};
 		}
 	}
 }
+
+using CsStaticMeshActorPooledLibrary = NCsStaticMesh::NActor::NPooled::FLibrary;
+using CsSMAPooledLibrary = NCsStaticMesh::NActor::NPooled::FLibrary;

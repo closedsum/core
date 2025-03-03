@@ -27,21 +27,10 @@
 // Cached
 #pragma region
 
-namespace NCsManagerInstancedStaticMeshComponent
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsManager_InstancedStaticMeshComponent, Init);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsManager_InstancedStaticMeshComponent, Initialize);
-		}
-
-		namespace Name
-		{
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsManager_InstancedStaticMeshComponent)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsManager_InstancedStaticMeshComponent, Init)
+	CS_DEFINE_CACHED_FUNCTION_NAME(ACsManager_InstancedStaticMeshComponent, Initialize)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -64,10 +53,6 @@ ACsManager_InstancedStaticMeshComponent::ACsManager_InstancedStaticMeshComponent
 
 	RootComponent = DefaultSceneRoot;
 }
-
-#define USING_NS_CACHED using namespace NCsManagerInstancedStaticMeshComponent::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsManagerInstancedStaticMeshComponent::NCached; \
-	const FString& Context = Str::__FunctionName
 
 // UObject Interface
 #pragma region
@@ -103,7 +88,7 @@ void ACsManager_InstancedStaticMeshComponent::BeginDestroy()
 
 /*static*/ void ACsManager_InstancedStaticMeshComponent::Init(UObject* InRoot, TSubclassOf<ACsManager_InstancedStaticMeshComponent> ManagerInstancedStaticMeshComponentClass)
 {
-	SET_CONTEXT(Init);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Init);
 
 	ICsGetManagerInstancedStaticMeshComponent* GetManagerISMC = Get_GetManagerInstancedStaticMeshComponent(InRoot);
 
@@ -185,7 +170,7 @@ void ACsManager_InstancedStaticMeshComponent::BeginDestroy()
 
 void ACsManager_InstancedStaticMeshComponent::Initialize()
 {
-	SET_CONTEXT(Initialize);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Initialize);
 
 	DefaultSceneRoot->SetWorldTransform(FTransform3d::Identity);
 
@@ -256,6 +241,3 @@ void ACsManager_InstancedStaticMeshComponent::SetMyRoot(UObject* InRoot)
 #pragma endregion Root
 
 #pragma endregion Singleton
-
-#undef USING_NS_CACHED
-#undef SET_CONTEXT

@@ -20,6 +20,7 @@ namespace NCsScriptLibraryStaticMeshActor
 			const FString FECsStaticMeshActor = TEXT("FECsStaticMeshActor");
 			const FString Get = TEXT("Get");
 			const FString GetByIndex = TEXT("GetByIndex");
+			const FString EnumType = TEXT("FECsStaticMeshActor");
 		}
 	}
 }
@@ -34,11 +35,9 @@ UCsScriptLibrary_StaticMeshActor::UCsScriptLibrary_StaticMeshActor(const FObject
 #define USING_NS_CACHED using namespace NCsScriptLibraryStaticMeshActor::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsScriptLibraryStaticMeshActor::NCached; \
 	const FString& Context = Str::__FunctionName
-#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryStaticMeshActor::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define CLASS_TYPE UCsScriptLibrary_StaticMeshActor
-#define EnumMapType EMCsStaticMeshActor
-#define EnumType FECsStaticMeshActor
+using CLASS_TYPE = UCsScriptLibrary_StaticMeshActor;
+using EnumMapType = EMCsStaticMeshActor;
+using EnumType = FECsStaticMeshActor;
 
 // Enum
 #pragma region
@@ -86,7 +85,3 @@ bool CLASS_TYPE::EqualEqual(const EnumType& A, const EnumType& B)
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef CONDITIONAL_SET_CTXT
-#undef CLASS_TYPE
-#undef EnumMapType
-#undef EnumType

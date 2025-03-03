@@ -17,7 +17,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsStaticMeshAttachment)
 
-#define AttachmentType NCsStaticMesh::NAttachment::FAttachment
+using AttachmentType = NCsStaticMesh::NAttachment::FAttachment;
 
 void FCsStaticMeshAttachment::CopyToAttachment(AttachmentType* Attachment)
 {
@@ -61,8 +61,6 @@ void FCsStaticMeshAttachment::CopyToAttachmentAsValue(AttachmentType* Attachment
 	Attachment->SetCustomDepthStencilValue(CustomDepthStencilValue);
 	Attachment->SetTags(Tags);
 }
-
-#undef AttachmentType
 
 bool FCsStaticMeshAttachment::IsValidChecked(const FString& Context) const
 {

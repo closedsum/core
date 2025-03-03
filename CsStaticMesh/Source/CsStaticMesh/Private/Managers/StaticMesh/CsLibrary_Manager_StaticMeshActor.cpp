@@ -20,28 +20,24 @@
 #include "Singleton/CsGetManagerSingleton.h"
 #endif // #if WITH_EDITOR
 
+CS_START_CACHED_FUNCTION_NAME_NESTED_2(NCsStaticMeshActor, NManager, Library)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsStaticMeshActor::NManager::FLibrary, GetSafeContextRoot)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsStaticMeshActor::NManager::FLibrary, SafeSpawn)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsStaticMeshActor::NManager::FLibrary, GetSafe)
+CS_END_CACHED_FUNCTION_NAME_NESTED_2
+
 namespace NCsStaticMeshActor
 {
 	namespace NManager
 	{
-		namespace NLibrary
-		{
-			namespace NCached
-			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NManager::FLibrary, GetSafeContextRoot);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NManager::FLibrary, SafeSpawn);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NManager::FLibrary, GetSafe);
-				}
-			}
-		}
+		using LogLevelType = NCsStaticMesh::FLog;
 
-		#define USING_NS_CACHED using namespace NCsStaticMeshActor::NManager::NLibrary::NCached;
-		#define SET_CONTEXT(__FunctionName) using namespace NCsStaticMeshActor::NManager::NLibrary::NCached; \
-			const FString& Context = Str::__FunctionName
-		#define LogLevel void(*Log)(const FString&) /*=&NCsStaticMesh::FLog::Warning*/
-		#define GameStateLibrary NCsGameState::FLibrary
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogLevelType::Warning);
+
+		using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+		using PayloadLibrary = NCsStaticMeshActor::NPayload::NLibrary::FLibrary;
+		using PayloadType = NCsStaticMeshActor::NPayload::IPayload;
+		using PayloadImplType = NCsStaticMeshActor::NPayload::NImpl::FImpl;
 
 		// ContextRoot
 		#pragma region
@@ -56,10 +52,10 @@ namespace NCsStaticMeshActor
 
 				return GetManagerSingleton->_getUObject();
 			}
-			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
+			return CsGameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
@@ -69,12 +65,12 @@ namespace NCsStaticMeshActor
 				}
 				return nullptr;
 			}
-			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
+			return CsGameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 		{
-			SET_CONTEXT(GetSafeContextRoot);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafeContextRoot);
 
 			return GetSafeContextRoot(Context, WorldContext, nullptr);
 		}
@@ -99,7 +95,7 @@ namespace NCsStaticMeshActor
 		#endif // #if UE_BUILD_SHIPPING
 		}
 
-		UCsManager_StaticMeshActor* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogLevel)
+		UCsManager_StaticMeshActor* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -120,7 +116,7 @@ namespace NCsStaticMeshActor
 
 		UCsManager_StaticMeshActor* FLibrary::GetSafe(const UObject* WorldContext)
 		{
-			SET_CONTEXT(GetSafe);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafe);
 
 			return GetSafe(Context, WorldContext, nullptr);
 		}
@@ -130,45 +126,33 @@ namespace NCsStaticMeshActor
 		// Payload
 		#pragma region
 
-		#define PayloadType NCsStaticMeshActor::NPayload::IPayload
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type)
 		{
 			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
 		}
-		#undef PayloadType
 
-		#define PayloadImplType NCsStaticMeshActor::NPayload::FImpl
 		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type)
 		{
 			return GetChecked(Context, WorldContext)->AllocatePayload<PayloadImplType>(Type);
 		}
-		#undef PayloadImplType
 
 		#pragma endregion 
 
 		// Spawn
 		#pragma region
 
-		#define PayloadType NCsStaticMeshActor::NPayload::IPayload
-
 		const FCsStaticMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type, PayloadType* Payload)
 		{
 			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
 		}
 
-		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-
-		const FCsStaticMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform3f& Transform /*=FTransform3f::Identity*/)
+		const FCsStaticMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			UCsManager_StaticMeshActor* Manager_StaticMeshActor = GetChecked(Context, WorldContext);
 			// Allocate Payload
-			typedef NCsStaticMeshActor::NPayload::FImpl PayloadImplType;
-
 			PayloadImplType* Payload = Manager_StaticMeshActor->AllocatePayload<PayloadImplType>(Info.Type);
 			// Set Payload
-			typedef NCsStaticMeshActor::NPayload::FLibrary PayloadLibrary;
-
-			checkf(Transform.GetScale3D() != FVector3f::ZeroVector, TEXT("%s: Transform.GetScale3D() == FVector3f::ZeroVector is NOT Valid."), *Context);
+			checkf(Transform.GetScale3D() != FVector::ZeroVector, TEXT("%s: Transform.GetScale3D() == FVector::ZeroVector is NOT Valid."), *Context);
 
 			Payload->Transform = Transform;
 			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, Info);
@@ -176,7 +160,7 @@ namespace NCsStaticMeshActor
 			return Manager_StaticMeshActor->Spawn(Info.Type, Payload);
 		}
 
-		const FCsStaticMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform3f& Transform /*=FTransform3f::Identity*/, LogLevel)
+		const FCsStaticMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform /*=FTransform::Identity*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UCsManager_StaticMeshActor* Manager_StaticMeshActor = GetSafe(Context, WorldContext, Log);
 
@@ -188,23 +172,14 @@ namespace NCsStaticMeshActor
 			if (!Info.IsValid(Context, Log))
 				return nullptr;
 
-			if (Transform.GetScale3D() == FVector3f::ZeroVector)
+			if (Transform.GetScale3D() == FVector::ZeroVector)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Transform.GetScale3D() == FVector3f::ZeroVector is NOT Valid."), *Context));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Transform.GetScale3D() == FVector::ZeroVector is NOT Valid."), *Context));
 				return nullptr;
 			}
 			return SpawnChecked(Context, WorldContext, PooledPayload, Info, Transform);
 		}
 
-		#undef PooledPayloadType
-
-		#undef PayloadType
-
 		#pragma endregion Spawn
-
-		#undef USING_NS_CACHED
-		#undef SET_CONTEXT
-		#undef LogLevel
-		#undef GameStateLibrary
 	}
 }

@@ -11,7 +11,27 @@
 // FCsProjectileWeapon_Fire_Sound_StartParams
 #pragma region
 
-// NCsWeapon::NProjectile::NFire::NSound::NStart::FParams
+struct FCsProjectileWeapon_Fire_Sound_StartParams;
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NSound::NStart::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NFire, NSound, NStart, FParams)
+
+namespace NCsProjectileWeapon_Fire_Sound_StartParams
+{
+	using ThisType = FCsProjectileWeapon_Fire_Sound_StartParams;
+	using ParamsType = NCsWeapon::NProjectile::NFire::NSound::NStart::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NSound::NStart::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NFire, NSound, NStart, FParams)
 
 /**
@@ -40,10 +60,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NSound::NStart::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsWeapon::NProjectile::NFire::NSound::NStart::FParams;
+	using _Impl = NCsProjectileWeapon_Fire_Sound_StartParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -66,32 +87,32 @@ namespace NCsWeapon
 					*/
 					struct CSWP_API FParams
 					{
-					#define _AttachType NCsWeapon::NProjectile::NFire::NSound::EAttach
+					private:
+
+						using AttachType = NCsWeapon::NProjectile::NFire::NSound::EAttach;
 
 					private:
 
 						/** Which Sound to play when the Fire action is executed. */
 						CS_DECLARE_MEMBER_WITH_PROXY(Sound, FCsSound)
 						/** How the Sound should be attached. */
-						CS_DECLARE_MEMBER_WITH_PROXY(AttachType, _AttachType)
+						CS_DECLARE_MEMBER_WITH_PROXY(Attach, AttachType)
 
 					public:
 
 						FParams() :
 							CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Sound),
-							CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachType, _AttachType::Component)
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Attach, AttachType::Component)
 						{
 							CS_CTOR_SET_MEMBER_PROXY(Sound);
-							CS_CTOR_SET_MEMBER_PROXY(AttachType);
+							CS_CTOR_SET_MEMBER_PROXY(Attach);
 						}
 
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Sound, FCsSound)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachType, _AttachType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Attach, AttachType)
 
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-					#undef _AttachType
 					};
 				}
 			}
@@ -104,7 +125,27 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Fire_Sound_ShotParams
 #pragma region
 
-// NCsWeapon::NProjectile::NFire::NSound::NShot::FParams
+struct FCsProjectileWeapon_Fire_Sound_ShotParams;
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NSound::NShot::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NFire, NSound, NShot, FParams)
+
+namespace NCsProjectileWeapon_Fire_Sound_ShotParams
+{
+	using ThisType = FCsProjectileWeapon_Fire_Sound_ShotParams;
+	using ParamsType = NCsWeapon::NProjectile::NFire::NSound::NShot::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NSound::NShot::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NFire, NSound, NShot, FParams)
 
 /**
@@ -138,10 +179,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NSound::NShot::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsWeapon::NProjectile::NFire::NSound::NShot::FParams;
+	using _Impl = NCsProjectileWeapon_Fire_Sound_ShotParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -164,7 +206,9 @@ namespace NCsWeapon
 					*/
 					struct CSWP_API FParams
 					{
-					#define _AttachType NCsWeapon::NProjectile::NFire::NSound::EAttach
+					private:
+
+						using AttachType = NCsWeapon::NProjectile::NFire::NSound::EAttach;
 
 					private:
 
@@ -173,28 +217,26 @@ namespace NCsWeapon
 						/** Which Sound to play when the Fire action is executed. */
 						CS_DECLARE_MEMBER_WITH_PROXY(Sound, FCsSound)
 						/** How the Sound should be attached. */
-						CS_DECLARE_MEMBER_WITH_PROXY(AttachType, _AttachType)
+						CS_DECLARE_MEMBER_WITH_PROXY(Attach, AttachType)
 
 					public:
 
 						FParams() :
 							CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(bSkipFirst),
 							CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Sound),
-							CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachType, _AttachType::Component)
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Attach, AttachType::Component)
 						{
 							CS_CTOR_SET_MEMBER_PROXY(bSkipFirst);
 							CS_CTOR_SET_MEMBER_PROXY(Sound);
-							CS_CTOR_SET_MEMBER_PROXY(AttachType);
+							CS_CTOR_SET_MEMBER_PROXY(Attach);
 						}
 
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bSkipFirst, bool)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Sound, FCsSound)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachType, _AttachType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Attach, AttachType)
 
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-					#undef _AttachType
 					};
 				}
 			}
@@ -207,7 +249,27 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Fire_SoundParams
 #pragma region
 
-// NCsWeapon::NProjectile::NFire::NSound::FParams
+struct FCsProjectileWeapon_Fire_SoundParams;
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NSound::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NFire, NSound, FParams)
+
+namespace NCsProjectileWeapon_Fire_SoundParams
+{
+	using ThisType = FCsProjectileWeapon_Fire_SoundParams;
+	using ParamsType = NCsWeapon::NProjectile::NFire::NSound::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NSound::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NFire, NSound, FParams)
 
 /**
@@ -245,11 +307,12 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NSound::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
-	
+	using ParamsType = NCsWeapon::NProjectile::NFire::NSound::FParams;
+	using _Impl = NCsProjectileWeapon_Fire_SoundParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
+
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 };
@@ -268,8 +331,10 @@ namespace NCsWeapon
 				*/
 				struct CSWP_API FParams
 				{
-				#define StartParamsType NCsWeapon::NProjectile::NFire::NSound::NStart::FParams
-				#define ShotParamsType NCsWeapon::NProjectile::NFire::NSound::NShot::FParams
+				private:
+
+					using StartParamsType = NCsWeapon::NProjectile::NFire::NSound::NStart::FParams;
+					using ShotParamsType = NCsWeapon::NProjectile::NFire::NSound::NShot::FParams;
 
 				private:
 	
@@ -303,9 +368,6 @@ namespace NCsWeapon
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
-
-				#undef StartParamsType
-				#undef ShotParamsType
 				};
 			}
 		}

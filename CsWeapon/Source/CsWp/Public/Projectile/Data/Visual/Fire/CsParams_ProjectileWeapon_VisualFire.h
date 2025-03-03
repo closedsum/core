@@ -93,7 +93,27 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Fire_Visual_StartParams
 #pragma region
 
-// NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams
+struct FCsProjectileWeapon_Fire_Visual_StartParams;
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NFire, NVisual, NStart, FParams)
+
+namespace NCsProjectileWeapon_Fire_Visual_StartParams
+{
+	using ThisType = FCsProjectileWeapon_Fire_Visual_StartParams;
+	using ParamsType = NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NFire, NVisual, NStart, FParams)
 
 /**
@@ -122,10 +142,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams;
+	using _Impl = NCsProjectileWeapon_Fire_Visual_StartParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 	
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -188,7 +209,27 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Fire_Visual_ShotParams
 #pragma region
 
-// NCsWeapon::NProjectile::NFire::NVisual::NShot::FParams
+struct FCsProjectileWeapon_Fire_Visual_ShotParams;
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NVisual::NShot::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NFire, NVisual, NShot, FParams)
+
+namespace NCsProjectileWeapon_Fire_Visual_ShotParams
+{
+	using ThisType = FCsProjectileWeapon_Fire_Visual_ShotParams;
+	using ParamsType = NCsWeapon::NProjectile::NFire::NVisual::NShot::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NVisual::NShot::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NFire, NVisual, NShot, FParams)
 
 /**
@@ -222,10 +263,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NVisual::NShot::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsWeapon::NProjectile::NFire::NVisual::NShot::FParams;
+	using _Impl = NCsProjectileWeapon_Fire_Visual_ShotParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 	
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -293,7 +335,27 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Fire_VisualParams
 #pragma region
 
-// NCsWeapon::NProjectile::NFire::NVisual::FParams
+struct FCsProjectileWeapon_Fire_VisualParams;
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NVisual::FParams)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NFire, NVisual, FParams)
+
+namespace NCsProjectileWeapon_Fire_VisualParams
+{
+	using ThisType = FCsProjectileWeapon_Fire_VisualParams;
+	using ParamsType = NCsWeapon::NProjectile::NFire::NVisual::FParams;
+
+	// Separate implementation to allow for clearer use of aliases
+	struct CSWP_API FImpl
+	{
+	public:
+
+		static void CopyToParams(ThisType* This, ParamsType* Params);
+		static void CopyToParamsAsValue(const ThisType* This, ParamsType* Params);
+	};
+}
+
+// ParamsType (NCsWeapon::NProjectile::NFire::NVisual::FParams)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NFire, NVisual, FParams)
 
 /**
@@ -332,10 +394,11 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NVisual::FParams
-	void CopyToParams(ParamsType* Params);
-	void CopyToParamsAsValue(ParamsType* Params) const;
-#undef ParamsType
+	using ParamsType = NCsWeapon::NProjectile::NFire::NVisual::FParams;
+	using _Impl = NCsProjectileWeapon_Fire_VisualParams::FImpl;
+
+	FORCEINLINE void CopyToParams(ParamsType* Params)				{ _Impl::CopyToParams(this, Params); }
+	FORCEINLINE void CopyToParamsAsValue(ParamsType* Params) const	{ _Impl::CopyToParamsAsValue(this, Params); }
 	
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;

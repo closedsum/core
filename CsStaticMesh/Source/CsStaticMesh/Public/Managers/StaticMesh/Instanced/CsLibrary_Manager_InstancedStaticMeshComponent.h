@@ -4,14 +4,18 @@
 #pragma once
 // Types
 #include "CsMacro_Namespace.h"
+#include "CsMacro_Log.h"
+#include "CsMacro_Cached.h"
 // Log
 #include "Utility/CsStaticMeshLog.h"
 
 class UObject;
 class ACsManager_InstancedStaticMeshComponent;
 
-// NCsStaticMesh::NInstanced::NComponent::FResource
+// ResourceType (NCsStaticMesh::NInstanced::NComponent::FResource)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsStaticMesh, NInstanced, NComponent, FResource)
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_4(NCsStaticMesh, NInstanced, NComponent, NManager, Library)
 
 namespace NCsStaticMesh
 {
@@ -23,7 +27,13 @@ namespace NCsStaticMesh
 			{
 				struct CSSTATICMESH_API FLibrary final
 				{
-				#define LogLevel void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning
+				private:
+
+					using ResourceType = NCsStaticMesh::NInstanced::NComponent::FResource;
+
+					CS_USING_CACHED_FUNCTION_NAME_NESTED_4(NCsStaticMesh, NInstanced, NComponent, NManager, Library);
+
+					CS_DECLARE_STATIC_LOG_LEVEL
 
 				// ContextRoot
 				#pragma region
@@ -46,7 +56,7 @@ namespace NCsStaticMesh
 					* @param Log
 					* return				Context for ACsManager_InstancedStaticMeshComponent
 					*/
-					static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel);
+					static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 					/**
 					* Get the Context (Root) for ACsManager_InstancedStaticMeshComponent from a WorldContext.
@@ -79,7 +89,7 @@ namespace NCsStaticMesh
 					* @param Log
 					* return				ACsManager_InstancedStaticMeshComponent.
 					*/
-					static ACsManager_InstancedStaticMeshComponent* GetSafe(const FString& Context, const UObject* WorldContext, LogLevel);
+					static ACsManager_InstancedStaticMeshComponent* GetSafe(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 					/**
 					* Safely get the reference to ACsManager_InstancedStaticMeshComponent from a WorldContext.
@@ -93,11 +103,7 @@ namespace NCsStaticMesh
 
 				public:
 
-				#define ResourceType NCsStaticMesh::NInstanced::NComponent::FResource
 					static const ResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext);
-				#undef ResourceType
-
-				#undef LogLevel
 				};
 			}
 		}

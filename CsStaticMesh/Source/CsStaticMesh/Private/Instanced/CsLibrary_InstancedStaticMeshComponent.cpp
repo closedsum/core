@@ -58,11 +58,10 @@ namespace NCsStaticMesh
 				return true;
 			}
 
-			#define PayloadType NCsStaticMesh::NInstanced::NComponent::FLibrary::FUpdateRenderDataChecked::FPayload
+			using PayloadType = NCsStaticMesh::NInstanced::NComponent::FLibrary::FUpdateRenderDataChecked::FPayload;
+
 			void FLibrary::UpdateRenderDataChecked(const FString& Context, const PayloadType& Payload)
 			{
-			#undef PayloadType
-
 				CS_IS_VALID_CHECKED(Payload);
 
 				UInstancedStaticMeshComponent* Component = Payload.GetComponent();

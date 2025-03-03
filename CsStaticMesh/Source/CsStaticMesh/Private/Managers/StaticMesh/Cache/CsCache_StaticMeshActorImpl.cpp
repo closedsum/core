@@ -4,7 +4,7 @@
 #include "Managers/StaticMesh/Cache/CsCache_StaticMeshActorImpl.h"
 
 // Types
-#include "CsMacro_Misc.h"
+#include "CsMacro_Interface.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool
@@ -12,7 +12,11 @@
 // StaticMesh
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActor.h"
 
-const FName NCsStaticMeshActor::NCache::FImpl::Name = FName("NCsStaticMeshActor::NCache::FImpl");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsStaticMeshActor::NCache::NImpl::FImpl);
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_3(NCsStaticMeshActor, NCache, NImpl, Impl)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsStaticMeshActor::NCache::NImpl::FImpl, Allocate)
+CS_END_CACHED_FUNCTION_NAME_NESTED_3
 
 namespace NCsStaticMeshActor
 {
@@ -20,120 +24,104 @@ namespace NCsStaticMeshActor
 	{
 		namespace NImpl
 		{
-			namespace NCached
+			FImpl::FImpl() :
+				InterfaceMap(nullptr),
+				// PooledCacheType (NCsPooledObject::NCache::ICache)
+				Index(INDEX_NONE),
+				bAllocated(false),
+				bQueueDeallocate(false),
+				State(StateType::Inactive),
+				UpdateType(NCsPooledObject::EUpdate::Manager),
+				Instigator(),
+				Owner(),
+				Parent(),
+				WarmUpTime(0.0f),
+				LifeTime(0.0f),
+				StartTime(),
+				ElapsedTime()
+				// StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
 			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NCache::FImpl, Allocate);
-				}
+				InterfaceMap = new FCsInterfaceMap();
+
+				CS_INTERFACE_MAP_SET_ROOT(FImpl);
+
+				CS_INTERFACE_MAP_ADD(PooledCacheType);
+				CS_INTERFACE_MAP_ADD(CacheType);
 			}
-		}
 
-		FImpl::FImpl() :
-			InterfaceMap(nullptr),
-			// PooledCacheType (NCsPooledObject::NCache::ICache)
-			Index(INDEX_NONE),
-			bAllocated(false),
-			bQueueDeallocate(false),
-			State(NCsPooledObject::EState::Inactive),
-			UpdateType(NCsPooledObject::EUpdate::Manager),
-			Instigator(),
-			Owner(),
-			Parent(),
-			WarmUpTime(0.0f),
-			LifeTime(0.0f),
-			StartTime(),
-			ElapsedTime()
-			// StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
-		{
-			InterfaceMap = new FCsInterfaceMap();
+			FImpl::~FImpl()
+			{
+				delete InterfaceMap;
+			}
 
-			InterfaceMap->SetRoot<FImpl>(this);
-
-			typedef NCsPooledObject::NCache::ICache PooledCacheType;
-			typedef NCsStaticMeshActor::NCache::ICache StaticMeshCacheType;
-
-			InterfaceMap->Add<PooledCacheType>(static_cast<PooledCacheType*>(this));
-			InterfaceMap->Add<StaticMeshCacheType>(static_cast<StaticMeshCacheType*>(this));
-		}
-
-		FImpl::~FImpl()
-		{
-			delete InterfaceMap;
-		}
-
-		// PooledCacheType (NCsPooledObject::NCache::ICache)
-		#pragma region
-
-		#define PayloadType NCsPooledObject::NPayload::IPayload
-		void FImpl::Allocate(PayloadType* Payload)
-		{
-		#undef PayloadType
-
-			using namespace NImpl::NCached;
-
-			const FString& Context = Str::Allocate;
+			using PooledPayloadLibrary = NCsPooledObject::NPayload::FLibrary;
+			using PayloadType = NCsStaticMeshActor::NPayload::IPayload;
 
 			// PooledCacheType (NCsPooledObject::NCache::ICache)
-			bAllocated = true;
-			State	   = NCsPooledObject::EState::Active;
-			UpdateType = Payload->GetUpdateType();
-			Instigator = Payload->GetInstigator();
-			Owner	   = Payload->GetOwner();
-			Parent	   = Payload->GetParent();
-			StartTime  = Payload->GetTime();
+			#pragma region
 
-			// StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
-			typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-			typedef NCsStaticMeshActor::NPayload::IPayload StaticMeshPayloadType;
+			void FImpl::Allocate(PooledPayloadType* Payload)
+			{
+				CS_SET_CONTEXT_AS_FUNCTION_NAME(Allocate);
 
-			StaticMeshPayloadType* StaticMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<StaticMeshPayloadType>(Context, Payload);
+				// PooledCacheType (NCsPooledObject::NCache::ICache)
+				bAllocated = true;
+				State	   = NCsPooledObject::EState::Active;
+				UpdateType = Payload->GetUpdateType();
+				Instigator = Payload->GetInstigator();
+				Owner	   = Payload->GetOwner();
+				Parent	   = Payload->GetParent();
+				StartTime  = Payload->GetTime();
 
-			LifeTime = StaticMeshPayload->GetLifeTime();
-		}
+				// CacheType (NCsStaticMeshActor::NCache::ICache)
+				PayloadType* StaticMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
-		void FImpl::Deallocate()
-		{
-			Reset();
-		}
+				LifeTime = StaticMeshPayload->GetLifeTime();
+			}
 
-		void FImpl::QueueDeallocate()
-		{
-			bQueueDeallocate = true;
-		}
+			void FImpl::Deallocate()
+			{
+				Reset();
+			}
 
-		bool FImpl::ShouldDeallocate() const
-		{
-			return bQueueDeallocate;
-		}
+			void FImpl::QueueDeallocate()
+			{
+				bQueueDeallocate = true;
+			}
 
-		bool FImpl::HasLifeTimeExpired() const
-		{
-			return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
-		}
+			bool FImpl::ShouldDeallocate() const
+			{
+				return bQueueDeallocate;
+			}
 
-		void FImpl::Reset()
-		{
-			// PooledCacheType (NCsPooledObject::NCache::ICache)
-			bAllocated = false;
-			bQueueDeallocate = false;
-			State = NCsPooledObject::EState::Inactive;
-			UpdateType = NCsPooledObject::EUpdate::Manager;
-			Instigator.Reset();
-			Owner.Reset();
-			Parent.Reset();
-			WarmUpTime = 0.0f;
-			LifeTime = 0.0f;
-			StartTime.Reset();
-			ElapsedTime.Reset();
-			// StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
-		}
+			bool FImpl::HasLifeTimeExpired() const
+			{
+				return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
+			}
 
-		#pragma endregion NCsPooledObject::NCache::ICache
+			void FImpl::Reset()
+			{
+				// PooledCacheType (NCsPooledObject::NCache::ICache)
+				bAllocated = false;
+				bQueueDeallocate = false;
+				State = StateType::Inactive;
+				UpdateType = NCsPooledObject::EUpdate::Manager;
+				Instigator.Reset();
+				Owner.Reset();
+				Parent.Reset();
+				WarmUpTime = 0.0f;
+				LifeTime = 0.0f;
+				StartTime.Reset();
+				ElapsedTime.Reset();
+				// StaticMeshCacheType (NCsStaticMeshActor::NCache::ICache)
+			}
 
-		void FImpl::Update(const FCsDeltaTime& DeltaTime)
-		{
-			ElapsedTime += DeltaTime;
+			#pragma endregion NCsPooledObject::NCache::ICache
+
+			void FImpl::Update(const FCsDeltaTime& DeltaTime)
+			{
+				ElapsedTime += DeltaTime;
+			}
 		}
 	}
 }

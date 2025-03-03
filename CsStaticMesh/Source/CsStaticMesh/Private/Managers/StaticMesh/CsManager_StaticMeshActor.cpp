@@ -34,21 +34,19 @@
 // Cached
 #pragma region
 
+CS_START_CACHED_FUNCTION_NAME(CsManager_StaticMeshActor)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_StaticMeshActor, SetupInternal)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_StaticMeshActor, InitInternalFromSettings)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_StaticMeshActor, Spawn)
+CS_END_CACHED_FUNCTION_NAME
+
 namespace NCsManagerStaticMeshActor
 {
 	namespace NCached
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, SetupInternal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, InitInternalFromSettings);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, Spawn);
-
 			const FString None = TEXT("None");
-		}
-
-		namespace Name
-		{
 		}
 	}
 }
@@ -60,9 +58,12 @@ namespace NCsManagerStaticMeshActor
 
 namespace NCsStaticMeshActor
 {
-	FManager::FManager()
-		: Super()
+	namespace NManager
 	{
+		FManager::FManager()
+			: Super()
+		{
+		}
 	}
 }
 
@@ -104,6 +105,14 @@ UCsManager_StaticMeshActor::UCsManager_StaticMeshActor(const FObjectInitializer&
 	ClassMap()
 {
 }
+
+using ManagerType = NCsStaticMeshActor::NManager::FManager;
+using ManagerParamsType = NCsStaticMeshActor::NManager::FManager::FParams;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PoolParamsType = NCsPooledObject::NManager::FPoolParams;
+using PayloadLibrary = NCsStaticMeshActor::NPayload::NLibrary::FLibrary;
+using PayloadType = NCsStaticMeshActor::NPayload::IPayload;
+using PayloadImplType = NCsStaticMeshActor::NPayload::NImpl::FImpl;
 
 // Singleton
 #pragma region
@@ -277,14 +286,10 @@ void UCsManager_StaticMeshActor::SetMyRoot(UObject* InRoot)
 
 void UCsManager_StaticMeshActor::SetupInternal()
 {
-	using namespace NCsManagerStaticMeshActor::NCached;
-
-	const FString& Context = Str::SetupInternal;
-
-	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetupInternal);
 
 	// Populate EnumMaps
-	UObject* ContextRoot = GameInstanceLibrary::GetSafeAsObject(MyRoot);
+	UObject* ContextRoot = CsGameInstanceLibrary::GetSafeAsObject(MyRoot);
 
 	NCsStaticMeshActor::PopulateEnumMapFromSettings(Context, ContextRoot);
 
@@ -332,14 +337,10 @@ void UCsManager_StaticMeshActor::SetupInternal()
 
 void UCsManager_StaticMeshActor::InitInternalFromSettings()
 {
-	using namespace NCsManagerStaticMeshActor::NCached;
-
-	const FString& Context = Str::InitInternalFromSettings;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(InitInternalFromSettings);
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsStaticMeshActor::FManager::FParams ManagerParamsType;
-
 		ManagerParamsType ManagerParams;
 
 		ManagerParams.Name  = TEXT("UCsManager_StaticMeshActor::NCsStaticMeshActor::FManager");
@@ -349,8 +350,6 @@ void UCsManager_StaticMeshActor::InitInternalFromSettings()
 		{
 			const FECsStaticMeshActor& Type								   = Pair.Key;
 			const FCsSettings_Manager_StaticMeshActor_PoolParams& Params = Pair.Value;
-
-			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
@@ -397,14 +396,11 @@ void UCsManager_StaticMeshActor::InitInternalFromSettings()
 	}
 }
 
-#define ManagerParamsType NCsStaticMeshActor::FManager::FParams
 void UCsManager_StaticMeshActor::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
 	{
 		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
-
-		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 		for (TPair<FECsStaticMeshActor, PoolParamsType>& Pair : P.ObjectParams)
 		{
@@ -426,7 +422,6 @@ void UCsManager_StaticMeshActor::InitInternal(const ManagerParamsType& Params)
 	}
 	Internal.Init(Params);
 }
-#undef ManagerParamsType
 
 void UCsManager_StaticMeshActor::Clear()
 {
@@ -458,10 +453,8 @@ FCsStaticMeshActorPooled* UCsManager_StaticMeshActor::ConstructContainer(const F
 	return new FCsStaticMeshActorPooled();
 }
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 TMulticastDelegate<void(const FCsStaticMeshActorPooled*, const ConstructParamsType&)>& UCsManager_StaticMeshActor::GetOnConstructObject_Event(const FECsStaticMeshActor& Type)
 {
-#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 
@@ -610,20 +603,13 @@ void UCsManager_StaticMeshActor::ConstructPayloads(const FECsStaticMeshActor& Ty
 	Internal.ConstructPayloads(Type, Size);
 }
 
-#define PayloadType NCsStaticMeshActor::NPayload::IPayload
 PayloadType* UCsManager_StaticMeshActor::ConstructPayload(const FECsStaticMeshActor& Type)
 {
-#undef PayloadType
-
-	typedef NCsStaticMeshActor::NPayload::FImpl PayloadImplType;
-
 	return new PayloadImplType();
 }
 
-#define PayloadType NCsStaticMeshActor::NPayload::IPayload
 PayloadType* UCsManager_StaticMeshActor::AllocatePayload(const FECsStaticMeshActor& Type)
 {
-#undef PayloadType
 	return Internal.AllocatePayload(Type);
 }
 
@@ -632,19 +618,11 @@ PayloadType* UCsManager_StaticMeshActor::AllocatePayload(const FECsStaticMeshAct
 	// Spawn
 #pragma region
 
-#define PayloadType NCsStaticMeshActor::NPayload::IPayload
 const FCsStaticMeshActorPooled* UCsManager_StaticMeshActor::Spawn(const FECsStaticMeshActor& Type, PayloadType* Payload)
 {
-#undef PayloadType
-
-	using namespace NCsManagerStaticMeshActor::NCached;
-
-	const FString& Context = Str::Spawn;
-
-	typedef NCsStaticMeshActor::NPayload::FLibrary PayloadLibrary;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Spawn);
 
 	check(PayloadLibrary::IsValidChecked(Context, Payload));
-
 	return Internal.Spawn(Type, Payload);
 }
 

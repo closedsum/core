@@ -153,8 +153,8 @@ namespace NCsStaticMeshActor
 
 class UStaticMesh;
 
-// NCsStaticMeshActor::NPayload::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NPayload, FImpl)
+// NCsStaticMeshActor::NPayload::NImpl::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsStaticMeshActor, NPayload, NImpl, FImpl)
 
 /**
 * Container holding general information for a Static Mesh Actor.
@@ -262,7 +262,7 @@ public:
 	{
 	}
 
-#define DeallocateMethodType NCsStaticMeshActor::EDeallocateMethod
+	using DeallocateMethodType = NCsStaticMeshActor::EDeallocateMethod;
 
 	FORCEINLINE FECsStaticMeshActor* GetTypePtr() { return &Type; }
 	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *((NCsStaticMeshActor::EDeallocateMethod*)(&DeallocateMethod)); }
@@ -273,12 +273,10 @@ public:
 	FORCEINLINE int32* GetTransformRulesPtr() { return &TransformRules; }
 	FORCEINLINE FTransform3f* GetTransformPtr() { return &Transform; }
 
-#undef DeallocateMethodType
+	using PayloadImplType = NCsStaticMeshActor::NPayload::NImpl::FImpl;
 
-#define PayloadType NCsStaticMeshActor::NPayload::FImpl
-	void SetPayloadChecked(const FString& Context, PayloadType* Payload) const;
-	bool SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning) const;
-#undef PayloadType
+	void SetPayloadChecked(const FString& Context, PayloadImplType* Payload) const;
+	bool SetSafePayload(const FString& Context, PayloadImplType* Payload, void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning) const;
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning) const;

@@ -26,13 +26,19 @@ namespace NCsProjectile
 
 				virtual ~ITracking() {}
 
-			#define ParamsType NCsProjectile::NTracking::FParams
+			private:
+
+				// Allow clearer names without name collisions
+				struct _
+				{
+					using ParamsType = NCsProjectile::NTracking::FParams;
+				};
+
+			public:
 
 				virtual const bool& ShouldUseTracking() const = 0;
 
-				virtual const ParamsType& GetTrackingParams() const = 0;
-
-			#undef ParamsType
+				virtual const _::ParamsType& GetTrackingParams() const = 0;
 			};
 		}
 	}
@@ -56,11 +62,17 @@ public:
 
 	static const FName Name;
 
-#define ParamsType NCsProjectile::NTracking::FParams
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using ParamsType = NCsProjectile::NTracking::FParams;
+	};
+
+public:
 
 	virtual const bool& ShouldUseTracking() const = 0;
 
-	virtual const ParamsType& GetTrackingParams() const = 0;
-
-#undef ParamsType
+	virtual const _::ParamsType& GetTrackingParams() const = 0;
 };

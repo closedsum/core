@@ -16,41 +16,28 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_StaticMeshActor)
 
-// Cached
-#pragma region
+CS_START_CACHED_FUNCTION_NAME(CsScriptLibrary_Manager_StaticMeshActor)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_StaticMeshActor, FindObject)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Manager_StaticMeshActor, Spawn)
+CS_END_CACHED_FUNCTION_NAME
 
-namespace NCsScriptLibraryManagerStaticMeshActor
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_StaticMeshActor, FindObject);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_StaticMeshActor, Spawn);
-		}
-	}
-}
-
-#pragma endregion Cached
+CS_DEFINE_STATIC_LOG_WARNING(UCsScriptLibrary_Manager_StaticMeshActor, NCsStaticMesh::FLog::Warning);
 
 UCsScriptLibrary_Manager_StaticMeshActor::UCsScriptLibrary_Manager_StaticMeshActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-#define USING_NS_CACHED using namespace NCsScriptLibraryManagerStaticMeshActor::NCached;
-#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryManagerStaticMeshActor::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
-#define LogWarning void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning;
+using PayloadImplType = NCsStaticMeshActor::NPayload::NImpl::FImpl;
 
 // Pool
 #pragma region
 
 UObject* UCsScriptLibrary_Manager_StaticMeshActor::FindObject(const FString& Context, const UObject* WorldContextObject, const FECsStaticMeshActor& Type, const int32& Index)
 {
-	CONDITIONAL_SET_CTXT(FindObject);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(FindObject);
 
-	LogWarning
+	void(*Log)(const FString&) = LogWarning;
 
 	UCsManager_StaticMeshActor* Manager_StaticMesh = CsStaticMeshManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
@@ -76,7 +63,7 @@ UObject* UCsScriptLibrary_Manager_StaticMeshActor::FindObject(const FString& Con
 
 int32 UCsScriptLibrary_Manager_StaticMeshActor::Spawn(const FString& Context, const UObject* WorldContextObject, const FCsPayload_StaticMesh& Payload)
 {
-	CONDITIONAL_SET_CTXT(Spawn);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(Spawn);
 	
 	// Check Payload is Valid
 	if (!Payload.IsValid(Ctxt))
@@ -88,8 +75,6 @@ int32 UCsScriptLibrary_Manager_StaticMeshActor::Spawn(const FString& Context, co
 	if (!Manager_StaticMesh)
 		return INDEX_NONE;
 
-	typedef NCsStaticMeshActor::NPayload::FImpl PayloadImplType;
-
 	const FECsStaticMeshActor& Type	= Payload.Mesh.Type;
 	PayloadImplType* PayloadImpl	= Manager_StaticMesh->AllocatePayload<PayloadImplType>(Type);
 
@@ -100,7 +85,3 @@ int32 UCsScriptLibrary_Manager_StaticMeshActor::Spawn(const FString& Context, co
 
 	return SkeletalMeshPooled->GetCache()->GetIndex();
 }
-
-#undef USING_NS_CACHED
-#undef CONDITIONAL_SET_CTXT
-#undef LogWarning

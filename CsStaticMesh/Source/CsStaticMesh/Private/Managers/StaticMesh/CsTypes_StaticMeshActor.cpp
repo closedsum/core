@@ -128,35 +128,36 @@ namespace NCsStaticMeshActorDeallocateMethod
 
 #pragma endregion StaticMeshActorDeallocateMethod
 
+using PayloadImplType = NCsStaticMeshActor::NPayload::NImpl::FImpl;
+
 // FCsStaticMeshActorPooledInfo
 #pragma region
 
-#define PayloadType NCsStaticMeshActor::NPayload::FImpl
-void FCsStaticMeshActorPooledInfo::SetPayloadChecked(const FString& Context, PayloadType* Payload) const
+void FCsStaticMeshActorPooledInfo::SetPayloadChecked(const FString& Context, PayloadImplType* Payload) const
 {
 	check(IsValidChecked(Context));
 
 	Payload->Mesh = Mesh.GetChecked(Context);
 	Payload->SetMaterials(Materials.GetChecked(Context));
 	Payload->DeallocateMethod = GetDeallocateMethod();
-	Payload->LifeTime = LifeTime;
-	Payload->AttachmentTransformRules = AttachmentTransformRules;
-	Payload->Bone = Bone;
-	Payload->TransformRules = TransformRules;
+	Payload->LifeTime					= LifeTime;
+	Payload->AttachmentTransformRules	= AttachmentTransformRules;
+	Payload->Bone						= Bone;
+	Payload->TransformRules				= TransformRules;
 
 	Payload->Transform.SetTranslation(Payload->Transform.GetTranslation() + Transform.GetTranslation());
 	const FRotator3f Rotation = Payload->Transform.GetRotation().Rotator() + Transform.GetRotation().Rotator();
 	Payload->Transform.SetRotation(Rotation.Quaternion());
 	Payload->Transform.SetScale3D(Payload->Transform.GetScale3D() * Transform.GetScale3D());
 
-	Payload->bCastShadow = bCastShadow;
-	Payload->bReceivesDecals = bReceivesDecals;
-	Payload->bUseAsOccluder = bUseAsOccluder;
-	Payload->bRenderCustomDepth = bRenderCustomDepth;
+	Payload->bCastShadow			= bCastShadow;
+	Payload->bReceivesDecals		= bReceivesDecals;
+	Payload->bUseAsOccluder			= bUseAsOccluder;
+	Payload->bRenderCustomDepth		= bRenderCustomDepth;
 	Payload->CustomDepthStencilValue = CustomDepthStencilValue;
 }
 
-bool FCsStaticMeshActorPooledInfo::SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsStaticMeshActorPooledInfo::SetSafePayload(const FString& Context, PayloadImplType* Payload, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
@@ -170,26 +171,24 @@ bool FCsStaticMeshActorPooledInfo::SetSafePayload(const FString& Context, Payloa
 		return false;
 
 	Payload->SetMaterials(Materials.GetChecked(Context));
-	Payload->DeallocateMethod = GetDeallocateMethod();
-	Payload->LifeTime = LifeTime;
+	Payload->DeallocateMethod		= GetDeallocateMethod();
+	Payload->LifeTime				= LifeTime;
 	Payload->AttachmentTransformRules = AttachmentTransformRules;
-	Payload->Bone = Bone;
-	Payload->TransformRules = TransformRules;
+	Payload->Bone					= Bone;
+	Payload->TransformRules			= TransformRules;
 
 	Payload->Transform.SetTranslation(Payload->Transform.GetTranslation() + Transform.GetTranslation());
 	const FRotator3f Rotation = Payload->Transform.GetRotation().Rotator() + Transform.GetRotation().Rotator();
 	Payload->Transform.SetRotation(Rotation.Quaternion());
 	Payload->Transform.SetScale3D(Payload->Transform.GetScale3D() * Transform.GetScale3D());
 
-	Payload->bCastShadow = bCastShadow;
-	Payload->bReceivesDecals = bReceivesDecals;
-	Payload->bUseAsOccluder = bUseAsOccluder;
-	Payload->bRenderCustomDepth = bRenderCustomDepth;
+	Payload->bCastShadow			= bCastShadow;
+	Payload->bReceivesDecals		= bReceivesDecals;
+	Payload->bUseAsOccluder			= bUseAsOccluder;
+	Payload->bRenderCustomDepth		= bRenderCustomDepth;
 	Payload->CustomDepthStencilValue = CustomDepthStencilValue;
 	return true;
 }	
-
-#undef PayloadType
 
 bool FCsStaticMeshActorPooledInfo::IsValidChecked(const FString& Context) const
 {
@@ -199,10 +198,7 @@ bool FCsStaticMeshActorPooledInfo::IsValidChecked(const FString& Context) const
 	if (!Materials.Materials.IsEmpty())
 	{
 		check(Materials.IsValidChecked(Context));
-
-		typedef NCsMaterial::FLibrary MaterialLibrary;
-
-		check(MaterialLibrary::IsValidChecked(Context, Mesh.Get(), Materials.Get()));
+		check(CsMaterialLibrary::IsValidChecked(Context, Mesh.Get(), Materials.Get()));
 	}
 	// Check Type is Valid
 	check(EMCsStaticMeshActor::Get().IsValidEnumChecked(Context, Type));
@@ -227,9 +223,7 @@ bool FCsStaticMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(co
 		if (!Materials.IsValid(Context, Log))
 			return false;
 
-		typedef NCsMaterial::FLibrary MaterialLibrary;
-
-		if (!MaterialLibrary::IsValid(Context, Mesh.Get(), Materials.Get(), Log))
+		if (!CsMaterialLibrary::IsValid(Context, Mesh.Get(), Materials.Get(), Log))
 			return false;
 	}
 	// Check Type is Valid

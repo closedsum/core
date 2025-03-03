@@ -19,7 +19,13 @@ namespace NCsStaticMeshActor
 
 			static const FName Name;
 
-		#define DeallocateMethodType NCsStaticMeshActor::EDeallocateMethod
+		private:
+
+			// Allow clearer names without name collisions
+			struct _
+			{
+				using DeallocateMethodType = NCsStaticMeshActor::EDeallocateMethod;
+			};
 
 		public:
 
@@ -53,7 +59,7 @@ namespace NCsStaticMeshActor
 			* 
 			* return Deallocate Method
 			*/
-			virtual const DeallocateMethodType& GetDeallocateMethod() const = 0;
+			virtual const _::DeallocateMethodType& GetDeallocateMethod() const = 0;
 
 			/**
 			* Relevant if the DeallocateMethod == DeallocateMethodType::LifeTime.
@@ -103,7 +109,7 @@ namespace NCsStaticMeshActor
 			*
 			* return Transform
 			*/
-			virtual const FTransform3f& GetTransform() const = 0;
+			virtual const FTransform& GetTransform() const = 0;
 
 			/**
 			* Controls whether the StaticMeshActor should cast an shadow or not.
@@ -149,8 +155,6 @@ namespace NCsStaticMeshActor
 			* return
 			*/
 			virtual const TArray<FName>& GetTags() const = 0;
-
-		#undef DeallocateMethodType
 		};
 	}
 }

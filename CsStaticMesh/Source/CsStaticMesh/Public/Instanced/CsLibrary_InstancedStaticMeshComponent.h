@@ -58,9 +58,9 @@ namespace NCsStaticMesh
 					};
 				};
 
-			#define PayloadType NCsStaticMesh::NInstanced::NComponent::FLibrary::FUpdateRenderDataChecked::FPayload
+				using PayloadType = NCsStaticMesh::NInstanced::NComponent::FLibrary::FUpdateRenderDataChecked::FPayload;
+
 				static void UpdateRenderDataChecked(const FString& Context, const PayloadType& Payload);
-			#undef PayloadType
 			};
 		}
 	}

@@ -82,6 +82,13 @@ ACsStaticMeshActorPooledImpl::ACsStaticMeshActorPooledImpl(const FObjectInitiali
 	GetStaticMeshComponent()->SetComponentTickEnabled(false);
 }
 
+using CacheImplType = NCsStaticMeshActor::NCache::NImpl::FImpl;
+using PooledPayloadLibrary = NCsPooledObject::NPayload::FLibrary;
+using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
+using PayloadType = NCsStaticMeshActor::NPayload::IPayload;
+using ChangeType = NCsStaticMeshActor::NPayload::EChange;
+using ChangeCounter = NCsStaticMeshActor::NPayload::NChange::FCounter;
+
 // UObject Interface
 #pragma region
 
@@ -162,9 +169,7 @@ void ACsStaticMeshActorPooledImpl::Shutdown()
 		CacheImpl = nullptr;
 	}
 
-	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
-	MIDLibrary::Destroy(MIDs);
+	CsMIDLibrary::Destroy(MIDs);
 
 	bShutdown = true;
 }
@@ -176,8 +181,6 @@ void ACsStaticMeshActorPooledImpl::Shutdown()
 
 void ACsStaticMeshActorPooledImpl::ConstructCache()
 {
-	typedef NCsStaticMeshActor::NCache::FImpl CacheImplType;
-
 	CacheImpl = new CacheImplType();
 	Cache	  = CacheImpl;
 }
@@ -187,21 +190,15 @@ void ACsStaticMeshActorPooledImpl::ConstructCache()
 // ICsPooledObject
 #pragma region
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 void ACsStaticMeshActorPooledImpl::Allocate(PooledPayloadType* Payload)
 {
-#undef PooledPayloadType
-
 	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
 
 	Cache->Allocate(Payload);
 
-	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-	typedef NCsStaticMeshActor::NPayload::IPayload StaticMeshPayloadType;
-	
-	StaticMeshPayloadType* StaticMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<StaticMeshPayloadType>(Context, Payload);
+	PayloadType* StaticMeshPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	// Set StaticMesh
 	Handle_SetStaticMesh(StaticMeshPayload);
@@ -264,17 +261,11 @@ void ACsStaticMeshActorPooledImpl::Deallocate_Internal()
 // Set / Clear Changes
 #pragma region
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define StaticMeshPayloadType NCsStaticMeshActor::NPayload::IPayload
-
-void ACsStaticMeshActorPooledImpl::Handle_SetStaticMesh(StaticMeshPayloadType* Payload)
+void ACsStaticMeshActorPooledImpl::Handle_SetStaticMesh(PayloadType* Payload)
 {
 	CS_NON_SHIPPING_EXPR(Log_SetStaticMesh(Payload));
 
 	UStaticMesh* Mesh = Payload->GetStaticMesh();
-
-	typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
-	typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
 
 	// If ALREADY set StaticMesh and the trying to the SAME StaticMesh, Do Nothing
 	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::StaticMesh) &&
@@ -300,7 +291,7 @@ void ACsStaticMeshActorPooledImpl::Handle_SetStaticMesh(StaticMeshPayloadType* P
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::StaticMesh);
 }
 
-void ACsStaticMeshActorPooledImpl::Log_SetStaticMesh(StaticMeshPayloadType* Payload)
+void ACsStaticMeshActorPooledImpl::Log_SetStaticMesh(PayloadType* Payload)
 {
 	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
@@ -310,9 +301,6 @@ void ACsStaticMeshActorPooledImpl::Log_SetStaticMesh(StaticMeshPayloadType* Payl
 		CS_CVAR_LOG_IS_SHOWING(LogStaticMeshActorPooledChangeSet))
 	{
 		UStaticMesh* Mesh = Payload->GetStaticMesh();
-
-		typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
-		typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
 
 		// Check if SkeletalMesh should be PRESERVED
 		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::StaticMesh))
@@ -339,18 +327,13 @@ void ACsStaticMeshActorPooledImpl::Log_SetStaticMesh(StaticMeshPayloadType* Payl
 	}
 }
 
-void ACsStaticMeshActorPooledImpl::Handle_SetMaterials(StaticMeshPayloadType* Payload)
+void ACsStaticMeshActorPooledImpl::Handle_SetMaterials(PayloadType* Payload)
 {
 	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
 	const FString& Context = Str::Handle_SetMaterials;
 
 	CS_NON_SHIPPING_EXPR(Log_SetMaterials(Payload));
-
-	typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
-	typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 	UStaticMeshComponent* Component				 = GetMeshComponent();
 	const TArray<UMaterialInterface*>& Materials = Payload->GetMaterials();
@@ -376,9 +359,9 @@ void ACsStaticMeshActorPooledImpl::Handle_SetMaterials(StaticMeshPayloadType* Pa
 		if (Different)
 		{
 			if (Payload->ShouldGenerateMIDs())
-				MIDLibrary::SetChecked(Context, Component, Materials, MIDs);
+				CsMIDLibrary::SetChecked(Context, Component, Materials, MIDs);
 			else
-				MaterialLibrary::SetChecked(Context, Component, Materials);
+				CsMaterialLibrary::SetChecked(Context, Component, Materials);
 			ChangeCounter::Get().AddChanged();
 		}
 		else
@@ -391,16 +374,16 @@ void ACsStaticMeshActorPooledImpl::Handle_SetMaterials(StaticMeshPayloadType* Pa
 		if (Materials.Num() > CS_EMPTY)
 		{
 			if (Payload->ShouldGenerateMIDs())
-				MIDLibrary::SetChecked(Context, Component, Materials, MIDs);
+				CsMIDLibrary::SetChecked(Context, Component, Materials, MIDs);
 			else
-				MaterialLibrary::SetChecked(Context, Component, Materials);
+				CsMaterialLibrary::SetChecked(Context, Component, Materials);
 			ChangeCounter::Get().AddChanged();
 		}
 	}
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Materials);
 }
 
-void ACsStaticMeshActorPooledImpl::Log_SetMaterials(StaticMeshPayloadType* Payload)
+void ACsStaticMeshActorPooledImpl::Log_SetMaterials(PayloadType* Payload)
 {
 	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
@@ -409,10 +392,6 @@ void ACsStaticMeshActorPooledImpl::Log_SetMaterials(StaticMeshPayloadType* Paylo
 	if (CS_CVAR_LOG_IS_SHOWING(LogStaticMeshActorPooledChange) ||
 		CS_CVAR_LOG_IS_SHOWING(LogStaticMeshActorPooledChangeSet))
 	{
-		typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
-		typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
-		typedef NCsMaterial::FLibrary MaterialLibrary;
-
 		UStaticMeshComponent* Component				 = GetMeshComponent();
 		const TArray<UMaterialInterface*>& Materials = Payload->GetMaterials();
 		
@@ -482,7 +461,7 @@ void ACsStaticMeshActorPooledImpl::Log_SetMaterials(StaticMeshPayloadType* Paylo
 	}
 }
 
-void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, StaticMeshPayloadType* StaticMeshPayload)
+void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, PayloadType* StaticMeshPayload)
 {
 	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
@@ -506,10 +485,8 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 	const FTransform3f& Transform = StaticMeshPayload->GetTransform();
 	const int32& TransformRules   = StaticMeshPayload->GetTransformRules();
 
-	typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
-	typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
-	#define ChangeHelper NCsStaticMeshActor::NPayload::NChange
-	typedef NCsArray::FLibrary ArrayLibrary;
+	bool(*HasAttach)(const uint32& /*Mask*/, const FAttachmentTransformRules& /*Rules*/)	= &NCsStaticMeshActor::NPayload::NChange::HasAttach;
+	ChangeType(*FromTransformAttachmentRule)(const FAttachmentTransformRules& /*Rules*/)	= &NCsStaticMeshActor::NPayload::NChange::FromTransformAttachmentRule;								 
 
 	if (Parent)
 	{
@@ -524,7 +501,7 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 			AttachToBone == Bone)
 		{
 			// Check Attachment Rule
-			IsPreserved   = ChangeHelper::HasAttach(PreserveChangesToDefaultMask & ChangesToDefaultMask, Rule);
+			IsPreserved   = HasAttach(PreserveChangesToDefaultMask & ChangesToDefaultMask, Rule);
 			PerformAttach = !IsPreserved;
 
 			if (IsPreserved)
@@ -536,15 +513,13 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 		{
 			AttachToBone = Bone;
 
-			typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
+			check(CsSkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
 
 			GetMeshComponent()->AttachToComponent(Parent, Rule, Bone);
 			ChangeCounter::Get().AddChanged();	
 		}
 
-		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeHelper::FromTransformAttachmentRule(Rule));
+		CS_SET_BITFLAG(ChangesToDefaultMask, FromTransformAttachmentRule(Rule));
 
 		bool PerformTransform = true;
 		IsPreserved			  = false;
@@ -568,7 +543,7 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 		}
 		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 
-		ArrayLibrary::ResetAndAppend<FName>(GetMeshComponent()->ComponentTags, StaticMeshPayload->GetTags());
+		CsArrayLibrary::ResetAndAppend<FName>(GetMeshComponent()->ComponentTags, StaticMeshPayload->GetTags());
 	}
 	// NO Parent, set the World Transform of the StaticMeshComponent
 	else
@@ -595,26 +570,17 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 
 		AttachToBone = NAME_None;
 
-		ArrayLibrary::ResetAndAppend<FName>(Tags, StaticMeshPayload->GetTags());
+		CsArrayLibrary::ResetAndAppend<FName>(Tags, StaticMeshPayload->GetTags());
 	}
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
-
-	#undef ChangeHelper
 }
 
-void ACsStaticMeshActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, StaticMeshPayloadType* StaticMeshPayload)
+void ACsStaticMeshActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, PayloadType* StaticMeshPayload)
 {
 }
-
-#undef PooledPayloadType
-#undef StaticMeshPayloadType
 
 void ACsStaticMeshActorPooledImpl::Handle_ClearStaticMesh()
 {
-	typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
-	typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
-	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
 	// If StaticMesh is SET and meant to be PRESERVED, Do Nothing
 	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::StaticMesh) &&
 		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::StaticMesh))
@@ -626,7 +592,7 @@ void ACsStaticMeshActorPooledImpl::Handle_ClearStaticMesh()
 	else
 	{
 		GetMeshComponent()->SetStaticMesh(nullptr);
-		MIDLibrary::Destroy(MIDs);
+		CsMIDLibrary::Destroy(MIDs);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::StaticMesh);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Materials);
 		ChangeCounter::Get().AddCleared();
@@ -636,16 +602,15 @@ void ACsStaticMeshActorPooledImpl::Handle_ClearStaticMesh()
 
 void ACsStaticMeshActorPooledImpl::Handle_ClearAttachAndTransform()
 {
-	typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
-	typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
-	#define ChangeHelper NCsStaticMeshActor::NPayload::NChange
-	
+	bool(*HasAttach)(const uint32& /*Mask*/, const FAttachmentTransformRules& /*Rules*/) = &NCsStaticMeshActor::NPayload::NChange::HasAttach;
+	uint32(*GetAttachAsMask)(const uint32& /*Mask*/)									 = &NCsStaticMeshActor::NPayload::NChange::GetAttachAsMask;
+
 	const uint32 Mask = PreserveChangesToDefaultMask & ChangesToDefaultMask;
 
 	// If Attached, check if the Attach should be PERSERVED
 	if (GetMeshComponent()->GetAttachParent())
 	{
-		if (ChangeHelper::HasAttach(Mask))
+		if (HasAttach(Mask))
 		{
 			// Do Nothing
 			ChangeCounter::Get().AddPreserved();
@@ -655,7 +620,7 @@ void ACsStaticMeshActorPooledImpl::Handle_ClearAttachAndTransform()
 		{
 			DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 			SetActorRelativeTransform(FTransform3d::Identity);
-			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));
+			CS_CLEAR_BITFLAG(ChangesToDefaultMask, GetAttachAsMask(Mask));
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 			AttachToBone = NAME_None;
 			ChangeCounter::Get().AddCleared();
@@ -675,16 +640,12 @@ void ACsStaticMeshActorPooledImpl::Handle_ClearAttachAndTransform()
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 		ChangeCounter::Get().AddCleared();
 	}
-
-	#undef ChangeHelper
 }
 
 void ACsStaticMeshActorPooledImpl::LogChangeCounter()
 {
 	if (CS_CVAR_LOG_IS_SHOWING(LogStaticMeshActorPooledChangeCounter))
 	{
-		typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
-
 		UE_LOG(LogCsStaticMesh, Warning, TEXT("ACsStaticMeshActorPooledImpl::LogChangeCounter: %s."), *(ChangeCounter::Get().ToString()));
 	}
 }

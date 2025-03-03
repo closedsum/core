@@ -99,10 +99,10 @@ public:
 	{
 	}
 
-#define AttachmentType NCsStaticMesh::NAttachment::FAttachment
+	using AttachmentType = NCsStaticMesh::NAttachment::FAttachment;
+
 	void CopyToAttachment(AttachmentType* Attachment);
 	void CopyToAttachmentAsValue(AttachmentType* Attachment) const;
-#undef AttachmentType
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsCore::NLibrary::FLog::Warning) const;

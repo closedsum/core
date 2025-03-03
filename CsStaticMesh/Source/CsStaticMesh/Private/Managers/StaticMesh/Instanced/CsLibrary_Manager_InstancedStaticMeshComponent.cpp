@@ -14,6 +14,12 @@
 #include "Singleton/CsGetManagerSingleton.h"
 #include "Managers/StaticMesh/Instanced/CsManager_InstancedStaticMeshComponent.h"
 
+CS_START_CACHED_FUNCTION_NAME_NESTED_4(NCsStaticMesh, NInstanced, NComponent, NManager, Library)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsStaticMesh::NInstanced::NComponent::NManager::FLibrary, GetSafeContextRoot)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsStaticMesh::NInstanced::NComponent::NManager::FLibrary, SafeSpawn)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsStaticMesh::NInstanced::NComponent::NManager::FLibrary, GetSafe)
+CS_END_CACHED_FUNCTION_NAME_NESTED_4
+
 namespace NCsStaticMesh
 {
 	namespace NInstanced
@@ -22,24 +28,11 @@ namespace NCsStaticMesh
 		{
 			namespace NManager
 			{
-				namespace NLibrary
-				{
-					namespace NCached
-					{
-						namespace Str
-						{
-							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMesh::NInstanced::NComponent::NManager::FLibrary, GetSafeContextRoot);
-							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMesh::NInstanced::NComponent::NManager::FLibrary, SafeSpawn);
-							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMesh::NInstanced::NComponent::NManager::FLibrary, GetSafe);
-						}
-					}
-				}
+				using LogLevelType = NCsStaticMesh::FLog;
 
-				#define USING_NS_CACHED using namespace NCsStaticMesh::NInstanced::NComponent::NManager::NLibrary::NCached;
-				#define SET_CONTEXT(__FunctionName) using namespace NCsStaticMesh::NInstanced::NComponent::NManager::NLibrary::NCached; \
-					const FString& Context = Str::__FunctionName
-				#define LogLevel void(*Log)(const FString&) /*=&NCsStaticMesh::FLog::Warning*/
-				#define GameStateLibrary NCsGameState::FLibrary
+				CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogLevelType::Warning);
+			
+				using ResourceType = NCsStaticMesh::NInstanced::NComponent::FResource;
 
 				// ContextRoot
 				#pragma region
@@ -52,10 +45,10 @@ namespace NCsStaticMesh
 
 						return GetManagerSingleton->_getUObject();
 					}
-					return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
+					return CsGameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 				}
 
-				UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel)
+				UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 				{
 					if (CsWorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 					{
@@ -65,12 +58,12 @@ namespace NCsStaticMesh
 						}
 						return nullptr;
 					}
-					return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
+					return CsGameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);
 				}
 
 				UObject* FLibrary::GetSafeContextRoot(const UObject* WorldContext)
 				{
-					SET_CONTEXT(GetSafeContextRoot);
+					CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafeContextRoot);
 
 					return GetSafeContextRoot(Context, WorldContext, nullptr);
 				}
@@ -93,7 +86,7 @@ namespace NCsStaticMesh
 				#endif // #if UE_BUILD_SHIPPING
 				}
 
-				ACsManager_InstancedStaticMeshComponent* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, LogLevel)
+				ACsManager_InstancedStaticMeshComponent* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 				{
 					UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -111,24 +104,17 @@ namespace NCsStaticMesh
 
 				ACsManager_InstancedStaticMeshComponent* FLibrary::GetSafe(const UObject* WorldContext)
 				{
-					SET_CONTEXT(GetSafe);
+					CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafe);
 
 					return GetSafe(Context, WorldContext, nullptr);
 				}
 
 				#pragma endregion Get
 
-				#define ResourceType NCsStaticMesh::NInstanced::NComponent::FResource
 				const ResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext)
 				{
 					return GetChecked(Context, WorldContext)->Allocate();
 				}
-				#undef ResourceType
-
-				#undef USING_NS_CACHED
-				#undef SET_CONTEXT
-				#undef LogLevel
-				#undef GameStateLibrary
 			}
 		}
 	}

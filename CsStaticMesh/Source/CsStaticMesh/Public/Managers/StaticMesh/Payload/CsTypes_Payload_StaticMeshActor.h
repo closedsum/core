@@ -12,8 +12,8 @@
 // FCsPayload_StaticMesh
 #pragma region
 
-// NCsStaticMeshActor::NPayload::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NPayload, FImpl)
+// PayloadImplType (NCsStaticMeshActor::NPayload::NImpl::FImpl)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsStaticMeshActor, NPayload, NImpl, FImpl)
 
 /**
 */
@@ -52,7 +52,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh|Payload", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsStaticMeshPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
-// StaticMeshPayloadType (NCsStaticMeshActor::Payload::IPayload)
+// PayloadType (NCsStaticMeshActor::Payload::IPayload)
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Static Mesh|Payload")
 	FCsStaticMeshActorPooledInfo Mesh;
@@ -68,9 +68,9 @@ public:
 	{
 	}
 
-#define PayloadType NCsStaticMeshActor::NPayload::FImpl
-	void CopyToPayloadAsValueChecked(const FString& Context, PayloadType* Payload) const;
-#undef PayloadType
+	using PayloadImplType = NCsStaticMeshActor::NPayload::NImpl::FImpl;
+
+	void CopyToPayloadAsValueChecked(const FString& Context, PayloadImplType* Payload) const;
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsStaticMesh::FLog::Warning) const;

@@ -9,40 +9,33 @@
 // FCsProjectileWeapon_Fire_Sound_StartParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NSound::NStart::FParams
-
-void FCsProjectileWeapon_Fire_Sound_StartParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Fire_Sound_StartParams
 {
-	Params->SetSound(&Sound);
+	using AttachType = NCsWeapon::NProjectile::NFire::NSound::EAttach;
 
-	typedef NCsWeapon::NProjectile::NFire::NSound::EAttach AttachType;
-	
-	Params->SetAttachType((AttachType*)(&Attach));
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, Sound);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Attach, AttachType);
+	}
+
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Sound);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Attach, AttachType);
+	}
 }
-
-void FCsProjectileWeapon_Fire_Sound_StartParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->SetSound(Sound);
-
-	typedef NCsWeapon::NProjectile::NFire::NSound::EAttach AttachType;
-
-	Params->SetAttachType((AttachType)(Attach));
-}
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Fire_Sound_StartParams::IsValidChecked(const FString& Context) const
 {
 	CS_IS_VALID_CHECKED(Sound);
-	
 	CS_IS_ENUM_VALID_CHECKED(EMCsProjectileWeaponFireSoundAttach, Attach)
 	return true;
 }
 
 bool FCsProjectileWeapon_Fire_Sound_StartParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	CS_IS_VALID(Sound)
-	
+	CS_IS_VALID(Sound)	
 	CS_IS_ENUM_VALID(EMCsProjectileWeaponFireSoundAttach, ECsProjectileWeaponFireSoundAttach, Attach)
 	return true;
 }
@@ -57,24 +50,19 @@ namespace NCsWeapon
 			{
 				namespace NStart
 				{
+					using AttachMapType = NCsWeapon::NProjectile::NFire::NSound::EMAttach;
+
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
 						CS_IS_VALID_CHECKED(GetSound());
-
-						typedef NCsWeapon::NProjectile::NFire::NSound::EMAttach _AttachMapType;
-
-						CS_IS_ENUM_VALID_CHECKED(_AttachMapType, GetAttachType())
+						CS_IS_ENUM_VALID_CHECKED(AttachMapType, GetAttach())
 						return true;
 					}
 
 					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
 						CS_IS_VALID(GetSound())
-
-						typedef NCsWeapon::NProjectile::NFire::NSound::EMAttach _AttachMapType;
-						typedef NCsWeapon::NProjectile::NFire::NSound::EAttach _AttachType;
-
-						CS_IS_ENUM_VALID(_AttachMapType, _AttachType, GetAttachType())
+						CS_IS_ENUM_VALID(AttachMapType, AttachType, GetAttach())
 						return true;
 					}
 				}
@@ -88,34 +76,28 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Fire_Sound_ShotParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NSound::NShot::FParams
-
-void FCsProjectileWeapon_Fire_Sound_ShotParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Fire_Sound_ShotParams
 {
-	Params->SetbSkipFirst(&bSkipFirst);
-	Params->SetSound(&Sound);
+	using AttachType = NCsWeapon::NProjectile::NFire::NSound::EAttach;
 
-	typedef NCsWeapon::NProjectile::NFire::NSound::EAttach AttachType;
-	
-	Params->SetAttachType((AttachType*)(&Attach));
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, bSkipFirst);
+		CS_THIS_COPY_TO_PROXY(Params, Sound);
+		CS_THIS_COPY_TYPE_TO_PROXY(Params, Attach, AttachType);
+	}
+
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bSkipFirst);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, Sound);
+		CS_THIS_COPY_TYPE_TO_PROXY_AS_VALUE(Params, Attach, AttachType);
+	}
 }
-
-void FCsProjectileWeapon_Fire_Sound_ShotParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->SetbSkipFirst(bSkipFirst);
-	Params->SetSound(Sound);
-
-	typedef NCsWeapon::NProjectile::NFire::NSound::EAttach AttachType;
-
-	Params->SetAttachType((AttachType)(Attach));
-}
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Fire_Sound_ShotParams::IsValidChecked(const FString& Context) const
 {
 	CS_IS_VALID_CHECKED(Sound);
-	
 	CS_IS_ENUM_VALID_CHECKED(EMCsProjectileWeaponFireSoundAttach, Attach)
 	return true;
 }
@@ -123,7 +105,6 @@ bool FCsProjectileWeapon_Fire_Sound_ShotParams::IsValidChecked(const FString& Co
 bool FCsProjectileWeapon_Fire_Sound_ShotParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	CS_IS_VALID(Sound)
-	
 	CS_IS_ENUM_VALID(EMCsProjectileWeaponFireSoundAttach, ECsProjectileWeaponFireSoundAttach, Attach)
 	return true;
 }
@@ -138,24 +119,19 @@ namespace NCsWeapon
 			{
 				namespace NShot
 				{
+					using AttachMapType = NCsWeapon::NProjectile::NFire::NSound::EMAttach;
+
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
 						CS_IS_VALID_CHECKED(GetSound());
-
-						typedef NCsWeapon::NProjectile::NFire::NSound::EMAttach _AttachMapType;
-
-						CS_IS_ENUM_VALID_CHECKED(_AttachMapType, GetAttachType())
+						CS_IS_ENUM_VALID_CHECKED(AttachMapType, GetAttach())
 						return true;
 					}
 
 					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
 						CS_IS_VALID(GetSound())
-
-						typedef NCsWeapon::NProjectile::NFire::NSound::EMAttach _AttachMapType;
-						typedef NCsWeapon::NProjectile::NFire::NSound::EAttach _AttachType;
-
-						CS_IS_ENUM_VALID(_AttachMapType, _AttachType, GetAttachType())
+						CS_IS_ENUM_VALID(AttachMapType, AttachType, GetAttach())
 						return true;
 					}
 				}
@@ -169,25 +145,24 @@ namespace NCsWeapon
 // FCsProjectileWeapon_Fire_SoundParams
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NFire::NSound::FParams
-
-void FCsProjectileWeapon_Fire_SoundParams::CopyToParams(ParamsType* Params)
+namespace NCsProjectileWeapon_Fire_SoundParams
 {
-	Params->SetbStartParams(&bStartParams);
-	StartParams.CopyToParams(Params->GetStartParamsPtr());
-	Params->SetbShotParams(&bShotParams);
-	ShotParams.CopyToParams(Params->GetShotParamsPtr());
-}
+	void FImpl::CopyToParams(ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY(Params, bStartParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, StartParams);
+		CS_THIS_COPY_TO_PROXY(Params, bShotParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR(Params, ShotParams);
+	}
 
-void FCsProjectileWeapon_Fire_SoundParams::CopyToParamsAsValue(ParamsType* Params) const
-{
-	Params->SetbStartParams(bStartParams);
-	StartParams.CopyToParamsAsValue(Params->GetStartParamsPtr());
-	Params->SetbShotParams(bShotParams);
-	ShotParams.CopyToParamsAsValue(Params->GetShotParamsPtr());
+	void FImpl::CopyToParamsAsValue(const ThisType* This, ParamsType* Params)
+	{
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bStartParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, StartParams);
+		CS_THIS_COPY_TO_PROXY_AS_VALUE(Params, bShotParams);
+		CS_THIS_COPY_PARAMS_TO_PROXY_PTR_AS_VALUE(Params, ShotParams);
+	}
 }
-
-#undef ParamsType
 
 bool FCsProjectileWeapon_Fire_SoundParams::IsValidChecked(const FString& Context) const
 {

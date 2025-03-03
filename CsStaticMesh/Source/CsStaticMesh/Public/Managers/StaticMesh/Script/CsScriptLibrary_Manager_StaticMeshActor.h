@@ -4,14 +4,24 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
+#include "CsMacro_Log.h"
 #include "Managers/StaticMesh/Payload/CsTypes_Payload_StaticMeshActor.h"
 
 #include "CsScriptLibrary_Manager_StaticMeshActor.generated.h"
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_Manager_StaticMeshActor)
 
 UCLASS()
 class CSSTATICMESH_API UCsScriptLibrary_Manager_StaticMeshActor : public UObject
 { 
 	GENERATED_UCLASS_BODY() 
+
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_Manager_StaticMeshActor);
+
+	CS_DECLARE_STATIC_LOG_WARNING
 
 // Pool
 #pragma region

@@ -13,38 +13,29 @@
 
 namespace NCsSceneComponent
 {
-	namespace NLibrary
+	using LogLevelType = NCsCore::NLibrary::FLog;
+
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogLevelType::Warning);
+
+	FVector FLibrary::GetScaleChecked(const FString& Context, const USceneComponent* Component)
 	{
-		namespace NCached
-		{
-			namespace Str
-			{
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, GetScaleChecked);
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, SetScaleChecked);
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, SetRelativeScaleChecked);
-				// Orientation
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, GetRotationChecked);
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, SetRotationChecked);
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, GetRelativeRotationChecked);
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, GetQuatChecked);
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, GetTransformChecked);
-				// Movement
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, GetLocationChecked);
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, SetLocationChecked);
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, SetRelativeLocationChecked);
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, GetSocketLocationChecked);
-				CSCORELIBRARY_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsSceneComponent::FLibrary, GetUpChecked);
-			}
-		}
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		return Component->GetComponentScale();
 	}
 
-	#define LogLevel void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/
-
-	FVector3f FLibrary::GetScaleChecked(const FString& Context, const USceneComponent* Component)
+	FVector3f FLibrary::GetScale3fChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
 		return CsMathLibrary::Convert(Component->GetComponentScale());
+	}
+
+	void FLibrary::SetScaleChecked(const FString& Context, USceneComponent* Component, const FVector& Scale)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		Component->SetWorldScale3D(Scale);
 	}
 
 	void FLibrary::SetScaleChecked(const FString& Context, USceneComponent* Component, const FVector3f& Scale)
@@ -54,22 +45,42 @@ namespace NCsSceneComponent
 		Component->SetWorldScale3D(CsMathLibrary::Convert(Scale));
 	}
 
+	void FLibrary::SetRelativeScaleChecked(const FString& Context, USceneComponent* Component, const FVector& Scale)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		Component->SetRelativeScale3D(Scale);
+	}
+
 	void FLibrary::SetRelativeScaleChecked(const FString& Context, USceneComponent* Component, const FVector3f& Scale)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
 		Component->SetRelativeScale3D(CsMathLibrary::Convert(Scale));
-
 	}
 
 	// Orientation
 	#pragma region
 
-	FRotator3f FLibrary::GetRotationChecked(const FString& Context, const USceneComponent* Component)
+	FRotator FLibrary::GetRotationChecked(const FString& Context, const USceneComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		return Component->GetComponentRotation();
+	}
+
+	FRotator3f FLibrary::GetRotation3fChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
 		return CsMathLibrary::Convert(Component->GetComponentRotation());
+	}
+	
+	void FLibrary::SetRotationChecked(const FString& Context, USceneComponent* Component, const FRotator& Rotation)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		Component->SetWorldRotation(Rotation);
 	}
 
 	void FLibrary::SetRotationChecked(const FString& Context, USceneComponent* Component, const FRotator3f& Rotation)
@@ -79,21 +90,43 @@ namespace NCsSceneComponent
 		Component->SetWorldRotation(CsMathLibrary::Convert(Rotation));
 	}
 
-	FRotator3f FLibrary::GetRelativeRotationChecked(const FString& Context, const USceneComponent* Component)
+	FRotator FLibrary::GetRelativeRotationChecked(const FString& Context, const USceneComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		return Component->GetRelativeRotation();
+	}
+
+
+	FRotator3f FLibrary::GetRelativeRotation3fChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
 		return CsMathLibrary::Convert(Component->GetRelativeRotation());
 	}
 
-	FQuat4f FLibrary::GetQuatChecked(const FString& Context, const USceneComponent* Component)
+	FQuat FLibrary::GetQuatChecked(const FString& Context, const USceneComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		return Component->GetComponentQuat();
+	}
+
+	FQuat4f FLibrary::GetQuat4fChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
 		return CsMathLibrary::Convert(Component->GetComponentQuat());
 	}
 
-	FTransform3f FLibrary::GetTransformChecked(const FString& Context, const USceneComponent* Component)
+	FTransform FLibrary::GetTransformChecked(const FString& Context, const USceneComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		return Component->GetComponentTransform();
+	}
+
+	FTransform3f FLibrary::GetTransform3fChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
@@ -105,11 +138,25 @@ namespace NCsSceneComponent
 	// Movement
 	#pragma region
 	
-	FVector3f FLibrary::GetLocationChecked(const FString& Context, const USceneComponent* Component)
+	FVector FLibrary::GetLocationChecked(const FString& Context, const USceneComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		return Component->GetComponentLocation();
+	}
+
+	FVector3f FLibrary::GetLocation3fChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
 		return CsMathLibrary::Convert(Component->GetComponentLocation());
+	}
+
+	void FLibrary::SetLocationChecked(const FString& Context, USceneComponent* Component, const FVector& Location)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		Component->SetWorldLocation(Location);
 	}
 
 	void FLibrary::SetLocationChecked(const FString& Context, USceneComponent* Component, const FVector3f& Location)
@@ -119,6 +166,13 @@ namespace NCsSceneComponent
 		Component->SetWorldLocation(CsMathLibrary::Convert(Location));
 	}
 
+	void FLibrary::SetRelativeLocationChecked(const FString& Context, USceneComponent* Component, const FVector& Location)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		Component->SetRelativeLocation(Location);
+	}
+
 	void FLibrary::SetRelativeLocationChecked(const FString& Context, USceneComponent* Component, const FVector3f& Location)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
@@ -126,7 +180,15 @@ namespace NCsSceneComponent
 		Component->SetRelativeLocation(CsMathLibrary::Convert(Location));
 	}
 
-	FVector3f FLibrary::GetSocketLocationChecked(const FString& Context, const USceneComponent* Component, const FName& SocketName)
+	FVector FLibrary::GetSocketLocationChecked(const FString& Context, const USceneComponent* Component, const FName& SocketName)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+		CS_IS_NAME_NONE_CHECKED(SocketName)
+
+		return Component->GetSocketLocation(SocketName);
+	}
+
+	FVector3f FLibrary::GetSocketLocation3fChecked(const FString& Context, const USceneComponent* Component, const FName& SocketName)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 		CS_IS_NAME_NONE_CHECKED(SocketName)
@@ -134,7 +196,14 @@ namespace NCsSceneComponent
 		return CsMathLibrary::Convert(Component->GetSocketLocation(SocketName));
 	}
 
-	FVector3f FLibrary::GetUpChecked(const FString& Context, const USceneComponent* Component)
+	FVector FLibrary::GetUpChecked(const FString& Context, const USceneComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+
+		return Component->GetUpVector();
+	}
+
+	FVector3f FLibrary::GetUp3fChecked(const FString& Context, const USceneComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
 
@@ -155,7 +224,7 @@ namespace NCsSceneComponent
 		return true;
 	}
 
-	bool FLibrary::SafeDoesSocketExist(const FString& Context, USceneComponent* Component, const FName& Socket, LogLevel)
+	bool FLibrary::SafeDoesSocketExist(const FString& Context, USceneComponent* Component, const FName& Socket, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Component)
 		CS_IS_NAME_NONE(Socket)
@@ -186,7 +255,7 @@ namespace NCsSceneComponent
 		return Success;
 	}
 
-	bool FLibrary::SafeAttach_KeepRelativeTransform(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket /*=NAME_None*/, LogLevel)
+	bool FLibrary::SafeAttach_KeepRelativeTransform(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket /*=NAME_None*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Child)
 		CS_IS_PENDING_KILL(Parent)
@@ -220,7 +289,7 @@ namespace NCsSceneComponent
 		return Success;
 	}
 
-	bool FLibrary::SafeAttach_KeepWorldTransform(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket /*=NAME_None*/, LogLevel)
+	bool FLibrary::SafeAttach_KeepWorldTransform(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket /*=NAME_None*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Child)
 		CS_IS_PENDING_KILL(Parent)
@@ -254,7 +323,7 @@ namespace NCsSceneComponent
 		return Success;
 	}
 
-	bool FLibrary::SafeAttach_SnapToTargetNotIncludingScale(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket /*=NAME_None*/, LogLevel)
+	bool FLibrary::SafeAttach_SnapToTargetNotIncludingScale(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket /*=NAME_None*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Child)
 		CS_IS_PENDING_KILL(Parent)
@@ -288,7 +357,7 @@ namespace NCsSceneComponent
 		return Success;
 	}
 
-	bool FLibrary::SafeAttach_SnapToTargetIncludingScale(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket /*=NAME_None*/, LogLevel)
+	bool FLibrary::SafeAttach_SnapToTargetIncludingScale(const FString& Context, USceneComponent* Child, USceneComponent* Parent, const FName& Socket /*=NAME_None*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Child)
 		CS_IS_PENDING_KILL(Parent)
@@ -318,7 +387,7 @@ namespace NCsSceneComponent
 		Component->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
 	}
 
-	bool FLibrary::SafeDetach_KeepRelativeTransform(const FString& Context, USceneComponent* Component, LogLevel)
+	bool FLibrary::SafeDetach_KeepRelativeTransform(const FString& Context, USceneComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Component)
 
@@ -333,7 +402,7 @@ namespace NCsSceneComponent
 		Component->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	}
 
-	bool FLibrary::SafeDetach_KeepWorldTransform(const FString& Context, USceneComponent* Component, LogLevel)
+	bool FLibrary::SafeDetach_KeepWorldTransform(const FString& Context, USceneComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Component)
 
@@ -344,6 +413,4 @@ namespace NCsSceneComponent
 	#pragma endregion Detach
 
 	#pragma endregion Attach / Detach
-
-	#undef LogLevel
 }

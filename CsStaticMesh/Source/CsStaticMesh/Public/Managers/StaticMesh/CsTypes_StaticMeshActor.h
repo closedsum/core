@@ -219,7 +219,7 @@ struct CSSTATICMESH_API FCsStaticMeshActorPooledInfo
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
-	FTransform3f Transform;
+	FTransform Transform;
 
 	/** Controls whether the StaticMeshComponent should cast a shadow or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
@@ -253,7 +253,7 @@ public:
 		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform3f::Identity),
+		Transform(FTransform::Identity),
 		bCastShadow(false),
 		bReceivesDecals(false),
 		bUseAsOccluder(false),
@@ -271,7 +271,7 @@ public:
 	FORCEINLINE FCsAttachmentTransformRules* GetAttachmentTransformRulesPtr() { return &AttachmentTransformRules; }
 	FORCEINLINE FName* GetBonePtr() { return &Bone; }
 	FORCEINLINE int32* GetTransformRulesPtr() { return &TransformRules; }
-	FORCEINLINE FTransform3f* GetTransformPtr() { return &Transform; }
+	FORCEINLINE FTransform* GetTransformPtr() { return &Transform; }
 
 	using PayloadImplType = NCsStaticMeshActor::NPayload::NImpl::FImpl;
 

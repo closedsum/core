@@ -92,7 +92,7 @@ namespace NCsDamage
 			* 
 			* return
 			*/
-			virtual const FVector3f& GetDamageDirection() const = 0;
+			virtual const FVector& GetDamageDirection() const = 0;
 
 			/**
 			*

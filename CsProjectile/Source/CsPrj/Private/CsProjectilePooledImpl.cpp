@@ -317,7 +317,6 @@ using PayloadType = NCsProjectile::NPayload::IPayload;
 using HitResultType = NCsProjectile::NCollision::NHit::FResult;
 using CollisionDataType = NCsProjectile::NData::NCollision::ICollision;
 using DamageDataType = NCsDamage::NData::IData;
-using DamageValueLibrary = NCsDamage::NValue::FLibrary;
 using ValueType = NCsDamage::NValue::IValue;
 using RangeType = NCsDamage::NRange::IRange;
 
@@ -1295,7 +1294,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				ProcessPayload.Instigator = GetCache()->GetInstigator();
 				ProcessPayload.Causer	  = this;
 				// TODO: Maybe store this value each tick / update
-				ProcessPayload.Direction  = CsMathLibrary::Convert(MovementComponent->Velocity.GetSafeNormal());
+				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
 				ProcessPayload.HitResult  = HitResult;
 
 				CsDamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
@@ -1344,7 +1343,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				ProcessPayload.Instigator = GetCache()->GetInstigator();
 				ProcessPayload.Causer	  = this;
 				// TODO: Maybe store this value each tick / update
-				ProcessPayload.Direction  = CsMathLibrary::Convert(MovementComponent->Velocity.GetSafeNormal());
+				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
 				ProcessPayload.HitResult  = HitResult;
 
 				CsDamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
@@ -1357,9 +1356,9 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 			}
 		}
 	}
-	// CsGetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes)
+	// CsGetDamageDataTypesDataType (NCsData::IGetDamageDataTypes)
 	{
-		if (CsGetDamageDataTypeDataTypes* GetDamageDataTypes = CsPrjDataLibrary::GetSafeInterfaceChecked<CsGetDamageDataTypeDataTypes>(Context, Data))
+		if (CsGetDamageDataTypesDataType* GetDamageDataTypes = CsPrjDataLibrary::GetSafeInterfaceChecked<CsGetDamageDataTypesDataType>(Context, Data))
 		{
 			static TArray<DamageDataType*> DamageDatas;
 			CsDamageManagerLibrary::GetDatasChecked(Context, GetWorldContext(), GetDamageDataTypes, DamageDatas);
@@ -1391,7 +1390,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				ProcessPayload.Instigator = GetCache()->GetInstigator();
 				ProcessPayload.Causer	  = this;
 				// TODO: Maybe store this value each tick / update
-				ProcessPayload.Direction  = CsMathLibrary::Convert(MovementComponent->Velocity.GetSafeNormal());
+				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
 				ProcessPayload.HitResult  = HitResult;
 
 				CsDamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
@@ -2074,10 +2073,10 @@ void ACsProjectilePooledImpl::FDamageImpl::SetValue(DamageDataType* InData)
 	const FString& Context = Str::SetValue;
 
 	const ValueType* Value = InData->GetValue();
-	Type				   = DamageValueLibrary::GetTypeChecked(Context, Value);
+	Type				   = CsDamageValueLibrary::GetTypeChecked(Context, Value);
 
 	ResetValue();
-	DamageValueLibrary::CopyChecked(Context, Value, GetValue());
+	CsDamageValueLibrary::CopyChecked(Context, Value, GetValue());
 }
 
 ValueType* ACsProjectilePooledImpl::FDamageImpl::GetValue()
@@ -2142,7 +2141,7 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 	}
 	// GetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes)
 	{
-		if (const CsGetDamageDataTypeDataTypes* GetDamageDataTypes = CsPrjDataLibrary::GetSafeInterfaceChecked<CsGetDamageDataTypeDataTypes>(Context, Data))
+		if (const CsGetDamageDataTypesDataType* GetDamageDataTypes = CsPrjDataLibrary::GetSafeInterfaceChecked<CsGetDamageDataTypesDataType>(Context, Data))
 		{
 			static TArray<DamageDataType*> DamageDatas;
 

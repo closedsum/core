@@ -43,7 +43,7 @@ namespace NCsDamage
 					CS_CTOR_SET_MEMBER_PROXY(Value);
 				}
 
-				using ValueLibrary = NCsDamage::NValue::FLibrary;
+				using ValueLibrary = NCsDamage::NValue::NLibrary::FLibrary;
 
 				// CopyType (NCsDamage::NValue::NCopy::ICopy)
 				#pragma region

@@ -34,11 +34,15 @@ class CSFX_API ICsGetNiagaraTool
 {
 	GENERATED_IINTERFACE_BODY()
 
+private:
+
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using NiagaraToolType = NCsFX::NNiagara::NTool::FImpl;
+	};
+
 public:
 
-#define NiagaraToolType NCsFX::NNiagara::NTool::FImpl
-
-	virtual NiagaraToolType* GetNiagaraTool() = 0;
-
-#undef NiagaraToolType
+	virtual _::NiagaraToolType* GetNiagaraTool() = 0;
 };

@@ -32,7 +32,6 @@ namespace NCsDamage
 		#define USING_NS_CACHED using namespace NCsDamage::NValue::NAllocated::NCached;
 		#define SET_CONTEXT(__FunctionName) using namespace NCsDamage::NValue::NAllocated::NCached; \
 			const FString& Context = Str::__FunctionName
-		#define DamageValueLibrary NCsDamage::NValue::FLibrary
 
 		FAllocated::~FAllocated()
 		{
@@ -49,7 +48,7 @@ namespace NCsDamage
 			Root	  = InRoot;
 			Container = CsDamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), From);
 			Value	  = Container->Get();
-			Type	  = DamageValueLibrary::GetTypeChecked(Context, Value);
+			Type	  = CsDamageValueLibrary::GetTypeChecked(Context, Value);
 		}
 
 		#define DataType NCsDamage::NData::IData
@@ -63,7 +62,7 @@ namespace NCsDamage
 			Root	  = InRoot;
 			Container = CsDamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), Data->GetValue());
 			Value	  = Container->Get();
-			Type	  = DamageValueLibrary::GetTypeChecked(Context, Value);
+			Type	  = CsDamageValueLibrary::GetTypeChecked(Context, Value);
 		}
 
 		void FAllocated::CopyFrom(const FAllocated* From)
@@ -79,7 +78,7 @@ namespace NCsDamage
 				Root	  = From->Root;
 				Container = CsDamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), From->GetContainer());
 				Value	  = Container->Get();
-				Type	  = DamageValueLibrary::GetTypeChecked(Context, Value);
+				Type	  = CsDamageValueLibrary::GetTypeChecked(Context, Value);
 			}
 		}
 
@@ -102,6 +101,5 @@ namespace NCsDamage
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT
-		#undef DamageValueLibrary
 	}
 }

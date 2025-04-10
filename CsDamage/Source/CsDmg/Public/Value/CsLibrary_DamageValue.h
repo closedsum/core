@@ -13,30 +13,33 @@ namespace NCsDamage
 {
 	namespace NValue
 	{
-	#define ValueType NCsDamage::NValue::IValue
-
-		/**
-		* Library for interface: ValueType (NCsDamage::NValue::IValue)
-		*/
-		struct CSDMG_API FLibrary final : public NCsInterfaceMap::TLibrary<ValueType>
+		namespace NLibrary
 		{
-		public:
-
-			static const FECsDamageValue& GetTypeChecked(const FString& Context, const ValueType* Value);
+			using ValueType = NCsDamage::NValue::IValue;
 
 			/**
-			* Copy the values from From to To with checks.
-			* Currently supports To types of:
-			*  NCsDamage::NValue::NPoint::Impl (NCsDamage::NValue::NPoint::IPoint)
-			*  NCsDamage::NValue::NRange::Impl (NCsDamage::NValue::NRange::IRange)
-			*
-			* @param Context	The calling context.
-			* @param From		What to copy.
-			* @param To			What to copy to.
+			* Library for interface: ValueType (NCsDamage::NValue::IValue)
 			*/
-			static bool CopyChecked(const FString& Context, const ValueType* From, ValueType* To);
-		};
+			struct CSDMG_API FLibrary final : public NCsInterfaceMap::TLibrary<ValueType>
+			{
+			public:
 
-	#undef ValueType
+				static const FECsDamageValue& GetTypeChecked(const FString& Context, const ValueType* Value);
+
+				/**
+				* Copy the values from From to To with checks.
+				* Currently supports To types of:
+				*  NCsDamage::NValue::NPoint::Impl (NCsDamage::NValue::NPoint::IPoint)
+				*  NCsDamage::NValue::NRange::Impl (NCsDamage::NValue::NRange::IRange)
+				*
+				* @param Context	The calling context.
+				* @param From		What to copy.
+				* @param To			What to copy to.
+				*/
+				static bool CopyChecked(const FString& Context, const ValueType* From, ValueType* To);
+			};
+		}
 	}
 }
+
+using CsDamageValueLibrary = NCsDamage::NValue::NLibrary::FLibrary;

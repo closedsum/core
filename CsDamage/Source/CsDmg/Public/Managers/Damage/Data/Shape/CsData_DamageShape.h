@@ -85,6 +85,9 @@ namespace NCsDamage
 	}
 }
 
+using CsDamageShapeDataType = NCsDamage::NData::NShape::IShape;
+using CsDmgShapeDataType = NCsDamage::NData::NShape::IShape;
+
 UINTERFACE(BlueprintType)
 class CSDMG_API UCsData_DamageShape : public UCsGetInterfaceMap
 {

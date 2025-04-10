@@ -61,7 +61,7 @@ namespace NCsDamage
 			}
 
 			using ShapeDataType = NCsDamage::NData::NShape::IShape;
-			using ValueLibrary = NCsDamage::NValue::FLibrary;
+			using ValueLibrary = NCsDamage::NValue::NLibrary::FLibrary;
 			using PointType = NCsDamage::NValue::NPoint::IPoint;
 
 			// CopyType (NCsDamage::NEvent::NCopy::ICopy)
@@ -134,7 +134,7 @@ namespace NCsDamage
 				Data = nullptr;
 				Instigator = nullptr;
 				Causer = nullptr;
-				DamageDirection = FVector3f::ZeroVector;
+				DamageDirection = FVector::ZeroVector;
 				HitType = EMCsHitType::Get().GetMAX();
 				Origin.Reset(0.0f, false);
 				HitResult.Reset(0.0f, false);

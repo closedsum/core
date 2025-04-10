@@ -102,7 +102,7 @@ bool FCsStaticMeshAttachment::IsValid(const FString& Context, void(*Log)(const F
 bool FCsStaticMeshAttachment::IsTransformValidChecked(const FString& Context) const
 {
 	// Check Transform is Valid
-	if (!Transform.Equals(FTransform3f::Identity))
+	if (!Transform.Equals(FTransform::Identity))
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
 	}
@@ -114,7 +114,7 @@ bool FCsStaticMeshAttachment::IsTransformValidChecked(const FString& Context) co
 bool FCsStaticMeshAttachment::IsTransformValid(const FString& Context, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 {
 	// Check Transform is Valid
-	if (!Transform.Equals(FTransform3f::Identity))
+	if (!Transform.Equals(FTransform::Identity))
 	{
 		if (TransformRules == 0)
 		{
@@ -217,7 +217,7 @@ namespace NCsStaticMesh
 		bool FAttachment::IsTransformValidChecked(const FString& Context) const
 		{
 			// Check Transform is Valid
-			if (!GetTransform().Equals(FTransform3f::Identity))
+			if (!GetTransform().Equals(FTransform::Identity))
 			{
 				checkf(GetTransformRules() != 0, TEXT("%s: No GetTransformRules() set for GetTransform(): %s."), *Context, *(GetTransform().ToString()));
 			}
@@ -229,7 +229,7 @@ namespace NCsStaticMesh
 		bool FAttachment::IsTransformValid(const FString& Context, void(*Log)(const FString&) /*=&NCsCore::NLibrary::FLog::Warning*/) const
 		{
 			// Check Transform is Valid
-			if (!GetTransform().Equals(FTransform3f::Identity))
+			if (!GetTransform().Equals(FTransform::Identity))
 			{
 				if (GetTransformRules() == 0)
 				{

@@ -96,3 +96,6 @@ namespace NCsDamage
 		};
 	}
 }
+
+using CsDamageAllocatedModifierType = NCsDamage::NModifier::FAllocated;
+using CsDmgAllocatedModifierType = NCsDamage::NModifier::FAllocated;

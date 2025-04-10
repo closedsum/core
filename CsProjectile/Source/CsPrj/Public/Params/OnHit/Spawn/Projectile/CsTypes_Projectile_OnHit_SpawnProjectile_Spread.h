@@ -438,7 +438,7 @@ namespace NCsProjectile
 
 					public:		
 
-						static FVector3f GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const DistributionType& Distribution);
+						static FVector GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector& Extents, const DistributionType& Distribution);
 
 						static void SetAnglesChecked(const FString& Context, const int32& Count, const AngleType& Type, const float& Angle, const AngleDistributionType& Distribution, TArray<float>& OutAngles);
 

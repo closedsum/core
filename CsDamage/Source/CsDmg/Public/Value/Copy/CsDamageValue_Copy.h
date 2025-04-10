@@ -6,7 +6,7 @@
 // Types
 #include "CsMacro_Namespace.h"
 
-// NCsDamage::NValue::IValue
+// ValueType (NCsDamage::NValue::IValue)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 
 namespace NCsDamage

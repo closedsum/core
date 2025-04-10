@@ -23,3 +23,5 @@ namespace NCsDamage
 		};
 	}
 }
+
+using CsDamageValueType = NCsDamage::NValue::IValue;

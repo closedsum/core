@@ -24,7 +24,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 // CsGetDamageDataTypeDataType (NCsData::IGetDamageDataType)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsData, IGetDamageDataType)
-// CsGetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes_
+// CsGetDamageDataTypesDataType (NCsData::IGetDamageDataTypes_
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsData, IGetDamageDataTypes)
 
 // NCsDamage::NValue::FResource
@@ -69,7 +69,7 @@ namespace NCsDamage
 			using EventResourceType = NCsDamage::NEvent::FResource;
 			using EventType = NCsDamage::NEvent::IEvent;
 			using CsGetDamageDataTypeDataType = NCsData::IGetDamageDataType;
-			using CsGetDamageDataTypeDataTypes = NCsData::IGetDamageDataTypes;
+			using CsGetDamageDataTypesDataType = NCsData::IGetDamageDataTypes;
 			using ProcessPayloadType = NCsDamage::NData::NProcess::FPayload;
 			using ValueResourceType = NCsDamage::NValue::FResource;
 			using ValueType = NCsDamage::NValue::IValue;
@@ -323,7 +323,7 @@ namespace NCsDamage
 			* @param GetDamageDataTypes
 			* @param OutDatas			(out) Objects which implements the interface: DataType (NCsDamage::NData::IData).
 			*/
-			static void GetDatasChecked(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas);
+			static void GetDatasChecked(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypesDataType* GetDamageDataTypes, TArray<DataType*>& OutDatas);
 
 			/**
 			* Safely, get the Datas, Objects that implements the interface: DataType (NCsDamage::NData::IData),
@@ -336,7 +336,7 @@ namespace NCsDamage
 			* @param Log				(optional)
 			* return
 			*/
-			static bool GetSafeDatas(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
+			static bool GetSafeDatas(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypesDataType* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 			/**
 			* Get the Data as a UObject (implements interface: DataType (ICsData_Damage)) associated with Type.

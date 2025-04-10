@@ -53,7 +53,7 @@ namespace NCsDamage
 				
 				UObject* Causer;
 				
-				FVector3f Direction;
+				FVector Direction;
 
 				FHitResult HitResult;
 				
@@ -91,7 +91,7 @@ namespace NCsDamage
 					Data = nullptr;
 					Instigator = nullptr;
 					Causer = nullptr;
-					Direction = FVector3f::ZeroVector;
+					Direction = FVector::ZeroVector;
 					HitResult.Init();
 					Modifiers.Reset(Modifiers.Max());
 				}

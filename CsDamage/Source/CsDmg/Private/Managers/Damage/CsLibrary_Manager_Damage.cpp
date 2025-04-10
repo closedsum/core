@@ -48,7 +48,7 @@ namespace NCsDamage
 		using EventResourceType = NCsDamage::NEvent::FResource;
 		using EventType = NCsDamage::NEvent::IEvent;
 		using ProcessPayloadType = NCsDamage::NData::NProcess::FPayload;
-		using ValueLibrary = NCsDamage::NValue::FLibrary;
+		using ValueLibrary = NCsDamage::NValue::NLibrary::FLibrary;
 		using ValueResourceType = NCsDamage::NValue::FResource;
 		using ValueType = NCsDamage::NValue::IValue;
 		using RangeResourceType = NCsDamage::NRange::FResource;
@@ -309,7 +309,7 @@ namespace NCsDamage
 			}
 		}
 
-		void FLibrary::GetDatasChecked(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas)
+		void FLibrary::GetDatasChecked(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypesDataType* GetDamageDataTypes, TArray<DataType*>& OutDatas)
 		{
 			CS_IS_PTR_NULL_CHECKED(GetDamageDataTypes)
 
@@ -318,7 +318,7 @@ namespace NCsDamage
 			GetDatasChecked(Context, WorldContext, DamageDataTypes, OutDatas);
 		}
 
-		bool FLibrary::GetSafeDatas(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+		bool FLibrary::GetSafeDatas(const FString& Context, const UObject* WorldContext, const CsGetDamageDataTypesDataType* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(GetDamageDataTypes)
 

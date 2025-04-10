@@ -54,6 +54,7 @@ namespace NCsBeam
 		}
 	};
 
+#undef ManagerMapType
 #undef PayloadType
 }
 

@@ -25,18 +25,22 @@ namespace NCsProjectile
 
 					static const FName Name;
 
-				public:
+				private:
 
-				#define TrailInfoType NCsProjectile::NVisual::NTrail::FInfo
+					// Allow clearer names without name collisions
+					struct _
+					{
+						using TrailInfoType = NCsProjectile::NVisual::NTrail::FInfo;
+					};
+
+				public:
 
 					/**
 					* Get any information related to a Trail.
 					* 
 					* return Trail Info
 					*/
-					virtual const TrailInfoType& GetTrailInfo() const = 0;
-
-				#undef TrailInfoType
+					virtual const _::TrailInfoType& GetTrailInfo() const = 0;
 				};
 			}
 		}
@@ -61,16 +65,20 @@ public:
 
 	static const FName Name;
 
-public:
+private:
 
-#define TrailInfoType NCsProjectile::NVisual::NTrail::FInfo
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using TrailInfoType = NCsProjectile::NVisual::NTrail::FInfo;
+	};
+
+public:
 
 	/**
 	* Get any information related to a Trail.
 	*
 	* return Trail Info
 	*/
-	virtual const TrailInfoType& GetTrailInfo() const = 0;
-
-#undef TrailInfoType
+	virtual const _::TrailInfoType& GetTrailInfo() const = 0;
 };

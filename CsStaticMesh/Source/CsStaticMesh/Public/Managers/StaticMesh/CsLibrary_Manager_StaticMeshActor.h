@@ -64,9 +64,9 @@ namespace NCsStaticMeshActor
 			* @param Log
 			* return				Context for UCsManager_StaticMeshActor
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, LogLevel) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, CS_FN_PARAM_DEFAULT_LOG_LEVEL) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR

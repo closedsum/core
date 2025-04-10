@@ -13,27 +13,26 @@ namespace NCsDamage
 {
 	namespace NValue
 	{
-		#define ValueType NCsDamage::NValue::IValue
-
-		const FECsDamageValue& FLibrary::GetTypeChecked(const FString& Context, const ValueType* Value)
+		namespace NLibrary
 		{
-			const ICsGetDamageValueType* GetDamageValueType = GetInterfaceChecked<ICsGetDamageValueType>(Context, Value);
+			using CopyType = NCsDamage::NValue::NCopy::ICopy;
 
-			return GetDamageValueType->GetDamageValueType();
+			const FECsDamageValue& FLibrary::GetTypeChecked(const FString& Context, const ValueType* Value)
+			{
+				const ICsGetDamageValueType* GetDamageValueType = GetInterfaceChecked<ICsGetDamageValueType>(Context, Value);
+
+				return GetDamageValueType->GetDamageValueType();
+			}
+
+			bool FLibrary::CopyChecked(const FString& Context, const ValueType* From, ValueType* To)
+			{
+				CS_IS_PTR_NULL_CHECKED(From)
+
+				CopyType* Copy = GetInterfaceChecked<CopyType>(Context, To);
+
+				Copy->Copy(From);
+				return true;
+			}
 		}
-
-		bool FLibrary::CopyChecked(const FString& Context, const ValueType* From, ValueType* To)
-		{
-			CS_IS_PTR_NULL_CHECKED(From)
-
-			typedef NCsDamage::NValue::NCopy::ICopy CopyType;
-
-			CopyType* Copy = GetInterfaceChecked<CopyType>(Context, To);
-
-			Copy->Copy(From);
-			return true;
-		}
-
-		#undef ValueType
 	}
 }

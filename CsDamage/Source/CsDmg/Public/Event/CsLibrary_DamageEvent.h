@@ -59,7 +59,7 @@ namespace NCsDamage
 				* @param Event
 				* @param Direction
 				*/
-				static void SetDamageDirectionChecked(const FString& Context, EventType* Event, const FVector3f& Direction);
+				static void SetDamageDirectionChecked(const FString& Context, EventType* Event, const FVector& Direction);
 
 				/**
 				* Safely try to get the Current Damage Event (EventType: NCsDamage::NEvent::IEvent) from Object.
@@ -84,7 +84,7 @@ namespace NCsDamage
 
 				static UObject* GetSafeCauser(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
-				static FVector3f GetSafeDamageDirection(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
+				static FVector GetSafeDamageDirection(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 				static const FECsHitType& GetSafeHitType(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 

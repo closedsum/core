@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "Misc/Build.h"
 
 #define CS_FWD_DECLARE_CACHED_FUNCTION_NAME(__ClassName) namespace N##__ClassName { \
 	namespace NCached { \
@@ -160,6 +161,81 @@
 								{ \
 									public:
 #define CS_END_CACHED_FUNCTION_NAME_NESTED_4 }; } } } } } } } }
+#define CS_START_CACHED_FUNCTION_NAME_NESTED_5(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __ClassName) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace N##__ClassName { \
+						namespace NCached { \
+							namespace NFunction { \
+								namespace NName { \
+									struct FInfo \
+									{ \
+										public:
+#define CS_END_CACHED_FUNCTION_NAME_NESTED_5 }; } } } } } } } } }
+#define CS_START_CACHED_FUNCTION_NAME_NESTED_6(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __ClassName) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						namespace N##__ClassName { \
+							namespace NCached { \
+								namespace NFunction { \
+									namespace NName { \
+										struct FInfo \
+										{ \
+											public:
+#define CS_END_CACHED_FUNCTION_NAME_NESTED_6 }; } } } } } } } } } }
+#define CS_START_CACHED_FUNCTION_NAME_NESTED_7(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __Ns7, __ClassName) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						namespace __Ns7 { \
+							namespace N##__ClassName { \
+								namespace NCached { \
+									namespace NFunction { \
+										namespace NName { \
+											struct FInfo \
+											{ \
+												public:
+#define CS_END_CACHED_FUNCTION_NAME_NESTED_7 }; } } } } } } } } } } }
+#define CS_START_CACHED_FUNCTION_NAME_NESTED_8(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __Ns7, __Ns8, __ClassName) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						namespace __Ns7 { \
+							namespace __Ns8 { \
+								namespace N##__ClassName { \
+									namespace NCached { \
+										namespace NFunction { \
+											namespace NName { \
+												struct FInfo \
+												{ \
+													public:
+#define CS_END_CACHED_FUNCTION_NAME_NESTED_8 }; } } } } } } } } } } } }
+#define CS_START_CACHED_FUNCTION_NAME_NESTED_9(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __Ns7, __Ns8, __Ns9, __ClassName) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						namespace __Ns7 { \
+							namespace __Ns8 { \
+								namespace __Ns9 { \
+									namespace N##__ClassName { \
+										namespace NCached { \
+											namespace NFunction { \
+												namespace NName { \
+													struct FInfo \
+													{ \
+														public:
+#define CS_END_CACHED_FUNCTION_NAME_NESTED_9 }; } } } } } } } } } } } }
 
 #define CS_MACRO_CACHED_STRINGIFY(x) #x
 

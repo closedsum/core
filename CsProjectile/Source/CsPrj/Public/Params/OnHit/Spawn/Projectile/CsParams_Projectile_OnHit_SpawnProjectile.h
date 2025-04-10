@@ -297,7 +297,7 @@ public:
 			movement direction of the parent Projectile and World Up vector.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit")
-	FVector3f Extents;
+	FVector Extents;
 
 	/** Describes the distribution of start locations within a Spread Shape. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit")
@@ -366,7 +366,7 @@ namespace NCsProjectile
 									The Radius is represented by the Right vector with respect to the
 									movement direction of the parent Projectile and World Up vector.
 							*/
-							CS_DECLARE_MEMBER_WITH_PROXY(Extents, FVector3f)
+							CS_DECLARE_MEMBER_WITH_PROXY(Extents, FVector)
 							/** Describes the distribution of start locations within a Spread Shape. */
 							CS_DECLARE_MEMBER_WITH_PROXY(Distribution, DistributionType)
 
@@ -383,7 +383,7 @@ namespace NCsProjectile
 							}
 
 							CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Shape, ShapeType)
-							CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Extents, FVector3f)
+							CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Extents, FVector)
 							CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Distribution, DistributionType)
 
 							bool IsValidChecked(const FString& Context) const;
@@ -397,7 +397,7 @@ namespace NCsProjectile
 								NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FLibrary::SetAnglesChecked(Context, Count, GetAngleType(), GetAngle(), GetDistribution(), OutAngles);
 							}
 							*/
-							FORCEINLINE FVector3f GetRandomOffsetChecked(const FString& Context) const
+							FORCEINLINE FVector GetRandomOffsetChecked(const FString& Context) const
 							{
 								return NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::FLibrary::GetRandomOffsetChecked(Context, GetShape(), GetExtents(), GetDistribution());
 							}

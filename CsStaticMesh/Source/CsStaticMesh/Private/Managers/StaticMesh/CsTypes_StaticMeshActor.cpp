@@ -146,7 +146,7 @@ void FCsStaticMeshActorPooledInfo::SetPayloadChecked(const FString& Context, Pay
 	Payload->TransformRules				= TransformRules;
 
 	Payload->Transform.SetTranslation(Payload->Transform.GetTranslation() + Transform.GetTranslation());
-	const FRotator3f Rotation = Payload->Transform.GetRotation().Rotator() + Transform.GetRotation().Rotator();
+	const FRotator Rotation = Payload->Transform.GetRotation().Rotator() + Transform.GetRotation().Rotator();
 	Payload->Transform.SetRotation(Rotation.Quaternion());
 	Payload->Transform.SetScale3D(Payload->Transform.GetScale3D() * Transform.GetScale3D());
 
@@ -178,7 +178,7 @@ bool FCsStaticMeshActorPooledInfo::SetSafePayload(const FString& Context, Payloa
 	Payload->TransformRules			= TransformRules;
 
 	Payload->Transform.SetTranslation(Payload->Transform.GetTranslation() + Transform.GetTranslation());
-	const FRotator3f Rotation = Payload->Transform.GetRotation().Rotator() + Transform.GetRotation().Rotator();
+	const FRotator Rotation = Payload->Transform.GetRotation().Rotator() + Transform.GetRotation().Rotator();
 	Payload->Transform.SetRotation(Rotation.Quaternion());
 	Payload->Transform.SetScale3D(Payload->Transform.GetScale3D() * Transform.GetScale3D());
 
@@ -203,7 +203,7 @@ bool FCsStaticMeshActorPooledInfo::IsValidChecked(const FString& Context) const
 	// Check Type is Valid
 	check(EMCsStaticMeshActor::Get().IsValidEnumChecked(Context, Type));
 
-	if (!Transform.Equals(FTransform3f::Identity))
+	if (!Transform.Equals(FTransform::Identity))
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
 	}
@@ -229,7 +229,7 @@ bool FCsStaticMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(co
 	// Check Type is Valid
 	CS_IS_ENUM_STRUCT_VALID(EMCsStaticMeshActor, FECsStaticMeshActor, Type)
 
-	if (!Transform.Equals(FTransform3f::Identity))
+	if (!Transform.Equals(FTransform::Identity))
 	{
 		if (TransformRules == 0)
 		{

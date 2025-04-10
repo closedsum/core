@@ -482,8 +482,8 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 	if (AActor* Actor = Cast<AActor>(Object))
 		Parent = Actor->GetRootComponent();;
 
-	const FTransform3f& Transform = StaticMeshPayload->GetTransform();
-	const int32& TransformRules   = StaticMeshPayload->GetTransformRules();
+	const FTransform& Transform = StaticMeshPayload->GetTransform();
+	const int32& TransformRules = StaticMeshPayload->GetTransformRules();
 
 	bool(*HasAttach)(const uint32& /*Mask*/, const FAttachmentTransformRules& /*Rules*/)	= &NCsStaticMeshActor::NPayload::NChange::HasAttach;
 	ChangeType(*FromTransformAttachmentRule)(const FAttachmentTransformRules& /*Rules*/)	= &NCsStaticMeshActor::NPayload::NChange::FromTransformAttachmentRule;								 
@@ -602,8 +602,8 @@ void ACsStaticMeshActorPooledImpl::Handle_ClearStaticMesh()
 
 void ACsStaticMeshActorPooledImpl::Handle_ClearAttachAndTransform()
 {
-	bool(*HasAttach)(const uint32& /*Mask*/, const FAttachmentTransformRules& /*Rules*/) = &NCsStaticMeshActor::NPayload::NChange::HasAttach;
-	uint32(*GetAttachAsMask)(const uint32& /*Mask*/)									 = &NCsStaticMeshActor::NPayload::NChange::GetAttachAsMask;
+	bool(*HasAttach)(const uint32& /*Mask*/)		 = &NCsStaticMeshActor::NPayload::NChange::HasAttach;
+	uint32(*GetAttachAsMask)(const uint32& /*Mask*/) = &NCsStaticMeshActor::NPayload::NChange::GetAttachAsMask;
 
 	const uint32 Mask = PreserveChangesToDefaultMask & ChangesToDefaultMask;
 

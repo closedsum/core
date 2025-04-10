@@ -220,14 +220,14 @@ namespace NCsProjectile
 					using AngleDistributionType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EDistribution;
 					using AngleDistributionMapType = NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NAngle::EMDistribution;
 
-					FVector3f FLibrary::GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const DistributionType& Distribution)
+					FVector FLibrary::GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector& Extents, const DistributionType& Distribution)
 					{
 						CS_IS_ENUM_VALID_CHECKED(ShapeMapType, Shape)
 						CS_IS_VECTOR_ZERO_CHECKED(Extents)
 
 						checkf(Distribution == DistributionType::Random, TEXT("%s: Distribution (%s) != DistributionType::Random."), *Context, DistributionMapType::Get().ToChar(Distribution));
 
-						FVector3f Offset = FVector3f::ZeroVector;
+						FVector Offset = FVector::ZeroVector;
 
 						// Line
 						if (Shape == ShapeType::Line)

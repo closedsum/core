@@ -177,7 +177,6 @@ using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 using PooledPayloadImplType = NCsPooledObject::NPayload::FImplSlice;
 using PayloadLibrary = NCsBeam::NPayload::FLibrary;
 using PayloadType = NCsBeam::NPayload::IPayload;
-using DamageValueLibrary = NCsDamage::NValue::FLibrary;
 using ValueType = NCsDamage::NValue::IValue;
 
 // UObject Interface
@@ -928,10 +927,10 @@ void ACsBeamActorPooledImpl::FDamageImpl::SetValue(CsDamageDataType* InData)
 	const FString& Context = Str::SetValue;
 
 	const ValueType* Value = InData->GetValue();
-	Type				   = DamageValueLibrary::GetTypeChecked(Context, Value);
+	Type				   = CsDamageValueLibrary::GetTypeChecked(Context, Value);
 
 	ResetValue();
-	DamageValueLibrary::CopyChecked(Context, Value, GetValue());
+	CsDamageValueLibrary::CopyChecked(Context, Value, GetValue());
 }
 
 ValueType* ACsBeamActorPooledImpl::FDamageImpl::GetValue()

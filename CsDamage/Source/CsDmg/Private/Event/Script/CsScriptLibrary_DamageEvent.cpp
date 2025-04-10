@@ -52,7 +52,7 @@ UObject* UCsScriptLibrary_DamageEvent::GetCauser(const FString& Context, UObject
 	return CsDamageEventLibrary::GetSafeCauser(Ctxt, Object);
 }
 
-FVector3f UCsScriptLibrary_DamageEvent::GetDamageDirection(const FString& Context, UObject* Object)
+FVector UCsScriptLibrary_DamageEvent::GetDamageDirection(const FString& Context, UObject* Object)
 {
 	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(GetDamageDirection);
 

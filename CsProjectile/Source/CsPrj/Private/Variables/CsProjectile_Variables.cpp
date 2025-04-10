@@ -47,68 +47,69 @@ namespace NCsProjectile
 		#define GET_BASE GetOuterMost()->MovementInfos
 
 		const float& PROXY::GetInitialSpeed() const { return GET_BASE.InitialSpeeds[GetID()]; }
-		float& PROXY::GetInitialSpeed() { return GET_BASE.InitialSpeeds[GetID()]; }
-		const float& PROXY::GetMaxSpeed() const { return GET_BASE.MaxSpeeds[GetID()]; }
-		float& PROXY::GetMaxSpeed() { return GET_BASE.MaxSpeeds[GetID()]; }
-		const FVector& PROXY::GetDirection() const { return GET_BASE.Directions[GetID()]; }
-		FVector& PROXY::GetDirection() { return GET_BASE.Directions[GetID()]; }
+		float& PROXY::GetInitialSpeed()				{ return GET_BASE.InitialSpeeds[GetID()]; }
+		const float& PROXY::GetMaxSpeed() const		{ return GET_BASE.MaxSpeeds[GetID()]; }
+		float& PROXY::GetMaxSpeed()					{ return GET_BASE.MaxSpeeds[GetID()]; }
+		const FVector& PROXY::GetDirection() const	{ return GET_BASE.Directions[GetID()]; }
+		FVector& PROXY::GetDirection()				{ return GET_BASE.Directions[GetID()]; }
 		const FVector3f& PROXY::GetDirection3f() const { return GET_BASE.Direction3fs[GetID()]; }
-		FVector3f& PROXY::GetDirection3f() { return GET_BASE.Direction3fs[GetID()]; }
-		const FVector& PROXY::GetVelocity() const { return GET_BASE.Velocities[GetID()]; }
-		FVector& PROXY::GetVelocity() { return GET_BASE.Velocities[GetID()]; }
+		FVector3f& PROXY::GetDirection3f()			{ return GET_BASE.Direction3fs[GetID()]; }
+		const FVector& PROXY::GetVelocity() const	{ return GET_BASE.Velocities[GetID()]; }
+		FVector& PROXY::GetVelocity()				{ return GET_BASE.Velocities[GetID()]; }
 		const FVector3f& PROXY::GetVelocity3f() const { return GET_BASE.Velocity3fs[GetID()]; }
-		FVector3f& PROXY::GetVelocity3f() { return GET_BASE.Velocity3fs[GetID()]; }
-		const float& PROXY::GetSpeed() const { return GET_BASE.Speeds[GetID()]; }
-		float& PROXY::GetSpeed() { return GET_BASE.Speeds[GetID()]; }
+		FVector3f& PROXY::GetVelocity3f()			{ return GET_BASE.Velocity3fs[GetID()]; }
+		const float& PROXY::GetSpeed() const		{ return GET_BASE.Speeds[GetID()]; }
+		float& PROXY::GetSpeed()					{ return GET_BASE.Speeds[GetID()]; }
 		const float& PROXY::GetGravityScale() const { return GET_BASE.GravityScales[GetID()]; }
-		float& PROXY::GetGravityScale() { return GET_BASE.GravityScales[GetID()]; }
+		float& PROXY::GetGravityScale()				{ return GET_BASE.GravityScales[GetID()]; }
 
 		#undef PROXY
 		#undef GET_BASE
 
 		// FVariables::FTrackingInfo
 
+		using TrackingStateType = NCsProjectile::NTracking::EState;
+		using DestinationType = NCsProjectile::NTracking::EDestination;
+
 		#define PROXY FVariables::FTrackingInfo
 		#define GET_BASE GetOuterMost()->TrackingInfos
 
 		const float& PROXY::GetDelay() const { return GET_BASE.Delays[GetID()]; }
-		float& PROXY::GetDelay() { return GET_BASE.Delays[GetID()]; }
-		#define TrackingStateType NCsProjectile::NTracking::EState
-		const TrackingStateType& PROXY::GetState() const { return GET_BASE.States[GetID()]; }
-		TrackingStateType& PROXY::GetState() { return GET_BASE.States[GetID()]; }
-		#undef TrackingStateType
-		#define DestinationType NCsProjectile::NTracking::EDestination
+		float& PROXY::GetDelay()			{ return GET_BASE.Delays[GetID()]; }
+		
+		const TrackingStateType& PROXY::GetState() const	{ return GET_BASE.States[GetID()]; }
+		TrackingStateType& PROXY::GetState()				{ return GET_BASE.States[GetID()]; }
+		
 		const DestinationType& PROXY::GetDestinationType() const { return GET_BASE.DestinationTypes[GetID()]; }
-		DestinationType& PROXY::GetDestinationType() { return GET_BASE.DestinationTypes[GetID()]; }
-		#undef DestinationType
-		const uint32& PROXY::GetDestinationMask() const { return GET_BASE.DestinationMasks[GetID()]; }
-		uint32& PROXY::GetDestinationMask() { return GET_BASE.DestinationMasks[GetID()]; }
-		const USceneComponent* PROXY::GetComponent() const { return GET_BASE.Components[GetID()]; }
-		USceneComponent*& PROXY::GetComponent() { return GET_BASE.Components[GetID()]; }
+		DestinationType& PROXY::GetDestinationType()		{ return GET_BASE.DestinationTypes[GetID()]; }
+		const uint32& PROXY::GetDestinationMask() const		{ return GET_BASE.DestinationMasks[GetID()]; }
+		uint32& PROXY::GetDestinationMask()					{ return GET_BASE.DestinationMasks[GetID()]; }
+		const USceneComponent* PROXY::GetComponent() const	{ return GET_BASE.Components[GetID()]; }
+		USceneComponent*& PROXY::GetComponent()				{ return GET_BASE.Components[GetID()]; }
 		const USkeletalMeshComponent* PROXY::GetMeshComponent() const { return GET_BASE.MeshComponents[GetID()]; }
-		USkeletalMeshComponent*& PROXY::GetMeshComponent() { return GET_BASE.MeshComponents[GetID()]; }
-		const FName& PROXY::GetBone() const { return GET_BASE.Bones[GetID()]; }
-		FName& PROXY::GetBone() { return GET_BASE.Bones[GetID()]; }
-		const int32& PROXY::GetTargetID() const { return GET_BASE.TargetIDs[GetID()]; }
-		int32& PROXY::GetTargetID() { return GET_BASE.TargetIDs[GetID()]; }
-		const float& PROXY::GetDuration() const { return GET_BASE.Durations[GetID()]; }
-		float& PROXY::GetDuration() { return GET_BASE.Durations[GetID()]; }
-		const float& PROXY::GetElapsedTime() const { return GET_BASE.ElapsedTimes[GetID()]; }
-		float& PROXY::GetElapsedTime() { return GET_BASE.ElapsedTimes[GetID()]; }
-		const FVector& PROXY::GetDestination() const { return GET_BASE.Destinations[GetID()]; }
-		FVector& PROXY::GetDestination() { return GET_BASE.Destinations[GetID()]; }
-		const FVector3f& PROXY::GetDestination3f() const { return GET_BASE.Destination3fs[GetID()]; }
-		FVector3f& PROXY::GetDestination3f() { return GET_BASE.Destination3fs[GetID()]; }
-		const FVector& PROXY::GetOffset() const { return GET_BASE.Offsets[GetID()]; }
-		FVector& PROXY::GetOffset() { return GET_BASE.Offsets[GetID()]; }
-		const FVector3f& PROXY::GetOffset3f() const { return GET_BASE.Offset3fs[GetID()]; }
-		FVector3f& PROXY::GetOffset3f() { return GET_BASE.Offset3fs[GetID()]; }
-		const float& PROXY::GetMinDotThreshold() const { return GET_BASE.MinDotThresholds[GetID()]; }
-		float& PROXY::GetMinDotThreshold() { return GET_BASE.MinDotThresholds[GetID()]; }
+		USkeletalMeshComponent*& PROXY::GetMeshComponent()	{ return GET_BASE.MeshComponents[GetID()]; }
+		const FName& PROXY::GetBone() const					{ return GET_BASE.Bones[GetID()]; }
+		FName& PROXY::GetBone()								{ return GET_BASE.Bones[GetID()]; }
+		const int32& PROXY::GetTargetID() const				{ return GET_BASE.TargetIDs[GetID()]; }
+		int32& PROXY::GetTargetID()							{ return GET_BASE.TargetIDs[GetID()]; }
+		const float& PROXY::GetDuration() const				{ return GET_BASE.Durations[GetID()]; }
+		float& PROXY::GetDuration()							{ return GET_BASE.Durations[GetID()]; }
+		const float& PROXY::GetElapsedTime() const			{ return GET_BASE.ElapsedTimes[GetID()]; }
+		float& PROXY::GetElapsedTime()						{ return GET_BASE.ElapsedTimes[GetID()]; }
+		const FVector& PROXY::GetDestination() const		{ return GET_BASE.Destinations[GetID()]; }
+		FVector& PROXY::GetDestination()					{ return GET_BASE.Destinations[GetID()]; }
+		const FVector3f& PROXY::GetDestination3f() const	{ return GET_BASE.Destination3fs[GetID()]; }
+		FVector3f& PROXY::GetDestination3f()				{ return GET_BASE.Destination3fs[GetID()]; }
+		const FVector& PROXY::GetOffset() const				{ return GET_BASE.Offsets[GetID()]; }
+		FVector& PROXY::GetOffset()							{ return GET_BASE.Offsets[GetID()]; }
+		const FVector3f& PROXY::GetOffset3f() const			{ return GET_BASE.Offset3fs[GetID()]; }
+		FVector3f& PROXY::GetOffset3f()						{ return GET_BASE.Offset3fs[GetID()]; }
+		const float& PROXY::GetMinDotThreshold() const		{ return GET_BASE.MinDotThresholds[GetID()]; }
+		float& PROXY::GetMinDotThreshold()					{ return GET_BASE.MinDotThresholds[GetID()]; }
 		const float& PROXY::GetMaxDotBeforeUsingPitch() const { return GET_BASE.MaxDotBeforeUsingPitches[GetID()]; }
-		float& PROXY::GetMaxDotBeforeUsingPitch() { return GET_BASE.MaxDotBeforeUsingPitches[GetID()]; }
-		const float& PROXY::GetRotationRate() const { return GET_BASE.RotationRates[GetID()]; }
-		float& PROXY::GetRotationRate() { return GET_BASE.RotationRates[GetID()]; }
+		float& PROXY::GetMaxDotBeforeUsingPitch()			{ return GET_BASE.MaxDotBeforeUsingPitches[GetID()]; }
+		const float& PROXY::GetRotationRate() const			{ return GET_BASE.RotationRates[GetID()]; }
+		float& PROXY::GetRotationRate()						{ return GET_BASE.RotationRates[GetID()]; }
 
 		#undef PROXY
 		#undef GET_BASE
@@ -118,46 +119,46 @@ namespace NCsProjectile
 		#define PROXY FVariables::FCollisionInfo
 		#define GET_BASE GetOuterMost()->CollisionInfos
 
-		const uint8& PROXY::GetChannel() const { return GET_BASE.Channels[GetID()]; }
-		uint8& PROXY::GetChannel() { return GET_BASE.Channels[GetID()]; }
-		const uint32& PROXY::GetBlockMask() const { return GET_BASE.BlockMasks[GetID()]; }
-		uint32& PROXY::GetBlockMask() { return GET_BASE.BlockMasks[GetID()]; }
-		const float& PROXY::GetRadius() const { return GET_BASE.Radii[GetID()]; }
-		float& PROXY::GetRadius() { return GET_BASE.Radii[GetID()]; }
-		const float& PROXY::GetHalfHeight() const { return GET_BASE.HalfHeights[GetID()]; }
-		float& PROXY::GetHalfHeight() { return GET_BASE.HalfHeights[GetID()]; }
-		const int32& PROXY::GetHitCount() const { return GET_BASE.HitCounts[GetID()]; }
-		int32& PROXY::GetHitCount() { return GET_BASE.HitCounts[GetID()]; }
+		const uint8& PROXY::GetChannel() const		{ return GET_BASE.Channels[GetID()]; }
+		uint8& PROXY::GetChannel()					{ return GET_BASE.Channels[GetID()]; }
+		const uint32& PROXY::GetBlockMask() const	{ return GET_BASE.BlockMasks[GetID()]; }
+		uint32& PROXY::GetBlockMask()				{ return GET_BASE.BlockMasks[GetID()]; }
+		const float& PROXY::GetRadius() const		{ return GET_BASE.Radii[GetID()]; }
+		float& PROXY::GetRadius()					{ return GET_BASE.Radii[GetID()]; }
+		const float& PROXY::GetHalfHeight() const	{ return GET_BASE.HalfHeights[GetID()]; }
+		float& PROXY::GetHalfHeight()				{ return GET_BASE.HalfHeights[GetID()]; }
+		const int32& PROXY::GetHitCount() const		{ return GET_BASE.HitCounts[GetID()]; }
+		int32& PROXY::GetHitCount()					{ return GET_BASE.HitCounts[GetID()]; }
 
 		#undef PROXY
 		#undef GET_BASE
 
 		// FVariables
 
-		const FECsProjectile& FVariables::GetType() const { return Outer->Types[ID]; }
-		FECsProjectile& FVariables::GetType() { return Outer->Types[ID]; }
-		#define StateType NCsProjectile::EState
-		const StateType& FVariables::GetState() const { return Outer->States[ID]; }
-		StateType& FVariables::GetState() { return Outer->States[ID]; }
-		#undef StateType
-		const int32& FVariables::GetGeneration() const { return Outer->Generations[ID]; }
-		int32& FVariables::GetGeneration() { return Outer->Generations[ID]; }
-		const FVector& FVariables::GetLastLocation() const { return Outer->Last_Locations[ID]; }
-		FVector& FVariables::GetLastLocation() { return Outer->Last_Locations[ID]; }
+		using StateType = NCsProjectile::EState;
+
+		const FECsProjectile& FVariables::GetType() const	{ return Outer->Types[ID]; }
+		FECsProjectile& FVariables::GetType()				{ return Outer->Types[ID]; }
+		const StateType& FVariables::GetState() const		{ return Outer->States[ID]; }
+		StateType& FVariables::GetState()					{ return Outer->States[ID]; }
+		const int32& FVariables::GetGeneration() const		{ return Outer->Generations[ID]; }
+		int32& FVariables::GetGeneration()					{ return Outer->Generations[ID]; }
+		const FVector& FVariables::GetLastLocation() const	{ return Outer->Last_Locations[ID]; }
+		FVector& FVariables::GetLastLocation()				{ return Outer->Last_Locations[ID]; }
 		const FVector3f& FVariables::GetLastLocation3f() const { return Outer->Last_Location3fs[ID]; }
-		FVector3f& FVariables::GetLastLocation3f() { return Outer->Last_Location3fs[ID]; }
-		const FVector& FVariables::GetLocation() const { return Outer->Locations[ID]; }
-		FVector& FVariables::GetLocation() { return Outer->Locations[ID]; }
-		const FVector3f& FVariables::GetLocation3f() const { return Outer->Location3fs[ID]; }
-		FVector3f& FVariables::GetLocation3f() { return Outer->Location3fs[ID]; }
-		const FRotator& FVariables::GetRotation() const { return Outer->Rotations[ID]; }
-		FRotator& FVariables::GetRotation() { return Outer->Rotations[ID]; }
+		FVector3f& FVariables::GetLastLocation3f()			{ return Outer->Last_Location3fs[ID]; }
+		const FVector& FVariables::GetLocation() const		{ return Outer->Locations[ID]; }
+		FVector& FVariables::GetLocation()					{ return Outer->Locations[ID]; }
+		const FVector3f& FVariables::GetLocation3f() const	{ return Outer->Location3fs[ID]; }
+		FVector3f& FVariables::GetLocation3f()				{ return Outer->Location3fs[ID]; }
+		const FRotator& FVariables::GetRotation() const		{ return Outer->Rotations[ID]; }
+		FRotator& FVariables::GetRotation()					{ return Outer->Rotations[ID]; }
 		const FRotator3f& FVariables::GetRotation3f() const { return Outer->Rotation3fs[ID]; }
-		FRotator3f& FVariables::GetRotation3f() { return Outer->Rotation3fs[ID]; }
-		const FQuat& FVariables::GetOrientation() const { return Outer->Orientations[ID]; }
-		FQuat& FVariables::GetOrientation() { return Outer->Orientations[ID]; }
+		FRotator3f& FVariables::GetRotation3f()				{ return Outer->Rotation3fs[ID]; }
+		const FQuat& FVariables::GetOrientation() const		{ return Outer->Orientations[ID]; }
+		FQuat& FVariables::GetOrientation()					{ return Outer->Orientations[ID]; }
 		const FQuat4f& FVariables::GetOrientation4f() const { return Outer->Orientation4fs[ID]; }
-		FQuat4f& FVariables::GetOrientation4f() { return Outer->Orientation4fs[ID]; }
+		FQuat4f& FVariables::GetOrientation4f()				{ return Outer->Orientation4fs[ID]; }
 	}
 }
 

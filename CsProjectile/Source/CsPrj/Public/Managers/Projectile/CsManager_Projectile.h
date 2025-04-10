@@ -59,6 +59,7 @@ namespace NCsProjectile
 		}
 	};
 
+#undef ManagerMapType
 #undef PayloadType
 }
 

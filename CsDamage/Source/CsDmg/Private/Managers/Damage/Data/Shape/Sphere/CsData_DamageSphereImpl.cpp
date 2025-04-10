@@ -93,7 +93,7 @@ namespace NCsDamage
 						delete InterfaceMap;
 					}
 
-					using ValueLibrary = NCsDamage::NValue::FLibrary;
+					using ValueLibrary = NCsDamage::NValue::NLibrary::FLibrary;
 					using ValuePointType = NCsDamage::NValue::NPoint::IPoint ;
 					using ValueRangeType = NCsDamage::NValue::NRange::IRange;
 

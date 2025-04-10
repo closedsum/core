@@ -70,7 +70,7 @@ public:
 	* return
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CImpl|Library|Damage|Event", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
-	static FVector3f GetDamageDirection(const FString& Context, UObject* Object);
+	static FVector GetDamageDirection(const FString& Context, UObject* Object);
 
 	/**
 	*

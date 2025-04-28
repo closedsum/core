@@ -126,7 +126,7 @@ public:
 	/**
 	* Adds a data slice which implements the interface: DamageDataType (NCsBeam::NData::NDamage::IDamage) to
 	* data with Name.
-	* Adds slice of type: NCsBeam::NData::NDamage::NPoint::FImplSlice.
+	* Adds slice of type: NCsBeam::NData::NDamage::NPoint::NImplSlice::FImplSlice.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
@@ -139,7 +139,7 @@ public:
 	/**
 	* Adds a data slice which implements the interface: DamageDataType (NCsBeam::NData::NDamage::IDamage) to
 	* data with Name.
-	* Adds slice of type: NCsBeam::NData::NDamage::NPoint::FImplSlice.
+	* Adds slice of type: NCsBeam::NData::NDamage::NPoint::NImplSlice::FImplSlice.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).

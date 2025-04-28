@@ -15,34 +15,33 @@ namespace NCsBeam
 	{
 		namespace NHandler
 		{
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataType NCsBeam::NData::IData
-		#define DataInterfaceMapType NCsBeam::NData::FInterfaceMap
-
-			/**
-			*/
-			class CSBEAM_API FData : public DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>
+			namespace NData
 			{
-			private:
+				using DataType = NCsBeam::NData::IData;
+				using DataInterfaceMapType = NCsBeam::NData::FInterfaceMap;
+				using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_BeamPtr, DataInterfaceMapType>;
+				
+				/**
+				*/
+				class CSBEAM_API FData : public DataHandlerType
+				{
+				private:
 
-				typedef DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType> Super;
+					using Super = DataHandlerType;
 
-			public:
+				public:
 
-				FData();
+					FData();
 
-			// DataHandlerType (NCsData::NManager::NHandler::TData)
-			#pragma region
-			protected:
+				// DataHandlerType (NCsData::NManager::NHandler::TData)
+				#pragma region
+				protected:
 
-				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
+					virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
 
-			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
-			};
-
-		#undef DataHandlerType
-		#undef DataType
-		#undef DataInterfaceMapType
+				#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
+				};
+			}
 		}
 	}
 

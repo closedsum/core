@@ -32,6 +32,12 @@ namespace NCsBeam
 	{
 		struct CSBEAM_API FLibrary final
 		{
+		private:
+
+			using DataType = NCsBeam::NData::IData;
+			using DataInterfaceMapType = NCsBeam::NData::FInterfaceMap;
+			using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_BeamPtr, DataInterfaceMapType>;
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -142,11 +148,6 @@ namespace NCsBeam
 		#pragma region
 		public:
 
-		#define DataType NCsBeam::NData::IData
-
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataInterfaceMapType NCsBeam::NData::FInterfaceMap
-
 			/**
 			* 
 			* 
@@ -154,10 +155,8 @@ namespace NCsBeam
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log			(optional)
 			*/
-			static DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsBeam::FLog::Warning);
+			static DataHandlerType* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsBeam::FLog::Warning);
 
-		#undef DataHandlerType
-		#undef DataInterfaceMapType
 
 			/**
 			* Get the Data (implements interface: DataType (NCsBeam::NData::IData)) associated with Name of the weapon type.
@@ -202,8 +201,6 @@ namespace NCsBeam
 			* return				Data that implements the interface: DataType (NCsBeam::NData::IData).
 			*/
 			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsBeam& Type, void(*Log)(const FString&) = &NCsBeam::FLog::Warning);
-
-		#undef DataType
 
 		#pragma endregion Data
 		};

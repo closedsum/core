@@ -13,34 +13,33 @@ namespace NCsProjectile
 	{
 		namespace NHandler
 		{
-#define DataHandlerType NCsData::NManager::NHandler::TData
-#define DataType NCsProjectile::NData::IData
-#define DataInterfaceMapType NCsProjectile::NData::FInterfaceMap
+			namespace NData
+			{	
+				using DataType = NCsProjectile::NData::IData;
+				using DataInterfaceMapType = NCsProjectile::NData::FInterfaceMap;
+				using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>;
 
-			/**
-			*/
-			class CSPRJ_API FData : public DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>
-			{
-			private:
+				/**
+				*/
+				class CSPRJ_API FData : public DataHandlerType
+				{
+				private:
 
-				typedef DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType> Super;
+					using Super = DataHandlerType;
 
-			public:
+				public:
 
-				FData();
+					FData();
 
-			// DataHandlerType (NCsData::NManager::NHandler::TData)
-			#pragma region
-			protected:
+				// DataHandlerType (NCsData::NManager::NHandler::TData)
+				#pragma region
+				protected:
 
-				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
+					virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
 
-			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
-			};
-
-#undef DataHandlerType
-#undef DataType
-#undef DataInterfaceMapType
+				#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
+				};
+			}
 		}
 	}
 

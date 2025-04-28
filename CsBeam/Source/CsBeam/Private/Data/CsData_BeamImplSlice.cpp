@@ -13,7 +13,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_BeamImplSlice)
 
-#define SliceType NCsBeam::NData::FImplSlice
+using SliceType = NCsBeam::NData::FImplSlice;
 
 SliceType* FCsData_BeamImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
 {
@@ -73,8 +73,6 @@ void FCsData_BeamImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
 	Slice->SetLifeTime(LifeTime);
 }
-
-#undef SliceType
 
 bool FCsData_BeamImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {

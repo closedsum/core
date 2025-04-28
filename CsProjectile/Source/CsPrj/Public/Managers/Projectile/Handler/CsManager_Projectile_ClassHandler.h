@@ -11,32 +11,33 @@ namespace NCsProjectile
 	{
 		namespace NHandler
 		{
-		#define ClassHandlerType NCsData::NManager::NHandler::TClass
-
-			/**
-			*/
-			class CSPRJ_API FClass : public ClassHandlerType<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>
+			namespace NClass
 			{
-			private:
+				using ClassHandlerType = NCsData::NManager::NHandler::TClass<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass>;
 
-				typedef ClassHandlerType<FCsProjectilePooled, FCsProjectilePtr, FECsProjectileClass> Super;
+				/**
+				*/
+				class CSPRJ_API FClass : public ClassHandlerType
+				{
+				private:
 
-			public:
+					using Super = ClassHandlerType;
 
-				FClass();
+				public:
 
-			// ClassHandlerType
-			#pragma region
-			protected:
+					FClass();
 
-				virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
+				// ClassHandlerType
+				#pragma region
+				protected:
 
-				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
+					virtual void GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject) override;
 
-			#pragma endregion ClassHandlerType
-			};
+					virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObject) override;
 
-		#undef ClassHandlerType
+				#pragma endregion ClassHandlerType
+				};
+			}
 		}
 	}
 }

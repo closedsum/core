@@ -1,22 +1,21 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/Pool/CsPooledObject.h"
+// Types
+#include "CsMacro_Namespace.h"
 #include "Types/CsTypes_Weapon.h"
 
 class ICsWeapon;
 
-// NCsWeapon::NData::IData
-namespace NCsWeapon {
-	namespace NData {
-		struct IData; } }
+// DataType (NCsWeapon::NData::IData)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 
 struct CSWP_API FCsWeaponPooled : public FCsPooledObject
 {
 private:
 
-	typedef FCsPooledObject Super;
-
-#define DataType NCsWeapon::NData::IData
+	using Super = FCsPooledObject;
+	using DataType = NCsWeapon::NData::IData;
 
 public:
 
@@ -101,6 +100,4 @@ public:
 	FORCEINLINE ICsWeapon* GetWeapon() const { return Weapon; }
 
 	FORCEINLINE void SetWeapon(ICsWeapon* InWeapon) { Weapon = InWeapon; }
-
-#undef DataType
 };

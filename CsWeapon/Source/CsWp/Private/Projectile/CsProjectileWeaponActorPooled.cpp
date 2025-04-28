@@ -133,36 +133,14 @@ namespace NCsProjectileWeaponActorPooled
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, SetUpdateGroup);
 			CS_DEFINE_CACHED_STRING(Group, "Group");
-
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Allocate);
-
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, SetWeaponType);
 			CS_DEFINE_CACHED_STRING(Type, "Type");
-
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, SetProjectileType);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Init);
 			CS_DEFINE_CACHED_STRING(UpdateGroup, "UpdateGroup");
 			CS_DEFINE_CACHED_STRING(WeaponType, "WeaponType");
 			CS_DEFINE_CACHED_STRING(ProjectileType, "ProjectileType");
 			CS_DEFINE_CACHED_STRING(IdleState, "IdleState");
 			CS_DEFINE_CACHED_STRING(FireState, "FireState");
-
-			// AActor Interface
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, OnUpdate_HandleStates);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, CanFire);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire_Internal_OnEnd);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetTimeBetweenShots);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, ProjectilesPerShot_GetCount);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, ProjectilesPerShot_GetInterval);
-
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, FireProjectile);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, SetProjectilePayload);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, LaunchProjectile);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, UseSpreadParams);
+			CS_DEFINE_CACHED_STRING(Fire_Internal, "Fire_Internal");
 		}
 
 		namespace Name
@@ -446,9 +424,9 @@ void ACsProjectileWeaponActorPooled::Update(const FCsDeltaTime& DeltaTime)
 
 void ACsProjectileWeaponActorPooled::SetUpdateGroup(const FECsUpdateGroup& Group)
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetUpdateGroup);
 
-	const FString& Context = Str::SetUpdateGroup;
+	using namespace NCsProjectileWeaponActorPooled::NCached;
 
 	check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Str::Group, Group));
 
@@ -487,9 +465,7 @@ void ACsProjectileWeaponActorPooled::Shutdown()
 
 void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::Allocate;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Allocate);
 
 	CS_IS_PTR_NULL_CHECKED(Payload)
 
@@ -662,9 +638,7 @@ void ACsProjectileWeaponActorPooled::ConstructCache()
 
 void ACsProjectileWeaponActorPooled::SetWeaponType(const FECsWeapon& Type)
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::SetWeaponType;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetWeaponType);
 
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeapon, Type);
 
@@ -678,9 +652,7 @@ void ACsProjectileWeaponActorPooled::SetWeaponType(const FECsWeapon& Type)
 
 void ACsProjectileWeaponActorPooled::SetProjectileType(const FECsProjectile& Type)
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::SetProjectileType;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(SetProjectileType);
 
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectile, Type);
 
@@ -727,9 +699,7 @@ const UObject* ACsProjectileWeaponActorPooled::GetWorldContext() const
 
 void ACsProjectileWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::OnUpdate_HandleStates;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(OnUpdate_HandleStates);
 
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
@@ -810,9 +780,7 @@ void ACsProjectileWeaponActorPooled::ConsumeAmmo()
 
 bool ACsProjectileWeaponActorPooled::CanFire() const
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::CanFire;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(CanFire);
 	
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
@@ -1176,9 +1144,7 @@ void ACsProjectileWeaponActorPooled::Fire_PreShot(const uint32& FireID)
 
 void ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::Fire_Internal_OnEnd;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Fire_Internal_OnEnd);
 
 	if (R->GetSafeOwnerAsObject())
 	{
@@ -1207,9 +1173,7 @@ void ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 
 float ACsProjectileWeaponActorPooled::GetTimeBetweenShots() const
 { 
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::GetTimeBetweenShots;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GetTimeBetweenShots);
 
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
@@ -1229,9 +1193,7 @@ float ACsProjectileWeaponActorPooled::GetTimeBetweenShots() const
 
 int32 ACsProjectileWeaponActorPooled::ProjectilesPerShot_GetCount() const
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::ProjectilesPerShot_GetCount;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(ProjectilesPerShot_GetCount);
 
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
@@ -1248,9 +1210,7 @@ int32 ACsProjectileWeaponActorPooled::ProjectilesPerShot_GetCount() const
 
 float ACsProjectileWeaponActorPooled::ProjectilesPerShot_GetInterval() const
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::ProjectilesPerShot_GetInterval;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(ProjectilesPerShot_GetInterval);
 
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
@@ -1277,9 +1237,7 @@ void ACsProjectileWeaponActorPooled::ProjectileImpl_SetLaunchComponentDirection(
 
 bool ACsProjectileWeaponActorPooled::UseSpreadParams() const
 {
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::UseSpreadParams;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(UseSpreadParams);
 
 	if (PrjWeaponData->UseSpreadParams())
 		return true;

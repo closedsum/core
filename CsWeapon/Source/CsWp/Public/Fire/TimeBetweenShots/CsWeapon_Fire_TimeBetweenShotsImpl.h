@@ -66,11 +66,11 @@ public:
 	void Evaluate();
 
 	FORCEINLINE void Clear()
-		{
-			OnElapsedTime_Event.Clear();
-			OnElapsedTimeAsPercent_Event.Clear();
-			OnComplete_Event.Clear();
-		}
+	{
+		OnElapsedTime_Event.Clear();
+		OnElapsedTimeAsPercent_Event.Clear();
+		OnComplete_Event.Clear();
+	}
 
 #pragma endregion ICsWeapon_Fire_TimeBetweenShots
 

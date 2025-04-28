@@ -32,6 +32,10 @@ namespace NCsBeam
 			}
 		}
 
+		using DataType = NCsBeam::NData::IData;
+		using DataInterfaceMapType = NCsBeam::NData::FInterfaceMap;
+		using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_BeamPtr, DataInterfaceMapType>;
+
 		// ContextRoot
 		#pragma region
 
@@ -134,15 +138,8 @@ namespace NCsBeam
 		// Data
 		#pragma region
 
-		#define DataType NCsBeam::NData::IData
-
-		#define DataHandlerType NCsData::NManager::NHandler::TData
-		#define DataInterfaceMapType NCsBeam::NData::FInterfaceMap
-		DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
+		DataHandlerType* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
 		{
-		#undef DataHandlerType
-		#undef DataInterfaceMapType
-
 			if (UCsManager_Beam* Manager_Beam = GetSafe(Context, WorldContext, Log))
 			{
 				return Manager_Beam->GetDataHandler();
@@ -191,8 +188,6 @@ namespace NCsBeam
 			}
 			return nullptr;
 		}
-
-		#undef DataType
 
 		#pragma endregion Data
 	}

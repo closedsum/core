@@ -30,32 +30,35 @@ class ICsBeam;
 
 namespace NCsBeam
 {
-#define ManagerMapType NCsPooledObject::NManager::TTMap
-#define PayloadType NCsBeam::NPayload::IPayload
-
-	class CSBEAM_API FManager : public ManagerMapType<ICsBeam, FCsBeamPooled, PayloadType, FECsBeam>
+	namespace NManager
 	{
-	private:
-
-		typedef ManagerMapType<ICsBeam, FCsBeamPooled, PayloadType, FECsBeam> Super;
-
-	public:
-
-		FManager();
-
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsBeam& Type) const override
+		namespace NInternal
 		{
-			return Type.GetName();
-		}
+			using PayloadType = NCsBeam::NPayload::IPayload;
+			using ManagerMapType = NCsPooledObject::NManager::TTMap<ICsBeam, FCsBeamPooled, PayloadType, FECsBeam>;
+			
+			class CSBEAM_API FManager : public ManagerMapType
+			{
+			private:
 
-		FORCEINLINE virtual bool IsValidKey(const FECsBeam& Type) const override
-		{
-			return EMCsBeam::Get().IsValidEnum(Type);
-		}
-	};
+				using Super = ManagerMapType;
 
-#undef ManagerMapType
-#undef PayloadType
+			public:
+
+				FManager();
+
+				FORCEINLINE virtual const FString& KeyTypeToString(const FECsBeam& Type) const override
+				{
+					return Type.GetName();
+				}
+
+				FORCEINLINE virtual bool IsValidKey(const FECsBeam& Type) const override
+				{
+					return EMCsBeam::Get().IsValidEnum(Type);
+				}
+			};
+		}
+	}
 }
 
 #pragma endregion Internal
@@ -92,16 +95,17 @@ class CSBEAM_API UCsManager_Beam : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-#define ManagerType NCsBeam::FManager
-#define ManagerParamsType NCsBeam::FManager::FParams
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-#define PayloadType NCsBeam::NPayload::IPayload
-#define ClassHandlerType NCsData::NManager::NHandler::TClass
-#define DataHandlerType NCsData::NManager::NHandler::TData
-#define DataType NCsBeam::NData::IData
+private:
 
-public:	
-
+	using ManagerType = NCsBeam::NManager::NInternal::FManager;
+	using ManagerParamsType = NCsBeam::NManager::NInternal::FManager::FParams;
+	using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+	using PayloadType = NCsBeam::NPayload::IPayload;
+	using ClassHandlerType = NCsData::NManager::NHandler::TClass<FCsBeamPooled, FCsBeamPtr, FECsBeamClass>;
+	using DataType = NCsBeam::NData::IData;
+	using DataInterfaceMapType = NCsBeam::NData::FInterfaceMap;
+	using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_BeamPtr, DataInterfaceMapType>;
+	
 // Singleton
 #pragma region
 public:
@@ -802,7 +806,7 @@ public:
 #pragma region
 protected:
 
-	ClassHandlerType<FCsBeamPooled, FCsBeamPtr, FECsBeamClass>* ClassHandler;
+	ClassHandlerType* ClassHandler;
 
 	virtual void ConstructClassHandler();
 
@@ -843,17 +847,13 @@ public:
 #pragma region
 protected:
 
-#define DataInterfaceMapType NCsBeam::NData::FInterfaceMap
-
-	DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler;
+	DataHandlerType* DataHandler;
 
 	virtual void ConstructDataHandler();
 
 public:
 
-	FORCEINLINE DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* GetDataHandler() const { return DataHandler; }
-
-#undef DataInterfaceMapType
+	FORCEINLINE DataHandlerType* GetDataHandler() const { return DataHandler; }
 
 	/**
 	* Get the Data (implements interface: DataType (NCsBeam::NData::IData)) associated with Name of the beam type.
@@ -912,12 +912,4 @@ public:
 	void OnPayloadUnloaded(const FName& Payload);
 
 #pragma endregion Data
-
-#undef ManagerType
-#undef ManagerParamsType
-#undef ConstructParamsType
-#undef PayloadType
-#undef ClassHandlerType
-#undef DataHandlerType
-#undef DataType
 };

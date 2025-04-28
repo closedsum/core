@@ -35,32 +35,35 @@ class ICsProjectile;
 
 namespace NCsProjectile
 {
-#define ManagerMapType NCsPooledObject::NManager::TTMap
-#define PayloadType NCsProjectile::NPayload::IPayload
-
-	class CSPRJ_API FManager : public ManagerMapType<ICsProjectile, FCsProjectilePooled, PayloadType, FECsProjectile>
+	namespace NManager
 	{
-	private:
-
-		typedef ManagerMapType<ICsProjectile, FCsProjectilePooled, PayloadType, FECsProjectile> Super;
-
-	public:
-
-		FManager();
-
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsProjectile& Type) const override
+		namespace NInternal
 		{
-			return Type.GetName();
-		}
+			using PayloadType = NCsProjectile::NPayload::IPayload;
+			using ManagerMapType = NCsPooledObject::NManager::TTMap<ICsProjectile, FCsProjectilePooled, PayloadType, FECsProjectile>;
 
-		FORCEINLINE virtual bool IsValidKey(const FECsProjectile& Type) const override
-		{
-			return EMCsProjectile::Get().IsValidEnum(Type);
-		}
-	};
+			class CSPRJ_API FManager : public ManagerMapType
+			{
+			private:
 
-#undef ManagerMapType
-#undef PayloadType
+				using Super = ManagerMapType;
+
+			public:
+
+				FManager();
+
+				FORCEINLINE virtual const FString& KeyTypeToString(const FECsProjectile& Type) const override
+				{
+					return Type.GetName();
+				}
+
+				FORCEINLINE virtual bool IsValidKey(const FECsProjectile& Type) const override
+				{
+					return EMCsProjectile::Get().IsValidEnum(Type);
+				}
+			};
+		}
+	}
 }
 
 #pragma endregion Internal
@@ -99,8 +102,8 @@ class CSPRJ_API UCsManager_Projectile : public UObject
 
 private:
 
-	using ManagerType = NCsProjectile::FManager;
-	using ManagerParamsType = NCsProjectile::FManager::FParams;
+	using ManagerType = NCsProjectile::NManager::NInternal::FManager;
+	using ManagerParamsType = NCsProjectile::NManager::NInternal::FManager::FParams;
 	using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 	using PooledPayloadType = NCsPooledObject::NPayload::IPayload;
 	using PayloadType = NCsProjectile::NPayload::IPayload;

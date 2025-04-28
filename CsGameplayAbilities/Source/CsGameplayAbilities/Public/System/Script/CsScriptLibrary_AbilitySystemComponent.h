@@ -33,6 +33,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsGameplayAbilities|Library", meta = (AutoCreateRefTerm = "Context"))
 	static bool GetActivatableAbilities_PrimaryInstance(const FString& Context, const UAbilitySystemComponent* Component, TArray<UGameplayAbility*>& OutAbilities);
 
+	/**
+	* NOTE: For scripts (i.e. Python) that don't handle const ref properly
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsGameplayAbilities|Library", meta = (AutoCreateRefTerm = "Context"))
+	static TArray<UGameplayAbility*> GetActivatableAbilities_PrimaryInstance2(const FString& Context, const UAbilitySystemComponent* Component);
+
 	UFUNCTION(BlueprintCallable, Category = "CsGameplayAbilities|Library", meta = (AutoCreateRefTerm = "Context,Tag"))
 	static bool TryActivateByExecutionTag(const FString& Context, UAbilitySystemComponent* Component, const FGameplayTag& Tag);
 

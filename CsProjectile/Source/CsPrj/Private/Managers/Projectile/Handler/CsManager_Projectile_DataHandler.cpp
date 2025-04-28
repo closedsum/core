@@ -10,28 +10,31 @@ namespace NCsProjectile
 	{
 		namespace NHandler
 		{
-			FData::FData()
+			namespace NData
 			{
+				using DataRootSetLibrary = NCsProjectile::NDataRootSet::FLibrary;
+				using MemberType = FCsPrjDataRootSet::EMember;
+
+				FData::FData()
+				{
+				}
+
+				// DataHandlerType (NCsData::NManager::NHandler::TData)
+				#pragma region
+
+				void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
+				{
+					const MemberType Member = MemberType::Projectiles;
+
+					UDataTable* DataTable						   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+					TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
+
+					OutDataTables.Add(DataTable);
+					OutDataTableSoftObjects.Add(DataTableSoftObject);
+				}
+
+				#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 			}
-
-			// DataHandlerType (NCsData::NManager::NHandler::TData)
-			#pragma region
-
-			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
-			{
-				typedef NCsProjectile::NDataRootSet::FLibrary DataRootSetLibrary;
-				typedef FCsPrjDataRootSet::EMember MemberType;
-
-				const MemberType Member = MemberType::Projectiles;
-
-				UDataTable* DataTable						   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
-				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
-
-				OutDataTables.Add(DataTable);
-				OutDataTableSoftObjects.Add(DataTableSoftObject);
-			}
-
-			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 		}
 	}
 }

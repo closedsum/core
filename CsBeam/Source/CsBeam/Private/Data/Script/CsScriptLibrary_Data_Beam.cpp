@@ -153,7 +153,7 @@ bool UCsScriptLibrary_Data_Beam::AddSlice_DamagePoint(const FString& Context, co
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddSlice_DamagePoint : Context;
 
-	typedef NCsBeam::NData::NDamage::NPoint::FImplSlice DataSliceType;
+	typedef NCsBeam::NData::NDamage::NPoint::NImplSlice::FImplSlice DataSliceType;
 
 	DataSliceType* DataSlice = Slice.AddSafeSliceAsValue(Ctxt, WorldContextObject, FName(*Name));
 
@@ -166,7 +166,7 @@ bool UCsScriptLibrary_Data_Beam::AddSliceFromObject_DamagePoint(const FString& C
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddSliceFromObject_DamagePoint : Context;
 
-	typedef NCsBeam::NData::NDamage::NPoint::FImplSlice DataSliceType;
+	typedef NCsBeam::NData::NDamage::NPoint::NImplSlice::FImplSlice DataSliceType;
 
 	DataSliceType* DataSlice = DataSliceType::AddSafeSlice(Context, WorldContextObject, FName(*Name), Object);
 

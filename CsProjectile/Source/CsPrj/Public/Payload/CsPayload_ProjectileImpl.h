@@ -16,7 +16,7 @@
 
 class UObject;
 
-// NCsProjectile::NPayload::IPayload
+// PayloadType (NCsProjectile::NPayload::IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 
 USTRUCT(BlueprintType)
@@ -50,7 +50,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
 	int32 PreserveChangesFromDefaultMask;
 
-// PrjPayloadType (NCsProjectile::Payload::IPayload)
+// PayloadType (NCsProjectile::Payload::IPayload)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
 	FECsProjectile Type;
@@ -71,7 +71,7 @@ public:
 		Owner(nullptr),
 		Parent(nullptr),
 		PreserveChangesFromDefaultMask(0),
-		// PrjPayloadType (NCsProjectile::Payload::IPayload)
+		// PayloadType (NCsProjectile::Payload::IPayload)
 		Type(),
 		Generation(0),
 		Location(0.0f),

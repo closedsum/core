@@ -83,9 +83,15 @@ namespace NCsManagerBeam
 
 namespace NCsBeam
 {
-	FManager::FManager()
-		: Super()
+	namespace NManager
 	{
+		namespace NInternal
+		{
+			FManager::FManager()
+				: Super()
+			{
+			}
+		}
 	}
 }
 
@@ -125,6 +131,16 @@ UCsManager_Beam::UCsManager_Beam(const FObjectInitializer& ObjectInitializer)
 	Script_Update_Impl()
 {
 }
+
+using ManagerType = NCsBeam::NManager::NInternal::FManager;
+using ManagerParamsType = NCsBeam::NManager::NInternal::FManager::FParams;
+using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
+using PoolParamsType = NCsPooledObject::NManager::FPoolParams;
+using PayloadType = NCsBeam::NPayload::IPayload;
+using ClassHandlerType = NCsData::NManager::NHandler::TClass<FCsBeamPooled, FCsBeamPtr, FECsBeamClass>;
+using DataType = NCsBeam::NData::IData;
+using DataInterfaceMapType = NCsBeam::NData::FInterfaceMap;
+using DataHandlerType = NCsData::NManager::NHandler::TData<DataType, FCsData_BeamPtr, DataInterfaceMapType>;
 
 // Singleton
 #pragma region
@@ -372,9 +388,8 @@ void UCsManager_Beam::SetupInternal()
 	const FString& Context = Str::SetupInternal;
 
 	// Populate EnumMaps
-	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-	UObject* ContextRoot = GameInstanceLibrary::GetSafeAsObject(Context, MyRoot, nullptr);
+	UObject* ContextRoot = CsGameInstanceLibrary::GetSafeAsObject(Context, MyRoot, nullptr);
 
 	NCsBeam::PopulateEnumMapFromSettings(Context, ContextRoot);
 	NCsBeamClass::PopulateEnumMapFromSettings(Context, ContextRoot);
@@ -462,9 +477,7 @@ void UCsManager_Beam::SetupInternal()
 		}
 
 		// Check if there any pool params from the LevelScriptActor
-		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
-
-		if (ICsGetSettingsManagerBeamPoolParams* GetPoolParams = LevelLibrary::GetSafeScriptActor<ICsGetSettingsManagerBeamPoolParams>(MyRoot))
+		if (ICsGetSettingsManagerBeamPoolParams* GetPoolParams = CsPersistentLevelLibrary::GetSafeScriptActor<ICsGetSettingsManagerBeamPoolParams>(MyRoot))
 		{
 			Settings.PoolParams = GetPoolParams->GetSettingsManagerBeamPoolParams();
 		}
@@ -484,8 +497,6 @@ void UCsManager_Beam::InitInternalFromSettings()
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
-		typedef NCsBeam::FManager::FParams ManagerParamsType;
-
 		ManagerParamsType ManagerParams;
 
 		ManagerParams.Name  = TEXT("UCsManager_Beam::NCsBeam::FManager");
@@ -495,8 +506,6 @@ void UCsManager_Beam::InitInternalFromSettings()
 		{
 			const FECsBeam& Type								= Pair.Key;
 			const FCsSettings_Manager_Beam_PoolParams& Params = Pair.Value;
-
-			typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
@@ -525,14 +534,11 @@ void UCsManager_Beam::InitInternalFromSettings()
 	}
 }
 
-#define ManagerParamsType NCsBeam::FManager::FParams
 void UCsManager_Beam::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
 	{
 		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
-
-		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
 		for (TPair<FECsBeam, PoolParamsType>& Pair : P.ObjectParams)
 		{
@@ -554,7 +560,6 @@ void UCsManager_Beam::InitInternal(const ManagerParamsType& Params)
 	}
 	Internal.Init(Params);
 }
-#undef ManagerParamsType
 
 void UCsManager_Beam::Clear()
 {
@@ -586,10 +591,8 @@ FCsBeamPooled* UCsManager_Beam::ConstructContainer(const FECsBeam& Type)
 	return new FCsBeamPooled();
 }
 
-#define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 TMulticastDelegate<void(const FCsBeamPooled*, const ConstructParamsType&)>& UCsManager_Beam::GetOnConstructObject_Event(const FECsBeam& Type)
 {
-#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
 
@@ -793,7 +796,6 @@ void UCsManager_Beam::ConstructPayloads(const FECsBeam& Type, const int32& Size)
 	Internal.ConstructPayloads(GetTypeFromTypeMap(Type), Size);
 }
 
-#define PayloadType NCsBeam::NPayload::IPayload
 PayloadType* UCsManager_Beam::ConstructPayload(const FECsBeam& Type)
 {
 	// TODO: Perform a new in place for all structs.
@@ -850,7 +852,6 @@ PayloadType* UCsManager_Beam::ConstructPayload(const FECsBeam& Type)
 
 	return InterfaceMap->Get<PayloadType>();
 }
-#undef PayloadType
 
 void UCsManager_Beam::DeconstructPayloadSlice(const FName& InterfaceImplName, void* Data)
 {
@@ -873,24 +874,18 @@ void UCsManager_Beam::DeconstructPayloadSlice(const FName& InterfaceImplName, vo
 	}
 }
 
-#define PayloadType NCsBeam::NPayload::IPayload
-
 PayloadType* UCsManager_Beam::AllocatePayload(const FECsBeam& Type)
 {
 	return Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 }
-
-#undef PayloadType
 
 #pragma endregion Payload
 
 	// Spawn
 #pragma region
 
-#define PayloadType NCsBeam::NPayload::IPayload
 const FCsBeamPooled* UCsManager_Beam::Spawn(const FECsBeam& Type, PayloadType* Payload)
 {
-#undef PayloadType
 	return Internal.Spawn(GetTypeFromTypeMap(Type), Payload);
 }
 
@@ -965,9 +960,9 @@ void UCsManager_Beam::LogTransaction(const FString& Context, const ECsPoolTransa
 
 void UCsManager_Beam::ConstructClassHandler()
 {
-	typedef NCsBeam::NManager::NHandler::FClass ClassHandlerType;
+	using ClassHandlerImplType = NCsBeam::NManager::NHandler::NClass::FClass;
 
-	ClassHandler = new ClassHandlerType();
+	ClassHandler = new ClassHandlerImplType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
 }
@@ -1002,14 +997,12 @@ FCsBeamPooled* UCsManager_Beam::GetBeamChecked(const FString& Context, const FEC
 
 void UCsManager_Beam::ConstructDataHandler()
 {
-	typedef NCsBeam::NManager::NHandler::FData DataHandlerType;
+	using DataHandlerImplType = NCsBeam::NManager::NHandler::NData::FData;
 
-	DataHandler = new DataHandlerType();
+	DataHandler = new DataHandlerImplType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
 }
-
-#define DataType NCsBeam::NData::IData
 
 DataType* UCsManager_Beam::GetData(const FName& Name)
 {
@@ -1048,8 +1041,6 @@ DataType* UCsManager_Beam::GetSafeData(const FString& Context, const FECsBeam& T
 {
 	return DataHandler->GetSafeData<EMCsBeam, FECsBeam>(Context, Type);
 }
-
-#undef DataType
 
 void UCsManager_Beam::OnPayloadUnloaded(const FName& Payload)
 {

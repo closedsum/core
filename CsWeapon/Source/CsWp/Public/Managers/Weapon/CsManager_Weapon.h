@@ -1,6 +1,5 @@
 // Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
 #include "UObject/Object.h"
 // Types
 #include "CsMacro_Cached.h"
@@ -36,7 +35,7 @@ namespace NCsWeapon
 	namespace NInternal
 	{
 		using PayloadType = NCsWeapon::NPayload::IPayload;
-		using ManagerMapType =NCsPooledObject::NManager::TTMap<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon>;
+		using ManagerMapType = NCsPooledObject::NManager::TTMap<ICsWeapon, FCsWeaponPooled, PayloadType, FECsWeapon>;
 		
 		class CSWP_API FManager : public ManagerMapType
 		{

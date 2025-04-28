@@ -10,7 +10,6 @@
 // Managers
 #include "Managers/Projectile/CsManager_Projectile.h"
 // Projectile
-#include "Payload/CsPayload_ProjectileImpl.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Manager_Projectile)

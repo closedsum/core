@@ -99,7 +99,7 @@ namespace NCsGameMode
 
 		#pragma endregion Seamless Travel
 	
-		// ICsGameMode_Event
+		// Event
 		#pragma region
 
 		OnPostSeamlessTravelCompleteEventType& FLibrary::GetPostSeamlessTravel_OnComplete_EventChecked(const FString& Context, const UObject* WorldContext)
@@ -110,7 +110,7 @@ namespace NCsGameMode
 			return Interface->GetPostSeamlessTravel_OnComplete_Event();
 		}
 
-		#pragma endregion ICsGameMode_Event
+		#pragma endregion Event
 
 		#undef USING_NS_CACHED
 		#undef SET_CONTEXT

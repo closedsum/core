@@ -96,9 +96,15 @@ namespace NCsManagerProjectile
 
 namespace NCsProjectile
 {
-	FManager::FManager()
-		: Super()
+	namespace NManager
 	{
+		namespace NInternal
+		{
+			FManager::FManager()
+				: Super()
+			{
+			}
+		}
 	}
 }
 
@@ -146,7 +152,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 {
 }
 
-using ManagerParamsType = NCsProjectile::FManager::FParams;
+using ManagerParamsType = NCsProjectile::NManager::NInternal::FManager::FParams;
 using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 using PoolParamsType = NCsPooledObject::NManager::FPoolParams;
 using PayloadType = NCsProjectile::NPayload::IPayload;
@@ -1159,7 +1165,7 @@ void UCsManager_Projectile::LogTransaction(const FString& Context, const ECsPool
 
 void UCsManager_Projectile::ConstructClassHandler()
 {
-	using ClassHandlerImplType = NCsProjectile::NManager::NHandler::FClass;
+	using ClassHandlerImplType = NCsProjectile::NManager::NHandler::NClass::FClass;
 
 	ClassHandler = new ClassHandlerImplType();
 	ClassHandler->Outer = this;
@@ -1206,7 +1212,7 @@ FCsProjectilePooled* UCsManager_Projectile::GetSafeProjectile(const FString& Con
 
 void UCsManager_Projectile::ConstructDataHandler()
 {
-	using DataHandlerImplType = NCsProjectile::NManager::NHandler::FData;
+	using DataHandlerImplType = NCsProjectile::NManager::NHandler::NData::FData;
 
 	DataHandler = new DataHandlerImplType();
 	DataHandler->Outer = this;

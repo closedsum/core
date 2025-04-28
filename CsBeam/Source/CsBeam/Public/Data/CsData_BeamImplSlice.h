@@ -37,7 +37,7 @@ public:
 	{
 	}
 
-#define SliceType NCsBeam::NData::FImplSlice
+	using SliceType = NCsBeam::NData::FImplSlice;
 
 	SliceType* SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) = &NCsBeam::FLog::Warning);
 	SliceType* SafeConstructAsValue(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
@@ -50,8 +50,6 @@ public:
 
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
-
-#undef SliceType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
 };

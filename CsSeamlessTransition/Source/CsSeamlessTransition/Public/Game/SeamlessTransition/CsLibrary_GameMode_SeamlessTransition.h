@@ -83,3 +83,6 @@ namespace NCsGameMode
 		};
 	}
 }
+
+using CsGameModeSeamlessTransitionLibrary = NCsGameMode::NSeamlessTransition::FLibrary;
+using CsGMSeamlessTransitionLibrary = NCsGameMode::NSeamlessTransition::FLibrary;

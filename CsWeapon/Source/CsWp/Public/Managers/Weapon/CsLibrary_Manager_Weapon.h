@@ -186,6 +186,26 @@ namespace NCsWeapon
 
 		#pragma endregion Get
 
+		// Active
+		#pragma region
+		public:
+
+			FORCEINLINE static bool IsActiveChecked(const FString& Context, const UObject* ContextObject)
+			{
+				return GetChecked(Context, ContextObject) != nullptr;
+			}
+
+			FORCEINLINE static bool SafeIsActive(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
+			{
+				return GetSafe(Context, ContextObject, Log) != nullptr;
+			}
+			FORCEINLINE static bool SafeIsActive(const UObject* ContextObject)
+			{
+				return GetSafe(ContextObject) != nullptr;
+			}
+
+		#pragma endregion Active
+
 		// Payload
 		#pragma region
 		public:

@@ -34,12 +34,10 @@ public:
 	{
 	}
 
-#define SliceType NCsBeam::NData::NType::FImplSlice
+	using SliceType = NCsBeam::NData::NType::FImplSlice;
 
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
-
-#undef SliceType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
 };
@@ -122,8 +120,6 @@ namespace NCsBeam
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
-
-			#undef ParamsType
 			};
 		}
 	}

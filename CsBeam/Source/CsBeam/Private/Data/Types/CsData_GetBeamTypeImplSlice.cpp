@@ -8,7 +8,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_GetBeamTypeImplSlice)
 
-#define SliceType NCsBeam::NData::NType::FImplSlice
+using SliceType = NCsBeam::NData::NType::FImplSlice;
 
 void FCsData_GetBeamTypeImplSlice::CopyToSlice(SliceType* Slice)
 {
@@ -19,8 +19,6 @@ void FCsData_GetBeamTypeImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
 	Slice->SetBeamType(Type);
 }
-
-#undef SliceType
 
 bool FCsData_GetBeamTypeImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {

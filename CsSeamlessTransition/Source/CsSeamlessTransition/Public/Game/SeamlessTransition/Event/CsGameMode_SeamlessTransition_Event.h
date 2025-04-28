@@ -20,11 +20,15 @@ class CSSEAMLESSTRANSITION_API ICsGameMode_SeamlessTransition_Event
 
 private:
 
-	typedef NCsGameMode::NSeamlessTravel::NPost::FOnComplete OnPostSeamlessTravelCompleteEventType;
+	// Allow clearer names without name collisions
+	struct _
+	{
+		using OnPostSeamlessTravelCompleteEventType = NCsGameMode::NSeamlessTravel::NPost::FOnComplete;
+	};;
 
 public:
 
 	virtual FCsGameMode_PostSeamlessTravel_OnComplete& GetPostSeamlessTravel_OnComplete_ScriptEvent() = 0;
 
-	virtual OnPostSeamlessTravelCompleteEventType& GetPostSeamlessTravel_OnComplete_Event() = 0;
+	virtual _::OnPostSeamlessTravelCompleteEventType& GetPostSeamlessTravel_OnComplete_Event() = 0;
 };

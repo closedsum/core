@@ -30,33 +30,37 @@ class ICsSoundPooled;
 
 namespace NCsSound
 {
-#define ManagerMapType NCsPooledObject::NManager::TTMap
-#define PayloadType NCsSound::NPayload::IPayload
-
-	class CSSOUND_API FManager : public ManagerMapType<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound>
+	namespace NManager
 	{
-	private:
-
-		typedef ManagerMapType<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound> Super;
-
-	public:
-
-		FManager();
-
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsSound& Type) const override
+		namespace NInternal
 		{
-			return Type.GetName();
-		}
+			using PayloadType = NCsSound::NPayload::IPayload;
+			using ManagerMapType = NCsPooledObject::NManager::TTMap<ICsSoundPooled, FCsSoundPooled, PayloadType, FECsSound>;
+		
+			class CSSOUND_API FManager : public ManagerMapType
+			{
+			private:
 
-		FORCEINLINE virtual bool IsValidKey(const FECsSound& Type) const override
-		{
-			return EMCsSound::Get().IsValidEnum(Type);
-		}
-	};
+				using Super = ManagerMapType;
 
-#undef ManagerMapType
-#undef PayloadType
+			public:
+
+				FManager();
+
+				FORCEINLINE virtual const FString& KeyTypeToString(const FECsSound& Type) const override
+				{
+					return Type.GetName();
+				}
+
+				FORCEINLINE virtual bool IsValidKey(const FECsSound& Type) const override
+				{
+					return EMCsSound::Get().IsValidEnum(Type);
+				}
+			};
+		}
+	}
 }
+
 #pragma endregion Internal
 
 class ICsGetManagerSound;
@@ -70,8 +74,8 @@ class CSSOUND_API UCsManager_Sound : public UObject
 
 private:	
 
-	using ManagerType = NCsSound::FManager;
-	using ManagerParamsType = NCsSound::FManager::FParams;
+	using ManagerType = NCsSound::NManager::NInternal::FManager;
+	using ManagerParamsType = NCsSound::NManager::NInternal::FManager::FParams;
 	using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 	using PayloadType = NCsSound::NPayload::IPayload;
 

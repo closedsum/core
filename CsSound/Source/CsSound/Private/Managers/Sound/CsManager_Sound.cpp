@@ -67,9 +67,15 @@ namespace NCsManagerSound
 
 namespace NCsSound
 {
-	FManager::FManager()
-		: Super()
+	namespace NManager
 	{
+		namespace NInternal
+		{
+			FManager::FManager()
+				: Super()
+			{
+			}
+		}
 	}
 }
 
@@ -115,7 +121,7 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-using ManagerParamsType = NCsSound::FManager::FParams;
+using ManagerParamsType = NCsSound::NManager::NInternal::FManager::FParams;
 using PoolParamsType = NCsPooledObject::NManager::FPoolParams;
 using ConstructParamsType = NCsPooledObject::NManager::FConstructParams;
 using PayloadLibrary = NCsSound::NPayload::NLibrary::FLibrary;

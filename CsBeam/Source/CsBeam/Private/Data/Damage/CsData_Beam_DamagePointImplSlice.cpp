@@ -3,6 +3,8 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Damage/CsData_Beam_DamagePointImplSlice.h"
 
+// Types
+#include "CsMacro_Interface.h"
 // Library
 #include "Managers/Beam/CsLibrary_Manager_Beam.h"
 #include "Library/CsLibrary_Property.h"
@@ -13,7 +15,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_Beam_DamagePointImplSlice)
 
-#define SliceType NCsBeam::NData::NDamage::NPoint::FImplSlice
+using SliceType = NCsBeam::NData::NDamage::NPoint::NImplSlice::FImplSlice;
 
 SliceType* FCsData_Beam_DamagePointImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
 {
@@ -69,8 +71,6 @@ void FCsData_Beam_DamagePointImplSlice::CopyToSliceAsValue(SliceType* Slice) con
 	Damage.CopyToPointAsValue(Slice->GetDamageDataImpl());
 }
 
-#undef SliceType
-
 bool FCsData_Beam_DamagePointImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
 	if (!Damage.IsValid(Context, Log))
@@ -78,7 +78,7 @@ bool FCsData_Beam_DamagePointImplSlice::IsValid(const FString& Context, void(*Lo
 	return true;
 }
 
-const FName NCsBeam::NData::NDamage::NPoint::FImplSlice::Name = FName("NCsBeam::NData::NDamage::NPoint::FImplSlice");
+CS_STRUCT_DEFINE_STATIC_CONST_FNAME(NCsBeam::NData::NDamage::NPoint::NImplSlice::FImplSlice);
 
 namespace NCsBeam
 {
@@ -99,81 +99,77 @@ namespace NCsBeam
 							const FName DamagePoint = FName("DamagePoint");
 						}
 					}
-				}
 
-				/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
-				{
-					using namespace NCsBeam::NData::NDamage::NPoint::NImplSlice::NCached;
+					/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
+					{
+						using namespace NCsBeam::NData::NDamage::NPoint::NImplSlice::NCached;
 
-					CS_IS_PTR_NULL_RET_NULL(Object)
+						CS_IS_PTR_NULL_RET_NULL(Object)
 
-					#define DataHandlerType NCsData::NManager::NHandler::TData
-					typedef NCsBeam::NData::IData DataType;
-					typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
+						#define DataHandlerType NCsData::NManager::NHandler::TData
+						typedef NCsBeam::NData::IData DataType;
+						typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
 
-					DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = CsBeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+						DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = CsBeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 				
-					#undef DataHandlerType
+						#undef DataHandlerType
 
-					if (!DataHandler)
-						return nullptr;
+						if (!DataHandler)
+							return nullptr;
 
-					typedef NCsBeam::NData::NDamage::IDamage DamageDataType;
+						FImplSlice* Slice = DataHandler->AddSafeDataSlice<FImplSlice, BeamDamageDataType>(Context, DataName);
 
-					FImplSlice* Slice = DataHandler->AddSafeDataSlice<FImplSlice, DamageDataType>(Context, DataName);
+						if (!Slice)
+							return nullptr;
 
-					if (!Slice)
-						return nullptr;
+						// Check for properties matching interface: BeamDamageDataType (NCsBeam::NData::NDamage::IDamage)
+						bool Success = false;
 
-					// Check for properties matching interface: DamageDataType (NCsBeam::NData::NDamage::IDamage)
-					typedef NCsProperty::FLibrary PropertyLibrary;
+						// Try FCsData_Beam_DamagePointImplSlice
+						typedef FCsData_Beam_DamagePointImplSlice StructSliceType;
 
-					bool Success = false;
-
-					// Try FCsData_Beam_DamagePointImplSlice
-					typedef FCsData_Beam_DamagePointImplSlice StructSliceType;
-
-					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::DamagePointSlice, nullptr))
-					{
-						SliceAsStruct->CopyToSlice(Slice);
-						Success = true;
-					}
-					// Try individual properties
-					else
-					{
-						FCsData_DamagePoint* DamagePointPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsData_DamagePoint>(Context, Object, Object->GetClass(), Name::DamagePoint, nullptr);
-
-						if (DamagePointPtr)
+						if (StructSliceType* SliceAsStruct = CsPropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::DamagePointSlice, nullptr))
 						{
-							DamagePointPtr->CopyToPoint(Slice->GetDamageDataImpl());
+							SliceAsStruct->CopyToSlice(Slice);
 							Success = true;
 						}
-					}
-
-					if (!Success)
-					{
-						if (Log)
+						// Try individual properties
+						else
 						{
-							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: DamageDataType (NCsBeam::NData::NDamage::IDamage)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
-							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Beam_DamagePointImplSlice with name: DamagePointSlice."), *Context));
-							Log(FString::Printf(TEXT("%s: - OR"), *Context));
-							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_DamagePoint with name: DamagePoint."), *Context));
+							FCsData_DamagePoint* DamagePointPtr = CsPropertyLibrary::GetStructPropertyValuePtr<FCsData_DamagePoint>(Context, Object, Object->GetClass(), Name::DamagePoint, nullptr);
+
+							if (DamagePointPtr)
+							{
+								DamagePointPtr->CopyToPoint(Slice->GetDamageDataImpl());
+								Success = true;
+							}
 						}
+
+						if (!Success)
+						{
+							if (Log)
+							{
+								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: DamageDataType (NCsBeam::NData::NDamage::IDamage)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Beam_DamagePointImplSlice with name: DamagePointSlice."), *Context));
+								Log(FString::Printf(TEXT("%s: - OR"), *Context));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_DamagePoint with name: DamagePoint."), *Context));
+							}
+						}
+						return Slice;
 					}
-					return Slice;
-				}
 
-				bool FImplSlice::IsValidChecked(const FString& Context) const
-				{
-					check(GetDamageDataImpl()->IsValidChecked(Context));
-					return true;
-				}
+					bool FImplSlice::IsValidChecked(const FString& Context) const
+					{
+						check(GetDamageDataImpl()->IsValidChecked(Context));
+						return true;
+					}
 
-				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
-				{
-					if (!GetDamageDataImpl()->IsValid(Context, Log))
-						return false;
-					return true;
+					bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
+					{
+						if (!GetDamageDataImpl()->IsValid(Context, Log))
+							return false;
+						return true;
+					}
 				}
 			}
 		}

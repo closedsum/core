@@ -32,3 +32,5 @@ namespace NCsInput
 		}
 	}
 }
+
+using CsInputMappingContextLibrary = NCsInput::NEnhanced::NInputMappingContext::FLibrary;

@@ -7,8 +7,6 @@
 #include "CsMacro_Misc.h"
 // Library
 #include "Enhanced/Data/CsLibrary_EnhancedInput_WithGameplayTag_DataRootSet.h"
-#include "CsLibrary_InputMappingContext.h"
-#include "CsLibrary_InputAction.h"
 #include "Object/CsLibrary_Object.h"
 #include "CsLibrary_Valid_GameplayTags.h"
 #include "Library/CsLibrary_Valid.h"
@@ -50,8 +48,8 @@ UCsManager_EnhancedInput_WithGameplayTag::UCsManager_EnhancedInput_WithGameplayT
 #define USING_NS_CACHED using namespace NCsManagerEnhancedInputWithGameplayTag::NCached;
 #define SET_CONTEXT(__FunctionName) using namespace NCsManagerEnhancedInputWithGameplayTag::NCached; \
 	const FString& Context = Str::__FunctionName
-#define InputMappingContextLibrary NCsInput::NEnhanced::NInputMappingContext::FLibrary
-#define InputActionLibrary NCsInput::NEnhanced::NInputAction::FLibrary
+
+using EventType = NCsInput::NWithGameplayTag::FEvent;
 
 // UObject Interface
 #pragma region
@@ -220,7 +218,6 @@ void UCsManager_EnhancedInput_WithGameplayTag::PostProcessInput(const float Delt
 		ActionsProcessedThisFrame[I] = false;
 	}
 
-	typedef NCsInput::NWithGameplayTag::FEvent EventType;
 	typedef UCsManager_EnhancedInput_WithGameplayTag::FMappingInfo MappingInfoType;
 	typedef UCsManager_EnhancedInput_WithGameplayTag::FActionInfo ActionInfoType;
 
@@ -397,8 +394,6 @@ void UCsManager_EnhancedInput_WithGameplayTag::PostProcessInput(const float Delt
 // Events
 #pragma region
 
-#define EventType NCsInput::NWithGameplayTag::FEvent
-
 void UCsManager_EnhancedInput_WithGameplayTag::OnAction(const int32& ActionIndex, const FInputActionInstance& ActionInstance)
 {
 	SET_CONTEXT(OnAction);
@@ -445,11 +440,7 @@ void UCsManager_EnhancedInput_WithGameplayTag::OnAction(const int32& ActionIndex
 	}
 }
 
-#undef EventType
-
 #pragma endregion Events
 
 #undef USING_NS_CACHED
 #undef SET_CONTEXT
-#undef InputMappingContextLibrary
-#undef InputActionLibrary

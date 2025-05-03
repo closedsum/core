@@ -25,18 +25,11 @@
 // Cached
 #pragma region
 
-namespace NCsManagerEnhancedInputWithGameplayTag
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_EnhancedInput_WithGameplayTag, Init);
-			// Events
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_EnhancedInput_WithGameplayTag, OnAction);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsManager_EnhancedInput_WithGameplayTag)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_EnhancedInput_WithGameplayTag, Init)
+	// Events
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_EnhancedInput_WithGameplayTag, OnAction)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -44,10 +37,6 @@ UCsManager_EnhancedInput_WithGameplayTag::UCsManager_EnhancedInput_WithGameplayT
 	bShutdown(false)
 {
 }
-
-#define USING_NS_CACHED using namespace NCsManagerEnhancedInputWithGameplayTag::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsManagerEnhancedInputWithGameplayTag::NCached; \
-	const FString& Context = Str::__FunctionName
 
 using EventType = NCsInput::NWithGameplayTag::FEvent;
 
@@ -108,7 +97,7 @@ void UCsManager_EnhancedInput_WithGameplayTag::Shutdown()
 
 void UCsManager_EnhancedInput_WithGameplayTag::Init()
 {
-	SET_CONTEXT(Init);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Init);
 
 	bShutdown = false;
 
@@ -396,7 +385,7 @@ void UCsManager_EnhancedInput_WithGameplayTag::PostProcessInput(const float Delt
 
 void UCsManager_EnhancedInput_WithGameplayTag::OnAction(const int32& ActionIndex, const FInputActionInstance& ActionInstance)
 {
-	SET_CONTEXT(OnAction);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(OnAction);
 
 	CS_IS_PENDING_KILL_CHECKED(ActionInstance.GetSourceAction())
 
@@ -441,6 +430,3 @@ void UCsManager_EnhancedInput_WithGameplayTag::OnAction(const int32& ActionIndex
 }
 
 #pragma endregion Events
-
-#undef USING_NS_CACHED
-#undef SET_CONTEXT

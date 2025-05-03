@@ -18,6 +18,7 @@ class NPyCommon:
             :return: bool
             """ 
             # NOTE: Future add different "level" of errors. Maybe even a native / c++ checkf.
+            assert type(condition) is bool, "condition is NOT of type: bool"
             assert condition, message
             return True
         @staticmethod
@@ -29,6 +30,7 @@ class NPyCommon:
             :return: bool
             """ 
             # NOTE: Future add different "level" of errors. Maybe even a native / c++ checkf.
+            assert type(condition) is bool, "condition is NOT of type: bool"
             assert condition
             return True
         @staticmethod

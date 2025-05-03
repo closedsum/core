@@ -8,12 +8,15 @@
 #include "Managers/Input/CsManager_Input_WithGameplayTag.h"
 #include "Managers/Input/Event/CsManager_Input_WithGameplayTag_Event.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "InputAction.h"
 
 #include "CsManager_EnhancedInput_WithGameplayTag.generated.h"
 
 class APlayerContoller;
 class UCsEnhancedInputListener;
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsManager_EnhancedInput_WithGameplayTag)
 
 UCLASS(BlueprintType, Blueprintable)
 class CSINPUTWITHGAMEPLAYTAG_API UCsManager_EnhancedInput_WithGameplayTag : public UActorComponent,
@@ -32,6 +35,8 @@ private:
 	using OnActionRawEventType = NCsInput::NWithGameplayTag::NManager::NEvent::NRaw::FOnAction;
 	using OnActionEventType = NCsInput::NWithGameplayTag::NManager::NEvent::FOnAction;
 	using EventType = NCsInput::NWithGameplayTag::FEvent;
+
+	CS_USING_CACHED_FUNCTION_NAME(CsManager_EnhancedInput_WithGameplayTag);
 
 // UObject Interface
 #pragma region
@@ -236,6 +241,7 @@ private:
 #pragma region
 private:
 
+	UPROPERTY()
 	TArray<UCsEnhancedInputListener*> Listeners;
 	
 #pragma endregion Listeners

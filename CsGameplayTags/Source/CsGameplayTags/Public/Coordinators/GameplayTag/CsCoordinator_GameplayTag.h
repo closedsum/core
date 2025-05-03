@@ -4,7 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "CsMacro_Namespace.h"
+#include "CsMacro_Cached.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Coordinators/GameplayTag/CsCoordinator_GameplayTag_Delegates.h"
 #include "Templates/SubclassOf.h"
@@ -15,6 +15,8 @@
 
 class ICsGetCoordinatorGameplayTag;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsCoordinator_GameplayTag)
+
 UCLASS(BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSGAMEPLAYTAGS_API UCsCoordinator_GameplayTag : public UObject
 {
@@ -24,6 +26,8 @@ private:
 
 	using CountContainerType = NCsGameplayTag::NCount::FContainer;
 	using OnProcessGameplayTagEventEventType = NCsGameplayTag::NCoordinator::FOnProcessGameplayTagEvent;
+
+	CS_USING_CACHED_FUNCTION_NAME(CsCoordinator_GameplayTag);
 
 // Singleton
 #pragma region
@@ -214,6 +218,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "CsGameplayTags|Coordinators|GameplayTag")
 	FCsCoordinatorGameplayTag_OnProcessGameplayTagEvent OnProcessGameplayTagEvent_ScriptEvent;
+
+	UPROPERTY(BlueprintAssignable, Category = "CsGameplayTags|Coordinators|GameplayTag")
+	FCsCoordinatorGameplayTag_OnProcessGameplayTagEvent2 OnProcessGameplayTagEvent2_ScriptEvent;
 
 	UPROPERTY(BlueprintAssignable, Category = "CsGameplayTags|Coordinators|GameplayTag")
 	FCsCoordinatorGameplayTag_OnProcessGameplayTagEvent OnProcessGameplayTagEvent_ManagerInput0_ScriptEvent;

@@ -18,6 +18,8 @@ struct CSGAMEPLAYTAGS_API FCsCoordinator_GameplayTag_Delegates_STUB
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsCoordinatorGameplayTag_OnProcessGameplayTagEvent, const FECsGameplayTagCoordinatorGroup&, Group, const FCsGameplayTagEvent&, Event);
+// NOTE: For scripts (i.e. Python) that don't handle const ref properly
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsCoordinatorGameplayTag_OnProcessGameplayTagEvent2, FECsGameplayTagCoordinatorGroup, Group, FCsGameplayTagEvent, Event);
 	// Override
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsOverride_OnProcessGameplayTagEventImpl, const FECsGameplayTagCoordinatorGroup&, Group, const FCsGameplayTagEvent&, Event);
 		// NOTE: For scripts (i.e. Python) that don't handle const ref properly

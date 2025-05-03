@@ -3,6 +3,11 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Enhanced/Data/CsData_EnhancedInput_WithGameplayTag.h"
 
+#if WITH_EDITOR
+// Library
+#include "Library/CsLibrary_Property.h"
+#endif // #if WITH_EDITOR
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsData_EnhancedInput_WithGameplayTag)
 
 UCsData_EnhancedInput_WithGameplayTag::UCsData_EnhancedInput_WithGameplayTag(const FObjectInitializer& ObjectInitializer) :
@@ -10,3 +15,26 @@ UCsData_EnhancedInput_WithGameplayTag::UCsData_EnhancedInput_WithGameplayTag(con
 	Inner()
 {
 }
+
+// UObject Interface
+#pragma region
+
+#if WITH_EDITOR
+
+void UCsData_EnhancedInput_WithGameplayTag::PostEditChangeChainProperty(FPropertyChangedChainEvent& e)
+{
+	//int32 Index;
+	TSet<FString> PropertyNames;
+	CsPropertyLibrary::GetPropertyNamesInChain(e, PropertyNames);
+
+	// Inner
+	if (PropertyNames.Contains(TEXT("Inner")))
+	{
+		Inner.OnPostEditChange(PropertyNames);
+	}
+	Super::PostEditChangeChainProperty(e);
+}
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion UObject Interface

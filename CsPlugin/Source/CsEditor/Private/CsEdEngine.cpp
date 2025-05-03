@@ -34,6 +34,7 @@
 #include "Settings/CsDataSettings.h"
 #include "Settings/ProjectPackagingSettings.h"
 #include "Settings/LevelEditorPlaySettings.h"
+#include "OutputLogSettings.h"
 // Property
 #include "DetailCustomizations/CsRegisterDetailCustomization.h"
 // Level
@@ -370,6 +371,10 @@ void UCsEdEngine::OnPostInit()
 
 	SettingsTool::ToggleProjectSettings();
 	
+	GConfig->SetBool(TEXT("/Script/OutputLog.OutputLogSettings"), TEXT("bEnableOutputLogClearOnPIE"), true, GEditorPerProjectIni);
+	GetMutableDefault<UOutputLogSettings>()->bEnableOutputLogClearOnPIE = true;
+	GetMutableDefault<UOutputLogSettings>()->SaveConfig();
+
 	// ICsAsset_Event
 	GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OnAssetOpenedInEditor().AddUObject(this, &UCsEdEngine::OnAssetOpenedInEditor);
 	GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OnAssetEditorRequestClose().AddUObject(this, &UCsEdEngine::OnAssetEditorRequestClose);

@@ -147,7 +147,7 @@ class FPyRoutine:
 		self.WaitForTimeTimer: float		= 0.0
 		self.WaitForTimeType: FPyProperty	= None
 		self.bWaitForFlag: bool				= False
-		self.WaitForFrameType: FPyProperty 	= None
+		self.WaitForFlagType: FPyProperty 	= None
 		self.bWaitForListenMessage: bool	= False
 		self.WaitForListenMessage: str		= None
 		self.WaitForListenMessageType: FPyProperty = None
@@ -334,10 +334,10 @@ class FPyRoutine:
         # Check WaitForFlag
 		#  TODO: WaitForFlagType with function IsEqual needs to be defined
 		if self.bWaitForFlag == True:
-			move = (self.WaitForBoolType != None and self.WaitForBoolType.Get() == True) or (self.WaitForFlagType != None and self.WaitForFlagType.IsEqual() == True)
+			move = (self.WaitForFlagType != None and self.WaitForFlagType.Get() == True) or (self.WaitForFlagType != None and self.WaitForFlagType.Get() == True)
 			
 			if move == True:
-				self.WaitForBoolType = None
+				self.WaitForFlagType = None
 				self.bWaitForFlag    = False
 
         # WaitForListenMessage
@@ -494,9 +494,9 @@ class FPyRoutine:
 			# 
             # WaitForFlag - yield 'flag property'
 			elif (isinstance(yieldCommand, FPyProperty)) and yieldCommand.IsBoolean():
-				self.WaitForBoolType = yieldCommand
-				
-				if self.WaitForBoolType.Get() == False:
+				self.WaitForFlagType = yieldCommand
+
+				if self.WaitForFlagType.Get() == False:
 					self.bWaitForFlag = True
             # WaitForListenMessage
 			elif type(yieldCommand) is str:

@@ -18,12 +18,20 @@ struct CSINPUTWITHGAMEPLAYTAG_API FCsData_EnhancedInput_WithGameplayTag_Inner
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsInput|Input|Enhanced")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsInput|Input|Enhanced", meta = (TitleProperty = "TitleProperty"))
 	TArray<FCsEnhancedInput_WithGameplayTag_MappingInfo> MappingInfos;
 	
 	FCsData_EnhancedInput_WithGameplayTag_Inner() :
 		MappingInfos()
 	{
+	}
+
+	void OnPostEditChange(const TSet<FString>& PropertyNames)
+	{
+		for (FCsEnhancedInput_WithGameplayTag_MappingInfo& Info : MappingInfos)
+		{
+			Info.OnPostEditChange(PropertyNames);
+		}
 	}
 };
 
@@ -33,6 +41,18 @@ UCLASS(BlueprintType, Blueprintable)
 class CSINPUTWITHGAMEPLAYTAG_API UCsData_EnhancedInput_WithGameplayTag : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+// UObject Interface
+#pragma region
+public:
+
+#if WITH_EDITOR
+
+	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& e) override;
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion UObject Interface
 
 public:
 

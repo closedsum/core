@@ -19,6 +19,9 @@ struct CSINPUTWITHGAMEPLAYTAG_API FCsEnhancedInput_WithGameplayTag_ActionInfo
 
 public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsInput|Enhanced")
+	FString TitleProperty;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsInput|Enhanced")
 	UInputAction* Action;
 
@@ -38,6 +41,8 @@ public:
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsInput::NWithGameplayTag::FLog::Warning) const;
+	
+	void OnPostEditChange(const TSet<FString>& PropertyNames);
 };
 
 #pragma endregion FCsEnhancedInput_WithGameplayTag_ActionInfo
@@ -54,16 +59,20 @@ struct CSINPUTWITHGAMEPLAYTAG_API FCsEnhancedInput_WithGameplayTag_MappingInfo
 
 public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsInput|Enhanced")
+	FString TitleProperty;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsInput|Enhanced")
 	UInputMappingContext* MappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsInput|Enhanced")
 	FGameplayTag Tag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsInput|Enhanced")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsInput|Enhanced", meta = (TitleProperty = "TitleProperty"))
 	TArray<FCsEnhancedInput_WithGameplayTag_ActionInfo> ActionInfos;
 
 	FCsEnhancedInput_WithGameplayTag_MappingInfo() :
+		TitleProperty(),
 		MappingContext(nullptr),
 		Tag(),
 		ActionInfos()
@@ -72,6 +81,8 @@ public:
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsInput::NWithGameplayTag::FLog::Warning) const;
+
+	void OnPostEditChange(const TSet<FString>& PropertyNames);
 };
 
 #pragma endregion FCsEnhancedInput_WithGameplayTag_MappingInfo

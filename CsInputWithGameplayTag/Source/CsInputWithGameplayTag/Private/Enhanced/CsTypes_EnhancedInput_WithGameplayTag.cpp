@@ -38,6 +38,16 @@ bool FCsEnhancedInput_WithGameplayTag_ActionInfo::IsValid(const FString& Context
 	return true;
 }
 
+void FCsEnhancedInput_WithGameplayTag_ActionInfo::OnPostEditChange(const TSet<FString>& PropertyNames)
+{
+	TitleProperty.Empty();
+
+	if (::IsValid(Action))
+		TitleProperty += Action->GetName();
+
+	TitleProperty += TitleProperty.IsEmpty() ? TEXT("None (") + Tag.ToString() + TEXT(")") : TEXT(" (") + Tag.ToString() + TEXT(")");
+}
+
 #pragma endregion FCsEnhancedInput_WithGameplayTag_ActionInfo
 
 // FCsEnhancedInput_WithGameplayTag_MappingInfo
@@ -65,6 +75,24 @@ bool FCsEnhancedInput_WithGameplayTag_MappingInfo::IsValid(const FString& Contex
 		CS_IS_VALID(Info)
 	}
 	return true;
+}
+
+void FCsEnhancedInput_WithGameplayTag_MappingInfo::OnPostEditChange(const TSet<FString>& PropertyNames)
+{
+	TitleProperty.Empty();
+
+	if (::IsValid(MappingContext))
+		TitleProperty += MappingContext->GetName();
+
+	TitleProperty += TitleProperty.IsEmpty() ? TEXT("None (") + Tag.ToString() + TEXT(")") : TEXT(" (") + Tag.ToString() + TEXT(")");
+
+	if (PropertyNames.Contains(TEXT("ActionInfos")))
+	{
+		for (FCsEnhancedInput_WithGameplayTag_ActionInfo& Info : ActionInfos)
+		{
+			Info.OnPostEditChange(PropertyNames);
+		}
+	}
 }
 
 #pragma endregion FCsEnhancedInput_WithGameplayTag_MappingInfo

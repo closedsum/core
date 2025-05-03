@@ -40,7 +40,8 @@ public class CsEditor : ModuleRules
                     "LevelEditor",
                     "DeveloperToolSettings",
                     "Settings",
-                    "SourceControl",
+                    "OutputLog",
+                    "SourceControl",                 
                     "Niagara", // TODO: move associated to plugin
                     "NiagaraEditor", // TODO: Move associated code to plugin
                     "CsPIE",

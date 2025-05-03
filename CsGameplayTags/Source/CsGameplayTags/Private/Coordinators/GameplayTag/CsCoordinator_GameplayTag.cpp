@@ -30,19 +30,12 @@
 // Cached
 #pragma region
 
-namespace NCsCoordinatorGameplayTag
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameplayTag, Init);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameplayTag, GetFromWorldContextObject);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameplayTag, ProcessGameplayTagEvent);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameplayTag, QueueGameplayTagEvent);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsCoordinator_GameplayTag)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsCoordinator_GameplayTag, Init)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsCoordinator_GameplayTag, GetFromWorldContextObject)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsCoordinator_GameplayTag, ProcessGameplayTagEvent)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsCoordinator_GameplayTag, QueueGameplayTagEvent)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -56,10 +49,6 @@ UCsCoordinator_GameplayTag::UCsCoordinator_GameplayTag(const FObjectInitializer&
 	OnProcessGameplayTagEvent_ManagerInput0_ScriptEvent()
 {
 }
-
-#define USING_NS_CACHED using namespace NCsCoordinatorGameplayTag::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsCoordinatorGameplayTag::NCached; \
-	const FString& Context = Str::__FunctionName
 
 // Singleton
 #pragma region
@@ -82,7 +71,7 @@ UCsCoordinator_GameplayTag::UCsCoordinator_GameplayTag(const FObjectInitializer&
 
 /*static*/ void UCsCoordinator_GameplayTag::Init(UObject* InRoot /*=nullptr*/, TSubclassOf<UCsCoordinator_GameplayTag> CoordinatorClass)
 {
-	SET_CONTEXT(Init);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Init);
 
 	CS_IS_SUBCLASS_OF_NULL_CHECKED(CoordinatorClass, UCsCoordinator_GameplayTag)
 
@@ -122,7 +111,7 @@ UCsCoordinator_GameplayTag::UCsCoordinator_GameplayTag(const FObjectInitializer&
 
 /*static*/ void UCsCoordinator_GameplayTag::Init(UObject* InRoot)
 {
-	SET_CONTEXT(Init);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Init);
 
 	const FCsSettings_Coordinator_GameplayTag& Settings = FCsSettings_Coordinator_GameplayTag::Get();
 
@@ -216,7 +205,7 @@ UCsCoordinator_GameplayTag::UCsCoordinator_GameplayTag(const FObjectInitializer&
 
 /*static*/ UCsCoordinator_GameplayTag* UCsCoordinator_GameplayTag::GetFromWorldContextObject(UObject* WorldContextObject)
 {
-	SET_CONTEXT(GetFromWorldContextObject);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(GetFromWorldContextObject);
 
 	if (UObject* ContextRoot = CsGameplayTagCoordinatorLibrary::GetSafeContextRoot(Context, WorldContextObject))
 	{
@@ -386,7 +375,7 @@ void UCsCoordinator_GameplayTag::OnTagEvent_ManagerInput1(const FCsGameplayTagEv
 
 void UCsCoordinator_GameplayTag::ProcessGameplayTagEvent(const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Event)
 {
-	SET_CONTEXT(ProcessGameplayTagEvent);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(ProcessGameplayTagEvent);
 
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameplayTagCoordinatorGroup, Group)
 
@@ -395,11 +384,12 @@ void UCsCoordinator_GameplayTag::ProcessGameplayTagEvent(const FECsGameplayTagCo
 	if (Group == NCsGameplayTagCoordinatorGroup::ManagerInput0)
 		OnProcessGameplayTagEvent_ManagerInput0_ScriptEvent.Broadcast(Group, Event);
 	OnProcessGameplayTagEvent_ScriptEvent.Broadcast(Group, Event);
+	OnProcessGameplayTagEvent2_ScriptEvent.Broadcast(Group, Event);
 }
 
 void UCsCoordinator_GameplayTag::QueueGameplayTagEvent(const FECsGameplayTagCoordinatorGroup& Group, const FCsGameplayTagEvent& Event)
 {
-	SET_CONTEXT(QueueGameplayTagEvent);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(QueueGameplayTagEvent);
 
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameplayTagCoordinatorGroup, Group)
 
@@ -428,6 +418,3 @@ void UCsCoordinator_GameplayTag::ProcessQueuedGameplayTagEvents(const FECsGamepl
 }
 
 #pragma endregion Events
-
-#undef USING_NS_CACHED
-#undef SET_CONTEXT

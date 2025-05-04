@@ -5,7 +5,7 @@
 #include "CsAI.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Behavior Tree
@@ -15,6 +15,8 @@
 #include "Tasks/AITask_MoveTo.h"
 // Log
 #include "Utility/CsAILog.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_BehaviorTree_Task)
 
 // Cached
 #pragma region

@@ -7,9 +7,11 @@
 // CVar
 #include "Script/CsCVars_Script.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Blackboard/CsLibrary_Blackboard.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_Blackboard)
 
 // Cached
 #pragma region

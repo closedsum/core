@@ -7,12 +7,14 @@
 // CVar
 #include "Script/CsCVars_Script.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Controller/CsLibrary_AI_Controller.h"
 #include "Library/CsLibrary_Valid.h"
 // AI
 #include "AIController.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_AI_Controller)
 
 // Cached
 #pragma region

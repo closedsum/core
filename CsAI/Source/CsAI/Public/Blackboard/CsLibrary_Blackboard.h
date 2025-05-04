@@ -1723,3 +1723,5 @@ namespace NCsBlackboard
 	#pragma endregion Get
 	};
 }
+
+using CsBlackboardLibrary = NCsBlackboard::FLibrary;

@@ -40,7 +40,15 @@ namespace NCsAI
 			*/
 			static UBlackboardComponent* GetSafeBlackboard(const FString& Context, const AAIController* Controller, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 		};
+	}
+}
 
+using CsAIControllerLibrary = NCsAI::NController::FLibrary;
+
+namespace NCsAI
+{
+	namespace NController
+	{
 		namespace NBlackboard
 		{
 			/**
@@ -773,3 +781,5 @@ namespace NCsAI
 		}
 	}
 }
+
+using CsAIBlackboardLibrary = NCsAI::NController::NBlackboard::FLibrary;

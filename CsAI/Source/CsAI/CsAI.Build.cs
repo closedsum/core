@@ -16,7 +16,10 @@ public class CsAI : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
-                    "CsCore",
+                    "CsMacro",
+                    "CsEnum",
+                    "CsTypes",
+                    "CsCoreLibrary",
                     "AIModule"
                 }
             );

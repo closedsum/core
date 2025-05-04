@@ -5,27 +5,22 @@
 #include "CsAI.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // AI
 #include "GameplayTask.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_GameplayTask)
 
 // Cached
 #pragma region
 
-namespace NCsScriptLibraryGameplayTask
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameplayTask, ReadyForActivation);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameplayTask, ExternalCancel);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameplayTask, IsActive);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameplayTask, IsPaused);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameplayTask, IsFinished);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsScriptLibrary_GameplayTask)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_GameplayTask, ReadyForActivation)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_GameplayTask, ExternalCancel)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_GameplayTask, IsActive)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_GameplayTask, IsPaused)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_GameplayTask, IsFinished)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -36,9 +31,7 @@ UCsScriptLibrary_GameplayTask::UCsScriptLibrary_GameplayTask(const FObjectInitia
 
 bool UCsScriptLibrary_GameplayTask::ReadyForActivation(const FString& Context, UGameplayTask* Task)
 {
-	using namespace NCsScriptLibraryGameplayTask::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::ReadyForActivation : Context;
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(ReadyForActivation);
 
 	if (!Task)
 	{
@@ -51,9 +44,7 @@ bool UCsScriptLibrary_GameplayTask::ReadyForActivation(const FString& Context, U
 
 bool UCsScriptLibrary_GameplayTask::ExternalCancel(const FString& Context, UGameplayTask* Task)
 {
-	using namespace NCsScriptLibraryGameplayTask::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::ExternalCancel : Context;
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(ExternalCancel);
 
 	if (!Task)
 	{
@@ -66,9 +57,7 @@ bool UCsScriptLibrary_GameplayTask::ExternalCancel(const FString& Context, UGame
 
 bool UCsScriptLibrary_GameplayTask::IsActive(const FString& Context, UGameplayTask* Task)
 {
-	using namespace NCsScriptLibraryGameplayTask::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::IsActive : Context;
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(IsActive);
 
 	if (!Task)
 	{
@@ -80,9 +69,7 @@ bool UCsScriptLibrary_GameplayTask::IsActive(const FString& Context, UGameplayTa
 
 bool UCsScriptLibrary_GameplayTask::IsPaused(const FString& Context, UGameplayTask* Task)
 {
-	using namespace NCsScriptLibraryGameplayTask::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::IsPaused : Context;
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(IsPaused);
 
 	if (!Task)
 	{
@@ -94,9 +81,7 @@ bool UCsScriptLibrary_GameplayTask::IsPaused(const FString& Context, UGameplayTa
 
 bool UCsScriptLibrary_GameplayTask::IsFinished(const FString& Context, UGameplayTask* Task)
 {
-	using namespace NCsScriptLibraryGameplayTask::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::IsFinished : Context;
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(IsFinished);
 
 	if (!Task)
 	{

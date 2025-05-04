@@ -4,8 +4,10 @@
 #include "BehaviorTree/Script/CsScriptLibrary_BehaviorTree.h"
 #include "CsAI.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_BehaviorTree)
+
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "BehaviorTree/CsLibrary_BehaviorTree.h"
 #include "Library/CsLibrary_Valid.h"

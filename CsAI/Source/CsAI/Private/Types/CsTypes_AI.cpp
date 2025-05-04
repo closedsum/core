@@ -3,4 +3,4 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Types/CsTypes_AI.h"
 
-#include UE_INLINE_GENERATED_CPP_BY_NAME(CTypes_AI)
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_AI)

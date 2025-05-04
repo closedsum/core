@@ -5,9 +5,11 @@
 #include "CsAI.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Character/CsLibrary_AI_Character.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_AI_Character)
 
 // Cached
 #pragma region

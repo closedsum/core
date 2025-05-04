@@ -4,11 +4,11 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Types/CsTypes_AI.h"
 #include "Tasks/Types/CsTypes_GameplayTask.h"
 
 #include "CsScriptLibrary_AI_Task.generated.h"
-
 
 USTRUCT(BlueprintType)
 struct CSAI_API FCsScriptLibrary_AI_Task_MoveTo_ReadyForActivation_Result
@@ -48,11 +48,17 @@ class UBehaviorTreeComponent;
 class UAITask;
 class UAITask_MoveTo;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_AI_Task)
+
 UCLASS()
 class CSAI_API UCsScriptLibrary_AI_Task : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_AI_Task);
+	
 public:
 
 	/**

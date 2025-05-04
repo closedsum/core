@@ -2,23 +2,14 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Library/Script/CsScriptLibrary_AI.h"
-#include "CsAI.h"
 
 // AI
 #include "AISystem.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_AI)
+
 // Cached
 #pragma region
-
-namespace NCsScriptLibraryAI
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-		}
-	}
-}
 
 #pragma endregion Cached
 

@@ -30,8 +30,7 @@ public class CsAIEditor : ModuleRules
                     "Engine",
                     "UnrealEd",
                     "Slate",
-                    "CsCore",
-                    "CsEditor",
+                    "CsEnum",
                     "CsAI"
                 }
             );

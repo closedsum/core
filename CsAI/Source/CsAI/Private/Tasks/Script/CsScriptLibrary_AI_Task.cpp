@@ -5,7 +5,7 @@
 #include "CsAI.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // AI
@@ -14,25 +14,20 @@
 // Log
 #include "Utility/CsAILog.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_AI_Task)
+
 // Cached
 #pragma region
 
-namespace NCsScriptLibraryAITask
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, GetAIController);
-			// MoveTo
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, New_MoveTo);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, MoveTo_ReadyForActivation);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, MoveTo_SetUp);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, MoveTo_ConditionalPerformMove);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, MoveTo_WasMoveSuccessful);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsScriptLibrary_AI_Task)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_AI_Task, GetAIController)
+	// MoveTo
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_AI_Task, New_MoveTo)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_AI_Task, MoveTo_ReadyForActivation)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_AI_Task, MoveTo_SetUp)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_AI_Task, MoveTo_ConditionalPerformMove)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_AI_Task, MoveTo_WasMoveSuccessful)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -41,14 +36,11 @@ UCsScriptLibrary_AI_Task::UCsScriptLibrary_AI_Task(const FObjectInitializer& Obj
 {
 }
 
-#define USING_NS_CACHED using namespace NCsScriptLibraryAITask::NCached;
-#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryAITask::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define SET_LOG_WARNING void(*Log)(const FString&) = &NCsAI::FLog::Warning;
 
 AAIController* UCsScriptLibrary_AI_Task::GetAIController(const FString& Context, const UAITask* Task)
 {
-	CONDITIONAL_SET_CTXT(GetAIController);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(GetAIController);
 	SET_LOG_WARNING
 
 	CS_IS_PENDING_KILL_RET_NULL2(Task)
@@ -57,7 +49,7 @@ AAIController* UCsScriptLibrary_AI_Task::GetAIController(const FString& Context,
 
 UAITask_MoveTo* UCsScriptLibrary_AI_Task::New_MoveTo(const FString& Context, AAIController* OwnerController)
 {
-	CONDITIONAL_SET_CTXT(New_MoveTo);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(New_MoveTo);
 	SET_LOG_WARNING
 
 	CS_IS_PENDING_KILL_RET_NULL2(OwnerController)
@@ -73,7 +65,7 @@ UAITask_MoveTo* UCsScriptLibrary_AI_Task::New_MoveTo(const FString& Context, AAI
 
 bool UCsScriptLibrary_AI_Task::MoveTo_ReadyForActivation(const FString& Context, UAITask_MoveTo* Task, FCsScriptLibrary_AI_Task_MoveTo_ReadyForActivation_Result& OutResult)
 {
-	CONDITIONAL_SET_CTXT(MoveTo_ReadyForActivation);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(MoveTo_ReadyForActivation);
 	SET_LOG_WARNING
 
 	CS_IS_PENDING_KILL2(Task)
@@ -91,7 +83,7 @@ bool UCsScriptLibrary_AI_Task::MoveTo_ReadyForActivation(const FString& Context,
 
 bool UCsScriptLibrary_AI_Task::MoveTo_SetUp(const FString& Context, UAITask_MoveTo* Task, AAIController* Controller, const FCsAIMoveRequest& MoveRequest)
 {
-	CONDITIONAL_SET_CTXT(MoveTo_SetUp);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(MoveTo_SetUp);
 	SET_LOG_WARNING
 
 	CS_IS_PENDING_KILL2(Task)
@@ -106,7 +98,7 @@ bool UCsScriptLibrary_AI_Task::MoveTo_SetUp(const FString& Context, UAITask_Move
 
 bool UCsScriptLibrary_AI_Task::MoveTo_ConditionalPerformMove(const FString& Context, UAITask_MoveTo* Task)
 {
-	CONDITIONAL_SET_CTXT(MoveTo_ConditionalPerformMove);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(MoveTo_ConditionalPerformMove);
 	SET_LOG_WARNING
 
 	CS_IS_PENDING_KILL2(Task)
@@ -117,7 +109,7 @@ bool UCsScriptLibrary_AI_Task::MoveTo_ConditionalPerformMove(const FString& Cont
 
 bool UCsScriptLibrary_AI_Task::MoveTo_WasMoveSuccessful(const FString& Context, UAITask_MoveTo* Task)
 {
-	CONDITIONAL_SET_CTXT(MoveTo_WasMoveSuccessful);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(MoveTo_WasMoveSuccessful);
 	SET_LOG_WARNING
 
 	CS_IS_PENDING_KILL2(Task)
@@ -126,6 +118,4 @@ bool UCsScriptLibrary_AI_Task::MoveTo_WasMoveSuccessful(const FString& Context, 
 	return true;
 }
 
-#undef USING_NS_CACHED
-#undef CONDITIONAL_SET_CTXT
 #undef SET_LOG_WARNING

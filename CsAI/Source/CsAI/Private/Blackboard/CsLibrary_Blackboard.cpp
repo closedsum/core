@@ -45,6 +45,10 @@ namespace NCsBlackboard
 		}
 	}
 
+	using LogClassType = NCsAI::FLog;
+
+	CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 	const UBlackboardData* FLibrary::GetDataChecked(const FString& Context, const UBlackboardComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component)
@@ -55,7 +59,7 @@ namespace NCsBlackboard
 		return Data;
 	}
 
-	const UBlackboardData* FLibrary::GetSafeData(const FString& Context, const UBlackboardComponent* Component, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	const UBlackboardData* FLibrary::GetSafeData(const FString& Context, const UBlackboardComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL_RET_NULL(Component)
 
@@ -85,7 +89,7 @@ namespace NCsBlackboard
 		return Blackboard;
 	}
 
-	const UBlackboardComponent* FLibrary::GetSafeComponent(const FString& Context, const UBehaviorTreeComponent* Component, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	const UBlackboardComponent* FLibrary::GetSafeComponent(const FString& Context, const UBehaviorTreeComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL_RET_NULL(Component);
 
@@ -95,7 +99,7 @@ namespace NCsBlackboard
 		return Blackboard;
 	}
 
-	UBlackboardComponent* FLibrary::GetSafeComponent(const FString& Context, UBehaviorTreeComponent* Component, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	UBlackboardComponent* FLibrary::GetSafeComponent(const FString& Context, UBehaviorTreeComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL_RET_NULL(Component);
 
@@ -116,7 +120,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::IsValid(const FString& Context, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::IsValid(const FString& Context, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!KeySelector.IsSet())
 		{
@@ -142,7 +146,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeAreEqual(const FString& Context, const TSubclassOf<UBlackboardKeyType>& A, const TSubclassOf<UBlackboardKeyType>& B, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeAreEqual(const FString& Context, const TSubclassOf<UBlackboardKeyType>& A, const TSubclassOf<UBlackboardKeyType>& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!A.Get())
 		{
@@ -173,7 +177,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeHasKey(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeHasKey(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL(Data)
 		CS_IS_NAME_NONE(KeyName)
@@ -197,7 +201,7 @@ namespace NCsBlackboard
 		return ID;
 	}
 
-	uint16 FLibrary::GetSafeKeyID(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	uint16 FLibrary::GetSafeKeyID(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL_RET_VALUE(Data, FBlackboard::InvalidKey)
 		CS_IS_NAME_NONE_RET_VALUE(KeyName, FBlackboard::InvalidKey)
@@ -251,7 +255,7 @@ namespace NCsBlackboard
 		return KeyType;
 	}
 
-	TSubclassOf<UBlackboardKeyType> FLibrary::GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const uint16& KeyID, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	TSubclassOf<UBlackboardKeyType> FLibrary::GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const uint16& KeyID, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		CS_IS_PENDING_KILL_RET_NULL(Data)
 
@@ -271,7 +275,7 @@ namespace NCsBlackboard
 		return KeyType;
 	}
 
-	TSubclassOf<UBlackboardKeyType> FLibrary::GetSafeKeyType(const FString& Context, UClass* KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	TSubclassOf<UBlackboardKeyType> FLibrary::GetSafeKeyType(const FString& Context, UClass* KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!KeyType)
 		{
@@ -284,7 +288,7 @@ namespace NCsBlackboard
 		// Object
 	#pragma region
 
-	bool FLibrary::SafeIsKeyType_Object(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKeyType_Object(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!KeyType.Get())
 		{
@@ -326,7 +330,7 @@ namespace NCsBlackboard
 
 #endif // #if !UE_BUILD_SHIPPING
 
-	bool FLibrary::SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
@@ -338,7 +342,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeHasKey(Context, Data, KeySelector, Log))
 			return false;
@@ -351,7 +355,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Object(const FString& Context, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Object(const FString& Context, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!IsValid(Context, KeySelector, Log))
 			return false;
@@ -377,7 +381,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Class(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Class(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
@@ -394,7 +398,7 @@ namespace NCsBlackboard
 		// Enum
 	#pragma region
 
-	bool FLibrary::SafeIsKeyType_Enum(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKeyType_Enum(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!KeyType.Get())
 		{
@@ -425,7 +429,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Enum(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Enum(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
@@ -437,7 +441,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Enum(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Enum(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeHasKey(Context, Data, KeySelector, Log))
 			return false;
@@ -455,7 +459,7 @@ namespace NCsBlackboard
 		// Int
 	#pragma region
 
-	bool FLibrary::SafeIsKeyType_Int(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKeyType_Int(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!KeyType.Get())
 		{
@@ -486,7 +490,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Int(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Int(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
@@ -498,7 +502,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Int(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Int(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeHasKey(Context, Data, KeySelector, Log))
 			return false;
@@ -516,7 +520,7 @@ namespace NCsBlackboard
 		// Float
 	#pragma region
 
-	bool FLibrary::SafeIsKeyType_Float(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKeyType_Float(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!KeyType.Get())
 		{
@@ -547,7 +551,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Float(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Float(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
@@ -559,7 +563,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Float(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Float(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeHasKey(Context, Data, KeySelector, Log))
 			return false;
@@ -585,7 +589,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Bool(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Bool(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
@@ -610,7 +614,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_String(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_String(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
@@ -635,7 +639,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Name(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Name(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
@@ -652,7 +656,7 @@ namespace NCsBlackboard
 		// Vector
 	#pragma region
 
-	bool FLibrary::SafeIsKeyType_Vector(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKeyType_Vector(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!KeyType.Get())
 		{
@@ -676,7 +680,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Vector(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Vector(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
@@ -701,7 +705,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SafeIsKey_Rotator(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIsKey_Rotator(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
@@ -737,7 +741,7 @@ namespace NCsBlackboard
 		Component->SetValueAsObject(KeySelector.SelectedKeyName, ObjectValue);
 	}
 
-	bool FLibrary::SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Object(Context, Component, KeyName))
 			return false;
@@ -746,7 +750,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Object(Context, Component, KeySelector))
 			return false;
@@ -771,7 +775,7 @@ namespace NCsBlackboard
 		Component->SetValueAsObject(KeySelector.SelectedKeyName, ObjectValue);
 	}
 
-	bool FLibrary::SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Object(Context, Component, KeyName))
 			return false;
@@ -782,7 +786,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Object(Context, Component, KeySelector))
 			return false;
@@ -812,7 +816,7 @@ namespace NCsBlackboard
 		Component->SetValueAsObject(KeySelector.SelectedKeyName, PawnValue);
 	}
 
-	bool FLibrary::SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Object(Context, Component, KeyName))
 			return false;
@@ -821,7 +825,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Object(Context, Component, KeySelector))
 			return false;
@@ -846,7 +850,7 @@ namespace NCsBlackboard
 		Component->SetValueAsObject(KeySelector.SelectedKeyName, PawnValue);
 	}
 
-	bool FLibrary::SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Object(Context, Component, KeyName))
 			return false;
@@ -857,7 +861,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Object(Context, Component, KeySelector))
 			return false;
@@ -887,7 +891,7 @@ namespace NCsBlackboard
 		Component->SetValueAsEnum(KeySelector.SelectedKeyName, EnumValue);
 	}
 
-	bool FLibrary::SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const uint8& EnumValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const uint8& EnumValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Enum(Context, Component, KeyName))
 			return false;
@@ -896,7 +900,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const uint8& EnumValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const uint8& EnumValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Enum(Context, Component, KeySelector))
 			return false;
@@ -924,7 +928,7 @@ namespace NCsBlackboard
 		Component->SetValueAsInt(KeySelector.SelectedKeyName, IntValue);
 	}
 
-	bool FLibrary::SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& IntValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Int(Context, Component, KeyName))
 			return false;
@@ -933,7 +937,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Int(Context, Component, KeySelector))
 			return false;
@@ -952,7 +956,7 @@ namespace NCsBlackboard
 		Component->SetValueAsInt(KeyName, Value + Amount);
 	}
 
-	bool FLibrary::SafeIncrementInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& Amount /*=1*/, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SafeIncrementInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& Amount /*=1*/, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Int(Context, Component, KeyName))
 			return false;
@@ -984,7 +988,7 @@ namespace NCsBlackboard
 		Component->SetValueAsFloat(KeySelector.SelectedKeyName, FloatValue);
 	}
 
-	bool FLibrary::SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const float& FloatValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const float& FloatValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Float(Context, Component, KeyName))
 			return false;
@@ -993,7 +997,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	bool FLibrary::SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Float(Context, Component, KeySelector))
 			return false;
@@ -1024,7 +1028,7 @@ namespace NCsBlackboard
 		return Component->GetValueAsObject(KeySelector.SelectedKeyName);
 	}
 
-	UObject* FLibrary::GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	UObject* FLibrary::GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -1037,7 +1041,7 @@ namespace NCsBlackboard
 		return O;
 	}
 
-	UObject* FLibrary::GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	UObject* FLibrary::GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -1073,7 +1077,7 @@ namespace NCsBlackboard
 		return CS_CAST_CHECKED(O, UObject, APawn);
 	}
 
-	APawn* FLibrary::GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	APawn* FLibrary::GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -1087,7 +1091,7 @@ namespace NCsBlackboard
 		return P;
 	}
 
-	APawn* FLibrary::GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	APawn* FLibrary::GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -1118,7 +1122,7 @@ namespace NCsBlackboard
 		return Component->GetValueAsEnum(KeySelector.SelectedKeyName);
 	}
 
-	uint8 FLibrary::GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	uint8 FLibrary::GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -1129,7 +1133,7 @@ namespace NCsBlackboard
 		return Component->GetValueAsEnum(KeyName);
 	}
 
-	uint8 FLibrary::GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	uint8 FLibrary::GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -1157,7 +1161,7 @@ namespace NCsBlackboard
 		return Component->GetValueAsInt(KeySelector.SelectedKeyName);
 	}
 
-	int32 FLibrary::GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	int32 FLibrary::GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -1168,7 +1172,7 @@ namespace NCsBlackboard
 		return Component->GetValueAsInt(KeyName);
 	}
 
-	int32 FLibrary::GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	int32 FLibrary::GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -1196,7 +1200,7 @@ namespace NCsBlackboard
 		return Component->GetValueAsFloat(KeySelector.SelectedKeyName);
 	}
 
-	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -1207,7 +1211,7 @@ namespace NCsBlackboard
 		return Component->GetValueAsFloat(KeyName);
 	}
 
-	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		OutSuccess = false;
 
@@ -1218,14 +1222,14 @@ namespace NCsBlackboard
 		return Component->GetValueAsFloat(KeySelector.SelectedKeyName);
 	}
 
-	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Float(Context, Component, KeyName, Log))
 			return 0;
 		return Component->GetValueAsFloat(KeyName);
 	}
 
-	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 	{
 		if (!SafeIsKey_Float(Context, Component, KeySelector, Log))
 			return 0;

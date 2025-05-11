@@ -3,7 +3,7 @@
 # Free for use and distribution: https://github.com/closedsum/core
 
 import unreal as ue
-from typing import Callable, List, TypeVar, Generic, Any, Optional, Tuple, Union, Type, Dict
+from typing import Callable, TypeVar, Generic, Any, Optional, Tuple, Union, Dict
 import weakref
 from dataclasses import dataclass
 import uuid
@@ -31,6 +31,13 @@ class FPyDelegateHandle:
     
     def __repr__(self):
         return f'FPyDelegateHandle({self._id})'
+        
+    def Reset(self):
+        self._id = ""
+
+    def IsValid(self) -> bool:
+        """Returns True if the delegate handle is valid (has a non-empty ID)."""
+        return bool(self._id)
 
 @dataclass
 class FPyDelegateEntry:
@@ -115,8 +122,8 @@ class FPyMulticastDelegate(Generic[T]):
         Creates a weak reference to the object to prevent memory leaks.
         
         Args:
-            obj: The Python object to bind the callback to
-            callback: The callback function to add, must match the delegate's signature       
+            obj:      (any):              The Python object to bind the callback to
+            callback: (Callable[..., T]): The callback function to add, must match the delegate's signature       
             
         Returns:
             FPyDelegateHandle: A handle that can be used to remove this callback later
@@ -148,8 +155,8 @@ class FPyMulticastDelegate(Generic[T]):
         The UObject must be valid.
         
         Args:
-            uobject: The UObject to bind the callback to
-            callback: The callback function to add, must match the delegate's signature
+            uobject: (UObject):           The UObject to bind the callback to
+            callback: (Callable[..., T]): The callback function to add, must match the delegate's signature
                  
         Returns:
             FPyDelegateHandle: A handle that can be used to remove this callback later
@@ -178,8 +185,8 @@ class FPyMulticastDelegate(Generic[T]):
         Internal method to add a callback with an optional object reference.
         
         Args:
-            callback: The callback function to add, must match the delegate's signature
-            obj: Optional object reference (UObject or Python object)
+            callback: (Callable[..., T]): The callback function to add, must match the delegate's signature
+            obj:      (any):              Optional object reference (UObject or Python object)
             
         Returns:
             FPyDelegateHandle: A handle that can be used to remove this callback later
@@ -237,21 +244,26 @@ class FPyMulticastDelegate(Generic[T]):
         Remove a callback using its handle.
         
         Args:
-            handle: The handle returned when adding the callback
+            handle: (FPyDelegateHandle): The handle returned when adding the callback
             
         Example:
             handle = delegate.Add(my_callback)
             delegate.Remove(handle)  # Remove the callback
         """
+        if handle is None:
+            raise ValueError(f"Handle is None")
+        if not handle.IsValid():
+            raise ValueError(f"Handle is not valid")
         if handle in self._delegates:
             del self._delegates[handle]
+            handle.Reset()
     
     def RemoveAll(self, obj: Any) -> None:
         """
         Remove all delegates associated with a specific object (UObject or Python object).
         
         Args:
-            obj: The object whose delegates should be removed
+            obj: (any): The object whose delegates should be removed
             
         Raises:
             ValueError: If obj is None
@@ -294,6 +306,7 @@ class FPyMulticastDelegate(Generic[T]):
         ]
         for handle in handles_to_remove:
             del self._delegates[handle]
+            handle.Reset()
     
     def Clear(self) -> None:
         """Clear all callbacks from the delegate list.
@@ -350,8 +363,8 @@ class FPyMulticastDelegate(Generic[T]):
         Automatically cleans up invalid references before broadcasting.
         
         Args:
-            *args: Positional arguments to pass to callbacks
-            **kwargs: Keyword arguments to pass to callbacks
+            *args:      (any): Positional arguments to pass to callbacks
+            **kwargs:   (any): Keyword arguments to pass to callbacks
             
         Example:
             def callback1(text: str, number: int):

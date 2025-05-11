@@ -2,12 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Blackboard/Script/CsScriptLibrary_Blackboard.h"
-#include "CsAI.h"
 
 // CVar
 #include "Script/CsCVars_Script.h"
-// Types
-#include "CsMacro_Misc.h"
 // Library
 #include "Blackboard/CsLibrary_Blackboard.h"
 
@@ -16,19 +13,12 @@
 // Cached
 #pragma region
 
-namespace NCsScriptLibraryBlackboard
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Blackboard, IsKeyType_Object);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Blackboard, IsKeyType_Vector);
-			// Selector
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Blackboard, IsKeySelectorChecked_Object);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsScriptLibrary_Blackboard)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Blackboard, IsKeyType_Object)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Blackboard, IsKeyType_Vector)
+	// Selector
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_Blackboard, IsKeySelectorChecked_Object)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -37,24 +27,18 @@ UCsScriptLibrary_Blackboard::UCsScriptLibrary_Blackboard(const FObjectInitialize
 {
 }
 
-#define BlackboardLibrary NCsBlackboard::FLibrary
-
 bool UCsScriptLibrary_Blackboard::IsKeyType_Object(const FString& Context, UClass* KeyType)
 {
-	using namespace NCsScriptLibraryBlackboard::NCached;
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(IsKeyType_Object);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::IsKeyType_Object : Context;
-
-	return BlackboardLibrary::SafeIsKeyType_Object(Context, KeyType, nullptr);
+	return CsBlackboardLibrary::SafeIsKeyType_Object(Context, KeyType, nullptr);
 }
 
 bool UCsScriptLibrary_Blackboard::IsKeyType_Vector(const FString& Context, UClass* KeyType)
 {
-	using namespace NCsScriptLibraryBlackboard::NCached;
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(IsKeyType_Vector);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::IsKeyType_Vector : Context;
-
-	return BlackboardLibrary::SafeIsKeyType_Vector(Context, KeyType, nullptr);
+	return CsBlackboardLibrary::SafeIsKeyType_Vector(Context, KeyType, nullptr);
 }
 
 
@@ -63,13 +47,9 @@ bool UCsScriptLibrary_Blackboard::IsKeyType_Vector(const FString& Context, UClas
 
 bool UCsScriptLibrary_Blackboard::IsKeySelectorChecked_Object(const FString& Context, const FBlackboardKeySelector& Key)
 {
-	using namespace NCsScriptLibraryBlackboard::NCached;
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(IsKeySelectorChecked_Object);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::IsKeySelectorChecked_Object : Context;
-
-	return CS_SCRIPT_GET_CHECKED(BlackboardLibrary::IsKeyChecked_Object(Ctxt, Key), BlackboardLibrary::SafeIsKey_Object(Ctxt, Key));
+	return CS_SCRIPT_GET_CHECKED(CsBlackboardLibrary::IsKeyChecked_Object(Ctxt, Key), CsBlackboardLibrary::SafeIsKey_Object(Ctxt, Key));
 }
 
 #pragma endregion Selector
-
-#undef BlackboardLibrary

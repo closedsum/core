@@ -17,6 +17,10 @@ namespace NCsAI
 {
 	namespace NCharacter
 	{
+		using LogClassType = NCsAI::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
 		// Controller
 		#pragma region
 
@@ -31,7 +35,7 @@ namespace NCsAI
 			return CS_CAST_CHECKED(Controller, AController, AAIController);
 		}
 
-		AAIController* FLibrary::GetSafeController(const FString& Context, const ACharacter* Character, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+		AAIController* FLibrary::GetSafeController(const FString& Context, const ACharacter* Character, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Character)
 
@@ -57,7 +61,7 @@ namespace NCsAI
 			return Blackboard;
 		}
 
-		UBlackboardComponent* FLibrary::GetSafeBlackboard(const FString& Context, const ACharacter* Character, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+		UBlackboardComponent* FLibrary::GetSafeBlackboard(const FString& Context, const ACharacter* Character, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			AAIController* Controller = GetSafeController(Context, Character, Log);
 
@@ -73,10 +77,18 @@ namespace NCsAI
 			CS_IS_PENDING_KILL_RET_NULL(Blackboard);
 			return Blackboard;
 		}
+	}
+}
 
+namespace NCsAI
+{
+	namespace NCharacter
+	{
 		namespace NBlackboard
 		{
-			#define BlackboardLibrary NCsBlackboard::FLibrary
+			using LogClassType = NCsAI::FLog;
+
+			CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 			// Set
 			#pragma region
@@ -88,7 +100,7 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Object(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_Object(Context, Blackboard, KeyName));
 
 				Blackboard->SetValueAsObject(KeyName, ObjectValue);
 			}
@@ -97,16 +109,16 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Object(Context, Blackboard, KeySelector));
+				check(CsBlackboardLibrary::IsKeyChecked_Object(Context, Blackboard, KeySelector));
 
 				Blackboard->SetValueAsObject(KeySelector.SelectedKeyName, ObjectValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Object(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Object(Context, Blackboard, KeyName, Log))
 						return false;
 					Blackboard->SetValueAsObject(KeyName, ObjectValue);
 					return true;
@@ -114,11 +126,11 @@ namespace NCsAI
 				return false;
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Object(Context, Blackboard, KeySelector, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Object(Context, Blackboard, KeySelector, Log))
 						return false;
 					Blackboard->SetValueAsObject(KeySelector.SelectedKeyName, ObjectValue);
 					return true;
@@ -135,16 +147,16 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Class(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_Class(Context, Blackboard, KeyName));
 
 				Blackboard->SetValueAsClass(KeyName, ClassValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, UClass* ClassValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, UClass* ClassValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Class(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Class(Context, Blackboard, KeyName, Log))
 						return false;
 					Blackboard->SetValueAsClass(KeyName, ClassValue);
 					return true;
@@ -161,16 +173,16 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Enum(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_Enum(Context, Blackboard, KeyName));
 
 				Blackboard->SetValueAsEnum(KeyName, EnumValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const uint8& EnumValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const uint8& EnumValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Enum(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Enum(Context, Blackboard, KeyName, Log))
 						return false;
 					Blackboard->SetValueAsEnum(KeyName, EnumValue);
 					return true;
@@ -187,16 +199,16 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Int(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_Int(Context, Blackboard, KeyName));
 
 				Blackboard->SetValueAsInt(KeyName, IntValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const int32& IntValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Int(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Int(Context, Blackboard, KeyName, Log))
 						return false;
 					Blackboard->SetValueAsInt(KeyName, IntValue);
 					return true;
@@ -213,16 +225,16 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Float(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_Float(Context, Blackboard, KeyName));
 
 				Blackboard->SetValueAsFloat(KeyName, FloatValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const float& FloatValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const float& FloatValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Float(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Float(Context, Blackboard, KeyName, Log))
 						return false;
 					Blackboard->SetValueAsFloat(KeyName, FloatValue);
 					return true;
@@ -239,16 +251,16 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Bool(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_Bool(Context, Blackboard, KeyName));
 
 				Blackboard->SetValueAsBool(KeyName, BoolValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const bool& BoolValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const bool& BoolValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Bool(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Bool(Context, Blackboard, KeyName, Log))
 						return false;
 					Blackboard->SetValueAsBool(KeyName, BoolValue);
 					return true;
@@ -265,16 +277,16 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_String(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_String(Context, Blackboard, KeyName));
 
 				Blackboard->SetValueAsString(KeyName, StringValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FString& StringValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FString& StringValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_String(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_String(Context, Blackboard, KeyName, Log))
 						return false;
 					Blackboard->SetValueAsString(KeyName, StringValue);
 					return true;
@@ -291,16 +303,16 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Name(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_Name(Context, Blackboard, KeyName));
 
 				Blackboard->SetValueAsName(KeyName, NameValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FName& NameValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FName& NameValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Name(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Name(Context, Blackboard, KeyName, Log))
 						return false;
 					Blackboard->SetValueAsName(KeyName, NameValue);
 					return true;
@@ -317,16 +329,16 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Vector(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_Vector(Context, Blackboard, KeyName));
 
 				Blackboard->SetValueAsVector(KeyName, VectorValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FVector3d& VectorValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FVector3d& VectorValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Vector(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Vector(Context, Blackboard, KeyName, Log))
 						return false;
 					Blackboard->SetValueAsVector(KeyName, VectorValue);
 					return true;
@@ -343,16 +355,16 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Rotator(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_Rotator(Context, Blackboard, KeyName));
 
 				Blackboard->SetValueAsRotator(KeyName, RotatorValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FRotator3d& RotatorValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			bool FLibrary::SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FRotator3d& RotatorValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Rotator(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Rotator(Context, Blackboard, KeyName, Log))
 						return false;
 					Blackboard->SetValueAsRotator(KeyName, RotatorValue);
 					return true;
@@ -374,7 +386,7 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Object(Context, Blackboard, KeyName));
+				check(CsBlackboardLibrary::IsKeyChecked_Object(Context, Blackboard, KeyName));
 
 				return Blackboard->GetValueAsObject(KeyName);
 			}
@@ -383,27 +395,27 @@ namespace NCsAI
 			{
 				UBlackboardComponent* Blackboard = GetComponentChecked(Context, Character);
 
-				check(BlackboardLibrary::IsKeyChecked_Object(Context, Blackboard, KeySelector));
+				check(CsBlackboardLibrary::IsKeyChecked_Object(Context, Blackboard, KeySelector));
 
 				return Blackboard->GetValueAsObject(KeySelector.SelectedKeyName);
 			}
 
-			UObject* FLibrary::GetSafeObject(const FString& Context, const ACharacter* Character, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			UObject* FLibrary::GetSafeObject(const FString& Context, const ACharacter* Character, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Object(Context, Blackboard, KeyName, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Object(Context, Blackboard, KeyName, Log))
 						return nullptr;		
 					return Blackboard->GetValueAsObject(KeyName);;
 				}
 				return nullptr;
 			}
 
-			UObject* FLibrary::GetSafeObject(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			UObject* FLibrary::GetSafeObject(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 			{
 				if (UBlackboardComponent* Blackboard = GetSafeComponent(Context, Character, Log))
 				{
-					if (!BlackboardLibrary::SafeIsKey_Object(Context, Blackboard, KeySelector, Log))
+					if (!CsBlackboardLibrary::SafeIsKey_Object(Context, Blackboard, KeySelector, Log))
 						return nullptr;
 					return Blackboard->GetValueAsObject(KeySelector.SelectedKeyName);
 				}
@@ -413,8 +425,6 @@ namespace NCsAI
 			#pragma endregion Object
 
 			#pragma endregion Get
-
-			#undef BlackboardLibrary
 		}
 	}
 }

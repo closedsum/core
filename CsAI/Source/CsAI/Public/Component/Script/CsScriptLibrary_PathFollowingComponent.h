@@ -4,16 +4,23 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Types/CsTypes_AI.h"
 
 #include "CsScriptLibrary_PathFollowingComponent.generated.h"
 
 class UPathFollowingComponent;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_PathFollowingComponent)
+
 UCLASS()
 class CSAI_API UCsScriptLibrary_PathFollowingComponent : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_PathFollowingComponent);
 
 public:
 

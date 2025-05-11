@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-//Types
+// Types
+#include "CsMacro_Log.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 // Log
 #include "Utility/CsAILog.h"
@@ -22,6 +23,10 @@ namespace NCsAI
 		*/
 		struct CSAI_API FLibrary final
 		{
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
+
 		// Controller
 		#pragma region
 		public:
@@ -42,7 +47,7 @@ namespace NCsAI
 			* @param Character
 			* return			AI Controller
 			*/
-			static AAIController* GetSafeController(const FString& Context, const ACharacter* Character, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+			static AAIController* GetSafeController(const FString& Context, const ACharacter* Character, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Controller
 
@@ -65,9 +70,17 @@ namespace NCsAI
 			* @param Log		(optional)
 			* return			Blackboard
 			*/
-			static UBlackboardComponent* GetSafeBlackboard(const FString& Context, const ACharacter* Character, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+			static UBlackboardComponent* GetSafeBlackboard(const FString& Context, const ACharacter* Character, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		};
+	}
+}
 
+using CsAICharacterLibrary = NCsAI::NCharacter::FLibrary;
+
+namespace NCsAI
+{
+	namespace NCharacter
+	{
 		namespace NBlackboard
 		{
 			/**
@@ -75,6 +88,10 @@ namespace NCsAI
 			*/
 			struct CSAI_API FLibrary final
 			{
+			private:
+
+				CS_DECLARE_STATIC_LOG_LEVEL
+
 			public:
 
 				FORCEINLINE static UBlackboardComponent* GetComponentChecked(const FString& Context, const ACharacter* Character)
@@ -84,7 +101,7 @@ namespace NCsAI
 					return CharacterLibrary::GetBlackboardChecked(Context, Character);
 				}
 
-				FORCEINLINE static UBlackboardComponent* GetSafeComponent(const FString& Context, const ACharacter* Character, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+				FORCEINLINE static UBlackboardComponent* GetSafeComponent(const FString& Context, const ACharacter* Character, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 				{
 					typedef NCsAI::NCharacter::FLibrary CharacterLibrary;
 
@@ -128,7 +145,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely set the Character's Blackboard Object Key value associated with KeySelector.
@@ -140,7 +157,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Object
 
@@ -168,7 +185,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, UClass* ClassValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, UClass* ClassValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Class
 
@@ -196,7 +213,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const uint8& EnumValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const uint8& EnumValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Enum
 
@@ -224,7 +241,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const int32& IntValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Int
 
@@ -252,7 +269,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const float& FloatValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const float& FloatValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Float
 
@@ -280,7 +297,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const bool& BoolValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const bool& BoolValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Bool
 
@@ -308,7 +325,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FString& StringValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FString& StringValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion String
 
@@ -336,7 +353,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FName& NameValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FName& NameValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Name
 
@@ -364,7 +381,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FVector3d& VectorValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FVector3d& VectorValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Vector (Vector3d)
 
@@ -392,7 +409,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FRotator3d& RotatorValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FRotator3d& RotatorValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Rotator (Rotator3d)
 
@@ -435,7 +452,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Object.
 				*/
-				static UObject* GetSafeObject(const FString& Context, const ACharacter* Character, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static UObject* GetSafeObject(const FString& Context, const ACharacter* Character, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 				/**
 				* Safely get the Character's Blackboard Object Key value associated with KeySelector.
@@ -446,7 +463,7 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Object.
 				*/
-				static UObject* GetSafeObject(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static UObject* GetSafeObject(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 			#pragma endregion Object
 
@@ -455,3 +472,5 @@ namespace NCsAI
 		}
 	}
 }
+
+using CsAICharacterBlackboardLibrary = NCsAI::NCharacter::NBlackboard::FLibrary;

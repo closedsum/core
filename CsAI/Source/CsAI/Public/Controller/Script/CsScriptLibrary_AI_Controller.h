@@ -4,6 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Types/CsTypes_AI.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 
@@ -13,10 +14,16 @@ class AAIController;
 class UBlackboardComponent;
 class APawn;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_AI_Controller)
+
 UCLASS()
 class CSAI_API UCsScriptLibrary_AI_Controller : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_AI_Controller);
 
 // Blackboard
 #pragma region
@@ -440,6 +447,8 @@ public:
 
 #pragma endregion Blackboard
 
+// Move To
+#pragma region
 public:
 
 	/** 
@@ -460,6 +469,21 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Controller", meta = (DisplayName = "Move To (Checked)", AutoCreateRefTerm = "Context,MoveRequest"))
 	static FCsPathFollowingRequestResult MoveToChecked(const FString& Context, AAIController* Controller, const FCsAIMoveRequest& MoveRequest, bool& OutSuccess);
+
+	/** 
+	* Makes Pawn move to an Actor with the given Tag (i.e. Actor->Tags contains Tag).
+	* 
+	* @param Context	The calling context.
+	* @param Pawn
+	* @param Tag
+	* @return			Whether this executed successfully or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Controller", meta = (DisplayName = "Simple Move To: Actor by Tag", AutoCreateRefTerm = "Context,Tag"))
+	static bool SimpleMoveTo_ActorByTag(const FString& Context, APawn* Pawn, const FName& Tag);
+
+#pragma endregion MoveTo
+
+public:
 
 	/**
 	* Call Controller->GetDefaultNavigationFilterClass()

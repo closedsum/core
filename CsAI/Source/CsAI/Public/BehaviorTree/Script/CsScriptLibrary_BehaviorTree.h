@@ -2,19 +2,24 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Object.h"
+// Types
+#include "CsMacro_Cached.h"
 
 #include "CsScriptLibrary_BehaviorTree.generated.h"
 
 class UBehaviorTreeComponent;
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_BehaviorTree)
 
 UCLASS()
 class CSAI_API UCsScriptLibrary_BehaviorTree : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-public:
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_BehaviorTree);
 
 // Load
 #pragma region

@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "CsMacro_Log.h"
 // Log
 #include "Utility/CsAILog.h"
 
@@ -14,6 +16,10 @@ namespace NCsBehaviorTree
 	*/
 	struct CSAI_API FLibrary final
 	{
+	private:
+
+		CS_DECLARE_STATIC_LOG_LEVEL
+
 	// Load
 	#pragma region
 	public:
@@ -26,7 +32,7 @@ namespace NCsBehaviorTree
 		* @param Log		(optional)
 		* return			Behavior Tree.
 		*/
-		static UBehaviorTree* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static UBehaviorTree* SafeLoad(const FString& Context, const FSoftObjectPath& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely load a Behavior Tree at the given Path.
@@ -36,7 +42,7 @@ namespace NCsBehaviorTree
 		* @param Log		(optional)
 		* return			Behavior Tree.
 		*/
-		static UBehaviorTree* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static UBehaviorTree* SafeLoad(const FString& Context, const FString& Path, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Load
 
@@ -44,14 +50,16 @@ namespace NCsBehaviorTree
 	#pragma region
 	public:
 
-		static UBehaviorTree* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static UBehaviorTree* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftObjectPtr<UBehaviorTree>& OutSoftObjectPtr, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftObjectPtr<UBehaviorTree>& OutSoftObjectPtr, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftObjectPath& OutSoftObjectPath, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftObjectPath& OutSoftObjectPath, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Get
 	};
 }
+
+using CsBehaviorTreeLibrary = NCsBehaviorTree::FLibrary;

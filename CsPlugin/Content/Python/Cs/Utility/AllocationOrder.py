@@ -2,9 +2,6 @@
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
 
-import unreal as ue
-import sys
-
 # Library
 # - Cs/Library/Library_Common.py
 import Cs.Library.Library_Common as Cs_Library_Common
@@ -19,12 +16,9 @@ CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
 FPyDoubleLinkedListNode = Cs_DoubleLinkedListNode.FPyDoubleLinkedListNode
 
 # "typedefs" - function
-checkf  = CommonLibrary.checkf;
+checkf  = CommonLibrary.checkf
 
 class FPyAllocationOrder:
-    class NCached:
-        class NStr:
-            Create = "FPyAllocationOrder.Create"
     def __init__(self):
         self.Links: list[FPyDoubleLinkedListNode] = []
         self.Head: FPyDoubleLinkedListNode = None
@@ -50,7 +44,7 @@ class FPyAllocationOrder:
             self.AddToTail(link)
 
     def Create(self, size: int):
-        context: str = FPyAllocationOrder.NCached.NStr.Create
+        context: str = __class__.Create.__qualname__
 
         checkf(type(size) is int, context + ": s is NOT an Integer.")
         checkf(size > 0, context + ": size: " + str(size) + " is NOT > 0.")

@@ -58,7 +58,6 @@ public:
 	FORCEINLINE UBehaviorTree* GetChecked(const FString& Context) const
 	{
 		checkf(Tree.ToSoftObjectPath().IsValid(), TEXT("%s: Tree is NULL."), *Context);
-
 		checkf(Tree_Internal, TEXT("%s: Tree has NOT been loaded from Path @ %s."), *Context, *(Tree.ToSoftObjectPath().ToString()));
 
 		return Tree_Internal;
@@ -72,7 +71,6 @@ public:
 	FORCEINLINE UBehaviorTree* GetChecked() const
 	{
 		checkf(Tree.ToSoftObjectPath().IsValid(), TEXT("FCsBehaviorTree::GetChecked: Tree is NULL."));
-
 		checkf(Tree_Internal, TEXT("FCsBehaviorTree::GetChecked: Tree has NOT been loaded from Path @ %s."), *(Tree.ToSoftObjectPath().ToString()));
 
 		return Tree_Internal;

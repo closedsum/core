@@ -4,6 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 
 #include "CsScriptLibrary_AI_Character.generated.h"
@@ -11,12 +12,16 @@
 class ACharacter;
 class AAIController;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_AI_Character)
+
 UCLASS()
 class CSAI_API UCsScriptLibrary_AI_Character : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-public:
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_AI_Character);
 
 // Controller
 #pragma region

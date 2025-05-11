@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-//Types
+// Types
+#include "CsMacro_Log.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 // Log
 #include "Utility/CsAILog.h"
@@ -21,6 +22,22 @@ namespace NCsAI
 		*/
 		struct CSAI_API FLibrary final
 		{
+		private:
+
+			CS_DECLARE_STATIC_LOG_LEVEL
+			
+		// Get
+		#pragma region
+		public:
+
+			static AAIController* GetSafe(const FString& Context, APawn* Pawn, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+
+		#pragma endregion Get
+
+		// Blackboard
+		#pragma region
+		public:
+
 			/**
 			* Get the Blackboard associated with Controller.
 			* 
@@ -38,7 +55,26 @@ namespace NCsAI
 			* @param Log		(optional)
 			* return			Blackboard
 			*/
-			static UBlackboardComponent* GetSafeBlackboard(const FString& Context, const AAIController* Controller, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+			static UBlackboardComponent* GetSafeBlackboard(const FString& Context, const AAIController* Controller, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+
+		#pragma endregion Blackboard
+
+		// Move To
+		#pragma region
+		public:
+
+			/**
+			* Safely Move a Pawn to an Actor by Tag.
+			* 
+			* @param Context 	The calling context.
+			* @param Pawn 		The Pawn to move.
+			* @param Tag 		The Tag of the Actor to move to.
+			* @param Log		(optional)
+			* return			Whether this executed successfully or not.
+			*/
+			static bool SafeSimpleMoveTo_ActorByTag(const FString& Context, APawn* Pawn, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+
+		#pragma endregion Move To
 		};
 	}
 }

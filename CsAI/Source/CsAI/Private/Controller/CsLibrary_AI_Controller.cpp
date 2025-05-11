@@ -4,8 +4,12 @@
 #include "Controller/CsLibrary_AI_Controller.h"
 
 // Library
+#include "Blueprint/AIBlueprintHelperLibrary.h" // TEMP
 #include "Blackboard/CsLibrary_Blackboard.h"
+#include "Actor/CsLibrary_Actor.h"
 #include "Library/CsLibrary_Valid.h"
+// Pawn
+#include "GameFramework/Pawn.h"
 // AI
 #include "AIController.h"
 #include "BrainComponent.h"
@@ -15,6 +19,27 @@ namespace NCsAI
 {
 	namespace NController
 	{
+		using LogClassType = NCsAI::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
+
+		// Get
+		#pragma region
+		
+		AAIController* FLibrary::GetSafe(const FString& Context, APawn* Pawn, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
+		{
+			CS_IS_PENDING_KILL_RET_NULL(Pawn)
+
+			AController* Controller = Pawn->GetController();
+			
+			return CS_CAST(Controller, AController, AAIController);
+		}
+
+		#pragma endregion Get
+
+		// Blackboard
+		#pragma region
+
 		UBlackboardComponent* FLibrary::GetBlackboardChecked(const FString& Context, const AAIController* Controller)
 		{
 			CS_IS_PENDING_KILL_CHECKED(Controller);
@@ -29,7 +54,7 @@ namespace NCsAI
 			return Blackboard;
 		}
 
-		UBlackboardComponent* FLibrary::GetSafeBlackboard(const FString& Context, const AAIController* Controller, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+		UBlackboardComponent* FLibrary::GetSafeBlackboard(const FString& Context, const AAIController* Controller, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			CS_IS_PENDING_KILL_RET_NULL(Controller);
 
@@ -42,6 +67,27 @@ namespace NCsAI
 			CS_IS_PENDING_KILL_RET_NULL(Blackboard);
 			return Blackboard;
 		}
+
+		#pragma endregion Blackboard
+
+		// Move To
+		#pragma region
+		
+		bool FLibrary::SafeSimpleMoveTo_ActorByTag(const FString& Context, APawn* Pawn, const FName& Tag, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
+		{
+			if (AAIController* Controller = GetSafe(Context, Pawn, Log))
+			{
+				if (AActor* Actor = CsActorLibrary::GetSafeByTag(Context, Pawn, Tag, Log))
+				{
+					// TODO: Expose the whole chain
+					UAIBlueprintHelperLibrary::SimpleMoveToActor(Controller, Actor);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		#pragma endregion Move To
 	}
 }
 

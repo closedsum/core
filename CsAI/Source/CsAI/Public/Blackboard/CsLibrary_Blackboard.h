@@ -2,7 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-//Types
+// Types
+#include "CsMacro_Log.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 // Log
 #include "Utility/CsAILog.h"
@@ -20,6 +21,10 @@ namespace NCsBlackboard
 	*/
 	struct CSAI_API FLibrary final
 	{
+	private:
+
+		CS_DECLARE_STATIC_LOG_LEVEL
+
 	public:
 
 		/**
@@ -39,7 +44,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Data
 		*/
-		static const UBlackboardData* GetSafeData(const FString& Context, const UBlackboardComponent* Component, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static const UBlackboardData* GetSafeData(const FString& Context, const UBlackboardComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get the Blackboard Component associated with Component
@@ -59,8 +64,8 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Component
 		*/
-		static const UBlackboardComponent* GetSafeComponent(const FString& Context, const UBehaviorTreeComponent* Component, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
-		static UBlackboardComponent* GetSafeComponent(const FString& Context, UBehaviorTreeComponent* Component, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static const UBlackboardComponent* GetSafeComponent(const FString& Context, const UBehaviorTreeComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		static UBlackboardComponent* GetSafeComponent(const FString& Context, UBehaviorTreeComponent* Component, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	// Key
 	#pragma region
@@ -68,11 +73,11 @@ namespace NCsBlackboard
 
 		static bool IsValidChecked(const FString& Context, const FBlackboardKeySelector& KeySelector);
 
-		static bool IsValid(const FString& Context, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool IsValid(const FString& Context, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		static bool AreEqualChecked(const FString& Context, const TSubclassOf<UBlackboardKeyType>& A, const TSubclassOf<UBlackboardKeyType>& B);
 
-		static bool SafeAreEqual(const FString& Context, const TSubclassOf<UBlackboardKeyType>& A, const TSubclassOf<UBlackboardKeyType>& B, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeAreEqual(const FString& Context, const TSubclassOf<UBlackboardKeyType>& A, const TSubclassOf<UBlackboardKeyType>& B, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get whether the Data has the Key with name KeyName or not.
@@ -133,7 +138,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Whether the Data has the Key with name KeyName or not.
 		*/
-		static bool SafeHasKey(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeHasKey(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely Get whether the Component has the Key with name KeyName or not.
@@ -144,7 +149,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Whether the Component has the Key wiht name KeyName or not.
 		*/
-		FORCEINLINE static bool SafeHasKey(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeHasKey(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeHasKey(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -158,7 +163,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Whether the Data has the Key associated with KeySelector or not.
 		*/
-		FORCEINLINE static bool SafeHasKey(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeHasKey(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			if (!IsValid(Context, KeySelector, Log))
 				return false;
@@ -174,7 +179,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Whether the Component has the Key associated with KeySelector or not.
 		*/
-		FORCEINLINE static bool SafeHasKey(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeHasKey(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeHasKey(Context, GetSafeData(Context, Component, Log), KeySelector, Log);
 		}
@@ -198,7 +203,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Get ID associated with the Key with KeyName.
 		*/
-		static uint16 GetSafeKeyID(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static uint16 GetSafeKeyID(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		static const FString& KeyTypeToString(const TSubclassOf<UBlackboardKeyType>& KeyType);
 
@@ -209,14 +214,14 @@ namespace NCsBlackboard
 			return GetKeyTypeChecked(Context, Data, GetKeyIDChecked(Context, Data, KeyName));
 		}
 
-		static TSubclassOf<UBlackboardKeyType> GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const uint16& KeyID, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static TSubclassOf<UBlackboardKeyType> GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const uint16& KeyID, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		FORCEINLINE static TSubclassOf<UBlackboardKeyType> GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static TSubclassOf<UBlackboardKeyType> GetSafeKeyType(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return GetSafeKeyType(Context, Data, GetSafeKeyID(Context, Data, KeyName));
 		}
 
-		static TSubclassOf<UBlackboardKeyType> GetSafeKeyType(const FString& Context, UClass* KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static TSubclassOf<UBlackboardKeyType> GetSafeKeyType(const FString& Context, UClass* KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		// Object
 		#pragma region
@@ -230,7 +235,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Whether KeyType is of type Object or not.
 		*/
-		static bool SafeIsKeyType_Object(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKeyType_Object(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 		
 		/**
 		* Safely check whether KeyType is of type Object.
@@ -240,7 +245,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Whether KeyType is of type Object or not.
 		*/
-		FORCEINLINE static bool SafeIsKeyType_Object(const FString& Context, UClass* KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKeyType_Object(const FString& Context, UClass* KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKeyType_Object(Context, GetSafeKeyType(Context, KeyType, Log), Log);
 		}
@@ -321,7 +326,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Whether the Data has the Key with name KeyName is of type Object or not.
 		*/
-		static bool SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type Object or not.
@@ -332,7 +337,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Whether the Data has the Key with name KeyName is of type Object or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Object(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Object(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Object(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -346,7 +351,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the Data has the Key associated with KeySelector is of type Object or not.
 		*/
-		static bool SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key associated with KeySelector is of type Object or not.
@@ -357,7 +362,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the Data has the Key associated with KeySelector is of type Object or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Object(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Object(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Object(Context, GetSafeData(Context, Component, Log), KeySelector, Log);
 		}
@@ -370,7 +375,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the KeySelector is Valid and of type Object or not.
 		*/
-		static bool SafeIsKey_Object(const FString& Context, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Object(const FString& Context, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		#pragma endregion Object
 		
@@ -408,7 +413,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Class or not.
 		*/
-		static bool SafeIsKey_Class(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Class(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type Class or not.
@@ -418,7 +423,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Class or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Class(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Class(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Class(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -435,7 +440,7 @@ namespace NCsBlackboard
 		* @param KeyType
 		* return			Whether KeyType is of type Enum or not.
 		*/
-		static bool SafeIsKeyType_Enum(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKeyType_Enum(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get whether the Data with Key with KeyName is of type Enum or not.
@@ -491,7 +496,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Enum or not.
 		*/
-		static bool SafeIsKey_Enum(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Enum(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type Enum or not.
@@ -501,7 +506,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Enum or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Enum(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Enum(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Enum(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -514,7 +519,7 @@ namespace NCsBlackboard
 		* @param KeySelector
 		* return			Whether the Data has the Key associated with KeySelector is of type Enum or not.
 		*/
-		static bool SafeIsKey_Enum(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Enum(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key associated with KeySelector is of type Enum or not.
@@ -524,7 +529,7 @@ namespace NCsBlackboard
 		* @param KeySelector
 		* return			Whether the Data has the Key associated with KeySelector is of type Enum or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Enum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Enum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Enum(Context, GetSafeData(Context, Component, Log), KeySelector, Log);
 		}
@@ -541,7 +546,7 @@ namespace NCsBlackboard
 		* @param KeyType
 		* return			Whether KeyType is of type Int (int32) or not.
 		*/
-		static bool SafeIsKeyType_Int(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKeyType_Int(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get whether the Data with Key with KeyName is of type Int or not.
@@ -597,7 +602,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Int or not.
 		*/
-		static bool SafeIsKey_Int(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Int(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type Int or not.
@@ -607,7 +612,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Int or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Int(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Int(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Int(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -620,7 +625,7 @@ namespace NCsBlackboard
 		* @param KeySelector
 		* return			Whether the Data has the Key associated with KeySelector is of type Int (int32) or not.
 		*/
-		static bool SafeIsKey_Int(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Int(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key associated with KeySelector is of type Int (int32) or not.
@@ -630,7 +635,7 @@ namespace NCsBlackboard
 		* @param KeySelector
 		* return			Whether the Data has the Key associated with KeySelector is of type Int (int32) or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Int(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Int(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Int(Context, GetSafeData(Context, Component, Log), KeySelector, Log);
 		}
@@ -648,7 +653,7 @@ namespace NCsBlackboard
 		* @param KeyType
 		* return			Whether KeyType is of type Float or not.
 		*/
-		static bool SafeIsKeyType_Float(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKeyType_Float(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Get whether the Data with Key with KeyName is of type Float or not.
@@ -704,7 +709,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Float or not.
 		*/
-		static bool SafeIsKey_Float(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Float(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type Float or not.
@@ -714,7 +719,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Float or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Float(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Float(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Float(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -727,7 +732,7 @@ namespace NCsBlackboard
 		* @param KeySelector
 		* return			Whether the Data has the Key associated with KeySelector is of type Float or not.
 		*/
-		static bool SafeIsKey_Float(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Float(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key associated with KeySelector is of type Float or not.
@@ -737,7 +742,7 @@ namespace NCsBlackboard
 		* @param KeySelector
 		* return			Whether the Data has the Key associated with KeySelector is of type Float or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Float(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Float(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Float(Context, GetSafeData(Context, Component, Log), KeySelector, Log);
 		}
@@ -778,7 +783,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Bool or not.
 		*/
-		static bool SafeIsKey_Bool(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Bool(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type Bool or not.
@@ -788,7 +793,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Bool or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Bool(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Bool(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Bool(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -829,7 +834,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type String or not.
 		*/
-		static bool SafeIsKey_String(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_String(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type String or not.
@@ -839,7 +844,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type String or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_String(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_String(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_String(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -880,7 +885,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Name or not.
 		*/
-		static bool SafeIsKey_Name(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Name(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type Name or not.
@@ -890,7 +895,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Name or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Name(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Name(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Name(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -907,7 +912,7 @@ namespace NCsBlackboard
 		* @param KeyType
 		* return			Whether KeyType is of type Vector or not.
 		*/
-		static bool SafeIsKeyType_Vector(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKeyType_Vector(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely check whether KeyType is of type Vector.
@@ -916,7 +921,7 @@ namespace NCsBlackboard
 		* @param KeyType
 		* return			Whether KeyType is of type Vector or not.
 		*/
-		FORCEINLINE static bool SafeIsKeyType_Vector(const FString& Context, UClass* KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKeyType_Vector(const FString& Context, UClass* KeyType, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKeyType_Vector(Context, GetSafeKeyType(Context, KeyType, Log), Log);
 		}
@@ -952,7 +957,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Vector or not.
 		*/
-		static bool SafeIsKey_Vector(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Vector(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type Vector or not.
@@ -962,7 +967,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Vector or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Vector(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Vector(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Vector(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -1003,7 +1008,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Rotator or not.
 		*/
-		static bool SafeIsKey_Rotator(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIsKey_Rotator(const FString& Context, const UBlackboardData* Data, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type Rotator or not.
@@ -1013,7 +1018,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Rotator or not.
 		*/
-		FORCEINLINE static bool SafeIsKey_Rotator(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SafeIsKey_Rotator(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SafeIsKey_Rotator(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
@@ -1059,7 +1064,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely set the Component's Blackboard Object Key value associated with KeySelector.
@@ -1071,7 +1076,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Set the Component's Blackboard Object Key value associated with KeyName.
@@ -1106,7 +1111,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely set the Component's Blackboard Object Key value associated with KeySelector.
@@ -1119,7 +1124,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Object
 
@@ -1157,7 +1162,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely set the Component's Blackboard Object Key value as a Pawn associated with KeySelector.
@@ -1169,7 +1174,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Set the Component's Blackboard Object Key value as a Pawn associated with KeyName.
@@ -1204,7 +1209,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely set the Component's Blackboard Object Key value as a Pawn associated with KeySelector.
@@ -1217,7 +1222,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Pawn
 
@@ -1255,7 +1260,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const uint8& EnumValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const uint8& EnumValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely set the Component's Blackboard Enum Key value associated with KeySelector.
@@ -1267,7 +1272,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const uint8& EnumValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const uint8& EnumValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Enum
 
@@ -1313,8 +1318,8 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
-		FORCEINLINE static bool SetSafeInt(const FString& Context, UBehaviorTreeComponent* Component, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		static bool SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& IntValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static bool SetSafeInt(const FString& Context, UBehaviorTreeComponent* Component, const FName& KeyName, const int32& IntValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SetSafeInt(Context, GetSafeComponent(Context, Component, Log), KeyName, IntValue, Log);
 		}
@@ -1329,8 +1334,8 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
-		FORCEINLINE static bool SetSafeInt(const FString& Context, UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		static bool SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static bool SetSafeInt(const FString& Context, UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SetSafeInt(Context, GetSafeComponent(Context, Component, Log), KeySelector, IntValue, Log);
 		}
@@ -1353,7 +1358,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* @parma Amount
 		*/
-		static bool SafeIncrementInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& Amount = 1, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SafeIncrementInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& Amount = 1, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Enum
 
@@ -1396,7 +1401,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const float& FloatValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const float& FloatValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely set the Component's Blackboard Float Key value associated with KeySelector.
@@ -1408,9 +1413,9 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Whether the value was set or not.
 		*/
-		static bool SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static bool SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		FORCEINLINE static bool SetSafeFloat(const FString& Context, UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static bool SetSafeFloat(const FString& Context, UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return SetSafeFloat(Context, GetSafeComponent(Context, Component, Log), KeySelector, FloatValue, Log);
 		}
@@ -1456,7 +1461,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Pawn.
 		*/
-		static UObject* GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static UObject* GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/*
 		* Safely get the Component's Blackboard Object Key value associated with KeySelector.
@@ -1468,7 +1473,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Pawn.
 		*/
-		static UObject* GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static UObject* GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Object
 
@@ -1506,7 +1511,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Pawn.
 		*/
-		static APawn* GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static APawn* GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/*
 		* Safely get the Component's Blackboard Object Key value as Pawn associated with KeySelector.
@@ -1518,7 +1523,7 @@ namespace NCsBlackboard
 		* @param Log		(optional)
 		* return			Pawn.
 		*/
-		static APawn* GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static APawn* GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Pawn
 
@@ -1556,7 +1561,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Enum (as Byte).
 		*/
-		static uint8 GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static uint8 GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get the Component's Blackboard Enum Key value associated with KeySelector.
@@ -1568,7 +1573,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Enum (as Byte).
 		*/
-		static uint8 GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static uint8 GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 	#pragma endregion Enum
 
@@ -1614,8 +1619,8 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Int (int32).
 		*/
-		static int32 GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
-		FORCEINLINE static int32 GetSafeInt(const FString& Context, const UBehaviorTreeComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		static int32 GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static int32 GetSafeInt(const FString& Context, const UBehaviorTreeComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return GetSafeInt(Context, GetSafeComponent(Context, Component), KeyName, OutSuccess, Log);
 		}
@@ -1630,8 +1635,8 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Int (int32).
 		*/
-		static int32 GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
-		FORCEINLINE static int32 GetSafeInt(const FString& Context, const UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		static int32 GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
+		FORCEINLINE static int32 GetSafeInt(const FString& Context, const UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return GetSafeInt(Context, GetSafeComponent(Context, Component), KeySelector, OutSuccess, Log);
 		}
@@ -1677,7 +1682,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Float.
 		*/
-		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get the Component's Blackboard Float Key value associated with KeySelector.
@@ -1689,7 +1694,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Float.
 		*/
-		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get the Component's Blackboard Float Key value associated with KeyName.
@@ -1700,7 +1705,7 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Float.
 		*/
-		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
 		/**
 		* Safely get the Component's Blackboard Float Key value associated with KeySelector.
@@ -1711,9 +1716,9 @@ namespace NCsBlackboard
 		* @param Log			(optional)
 		* return				Float.
 		*/
-		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL);
 
-		FORCEINLINE static float GetSafeFloat(const FString& Context, const UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		FORCEINLINE static float GetSafeFloat(const FString& Context, const UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, CS_FN_PARAM_DEFAULT_LOG_LEVEL)
 		{
 			return GetSafeFloat(Context, GetSafeComponent(Context, Component, Log), KeySelector, Log);
 		}

@@ -4,6 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 
 #include "CsScriptLibrary_BehaviorTree_Task.generated.h"
@@ -14,10 +15,16 @@ class UBehaviorTreeComponent;
 class UAITask_MoveTo;
 class UGameplayTask;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_BehaviorTree_Task)
+
 UCLASS()
 class CSAI_API UCsScriptLibrary_BehaviorTree_Task : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_BehaviorTree_Task);
 
 public:
 

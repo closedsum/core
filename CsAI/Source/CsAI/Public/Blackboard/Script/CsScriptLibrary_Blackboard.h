@@ -3,15 +3,22 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
-//Types
+// Types
+#include "CsMacro_Cached.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 
 #include "CsScriptLibrary_Blackboard.generated.h"
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsScriptLibrary_Blackboard)
 
 UCLASS()
 class CSAI_API UCsScriptLibrary_Blackboard : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsScriptLibrary_Blackboard);
 
 public:
 

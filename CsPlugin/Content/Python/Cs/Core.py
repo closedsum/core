@@ -4,23 +4,30 @@
 
 import unreal as ue
 
+# IMPORT
 # Library
 # - Cs/Library/Library_Common.py
 import Cs.Library.Library_Common as Cs_Library_Common
 # Coroutine
 # - Cs/Coroutine/CoroutineScheduler.py
 import Cs.Coroutine.CoroutineScheduler as Cs_CoroutineScheduler
+# Utility
+# - Cs/Utility/Heartbeat.py
+import Cs.Utility.Heartbeat as Cs_Utility_Heartbeat
 
-# "typedefs" - library (py)
-CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
+# ALIAS
 
-# "typedefs" - class
+# "alias" - library (py)
+FPyCommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
+
+# "alias" - class (py)
 FPyCoroutineScheduler = Cs_CoroutineScheduler.FPyCoroutineScheduler
+FPyHeartbeat = Cs_Utility_Heartbeat.FPyHeartbeat
 
-# "typedefs" - functions
-check           = CommonLibrary.check
-checkf          = CommonLibrary.checkf
-IsValidObject   = CommonLibrary.IsValidObject
+# "alias" - functions (py)
+check           = FPyCommonLibrary.check
+checkf          = FPyCommonLibrary.checkf
+IsValidObject   = FPyCommonLibrary.IsValidObject
 
 # Constants
 INDEX_NONE = -1
@@ -28,13 +35,27 @@ INDEX_NONE = -1
 class FPyCore:
     class FScript:
         def __init__(self):
+            self.Outer: 'FPyCore' = None
             self.Objects: list = []
+            self.Heartbeat: FPyHeartbeat = FPyHeartbeat()
+
+        def Init(self, core: 'FPyCore'):
+            self.Outer = core
+            self.Heartbeat.Init(core)
 
         def Shutdown(self):
             for o in self.Objects:
                 o.Shutdown()
 
+            if IsValidObject(self.Heartbeat) == True:
+                self.Heartbeat.Shutdown()
+            
+            self.Outer = None
+            self.Heartbeat = None
             self.Objects = []
+
+        def GetHeartbeat(self) -> FPyHeartbeat:
+            return self.Heartbeat
 
         def AddObject(self, o: object):
             # TODO: Check o has function Shutdown
@@ -79,11 +100,11 @@ class FPyCore:
         return self.PlayerPawn
     def GetCoroutineScheduler(self) -> FPyCoroutineScheduler:
         return self.CoroutineScheduler
-    def GetScript(self) -> object:
+    def GetScript(self) -> 'FPyCore.FScript':
         return self.Script
 
     def Init(self):
-        pass
+        self.Script.Init(self)
 
     def HasShutdown(self) -> bool:
         return self.bShutdown

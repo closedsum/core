@@ -4,8 +4,6 @@
 #include "BehaviorTree/Script/CsScriptLibrary_BehaviorTree_Task.h"
 #include "CsAI.h"
 
-// Types
-#include "CsMacro_Misc.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Behavior Tree
@@ -21,18 +19,11 @@
 // Cached
 #pragma region
 
-namespace NCsScriptLibraryBehaviorTreeTask
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BehaviorTree_Task, New_MoveTo);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BehaviorTree_Task, GetBTComponentForTask);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BehaviorTree_Task, FinishLatentTask);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsScriptLibrary_BehaviorTree_Task)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_BehaviorTree_Task, New_MoveTo)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_BehaviorTree_Task, GetBTComponentForTask)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsScriptLibrary_BehaviorTree_Task, FinishLatentTask)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -41,14 +32,11 @@ UCsScriptLibrary_BehaviorTree_Task::UCsScriptLibrary_BehaviorTree_Task(const FOb
 {
 }
 
-#define USING_NS_CACHED using namespace NCsScriptLibraryBehaviorTreeTask::NCached;
-#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryBehaviorTreeTask::NCached; \
-	const FString& Ctxt = Context.IsEmpty() ? Str::__FunctionName : Context
 #define SET_LOG_WARNING void(*Log)(const FString&) = &NCsAI::FLog::Warning;
 
 UAITask_MoveTo* UCsScriptLibrary_BehaviorTree_Task::New_MoveTo(const FString& Context, UBTNode* Task, UBehaviorTreeComponent* OwnerComp)
 {
-	CONDITIONAL_SET_CTXT(New_MoveTo);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(New_MoveTo);
 	SET_LOG_WARNING
 
 	CS_IS_PTR_NULL_RET_NULL2(Task)
@@ -65,7 +53,7 @@ UAITask_MoveTo* UCsScriptLibrary_BehaviorTree_Task::New_MoveTo(const FString& Co
 
 UBehaviorTreeComponent* UCsScriptLibrary_BehaviorTree_Task::GetBTComponentForTask(const FString& Context, UBTNode* Task, UGameplayTask* GameplayTask)
 {
-	CONDITIONAL_SET_CTXT(GetBTComponentForTask);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(GetBTComponentForTask);
 	SET_LOG_WARNING
 
 	CS_IS_PTR_NULL_RET_NULL2(Task)
@@ -75,7 +63,7 @@ UBehaviorTreeComponent* UCsScriptLibrary_BehaviorTree_Task::GetBTComponentForTas
 
 bool UCsScriptLibrary_BehaviorTree_Task::FinishLatentTask(const FString& Context, UBTTaskNode* Task, UBehaviorTreeComponent* OwnerComp, const TEnumAsByte<EBTNodeResult::Type>& TaskResult)
 {
-	CONDITIONAL_SET_CTXT(FinishLatentTask);
+	CS_CONDITIONAL_SET_CTXT_AS_FUNCTION_NAME(FinishLatentTask);
 	SET_LOG_WARNING
 
 	CS_IS_PTR_NULL(Task)
@@ -85,6 +73,4 @@ bool UCsScriptLibrary_BehaviorTree_Task::FinishLatentTask(const FString& Context
 	return true;
 }
 
-#undef USING_NS_CACHED
-#undef CONDITIONAL_SET_CTXT
 #undef SET_LOG_WARNING

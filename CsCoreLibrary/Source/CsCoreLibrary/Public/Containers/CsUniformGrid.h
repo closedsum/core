@@ -99,7 +99,7 @@ namespace NCsGrid
 				{
 					int32 Index = DeallocatedIndices.Last();
 
-					DeallocatedIndices.RemoveAt(DeallocatedIndices.Num() - 1, 1, false);
+					DeallocatedIndices.RemoveAt(DeallocatedIndices.Num() - 1, 1, EAllowShrinking::No);
 					return Index;
 				}
 

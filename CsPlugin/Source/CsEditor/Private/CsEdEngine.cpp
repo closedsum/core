@@ -188,13 +188,13 @@ void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 				if (Instances.Num() == CS_EMPTY)
 				{
 					OnAssetEditorRequestClose(Asset, EAssetEditorCloseReason::CloseAllEditorsForAsset);
-					OpenedAssets.RemoveAt(I, 1, false);
+					OpenedAssets.RemoveAt(I, 1, EAllowShrinking::No);
 				}
 			}
 			// TODO: Potentially need a Unique ID to broadcast OnAssetEditorRequestClose
 			else
 			{
-				OpenedAssets.RemoveAt(I, 1, false);
+				OpenedAssets.RemoveAt(I, 1, EAllowShrinking::No);
 			}
 		}
 	}
@@ -1205,6 +1205,7 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_DataTables(UDataTable* Data
 
 void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payloads(UDataTable* DataTable)
 {
+	/*
 	// Get Settings
 	UCsDataSettings* DataSettings = GetMutableDefault<UCsDataSettings>();
 
@@ -1233,6 +1234,7 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payloads(UDataTable* DataTa
 
 		OnObjectPreSave_Update_DataRootSet_Payload(*RowPtr);
 	}
+	*/
 }
 
 void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payload(FCsPayload& Payload)

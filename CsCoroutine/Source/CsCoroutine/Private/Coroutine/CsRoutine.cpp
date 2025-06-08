@@ -374,7 +374,7 @@ void FCsRoutine::EndChild(FCsRoutine* Child)
 		if (Child == Children[I])
 		{
 			Child->End(EndReasonType::Parent);
-			Children.RemoveAt(I, 1, false);
+			Children.RemoveAt(I, 1, EAllowShrinking::No);
 			break;
 		}
 	}

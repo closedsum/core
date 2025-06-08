@@ -1,12 +1,12 @@
 # Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
-
 import unreal as ue
-from typing import Callable, TypeVar, Generic, Any, Optional, Tuple, Union, Dict
+from typing import Callable, TypeVar, Generic, Any, Optional, Tuple, Union, Dict, List
 import weakref
 from dataclasses import dataclass
 import uuid
+from enum import Enum, auto
 
 # "alias" - library (c++)
 CsObjectLibrary = ue.CsScriptLibrary_Object
@@ -49,6 +49,19 @@ class FPyDelegateEntry:
     callback: Callable[..., Any]
     obj_ref: Optional[Union[weakref.ReferenceType, Any]] = None  # Can be weakref or UObject
 
+class EDelegateOperationType(Enum):
+    """Enum representing the type of delegate operation."""
+    ADD = auto()
+    REMOVE = auto()
+    
+@dataclass
+class FPyDelegateQueuedOperation:
+    """Represents a queued Add or Remove operation."""
+    operation_type: EDelegateOperationType
+    callback: Optional[Callable[..., Any]] = None
+    obj_ref: Optional[Union[weakref.ReferenceType, Any]] = None
+    handle: Optional['FPyDelegateHandle'] = None
+
 class FPyMulticastDelegate(Generic[T]):
     """
     A generic event handler that mimics Unreal Engine's TMulticastDelegate.
@@ -90,6 +103,11 @@ class FPyMulticastDelegate(Generic[T]):
             delegate = FPyMulticastDelegate[Tuple[str, int]]()
         """
         self._delegates: Dict[FPyDelegateHandle, FPyDelegateEntry] = {}
+        self._is_broadcasting: bool = False
+        self._queued_operations: List[FPyDelegateQueuedOperation] = []
+    
+    def Num(self) -> int:
+        return len(self._delegates)
     
     def Add(self, callback: Callable[..., T]) -> FPyDelegateHandle:
         """
@@ -201,6 +219,17 @@ class FPyMulticastDelegate(Generic[T]):
             handle = delegate._add_internal(my_callback)  # First add works
             delegate._add_internal(my_callback)  # Raises ValueError
         """
+        # If broadcasting, queue the operation
+        if self._is_broadcasting:
+            handle = FPyDelegateHandle()
+            self._queued_operations.append(FPyDelegateQueuedOperation(
+                operation_type=EDelegateOperationType.ADD,
+                callback=callback,
+                obj_ref=obj,
+                handle=handle
+            ))
+            return handle
+
         # Clean up any invalid references first
         self.cleanup()
         
@@ -254,6 +283,15 @@ class FPyMulticastDelegate(Generic[T]):
             raise ValueError(f"Handle is None")
         if not handle.IsValid():
             raise ValueError(f"Handle is not valid")
+
+        # If broadcasting, queue the operation
+        if self._is_broadcasting:
+            self._queued_operations.append(FPyDelegateQueuedOperation(
+                operation_type=EDelegateOperationType.REMOVE,
+                handle=handle
+            ))
+            return
+
         if handle in self._delegates:
             del self._delegates[handle]
             handle.Reset()
@@ -308,6 +346,60 @@ class FPyMulticastDelegate(Generic[T]):
             del self._delegates[handle]
             handle.Reset()
     
+    def RemoveAllClass(self, class_type: type) -> None:
+        """
+        Remove all delegates associated with objects that are instances of the specified class.
+        
+        Args:
+            class_type: (type): The class type to match against
+            
+        Example:
+            # For Python classes
+            class MyClass:
+                def callback(self, text: str, number: int):
+                    print(f"{text}: {number}")
+                    
+            class MySubClass(MyClass):
+                pass
+                
+            obj1 = MyClass()
+            obj2 = MySubClass()
+            delegate.AddObject(obj1.callback, obj1)
+            delegate.AddObject(obj2.callback, obj2)
+            delegate.RemoveAllClass(MyClass)  # Removes both callbacks since MySubClass is a subclass of MyClass
+            
+            # For UObject classes
+            delegate.AddUObject(uobject.callback, uobject)
+            delegate.RemoveAllClass(uobject.get_class())  # Removes the callback if uobject is an instance of the specified class
+        """
+        if class_type is None:
+            raise ValueError("Class type cannot be None")
+            
+        # Remove all delegates that match the class type
+        handles_to_remove = []
+        for handle, entry in self._delegates.items():
+            if entry.obj_ref is None:
+                continue
+                
+            # Check if it's a UObject
+            if isinstance(entry.obj_ref, UObject):
+                if CsObjectLibrary.is_valid_object(entry.obj_ref):
+                    if isinstance(entry.obj_ref, class_type):
+                        handles_to_remove.append(handle)
+            # Check if it's a weakref
+            elif isinstance(entry.obj_ref, weakref.ReferenceType):
+                obj = entry.obj_ref()
+                if obj is not None and isinstance(obj, class_type):
+                    handles_to_remove.append(handle)
+            # Direct reference
+            elif isinstance(entry.obj_ref, class_type):
+                handles_to_remove.append(handle)
+        
+        # Remove the matching delegates
+        for handle in handles_to_remove:
+            del self._delegates[handle]
+            handle.Reset()
+    
     def Clear(self) -> None:
         """Clear all callbacks from the delegate list.
         
@@ -357,10 +449,28 @@ class FPyMulticastDelegate(Generic[T]):
             if handle not in valid_handles:
                 del self._delegates[handle]
     
+    def _process_queued_operations(self) -> None:
+        """Process any queued Add/Remove operations after Broadcast completes."""
+        # Process Add operations first
+        for op in self._queued_operations:
+            if op.operation_type == EDelegateOperationType.ADD:
+                self._delegates[op.handle] = FPyDelegateEntry(op.callback, op.obj_ref)
+        
+        # Then process Remove operations
+        for op in self._queued_operations:
+            if op.operation_type == EDelegateOperationType.REMOVE:
+                if op.handle in self._delegates:
+                    del self._delegates[op.handle]
+                    op.handle.Reset()
+        
+        # Clear the queue
+        self._queued_operations.clear()
+
     def Broadcast(self, *args: Any, **kwargs: Any) -> None:
         """
         Call all registered callbacks with the given arguments.
         Automatically cleans up invalid references before broadcasting.
+        Locks Add/Remove operations during broadcast, queuing them for after completion.
         
         Args:
             *args:      (any): Positional arguments to pass to callbacks
@@ -377,13 +487,21 @@ class FPyMulticastDelegate(Generic[T]):
             delegate.Add(callback2)
             delegate.Broadcast("Hello", 42)  # Calls both callbacks with ("Hello", 42)
         """
+        if self._is_broadcasting:
+            return  # Prevent recursive broadcasts
+
+        self._is_broadcasting = True
         self.cleanup()
         
-        for entry in self._delegates.values():
-            try:
-                entry.callback(*args, **kwargs)
-            except Exception as e:
-                print(f"Error in delegate callback: {e}")
+        try:
+            for entry in self._delegates.values():
+                try:
+                    entry.callback(*args, **kwargs)
+                except Exception as e:
+                    print(f"Error in delegate callback: {e}")
+        finally:
+            self._is_broadcasting = False
+            self._process_queued_operations()
     
     def __iadd__(self, callback: Union[Callable[..., T], Tuple[Callable[..., T], Any]]) -> 'FPyMulticastDelegate':
         """

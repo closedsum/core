@@ -250,7 +250,7 @@ namespace NCsModifier
 
 			Result = FloatModifier->Modify(Value);
 
-			Modifiers.RemoveAt(I, 1, false);
+			Modifiers.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 		return Result;
 	}
@@ -289,7 +289,7 @@ namespace NCsModifier
 
 			Percent = Modifier->Modify(Percent);
 
-			Modifiers.RemoveAt(I, 1, false);
+			Modifiers.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 		Percent = FMath::Max(0.0f, Percent);
 		Result *= Percent;
@@ -385,7 +385,7 @@ namespace NCsModifier
 					
 				Percent = FloatModifier->ModifyMin(Percent);
 					
-				FirstModifiers.RemoveAt(I, 1, false);
+				FirstModifiers.RemoveAt(I, 1, EAllowShrinking::No);
 			}
 			Percent = FMath::Max(0.0f, Percent);
 			Result *= Percent;
@@ -400,7 +400,7 @@ namespace NCsModifier
 
 				Result = FloatModifier->ModifyMin(Result);
 
-				OtherModifiers.RemoveAt(I, 1, false);
+				OtherModifiers.RemoveAt(I, 1, EAllowShrinking::No);
 			}
 		}
 		// PercentAddLast || PercentSubtractLast
@@ -415,7 +415,7 @@ namespace NCsModifier
 
 				Percent = FloatModifier->ModifyMin(Percent);
 
-				LastModifiers.RemoveAt(I, 1, false);
+				LastModifiers.RemoveAt(I, 1, EAllowShrinking::No);
 			}
 			Percent = FMath::Max(0.0f, Percent);
 			Result *= Percent;
@@ -485,7 +485,7 @@ namespace NCsModifier
 
 			Result = FloatModifier->ModifyMin(Value);
 
-			Modifiers.RemoveAt(I, 1, false);
+			Modifiers.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 		return Result;
 	}
@@ -523,7 +523,7 @@ namespace NCsModifier
 
 			Percent = FloatModifier->ModifyMin(Percent);
 
-			Modifiers.RemoveAt(I, 1, false);
+			Modifiers.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 		Percent = FMath::Max(0.0f, Percent);
 		Result *= Percent;
@@ -614,7 +614,7 @@ namespace NCsModifier
 					
 				Percent = FloatModifier->ModifyMax(Percent);
 					
-				FirstModifiers.RemoveAt(I, 1, false);
+				FirstModifiers.RemoveAt(I, 1, EAllowShrinking::No);
 			}
 			Percent = FMath::Max(0.0f, Percent);
 			Result *= Percent;
@@ -629,7 +629,7 @@ namespace NCsModifier
 
 				Result = FloatModifier->ModifyMax(Result);
 
-				OtherModifiers.RemoveAt(I, 1, false);
+				OtherModifiers.RemoveAt(I, 1, EAllowShrinking::No);
 			}
 		}
 		// PercentAddLast || PercentSubtractLast
@@ -644,7 +644,7 @@ namespace NCsModifier
 
 				Percent = FloatModifier->ModifyMax(Percent);
 
-				LastModifiers.RemoveAt(I, 1, false);
+				LastModifiers.RemoveAt(I, 1, EAllowShrinking::No);
 			}
 			Percent = FMath::Max(0.0f, Percent);
 			Result *= Percent;
@@ -714,7 +714,7 @@ namespace NCsModifier
 
 			Result = FloatModifier->ModifyMax(Value);
 
-			Modifiers.RemoveAt(I, 1, false);
+			Modifiers.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 		return Result;
 	}
@@ -752,7 +752,7 @@ namespace NCsModifier
 
 			Percent = FloatModifier->ModifyMax(Percent);
 
-			Modifiers.RemoveAt(I, 1, false);
+			Modifiers.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 		Percent = FMath::Max(0.0f, Percent);
 		Result *= Percent;

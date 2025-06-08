@@ -44,7 +44,7 @@ namespace NCsLoad
 		// Iterate through Properties
 		for (TPropertyValueIterator<FProperty> It(Struct, StructValue); It; ++It)
 		{
-			FProperty* Property		  = It.Key();
+			const FProperty* Property = It.Key();
 			const void* PropertyValue = It.Value();
 
 			// TSoftObjectPtr
@@ -67,7 +67,7 @@ namespace NCsLoad
 				continue;
 			}
 			// ObjectProperty
-			if (FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property))
+			if (const FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property))
 			{
 				void* Value = const_cast<void*>(PropertyValue);
 
@@ -116,7 +116,7 @@ namespace NCsLoad
 	{
 		for (TPropertyValueIterator<FProperty> It(Struct, StructValue); It; ++It)
 		{
-			FProperty* Property		  = It.Key();
+			const FProperty* Property = It.Key();
 			const void* PropertyValue = It.Value();
 
 			// TSoftClassPtr
@@ -216,7 +216,7 @@ namespace NCsLoad
 		// Iterate through Properties
 		for (TPropertyValueIterator<FProperty> It(Struct, StructValue); It; ++It)
 		{
-			FProperty* Property		  = It.Key();
+			const FProperty* Property = It.Key();
 			const void* PropertyValue = It.Value();
 
 			// TSoftClassPtr

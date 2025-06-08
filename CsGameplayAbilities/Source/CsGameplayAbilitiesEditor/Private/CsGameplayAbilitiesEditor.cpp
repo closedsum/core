@@ -3,6 +3,6 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #include "CsGameplayAbilitiesEditor.h"
 
-IMPLEMENT_GAME_MODULE(FDefaultGameModuleImpl, CsSkinEditor);
+IMPLEMENT_GAME_MODULE(FDefaultGameModuleImpl, CsGameplayAbilitiesEditor);
 
 DEFINE_LOG_CATEGORY(LogCsGameplayAbilitiesEditor);

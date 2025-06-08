@@ -1926,19 +1926,19 @@ void UCsManager_Achievement::Write_Internal(ActionInfoType* ActionInfo)
 						ProgType == ProgressType::Standard ||
 						ProgType == ProgressType::Binary)
 					{
-						WriteObject->SetFloatStat(Achievement.GetFName(), NewProgress);
+						WriteObject->SetFloatStat(Achievement.GetName(), NewProgress);
 					}
 					// Count
 					else
 					if (ProgType == ProgressType::Count)
 					{
-						WriteObject->SetIntStat(Achievement.GetFName(), CountToWrite);
+						WriteObject->SetIntStat(Achievement.GetName(), CountToWrite);
 					}
 					// Bitfield
 					else
 					if (ProgType == ProgressType::Bitfield)
 					{
-						FVariantData& Data = WriteObject->Properties.Add(Achievement.GetFName());
+						FVariantData& Data = WriteObject->Properties.Add(Achievement.GetName());
 						Data.SetValue(NewBitfield);
 					}
 
@@ -3626,7 +3626,7 @@ void UCsManager_Achievement::OnAchievementsWritten(const FUniqueNetId& PlayerId,
 
 	// Determine the result
 
-	FVariantData* Data = WriteObject->FindStatByName(Achievement.Name_Internal);
+	FVariantData* Data = WriteObject->FindStatByName(Achievement.GetName());
 
 	const ProgressType& ProgType = IA->GetProgressType();
 	float Progress				 = 0.0f;

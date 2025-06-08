@@ -13,10 +13,15 @@ import Cs.Types.Enum.Enum as Cs_Enum
 # - Cs/Library/Library_Common.py
 import Cs.Library.Library_Common as Cs_Library_Common
 
-# "typedefs" - library (py)
+# "ALIAS"
+
+# "alias" - library (py)
 CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
 
-# "typedefs" - functions
+# "alias" - class (py)
+FPyEnum = Cs_Enum.FPyEnum
+
+# "alias" - functions (py)
 check               = CommonLibrary.check
 IsValidDictChecked  = CommonLibrary.IsValidDictChecked
 IsInstanceOfChecked = CommonLibrary.IsInstanceOfChecked
@@ -38,7 +43,7 @@ class NPyYield:
             # Check 'WaitForEnum' key exists for yieldCommand
             if ("WaitForEnum" in yieldCommand) and ("Value" in yieldCommand):
                 # Check yieldCommand.WaitForEnum is of type: FJsEnum.FValue
-                check(IsInstanceOfChecked(context, yieldCommand["WaitForEnum"], Cs_Enum.FPyEnum))
+                check(IsInstanceOfChecked(context, yieldCommand["WaitForEnum"], FPyEnum))
                 check(IsInstanceOfChecked(context, yieldCommand["Value"], Enum))
  
                 self.EnumContainer = yieldCommand["WaitForEnum"]

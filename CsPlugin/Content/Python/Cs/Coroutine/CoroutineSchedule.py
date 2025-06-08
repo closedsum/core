@@ -1,7 +1,6 @@
 # Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
-
 import unreal as ue
  
 # Type
@@ -31,23 +30,28 @@ ROUTINE_POOL_SIZE = 2048
 COROUTINE_PAYLOAD_SIZE = 64
 INDEX_NONE = -1
 
-# "typedefs" - library (py)
-CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
-PyMathLibrary = Cs_Library_Math.NPyMath.FLibrary
+# ALIAS
 
-# "typedefs" - library (c++)
+# "alias" - library (c++)
 RoutineLibrary      = ue.CsScriptLibrary_Routine
 UpdateGroupLibrary  = ue.CsScriptLibrary_UpdateGroup
 
-# "typedefs" - class
+# "alias" struct (c++)
+FCsRoutineHandle = ue.CsRoutineHandle
+
+# "alias" - library (py)
+CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
+PyMathLibrary = Cs_Library_Math.NPyMath.FLibrary
+
+# "alias" - class (py)
 PayloadType               = Cs_Types_Coroutine.NPyCoroutine.NPayload.FImpl
 FPyManager_Resource_Fixed = Cs_Manager_Resource_Fixed.FPyManager_Resource_Fixed
 FPyRoutine                = Cs_Routine.FPyRoutine
 FPyResourceContainer      = Cs_ResourceContainer.FPyResourceContainer
-FPYDoubleLinkedListNode   = Cs_DoubleLinkedListNode.FPyDoubleLinkedListNode
+FPyDoubleLinkedListNode   = Cs_DoubleLinkedListNode.FPyDoubleLinkedListNode
 FPyProperty 	          = Cs_Property.FPyProperty
 
-# "typedefs" - functions
+# "alias" - functions (py)
 checkf              = CommonLibrary.checkf
 check               = CommonLibrary.check
 IsValidObject       = CommonLibrary.IsValidObject
@@ -78,41 +82,41 @@ class NPyCoroutine:
 
                 self.Group: ue.ECsUpdateGroup = None
 
-                self.Manager_Routine: FPyManager_Resource_Fixed = FPyManager_Resource_Fixed()
+                self.Manager_Routine: FPyManager_Resource_Fixed[FPyRoutine] = FPyManager_Resource_Fixed[FPyRoutine]()
                 self.Manager_Routine.CreatePool(ROUTINE_POOL_SIZE, FPyRoutine)
 
                 # Set Index for fast look up
 
                 # Routine
                 if True:
-                    pool: list[FPyResourceContainer] = self.Manager_Routine.GetPool()
+                    pool: list[FPyResourceContainer[FPyRoutine]] = self.Manager_Routine.GetPool()
 
                     count: int = len(pool)
 
                     for i in range(0, count):
-                        container: FPyResourceContainer = pool[i]
+                        container: FPyResourceContainer[FPyRoutine] = pool[i]
                         r: FPyRoutine                   = container.Get()
                         index: int                      = container.GetIndex()
                         r.SetIndex(index)
 
-                self.Manager_Payload: FPyManager_Resource_Fixed = FPyManager_Resource_Fixed()
+                self.Manager_Payload: FPyManager_Resource_Fixed[PayloadType] = FPyManager_Resource_Fixed[PayloadType]()
                 self.Manager_Payload.CreatePool(COROUTINE_PAYLOAD_SIZE, PayloadType)
 
                 # Set Index for fast look up
 
                 # Payload
                 if True:
-                    pool: list[FPyResourceContainer] = self.Manager_Payload.GetPool()
+                    pool: list[FPyResourceContainer[PayloadType]] = self.Manager_Payload.GetPool()
 
                     count: int = len(pool)
 
                     for i in range(0, count):
-                        container: FPyResourceContainer = pool[i]
+                        container: FPyResourceContainer[PayloadType] = pool[i]
                         r: PayloadType                  = container.Get()
                         index: int                      = container.GetIndex()
                         r.SetIndex(index)
 
-                self.QueueEndHandles: list[ue.CsRoutineHandle] = []
+                self.QueueEndHandles: list[FCsRoutineHandle] = []
 
             # Schedule
             #region Schedule
@@ -123,23 +127,23 @@ class NPyCoroutine:
 
                 # Routine
                 if True:
-                    pool: list[FPyResourceContainer] = self.Manager_Routine.GetPool()
+                    pool: list[FPyResourceContainer[FPyRoutine]] = self.Manager_Routine.GetPool()
 
                     count: int = len(pool)
 
                     for i in range(0, count):
-                        container: FPyResourceContainer = pool[i]
+                        container: FPyResourceContainer[FPyRoutine] = pool[i]
                         r: FPyRoutine                   = container.Get()
                         r.SetGroup(group)
                 
                 # Payload
                 if True:
-                    pool: list[FPyResourceContainer] = self.Manager_Payload.GetPool()
+                    pool: list[FPyResourceContainer[PayloadType]] = self.Manager_Payload.GetPool()
 
                     count: int = len(pool)
 
                     for i in range(0, count):
-                        container: FPyResourceContainer = pool[i]
+                        container: FPyResourceContainer[PayloadType] = pool[i]
                         r: PayloadType                  = container.Get()
                         r.Group                         = group
 
@@ -149,10 +153,10 @@ class NPyCoroutine:
             #region Routine
             # public:
 
-            def GetRoutineContainer(self, handle: ue.CsRoutineHandle) -> FPyResourceContainer:
-                context: str = NPyCoroutine.NSchedule.FDefault.NCached.NStr.GetRoutineContainer
+            def GetRoutineContainer(self, handle: FCsRoutineHandle) -> FPyResourceContainer[FPyRoutine]:
+                context: str = __class__.GetRoutineContainer.__qualname__
                 
-                check(IsInstanceOfChecked(context, handle, ue.CsRoutineHandle))
+                check(IsInstanceOfChecked(context, handle, FCsRoutineHandle))
 
                 if RoutineLibrary.is_valid(handle) == False:
                     # console.log("FCsCoroutineSchedule::GetRoutineContainer: Handle is NOT valid: " + handle.Index + " " + Guid.Conv_GuidToString(handle.Handle));
@@ -166,10 +170,10 @@ class NPyCoroutine:
                     index = handle.index
 
                 if index >= poolSize:
-                    ue.log_warning("FCsCoroutineSchedule::GetRoutineContainer: Handle's Index: " + index + " is not associated with any Routine with Group: " + self.Group.name_internal + ".")
+                    ue.log_warning(f"{context}: Handle's Index: {index} is not associated with any Routine with Group: {self.Group.name_internal}.")
                     return None
 
-                container: FPyResourceContainer = self.Manager_Routine.GetAt(index)
+                container: FPyResourceContainer[FPyRoutine] = self.Manager_Routine.GetAt(index)
                 r: FPyRoutine		            = container.Get()
 
                 IsEqual = RoutineLibrary.equal_equal
@@ -178,10 +182,10 @@ class NPyCoroutine:
                     return container
                 return None
 
-            def GetRoutine(self, handle:  ue.CsRoutineHandle) -> FPyRoutine:
-                container: FPyResourceContainer = self.GetRoutineContainer(handle)
+            def GetRoutine(self, handle: FCsRoutineHandle) -> FPyRoutine:
+                container: FPyResourceContainer[FPyRoutine] = self.GetRoutineContainer(handle)
 
-                return container.Get() if IsValidObject(FPyResourceContainer) else None
+                return container.Get() if IsValidObject(container) else None
             
             #endregion Routine
 
@@ -189,10 +193,10 @@ class NPyCoroutine:
             #region Handle
             # public:
 
-            def IsHandleValid(self, handle: ue.CsRoutineHandle) -> bool:
+            def IsHandleValid(self, handle: FCsRoutineHandle) -> bool:
                 return self.GetRoutineContainer(handle) != None
 
-            def IsRunning(self, handle: ue.CsRoutineHandle) -> bool:
+            def IsRunning(self, handle: FCsRoutineHandle) -> bool:
                 r: FPyRoutine = self.GetRoutine(handle)
 
                 if IsValidObject(r) == True:
@@ -205,14 +209,14 @@ class NPyCoroutine:
             #region Start
             # public:
 
-            def StartByContainer(self, payloadContainer: FPyResourceContainer) -> ue.CsRoutineHandle:
-                context: str = NPyCoroutine.NSchedule.FDefault.NCached.NStr.StartByContainer
+            def StartByContainer(self, payloadContainer: FPyResourceContainer[PayloadType]) -> FCsRoutineHandle:
+                context: str = __class__.StartByContainer.__qualname__
 
                 payload: PayloadType = payloadContainer.Get()
 
-                checkf(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.")
+                checkf(IsValidObject(payload), f"{context}: payloadContainer does NOT contain a reference to a payload.")
                 check(payload.IsValidChecked(context))
-                checkf(UpdateGroupLibrary.equal_equal(self.Group, payload.Group), context + ": Mismatch between payload.Group: " + str(payload.Group.name_internal) + " and Group: " + str(self.Group.name_internal))
+                checkf(UpdateGroupLibrary.equal_equal(self.Group, payload.Group), f"{context}: Mismatch between payload.Group: {str(payload.Group.name_internal)} and Group: {str(self.Group.name_internal)}")
 
                 r: FPyRoutine = self.Manager_Routine.AllocateResource()
                 
@@ -231,30 +235,30 @@ class NPyCoroutine:
                 self.Manager_Payload.Deallocate(payloadContainer)
                 return r.GetHandle()
 
-            def Start(self, payload: PayloadType) -> ue.CsRoutineHandle:
+            def Start(self, payload: PayloadType) -> FCsRoutineHandle:
                 return self.StartByContainer(self.GetPayloadContainer(payload))
 
-            def StartChildByContainer(self, payloadContainer: FPyResourceContainer) -> ue.CsRoutineHandle:
-                context = NPyCoroutine.NSchedule.FDefault.NCached.NStr.StartChildByContainer
+            def StartChildByContainer(self, payloadContainer: FPyResourceContainer[PayloadType]) -> FCsRoutineHandle:
+                context: str = __class__.StartChildByContainer.__qualname__
 
                 payload: PayloadType = payloadContainer.Get()
 
-                checkf(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.")
+                checkf(IsValidObject(payload), f"{context}: payloadContainer does NOT contain a reference to a payload.")
                 checkf(payload.IsValidChecked(context))
-                checkf(UpdateGroupLibrary.equal_equal(self.Group, payload.Group), context + ": Mismatch between payload.Group: " + payload.Group.name_internal + " and Group: " + self.Group.name_internal)
+                checkf(UpdateGroupLibrary.equal_equal(self.Group, payload.Group), f"{context}: Mismatch between payload.Group: {payload.Group.name_internal} and Group: {self.Group.name_internal}")
 
-                parentContainer: FPyResourceContainer = self.GetRoutineContainer(payload.ParentHandle)
+                parentContainer: FPyResourceContainer[FPyRoutine] = self.GetRoutineContainer(payload.ParentHandle)
 
-                checkf(IsValidObject(parentContainer), context + ": Failed to find a container for payload.")
+                checkf(IsValidObject(parentContainer), f"{context}: Failed to find a container for payload.")
 
                 parent: FPyRoutine    = parentContainer.Get()
                 lastChild: FPyRoutine = parent.GetLastChild()
 
-                routineContainer: FPyResourceContainer = None
+                routineContainer: FPyResourceContainer[FPyRoutine] = None
 
                 # Add after Last Child
                 if lastChild != None:
-                    lastChildContainer: FPyResourceContainer = self.Manager_Routine.GetAt(lastChild.GetIndex())
+                    lastChildContainer: FPyResourceContainer[FPyRoutine] = self.Manager_Routine.GetAt(lastChild.GetIndex())
 
                     routineContainer = self.Manager_Routine.AllocateAfter(lastChildContainer)
                 # Add after Parent
@@ -276,7 +280,7 @@ class NPyCoroutine:
                 #UE_LOG(LogCs, Warning, TEXT("UCsCoroutineScheduler::StartChild: No free Routines. Look for Runaway Coroutines or consider raising the pool size."));
                 return r.GetHandle()
 
-            def StartChild(self, payload: PayloadType) -> ue.CsRoutineHandle:
+            def StartChild(self, payload: PayloadType) -> FCsRoutineHandle:
                 return self.StartChildByContainer(self.GetPayloadContainer(payload))
 
             #endregion Start
@@ -291,12 +295,12 @@ class NPyCoroutine:
                 """ 
                 result: bool = False
 
-                current: FPYDoubleLinkedListNode = self.Manager_Routine.GetAllocatedHead()
-                next: FPYDoubleLinkedListNode	 = current
+                current: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]] = self.Manager_Routine.GetAllocatedHead()
+                next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]	 = current
 
                 while next != None:
                     current				                   = next
-                    routineContainer: FPyResourceContainer = current.Element
+                    routineContainer: FPyResourceContainer[FPyRoutine] = current.Element
                     next				                   = current.GetNextLink()
 
                     r: FPyRoutine = routineContainer.Get()
@@ -311,15 +315,15 @@ class NPyCoroutine:
                     result = True
                 return result
 
-            def End(self, handle: ue.CsRoutineHandle) -> bool:
+            def End(self, handle: FCsRoutineHandle) -> bool:
                 """
                 End the routine associated with the Handle.
 
-                :param ue.CsRoutineHandle handle:   Handle to a routine.
+                :param FCsRoutineHandle handle:   Handle to a routine.
                 :return bool:                       Whether the routine has successful ended.
                                                     NOTE: If the routine has already ended, this will return false.
                 """ 
-                container: FPyResourceContainer = self.GetRoutineContainer(handle)
+                container: FPyResourceContainer[FPyRoutine] = self.GetRoutineContainer(handle)
 
                 if IsValidObject(container) == True:
                     r: FPyRoutine = container.Get()
@@ -343,12 +347,12 @@ class NPyCoroutine:
                     return True
                 return False
 
-            def HasEnded(self, handle: ue.CsRoutineHandle) -> bool:
+            def HasEnded(self, handle: FCsRoutineHandle) -> bool:
                 """
                 Check if a routine associated with the Handle has already ended.
                  NOTE: This returns True if Handle is NOT Valid.
 
-                :param ue.CsRoutineHandle handle:   Handle to a routine.
+                :param FCsRoutineHandle handle:   Handle to a routine.
                 :return bool:                       Whether the routine has successful ended.
                 """ 
                 r: FPyRoutine = self.GetRoutine(handle)
@@ -357,11 +361,11 @@ class NPyCoroutine:
                     return r.HasEnded()
                 return True
 
-            def HasJustEnded(self, handle: ue.CsRoutineHandle) -> bool:
+            def HasJustEnded(self, handle: FCsRoutineHandle) -> bool:
                 """
                 CCheck if a routine associated with the Handle has just ended.
 
-                :param ue.CsRoutineHandle handle:   Handle to a routine.
+                :param FCsRoutineHandle handle:   Handle to a routine.
                 :return bool:                       Whether the routine has successful ended.
                 """ 
                 r: FPyRoutine = self.GetRoutine(handle)
@@ -383,13 +387,13 @@ class NPyCoroutine:
 
                 self.QueueEndHandles = []
 
-                current: FPYDoubleLinkedListNode = self.Manager_Routine.GetAllocatedHead()
-                next: FPYDoubleLinkedListNode    = current
+                current: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]] = self.Manager_Routine.GetAllocatedHead()
+                next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]    = current
                 #ue.log_warning(str(self.Manager_Routine.GetAllocatedSize()))
                 while next != None:
                     current				                   = next
-                    routineContainer: FPyResourceContainer = current.Element
-                    next: FPYDoubleLinkedListNode 		   = current.GetNextLink()
+                    routineContainer: FPyResourceContainer[FPyRoutine] = current.Element
+                    next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]] 		   = current.GetNextLink()
                     
                     r: FPyRoutine = routineContainer.Get()
 
@@ -421,7 +425,7 @@ class NPyCoroutine:
             #region Payload
             # public:
 
-            def AllocatePayloadContainer(self) -> FPyResourceContainer:
+            def AllocatePayloadContainer(self) -> FPyResourceContainer[PayloadType]:
                 return self.Manager_Payload.Allocate()
 
             def AllocatePayload(self) -> PayloadType:
@@ -429,9 +433,9 @@ class NPyCoroutine:
 
             # protected:
 
-            def GetPayloadContainer(self, payload: PayloadType) -> FPyResourceContainer:
+            def GetPayloadContainer(self, payload: PayloadType) -> FPyResourceContainer[PayloadType]:
                 if payload.GetIndex() == INDEX_NONE:
-                    container: FPyResourceContainer = self.Manager_Payload.Allocate()
+                    container: FPyResourceContainer[PayloadType] = self.Manager_Payload.Allocate()
                     p: PayloadType		            = self.container.Get()
 
                     p.Copy(payload)
@@ -446,13 +450,13 @@ class NPyCoroutine:
             # public:
 
             def BroadcastMessage(self, type: MessageType, message: str, owner: object):
-                current: FPYDoubleLinkedListNode = self.Manager_Routine.GetAllocatedHead()
-                next: FPYDoubleLinkedListNode    = current
+                current: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]] = self.Manager_Routine.GetAllocatedHead()
+                next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]    = current
 
                 while next != None:
-                    current: FPYDoubleLinkedListNode       = next
-                    routineContainer: FPyResourceContainer = current.Element
-                    next: FPYDoubleLinkedListNode          = current.GetNextLink()
+                    current: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]  = next
+                    routineContainer: FPyResourceContainer[FPyRoutine]                  = current.Element
+                    next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]     = current.GetNextLink()
 
                     r: FPyRoutine = routineContainer.Get()
 
@@ -486,18 +490,18 @@ class NPyCoroutine:
                 self.Group: ue.ECsUpdateGroup = None
 
                 # Owner
-                self.Manager_OwnerID: FPyManager_Resource_Fixed = FPyManager_Resource_Fixed()
+                self.Manager_OwnerID: FPyManager_Resource_Fixed[FPyProperty] = FPyManager_Resource_Fixed[FPyProperty]()
                 self.Manager_OwnerID.CreatePool(ROUTINE_POOL_SIZE, FPyProperty)
 
                 if True:
-                    pool: list[FPyResourceContainer] = self.Manager_OwnerID.GetPool()
+                    pool: list[FPyResourceContainer[FPyProperty]] = self.Manager_OwnerID.GetPool()
 
                     count: int = len(pool)
 
                     for i in range(0, count):
-                        container: FPyResourceContainer = pool[i]
-                        p: FPyProperty                  = container.Get()
-                        p.Value                         = container.GetIndex()
+                        container: FPyResourceContainer[FPyProperty] = pool[i]
+                        p: FPyProperty                               = container.Get()
+                        p.Value                                      = container.GetIndex()
 
                 # TODO: Get from settings
                 self.MaxOwners = 128
@@ -509,7 +513,7 @@ class NPyCoroutine:
                 #   current Update.
                 #   NOTE: This list is populated when a Routine is currently being Executed and
                 #         requested to End.
-                self.OwnerQueueEndHandles: list[ue.CsRoutineHandle] = [None] * ROUTINE_POOL_SIZE
+                self.OwnerQueueEndHandles: list[FCsRoutineHandle] = [None] * ROUTINE_POOL_SIZE
                 self.QueueEndHandleStrideByOwnerID: list[int] = [0] * self.MaxOwners
 
                 for i in range(0, ROUTINE_POOL_SIZE):
@@ -520,36 +524,36 @@ class NPyCoroutine:
                     self.RoutineStrideByOwnerID[i] = 0
                     self.QueueEndHandleStrideByOwnerID[i] = 0
 
-                self.Manager_Routine: FPyManager_Resource_Fixed = FPyManager_Resource_Fixed()
+                self.Manager_Routine: FPyManager_Resource_Fixed[FPyRoutine] = FPyManager_Resource_Fixed[FPyRoutine]()
                 self.Manager_Routine.CreatePool(ROUTINE_POOL_SIZE, FPyRoutine)
 
                 # Set Index for fast look up
 
                 # Routine
                 if True:
-                    pool: list[FPyResourceContainer] = self.Manager_Routine.GetPool()
+                    pool: list[FPyResourceContainer[FPyRoutine]] = self.Manager_Routine.GetPool()
 
                     count: int = len(pool)
 
                     for i in range(0, count):
-                        container: FPyResourceContainer = pool[i]
+                        container: FPyResourceContainer[FPyRoutine] = pool[i]
                         r: FPyRoutine                   = container.Get()
                         index: int                      = container.GetIndex()
                         r.SetIndex(index);
 
-                self.Manager_Payload: FPyManager_Resource_Fixed = FPyManager_Resource_Fixed()
+                self.Manager_Payload: FPyManager_Resource_Fixed[PayloadType] = FPyManager_Resource_Fixed[PayloadType]()
                 self.Manager_Payload.CreatePool(COROUTINE_PAYLOAD_SIZE, PayloadType)
 
                 # Set Index for fast look up
 
                 # Payload
                 if True:
-                    pool: list[FPyResourceContainer] = self.Manager_Payload.GetPool()
+                    pool: list[FPyResourceContainer[PayloadType]] = self.Manager_Payload.GetPool()
 
                     count: int = len(pool)
 
                     for i in range(0, count):
-                        container: FPyResourceContainer = pool[i]
+                        container: FPyResourceContainer[PayloadType] = pool[i]
                         r: PayloadType                  = container.Get()
                         index: int                      = container.GetIndex()
                         r.SetIndex(index);
@@ -568,18 +572,18 @@ class NPyCoroutine:
                 return self.Manager_OwnerID.IsExhausted() == False
         
             def GetOwnerID(self, routineIndex: int) -> int:
-                context: str = NPyCoroutine.NSchedule.FCustom.NCached.NStr.GetOwnerID
+                context: str = __class__.GetOwnerID.__qualname__
 
                 check(IsIntChecked(context, routineIndex))
                 check(PyMathLibrary.IsIntInRangeInclusiveChecked(context, routineIndex, 0, self.Manager_Routine.GetPoolSize()))
 
-                current: FPYDoubleLinkedListNode = self.Manager_OwnerID.GetAllocatedHead()
-                next: FPYDoubleLinkedListNode	 = current
+                current: FPyDoubleLinkedListNode[FPyResourceContainer[FPyProperty]] = self.Manager_OwnerID.GetAllocatedHead()
+                next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyProperty]]	 = current
 
                 while IsValidObject(next) != None:
-                    current: FPYDoubleLinkedListNode  = next
-                    idContainer: FPyResourceContainer = current.GetElement()
-                    next: FPYDoubleLinkedListNode	  = current.GetNextLink()
+                    current: FPyDoubleLinkedListNode[FPyResourceContainer[FPyProperty]]  = next
+                    idContainer: FPyResourceContainer[FPyProperty] = current.GetElement()
+                    next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyProperty]]	  = current.GetNextLink()
 
                     # FPyResourceContainer -> contains FPyProperty (int) -> Get
                     id: int = idContainer.Get().Get()
@@ -593,17 +597,17 @@ class NPyCoroutine:
                         if self.OwnerRoutineIDs[index] == routineIndex:
                             return id
 
-                checkf(0, context + ": Failed to find OwnerID associated with RoutineIndex: " + routineIndex + ".")
+                checkf(0, f"{context}: Failed to find OwnerID associated with RoutineIndex: {routineIndex}.")
                 return INDEX_NONE
 
             def GetOwnerIDByRoutine(self, r: FPyRoutine) -> int:
-                context: str = NPyCoroutine.NSchedule.FCustom.NCached.NStr.GetOwnerIDByRoutine
+                context: str = __class__.GetOwnerIDByRoutine.__qualname__
 
                 check(IsValidObjectChecked(context, r))
                 return self.GetOwnerID(r.GetIndex())
 
-            def GetOwnerIDByHandle(self, handle: ue.CsRoutineHandle) -> int:
-                container: FPyResourceContainer = self.GetRoutineContainer(handle)
+            def GetOwnerIDByHandle(self, handle: FCsRoutineHandle) -> int:
+                container: FPyResourceContainer[FPyRoutine] = self.GetRoutineContainer(handle)
 
                 if IsValidObject(container) == True:
                     return self.GetOwnerIDByRoutine(container.Get())
@@ -620,22 +624,22 @@ class NPyCoroutine:
 
                 # Routine
                 if True:
-                    pool: list[FPyResourceContainer] = self.Manager_Routine.GetPool()
+                    pool: list[FPyResourceContainer[FPyRoutine]] = self.Manager_Routine.GetPool()
 
                     count: int = len(pool)
 
                     for i in range(0, count):
-                        container: FPyResourceContainer = pool[i]
+                        container: FPyResourceContainer[FPyRoutine] = pool[i]
                         r: FPyRoutine                   = container.Get()
                         r.SetGroup(group)
                 # Payload
                 if True:
-                    pool: list[FPyResourceContainer] = self.Manager_Payload.GetPool()
+                    pool: list[FPyResourceContainer[PayloadType]] = self.Manager_Payload.GetPool()
 
                     count: int = len(pool)
 
                     for i in range(0, count):
-                        container: FPyResourceContainer = pool[i]
+                        container: FPyResourceContainer[PayloadType] = pool[i]
                         r: PayloadType                  = container.Get()
                         r.Group                         = group
 
@@ -645,10 +649,10 @@ class NPyCoroutine:
             #region Routine
             # public:
 
-            def GetRoutineContainer(self, handle: ue.CsRoutineHandle) -> FPyResourceContainer:
-                context: str = NPyCoroutine.NSchedule.FCustom.NCached.NStr.GetRoutineContainer
+            def GetRoutineContainer(self, handle: FCsRoutineHandle) -> FPyResourceContainer[FPyRoutine]:
+                context: str = __class__.GetRoutineContainer.__qualname__
                 
-                check(IsInstanceOfChecked(context, handle, ue.CsRoutineHandle))
+                check(IsInstanceOfChecked(context, handle, FCsRoutineHandle))
 
                 if RoutineLibrary.is_valid(handle) == False:
                     #console.log("FCsCoroutineSchedule::GetRoutineContainer: Handle is NOT valid: " + handle.Index + " " + Guid.Conv_GuidToString(handle.Handle));
@@ -662,10 +666,10 @@ class NPyCoroutine:
                     index = handle.index
 
                 if index >= poolSize:
-                    ue.log_warning("FCsCoroutineSchedule::GetRoutineContainer: Handle's Index: " + index + " is not associated with any Routine with Group: " + self.Group.name_internal + ".")
+                    ue.log_warning(f"{context}: Handle's Index: {index} is not associated with any Routine with Group: {self.Group.name_internal}.")
                     return None
 
-                container: FPyResourceContainer = self.Manager_Routine.GetAt(index)
+                container: FPyResourceContainer[FPyRoutine] = self.Manager_Routine.GetAt(index)
                 r: FPyRoutine		            = container.Get()
 
                 IsEqual = RoutineLibrary.equal_equal
@@ -674,8 +678,8 @@ class NPyCoroutine:
                     return container
                 return None
 
-            def GetRoutine(self, handle: ue.CsRoutineHandle) -> FPyRoutine:
-                container: FPyResourceContainer = self.GetRoutineContainer(handle)
+            def GetRoutine(self, handle: FCsRoutineHandle) -> FPyRoutine:
+                container: FPyResourceContainer[FPyRoutine] = self.GetRoutineContainer(handle)
 
                 return container.Get() if IsValidObject(container) == True else None
 
@@ -685,10 +689,10 @@ class NPyCoroutine:
             #region Handle
             # public:
 
-            def IsHandleValid(self, handle: ue.CsRoutineHandle) -> bool:
+            def IsHandleValid(self, handle: FCsRoutineHandle) -> bool:
                 return self.GetRoutineContainer(handle) != None
 
-            def IsRunning(self, handle: ue.CsRoutineHandle) -> bool:
+            def IsRunning(self, handle: FCsRoutineHandle) -> bool:
                 r: FPyRoutine = self.GetRoutine(handle)
 
                 if IsValidObject(r) == True:
@@ -701,20 +705,20 @@ class NPyCoroutine:
             #region Start
             # public:
 
-            def StartByContainer(self, ownerID: int, payloadContainer: FPyResourceContainer) -> ue.CsRoutineHandle:
-                context: str = NPyCoroutine.NSchedule.FCustom.NCached.NStr.StartByContainer
+            def StartByContainer(self, ownerID: int, payloadContainer: FPyResourceContainer[PayloadType]) -> FCsRoutineHandle:
+                context: str = __class__.StartByContainer.__qualname__
                 
                 check(self.Manager_OwnerID.IsAllocatedChecked(context, ownerID))
                 
                 payload: PayloadType = payloadContainer.Get()
 
-                checkf(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.")
+                checkf(IsValidObject(payload), f"{context}: payloadContainer does NOT contain a reference to a payload.")
                 check(payload.IsValidChecked(context))
-                checkf(UpdateGroupLibrary.equal_equal(self.Group, payload.Group), context + ": Mismatch between payload.Group: " + payload.Group.name_internal.__str__() + " and Group: " + self.Group.name_internal.__str__())
+                checkf(UpdateGroupLibrary.equal_equal(self.Group, payload.Group), f"{context}: Mismatch between payload.Group: {payload.Group.name_internal} and Group: {self.Group.name_internal}")
 
                 r: FPyRoutine = self.Manager_Routine.AllocateResource()
 
-                checkf(self.RoutineStrideByOwnerID[ownerID] < self.MaxRoutinesPerOwner, context + ": Owner ID: " +  str(ownerID) + " has ALREADY allocated " + str(self.RoutineStrideByOwnerID[ownerID]) + " Max Routines Per Owner: " + str(self.MaxRoutinesPerOwner) + ".")
+                checkf(self.RoutineStrideByOwnerID[ownerID] < self.MaxRoutinesPerOwner, f"{context}: Owner ID: {ownerID} has ALREADY allocated {self.RoutineStrideByOwnerID[ownerID]} Max Routines Per Owner: {self.MaxRoutinesPerOwner}.")
     
                 routineIdIndex: int		             = (ownerID * self.MaxRoutinesPerOwner) + self.RoutineStrideByOwnerID[ownerID]
                 self.OwnerRoutineIDs[routineIdIndex] = r.GetIndex();
@@ -736,32 +740,32 @@ class NPyCoroutine:
                 self.Manager_Payload.Deallocate(payloadContainer)
                 return r.GetHandle()
 
-            def Start(self, ownerID: int, payload: PayloadType) -> ue.CsRoutineHandle:
+            def Start(self, ownerID: int, payload: PayloadType) -> FCsRoutineHandle:
                 return self.StartByContainer(ownerID, self.GetPayloadContainer(payload))
 
-            def StartChildByContainer(self, ownerID: int, payloadContainer: FPyResourceContainer) -> ue.CsRoutineHandle:
-                context: str = NPyCoroutine.NSchedule.FCustom.NCached.NStr.StartChildByContainer
+            def StartChildByContainer(self, ownerID: int, payloadContainer: FPyResourceContainer[PayloadType]) -> FCsRoutineHandle:
+                context: str = __class__.StartChildByContainer.__qualname__
                 
                 check(self.Manager_OwnerID.IsAllocatedChecked(context, ownerID))
 
                 payload: PayloadType = payloadContainer.Get()
 
-                checkf(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.")
+                checkf(IsValidObject(payload), f"{context}: payloadContainer does NOT contain a reference to a payload.")
                 checkf(payload.IsValidChecked(context))
-                checkf(UpdateGroupLibrary.equal_equal(self.Group, payload.Group), context + ": Mismatch between payload.Group: " + payload.Group.name_internal + " and Group: " + self.Group.name_internal)
+                checkf(UpdateGroupLibrary.equal_equal(self.Group, payload.Group), f"{context}: Mismatch between payload.Group: {payload.Group.name_internal} and Group: {self.Group.name_internal}")
 
-                parentContainer: FPyResourceContainer = self.GetRoutineContainer(payload.ParentHandle)
+                parentContainer: FPyResourceContainer[FPyRoutine] = self.GetRoutineContainer(payload.ParentHandle)
 
-                checkf(IsValidObject(parentContainer), context + ": Failed to find a container for payload.")
+                checkf(IsValidObject(parentContainer), f"{context}: Failed to find a container for payload.")
 
                 parent: FPyRoutine    = parentContainer.Get()
                 lastChild: FPyRoutine = parent.GetLastChild()
 
-                routineContainer: FPyResourceContainer = None
+                routineContainer: FPyResourceContainer[FPyRoutine] = None
 
                 # Add after Last Child
                 if lastChild != None:
-                    lastChildContainer: FPyResourceContainer = self.Manager_Routine.GetAt(lastChild.GetIndex())
+                    lastChildContainer: FPyResourceContainer[FPyRoutine] = self.Manager_Routine.GetAt(lastChild.GetIndex())
 
                     routineContainer = self.Manager_Routine.AllocateAfter(lastChildContainer)
                 # Add after Parent
@@ -770,7 +774,7 @@ class NPyCoroutine:
 
                 r: FPyRoutine = routineContainer.Get()
 
-                checkf(self.RoutineStrideByOwnerID[ownerID] < self.MaxRoutinesPerOwner, context + ": Owner ID: " +  ownerID + " has ALREADY allocated " + self.RoutineStrideByOwnerID[ownerID] + " Max Routines Per Owner: " + self.MaxRoutinesPerOwner + ".")
+                checkf(self.RoutineStrideByOwnerID[ownerID] < self.MaxRoutinesPerOwner, f"{context}: Owner ID: {ownerID} has ALREADY allocated {self.RoutineStrideByOwnerID[ownerID]} Max Routines Per Owner: {self.MaxRoutinesPerOwner}.")
     
                 routineIdIndex: int		             = (ownerID * self.MaxRoutinesPerOwner) + self.RoutineStrideByOwnerID[ownerID]
                 self.OwnerRoutineIDs[routineIdIndex] = r.GetIndex()
@@ -791,7 +795,7 @@ class NPyCoroutine:
                 #UE_LOG(LogCs, Warning, TEXT("UCsCoroutineScheduler::StartChild: No free Routines. Look for Runaway Coroutines or consider raising the pool size."));
                 return r.GetHandle()
 
-            def StartChild(self, ownerID: int, payload: PayloadType) -> ue.CsRoutineHandle:
+            def StartChild(self, ownerID: int, payload: PayloadType) -> FCsRoutineHandle:
                 return self.StartChildByContainer(self.GetPayloadContainer(payload))
 
             #endregion Start
@@ -806,13 +810,13 @@ class NPyCoroutine:
                 """ 
                 result: bool = False
 
-                current: FPYDoubleLinkedListNode = self.Manager_Routine.GetAllocatedHead()
-                next: FPYDoubleLinkedListNode	 = current
+                current: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]] = self.Manager_Routine.GetAllocatedHead()
+                next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]	 = current
 
                 while next != None:
-                    current: FPYDoubleLinkedListNode	   = next
-                    routineContainer: FPyResourceContainer = current.Element
-                    next: FPYDoubleLinkedListNode		   = current.GetNextLink()
+                    current: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]	   = next
+                    routineContainer: FPyResourceContainer[FPyRoutine] = current.Element
+                    next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]		   = current.GetNextLink()
 
                     r: FPyRoutine = routineContainer.Get()
 
@@ -834,7 +838,7 @@ class NPyCoroutine:
                 :return bool:       Whether the routine has successful ended.
                                     NOTE: If the routine has already ended, this will return false.
                 """ 
-                context: str = NPyCoroutine.NSchedule.FCustom.NCached.NStr.End
+                context: str = __class__.End.__qualname__
 
                 result: bool = False
 
@@ -848,7 +852,7 @@ class NPyCoroutine:
                     index: int        = start + i
                     routineIndex: int = self.OwnerRoutineIDs[index]
 
-                    routineContainer: FPyResourceContainer = self.Manager_Routine.GetAt(routineIndex)
+                    routineContainer: FPyResourceContainer[FPyRoutine] = self.Manager_Routine.GetAt(routineIndex)
                     r: FPyRoutine				           = routineContainer.Get()
 
                     # If the Routine is currently being Updated, queue the End for either the
@@ -880,18 +884,18 @@ class NPyCoroutine:
                     self.OwnerRoutineIDs[index] = INDEX_NONE
                 return result
 
-            def EndHandle(self, ownerID: int, handle: ue.CsRoutineHandle) -> bool:
+            def EndHandle(self, ownerID: int, handle: FCsRoutineHandle) -> bool:
                 """
                 End the routine associated with the Handle.
 
                 :param int ownerID:
-                :param ue.CsRoutineHandle handle:   Handle to a routine.
+                :param FCsRoutineHandle handle:   Handle to a routine.
                 :return bool:                       Whether the routine has successful ended.
                                                     NOTE: If the routine has already ended, this will return false.
                 """ 
-                context: str = NPyCoroutine.NSchedule.FCustom.NCached.NStr.End
+                context: str = __class__.EndHandle.__qualname__
 
-                container: FPyResourceContainer = self.GetRoutineContainer(handle)
+                container: FPyResourceContainer[FPyRoutine] = self.GetRoutineContainer(handle)
 
                 if IsValidObject(container) == True:
                     r: FPyRoutine = container.Get()
@@ -922,12 +926,12 @@ class NPyCoroutine:
                     return True
                 return False
 
-            def HasEnded(self, handle: ue.CsRoutineHandle) -> bool:
+            def HasEnded(self, handle: FCsRoutineHandle) -> bool:
                 """
                 Check if a routine associated with the Handle has already ended.
                  NOTE: This returns True if Handle is NOT Valid.
 
-                :param ue.CsRoutineHandle handle:   Handle to a routine.
+                :param FCsRoutineHandle handle:   Handle to a routine.
                 :return bool:                       Whether the routine has already ended.
                 """ 
                 r: FPyRoutine = self.GetRoutine(handle)
@@ -936,11 +940,11 @@ class NPyCoroutine:
                     return r.HasEnded()
                 return True
 
-            def HasJustEnded(self, handle: ue.CsRoutineHandle) -> bool:
+            def HasJustEnded(self, handle: FCsRoutineHandle) -> bool:
                 """
                 Check if a routine associated with the Handle has just ended.
 
-                :param ue.CsRoutineHandle handle:   Handle to a routine.
+                :param FCsRoutineHandle handle:   Handle to a routine.
                 :return bool:                       Whether the routine has already ended.
                 """ 
                 r: FPyRoutine = self.GetRoutine(handle)
@@ -956,7 +960,7 @@ class NPyCoroutine:
             # public:
 
             def Update(self, ownerID: int, deltaTime: ue.CsDeltaTime):
-                context: str = NPyCoroutine.NSchedule.FCustom.NCached.NStr.Update
+                context: str = __class__.Update.__qualname__
                 
                 check(self.Manager_OwnerID.IsAllocatedChecked(context, ownerID))
 
@@ -967,7 +971,7 @@ class NPyCoroutine:
                     
                     for i in range(0, stride):
                         index: int                  = start + i
-                        handle: ue.CsRoutineHandle  = self.OwnerQueueEndHandles[index]
+                        handle: FCsRoutineHandle  = self.OwnerQueueEndHandles[index]
 
                         self.End(ownerID, handle)
 
@@ -986,7 +990,7 @@ class NPyCoroutine:
                         index: int        = start + i
                         routineIndex: int = self.OwnerRoutineIDs[index]
 
-                        routineContainer: FPyResourceContainer = self.Manager_Routine.GetAt(routineIndex)
+                        routineContainer: FPyResourceContainer[FPyRoutine] = self.Manager_Routine.GetAt(routineIndex)
                         r: FPyRoutine                          = routineContainer.Get()
 
                         state: StateType = r.State
@@ -1028,7 +1032,7 @@ class NPyCoroutine:
                     
                     for i in range(0, stride):
                         index: int                  = start + i
-                        handle: ue.CsRoutineHandle  = self.OwnerQueueEndHandles[index]
+                        handle: FCsRoutineHandle  = self.OwnerQueueEndHandles[index]
 
                         self.End(ownerID, handle)
 
@@ -1042,7 +1046,7 @@ class NPyCoroutine:
             #region Payload
             # public:
 
-            def AllocatePayloadContainer(self) -> FPyResourceContainer:
+            def AllocatePayloadContainer(self) -> FPyResourceContainer[PayloadType]:
                 return self.Manager_Payload.Allocate()
 
             def AllocatePayload(self) -> PayloadType:
@@ -1050,10 +1054,10 @@ class NPyCoroutine:
 
             # protected:
 
-            def GetPayloadContainer(self, payload: PayloadType) -> FPyResourceContainer:
+            def GetPayloadContainer(self, payload: PayloadType) -> FPyResourceContainer[PayloadType]:
                 if payload.GetIndex() == INDEX_NONE:
-                    container: FPyResourceContainer = self.Manager_Payload.Allocate()
-                    p: PayloadType		            = self.container.Get()
+                    container: FPyResourceContainer[PayloadType] = self.Manager_Payload.Allocate()
+                    p: PayloadType		                         = container.Get()
 
                     p.Copy(payload)
 
@@ -1067,13 +1071,13 @@ class NPyCoroutine:
             # public:
 
             def BroadcastMessage(self, type: MessageType, message: str, owner: object):
-                current: FPYDoubleLinkedListNode = self.Manager_Routine.GetAllocatedHead()
-                next: FPYDoubleLinkedListNode    = current
+                current: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]] = self.Manager_Routine.GetAllocatedHead()
+                next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]    = current
 
                 while next != None:
-                    current: FPYDoubleLinkedListNode	   = next
-                    routineContainer: FPyResourceContainer = current.Element
-                    next: FPYDoubleLinkedListNode		   = current.GetNextLink()
+                    current: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]  = next
+                    routineContainer: FPyResourceContainer[FPyRoutine]                  = current.Element
+                    next: FPyDoubleLinkedListNode[FPyResourceContainer[FPyRoutine]]     = current.GetNextLink()
 
                     r = routineContainer.Get();
 

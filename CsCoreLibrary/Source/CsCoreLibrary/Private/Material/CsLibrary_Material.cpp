@@ -567,7 +567,7 @@ namespace NCsMaterial
 			{
 				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
-			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
+			Mesh->OverrideMaterials.RemoveAt(Index, 1, EAllowShrinking::No);
 		}
 
 		if (Count > 0)
@@ -587,7 +587,7 @@ namespace NCsMaterial
 			{
 				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
-			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
+			Mesh->OverrideMaterials.RemoveAt(Index, 1, EAllowShrinking::No);
 		}
 
 		if (Count > 0)
@@ -607,7 +607,7 @@ namespace NCsMaterial
 			{
 				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
-			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
+			Mesh->OverrideMaterials.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 
 		if (Count > 0)
@@ -626,7 +626,7 @@ namespace NCsMaterial
 			{
 				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
-			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
+			Mesh->OverrideMaterials.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 
 		if (Count > 0)
@@ -647,7 +647,7 @@ namespace NCsMaterial
 			{
 				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
-			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
+			Mesh->OverrideMaterials.RemoveAt(Index, 1, EAllowShrinking::No);
 		}
 
 		if (Count > 0)
@@ -667,7 +667,7 @@ namespace NCsMaterial
 			{
 				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
-			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
+			Mesh->OverrideMaterials.RemoveAt(Index, 1, EAllowShrinking::No);
 		}
 
 		if (Count > 0)
@@ -687,7 +687,7 @@ namespace NCsMaterial
 			{
 				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
-			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
+			Mesh->OverrideMaterials.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 
 		if (Count > 0)
@@ -706,7 +706,7 @@ namespace NCsMaterial
 			{
 				CsObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
-			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
+			Mesh->OverrideMaterials.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 
 		if (Count > 0)
@@ -1514,7 +1514,7 @@ namespace NCsMaterial
 
 				CsObjectLibrary::SafeMarkAsGarbage(MID);
 
-				OutMIDs.RemoveAt(I, 1, false);
+				OutMIDs.RemoveAt(I, 1, EAllowShrinking::No);
 			}
 		}
 
@@ -1691,7 +1691,7 @@ namespace NCsMaterial
 				{
 					if (Value.ParameterInfo.Name == Names[I])
 					{
-						Names.RemoveAt(I, 1, false);
+						Names.RemoveAt(I, 1, EAllowShrinking::No);
 					}
 				}
 			}
@@ -1712,7 +1712,7 @@ namespace NCsMaterial
 					{
 						if (Value.ParameterInfo.Name == Names[I])
 						{
-							Names.RemoveAt(I, 1, false);
+							Names.RemoveAt(I, 1, EAllowShrinking::No);
 						}
 					}
 				}
@@ -1732,7 +1732,7 @@ namespace NCsMaterial
 						{
 							if (Info.Name == Names[I])
 							{
-								Names.RemoveAt(I, 1, false);
+								Names.RemoveAt(I, 1, EAllowShrinking::No);
 							}
 						}
 					}
@@ -1756,7 +1756,7 @@ namespace NCsMaterial
 					{
 						if (Info.Name == Names[I])
 						{
-							Names.RemoveAt(I, 1, false);
+							Names.RemoveAt(I, 1, EAllowShrinking::No);
 						}
 					}
 				}
@@ -1907,7 +1907,7 @@ namespace NCsMaterial
 
 					if (Parameter->ParameterInfo.Name == Names[Index])
 					{
-						Indices.RemoveAt(J, 1, false);
+						Indices.RemoveAt(J, 1, EAllowShrinking::No);
 					}
 				}
 			}
@@ -2349,7 +2349,7 @@ namespace NCsMaterial
 
 					if (Parameter->ParameterInfo.Name == Names[Index])
 					{
-						Indices.RemoveAt(J, 1, false);
+						Indices.RemoveAt(J, 1, EAllowShrinking::No);
 					}
 				}
 			}

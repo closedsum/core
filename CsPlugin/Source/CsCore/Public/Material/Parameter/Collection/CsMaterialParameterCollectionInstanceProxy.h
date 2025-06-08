@@ -272,7 +272,7 @@ namespace NCsMaterial
 							Index = I - StartIndex;
 
 							*(VectorParameterValuesByIndex[I]) = Values[Index];
-							Values.RemoveAt(Index, 1, false);
+							Values.RemoveAt(Index, 1, EAllowShrinking::No);
 						}
 						bDirty = true;
 					}

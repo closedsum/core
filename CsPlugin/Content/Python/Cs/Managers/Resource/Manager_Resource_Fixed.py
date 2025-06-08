@@ -1,7 +1,10 @@
 # Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
-    
+from typing import TypeVar, Generic, Type
+
+# IMPORT
+
 # Library
 # - Cs/Library/Library_Common.py
 import Cs.Library.Library_Common as Cs_Library_Common
@@ -32,16 +35,15 @@ IsIntChecked2	= CommonLibrary.IsIntChecked2
 
 INDEX_NONE = -1
 
-class FPyManager_Resource_Fixed:
-	class NCached:
-		class NStr:
-			CreatePool = "FPyManager_Resource_Fixed.CreatePool"
+T = TypeVar('T')
+
+class FPyManager_Resource_Fixed(Generic[T]):
 	def __init__(self):
 		self.Name: str = "FPyManager_Resource_Fixed"
 
-		self.ResourceContainers: list[FPyResourceContainer] = []
-		self.Resources: list[any] = []
-		self.Pool: list[FPyResourceContainer] = []
+		self.ResourceContainers: list[FPyResourceContainer[T]] = []
+		self.Resources: list[T] = []
+		self.Pool: list[FPyResourceContainer[T]] = []
 		
 		self.PoolSize: int = 0
 		self.PoolSizeMinusOne: int = 0
@@ -49,9 +51,9 @@ class FPyManager_Resource_Fixed:
 		
 		self.AdvancePoolIndex: any = self.AdvancePoolIndexByOrder
 		
-		self.Links: list[FPyDoubleLinkedListNode] = []
-		self.AllocatedHead: FPyDoubleLinkedListNode = None
-		self.AllocatedTail: FPyDoubleLinkedListNode = None
+		self.Links: list[FPyDoubleLinkedListNode[FPyResourceContainer[T]]] = []
+		self.AllocatedHead: FPyDoubleLinkedListNode[FPyResourceContainer[T]] = None
+		self.AllocatedTail: FPyDoubleLinkedListNode[FPyResourceContainer[T]] = None
 		self.AllocatedSize: int = 0
 		
 		self.AllocationOrder: FPyAllocationOrder = FPyAllocationOrder()
@@ -84,11 +86,11 @@ class FPyManager_Resource_Fixed:
 	# Pool
 	#region Pool
     # public
-	def CreatePool(self, size: int, resourceClassType: any):
-		context: str = FPyManager_Resource_Fixed.NCached.NStr.CreatePool
+	def CreatePool(self, size: int, resourceClassType: Type[T]):
+		context: str = __class__.CreatePool.__qualname__
 
-		checkf(type(size) is int, context + ": size is NOT an Integer.")
-		checkf(size > 0, context + ": size: " + str(size) + " is NOT > 0.")
+		checkf(type(size) is int, f"{context}: size is NOT an Integer.")
+		checkf(size > 0, f"{context}: size: {size} is NOT > 0.")
 		
 		self.Shutdown()
 
@@ -108,33 +110,33 @@ class FPyManager_Resource_Fixed:
 		self.Resources          = [None] * self.PoolSize
 		
 		for i in range(0, self.PoolSize):
-			self.ResourceContainers[i] = FPyResourceContainer()
+			self.ResourceContainers[i] = FPyResourceContainer[T]()
 			self.Resources[i] = resourceClassType()
 			
 		self.Pool  = [None] * self.PoolSize
 		self.Links = [None] * self.PoolSize
 		
 		for i in range(0, self.PoolSize):
-			self.Links[i] = FPyDoubleLinkedListNode()
+			self.Links[i] = FPyDoubleLinkedListNode[FPyResourceContainer[T]]()
 			
 		self.AllocationOrder.Create(self.PoolSize)
 		
 		for i in range(0, self.PoolSize):
-			m: FPyResourceContainer = self.ResourceContainers[i]
+			m: FPyResourceContainer[T] = self.ResourceContainers[i]
 			m.SetIndex(i)
-			r: any = self.Resources[i]
+			r: T = self.Resources[i]
 			m.Set(r)
 			self.Pool[i] = m
 
             # Set Element for Link
-			link: FPyDoubleLinkedListNode = self.Links[i]
+			link: FPyDoubleLinkedListNode[FPyResourceContainer[T]] = self.Links[i]
 			link.Element = m
 
-	def GetPool(self) -> list[FPyResourceContainer]:
+	def GetPool(self) -> list[FPyResourceContainer[T]]:
 		"""
 		Get a reference to the Pool.
 
-		:return list[any]:
+		:return list[FPyResourceContainer[T]]:
 		""" 
 		return self.Pool
 	def GetPoolSize(self) -> int:
@@ -165,38 +167,42 @@ class FPyManager_Resource_Fixed:
 	def AdvancePoolIndexByOrder(self):
 		self.PoolIndex = self.AllocationOrder.Advance()
 		
-	def GetAt(self, index: int) -> FPyResourceContainer:
+	def GetAt(self, index: int) -> FPyResourceContainer[T]:
 		check(IsIntChecked2(index))
-		checkf((index > INDEX_NONE) and (index < self.PoolSize), self.Name + ".GetAt: Index: " + str(index) + " is NOT >= 0 and < PoolSize: " + str(self.PoolSize))
+		checkf((index > INDEX_NONE) and (index < self.PoolSize), f"{self.Name}.GetAt: Index: {index} is NOT >= 0 and < PoolSize: {self.PoolSize}")
 		return self.Pool[index]
 
-	def GetAtChecked(self, context: str, index: int) -> FPyResourceContainer:
+	def GetAtChecked(self, context: str, index: int) -> FPyResourceContainer[T]:
 		check(IsIntChecked(context, index))
-		checkf((index > INDEX_NONE) and (index < self.PoolSize), context + ".GetAt: Index: " + str(index) + " is NOT >= 0 and < PoolSize: " + str(self.PoolSize))
+		checkf((index > INDEX_NONE) and (index < self.PoolSize), f"{context}: Index: {index} is NOT >= 0 and < PoolSize: {self.PoolSize}")
 		return self.Pool[index]
 	
-	def GetResourceAt(self, index: int) -> any:
+	def GetResourceAt(self, index: int) -> T:
 		check(IsIntChecked2(index))
-		checkf((index > INDEX_NONE) and (index < self.PoolSize), self.Name + ".GetResourceAt: Index: " + str(index) + " is NOT >= 0 and < PoolSize: " + str(self.PoolSize))
+		checkf((index > INDEX_NONE) and (index < self.PoolSize), f"{self.Name}.GetResourceAt: Index: {index} is NOT >= 0 and < PoolSize: {self.PoolSize}")
 		return self.Pool[index].Get()
 
-	def GetAllocatedContainer(self, resource: any) -> FPyResourceContainer:
+	def GetAllocatedContainer(self, resource: T) -> FPyResourceContainer[T]:
 		"""
+		Get the FPyResourceContainer[T] associated with the resource.
 
-		:param any resource: 			Resource to find the associated container for.
-		:return FPyResourceContainer: 	Allocated Size.
+		Args:
+			resource (T): Resource to find the associated container for.
+
+		Returns:
+			FPyResourceContainer[T]
 		"""
-		checkf(IsValidObject(resource), self.Name + ".GetAllocatedContainer: Resource is NULL.")
+		checkf(IsValidObject(resource), f"{self.Name}.GetAllocatedContainer: Resource is NULL.")
 
-		current: FPyDoubleLinkedListNode = self.AllocatedHead
-		next: FPyDoubleLinkedListNode    = current
+		current: FPyDoubleLinkedListNode[FPyResourceContainer[T]] = self.AllocatedHead
+		next: FPyDoubleLinkedListNode[FPyResourceContainer[T]]    = current
 
 		while next != None:
-			current 				 = next
-			m: FPyResourceContainer = current.Element
-			next					 = current.GetNextLink()
+			current 				   = next
+			m: FPyResourceContainer[T] = current.Element
+			next					   = current.GetNextLink()
 
-			r: any = m.Get()
+			r: T = m.Get()
 			
 			if r == resource:
 				return m
@@ -208,12 +214,12 @@ class FPyManager_Resource_Fixed:
 	#region Linked List
     # private
 
-	def AddAllocatedLink(self, link: FPyDoubleLinkedListNode):
+	def AddAllocatedLink(self, link: FPyDoubleLinkedListNode[FPyResourceContainer[T]]):
 		"""
 		Add a link, LinkedList pointer to a FPyResourceContainer, to the end, AllocatedTail,
 		 of the allocated linked list, list of Resources that have been allocated.
 
-		:param FPyDoubleLinkedListNode link: Pointer to LinkedList element containing a FPyResourceContainer.
+		:param FPyDoubleLinkedListNode[FPyResourceContainer[T]] link: Pointer to LinkedList element containing a FPyResourceContainer.
 		"""
 		if IsValidObject(self.AllocatedTail) == True:
 			link.LinkAfter(self.AllocatedTail)
@@ -222,19 +228,19 @@ class FPyManager_Resource_Fixed:
 			self.AllocatedHead = link
 			self.AllocatedTail = self.AllocatedHead
 
-	def AddAllocatedLinkAfter(self, link: FPyDoubleLinkedListNode, resourceContainer: FPyResourceContainer):
+	def AddAllocatedLinkAfter(self, link: FPyDoubleLinkedListNode[FPyResourceContainer[T]], resourceContainer: FPyResourceContainer[T]):
 		"""
 		Add a link, LinkedList pointer to a ResourceContainerTytpe, after the ResourceContainer
 		 in the active linked list, list of ResourceTypes that have been allocated.
 		 This is equivalent to inserting a linked list element after another element.
 
-		:param FPyDoubleLinkedListNode link: 			Pointer to LinkedList element containing a FPyResourceContainer.
-		:param FPyResourceContainer resourceContainer: Container for a ResourceType
+		:param FPyDoubleLinkedListNode[FPyResourceContainer[T]] link: 			Pointer to LinkedList element containing a FPyResourceContainer.
+		:param FPyResourceContainer[T] resourceContainer: Container for a ResourceType
 		"""
 		# Resource to Link After
 		linkAfterIndex: int = resourceContainer.GetIndex()
 
-		linkAfter: FPyDoubleLinkedListNode = self.Links[linkAfterIndex]
+		linkAfter: FPyDoubleLinkedListNode[FPyResourceContainer[T]] = self.Links[linkAfterIndex]
 
 		# Make Resource (Link) LinkAfter the link for ResourceContainer (LinkAfter)
 		link.LinkAfter(linkAfter)
@@ -242,19 +248,19 @@ class FPyManager_Resource_Fixed:
 		if linkAfter == self.AllocatedTail:
 			self.AllocatedTail = link
 
-	def AddAllocatedLinkBefore(self, link: FPyDoubleLinkedListNode, resourceContainer: FPyResourceContainer):
+	def AddAllocatedLinkBefore(self, link: FPyDoubleLinkedListNode[FPyResourceContainer[T]], resourceContainer: FPyResourceContainer[T]):
 		"""
 		Add a link, LinkedList pointer to a ResourceContainerTytpe, before the ResourceContainer
 		 in the allocated linked list, list of ResourceTypes that have been allocated.
 		 This is equivalent to inserting a linked list element before another element.
 
-		:param FPyDoubleLinkedListNode link: 			Pointer to LinkedList element containing a FPyResourceContainer.
-		:param FPyResourceContainer resourceContainer: Container for a ResourceType
+		:param FPyDoubleLinkedListNode[FPyResourceContainer[T]] link: 			Pointer to LinkedList element containing a FPyResourceContainer.
+		:param FPyResourceContainer[T] resourceContainer: Container for a ResourceType
 		"""
 		# Resource to Link Before
 		linkBeforeIndex: int = resourceContainer.GetIndex()
 
-		linkBefore: FPyDoubleLinkedListNode = self.Links[linkBeforeIndex]
+		linkBefore: FPyDoubleLinkedListNode[FPyResourceContainer[T]] = self.Links[linkBeforeIndex]
 
 		# Make Resource (Link) LinkBefore the link for ResourceContainer (LinkBefore)
 		link.LinkBefore(linkBefore)
@@ -262,12 +268,12 @@ class FPyManager_Resource_Fixed:
 		if linkBefore == self.AllocatedHead:
 			self.AllocatedHead = link
 
-	def RemoveActiveLink(self, link: FPyDoubleLinkedListNode):
+	def RemoveActiveLink(self, link: FPyDoubleLinkedListNode[FPyResourceContainer[T]]):
 		"""
 		Remove a link, LinkedList pointer to a FPyResourceContainer, from the allocated linked
 		 list, list of ResourceTypes that have been allocated.
 
-		:param FPyDoubleLinkedListNode link: 			Pointer to LinkedList element containing a FPyResourceContainer.
+		:param FPyDoubleLinkedListNode[FPyResourceContainer[T]] link: 			Pointer to LinkedList element containing a FPyResourceContainer.
 		"""
 		# Check to Update HEAD
 		if link == self.AllocatedHead:
@@ -282,18 +288,18 @@ class FPyManager_Resource_Fixed:
 
    # public
 
-	def GetAllocatedHead(self) -> FPyDoubleLinkedListNode:
+	def GetAllocatedHead(self) -> FPyDoubleLinkedListNode[FPyResourceContainer[T]]:
 		"""
 		Get the current head of the allocated linked list.
 
-		:return FPyDoubleLinkedListNode:
+		:return FPyDoubleLinkedListNode[FPyResourceContainer[T]]:
 		"""
 		return self.AllocatedHead
-	def GetAllocatedTail(self) -> FPyDoubleLinkedListNode:
+	def GetAllocatedTail(self) -> FPyDoubleLinkedListNode[FPyResourceContainer[T]]:
 		"""
 		Get the current tail of the active linked list.
 
-		:return FPyDoubleLinkedListNode:
+		:return FPyDoubleLinkedListNode[FPyResourceContainer[T]]:
 		"""
 		return self.AllocatedTail
 
@@ -303,128 +309,128 @@ class FPyManager_Resource_Fixed:
 	#region Allocate
 	# public
 
-	def Allocate(self) -> FPyResourceContainer:
+	def Allocate(self) -> FPyResourceContainer[T]:
 		"""
 		Allocate a ResourceType and add the corresponding linked list element to the 
 		 end of the list
 
-		:return FPyResourceContainer:
+		:return FPyResourceContainer[T]:
 		"""
-		checkf(self.IsExhausted() == False, self.Name + ".Allocate: Pool is exhausted.")
+		checkf(self.IsExhausted() == False, f"{self.Name}.Allocate: Pool is exhausted.")
 
 		for i in range(0, self.PoolSize):
 			self.AdvancePoolIndex()
 
-			m: FPyResourceContainer = self.Pool[self.PoolIndex]
+			m: FPyResourceContainer[T] = self.Pool[self.PoolIndex]
 
 			if m.IsAllocated() == False:
-				checkf(IsValidObject(m.Get()), self.Name + ".Allocate: Resource is NULL. Container " + str(self.PoolIndex) + " no longer holds a reference to a resource.")
+				checkf(IsValidObject(m.Get()), f"{self.Name}.Allocate: Resource is NULL. Container {self.PoolIndex} no longer holds a reference to a resource.")
 
 				m.Allocate()
 				self.AddAllocatedLink(self.Links[self.PoolIndex])
 				self.AllocatedSize += 1
 				return m
-		checkf(False, self.Name + ".Allocate: Pool is exhausted.")
+		checkf(False, f"{self.Name}.Allocate: Pool is exhausted.")
 		return None
 
-	def AllocateResource(self) -> any:
+	def AllocateResource(self) -> T:
 		"""
 		Allocate a ResourceType and add the corresponding linked list element to the
 		 end of the list
 
-		:return any ResourceType:	Allocated ResourceType
+		:return T ResourceType:	Allocated ResourceType
 		"""
 		return self.Allocate().Get()
 	
-	def AllocateAfter(self, resourceContainer: FPyResourceContainer) -> FPyResourceContainer:
+	def AllocateAfter(self, resourceContainer: FPyResourceContainer[T]) -> FPyResourceContainer[T]:
 		"""
 		Allocate a ResourceType and add the corresponding linked list element after
 		 another FPyResourceContainer. This is equivalent to inserting a linked list element
 		 after another element. 
 
-		:param FPyResourceContainer	resourceContainer:	Container for a ResourceType.
-		:return FPyResourceContainer ResourceType:		Allocated ResourceType wrapped in a container.
+		:param FPyResourceContainer[T]	resourceContainer:	Container for a ResourceType.
+		:return FPyResourceContainer[T] ResourceType:		Allocated ResourceType wrapped in a container.
 		"""
-		checkf(IsValidObject(resourceContainer), self.Name + ".AllocateAfter: resourceContainer is NULL.")
-		checkf(resourceContainer.IsAllocated(), self.Name + ".AllocateAfter: ResourceContainer must be Allocated.")
-		checkf(self.IsExhausted() == False, self.Name + ".AllocateAfter: Pool is exhausted.")
+		checkf(IsValidObject(resourceContainer), f"{self.Name}.AllocateAfter: resourceContainer is NULL.")
+		checkf(resourceContainer.IsAllocated(), f"{self.Name}.AllocateAfter: ResourceContainer must be Allocated.")
+		checkf(self.IsExhausted() == False, f"{self.Name}.AllocateAfter: Pool is exhausted.")
 
 		# New Resource
-		r: FPyResourceContainer	 	  = None
-		link: FPyDoubleLinkedListNode = None
+		r: FPyResourceContainer[T]	 	  = None
+		link: FPyDoubleLinkedListNode[FPyResourceContainer[T]] = None
 		
 		for i in range(0, self.PoolSize):
 			self.PoolIndex 			= (self.PoolIndex + 1) & self.PoolSizeMinusOne
-			m: FPyResourceContainer	= self.Pool[self.PoolIndex]
+			m: FPyResourceContainer[T]	= self.Pool[self.PoolIndex]
 
 			if m.IsAllocated() == False:
-				checkf(IsValidObject(m.Get()), self.Name + ".AllocateAfter: Resource is NULL. Container " + str(self.PoolIndex) + " no longer holds a reference to a resource.")
+				checkf(IsValidObject(m.Get()), f"{self.Name}.AllocateAfter: Resource is NULL. Container {self.PoolIndex} no longer holds a reference to a resource.")
 
 				m.Allocate()
 				r    = m
 				link = self.Links[self.PoolIndex]
 				break
 
-		checkf(IsValidObject(r), self.Name + ".AllocateAfter: Pool is exhausted.")
+		checkf(IsValidObject(r), f"{self.Name}.AllocateAfter: Pool is exhausted.")
 
 		self.AddAllocatedLinkAfter(link, resourceContainer)
 		self.AllocatedSize += 1
 		return r
 	
-	def AllocateAfterHead(self) -> FPyResourceContainer:
+	def AllocateAfterHead(self) -> FPyResourceContainer[T]:
 		"""
 		Allocate a ResourceType and add the corresponding linked list element AFTER
 		 the AllocatedHead. This is equivalent to inserting a linked list element
 		 after the head of the list.
 
-		:return FPyResourceContainer ResourceContainerType:	Allocated ResourceType wrapped in a container.
+		:return FPyResourceContainer[T] ResourceContainerType:	Allocated ResourceType wrapped in a container.
 		"""
 		if IsValidObject(self.AllocatedHead) == True:
 			return self.AllocateAfter(self.AllocatedHead.Element)
 		return self.Allocate()
 
-	def AllocateBefore(self, resourceContainer: FPyResourceContainer) -> FPyResourceContainer:
+	def AllocateBefore(self, resourceContainer: FPyResourceContainer[T]) -> FPyResourceContainer[T]:
 		"""
 		Allocate a ResourceType and add the corresponding linked list element before
 		 another FPyResourceContainer. This is equivalent to inserting a linked list element
 		 before another element.
 
-		:param FPyResourceContainer resourceContainer:		Container for a ResourceType.
-		:return FPyResourceContainer resourceContainerType:	Allocated ResourceType wrapped in a container.
+		:param FPyResourceContainer[T] resourceContainer:		Container for a ResourceType.
+		:return FPyResourceContainer[T] resourceContainerType:	Allocated ResourceType wrapped in a container.
 		"""
-		checkf(IsValidObject(resourceContainer), self.Name + ".AllocateBefore: ResourceContainer is NULL.")
-		checkf(resourceContainer.IsAllocated(), self.Name + ".AllocateBefore: ResourceContainer must be Allocated.")
-		checkf(self.IsExhausted() == False, self.Name + ".AllocateBefore: Pool is exhausted.")
+		checkf(IsValidObject(resourceContainer), f"{self.Name}.AllocateBefore: ResourceContainer is NULL.")
+		checkf(resourceContainer.IsAllocated(), f"{self.Name}.AllocateBefore: ResourceContainer must be Allocated.")
+		checkf(self.IsExhausted() == False, f"{self.Name}.AllocateBefore: Pool is exhausted.")
 
 		# New Resource
-		r: FPyResourceContainer	 	  = None
-		link: FPyDoubleLinkedListNode = None
+		r: FPyResourceContainer[T]	 	  = None
+		link: FPyDoubleLinkedListNode[FPyResourceContainer[T]] = None
 		
 		for i in range(0, self.PoolSize):
 			self.PoolIndex 			= (self.PoolIndex + 1) & self.PoolSizeMinusOne
-			m: FPyResourceContainer	= self.Pool[self.PoolIndex]
+			m: FPyResourceContainer[T]	= self.Pool[self.PoolIndex]
 
 			if m.IsAllocated() == False:
-				checkf(IsValidObject(m.Get()), self.Name + ".AllocateBefore: Resource is NULL. Container " + str(self.PoolIndex) + " no longer holds a reference to a resource.")
+				checkf(IsValidObject(m.Get()), f"{self.Name}.AllocateBefore: Resource is NULL. Container {self.PoolIndex} no longer holds a reference to a resource.")
 
 				m.Allocate()
 				r    = m
 				link = self.Links[self.PoolIndex]
 				break
 
-		checkf(IsValidObject(r), self.Name + ".AllocateBefore: Pool is exhausted.")
+		checkf(IsValidObject(r), f"{self.Name}.AllocateBefore: Pool is exhausted.")
 
 		self.AddAllocatedLinkBefore(link, resourceContainer)
 		self.AllocatedSize += 1
 		return r
 
-	def AllocateBeforeHead(self) -> FPyResourceContainer:
+	def AllocateBeforeHead(self) -> FPyResourceContainer[T]:
 		"""
 		Allocate a ResourceType and add the corresponding linked list element BEFORE
 		 the AllocatedHead. This is equivalent to inserting a linked list element
 		 after the head of the list.
 
-		:return FPyResourceContainer resourceContainerType:	Allocated ResourceType wrapped in a container.
+		:return FPyResourceContainer[T] resourceContainerType:	Allocated ResourceType wrapped in a container.
 		"""
 		if IsValidObject(self.AllocatedHead) == True:
 			return self.AllocateBefore(self.AllocatedHead.Element)
@@ -442,28 +448,28 @@ class FPyManager_Resource_Fixed:
 	#region Deallocate
 	# public:
 
-	def Deallocate(self, resourceContainer: FPyResourceContainer) -> bool:
+	def Deallocate(self, resourceContainer: FPyResourceContainer[T]) -> bool:
 		"""
 		Deallocate a ResourceType and remove the corresponding linked list element from the
 		 allocated linked list.
 
-		:param FPyResourceContainer resourceContainer:	Container for a ResourceType to deallocate.
+		:param FPyResourceContainer[T] resourceContainer:	Container for a ResourceType to deallocate.
 		:return bool success:							Whether the Deallocate performed successfully or not.
 		"""
-		checkf(IsValidObject(resourceContainer), self.Name + ".Deallocate: ResourceContainer is NULL.")
+		checkf(IsValidObject(resourceContainer), f"{self.Name}.Deallocate: ResourceContainer is NULL.")
 
 		if resourceContainer.IsAllocated() == False:
 			return False
 
-		checkf(IsValidObject(resourceContainer.Get()), self.Name + ".Deallocate: Resource is NULL.")
+		checkf(IsValidObject(resourceContainer.Get()), f"{self.Name}.Deallocate: Resource is NULL.")
 
 		index: int = resourceContainer.GetIndex()
 
-		checkf((index >= 0) and (index < self.PoolSize), self.Name + ".Deallocate: index: " + str(index) + " (< 0 or >= " + str(self.PoolIndex) + ") of Resource Container is NOT Valid.")
+		checkf((index >= 0) and (index < self.PoolSize), f"{self.Name}.Deallocate: index: {index} (< 0 or >= {self.PoolIndex}) of Resource Container is NOT Valid.")
 
-		m: FPyResourceContainer = self.Pool[index]
+		m: FPyResourceContainer[T] = self.Pool[index]
 
-		checkf(m == resourceContainer, self.Name + ".Deallocate: Resource is NOT contained in Pool.")
+		checkf(m == resourceContainer, f"{self.Name}.Deallocate: Resource is NOT contained in Pool.")
 
 		m.Deallocate();
 		self.RemoveActiveLink(self.Links[index])
@@ -471,17 +477,17 @@ class FPyManager_Resource_Fixed:
 		self.AllocatedSize -= 1
 		return True
 
-	def DeallocateByResource(self, resource: any) -> bool:
+	def DeallocateByResource(self, resource: T) -> bool:
 		"""
 		Deallocate a ResourceType and remove the corresponding linked list element from the
 		 allocated linked list.
 
-		:param any resource:	ResourceType to deallocate.
+		:param T resource:	ResourceType to deallocate.
 		:return bool success:	Whether the Deallocate performed successfully or not.
 		"""
-		checkf(IsValidObject(resource), self.Name + ".Deallocate: Resource is NULL.")
+		checkf(IsValidObject(resource), f"{self.Name}.Deallocate: Resource is NULL.")
 
-		resourceContainer: FPyResourceContainer = self.GetAllocatedContainer(resource)
+		resourceContainer: FPyResourceContainer[T] = self.GetAllocatedContainer(resource)
 
 		return self.Deallocate(resourceContainer)
 
@@ -494,14 +500,14 @@ class FPyManager_Resource_Fixed:
 		:return bool success:	Whether the Deallocate performed successfully or not.
 		"""
 		check(IsIntChecked2(index))
-		checkf((index >= 0) and (index < self.PoolSize), self.Name + ".DeallocateAt: index: " + str(index) + " (< 0 or >= " + str(self.PoolSize) + ") is NOT Valid.")
+		checkf((index >= 0) and (index < self.PoolSize), f"{self.Name}.DeallocateAt: index: {index} (< 0 or >= {self.PoolSize}) is NOT Valid.")
 
-		m: FPyResourceContainer = self.Pool[index]
+		m: FPyResourceContainer[T] = self.Pool[index]
 
 		if m.IsAllocated() == False:
 			return False
 
-		checkf(IsValidObject(m.Get()), self.Name + ".DeallocateAt: Resource is NULL.")
+		checkf(IsValidObject(m.Get()), f"{self.Name}.DeallocateAt: Resource is NULL.")
 
 		m.Deallocate();
 		self.RemoveActiveLink(self.Links[index])
@@ -509,26 +515,26 @@ class FPyManager_Resource_Fixed:
 		self.AllocatedSize -= 1
 		return True
 
-	def DeallocateAt(self, resource: any, index: int) -> bool:
+	def DeallocateAt(self, resource: T, index: int) -> bool:
 		"""
 		Deallocate a ResourceType and remove the corresponding linked list element from the
 		 allocated linked list.s
 
-		:param any resource: 	ResourceType to deallocate.
+		:param T resource: 	ResourceType to deallocate.
 		:param int index:		Index of the ResourceType to deallocate
 		:return bool success:	Whether the Deallocate performed successfully or not.
 		"""
-		checkf(IsValidObject(resource), self.Name + ".Deallocate: resource is NULL.")
+		checkf(IsValidObject(resource), f"{self.Name}.Deallocate: resource is NULL.")
 		check(IsIntChecked2(index))
-		checkf((index >= 0) and (index < self.PoolSize), self.Name + ".DeallocateAt: index: " + str(index) + " (< 0 or >= " + self.PoolSize + ") is NOT Valid.")
+		checkf((index >= 0) and (index < self.PoolSize), f"{self.Name}.DeallocateAt: index: {index} (< 0 or >= {self.PoolSize}) is NOT Valid.")
 
-		m: FPyResourceContainer = self.Pool[index]
+		m: FPyResourceContainer[T] = self.Pool[index]
 
 		if m.IsAllocated() == False:
 			return False
 
-		checkf(IsValidObject(m.Get()), self.Name + ".DeallocateAt: resource is NULL.")
-		checkf(resource == m.Get(), self.Name + ".DeallocateAt: resource at index: " + str(index) + " is NOT contained in Pool.")
+		checkf(IsValidObject(m.Get()), f"{self.Name}.DeallocateAt: resource is NULL.")
+		checkf(resource == m.Get(), f"{self.Name}.DeallocateAt: resource at index: {index} is NOT contained in Pool.")
 
 		m.Deallocate()
 		self.RemoveActiveLink(self.Links[index])
@@ -542,12 +548,12 @@ class FPyManager_Resource_Fixed:
 		return self.Deallocate(self.AllocatedHead.Element)
 
 	def DeallocateAll(self):
-		current: FPyDoubleLinkedListNode = self.AllocatedHead
-		next: FPyDoubleLinkedListNode	 = current
+		current: FPyDoubleLinkedListNode[FPyResourceContainer[T]] = self.AllocatedHead
+		next: FPyDoubleLinkedListNode[FPyResourceContainer[T]]	 = current
 
 		while next != None:
 			current					= next
-			m: FPyResourceContainer	= current.Element
+			m: FPyResourceContainer[T]	= current.Element
 			next					= current.GetNextLink()
 
 			index: int = m.GetIndex()
@@ -563,21 +569,21 @@ class FPyManager_Resource_Fixed:
 	#region Queue
 	# public:
 
-	def Enqueue(self) -> FPyResourceContainer:
+	def Enqueue(self) -> FPyResourceContainer[T]:
 		"""
 		Allocate and add the element to end of the list of allocated
 		 ResourceContainerTypes. This is equivalent to calling Allocate().
 
-		:return FPyResourceContainer resourceContainerType:
+		:return FPyResourceContainer[T] resourceContainerType:
 		"""
 		return self.Allocate()
 
-	def Dequeue(self) -> FPyResourceContainer:
+	def Dequeue(self) -> FPyResourceContainer[T]:
 		"""
 		Deallocate the current head of the list of allocated ResourceContainerTypes.
 		 This is equivalent to called Deallocate on the AllocatedHead.
 
-		:return FPyResourceContainer resourceContainerType:
+		:return FPyResourceContainer[T] resourceContainerType:
 		"""
 		if IsValidObject(self.AllocatedHead) == True:
 			if self.Deallocate(self.AllocatedHead.Element) == True:
@@ -590,21 +596,21 @@ class FPyManager_Resource_Fixed:
 	#region Stack
 	# public:
 
-	def Push(self) -> FPyResourceContainer:
+	def Push(self) -> FPyResourceContainer[T]:
 		"""
 		Allocate and add the element AFTER the head of the list of allocated 
 		 ResourceContainerTypes. This is equivalent to calling AllocateAfterHead().
 
-		:return FPyResourceContainer resourceContainerType:
+		:return FPyResourceContainer[T] resourceContainerType:
 		"""
 		return self.AllocateAfterHead()
 
-	def Pop(self) -> FPyResourceContainer:
+	def Pop(self) -> FPyResourceContainer[T]:
 		"""
 		Deallocate the head of the list of allocated ResourceContainerTypes. 
 		 This is equivalent to calling Deallocate() on the AllocatedHead.
 
-		:return FPyResourceContainer resourceContainerType:
+		:return FPyResourceContainer[T] resourceContainerType:
 		"""
 		if IsValidObject(self.AllocatedHead) == True:
 			if self.Deallocate(self.AllocatedHead.Element) == True:

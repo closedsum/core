@@ -1,0 +1,2 @@
+d:\Trees\cs10\Plugins\CsPlugin\Content\Python\Cs\Managers\Resource\Manager_Resource_Fixed.py
+d:\Trees\cs10\Plugins\CsPlugin\Content\Python\Cs\Utility\AllocationOrder.py

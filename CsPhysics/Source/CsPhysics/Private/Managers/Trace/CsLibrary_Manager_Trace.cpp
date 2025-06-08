@@ -505,7 +505,7 @@ namespace NCsTrace
 				if (Object == Hit.GetComponent())
 					continue;
 
-				Response->OutHits.RemoveAt(I, 1, false);
+				Response->OutHits.RemoveAt(I, 1, EAllowShrinking::No);
 			}
 
 			if (Response->OutHits.Num() == CS_EMPTY)

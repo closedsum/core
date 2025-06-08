@@ -1061,19 +1061,20 @@ void UCsManager_Input_Default::OnPostProcessInput_LogCaptureTouchInput()
 
 void UCsManager_Input_Default::OnPostProcessInput_CaptureVRInput()
 {
-	const bool IsVR = false;//UCsLibrary_Common::IsVR();
+	//const bool IsVR = false;//UCsLibrary_Common::IsVR();
 
+	/*
 	if (IsVR)
 	{
-		FRotator3f Rotation;
-		FVector3f Location;
+		//FRotator3f Rotation;
+		//FVector3f Location;
 
 		//UCsLibrary_Common::GetHMDOrientationAndPosition(Rotation, Location);
 
 		//HMD_Rotation_Raw.ExecuteIfBound(Rotation);
 		//HMD_Location_Raw.ExecuteIfBound(Location);
 	}
-
+	*/
 	/*
 	TArray<IMotionController*> Controllers = IModularFeatures::Get().GetModularFeatureImplementations<IMotionController>(IMotionController::GetModularFeatureName());
 

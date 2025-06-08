@@ -213,7 +213,7 @@ namespace NCsMaterial
 								//R->CacheUniformExpressions(false);
 							});
 
-							Dirties.RemoveAt(J, 1, false);
+							Dirties.RemoveAt(J, 1, EAllowShrinking::No);
 						}
 						Scalars.DirtySet.Reset();
 					}
@@ -239,7 +239,7 @@ namespace NCsMaterial
 								//R->CacheUniformExpressions(false);
 							});
 
-							Dirties.RemoveAt(J, 1, false);
+							Dirties.RemoveAt(J, 1, EAllowShrinking::No);
 						}
 						Vectors.DirtySet.Reset();
 					}
@@ -273,7 +273,7 @@ namespace NCsMaterial
 						Resource->RenderThread_UpdateParameter(Values[Index]->ParameterInfo, Values[Index]->ParameterValue);
 						Resource->CacheUniformExpressions(FRHICommandListImmediate::Get(), false);
 
-						Dirties.RemoveAt(J, 1, false);
+						Dirties.RemoveAt(J, 1, EAllowShrinking::No);
 					}
 				}
 				// Vectors
@@ -291,7 +291,7 @@ namespace NCsMaterial
 						Resource->RenderThread_UpdateParameter(Values[Index]->ParameterInfo, Values[Index]->ParameterValue);
 						Resource->CacheUniformExpressions(FRHICommandListImmediate::Get(), false);
 
-						Dirties.RemoveAt(J, 1, false);
+						Dirties.RemoveAt(J, 1, EAllowShrinking::No);
 					}
 				}
 				
@@ -318,7 +318,7 @@ namespace NCsMaterial
 
 						Batch.GameThread_Update();
 
-						Dirties.RemoveAt(I, 1, false);
+						Dirties.RemoveAt(I, 1, EAllowShrinking::No);
 					}
 					DirtySet.Reset();
 					/*
@@ -357,7 +357,7 @@ namespace NCsMaterial
 							Resource->RenderThread_UpdateParameter(Values[Index]->ParameterInfo, Values[Index]->ParameterValue);
 							Resource->CacheUniformExpressions(FRHICommandListImmediate::Get(), false);
 
-							Dirties.RemoveAt(J, 1, false);
+							Dirties.RemoveAt(J, 1, EAllowShrinking::No);
 						}
 					}
 					// Vectors
@@ -375,7 +375,7 @@ namespace NCsMaterial
 							Resource->RenderThread_UpdateParameter(Values[Index]->ParameterInfo, Values[Index]->ParameterValue);
 							Resource->CacheUniformExpressions(FRHICommandListImmediate::Get(), false);
 
-							Dirties.RemoveAt(J, 1, false);
+							Dirties.RemoveAt(J, 1, EAllowShrinking::No);
 						}
 					}
 				}
@@ -387,7 +387,7 @@ namespace NCsMaterial
 
 					Batch.bProcessing = false;
 
-					Payload->Dirties.RemoveAt(I, 1, false);
+					Payload->Dirties.RemoveAt(I, 1, EAllowShrinking::No);
 				}
 
 				Payload->bProcessing = false;

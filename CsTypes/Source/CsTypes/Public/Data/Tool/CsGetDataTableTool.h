@@ -42,13 +42,13 @@ namespace NCsDataTable
 
 						if (!Change.IsValid())
 						{
-							RowNameChanges.RemoveAt(I, 1, false);
+							RowNameChanges.RemoveAt(I, 1, EAllowShrinking::No);
 							continue;
 						}
 
 						if (Change.Execute(DataTable))
 						{
-							RowNameChanges.RemoveAt(I, 1, false);
+							RowNameChanges.RemoveAt(I, 1, EAllowShrinking::No);
 							continue;
 						}
 					}

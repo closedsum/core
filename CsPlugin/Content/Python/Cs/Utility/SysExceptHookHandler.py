@@ -39,13 +39,18 @@ class FPySysExceptHookHandler:
         return FPySysExceptHookHandler._instance
     
     def Shutdown(self):
-        #context: str = __class__.Shutdown.__qualname__
+        context: str = __class__.Shutdown.__qualname__
+        print(context)
 
         self.OnHandle_ExceptHook_Event.Broadcast()
         self.OnHandle_ExceptHook_Event.Clear()
-
+        print(f"{len(self.OnHandle_ExceptHook_Event)}")
         # Reset sys.excepthook to its original behavior
         sys.excepthook = sys.__original_excepthook__  
+
+    def Assertion(self, message: str):
+        print(message)
+        FPySysExceptHookHandler.Get().Shutdown()
 
     @staticmethod
     def OnHandle_ExceptHook(exc_type, exc_value, exc_traceback):
@@ -56,4 +61,4 @@ class FPySysExceptHookHandler:
         msg = f"caller: {' '.join(sys.argv)}\n{exc_type}: {exc_value}\n{traceback_details}"
         print(msg)
 
-PRIVATE_FPySysExceptHookHandler: FPySysExceptHookHandler = FPySysExceptHookHandler.Get()
+_PRIVATE_FPySysExceptHookHandler: FPySysExceptHookHandler = FPySysExceptHookHandler.Get()

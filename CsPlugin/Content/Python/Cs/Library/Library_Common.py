@@ -2,6 +2,17 @@
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
 
+# IMPORT
+
+# Utility
+# - Cs/Utility/SysExceptHookHandler.py
+import Cs.Utility.SysExceptHookHandler as Cs_SysExceptHookHandler
+
+# ALIAS
+
+# "alias" - class (py)
+FPySysExceptHookHandler = Cs_SysExceptHookHandler.FPySysExceptHookHandler
+
 class NPyCommon:
     class FLibrary:
         @staticmethod
@@ -16,9 +27,13 @@ class NPyCommon:
                 bool: True if 'condition' is TRUE, False otherwise.
             """ 
             # NOTE: Future add different "level" of errors. Maybe even a native / c++ checkf.
-            assert type(condition) is bool, "condition is NOT of type: bool"
-            assert condition, message
-            return True
+            try:
+                assert type(condition) is bool, "condition is NOT of type: bool"
+                assert condition, message
+                return True
+            except AssertionError:
+                FPySysExceptHookHandler.Get().Assertion(message)
+                return False
         @staticmethod
         def check(condition: bool) -> bool:
             """
@@ -30,9 +45,13 @@ class NPyCommon:
                 bool: True if 'condition' is TRUE, False otherwise.
             """ 
             # NOTE: Future add different "level" of errors. Maybe even a native / c++ checkf.
-            assert type(condition) is bool, "condition is NOT of type: bool"
-            assert condition
-            return True
+            try:
+                assert type(condition) is bool, "condition is NOT of type: bool"
+                assert condition
+                return True
+            except AssertionError:
+                FPySysExceptHookHandler.Get().Assertion("")
+                return False
         @staticmethod
         def IsStringChecked(context: str, s: str) -> bool:
             """
@@ -45,10 +64,10 @@ class NPyCommon:
             Returns:
                 bool: True if 's' is a string, False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             result: bool = type(s) is str
-            ThisType.checkf(result, context + ": s: " + str(s) + " is NOT a string.")
+            ThisType.checkf(result, f"{context}: s: {str(s)} is NOT a string.")
             return result
         @staticmethod
         def IsStringChecked2(s: str) -> bool:
@@ -61,10 +80,10 @@ class NPyCommon:
             Returns:
                 bool: True if 's' is a string, False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             result: bool = type(s) is str
-            ThisType.checkf(result, "NPyCommon.FLibrary: s: " + str(s) + " is NOT a string.")
+            ThisType.checkf(result, f"{__class__.IsStringChecked2.__qualname__}: s: {str(s)} is NOT a string.")
             return result
         @staticmethod
         def IsStringNotEmptyChecked(context, s) -> bool:
@@ -78,10 +97,10 @@ class NPyCommon:
             Returns:
                 bool: True if 's' is NOT empty, False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.check(ThisType.IsStringChecked(context, s))
-            ThisType.checkf(s != "", context + ": s: " + s + " is EMPTY.")
+            ThisType.checkf(s != "", f"{context}: s: {s} is EMPTY.")
             return True
         @staticmethod
         def IsNotNoneChecked(context: str, o: any) -> bool:
@@ -95,10 +114,10 @@ class NPyCommon:
             Returns:
                 bool: True if 'o' is NOT None, False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.IsStringChecked2(context)
-            ThisType.checkf(o != None, context + ": o: is None.")
+            ThisType.checkf(o != None, f"{context}: o: is None.")
             return True
         @staticmethod
         def IsValidObject(o: any) -> bool:
@@ -123,11 +142,11 @@ class NPyCommon:
             Returns:
                 bool: True if 'o' is a valid object, False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.IsStringChecked2(context)
             result: bool = ThisType.IsValidObject(o)
-            ThisType.checkf(result, context + ": o: " + str(o) + " is NOT a Valid Object.")
+            ThisType.checkf(result, f"{context}: o: {str(o)} is NOT a Valid Object.")
             return result
         @staticmethod
         def IsClassChecked(context: str, c: type) -> bool:
@@ -141,10 +160,10 @@ class NPyCommon:
             Returns:
                 bool: True if 'c' is a class, False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             result: bool = isinstance(c, type)
-            ThisType.checkf(result, context + ": c: " + str(c) + " is NOT a class.")
+            ThisType.checkf(result, f"{context}: c: {type(c)} is NOT a class.")
             return result
         @staticmethod
         def IsInstanceOfChecked(context: str, a: any, c: type) -> bool:
@@ -159,13 +178,13 @@ class NPyCommon:
             Returns:
                 bool: True if 'a' is an instance of 'c', False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.IsValidObjectChecked(context, a)
             ThisType.IsClassChecked(context, c)
 
             result: bool = isinstance(a, c)
-            ThisType.checkf(result, context + ": a: " + str(a) + " is NOT an instance of c: " + str(c))
+            ThisType.checkf(result, f"{context}: a: {str(a)} of type: {type(a)} is NOT an instance of c: {type(c)} | {c.__module__}.{c.__qualname__ }.")
             return result
         @staticmethod
         def IsInstanceOf(a: any, c: any) -> bool:
@@ -178,7 +197,7 @@ class NPyCommon:
             Returns:
                 bool: True if 'a' is an instance of 'c', False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             if ThisType.IsValidObject(a) == False:
                 return False
@@ -210,11 +229,11 @@ class NPyCommon:
             Returns:
                 bool: True if 'func' is a function, False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.IsStringChecked2(context)
             result: bool = ThisType.IsFunction(func)
-            ThisType.checkf(result, context + ": func: " + str(func) + " is NOT a function.")
+            ThisType.checkf(result, f"{context}: func: {str(func)} is NOT a function.")
             return result
         @staticmethod
         def IsValidDict(o: any) -> bool:
@@ -239,11 +258,11 @@ class NPyCommon:
             Returns:
                 bool: True if 'o' is a valid dictionary / dict, False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.IsStringChecked2(context)
             result: bool = ThisType.IsValidDict(o)
-            ThisType.checkf(result, context + ": o: " + str(o) + " is NOT a Valid Dictionary.")
+            ThisType.checkf(result, f"{context}: o: {str(o)} is NOT a Valid Dictionary.")
             return result
         @staticmethod
         def DoesKeyExistChecked(context: str, d: dict, key: str) -> bool:
@@ -258,11 +277,11 @@ class NPyCommon:
             Returns:
                 bool: True if 'key' is a key for dictionary 'd', False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.check(ThisType.IsValidDictChecked(context, d))
             ThisType.check(ThisType.IsStringChecked(context, key))
-            ThisType.checkf(key in dict, context + ": o does NOT contain key: " + key)
+            ThisType.checkf(key in dict, f"{context}: o does NOT contain key: {key}")
             return True
         @staticmethod
         def DoesKeyExist(d: dict, key: str) -> bool:
@@ -276,7 +295,7 @@ class NPyCommon:
             Returns:
                 bool: True if 'key' is a key for dictionary 'd', False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             if ThisType.IsValidDict(d) == False:
                 return False
@@ -295,7 +314,7 @@ class NPyCommon:
             Returns:
                 bool: True if 'key' is a key for dictionary 'd' and is of type 'classType', False otherwise.
             """
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.check(ThisType.DoesKeyExistChecked(context, d, key))
             ThisType.check(ThisType.IsInstanceOfChecked(context, d[key], classType))
@@ -311,7 +330,7 @@ class NPyCommon:
             Returns:
                 bool: True if 'key' is a key for dictionary 'd' and is of type bool, False otherwise.
             """
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             if ThisType.DoesKeyExist(d, key) == False:
                 return False
@@ -329,10 +348,10 @@ class NPyCommon:
             Returns:
                 bool: True if 'key' is a key for dictionary 'd' and is of type bool, False otherwise.
             """
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.check(ThisType.DoesKeyExistChecked(context, d, key))
-            ThisType.checkf(type(d[key]) is bool, context + " d[" + str + "]: " + str(d[key]) + " is NOT of type: bool")
+            ThisType.checkf(type(d[key]) is bool, f"{context}: d[{key}]: {str(d[key])} is NOT of type: bool")
             return True
         @staticmethod
         def IsIntChecked(context: str, a: int) -> bool:
@@ -346,11 +365,11 @@ class NPyCommon:
             Returns:
                 bool: True if 'a' is an int (number), False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.IsStringChecked2(context)
             result: bool = type(a) is int
-            ThisType.checkf(result, context + ": a: " + str(a) + " is NOT a int.")
+            ThisType.checkf(result, f"{context}: a: {str(a)} is NOT a int.")
             return result
         @staticmethod
         def IsIntChecked2(a: int) -> bool:
@@ -363,7 +382,7 @@ class NPyCommon:
             Returns:
                 bool: True if 'a' is an int (number), False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
             context: str = __class__.IsIntChecked2.__qualname__
 
             return ThisType.IsIntChecked(context, a)
@@ -379,11 +398,11 @@ class NPyCommon:
             Returns:
                 bool: True if 'a' is an float / double (number), False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
 
             ThisType.IsStringChecked2(context)
             result: bool = type(a) is float
-            ThisType.checkf(result, context + ": a: " + str(a) + " is NOT a float.")
+            ThisType.checkf(result, f"{context}: a: {str(a)} is NOT a float.")
             return result
         @staticmethod
         def IsFloatChecked2(a: float) -> bool:
@@ -396,7 +415,7 @@ class NPyCommon:
             Returns:
                 bool: True if 'a' is an float / double (number), False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
+            ThisType = __class__
             context: str = __class__.IsFloatChecked2.__qualname__
 
             return ThisType.IsFloatChecked(context, a)
@@ -423,8 +442,8 @@ class NPyCommon:
             Returns:
                 bool: True if 'a' is a number (int or float), False otherwise.
             """ 
-            ThisType: NPyCommon.FLibrary = NPyCommon.FLibrary
-            return ThisType.checkf((type(a) is int) or (type(a) is float), context + " a: " + str(a) + " is NOT a number (int or float)")
+            ThisType = __class__
+            return ThisType.checkf((type(a) is int) or (type(a) is float), f"{context}: a: {str(a)} is NOT a number (int or float)")
         class FDisableCheck:
             @staticmethod
             def checkf(condition, method):

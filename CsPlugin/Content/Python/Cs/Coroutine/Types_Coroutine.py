@@ -1,7 +1,6 @@
 # Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
-
 import unreal as ue
 from enum import Enum
 import copy
@@ -48,9 +47,6 @@ class NPyCoroutine:
         EEndReason_MAX = 8
 
     class FOwner:
-        class NCached:
-            class NStr:
-                SetObject: str = "NPyCoroutine.FOwner.SetObject"
         def __init__(self):
             self.Owner: object = None
             self.UEObject: ue.Object = None
@@ -61,7 +57,7 @@ class NPyCoroutine:
              return self.bObject
 
         def SetObject(self, o: any):
-            context: str = NPyCoroutine.FOwner.NCached.NStr.SetObject
+            context: str = __class__.SetObject.__qualname__
 
             self.Owner = o
 
@@ -69,13 +65,14 @@ class NPyCoroutine:
                 self.UEObject = o
                 self.bObject = True
 
-            checkf(self.bObject, context + ": o is NOT a UObject.")
+            checkf(self.bObject, f"{context}: o {type(o)} is NOT a UObject.")
 
             if (isinstance(o, ue.Actor)):
                 self.UEActor = o
 
         def Copy(self, b: any):
-            checkf(isinstance(b, NPyCoroutine.FOwner), "b is NOT of type: NPyCoroutine.FOwner")
+            ThisType = __class__
+            checkf(isinstance(b, ThisType), f"b {type(b)} is NOT of type: {ThisType.__module__}.{ThisType.__qualname__}")
             
             self.Owner    = b.Owner
             self.UEObject = b.UEObject
@@ -167,7 +164,8 @@ class NPyCoroutine:
                 self.Name = ""
 
             def Copy(self, b: any):
-                checkf(isinstance(b, NPyCoroutine.NPayload.FImpl), "b is NOT of type: NPyCoroutine.NPayload.FImpl")
+                ThisType = __class__
+                checkf(isinstance(b, ThisType), f"b {type(b)} is NOT of type: {ThisType.__module__}.{ThisType.__qualname__} ")
 
                 self.Index = b.Index
                 self.Group = b.Group

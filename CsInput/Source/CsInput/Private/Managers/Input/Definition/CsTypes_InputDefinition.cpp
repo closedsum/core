@@ -189,7 +189,7 @@ void FCsInputWord::ProcessInput(FCsInputFrame* InputFrame)
 		if (bCompleted)
 		{
 			if (bConsume)
-				InputFrame->Inputs.RemoveAt(I, 1, false);
+				InputFrame->Inputs.RemoveAt(I, 1, EAllowShrinking::No);
 			CompletedTime = InputFrame->Time.Time;
 
 			// Populate Completed Values

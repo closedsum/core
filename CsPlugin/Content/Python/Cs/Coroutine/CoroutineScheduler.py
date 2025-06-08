@@ -1,8 +1,19 @@
 # Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
-
 import unreal as ue
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    # Core
+    # - Cs/Core/Core.py
+    import Cs.Core as Cs_Core
+
+if TYPE_CHECKING:
+    # "alias" - class (py)
+    FPyCore = Cs_Core.FPyCore
+
+# IMPORT
 
 # Library
 # - Cs/Library/Library_Common.py
@@ -18,37 +29,43 @@ import Cs.Coroutine.CoroutineSchedule as Cs_CoroutineSchedule
 # - Cs/Managers/Resource/ResourceContainer.py
 import Cs.Managers.Resource.ResourceContainer as Cs_ResourceContainer
 
-# "typedefs" - library (py)
+# ALIAS
+
+# "alias" - library (c++)
+CsObjectLibrary = ue.CsScriptLibrary_Object
+CsUpdateGroupLibrary = ue.CsScriptLibrary_UpdateGroup
+
+# "alias" - class (c++)
+UObject = ue.Object
+
+# "alias" struct (c++)
+FCsRoutineHandle = ue.CsRoutineHandle
+FCsDeltaTime = ue.CsDeltaTime
+	# enum
+FECsUpdateGroup = ue.ECsUpdateGroup
+
+# "alias" - library (py)
 CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
 PyMathLibrary = Cs_Library_Math.NPyMath.FLibrary
 
-# "typedefs" - library (c++)
-UpdateGroupLibrary = ue.CsScriptLibrary_UpdateGroup
-
-# "typedefs" - class
+# "alias" - class (py)
 DefaultScheduleType 	= Cs_CoroutineSchedule.NPyCoroutine.NSchedule.FDefault
 CustomScheduleType 		= Cs_CoroutineSchedule.NPyCoroutine.NSchedule.FCustom
 PayloadType             = Cs_Types_Coroutine.NPyCoroutine.NPayload.FImpl
 FPyResourceContainer  	= Cs_ResourceContainer.FPyResourceContainer
 
-# "typedefs" - functions
-checkf	= CommonLibrary.checkf
-check   = CommonLibrary.check
+# "alias" - functions (py)
+checkf					= CommonLibrary.checkf
+check   				= CommonLibrary.check
+IsStringNotEmptyChecked = CommonLibrary.IsStringNotEmptyChecked
 
 INDEX_NONE = -1
 
 class FPyCoroutineScheduler:
-	class NCached:
-		class NStr:
-			# Custom
-			GetCustomSchedule				   = "FPyCoroutineScheduler.GetCustomSchedule"
-			AllocateCustomGroupIndexAndOwnerID = "FPyCoroutineScheduler.AllocateCustomGroupIndexAndOwnerID"
-			
-	def __init__(self, core: any):
-		# NOTE: FPyCore "typed" as any to prevent circular import
-		self.Core = core
+	def __init__(self, core: 'FPyCore'):
+		self.Core: 'FPyCore' = core
 		
-		count: int = UpdateGroupLibrary.get_count()
+		count: int = CsUpdateGroupLibrary.get_count()
 
 		self.DefaultSchedules: list[DefaultScheduleType] = [None] * count
 		self.CustomSchedules: list[CustomScheduleType] = [None] * count
@@ -58,12 +75,12 @@ class FPyCoroutineScheduler:
 			# NOTE: UpdateGroup: Custom = 0
 			#		 This is skipped for DefaultSchedules
 
-			count: int = UpdateGroupLibrary.get_count()
+			count: int = CsUpdateGroupLibrary.get_count()
 
 			for i in range(0, count):
 				schedule: DefaultScheduleType = DefaultScheduleType(self.Core)
 
-				schedule.SetGroup(UpdateGroupLibrary.get_by_index(i))
+				schedule.SetGroup(CsUpdateGroupLibrary.get_by_index(i))
 
 				self.DefaultSchedules[i] = schedule
 		# Custom
@@ -74,7 +91,7 @@ class FPyCoroutineScheduler:
 			for i in range (0, maxGroups):
 				schedule: CustomScheduleType = CustomScheduleType(self.Core)
 
-				schedule.SetGroup(UpdateGroupLibrary.get("Custom"))
+				schedule.SetGroup(CsUpdateGroupLibrary.get("Custom"))
 
 				self.CustomSchedules[i] = schedule
 
@@ -89,21 +106,39 @@ class FPyCoroutineScheduler:
 	#region Start
 	# public:
 
-	def StartByContainer(self, payloadContainer: FPyResourceContainer) -> ue.CsRoutineHandle:
+	def StartByContainer(self, payloadContainer: FPyResourceContainer) -> FCsRoutineHandle:
 		payload: PayloadType = payloadContainer.Get()
 
 		return self.DefaultSchedules[payload.Group.value].StartByContainer(payloadContainer)
 
-	def Start(self, payload: PayloadType) -> ue.CsRoutineHandle:
+	def Start(self, payload: PayloadType) -> FCsRoutineHandle:
 		return self.DefaultSchedules[payload.Group.value].Start(payload)
 
-	def StartChildByContainer(self, payloadContainer: FPyResourceContainer) -> ue.CsRoutineHandle:
+	def StartChildByContainer(self, payloadContainer: FPyResourceContainer) -> FCsRoutineHandle:
 		payload: PayloadType = payloadContainer.Get()
 
 		return self.DefaultSchedules[payload.Group.value].StartChildByContainer(payloadContainer)
 
-	def StartChild(self, payload: PayloadType) -> ue.CsRoutineHandle:
+	def StartChild(self, payload: PayloadType) -> FCsRoutineHandle:
 		return self.DefaultSchedules[payload.Group.value].StartChild(payload)
+
+	def SetupAndStartUObject(self, obj: UObject, group: str, func: any) -> FCsRoutineHandle:
+		context: str = __class__.SetupAndStartUObject.__qualname__
+
+		# TODO: update type for func
+			
+		check(CsObjectLibrary.is_valid_object(obj))
+		check(IsStringNotEmptyChecked(context, group))
+
+		# TODO: Check if group is valid
+
+		group: FECsUpdateGroup  = CsUpdateGroupLibrary.get("GameState")
+		payload: PayloadType    = self.AllocatePayload(group)
+
+		payload.CoroutineImpl = func
+		payload.Owner.SetObject(obj)
+
+		return self.Start(payload)
 
 	#endregion Start
 
@@ -111,7 +146,7 @@ class FPyCoroutineScheduler:
 	#region Update
 	# public:
 
-	def Update(self, group: ue.ECsUpdateGroup, deltaTime: ue.CsDeltaTime): 
+	def Update(self, group: FECsUpdateGroup, deltaTime: FCsDeltaTime): 
 		self.DefaultSchedules[group.value].Update(deltaTime)
 
 	#endregion Update
@@ -120,10 +155,10 @@ class FPyCoroutineScheduler:
 	#region End
 	# public:
 
-	def EndByGroup(self, group: ue.ECsUpdateGroup) -> bool:
+	def EndByGroup(self, group: FECsUpdateGroup) -> bool:
 		return self.DefaultSchedules[group.value].End()
 
-	def EndByHandle(self, group: ue.ECsUpdateGroup, handle: ue.CsRoutineHandle) -> bool:
+	def EndByHandle(self, group: FECsUpdateGroup, handle: FCsRoutineHandle) -> bool:
 		return self.DefaultSchedules[group.value].End(handle)
 
 	def EndAll(self):
@@ -132,23 +167,23 @@ class FPyCoroutineScheduler:
 		for i in range(0, count):
 			self.DefaultSchedules[i].EndAll()
 
-	def HasEnded(self, group: ue.ECsUpdateGroup, handle: ue.CsRoutineHandle) -> bool:
+	def HasEnded(self, group: FECsUpdateGroup, handle: FCsRoutineHandle) -> bool:
 		"""
 		Check if a routine associated with the Group and Handle has already ended.
 		 NOTE: This returns True if Handle is NOT Valid.
 
 		:param ue.ECsUpdateGroup group:
-		:param ue.CsRoutineHandle handle:   Handle to a routine.
+		:param FCsRoutineHandle handle:   Handle to a routine.
 		:return bool:                       Whether the routine has already ended.
 		""" 
 		return self.DefaultSchedules[group.value].HasEnded(handle)
 
-	def HasJustEnded(self, group: ue.ECsUpdateGroup, handle: ue.CsRoutineHandle) -> bool:
+	def HasJustEnded(self, group: FECsUpdateGroup, handle: FCsRoutineHandle) -> bool:
 		"""
 		Check if a routine associated with the Group and Handle has just ended.
 
 		:param ue.ECsUpdateGroup group:
-		:param ue.CsRoutineHandle handle:   Handle to a routine.
+		:param FCsRoutineHandle handle:   Handle to a routine.
 		:return bool:                       Whether the routine has already ended.
 		""" 
 		return self.DefaultSchedules[group.value].HasJustEnded(handle)
@@ -159,10 +194,10 @@ class FPyCoroutineScheduler:
 	#region Payload
 	# public:
 
-	def AllocatePayloadContainer(self, group: ue.ECsUpdateGroup) -> FPyResourceContainer:
+	def AllocatePayloadContainer(self, group: FECsUpdateGroup) -> FPyResourceContainer:
 		return self.DefaultSchedules[group.value].AllocatePayloadContainer()
 
-	def AllocatePayload(self, group: ue.ECsUpdateGroup) -> PayloadType:
+	def AllocatePayload(self, group: FECsUpdateGroup) -> PayloadType:
 		return self.DefaultSchedules[group.value].AllocatePayload()
 
 	#endregion Payload
@@ -171,10 +206,10 @@ class FPyCoroutineScheduler:
 	#region Handle
 	# public:
 
-	def IsHandleValid(self, group: ue.ECsUpdateGroup, handle: ue.CsRoutineHandle) -> bool:
+	def IsHandleValid(self, group: FECsUpdateGroup, handle: FCsRoutineHandle) -> bool:
 		return self.DefaultSchedules[group.value].GetRoutineContainer(handle) != None
 
-	def IsRunning(self, group: ue.ECsUpdateGroup, handle: ue.CsRoutineHandle) -> bool:
+	def IsRunning(self, group: FECsUpdateGroup, handle: FCsRoutineHandle) -> bool:
 		return self.DefaultSchedules[group.value].IsRunning(handle)
 
 	#endregion Handle
@@ -190,7 +225,7 @@ class FPyCoroutineScheduler:
 	# private:
 
 	def GetCustomSchedule(self, groupIndex: int) -> CustomScheduleType:
-		context: str = FPyCoroutineScheduler.NCached.NStr.GetCustomSchedule
+		context: str = __class__.GetCustomSchedule.__qualname__
 		
 		check(self.IsValidGroupIndexChecked(context, groupIndex))
 		
@@ -204,9 +239,11 @@ class FPyCoroutineScheduler:
 
 	def AllocateCustomGroupIndexAndOwnerID(self) -> dict[int, int]:
 		"""
+		Allocate a GroupIndex and OwnerID for a Custom Schedule.
+
 		:return dict[int, int]:	{"GroupIndex": int, "OwnerID": int}
 		""" 
-		context: str = FPyCoroutineScheduler.NCached.NStr.AllocateCustomGroupIndexAndOwnerID
+		context: str = __class__.AllocateCustomGroupIndexAndOwnerID.__qualname__
 
 		count: int = len(self.CustomSchedules)
 
@@ -231,16 +268,16 @@ class FPyCoroutineScheduler:
 	#region Start
 	# public:
 
-	def CustomStartByContainer(self, groupIndex: int, ownerID: int, payloadContainer: FPyResourceContainer) -> ue.CsRoutineHandle:
+	def CustomStartByContainer(self, groupIndex: int, ownerID: int, payloadContainer: FPyResourceContainer) -> FCsRoutineHandle:
 		return self.GetCustomSchedule(groupIndex).Start(ownerID, payloadContainer)
 	
-	def CustomStart(self, groupIndex: int, ownerID: int, payload: PayloadType) -> ue.CsRoutineHandle:
+	def CustomStart(self, groupIndex: int, ownerID: int, payload: PayloadType) -> FCsRoutineHandle:
 		return self.GetCustomSchedule(groupIndex).Start(ownerID, payload)
 
-	def CustomStartChildByContainer(self, groupIndex: int, ownerID: int, payloadContainer: FPyResourceContainer) -> ue.CsRoutineHandle:
+	def CustomStartChildByContainer(self, groupIndex: int, ownerID: int, payloadContainer: FPyResourceContainer) -> FCsRoutineHandle:
 		return self.GetCustomSchedule(groupIndex).StartChild(ownerID, payloadContainer)
 
-	def CustomStartChild(self, groupIndex: int, ownerID: int, payload: PayloadType) -> ue.CsRoutineHandle:
+	def CustomStartChild(self, groupIndex: int, ownerID: int, payload: PayloadType) -> FCsRoutineHandle:
 		return self.GetCustomSchedule(groupIndex).StartChild(ownerID, payload)
 	
 	#endregion Start
@@ -249,7 +286,7 @@ class FPyCoroutineScheduler:
 	#region Update
 	# public:
 
-	def CustomUpdate(self, groupIndex: int, ownerID: int, deltaTime:  ue.CsDeltaTime):
+	def CustomUpdate(self, groupIndex: int, ownerID: int, deltaTime: FCsDeltaTime):
 		self.GetCustomSchedule(groupIndex).Update(ownerID, deltaTime)
 
 	#endregion Update
@@ -258,26 +295,26 @@ class FPyCoroutineScheduler:
 	#region End
 	# public:
 
-	def CustomEnd(self, groupIndex: int, handle: ue.CsRoutineHandle) -> bool:
+	def CustomEnd(self, groupIndex: int, handle: FCsRoutineHandle) -> bool:
 		return self.GetCustomSchedule(groupIndex).End(groupIndex, handle)
 
-	def HasCustomEnded(self, groupIndex: int, handle: ue.CsRoutineHandle) -> bool:
+	def HasCustomEnded(self, groupIndex: int, handle: FCsRoutineHandle) -> bool:
 		"""
 		Check if a routine associated with the Group: Custom, GroupIndex and Handle has already ended.
 		 NOTE: This returns True if Handle is NOT Valid.
 
 		:param int groupIndex:
-		:param ue.CsRoutineHandle handle:   Handle to a routine.
+		:param FCsRoutineHandle handle:   Handle to a routine.
 		:return bool:                       Whether the routine has already ended.
 		""" 
 		return self.GetCustomSchedule(groupIndex).HasEnded(handle)
 
-	def HasCustomJustEnded(self, groupIndex: int, handle: ue.CsRoutineHandle) -> bool:
+	def HasCustomJustEnded(self, groupIndex: int, handle: FCsRoutineHandle) -> bool:
 		"""
 		Check if a routine associated with the Group: Custom, GroupIndex and Handle has just ended.
 
 		:param int groupIndex:
-		:param ue.CsRoutineHandle handle:   Handle to a routine.
+		:param FCsRoutineHandle handle:   Handle to a routine.
 		:return bool:                       Whether the routine has already ended.
 		""" 
 		return self.GetCustomSchedule(groupIndex).HasJustEnded(handle)
@@ -300,10 +337,10 @@ class FPyCoroutineScheduler:
 	#region Handle
 	# public:
 
-	def IsCustomHandleValid(self, groupIndex: int, handle: ue.CsRoutineHandle) -> bool:
+	def IsCustomHandleValid(self, groupIndex: int, handle: FCsRoutineHandle) -> bool:
 		return self.GetCustomSchedule(groupIndex).GetRoutineContainer(handle) != None
 
-	def IsCustomRunning(self, groupIndex: int, handle: ue.CsRoutineHandle) -> bool:
+	def IsCustomRunning(self, groupIndex: int, handle: FCsRoutineHandle) -> bool:
 		return self.GetCustomSchedule(groupIndex).IsRunning(handle)
 
 	#endregion Handle

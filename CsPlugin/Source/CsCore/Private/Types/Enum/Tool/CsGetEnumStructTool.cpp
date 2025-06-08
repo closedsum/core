@@ -117,7 +117,7 @@ namespace NCsEnum
 
 					if (Found)
 					{
-						PropertyChanges.RemoveAt(PropertyChanges.Num() - 1, 1, false);
+						PropertyChanges.RemoveAt(PropertyChanges.Num() - 1, 1, EAllowShrinking::No);
 
 						SettingsLibrary::TryUpdateDefaultConfigFile();
 					}

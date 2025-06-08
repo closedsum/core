@@ -271,7 +271,7 @@ namespace NCsLooseCoarseGrid
 
 				++OutResult.InterationCount;
 			}
-			LooseCellIndices.RemoveAt(I, 1, false);
+			LooseCellIndices.RemoveAt(I, 1, EAllowShrinking::No);
 		}
 	}
 
@@ -368,7 +368,7 @@ namespace NCsLooseCoarseGrid
 				TempElements[new_elt_idx].Next = LooseCell.Head;
 				LooseCell.Head				   = new_elt_idx;
 
-				new_elt_idxs.RemoveAt(J, 1, false);
+				new_elt_idxs.RemoveAt(J, 1, EAllowShrinking::No);
 			}
 		}
 		// Swap the new element list with the old one.

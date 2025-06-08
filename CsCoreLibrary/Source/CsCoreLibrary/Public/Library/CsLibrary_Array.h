@@ -328,7 +328,7 @@ namespace NCsArray
 				{
 					if (_A == _B)
 					{
-						A.RemoveAt(I, 1, false);
+						A.RemoveAt(I, 1, EAllowShrinking::No);
 						break;
 					}
 				}
@@ -394,7 +394,7 @@ namespace NCsArray
 		template<typename T>
 		FORCEINLINE static void RemoveLast(TArray<T>& A)
 		{
-			A.RemoveAt(A.Num() - 1, 1, false);
+			A.RemoveAt(A.Num() - 1, 1, EAllowShrinking::No);
 		}
 
 		template<typename T>

@@ -1,9 +1,10 @@
 # Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
-
 import unreal as ue
 import copy
+
+# IMPORT
 
 # Types
 # - Cs/Coroutine/Types_Coroutine.py
@@ -29,66 +30,62 @@ INVALID_LISTEN_MESSAGE = ""
 ROUTINE_END = -1
 ROUTINE_FREE = -2
 
-# "typedefs" - library (py)
-CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
+# ALIAS
 
-# "typedefs" - library (c++)
+# "alias" - library (c++)
 UpdateGroupLibrary	= ue.CsScriptLibrary_UpdateGroup
 TimeLibrary 		= ue.CsScriptLibrary_Time
 RoutineLibrary 		= ue.CsScriptLibrary_Routine
 
-# "typedefs" - classes
+# "alias" - library (py)
+CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
+
+# "alias" - classes (py)
+OwnerType 				= Cs_Types_Coroutine.NPyCoroutine.FOwner
 EnumYieldType 			= Cs_Yield_Enum.NPyYield.FEnum
 RoutineHandleYieldType 	= Cs_Yield_RoutineHandle.NPyYield.FRoutineHandle
 FunctionYieldType 	 	= Cs_Yield_Function.NPyYield.FFunction
 
-# "typedefs" - function
+# "alias" - functions (py)
 check 				 = CommonLibrary.check
 checkf 				 = CommonLibrary.checkf
 IsValidObject 		 = CommonLibrary.IsValidObject
 IsValidObjectChecked = CommonLibrary.IsValidObjectChecked
 
-# "typedefs" - types
+# "alias" - types (py)
 PayloadType		= Cs_Types_Coroutine.NPyCoroutine.NPayload.FImpl
 FPyProperty 	= Cs_Property.FPyProperty
 StateType 		= Cs_Types_Coroutine.NPyCoroutine.EState
 EndReasonType 	= Cs_Types_Coroutine.NPyCoroutine.EEndReason
 MessageType		= Cs_Types_Coroutine.NPyCoroutine.EMessage
 
-#var OnEndType = null;
+#var OnEndType = null
 
 class FPyRoutine:
 	class FOnEnd:
-		class NCached:
-			class NStr:
-				Set: str = "FPyRoutine.FOnEnd.Set"
-				Execute: str = "FPyRoutine.FOnEnd.Execute"
 		def __init__(self):
 			self.Fn: any = None
 		def Set(self, fn: any):
-			context: str = FPyRoutine.FOnEnd.NCached.NStr.Set
+			context: str = __class__.Set.__qualname__
 			
 			check(CommonLibrary.IsFunctionChecked(context, fn))
 			# TODO: Check Function returns bool
 			self.Fn = fn
 		def Execute(self, r: object) -> bool:
-			context: str = FPyRoutine.FOnEnd.NCached.NStr.Execute
+			context: str = __class__.Execute.__qualname__
 
 			check(CommonLibrary.IsInstanceOfChecked(context, r, FPyRoutine)) 
 			return self.Fn()
 		def Reset(self):
 			self.Fn = None
-	class NCached:
-		class NStr:
-			AddChild: str = "FPyRoutine.AddChild"
-			EndChild: str = "FPyRoutine.EndChild"
+
 	def __init__(self):
 		# NOTE: FPyCore "typed" as any to prevent circular import
 		self.Core: any = None
 
 		self.OnEndType = FPyRoutine.FOnEnd
 
-		self.Group: ue.ECsUpdateGroup = UpdateGroupLibrary.get_max();
+		self.Group: ue.ECsUpdateGroup = UpdateGroupLibrary.get_max()
 
 		# Time
 		self.StartTime: ue.CsTime 				= ue.CsTime()
@@ -122,7 +119,7 @@ class FPyRoutine:
 
 		# Owner
 		
-		self.Owner: Cs_Types_Coroutine.NPyCoroutine.FOwner  = Cs_Types_Coroutine.NPyCoroutine.FOwner();
+		self.Owner: OwnerType  = OwnerType()
 
 		# Children
 
@@ -177,15 +174,18 @@ class FPyRoutine:
 	def GetIndex(self) -> int:
 		return self.Index
 
+	def GetDeltaTime(self) -> ue.CsDeltaTime:
+		return self.DeltaTime
+	
 	def AddOnEnd(self, fn: any):
 		onEnd = self.OnEndType()
 		onEnd.Set(fn)
 		self.OnEnds.append(onEnd)
 	
 	def Init(self, payload: PayloadType):
-		self.State = StateType.Init;
+		self.State = StateType.Init
 
-		self.CoroutineImpl = payload.CoroutineImpl;
+		self.CoroutineImpl = payload.CoroutineImpl
 
 		self.StartTime = TimeLibrary.fcstime_copy(payload.StartTime)
 
@@ -203,7 +203,7 @@ class FPyRoutine:
 		for fn in payload.OnEnds:
 			self.OnEnds.append(fn)
 
-		self.Name = payload.Name;
+		self.Name = payload.Name
 
 		for info in payload.RegisterMap.Infos:
 			idx: int = info.Index
@@ -321,13 +321,13 @@ class FPyRoutine:
 		
         # if (bWaitingFor)
         # {
-        #     move = WaitingFor.State != ECgRoutineState.Running;
+        #     move = WaitingFor.State != ECgRoutineState.Running
 
         #     if (move)
         #     {
-        #         WaitingFor.Blocking = null;
-        #         WaitingFor  = null;
-        #         bWaitingFor = false;
+        #         WaitingFor.Blocking = null
+        #         WaitingFor  = null
+        #         bWaitingFor = false
         #     }
         # }
 		
@@ -484,12 +484,12 @@ class FPyRoutine:
             # else
             # if (type == typeof(FCgRoutine))
             # {
-            #     WaitingFor = (FCgRoutine)yieldCommand;
-            #     WaitingFor.Blocking = this;
-            #     bWaitingFor = true;
+            #     WaitingFor = (FCgRoutine)yieldCommand
+            #     WaitingFor.Blocking = this
+            #     bWaitingFor = true
 
             #     // Fix linkage. Prev / Next
-            #     InsertRoutine(Schedule, this, WaitingFor);
+            #     InsertRoutine(Schedule, this, WaitingFor)
             # }
 			# 
             # WaitForFlag - yield 'flag property'
@@ -545,10 +545,10 @@ class FPyRoutine:
 	def End(self, endReason: EndReasonType):
 		self.EndChildren()
 
-		self.State = StateType.End;
+		self.State = StateType.End
 
 		if isinstance(endReason, StateType) == False or endReason == None:
-			self.EndReason = EndReasonType.EndOfExecution;
+			self.EndReason = EndReasonType.EndOfExecution
 		else:
 			self.EndReason = endReason
 
@@ -625,7 +625,7 @@ class FPyRoutine:
 		self.WaitForFunction.Reset()
 		
 	def AddChild(self, child: any):
-		context = FPyRoutine.NCached.NStr.AddChild
+		context = __class__.AddChild.__qualname__
 		check(CommonLibrary.IsInstanceOfChecked(context, child, FPyRoutine))
 		child.Parent = self
 		self.Children.append(child)
@@ -636,7 +636,7 @@ class FPyRoutine:
 		self.Children = []
 
 	def EndChild(self, child: any):
-		context = FPyRoutine.NCached.NStr.EndChild
+		context = __class__.EndChild.__qualname__
 		toRemove = None
 
 		for c in self.Children:

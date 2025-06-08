@@ -2,6 +2,8 @@
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
 
+# IMPORT
+
 # Library
 # - Cs/Library/Library_Common.py
 import Cs.Library.Library_Common as Cs_Library_Common
@@ -9,20 +11,22 @@ import Cs.Library.Library_Common as Cs_Library_Common
 # - Cs/Containers/DoubleLinkedListNode.js
 import Cs.Containers.DoubleLinkedListNode as Cs_DoubleLinkedListNode
 
-# "typedefs" - library (py)
+# ALIAS
+
+# "alias" - library (py)
 CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
 
-# "typedefs" - type
+# "alias" - type (py)
 FPyDoubleLinkedListNode = Cs_DoubleLinkedListNode.FPyDoubleLinkedListNode
 
-# "typedefs" - function
+# "alias" - function (py)
 checkf  = CommonLibrary.checkf
 
 class FPyAllocationOrder:
     def __init__(self):
-        self.Links: list[FPyDoubleLinkedListNode] = []
-        self.Head: FPyDoubleLinkedListNode = None
-        self.Tail: FPyDoubleLinkedListNode = None
+        self.Links: list[FPyDoubleLinkedListNode[int]] = []
+        self.Head: FPyDoubleLinkedListNode[int] = None
+        self.Tail: FPyDoubleLinkedListNode[int] = None
         self.Size: int = 0
 
     def Shutdown(self):
@@ -33,14 +37,14 @@ class FPyAllocationOrder:
 
     def Reset(self):
         for i in range(0, self.Size):
-            link: FPyDoubleLinkedListNode = self.Links[i]
+            link: FPyDoubleLinkedListNode[int] = self.Links[i]
             link.Unlink()
 
         self.Head = None
         self.Tail = None
 
         for i in range(0, self.Size):
-            link: FPyDoubleLinkedListNode = self.Links[i]
+            link: FPyDoubleLinkedListNode[int] = self.Links[i]
             self.AddToTail(link)
 
     def Create(self, size: int):
@@ -59,11 +63,11 @@ class FPyAllocationOrder:
         for i in range(0, self.Size):
             self.AddNewToTail()
 
-    def GetLinks(self) -> list[FPyDoubleLinkedListNode]:
+    def GetLinks(self) -> list[FPyDoubleLinkedListNode[int]]:
         return self.Links
-    def GetHead(self) -> FPyDoubleLinkedListNode:
+    def GetHead(self) -> FPyDoubleLinkedListNode[int]:
         return self.Head
-    def GetTail(self) -> FPyDoubleLinkedListNode:
+    def GetTail(self) -> FPyDoubleLinkedListNode[int]:
         return self.Tail
     def GetSize(self) -> int:
         return self.Size
@@ -73,7 +77,7 @@ class FPyAllocationOrder:
 
         self.Size += 1
 
-    def AddToTail(self, link: FPyDoubleLinkedListNode):
+    def AddToTail(self, link: FPyDoubleLinkedListNode[int]):
         if self.Tail != None:
             link.LinkAfter(self.Tail)
 
@@ -83,7 +87,7 @@ class FPyAllocationOrder:
             self.Tail = self.Head
 
     def AddNewToTail(self):
-        link: FPyDoubleLinkedListNode = FPyDoubleLinkedListNode()
+        link: FPyDoubleLinkedListNode[int] = FPyDoubleLinkedListNode[int]()
     
         self.Links.append(link)
 
@@ -91,24 +95,24 @@ class FPyAllocationOrder:
 
         self.AddToTail(link)
 
-    def AddBefore(self, link: FPyDoubleLinkedListNode, linkBefore: FPyDoubleLinkedListNode):
+    def AddBefore(self, link: FPyDoubleLinkedListNode[int], linkBefore: FPyDoubleLinkedListNode[int]):
         link.LinkBefore(linkBefore)
 
         if linkBefore == self.Head:
             self.Head = link
 
-    def AddBeforeHead(self, link: FPyDoubleLinkedListNode):
+    def AddBeforeHead(self, link: FPyDoubleLinkedListNode[int]):
         self.AddBefore(link, self.Head)
 
     def MoveHeadToTail(self):
-        previousHead: FPyDoubleLinkedListNode = self.Head
+        previousHead: FPyDoubleLinkedListNode[int] = self.Head
 
         self.Head = self.Head.GetNextLink()
 
         previousHead.Unlink();
         self.AddToTail(previousHead)
 
-    def Remove(self, link: FPyDoubleLinkedListNode):
+    def Remove(self, link: FPyDoubleLinkedListNode[int]):
         # Check to Update HEAD
         if link == self.Head:
             self.Head = link.GetNextLink()
@@ -121,7 +125,7 @@ class FPyAllocationOrder:
         link.Unlink()
 
     def MoveToHead(self, index: int):
-        link: FPyDoubleLinkedListNode = self.Links[index]
+        link: FPyDoubleLinkedListNode[int] = self.Links[index]
 
         self.Remove(link)
         self.AddBeforeHead(link)
@@ -129,7 +133,7 @@ class FPyAllocationOrder:
     def Advance(self) -> any:
         value: any = self.Head.Element
 
-        self.MoveHeadToTail();
+        self.MoveHeadToTail()
         return value
 
     def Promote(self, index: int):

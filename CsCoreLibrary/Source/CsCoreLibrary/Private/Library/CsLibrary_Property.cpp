@@ -225,7 +225,7 @@ namespace NCsProperty
 			if (HasStructProperty(Context, Function, SearchStruct, nullptr))
 				return true;
 		}
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Struct: %s does not contain struct of type: %s."), *(Struct->GetName()), *(SearchStruct->GetName())));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Struct: %s does not contain struct of type: %s."), *Context, *(Struct->GetName()), *(SearchStruct->GetName())));
 		return false;
 	}
 

@@ -33,9 +33,11 @@ namespace NCsGameplayAbility
 			Spec.PendingRemove = false;
 			Spec.bActivateOnce = false;
 			Spec.GameplayEventData.Reset();
-			Spec.ActivationInfo.ActivationMode = EGameplayAbilityActivationMode::Authority;
-			Spec.ActivationInfo.bCanBeEndedByOtherInstance = false;
-			Spec.DynamicAbilityTags.Reset(Spec.DynamicAbilityTags.Num());
+			// TODO: Deprecated in 5.6
+			// NOTE: See if anything needs to updated
+			//Spec.ActivationInfo.ActivationMode = EGameplayAbilityActivationMode::Authority;
+			//Spec.ActivationInfo.bCanBeEndedByOtherInstance = false;
+			Spec.GetDynamicSpecSourceTags().Reset(Spec.GetDynamicSpecSourceTags().Num());
 			Spec.NonReplicatedInstances.Reset(Spec.NonReplicatedInstances.Num());
 			Spec.ReplicatedInstances.Reset(Spec.ReplicatedInstances.Num());
 			Spec.GameplayEffectHandle.Invalidate();

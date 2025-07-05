@@ -649,6 +649,8 @@ bool FCsMaterialAnim::IsValid(const FString& Context, void(*Log)(const FString&)
 	// Check DeltaTime or TotalTime
 	using namespace NCsAnim;
 
+	const FString& PlayRateName = EMCsAnimPlayRate::Get().ToDisplayName(PlayRate);
+
 	if (PlayRate != ECsAnimPlayRate::PR_CustomDeltaTime &&
 		PlayRate != ECsAnimPlayRate::PR_CustomTotalTime &&
 		PlayRate != ECsAnimPlayRate::PR_CustomDeltaTimeAndTotalTime &&
@@ -658,13 +660,13 @@ bool FCsMaterialAnim::IsValid(const FString& Context, void(*Log)(const FString&)
 
 		if (FMath::Abs(DeltaTime - DT) > KINDA_SMALL_NUMBER)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DeltaTime: %f is NOT correct (%f != %f) for PlayRate: %s."), *Context, DeltaTime, DeltaTime, DT, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DeltaTime: %f is NOT correct (%f != %f) for PlayRate: %s."), *Context, DeltaTime, DeltaTime, DT, *PlayRateName));
 			return false;
 		}
 
 		if (DeltaTime <= 0.0f)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate)));
+		{	
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalTime: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, *PlayRateName));
 			return false;
 		}
 
@@ -672,7 +674,7 @@ bool FCsMaterialAnim::IsValid(const FString& Context, void(*Log)(const FString&)
 		{
 			if (TotalCount <= 0)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate)));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, *PlayRateName));
 				return false;
 			}
 		}
@@ -683,13 +685,13 @@ bool FCsMaterialAnim::IsValid(const FString& Context, void(*Log)(const FString&)
 	{
 		if (DeltaTime <= 0.0f)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DeltaTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, DeltaTime, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DeltaTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, DeltaTime, *PlayRateName));
 			return false;
 		}
 
 		if (TotalTime <= 0.0f)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalTime, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalTime, *PlayRateName));
 			return false;
 		}
 				
@@ -697,7 +699,7 @@ bool FCsMaterialAnim::IsValid(const FString& Context, void(*Log)(const FString&)
 		{
 			if (TotalCount <= 0)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate)));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, *PlayRateName));
 				return false;
 			}
 		}

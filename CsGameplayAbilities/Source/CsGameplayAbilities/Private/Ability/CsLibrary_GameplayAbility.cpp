@@ -69,7 +69,7 @@ namespace NCsGameplayAbility
 		CS_IS_OBJECT_PTR_NULL_CHECKED(Spec.Ability, UGameplayAbility)
 		CS_IS_GAMEPLAY_TAG_CONTAINER_VALID_CHECKED(Tags)
 
-		return Spec.Ability->AbilityTags.HasAll(Tags);
+		return Spec.Ability->GetAssetTags().HasAll(Tags);
 	}
 
 	#pragma endregion Spec

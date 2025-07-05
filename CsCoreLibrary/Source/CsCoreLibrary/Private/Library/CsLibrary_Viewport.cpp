@@ -57,7 +57,7 @@ namespace NCsViewport
 
 				if (!LocalPlayer->ViewportClient)
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName())));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName())));
 					return false;
 				}
 				return true;
@@ -321,7 +321,7 @@ namespace NCsViewport
 
 				if (!LocalPlayer->ViewportClient)
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName())));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *Context, *(LocalPlayer->GetName())));
 					return false;
 				}
 				return true;

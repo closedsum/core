@@ -21,6 +21,8 @@
 #include "Animation/AnimBlueprintGeneratedClass.h"
 // Class
 #include "UObject/Class.h"
+// AActor
+#include "GameFramework/Actor.h"
 // Level
 #include "Engine/Level.h"
 

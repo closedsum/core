@@ -38,12 +38,14 @@ bool UCsGameViewportClient::InputKey(const FInputKeyEventArgs& EventArgs)
 	return Super::InputKey(EventArgs);
 }
 
-bool UCsGameViewportClient::InputAxis(FViewport* InViewport, int32 ControllerId, FKey Key, float Delta, float DeltaTime, int32 NumSamples, bool bGamepad)
+bool UCsGameViewportClient::InputAxis(const FInputKeyEventArgs& EventArgs)
 {
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
 	TArray<int32>& Remap = Settings->Manager_Input.RemappedGamepadControllerIds;
 
+	const FKey& Key			  = EventArgs.Key;
+	const int32& ControllerId = EventArgs.ControllerId;
 	int32 AdjustedControlerId = ControllerId < Remap.Num() && Key.IsGamepadKey() ? Remap[ControllerId] : ControllerId;
 
 	// Remap the old int32 ControllerId value to the new InputDeviceId
@@ -52,7 +54,7 @@ bool UCsGameViewportClient::InputAxis(FViewport* InViewport, int32 ControllerId,
 	FInputDeviceId DeviceId					 = INPUTDEVICEID_NONE;
 	DeviceMapper.RemapControllerIdToPlatformUserAndDevice(AdjustedControlerId, UserId, DeviceId);
 
-	return Super::InputAxis(InViewport, DeviceId, Key, Delta, DeltaTime, NumSamples, bGamepad);
+	return Super::InputAxis(EventArgs);
 }
 
 #pragma endregion FViewportClient Interface

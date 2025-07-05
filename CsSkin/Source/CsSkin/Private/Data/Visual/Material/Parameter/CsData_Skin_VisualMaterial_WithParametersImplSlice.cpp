@@ -183,10 +183,10 @@ namespace NCsSkin
 						{
 							if (Log)
 							{
-								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CsMaterialWithParamsSkinDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)."), *(CsObjectLibrary::PrintObjectAndClass(Object))));
-								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualMaterial_WithParametersImplSlice with name: VisualMaterialWithParamsSlice.")));
-								Log(FString::Printf(TEXT("%s: - OR")));
-								Log(FString::Printf(TEXT("%s: - Failed to get array struct property of type: TArray<FCsMaterialInterface_WithRangeParameters> with name: Materials.")));
+								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CsMaterialWithParamsSkinDataType (NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualMaterial_WithParametersImplSlice with name: VisualMaterialWithParamsSlice."), *Context));
+								Log(FString::Printf(TEXT("%s: - OR"), *Context));
+								Log(FString::Printf(TEXT("%s: - Failed to get array struct property of type: TArray<FCsMaterialInterface_WithRangeParameters> with name: Materials."), *Context));
 							}
 						}
 						return Slice;

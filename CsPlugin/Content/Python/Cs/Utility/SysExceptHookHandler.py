@@ -44,7 +44,7 @@ class FPySysExceptHookHandler:
 
         self.OnHandle_ExceptHook_Event.Broadcast()
         self.OnHandle_ExceptHook_Event.Clear()
-        print(f"{len(self.OnHandle_ExceptHook_Event)}")
+
         # Reset sys.excepthook to its original behavior
         sys.excepthook = sys.__original_excepthook__  
 

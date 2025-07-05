@@ -29,6 +29,9 @@ class FPyGlobalVariable(Generic[T]):
         self.DefaultValue = None
         self.Value = None
 
+    def Reset(self):
+        self.Value = self.DefaultValue
+
     def SetDefaultValue(self, default_value: T):
         self.DefaultValue = default_value
         self.Value = default_value

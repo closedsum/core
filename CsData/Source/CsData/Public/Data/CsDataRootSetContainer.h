@@ -66,7 +66,7 @@ public:
 		if (!Data_Internal)
 		{
 			if (Log)
-				Log(FString::Printf(TEXT("%: Data_Internal is NULL."), *Context));
+				Log(FString::Printf(TEXT("%s: Data_Internal is NULL."), *Context));
 			return nullptr;
 		}
 		return Data_Internal;
@@ -94,10 +94,11 @@ public:
 
 	FORCEINLINE ICsGetDataRootSet* GetSafe(const FString& Context, void(*Log)(const FString&) = &NCsData::FLog::Warning) const 
 	{
+		// TODO: Get Class Name (add .cpp)
 		if (!Interface)
 		{
 			if (Log)
-				Log(FString::Printf(TEXT("%s: Interface is NULL. Class: %s does NOT implement the interface: ICsGetDataRootSet."), *Context));
+				Log(FString::Printf(TEXT("%s: Interface is NULL. Class does NOT implement the interface: ICsGetDataRootSet."), *Context));
 			return nullptr;
 		}
 		return Interface;

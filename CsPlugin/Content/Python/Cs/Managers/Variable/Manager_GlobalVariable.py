@@ -33,7 +33,23 @@ class FPyManager_GlobalVariable:
         context: str = __class__.Shutdown.__qualname__
         print(context)
 
+    def Reset(self):
+        for key, variable in self.IntVariables.items():
+            variable.Reset()
+
     def AddInt(self, key: str, default_value: int) -> FPyGlobalVariable[int]:
+        """
+        Add an integer variable to the manager.
+            If the variable already exists, it will be returned.
+            If the variable does not exist, it will be created and returned.
+
+        Args:
+            key:            (str): The key of the variable to add.
+            default_value:  (int): The default value of the variable.
+
+        Returns:
+            (FPyGlobalVariable[int]): The variable that was added.
+        """
         variable: FPyGlobalVariable[int]  = None
 
         if key in self.IntVariables:

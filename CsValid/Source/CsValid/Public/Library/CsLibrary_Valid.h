@@ -3060,7 +3060,7 @@ namespace NCsValid
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
 		bool __temp__result = NCsValid::NObject::FLibrary::ImplementsInterfaceChecked<__ObjectType, __InterfaceType::UClassType>(Context, __Object, __temp__str__a, __temp__str__b); \
-		check(__temp__restul); \
+		check(__temp__result); \
 	}
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)

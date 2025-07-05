@@ -157,7 +157,7 @@ namespace NCsPlayer
 			}
 			else
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s with Class: %s"), *Context, *(Pawn->GetName()), *CsObjectLibrary::PrintNameAndClass(Pawn->GetController())));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s"), *Context, *(Pawn->GetName()), *CsObjectLibrary::PrintNameAndClass(Pawn->GetController())));
 				return INDEX_NONE;
 			}
 		}
@@ -553,7 +553,7 @@ namespace NCsPlayer
 				}
 				else
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s with Class: %s"), *Context, *(PlayerContext->GetName()), *CsObjectLibrary::PrintNameAndClass(Pawn->GetController())));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s."), *Context, *(PlayerContext->GetName()), *CsObjectLibrary::PrintNameAndClass(Pawn->GetController())));
 					return INDEX_NONE;
 				}
 			}
@@ -569,7 +569,7 @@ namespace NCsPlayer
 					return INDEX_NONE;
 				}
 			}
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerContext: %s with Class: %s is NOT of type APawn or APlayerController."), *Context, *CsObjectLibrary::PrintNameAndClass(PlayerContext)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerContext: %s is NOT of type APawn or APlayerController."), *Context, *CsObjectLibrary::PrintNameAndClass(PlayerContext)));
 			return INDEX_NONE;
 		}
 

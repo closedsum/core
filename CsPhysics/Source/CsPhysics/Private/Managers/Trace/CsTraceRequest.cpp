@@ -151,7 +151,7 @@ namespace NCsTrace
 			{
 				if (UPhysicsSettings::Get()->bSuppressFaceRemapTable)
 				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Returning Face Index is DISABLED globally.")));
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Returning Face Index is DISABLED globally."), *Context));
 					return false;
 				}
 			}

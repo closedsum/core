@@ -1,14 +1,21 @@
 # Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
+import enum
 
 # IMPORT
 
+# Library
+# - CsThread/Library/Library_Thread.py
+import CsThread.Library.Library_Thread as CsThread_Library_Thread
 # Utility
 # - Cs/Utility/SysExceptHookHandler.py
 import Cs.Utility.SysExceptHookHandler as Cs_SysExceptHookHandler
 
 # ALIAS
+
+# "alias" - library (py)
+FPyThreadLibrary = CsThread_Library_Thread.NPyThread.FLibrary
 
 # "alias" - class (py)
 FPySysExceptHookHandler = Cs_SysExceptHookHandler.FPySysExceptHookHandler
@@ -19,7 +26,8 @@ class NPyCommon:
         def checkf(condition: bool, message: str) -> bool:
             """
             Assert if condition is FALSE and display a message.
-
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+            
             Args:
                 condition   (bool): The condition to check.
                 message     (str):  The message to display.
@@ -28,6 +36,7 @@ class NPyCommon:
             """ 
             # NOTE: Future add different "level" of errors. Maybe even a native / c++ checkf.
             try:
+                FPyThreadLibrary.IsMainThreadChecked(f"{__class__.checkf.__qualname__}: message: {message}")
                 assert type(condition) is bool, "condition is NOT of type: bool"
                 assert condition, message
                 return True
@@ -38,6 +47,7 @@ class NPyCommon:
         def check(condition: bool) -> bool:
             """
             Assert if condition is FALSE
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 condition (bool): The condition to check.
@@ -46,6 +56,7 @@ class NPyCommon:
             """ 
             # NOTE: Future add different "level" of errors. Maybe even a native / c++ checkf.
             try:
+                FPyThreadLibrary.IsMainThreadChecked(__class__.check.__qualname__)
                 assert type(condition) is bool, "condition is NOT of type: bool"
                 assert condition
                 return True
@@ -57,7 +68,8 @@ class NPyCommon:
             """
             Get whether or not 's' is a string.
              Assert if NOT. 
-
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
             Args:
                 context (str): The calling context.
                 s:      (str): The string to check.
@@ -74,6 +86,7 @@ class NPyCommon:
             """
             Get whether or not 's' is a string.
              Assert if NOT. 
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 s: (str): The string to check.
@@ -86,10 +99,49 @@ class NPyCommon:
             ThisType.checkf(result, f"{__class__.IsStringChecked2.__qualname__}: s: {str(s)} is NOT a string.")
             return result
         @staticmethod
+        def IsStringRaiseError(context: str, s: str) -> bool:
+            """
+            Get whether or not 's' is a string.
+             Assert if NOT. 
+
+            Args:
+                context (str): The calling context.
+                s:      (str): The string to check.
+            Returns:
+                bool: True if 's' is a string, False otherwise.
+            """ 
+            ThisType = __class__
+
+            result: bool = type(s) is str
+
+            if not result:
+                raise Exception(f"{context}: s: {str(s)} is NOT a string.")
+            return result
+        @staticmethod
+        def IsStringRaiseError2(s: str) -> bool:
+            """
+            Get whether or not 's' is a string.
+             Assert if NOT. 
+
+            Args:
+                s:      (str): The string to check.
+            Returns:
+                bool: True if 's' is a string, False otherwise.
+            """ 
+            ThisType = __class__
+            context: str = __class__.IsStringRaiseError2.__qualname__
+
+            result: bool = type(s) is str
+
+            if not result:
+                raise Exception(f"{context}: s: {str(s)} is NOT a string.")
+            return result
+        @staticmethod
         def IsStringNotEmptyChecked(context, s) -> bool:
             """
             Get whether or not 's' is NOT empty ('').
              Assert if NOT. 
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 context (str): The calling context.
@@ -103,10 +155,34 @@ class NPyCommon:
             ThisType.checkf(s != "", f"{context}: s: {s} is EMPTY.")
             return True
         @staticmethod
+        def IsStringNotEmptyRaiseError(context, s) -> bool:
+            """
+            Get whether or not 's' is NOT empty ('').
+             Assert if NOT. 
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+
+            Args:
+                context (str): The calling context.
+                s:      (str): The string to check.
+            Returns:
+                bool: True if 's' is NOT empty, False otherwise.
+            """ 
+            ThisType = __class__
+
+            try:
+                ThisType.IsStringRaiseError(context, s)
+            except Exception as e:
+                raise e
+            
+            if s == "":
+                raise Exception(f"{context}: s: {s} is EMPTY.")
+            return True
+        @staticmethod
         def IsNotNoneChecked(context: str, o: any) -> bool:
             """
             Get whether or not 'o' is NOT None.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 context (str): The calling context.
@@ -123,7 +199,7 @@ class NPyCommon:
         def IsValidObject(o: any) -> bool:
             """
             Get whether or not 'o' is a valid object.
-
+            
             Args:
                 o: (any): The object to check.
             Returns:
@@ -135,6 +211,7 @@ class NPyCommon:
             """
             Get whether or not 'o' is a valid object.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 context (str): The calling context.
@@ -149,11 +226,37 @@ class NPyCommon:
             ThisType.checkf(result, f"{context}: o: {str(o)} is NOT a Valid Object.")
             return result
         @staticmethod
+        def IsValidObjectRaiseError(context: str, o: any) -> bool:
+            """
+            Get whether or not 'o' is a valid object.
+             Assert if NOT.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+
+            Args:
+                context (str): The calling context.
+                o:      (any): The object to check.
+            Returns:
+                bool: True if 'o' is a valid object, False otherwise.
+            """ 
+            ThisType = __class__
+
+            try:
+                ThisType.IsStringRaiseError2(context)
+            except Exception as e:
+                raise e
+
+            result: bool = ThisType.IsValidObject(o)
+
+            if not result:
+                raise Exception(f"{context}: o: {str(o)} is NOT a Valid Object.")
+            return result
+        @staticmethod
         def IsClassChecked(context: str, c: type) -> bool:
             """
             Get whether or not 'c' is a class.
              Assert if NOT.
-
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+             
             Args:
                 context (str): The calling context.
                 c:      (any): The class type to check.
@@ -166,10 +269,36 @@ class NPyCommon:
             ThisType.checkf(result, f"{context}: c: {type(c)} is NOT a class.")
             return result
         @staticmethod
+        def IsClassRaiseError(context: str, c: type) -> bool:
+            """
+            Get whether or not 'c' is a class.
+             Assert if NOT.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+             
+            Args:
+                context (str): The calling context.
+                c:      (any): The class type to check.
+            Returns:
+                bool: True if 'c' is a class, False otherwise.
+            """ 
+            ThisType = __class__
+
+            try:
+                ThisType.IsStringRaiseError2(context)
+            except Exception as e:
+                raise e
+
+            result: bool = isinstance(c, type)
+
+            if not result:
+                raise Exception(f"{context}: c: {type(c)} is NOT a class.")
+            return result
+        @staticmethod
         def IsInstanceOfChecked(context: str, a: any, c: type) -> bool:
             """
             Get whether or not 'a' is an instance of 'c'.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 context (str): The calling context.
@@ -207,6 +336,81 @@ class NPyCommon:
                 return False
             return isinstance(a, c)
         @staticmethod
+        def IsInstanceOfRaiseError(context: str, a: any, c: type) -> bool:
+            """
+            Get whether or not 'a' is an instance of 'c'.
+             Assert if NOT.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+
+            Args:
+                context (str): The calling context.
+                a:      (any): The object to check.
+                c:      (any): The class type to check.
+            Returns:
+                bool: True if 'a' is an instance of 'c', False otherwise.
+            """ 
+            ThisType = __class__
+
+            try:
+                ThisType.IsValidObjectRaiseError(context, a)
+            except Exception as e:
+                raise e
+
+            try:
+                ThisType.IsClassRaiseError(context, c)
+            except Exception as e:
+                raise e
+
+            result: bool = isinstance(a, c)
+
+            if not result:
+                raise Exception(f"{context}: a: {str(a)} of type: {type(a)} is NOT an instance of c: {type(c)} | {c.__module__}.{c.__qualname__ }.")
+            return result
+        @staticmethod
+        def IsTypeChecked(context: str, a: any, c: type) -> bool:
+            """
+            Get whether or not 'a' is of type 'c'.
+             Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+
+            Args:
+                context (str): The calling context.
+                a:      (any): The object to check.
+                c:      (type): The class type to check.
+            Returns:
+                bool: True if 'a' is an instance of 'c', False otherwise.
+            """ 
+            ThisType = __class__
+
+            ThisType.IsValidObjectChecked(context, a)
+            ThisType.checkf(issubclass(c, type), f"{context}: c: {type(c)} is NOT a class.")
+
+            result: bool = type(a) is c
+            ThisType.checkf(result, f"{context}: a: {str(a)} of type: {type(a)} is NOT of type: {type(c)} | {c.__module__}.{c.__qualname__ }.")
+            return result
+        @staticmethod
+        def IsEnumChecked(context: str, a: any, c: any) -> bool:
+            """
+            Get whether or not 'a' is of an enum of type 'c'.
+             Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+
+            Args:
+                context (str): The calling context.
+                a:      (any): The object to check.
+                c:      (type): The enum type to check.
+            Returns:
+                bool: True if 'a' is an instance of 'c', False otherwise.
+            """ 
+            ThisType = __class__
+
+            ThisType.IsValidObjectChecked(context, a)
+            ThisType.checkf(issubclass(c, enum.Enum), f"{context}: c: {type(c)} is NOT a class.")
+
+            result: bool = str(type(a)) == str(c)
+            ThisType.checkf(result, f"{context}: a: {str(a)} of type: {type(a)} is NOT of type: {type(c)} | {c.__module__}.{c.__qualname__ }.")
+            return result
+        @staticmethod
         def IsFunction(func: any) -> bool:
             """
             Get whether or not 'func' is a function. 
@@ -222,6 +426,7 @@ class NPyCommon:
             """
             Get whether or not 'func' is a function. 
              Assert if NOT. 
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 context (str): The calling context.
@@ -251,6 +456,7 @@ class NPyCommon:
             """
             Get whether or not 'o' is a valid dictionary / dict.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 context (str): The calling context.
@@ -281,7 +487,7 @@ class NPyCommon:
 
             ThisType.check(ThisType.IsValidDictChecked(context, d))
             ThisType.check(ThisType.IsStringChecked(context, key))
-            ThisType.checkf(key in dict, f"{context}: o does NOT contain key: {key}")
+            ThisType.checkf(key in d, f"{context}: o does NOT contain key: {key}")
             return True
         @staticmethod
         def DoesKeyExist(d: dict, key: str) -> bool:
@@ -299,12 +505,32 @@ class NPyCommon:
 
             if ThisType.IsValidDict(d) == False:
                 return False
-            return key in dict
+            return key in d
+        @staticmethod
+        def DoesKeyNotExistChecked(context: str, d: dict, key: str) -> bool:
+            """
+            Get whether or not 'key' is NOT a key for dictionary 'd'.
+             Assert if key ALREADY exists.
+
+            Args:
+                context (str): The calling context.
+                d:      (dict): The dictionary to check.
+                key:    (str):  The key to check.
+            Returns:
+                bool: True if 'key' is NOT a key for dictionary 'd', False otherwise.
+            """ 
+            ThisType = __class__
+
+            ThisType.check(ThisType.IsValidDictChecked(context, d))
+            ThisType.check(ThisType.IsStringChecked(context, key))
+            ThisType.checkf(key not in d, f"{context}: o does contain key: {key}")
+            return True
         @staticmethod
         def DoesKeyOfInstanceExistChecked(context: str, d: dict, key: str, classType: any) -> bool:
             """
             Get whether or not 'key' is a key for dictionary 'd' and is of type 'classType'.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 context     (str):  The calling context.
@@ -340,6 +566,7 @@ class NPyCommon:
             """
             Get whether or not 'key' is a key for dictionary 'd' and is of type bool.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 context (str):  The calling context.
@@ -358,6 +585,7 @@ class NPyCommon:
             """
             Get whether or not 'a' is an int (number). 
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 context (str): The calling context.
@@ -376,6 +604,7 @@ class NPyCommon:
             """
             Get whether or not 'a' is an int (number). 
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 a: (int): The value to check.
@@ -387,10 +616,31 @@ class NPyCommon:
 
             return ThisType.IsIntChecked(context, a)
         @staticmethod
+        def IsIntRaiseError(context: str, a: float) -> bool:
+            """
+            Get whether or not 'a' is an int (number). 
+             Assert if NOT.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+
+            Args:
+                context (str): The calling context.
+                a:      (int): The value to check.
+            Returns:
+                bool: True if 'a' is an int (number), False otherwise.
+            """
+            ThisType = __class__
+
+            ThisType.IsStringRaiseError2(context)
+
+            if type(a) is not int:
+                raise Exception(f"{context}: a: {str(a)} is NOT a int.")
+            return True
+        @staticmethod
         def IsFloatChecked(context: str, a: float) -> bool:
             """
             Get whether or not 'a' is an float / double (number). 
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 context    (str):   The calling context.
@@ -409,6 +659,7 @@ class NPyCommon:
             """
             Get whether or not 'a' is an float / double (number). 
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
             Args:
                 a: (float): The value to check.
@@ -419,6 +670,26 @@ class NPyCommon:
             context: str = __class__.IsFloatChecked2.__qualname__
 
             return ThisType.IsFloatChecked(context, a)
+        @staticmethod
+        def IsFloatRaiseError(context: str, a: float) -> bool:
+            """
+            Get whether or not 'a' is an float / double (number). 
+             Assert if NOT.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+
+            Args:
+                context (str):   The calling context.
+                a:      (float): The value to check.
+            Returns:
+                bool: True if 'a' is an float / double (number), False otherwise.
+            """
+            ThisType = __class__
+
+            ThisType.IsStringRaiseError2(context)
+
+            if type(a) is not float:
+                raise Exception(f"{context}: a: {str(a)} is NOT a float.")
+            return True
         @staticmethod
         def IsIntOrFloat(a: any) -> bool:
             """
@@ -435,6 +706,7 @@ class NPyCommon:
             """
             Get whether or not 'a' is a number (int or float). 
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
             
             Args:
                 context (str): The calling context.

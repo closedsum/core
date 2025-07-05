@@ -202,21 +202,21 @@ namespace NCsAbility
 				{
 					CS_IS_OBJECT_PTR_NULL_CHECKED(Spec.Ability, UGameplayAbility)
 					
-					int32 LocalCount = Spec.Ability->AbilityTags.HasTagExact(Tag) ? 1 : 0;
+					int32 LocalCount = Spec.Ability->GetAssetTags().HasTagExact(Tag) ? 1 : 0;
 
 					// Non Replicated
 					for (const TObjectPtr<UGameplayAbility>& Instance : Spec.NonReplicatedInstances)
 					{
 						CS_IS_OBJECT_PTR_NULL_CHECKED(Instance, UGameplayAbility)
 
-						LocalCount += Instance->AbilityTags.HasTagExact(Tag) ? 1 : 0;
+						LocalCount += Instance->GetAssetTags().HasTagExact(Tag) ? 1 : 0;
 					}
 					// Replicated
 					for (const TObjectPtr<UGameplayAbility>& Instance : Spec.ReplicatedInstances)
 					{
 						CS_IS_OBJECT_PTR_NULL_CHECKED(Instance, UGameplayAbility)
 
-						LocalCount += Instance->AbilityTags.HasTagExact(Tag) ? 1 : 0;
+						LocalCount += Instance->GetAssetTags().HasTagExact(Tag) ? 1 : 0;
 					}
 
 					Count += LocalCount > 0 ? 1 : 0;

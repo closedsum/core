@@ -57,6 +57,19 @@ IsValidObject        = FPyCommonLibrary.IsValidObject
 IsValidObjectChecked = FPyCommonLibrary.IsValidObjectChecked
 
 class FPyHeartbeat:
+    """
+    A heartbeat is a coroutine that will throb at a given interval.
+    """
+
+    Interval: float = 1.0
+    """
+    The interval in seconds between each throb.
+    """
+    bSilent: bool = False
+    """
+    Whether or not the heartbeat is silent (i.e. no log messages).
+    """
+
     def __init__(self):
         self.Interval: float = 1.0
         self.bSilent: bool = False
@@ -66,7 +79,7 @@ class FPyHeartbeat:
     def Init(self, core: 'FPyCore'):
         self.Core = core
 
-     # IPyCsShutdown
+     # IPyShutdown
 
     def HasShutdown(self) -> bool:
         return self.bShutdown
@@ -96,6 +109,13 @@ class FPyHeartbeat:
         self.Core = None
          
     def SetSilent(self, bSilent: bool):
+        """
+        Set the heartbeat to silent  (i.e. no log messages).
+            NOTE: Allowed ONLY on Main Thread (Game Thread).
+
+        Args:
+            bSilent: True to set the heartbeat to silent, False to set the heartbeat to not silent.
+        """
         self.bSilent = bSilent
 
     def Start(self):

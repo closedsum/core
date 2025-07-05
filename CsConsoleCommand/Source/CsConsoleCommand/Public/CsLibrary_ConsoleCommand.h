@@ -321,7 +321,7 @@ namespace NCsConsoleCommand
 					{
 						if (Params.Log)
 						{
-							Params.Log(FString::Printf(TEXT("%s: %s: %d is NOT Valid from: %s. Command:"), *Context, Params.ValueNameToChar(), *(Params.OutValueToString()), Str));
+							Params.Log(FString::Printf(TEXT("%s: %s: %s is NOT Valid from: %s. Command:"), *Context, Params.ValueNameToChar(), *(Params.OutValueToString()), Str));
 							Params.Log(FString::Printf(TEXT("%s"), Params.DefinitionToChar()));
 						}
 						return false;

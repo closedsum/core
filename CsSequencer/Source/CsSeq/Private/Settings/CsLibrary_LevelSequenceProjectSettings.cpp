@@ -4,8 +4,7 @@
 #include "Settings/CsLibrary_LevelSequenceProjectSettings.h"
 
 // Settings
-#include "Runtime/LevelSequence/Private/LevelSequenceProjectSettings.h" 
-
+#include "LevelSequenceProjectSettings.h" 
 
 namespace NCsLevelSequence
 {

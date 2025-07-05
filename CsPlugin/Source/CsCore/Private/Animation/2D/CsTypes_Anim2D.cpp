@@ -551,7 +551,7 @@ bool FCsAnim2DFlipbookTexture::IsValid(const FString& Context, void(*Log)(const 
 	// Check Frames
 	if (Frames.Num() == CS_EMPTY)
 	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Frames set.")));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Frames set."), *Context));
 		return false;
 	}
 
@@ -939,7 +939,7 @@ namespace NCsAnim
 					// Check Frames
 					if (Frames.Num() == CS_EMPTY)
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Frames set.")));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Frames set."), *Context));
 						return false;
 					}
 
@@ -1366,7 +1366,7 @@ bool FCsAnim2DMaterialFlipbook::IsValid(const FString& Context, void(*Log)(const
 	// Check Frames
 	if (Frames.Num() == CS_EMPTY)
 	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Frames set.")));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Frames set."), *Context));
 		return false;
 	}
 
@@ -1678,7 +1678,7 @@ namespace NCsAnim
 					// Check Frames
 					if (Frames.Num() == CS_EMPTY)
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Frames set.")));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Frames set."), *Context));
 						return false;
 					}
 

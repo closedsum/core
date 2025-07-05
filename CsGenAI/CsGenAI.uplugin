@@ -1,0 +1,38 @@
+{
+  "FileVersion": 3,
+  "Version": 2,
+  "VersionName": "0.0.1",
+  "FriendlyName": "Closed Sum Games: Gen AI",
+  "Description": "Closed Sum Games: Gen AI",
+  "Category": "Programming",
+  "CreatedBy": "Closed Sum Games LLC",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "EngineVersion": "5.6.0",
+  "CanContainContent": true,
+  "Installed": true,
+  "Modules": [
+    {
+      "Name": "CsGenAI",
+      "Type": "Runtime",
+      "LoadingPhase": "PostEngineInit"
+    },
+    {
+      "Name": "CsGenAIEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "CsMacro",
+      "Enabled": true
+    },
+    {
+      "Name": "CsEnum",
+      "Enabled": true
+    }
+  ]
+}

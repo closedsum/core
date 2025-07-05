@@ -472,7 +472,7 @@ bool UCsManager_Trace::SafeDeallocateRequest(const FString& Context, RequestType
 
 	if (Request->GetIndex() < 0)
 	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Request->GetIndex(): %s id NOT Valid."), *Context, Request->GetIndex()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Request->GetIndex(): %d id NOT Valid."), *Context, Request->GetIndex()));
 		return false;
 	}
 

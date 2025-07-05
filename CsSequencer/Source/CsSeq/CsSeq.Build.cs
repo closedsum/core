@@ -31,7 +31,6 @@ public class CsSeq : ModuleRules
 
         PrivateDependencyModuleNames.AddRange(
             new string[] {
-                "LevelSequence"
             }
         );
 

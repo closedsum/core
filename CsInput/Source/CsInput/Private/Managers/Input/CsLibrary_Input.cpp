@@ -659,7 +659,7 @@ namespace NCsInput
 
 			if (!NCsInput::NKey::FLibrary::IsValidForDevice(Context, Device, Key))
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid for Device: %s."), *Context, *(Key.ToString()), *(EMCsInputDevice::Get().ToChar(Device))));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid for Device: %s."), *Context, *(Key.ToString()), EMCsInputDevice::Get().ToChar(Device)));
 				return false;
 			}
 

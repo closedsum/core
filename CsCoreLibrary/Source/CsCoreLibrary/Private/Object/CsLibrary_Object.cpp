@@ -91,9 +91,6 @@ namespace NCsObject
 		// RF_NeedLoad
 		if (Object->HasAnyFlags(EObjectFlags::RF_NeedLoad))
 			Str += TEXT("RF_NeedLoad,");
-		// RF_KeepForCooker
-		if (Object->HasAnyFlags(EObjectFlags::RF_KeepForCooker))
-			Str += TEXT("RF_KeepForCooker,");
 		// RF_NeedPostLoad
 		if (Object->HasAnyFlags(EObjectFlags::RF_NeedPostLoad))
 			Str += TEXT("RF_NeedPostLoad,");

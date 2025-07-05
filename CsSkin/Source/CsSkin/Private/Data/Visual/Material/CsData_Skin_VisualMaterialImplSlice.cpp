@@ -167,10 +167,10 @@ namespace NCsSkin
 					{
 						if (Log)
 						{
-							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *(CsObjectLibrary::PrintObjectAndClass(Object))));
-							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMeshImplSlice with name: VisualMaterialSlice.")));
-							Log(FString::Printf(TEXT("%s: - OR")));
-							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialInterface with name: Materials.")));
+							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CsMaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *Context, *(CsObjectLibrary::PrintObjectAndClass(Object))));
+							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMeshImplSlice with name: VisualMaterialSlice."), *Context));
+							Log(FString::Printf(TEXT("%s: - OR"), *Context));
+							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialInterface with name: Materials."), *Context));
 						}
 					}
 					return Slice;

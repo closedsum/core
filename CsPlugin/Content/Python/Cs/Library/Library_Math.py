@@ -7,48 +7,33 @@
 import Cs.Library.Library_Common as Cs_Library_Common
 
 # "typedefs" - library (py)
-CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
+FPyCommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
 
 # "typedefs" - functions
-check           = CommonLibrary.check
-checkf          = CommonLibrary.checkf
-IsNumberChecked = CommonLibrary.IsNumberChecked
-IsIntChecked    = CommonLibrary.IsIntChecked
-IsFloatChecked  = CommonLibrary.IsFloatChecked
+check           = FPyCommonLibrary.check
+checkf          = FPyCommonLibrary.checkf
+IsNumberChecked = FPyCommonLibrary.IsNumberChecked
+IsIntChecked    = FPyCommonLibrary.IsIntChecked
+IsIntRaiseError = FPyCommonLibrary.IsIntRaiseError
+IsFloatChecked  = FPyCommonLibrary.IsFloatChecked
+IsFloatRaiseError = FPyCommonLibrary.IsFloatRaiseError
 
 class NPyMath:
     class FLibrary:
-        class NCached:
-            class NStr:
-                # Number
-                IsGreaterThanChecked          = "NPyMath.FLibrary.IsGreaterThanChecked"
-                IsGreaterThanOrEqualChecked   = "NPyMath.FLibrary.IsGreaterThanOrEqualChecked"
-                IsLessThanChecked             = "NPyMath.FLibrary.IsLessThanChecked"
-                IsLessThanOrEqualChecked      = "NPyMath.FLibrary.IsLessThanOrEqualChecked"
-                # Int
-                IsPositiveIntChecked             = "NPyMath.FLibrary.IsPositiveIntChecked"
-                IsNonNegativeIntChecked          = "NPyMath.FLibrary.IsNonNegativeIntChecked"
-                IsIntGreaterThanChecked          = "NPyMath.FLibrary.IsIntGreaterThanChecked"
-                IsIntGreaterThanOrEqualChecked   = "NPyMath.FLibrary.IsIntGreaterThanOrEqualChecked"
-                IsIntLessThanChecked             = "NPyMath.FLibrary.IsIntLessThanChecked"
-                IsIntLessThanOrEqualChecked      = "NPyMath.FLibrary.IsIntLessThanOrEqualChecked"
-                IsIntInRangeInclusiveChecked     = "NPyMath.FLibrary.IsIntInRangeInclusiveChecked"
-                # Float
-                IsFloatGreaterThanChecked          = "NPyMath.FLibrary.IsFloatGreaterThanChecked"
-                IsFloatGreaterThanOrEqualChecked   = "NPyMath.FLibrary.IsFloatGreaterThanOrEqualChecked"
-                IsFloatLessThanChecked             = "NPyMath.FLibrary.IsFloatLessThanChecked"
-                IsFloatLessThanOrEqualChecked      = "NPyMath.FLibrary.IsFloatLessThanOrEqualChecked"
         # Number
         @staticmethod
         def IsGreaterThanChecked(context: str, a: any, b: any) -> bool:
             """
             Get whether or not 'a' is GREATER THAN (>) 'b'.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
-            :param str context:
-            :param any a:
-            :param any b:
-            :return bool:
+            Args:
+                context (str): The calling context.
+                a       (any): The first value to compare.
+                b       (any): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than 'b', False otherwise.
             """ 
             IsNumberChecked(context, a)
             IsNumberChecked(context, b)
@@ -60,25 +45,31 @@ class NPyMath:
             """
             Get whether or not 'a' is GREATER THAN (>) 'b'.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
-            :param any a:
-            :param any b:
-            :return bool:
+            Args:
+                a       (any): The first value to compare.
+                b       (any): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than 'b', False otherwise.
             """ 
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsGreaterThanChecked
+            ThisType = __class__
+            context: str = __class__.IsGreaterThanChecked2.__qualname__
 
-            return lib.IsGreaterThanChecked(context, a, b)
+            return ThisType.IsGreaterThanChecked(context, a, b)
         @staticmethod
         def IsGreaterThanOrEqualChecked(context: str, a: any, b: any) -> bool:
             """
             Get whether or not 'a' is GREATER THAN OR EQUAL (>=) 'b'.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
-            :param str context: The call context.
-            :param any a:
-            :param any b:
-            :return bool:
+            Args:
+                context (str): The calling context.
+                a       (any): The first value to compare.
+                b       (any): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than or equal to 'b', False otherwise.
             """ 
             IsNumberChecked(context, a)
             IsNumberChecked(context, b)
@@ -90,25 +81,31 @@ class NPyMath:
             """
             Get whether or not 'a' is GREATER THAN OR EQUAL (>=) 'b'.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
-            :param any a:
-            :param any b:
-            :return bool:
+            Args:
+                a       (any): The first value to compare.
+                b       (any): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than or equal to 'b', False otherwise.
             """ 
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsGreaterThanOrEqualChecked
-        
-            return lib.IsGreaterThanOrEqualChecked(context, a, b)
+            ThisType = __class__
+            context: str = __class__.IsGreaterThanOrEqualChecked2.__qualname__
+
+            return ThisType.IsGreaterThanOrEqualChecked(context, a, b)
         @staticmethod
         def IsLessThanChecked(context: str, a: any, b: any) -> bool:
             """
             Get whether or not 'a' is LESS THAN (<) 'b'.
              Assert if NOT.
-             
-            :param str context: The calling context.
-            :param any a:
-            :param any b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (any): The first value to compare.
+                b       (any): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than 'b', False otherwise.
             """ 
             IsNumberChecked(context, a)
             IsNumberChecked(context, b)
@@ -120,25 +117,31 @@ class NPyMath:
             """
             Get whether or not 'a' is LESS THAN (<) 'b'.
              Assert if NOT.
-             
-            :param any a:
-            :param any b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                a       (any): The first value to compare.
+                b       (any): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than 'b', False otherwise.
             """ 
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsLessThanChecked
+            ThisType = __class__
+            context: str = __class__.IsLessThanChecked2.__qualname__
 
-            return lib.IsLessThanChecked(context, a, b)
+            return ThisType.IsLessThanChecked(context, a, b)
         @staticmethod
         def IsLessThanOrEqualChecked(context: str, a: any, b: any) -> bool:
             """
             Get whether or not 'a' is LESS THAN OR EQUAL (<=) 'b'.
              Assert if NOT.
-             
-            :param str context: The calling context.
-            :param any a:
-            :param any b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (any): The first value to compare.
+                b       (any): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than or equal to 'b', False otherwise.
             """ 
             IsNumberChecked(context, a)
             IsNumberChecked(context, b)
@@ -149,32 +152,46 @@ class NPyMath:
             """
             Get whether or not 'a' is LESS THAN OR EQUAL (<=) 'b'.
              Assert if NOT.
-             
-            :param any a:
-            :param any b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                a       (any): The first value to compare.
+                b       (any): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than or equal to 'b', False otherwise.
             """ 
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsLessThanOrEqualChecked
+            ThisType = __class__
+            context: str = __class__.IsLessThanOrEqualChecked2.__qualname__
 
-            return lib.IsLessThanOrEqualChecked(context, a, b)
+            return ThisType.IsLessThanOrEqualChecked(context, a, b)
         # Int
         @staticmethod
         def IsPositiveInt(a: int) -> bool:
+            """
+            Get whether or not 'a' is a positive integer (a > 0).
+            
+            Args:
+                a       (int): The value to check.
+            Returns:
+                bool: True if 'a' is a positive integer (a > 0), False otherwise.
+            """ 
             return (type(a) is int) and (a > 0)
         @staticmethod
         def IsPositiveIntChecked(context: str, a: int) -> bool:
             """
             Get whether or not 'a' is a positive integer (a > 0).
              Assert if NOT.
-             
-            :param str context: The calling context.
-            :param int a:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (int): The value to check.
+            Returns:
+                bool: True if 'a' is a positive integer (a > 0), False otherwise.
             """ 
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
+            ThisType = __class__
 
-            result: bool = lib.IsPositiveInt(a)
+            result: bool = ThisType.IsPositiveInt(a)
             checkf(result, context + ": a: " + str(a) + " is NOT BOTH an integer AND > 0.")
             return result
         @staticmethod
@@ -182,21 +199,26 @@ class NPyMath:
             """
             Get whether or not 'a' is a positive integer (a > 0).
              Assert if NOT.
-             
-            :param int a:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                a       (int): The value to check.
+            Returns:
+                bool: True if 'a' is a positive integer (a > 0), False otherwise.
             """ 
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsPositiveIntChecked
+            ThisType = __class__
+            context: str = __class__.IsPositiveIntChecked2.__qualname__
 
-            return lib.IsPositiveIntChecked(context, a)
+            return ThisType.IsPositiveIntChecked(context, a)
         @staticmethod
         def IsNonNegativeInt(a: int) -> bool:
             """
             Get whether or not 'a' is a non-negative integer (a >= 0).
              
-            :param int a:
-            :return bool:
+            Args:
+                a       (int): The value to check.
+            Returns:
+                bool: True if 'a' is a non-negative integer (a >= 0), False otherwise.
             """ 
             return (type(a) is int) and (a >= 0) 
         @staticmethod
@@ -204,14 +226,17 @@ class NPyMath:
             """
             Get whether or not 'a' is a non-negative integer (a >= 0).
              Assert if NOT. 
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
-            :param str context: The calling context.
-            :param int a:
-            :return bool:
+            Args:
+                context (str): The calling context.
+                a       (int): The value to check.
+            Returns:
+                bool: True if 'a' is a non-negative integer (a >= 0), False otherwise.
             """ 
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
+            ThisType = __class__
 
-            result: bool = lib.IsNonNegativeInt(a)
+            result: bool = ThisType.IsNonNegativeInt(a)
             checkf(result, context + ": a: " + str(a) + " is NOT BOTH an integer AND >= 0.")
             return result
         @staticmethod
@@ -219,24 +244,30 @@ class NPyMath:
             """
             Get whether or not 'a' is a non-negative integer (a >= 0).
              Assert if NOT.
-             
-            :param int a:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                a       (int): The value to check.
+            Returns:
+                bool: True if 'a' is a non-negative integer (a >= 0), False otherwise.
             """ 
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsNonNegativeIntChecked
+            ThisType = __class__
+            context: str = __class__.IsNonNegativeIntChecked2.__qualname__
 
-            return lib.IsNonNegativeIntChecked(context, a)
+            return ThisType.IsNonNegativeIntChecked(context, a)
         @staticmethod
         def IsIntGreaterThanChecked(context: str, a: int, b: int) -> bool:
             """
             Get whether or not 'a' is GREATER THAN (>) 'b'.
              Assert if NOT.
-             
-            :param str context: The calling context.
-            :param int a:
-            :param int b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (int): The first value to compare.
+                b       (int): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than 'b', False otherwise.
             """
             IsIntChecked(context, a)
             IsIntChecked(context, b)
@@ -248,25 +279,51 @@ class NPyMath:
             """
             Get whether or not 'a' is GREATER THAN (>) 'b'.
              Assert if NOT.
-             
-            :param int a:
-            :param int b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                a       (int): The first value to compare.
+                b       (int): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than 'b', False otherwise.
             """
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsIntGreaterThanChecked
+            ThisType = __class__
+            context: str = __class__.IsIntGreaterThanChecked2.__qualname__
 
-            return lib.IsIntGreaterThanChecked(context, a, b)
+            return ThisType.IsIntGreaterThanChecked(context, a, b)
+        @staticmethod
+        def IsIntGreaterThanRaiseError(context: str, a: float, b: float) -> bool:
+            """
+            Get whether or not 'a' is GREATER THAN (>) 'b'.
+             Assert if NOT.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+
+            Args:
+                context (str): The calling context.
+                a       (int): The first value to compare.
+                b       (int): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than 'b', False otherwise.
+            """
+            IsIntRaiseError(context, a)
+            IsIntRaiseError(context, b)
+
+            if a <= b:
+                raise Exception(f"{context}: a: {str(a)} is NOT > b: {str(b)} .")
+            return True
         @staticmethod
         def IsIntGreaterThanOrEqualChecked(context: str, a: int, b: int) -> bool:
             """
             Get whether or not 'a' is GREATER THAN OR EQUAL (>=) 'b'.
              Assert if NOT.
-             
-            :param str context:
-            :param int a:
-            :param int b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (int): The first value to compare.
+                b       (int): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than or equal to 'b', False otherwise.
             """
             IsIntChecked(context, a)
             IsIntChecked(context, b)
@@ -278,25 +335,31 @@ class NPyMath:
             """
             Get whether or not 'a' is GREATER THAN OR EQUAL (>=) 'b'.
              Assert if NOT.
-             
-            :param int a:
-            :param int b:
-            :return bool:
-            """
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsIntGreaterThanOrEqualChecked
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
-            return lib.IsIntGreaterThanOrEqualChecked(context, a, b)
+            Args:
+                a       (int): The first value to compare.
+                b       (int): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than or equal to 'b', False otherwise.
+            """
+            ThisType = __class__
+            context: str = __class__.IsIntGreaterThanOrEqualChecked2.__qualname__
+
+            return ThisType.IsIntGreaterThanOrEqualChecked(context, a, b)
         @staticmethod
         def IsIntLessThanChecked(context: str, a: int, b: int) -> bool:
             """
             Get whether or not 'a' is LESS THAN (<) 'b'.
              Assert if NOT.
-             
-            :param str context: The calling context
-            :param int a:
-            :param int b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (int): The first value to compare.
+                b       (int): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than 'b', False otherwise.
             """
             IsIntChecked(context, a)
             IsIntChecked(context, b)
@@ -308,25 +371,31 @@ class NPyMath:
             """
             Get whether or not 'a' is LESS THAN (<) 'b'.
              Assert if NOT.
-             
-            :param int a:
-            :param int b:
-            :return bool:
-            """
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsIntLessThanChecked
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
-            return lib.IsIntLessThanChecked(context, a, b)
+            Args:
+                a       (int): The first value to compare.
+                b       (int): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than 'b', False otherwise.
+            """
+            ThisType = __class__
+            context: str = __class__.IsIntLessThanChecked2.__qualname__
+
+            return ThisType.IsIntLessThanChecked(context, a, b)
         @staticmethod
         def IsIntLessThanOrEqualChecked(context: str, a: int, b: int) -> bool:
             """
             Get whether or not 'a' is LESS THAN OR EQUAL (<=) 'b'.
              Assert if NOT.
-             
-            :param str context: The calling context.
-            :param int a:
-            :param int b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (int): The first value to compare.
+                b       (int): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than or equal to 'b', False otherwise.
             """
             IsIntChecked(context, a)
             IsIntChecked(context, b)
@@ -338,67 +407,76 @@ class NPyMath:
             """
             Get whether or not 'a' is LESS THAN OR EQUAL (<=) 'b'.
              Assert if NOT.
-             
-            :param int a:
-            :param int b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                a       (int): The first value to compare.
+                b       (int): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than or equal to 'b', False otherwise.
             """
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsIntLessThanOrEqualChecked
+            ThisType = __class__
+            context: str = __class__.IsIntLessThanOrEqualChecked2.__qualname__
 
-            return lib.IsIntLessThanOrEqualChecked(context, a, b)
+            return ThisType.IsIntLessThanOrEqualChecked(context, a, b)
         @staticmethod
         def IsIntInRangeInclusiveChecked(context: str, a: int, l: int, r: int) -> bool:
             """
             Get whether or not 'a' is in the RANGE [l, r] (l <= a <= r) INCLUSIVE.
              Assert if NOT.
-             
-            :param str context: The calling context.
-            :param int a:
-            :param int l:
-            :param int r:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (int): The value to check.
+                l       (int): The lower bound of the range.
+                r       (int): The upper bound of the range.
+            Returns:
+                bool: True if 'a' is in the RANGE [l, r] (l <= a <= r) INCLUSIVE, False otherwise.
             """
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
+            ThisType = __class__
             
-            return lib.IsIntGreaterThanOrEqualChecked(context, a, l) and lib.IsIntLessThanOrEqualChecked(context, a, r)
+            return ThisType.IsIntGreaterThanOrEqualChecked(context, a, l) and ThisType.IsIntLessThanOrEqualChecked(context, a, r)
         @staticmethod
         def IsIntInRangeInclusiveChecked2(a: int, l: int, r: int) -> bool:
             """
             Get whether or not 'a' is in the RANGE [l, r] (l <= a <= r) INCLUSIVE.
              Assert if NOT.
-             
-            :param int a:
-            :param int l:
-            :param int r:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                a       (int): The value to check.
+                l       (int): The lower bound of the range.
+                r       (int): The upper bound of the range.
+            Returns:
+                bool: True if 'a' is in the RANGE [l, r] (l <= a <= r) INCLUSIVE, False otherwise.
             """
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsIntInRangeInclusiveChecked
+            ThisType = __class__
+            context: str = __class__.IsIntInRangeInclusiveChecked2.__qualname__
 
-            return lib.IsIntInRangeInclusiveChecked(context, a, l, r)
+            return ThisType.IsIntInRangeInclusiveChecked(context, a, l, r)
         # Flag
         @staticmethod
         def BitFlag_Test(bitmask: int, bit: int) -> bool:
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
+            ThisType = __class__
 
-            check(lib.IsNonNegativeInt(bitmask))
-            check(lib.IsNonNegativeInt(bit))
+            check(ThisType.IsNonNegativeInt(bitmask))
+            check(ThisType.IsNonNegativeInt(bit))
             return (bitmask & bit) == bit
         @staticmethod
         def BitFlag_Set(bitmask: int, bit: int) -> int:
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
+            ThisType = __class__
 
-            check(lib.IsNonNegativeInt(bitmask))
-            check(lib.IsNonNegativeInt(bit))
+            check(ThisType.IsNonNegativeInt(bitmask))
+            check(ThisType.IsNonNegativeInt(bit))
 
             return (bitmask | bit)
         @staticmethod
         def BitFlag_Clear(bitmask: int, bit: int) -> int:
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
+            ThisType = __class__
 
-            check(lib.IsNonNegativeInt(bitmask))
-            check(lib.IsNonNegativeInt(bit))
+            check(ThisType.IsNonNegativeInt(bitmask))
+            check(ThisType.IsNonNegativeInt(bit))
             
             return (bitmask & (~bit))
         # Float
@@ -407,11 +485,14 @@ class NPyMath:
             """
             Get whether or not 'a' is GREATER THAN (>) 'b'.
              Assert if NOT.
-             
-            :param str context: The calling context.
-            :param float a:
-            :param float b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+
+            Args:
+                context (str): The calling context.
+                a       (float): The first value to compare.
+                b       (float): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than 'b', False otherwise.
             """
             IsFloatChecked(context, a)
             IsFloatChecked(context, b)
@@ -423,25 +504,51 @@ class NPyMath:
             """
             Get whether or not 'a' is GREATER THAN (>) 'b'.
              Assert if NOT.
-             
-            :param float a:
-            :param float b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                a       (float): The first value to compare.
+                b       (float): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than 'b', False otherwise.
             """
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsFloatGreaterThanChecked
+            ThisType = __class__
+            context: str = __class__.IsFloatGreaterThanChecked2.__qualname__
 
-            return lib.IsFloatGreaterThanChecked(context, a, b)
+            return ThisType.IsFloatGreaterThanChecked(context, a, b)
+        @staticmethod
+        def IsFloatGreaterThanRaiseError(context: str, a: float, b: float) -> bool:
+            """
+            Get whether or not 'a' is GREATER THAN (>) 'b'.
+             Assert if NOT.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+
+            Args:
+                context (str): The calling context.
+                a       (float): The first value to compare.
+                b       (float): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than 'b', False otherwise.
+            """
+            IsFloatRaiseError(context, a)
+            IsFloatRaiseError(context, b)
+
+            if a <= b:
+                raise Exception(f"{context}: a: {str(a)} is NOT > b: {str(b)} .")
+            return True
         @staticmethod
         def IsFloatGreaterThanOrEqualChecked(context: str, a: float, b: float) -> bool:
             """
             Get whether or not 'a' is GREATER THAN OR EQUAL (>=) 'b'.
              Assert if NOT.
-             
-            :param str context: The calling context.
-            :param float a:
-            :param float b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (float): The first value to compare.
+                b       (float): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than or equal to 'b', False otherwise.
             """
             IsFloatChecked(context, a)
             IsFloatChecked(context, b)
@@ -453,25 +560,31 @@ class NPyMath:
             """
             Get whether or not 'a' is GREATER THAN OR EQUAL (>=) 'b'.
              Assert if NOT.
-             
-            :param float a:
-            :param float b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                a       (float): The first value to compare.
+                b       (float): The second value to compare.
+            Returns:
+                bool: True if 'a' is greater than or equal to 'b', False otherwise.
             """
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsFloatGreaterThanOrEqualChecked
+            ThisType = __class__
+            context: str = __class__.IsFloatGreaterThanOrEqualChecked2.__qualname__
 
-            return lib.IsFloatGreaterThanOrEqualChecked(context, a, b)
+            return ThisType.IsFloatGreaterThanOrEqualChecked(context, a, b)
         @staticmethod
         def IsFloatLessThanChecked(context: str, a: float, b: float) -> bool:
             """
             Get whether or not 'a' is LESS THAN (<) 'b'.
              Assert if NOT.
-             
-            :param str context. The calling context.
-            :param float a:
-            :param float b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (float): The first value to compare.
+                b       (float): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than 'b', False otherwise.
             """
             IsFloatChecked(context, a)
             IsFloatChecked(context, b)
@@ -483,25 +596,31 @@ class NPyMath:
             """
             Get whether or not 'a' is LESS THAN (<) 'b'.
              Assert if NOT.
-             
-            :param float a:
-            :param float b:
-            :return bool:
-            """
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsFloatLessThanChecked
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
 
-            return lib.IsFloatLessThanChecked(context, a, b)
+            Args:
+                a       (float): The first value to compare.
+                b       (float): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than 'b', False otherwise.
+            """
+            ThisType = __class__
+            context: str = __class__.IsFloatLessThanChecked2.__qualname__
+
+            return ThisType.IsFloatLessThanChecked(context, a, b)
         @staticmethod
         def IsFloatLessThanOrEqualChecked(context: str, a: float, b: float) -> bool:
             """
             Get whether or not 'a' is LESS THAN OR EQUAL (<=) 'b'.
              Assert if NOT.
-             
-            :param str context: The calling context.
-            :param float a:
-            :param float b:
-            :return bool:
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                
+            Args:
+                context (str): The calling context.
+                a       (float): The first value to compare.
+                b       (float): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than or equal to 'b', False otherwise.
             """
             IsFloatChecked(context, a)
             IsFloatChecked(context, b)
@@ -513,13 +632,15 @@ class NPyMath:
             """
             Get whether or not 'a' is LESS THAN OR EQUAL (<=) 'b'.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
              
-
-            :param float a:
-            :param float b:
-            :return bool:
+            Args:
+                a       (float): The first value to compare.
+                b       (float): The second value to compare.
+            Returns:
+                bool: True if 'a' is less than or equal to 'b', False otherwise.
             """
-            lib: NPyMath.FLibrary = NPyMath.FLibrary
-            context: str = NPyMath.FLibrary.NCached.NStr.IsFloatLessThanOrEqualChecked
+            ThisType = __class__
+            context: str = __class__.IsFloatLessThanOrEqualChecked2.__qualname__
 
-            return lib.IsFloatLessThanOrEqualChecked(context, a, b)
+            return ThisType.IsFloatLessThanOrEqualChecked(context, a, b)

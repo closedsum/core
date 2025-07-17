@@ -58,7 +58,7 @@
 // Module
 #include "Modules/ModuleManager.h"
 // SourceControl
-#include "SourceControlHelpers.h"
+#include "SourceControl/Tool/CsSourceControlTool.h"
 
 // Cache
 #pragma region
@@ -140,8 +140,6 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 
 	UCsManager_Time::Init(this);
 	UCsCoroutineScheduler::Init(this);
-
-	SourceControlTool.CheckOutFileImpl = &USourceControlHelpers::CheckOutFile;
 
 	NCsEnum::NStruct::NLayout::FLibrary::ConditionalAddLayout = &NCsEnum::NStruct::NLayout::NImpl::FLibrary::ConditionalAddLayout;
 	NCsEnum::NStruct::NLayout::FLibrary::AddPropertyChange = &NCsEnum::NStruct::NLayout::NImpl::FLibrary::AddPropertyChange;
@@ -387,6 +385,16 @@ void UCsEdEngine::OnPostInit()
 }
 
 #pragma endregion Init
+
+// ICsGetSourceControlTool
+#pragma region
+
+CsSourceControlToolType* UCsEdEngine::GetSourceControlTool()
+{
+	return CsSourceControlToolImpl::GetPtr();
+}
+
+#pragma endregion ICsGetSourceControlTool
 
 // PIE_Event
 #pragma region

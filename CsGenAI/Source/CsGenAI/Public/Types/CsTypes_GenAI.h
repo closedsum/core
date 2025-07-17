@@ -44,6 +44,8 @@ namespace NCsGenAIService
 UENUM(BlueprintType)
 enum class ECsTextModel : uint8
 {
+// OpenAI
+
 	GPT_4_1				UMETA(DisplayName = "gpt-4.1"),
 	GPT_4O				UMETA(DisplayName = "gpt-4o"),
 	GPT_4_1_MINI		UMETA(DisplayName = "gpt-4.1-mini"),
@@ -63,6 +65,8 @@ namespace NCsTextModel
 
 	namespace Ref
 	{
+	// OpenAI
+
 		extern CSGENAI_API const Type GPT_4_1;
 		extern CSGENAI_API const Type GPT_4O;
 		extern CSGENAI_API const Type GPT_4_1_MINI;
@@ -70,6 +74,8 @@ namespace NCsTextModel
 		extern CSGENAI_API const Type GPT_4_1_NANO;
 		extern CSGENAI_API const Type ECsTextModel_MAX;
 	}
+
+	FORCEINLINE uint8 GetOpenAI_StartIndex() { return (uint8)Type::GPT_4_1; }
 }
 
 #pragma endregion TextModel
@@ -83,6 +89,8 @@ namespace NCsTextModel
 UENUM(BlueprintType)
 enum class ECsTextToSpeechModel : uint8
 {
+// OpenAI
+
 	GPT_4O_MINI_TTS				UMETA(DisplayName = "gpt-4o-mini-tts"),
 	ECsTextToSpeechModel_MAX	UMETA(Hidden),
 };
@@ -98,9 +106,13 @@ namespace NCsTextToSpeechModel
 
 	namespace Ref
 	{
+	// OpenAI
+
 		extern CSGENAI_API const Type GPT_4O_MINI_TTS;
 		extern CSGENAI_API const Type ECsTextToSpeechModel_MAX;
 	}
+
+	FORCEINLINE uint8 GetOpenAI_StartIndex() { return (uint8)Type::GPT_4O_MINI_TTS; }
 }
 
 #pragma endregion TextToSpeechModel
@@ -114,6 +126,8 @@ namespace NCsTextToSpeechModel
 UENUM(BlueprintType)
 enum class ECsSpeechToTextModel : uint8
 {
+// OpenAI
+
 	WHISPER_1					UMETA(DisplayName = "whisper-1"),
 	ECsSpeechToTextModel_MAX	UMETA(Hidden),
 };
@@ -129,9 +143,13 @@ namespace NCsSpeechToTextModel
 
 	namespace Ref
 	{
+	// OpenAI
+
 		extern CSGENAI_API const Type WHISPER_1;
 		extern CSGENAI_API const Type ECsSpeechToTextModel_MAX;
 	}
+
+	FORCEINLINE uint8 GetOpenAI_StartIndex() { return (uint8)Type::WHISPER_1; }
 }
 
 #pragma endregion SpeechToTextModel

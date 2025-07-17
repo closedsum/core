@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Material/CsLibrary_Material_Anim.h"
-#include "CsCore.h"
 
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"

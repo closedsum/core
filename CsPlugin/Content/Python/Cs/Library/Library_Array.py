@@ -2,16 +2,20 @@
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
 
+# IMPORT
+
 # Library
 # - Cs/Library/Library_Common.py
 import Cs.Library.Library_Common as Cs_Library_Common
 
-# "typedefs" - library (py)
-CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
+# ALIAS
 
-# "typedefs" - functions
-checkf = CommonLibrary.checkf
-check  = CommonLibrary.check
+# "alias" - library (py)
+FPyCommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
+
+# "alias" - functions
+checkf = FPyCommonLibrary.checkf
+check  = FPyCommonLibrary.check
 
 class NPyArray:
     class FLibrary:
@@ -31,10 +35,13 @@ class NPyArray:
             """
             Get whether the Array 'a' is NOT empty or not.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread). 
 
-            :param str context:
-            :param list a:
-            :return: bool
+            Args:
+                context (str):  The calling context.
+                a       (list): The array to check.
+            Returns:
+                bool: True if 'a' is NOT empty, False otherwise.
             """
             # Check is array
             checkf(type(a) is list, context + ": a is type: " + str(type(a)) + " and NOT an array.")
@@ -46,8 +53,10 @@ class NPyArray:
             """
             Get whether the Array 'a' is NOT empty or not.
 
-            :param list a:
-            :return: bool
+            Args:
+                a (list): The array to check.
+            Returns:
+                bool: True if 'a' is NOT empty, False otherwise.
             """
             # Check is array
             if type(a) is not list:
@@ -57,14 +66,35 @@ class NPyArray:
                 return False
             return True
         @staticmethod
+        def IsNotEmptyRaiseError(context: str, a: list) -> bool:
+            """
+            Get whether the Array 'a' is NOT empty or not.
+             Assert if NOT.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+
+            Args:
+                context (str):  The calling context.
+                a       (list): The array to check.
+            Returns:
+                bool: True if 'a' is NOT empty, False otherwise.
+            """
+            # Check is array
+            checkf(type(a) is list, context + ": a is type: " + str(type(a)) + " and NOT an array.")
+            # Check array.length is NOT 0
+            checkf(len(a) != 0, context + ": a is EMPTY")
+            return True
+        @staticmethod
         def AllNotNoneChecked(context: str, a: list) -> bool:
             """
             Get whether any element in Array 'a' is None or not.
              Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread). 
             
-            :param str context;
-            :param list a:
-            :return: bool
+            Args:
+                context (str):  The calling context.
+                a       (list): The array to check.
+            Returns:
+                bool: True if any element in 'a' is NOT None, False otherwise.
             """
             # Check is array
             checkf(type(a) is list, context + ": a is type: " + str(type(a))+ " and NOT an array.")

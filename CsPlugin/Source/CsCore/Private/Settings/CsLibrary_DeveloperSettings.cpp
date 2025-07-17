@@ -3,47 +3,34 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsLibrary_DeveloperSettings.h"
-#include "CsCore.h"
 
 // Library
+#include "SourceControl/Tool/CsLibrary_SourceControlTool.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
-// Interface
-#include "SourceControl/Tool/CsGetSourceControlTool.h"
+
+// Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_2(NCsCore, NSettings, Library)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsCore::NSettings::FLibrary, TryUpdateDefaultConfigFile)
+CS_END_CACHED_FUNCTION_NAME_NESTED_2
+
+#pragma endregion Cached
 
 namespace NCsCore
 {
 	namespace NSettings
 	{
-		namespace NLibrary
-		{
-			namespace NCached
-			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCore::NSettings::FLibrary, TryUpdateDefaultConfigFile);
-				}
-			}
-		}
-
 		UCsDeveloperSettings* FLibrary::Get() { return GetMutableDefault<UCsDeveloperSettings>(); }
-
-		#define USING_NS_CACHED using namespace NCsCore::NSettings::NLibrary::NCached;
-		#define SET_CONTEXT(__FunctionName) using namespace NCsCore::NSettings::NLibrary::NCached; \
-			const FString& Context = Str::__FunctionName
 
 		bool FLibrary::TryUpdateDefaultConfigFile() 
 		{ 
-			SET_CONTEXT(TryUpdateDefaultConfigFile);
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(TryUpdateDefaultConfigFile);
 
 		#if WITH_EDITOR
-			typedef NCsSourceControl::NTool::FImpl SourceControlToolType;
-
-			ICsGetSourceControlTool* GetSourceControlTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetSourceControlTool);
-			SourceControlToolType* SourceControlTool	  = GetSourceControlTool->GetSourceControlTool(); 
-			
-			SourceControlTool->CheckOutFileImpl(Get()->GetDefaultConfigFilename(), false);
+			CsSourceControlToolLibrary::CheckOutFileChecked(Context, Get()->GetDefaultConfigFilename(), false);
 
 			return Get()->TryUpdateDefaultConfigFile();
 		#else
@@ -76,8 +63,5 @@ namespace NCsCore
 		const FString& FLibrary::GetSettingsEnumPath_VertexAnimNotify()							{ return NCsDeveloperSettings::NCached::Str::VertexAnimNotify; }
 
 		#pragma endregion Anim
-
-		#undef USING_NS_CACHED
-		#undef SET_CONTEXT
 	}
 }

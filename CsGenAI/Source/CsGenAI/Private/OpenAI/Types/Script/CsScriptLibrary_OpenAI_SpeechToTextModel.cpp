@@ -1,0 +1,24 @@
+// Copyright 2017-2025 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#include "OpenAI/Types/Script/CsScriptLibrary_OpenAI_SpeechToTextModel.h"
+
+#include UE_INLINE_GENERATED_CPP_BY_NAME(CsScriptLibrary_OpenAI_SpeechToTextModel)
+
+UCsScriptLibrary_OpenAI_SpeechToTextModel::UCsScriptLibrary_OpenAI_SpeechToTextModel(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+}
+
+using EnumMapType = EMCsOpenAI_SpeechToTextModel;
+using EnumType = ECsOpenAI_SpeechToTextModel;
+
+// Enum
+#pragma region
+
+FString UCsScriptLibrary_OpenAI_SpeechToTextModel::ToDisplayName(const EnumType& Enum)
+{
+	return EMCsOpenAI_SpeechToTextModel::Get().ToDisplayName(Enum);
+}
+
+#pragma endregion Enum

@@ -2,6 +2,7 @@
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
 import enum
+from typing import Dict
 
 # IMPORT
 
@@ -103,6 +104,7 @@ class NPyCommon:
             """
             Get whether or not 's' is a string.
              Assert if NOT. 
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
 
             Args:
                 context (str): The calling context.
@@ -122,6 +124,7 @@ class NPyCommon:
             """
             Get whether or not 's' is a string.
              Assert if NOT. 
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
 
             Args:
                 s:      (str): The string to check.
@@ -159,7 +162,7 @@ class NPyCommon:
             """
             Get whether or not 's' is NOT empty ('').
              Assert if NOT. 
-                NOTE: Allowed ONLY on Main Thread (Game Thread).
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
 
             Args:
                 context (str): The calling context.
@@ -292,6 +295,28 @@ class NPyCommon:
 
             if not result:
                 raise Exception(f"{context}: c: {type(c)} is NOT a class.")
+            return result
+        @staticmethod
+        def IsClassQualNameChecked(context: str, o: any, qual_name: str) -> bool:
+            """
+            Get whether or not 'o' is an object of a class with the given 'qual_name'.
+             Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+             
+            Args:
+                context     (str): The calling context.
+                o:          (any): The object to check.
+                qual_name:  (str): The class qual name to check.
+            Returns:
+                bool: True if 'o' is an object of a class with the given 'qual_name', False otherwise.
+            """ 
+            ThisType = __class__
+
+            ThisType.IsValidObjectChecked(context, o)
+            ThisType.IsStringChecked(context, qual_name)
+
+            result: bool = o.__class__.__qualname__ == qual_name
+            ThisType.checkf(result, f"{context}: o: {o.__class__.__qualname__} is NOT a class with the given qual_name: {qual_name}.")
             return result
         @staticmethod
         def IsInstanceOfChecked(context: str, a: any, c: type) -> bool:
@@ -468,7 +493,32 @@ class NPyCommon:
 
             ThisType.IsStringChecked2(context)
             result: bool = ThisType.IsValidDict(o)
-            ThisType.checkf(result, f"{context}: o: {str(o)} is NOT a Valid Dictionary.")
+            ThisType.checkf(result, f"{context}: o: {str(o)} of type: {type(o)} is NOT a Valid Dictionary.")
+            return result
+        @staticmethod
+        def IsValidDictRaiseError(context: str, o: Dict) -> bool:
+            """
+            Get whether or not 'o' is a valid dictionary / dict.
+             Assert if NOT.
+                NOTE: Allowed ONLY on Main Thread (Game Thread).
+
+            Args:
+                context (str):  The calling context.
+                o:      (Dict): The object to check is a dictionary.
+            Returns:
+                bool: True if 'o' is a valid dictionary / dict, False otherwise.
+            """ 
+            ThisType = __class__
+
+            try:
+                ThisType.IsStringRaiseError2(context)
+            except Exception as e:
+                raise e
+
+            result: bool = ThisType.IsValidDict(o)
+
+            if not result:
+                raise Exception(f"{context}: o: {str(o)} of type: {type(o)} is NOT a Valid Dictionary.")
             return result
         @staticmethod
         def DoesKeyExistChecked(context: str, d: dict, key: str) -> bool:

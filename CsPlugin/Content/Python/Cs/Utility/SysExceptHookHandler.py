@@ -49,7 +49,10 @@ class FPySysExceptHookHandler:
         sys.excepthook = sys.__original_excepthook__  
 
     def Assertion(self, message: str):
-        print(message)
+        traceback_details = "\n".join(traceback.extract_stack().format())
+
+        msg = f"caller: {' '.join(sys.argv)}\n{message}: \n{traceback_details}"
+        print(msg)
         FPySysExceptHookHandler.Get().Shutdown()
 
     @staticmethod

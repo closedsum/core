@@ -2,6 +2,9 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CsTypes_GenAI)
 
+// GenAIService
+#pragma region
+
 namespace NCsGenAIService
 {
 	using EnumMapType = EMCsGenAIService;
@@ -12,6 +15,11 @@ namespace NCsGenAIService
 		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsGenAIService_MAX, "MAX");
 	}
 }
+
+#pragma endregion GenAIService
+
+// TextModel
+#pragma region
 
 namespace NCsTextModel
 {
@@ -28,6 +36,11 @@ namespace NCsTextModel
 	}
 }
 
+#pragma endregion
+
+// TextToSpeechModel
+#pragma region
+
 namespace NCsTextToSpeechModel
 {
 	using EnumMapType = EMCsTextToSpeechModel;
@@ -39,6 +52,11 @@ namespace NCsTextToSpeechModel
 	}
 }
 
+#pragma endregion TextToSpeechModel
+
+// SpeechToTextModel
+#pragma region
+
 namespace NCsSpeechToTextModel
 {
 	using EnumMapType = EMCsSpeechToTextModel;
@@ -49,3 +67,5 @@ namespace NCsSpeechToTextModel
 		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpeechToTextModel_MAX, "MAX");
 	}
 }
+
+#pragma endregion SpeechToTextModel

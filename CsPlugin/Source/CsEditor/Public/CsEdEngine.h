@@ -321,21 +321,9 @@ private:
 #pragma region
 public:
 
-#define SourceControlToolType NCsSourceControl::NTool::FImpl
-	FORCEINLINE SourceControlToolType* GetSourceControlTool() { return &SourceControlTool; }
-#undef SourceControlToolType
+	CsSourceControlToolType* GetSourceControlTool();
 
 #pragma endregion ICsGetSourceControlTool
-
-// GetSourceControlTool
-#pragma region
-private:
-
-#define SourceControlToolType NCsSourceControl::NTool::FImpl
-	SourceControlToolType SourceControlTool;
-#undef SourceControlToolType
-
-#pragma endregion GetSourceControlTool
 
 // ICsGetLevelEditorTool
 #pragma region

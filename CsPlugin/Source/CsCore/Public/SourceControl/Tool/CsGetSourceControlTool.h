@@ -12,27 +12,30 @@ namespace NCsSourceControl
 {
 	namespace NTool
 	{
-		struct CSCORE_API FImpl
+		struct CSCORE_API ITool
 		{
+		public:
+
+			virtual ~ITool() {}
+
 		public:
 
 			/**
 			* Use currently set source control provider to check out a file.
 			* @note	Blocks until action is complete.
 			*
-			* @param	InFile		The file to check out - can be either fully qualified path, relative path, long package name, asset path or export text path (often stored on clipboard)
-			* @param	bSilent		if false (default) then write out any error info to the Log. Any error text can be retrieved by LastErrorMsg() regardless.
+			* @param	InFile		The file to check out - can be either fully qualified path, 
+			*						relative path, long package name, asset path or export text path (often stored on clipboard)
+			* @param	bSilent		(optional)	if false (default) then write out any error info to the Log. 
+			*						Any error text can be retrieved by LastErrorMsg() regardless.
 			* @return	true if succeeded, false if failed and can call LastErrorMsg() for more info.
 			*/
-			bool(*CheckOutFileImpl)(const FString& /*InFile*/, bool /*bSilent=false*/);
-
-			FImpl() :
-				CheckOutFileImpl(nullptr)
-			{
-			}
+			virtual bool CheckOutFile(const FString& InFile, bool bSilent=false) = 0;
 		};
 	}
 }
+
+using CsSourceControlToolType = NCsSourceControl::NTool::ITool;
 
 UINTERFACE(Blueprintable)
 class CSCORE_API UCsGetSourceControlTool : public UInterface
@@ -46,9 +49,5 @@ class CSCORE_API ICsGetSourceControlTool
 
 public:
 
-#define SourceControlToolType NCsSourceControl::NTool::FImpl
-
-	virtual SourceControlToolType* GetSourceControlTool() = 0;
-
-#undef SourceControlToolType
+	virtual CsSourceControlToolType* GetSourceControlTool() = 0;
 };

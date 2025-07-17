@@ -3,11 +3,14 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
+#include "CsMacro_Cached.h"
 #include "Settings/CsTypes_Settings_Enum.h"
 #include "Types/Enum/CsEnumStructLayoutHistory.h"
 
 class UCsDeveloperSettings;
 class UObject;
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME_NESTED_2(NCsCore, NSettings, Library)
 
 namespace NCsCore
 {
@@ -17,6 +20,10 @@ namespace NCsCore
 		*/
 		class CSCORE_API FLibrary
 		{
+		private:
+
+			CS_USING_CACHED_FUNCTION_NAME_NESTED_2(NCsCore, NSettings, Library);
+
 		public:
 			
 			static UCsDeveloperSettings* Get();

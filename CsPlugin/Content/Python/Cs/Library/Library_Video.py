@@ -242,6 +242,7 @@ class NPyVideo:
                 Info: Dict[str, any] = {}
                 """
                 The information of the video to download.
+                 const | NOT mutable
                 """
 
                 def __init__(self):
@@ -283,6 +284,15 @@ class NPyVideo:
                 params:    (FDownload.FParams): The parameters for the download.
             Returns:
                 Dict[str, any]: The result of the download.
+                 Format:
+                  Dict["video_type"]: str
+                   - The type of video.
+                  Dict["video_has_audio"]: bool
+                   - Whether the video has audio.
+                  Dict["video_title"]: str | None
+                   - The title of the video.
+                  Dict["video_file_path"]: str
+                   - The path to the downloaded video file.
             """
             ThisType = __class__
 
@@ -395,6 +405,15 @@ class NPyVideo:
                 params:    (FDownload.FParams): The parameters for the download.
             Returns:
                 Dict[str, any]: The result of the download.
+                 Format:
+                  Dict["video_type"]: str
+                   - The type of video.
+                  Dict["video_has_audio"]: bool
+                   - Whether the video has audio.
+                  Dict["video_title"]: str | None
+                   - The title of the video.
+                  Dict["video_file_path"]: str
+                   - The path to the downloaded video file.
             """
             ThisType = __class__
 
@@ -617,6 +636,15 @@ class NPyVideo:
                 params:    (FDownload.FParams): The parameters for the download.
             Returns:
                 Dict[str, any]: The result of the download.
+                 Format:
+                  Dict["video_type"]: str
+                   - The type of video.
+                  Dict["video_has_audio"]: bool
+                   - Whether the video has audio.
+                  Dict["video_title"]: str | None
+                   - The title of the video.
+                  Dict["video_file_path"]: str
+                   - The path to the downloaded video file.
             """
             # TODO: FUTURE: change to have params
             ThisType = __class__
@@ -721,7 +749,9 @@ class NPyVideo:
 
             try:
                 audio_data = f.read()
+                f.close()
             except Exception as e:
+                f.close()
                 raise Exception(f"{context}: Failed to read audio data from buffered reader. Error: {e}")
             
             # Convert Audio to String
@@ -966,19 +996,23 @@ class NPyVideo:
             Returns:
                 Dict[str, any]: The info of the video.
             """
+            ThisType = __class__
+
+            video_type: str = ""
+
             try:
-                IsStringNotEmptyRaiseError(context, url)
+                video_type = ThisType.GetVideoType(context, url)
             except Exception as e:
                 raise e
         
             info: Dict[str, any] = {}
 
             # TikTok
-            if url.startswith("https://www.tiktok.com/") or url.startswith("http://wmw.tiktok.com/"):
+            if video_type == "TikTok":
                 # NOTE: TODO: Implement TikTok Info later
                 return info
             # YouTube
-            if url.startswith("https://www.youtube.com/") or url.startswith("http://www.youtube.com/"):
+            if video_type == "YouTube":
                 ydl_opts = {
                     'download': False,
                     'ffmpeg_location': FFMPEG_PATH,
@@ -1244,6 +1278,9 @@ class NPyVideo:
                 params:    (FDownload.FParams): The parameters for the download.
             Returns:
                 Dict[str, any]: The info of the video.
+                Format:
+                  Dict["audio_path"] -> str
+                   - The path to the downloaded audio file.
             """      
             ThisType = __class__
 
@@ -1358,8 +1395,6 @@ class NPyVideo:
             }
 
             # Download Audio
-            start_time: datetime = datetime.now()
-
             try:
                 with yt.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([url])
@@ -1370,7 +1405,6 @@ class NPyVideo:
 
             result: Dict[str, any] = {}
             result["audio_path"] = audio_path
-            result["duration"] = datetime.now() - start_time
 
             return result
      
@@ -1393,6 +1427,9 @@ class NPyVideo:
                 params:    (FDownload.FParams): The parameters for the download.
             Returns:
                 Dict[str, any]: The info of the audio of the video.
+                 Format:
+                  Dict["audio_path"] -> str
+                   - The path to the downloaded audio file.
             """
             ThisType = __class__
   

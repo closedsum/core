@@ -79,9 +79,11 @@ class NPyArray:
                 bool: True if 'a' is NOT empty, False otherwise.
             """
             # Check is array
-            checkf(type(a) is list, context + ": a is type: " + str(type(a)) + " and NOT an array.")
+            if type(a) is not list:
+                raise Exception(context + ": a is type: " + str(type(a)) + " and NOT an array.")    
             # Check array.length is NOT 0
-            checkf(len(a) != 0, context + ": a is EMPTY")
+            if len(a) == 0:
+                raise Exception(context + ": a is EMPTY")
             return True
         @staticmethod
         def AllNotNoneChecked(context: str, a: list) -> bool:

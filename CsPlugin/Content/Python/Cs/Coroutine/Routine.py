@@ -37,6 +37,9 @@ UpdateGroupLibrary	= ue.CsScriptLibrary_UpdateGroup
 TimeLibrary 		= ue.CsScriptLibrary_Time
 RoutineLibrary 		= ue.CsScriptLibrary_Routine
 
+# "alias" - struct (c++)
+FCsDeltaTime = ue.CsDeltaTime
+
 # "alias" - library (py)
 CommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
 
@@ -89,8 +92,8 @@ class FPyRoutine:
 
 		# Time
 		self.StartTime: ue.CsTime 				= ue.CsTime()
-		self.ElapsedTime: ue.CsDeltaTime 		= ue.CsDeltaTime()
-		self.DeltaTime: ue.CsDeltaTime 			= ue.CsDeltaTime()
+		self.ElapsedTime: FCsDeltaTime 		    = FCsDeltaTime()
+		self.DeltaTime: FCsDeltaTime 			= FCsDeltaTime()
 		self.TickCount: int 					= 0
 		self.Delay: float						= 0.0
 		self.bDeltaTimeScale: bool				= False
@@ -174,8 +177,11 @@ class FPyRoutine:
 	def GetIndex(self) -> int:
 		return self.Index
 
-	def GetDeltaTime(self) -> ue.CsDeltaTime:
+	def GetDeltaTime(self) -> FCsDeltaTime:
 		return self.DeltaTime
+	
+	def GetElapsedTime(self) -> FCsDeltaTime:
+		return self.ElapsedTime
 	
 	def AddOnEnd(self, fn: any):
 		onEnd = self.OnEndType()
@@ -216,7 +222,7 @@ class FPyRoutine:
 	def StartUpdate(self):
 		self.State = StateType.Update
 
-	def Update(self, deltaTime: ue.CsDeltaTime):
+	def Update(self, deltaTime: FCsDeltaTime):
 		self.bUpdateComplete = False
 		
 		# Check for Abort Messages
@@ -577,8 +583,8 @@ class FPyRoutine:
 
 		# Time
 		self.StartTime = ue.CsTime()
-		self.ElapsedTime = ue.CsDeltaTime()
-		self.DeltaTime = ue.CsDeltaTime()
+		self.ElapsedTime = FCsDeltaTime()
+		self.DeltaTime = FCsDeltaTime()
 		self.TickCount = 0
 		self.Delay = 0.0
 

@@ -7,6 +7,8 @@
 # Library
 # - Cs/Library/Library_Common.py
 import Cs.Library.Library_Common as Cs_Library_Common
+# - Cs/Utility/Log.py
+import Cs.Utility.Log as Cs_Utility_Log
 # Variable
 import Cs.Managers.Variable.GlobalVariable as Cs_GlobalVariable
 
@@ -16,7 +18,11 @@ import Cs.Managers.Variable.GlobalVariable as Cs_GlobalVariable
 FPyCommonLibrary = Cs_Library_Common.NPyCommon.FLibrary
 
 # "alias" - class (py)
+FPyLog = Cs_Utility_Log.FPyLog
 FPyGlobalVariable = Cs_GlobalVariable.FPyGlobalVariable
+
+# "alias" - enum (py)
+LogType = FPyLog.EType
 
 # "alias" - function (py)
 checkf = FPyCommonLibrary.checkf
@@ -34,6 +40,7 @@ class FPyManager_GlobalVariable:
         else:
             FPyManager_GlobalVariable._instance = self
 
+        self.LogType = LogType.PRINT
         self.IntVariables: dict[str, FPyGlobalVariable[int]] = {}
 
     @staticmethod
@@ -49,6 +56,9 @@ class FPyManager_GlobalVariable:
     def Reset(self):
         for key, variable in self.IntVariables.items():
             variable.Reset()
+
+    def SetLogType(self, log_type: LogType):
+        self.LogType = log_type
 
     def AddInt(self, key: str, default_value: int) -> FPyGlobalVariable[int]:
         """
@@ -117,10 +127,30 @@ class FPyManager_GlobalVariable:
             ASSUME: The Global Variable associated with key is meant for logging.
             ASSUME: The Global Variable is an integer.
             ASSUME: Showing a log means the Global Variable == 1 (SHOW_LOG)
+
+        Args:
+            key: (str): The key of the Global Variable to check.
+
+        Returns:
+            (bool): True if the log should be shown, False otherwise.
         """
         context: str = __class__.CanShowLog.__qualname__
 
         checkf(key in self.IntVariables, f"{context}: Global Variable: {key} has NOT been added.")
         return self.IntVariables[key].GetValue() == SHOW_LOG
+    
+    def ConditionalShowLog(self, key: str, message: str):
+        """
+        Show a log if the Global Variable associated with key is meant for logging.
+            ASSUME: The Global Variable associated with key is meant for logging.
+            ASSUME: The Global Variable is an integer.
+            ASSUME: Showing a log means the Global Variable == 1 (SHOW_LOG)
+
+        Args:
+            key:       (str): The key of the Global Variable to check.
+            message:   (str): The message to show if the log should be shown.
+        """
+        if self.CanShowLog(key):
+            FPyLog.Log(self.LogType, message)
 
 _PRIVATE_FPyManager_GlobalVariable: FPyManager_GlobalVariable = FPyManager_GlobalVariable.Get()

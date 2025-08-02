@@ -1,7 +1,7 @@
 # Copyright 2017-2024 Closed Sum Games, LLC. All Rights Reserved.
 # MIT License: https://opensource.org/license/mit/
 # Free for use and distribution: https://github.com/closedsum/core
-
+import unreal as ue
 # IMPORT
 
 # Library
@@ -114,22 +114,22 @@ class NPyArray:
             return len(a) == size
         @staticmethod
         def IsSizeChecked(context: str, a: list, size: int) -> bool:
-            lib: NPyArray.FLibrary = NPyArray.FLibrary
+            ThisType = __class__
 
-            lib.IsNotEmptyChecked(context, a)
-            CommonLibrary.IsIntChecked(context, size)
+            ThisType.IsNotEmptyChecked(context, a)
+            FPyCommonLibrary.IsIntChecked(context, size)
             checkf(len(a) == size, context + ": a is NOT of length: " + size)
 
             return True
         @staticmethod
         def AreAllElements_Class_Checked(context: str, a: list, classType: type) -> bool:
-            lib: NPyArray.FLibrary = NPyArray.FLibrary
+            ThisType = __class__
 
             # Check is array
             checkf(type(a) is list, context + ": a is type: " + type(a) + " and NOT an array.")
 
             for item in a:
-                check(CommonLibrary.IsInstanceOfChecked(context, item, classType))
+                check(FPyCommonLibrary.IsInstanceOfChecked(context, item, classType))
             return True
         @staticmethod
         def AreAllElements_Class(a: list, classType: type) -> bool:
@@ -143,10 +143,10 @@ class NPyArray:
             return True
         @staticmethod
         def Is2dChecked(context: str, a: list) -> bool:
-            lib: NPyArray.FLibrary = NPyArray.FLibrary
+            ThisType = __class__
 
             checkf(type(a) is list, context + ": a is type: " + type(a) + " and NOT an array.")
-            lib.IsNotEmptyChecked(context, a)
+            ThisType.IsNotEmptyChecked(context, a)
             checkf(type(a[0]) is list, context + ": a is NOT a 2d array.")
             return True
         @staticmethod
@@ -160,41 +160,39 @@ class NPyArray:
             return True
         @staticmethod
         def AreAllElements2d_Class_Checked(context: str, a: list, classType: type) -> bool:
-            lib: NPyArray.FLibrary = NPyArray.FLibrary
+            ThisType = __class__
 
-            lib.Is2dChecked(context, a)
+            ThisType.Is2dChecked(context, a)
 
             for a2 in a:
                 for item in a2:
-                    check(CommonLibrary.IsInstanceOfChecked(context, item, classType))
+                    check(FPyCommonLibrary.IsInstanceOfChecked(context, item, classType))
             return True
         @staticmethod
         def AreAllElements2d_Class(a: list, classType: type) -> bool:
-            lib: NPyArray.FLibrary = NPyArray.FLibrary
+            ThisType = __class__
 
             if isinstance(classType, type) == False:
                 return False
-            if lib.Is2d(a) == False:
+            if ThisType.Is2d(a) == False:
                 return False
 
             for a2 in a:
                 for item in a2:
-                    if CommonLibrary.IsInstanceOf(item, classType) == False:
+                    if FPyCommonLibrary.IsInstanceOf(item, classType) == False:
                         return False
             return True
         @staticmethod
         def IsNotEmptyAndAllElements_Class_Checked(context: str, a: list, classType: type) -> bool:
-            lib: NPyArray.FLibrary = NPyArray.FLibrary
+            ThisType = __class__
 
-            check(lib.IsNotEmptyChecked(context, a))
+            check(ThisType.IsNotEmptyChecked(context, a))
 
             for item in a:
-                check(CommonLibrary.IsInstanceOfChecked(context, item, classType))
+                check(FPyCommonLibrary.IsInstanceOfChecked(context, item, classType))
             return True
         @staticmethod
         def IsNotEmptyAndAllElements_Class(a: list, classType: type) -> bool:
-            lib: NPyArray.FLibrary = NPyArray.FLibrary
-
             if type(a) is not list:
                 return False
             if len(a) == 0:
@@ -208,19 +206,19 @@ class NPyArray:
             return True
         @staticmethod
         def IsNotEmptyAndAllElements2d_Class_Checked(context: str, a: list, classType: any) -> bool:
-            lib: NPyArray.FLibrary = NPyArray.FLibrary
+            ThisType = __class__
 
-            check(lib.Is2dChecked(context, a))
+            check(ThisType.Is2dChecked(context, a))
 
             for a2 in a:
                 for item in a2:
-                    check(CommonLibrary.IsInstanceOfChecked(context, item, classType))
+                    check(FPyCommonLibrary.IsInstanceOfChecked(context, item, classType))
             return True
         @staticmethod
         def IsNotEmptyAndAllElements2d_Class(a: list, classType: type) -> bool:
-            lib: NPyArray.FLibrary = NPyArray.FLibrary
+            ThisType = __class__
 
-            if lib.Is2d(a) == False:
+            if ThisType.Is2d(a) == False:
                 return False
 
             for a2 in a:
@@ -228,3 +226,10 @@ class NPyArray:
                     if isinstance(item, classType) == False:
                         return False
             return True
+        @staticmethod
+        def CopyFromTArrayChecked(context: str, in_list: list, in_arrary: ue.Array):
+            # TODO: Do checks
+            in_list.clear()
+
+            for a in in_arrary:
+                in_list.append(a)

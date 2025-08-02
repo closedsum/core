@@ -54,6 +54,7 @@ check 				 = CommonLibrary.check
 checkf 				 = CommonLibrary.checkf
 IsValidObject 		 = CommonLibrary.IsValidObject
 IsValidObjectChecked = CommonLibrary.IsValidObjectChecked
+IsEnum 				= CommonLibrary.IsEnum
 
 # "alias" - types (py)
 PayloadType		= Cs_Types_Coroutine.NPyCoroutine.NPayload.FImpl
@@ -223,6 +224,8 @@ class FPyRoutine:
 		self.State = StateType.Update
 
 	def Update(self, deltaTime: FCsDeltaTime):
+		context: str = __class__.Update.__qualname__
+
 		self.bUpdateComplete = False
 		
 		# Check for Abort Messages
@@ -292,7 +295,7 @@ class FPyRoutine:
 					self.WaitForFrame	  = 0
 					self.WaitForFrameType = None
 
-					checkf(False, "FPyRoutine.Update: yield return value of type 'FPyRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.")
+					checkf(False, f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. yield return value of type 'FPyRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.")
 					
 				self.WaitForFrameCounter += 1
 				
@@ -312,7 +315,7 @@ class FPyRoutine:
 					self.WaitForTime     = 0.0
 					self.WaitForTimeType = None
 
-					checkf(False, "FPyRoutine.Update: yield return value of type 'FPyRoutine.TimeType' is used for WaitForTime. yield return value must be >= 0.0f.")
+					checkf(False, f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. yield return value of type 'FPyRoutine.TimeType' is used for WaitForTime. yield return value must be >= 0.0f.")
 					
 			self.WaitForTimeTimer += deltaTime.time
 			
@@ -352,7 +355,7 @@ class FPyRoutine:
 				self.WaitForListenMessage = self.WaitForListenMessageType.Get()
 				
 				if self.WaitForListenMessage == INVALID_LISTEN_MESSAGE:
-					checkf(False, "FJsRoutine.Update: yield return value of type 'FJsRoutine.ListenMessageType' is used for WaitForListenMessage. yield return value must NOT be empty.")
+					checkf(False, f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. yield return value of type 'FJsRoutine.ListenMessageType' is used for WaitForListenMessage. yield return value must NOT be empty.")
 					
 			move = self.WaitForListenMessage == INVALID_LISTEN_MESSAGE
 			
@@ -406,7 +409,7 @@ class FPyRoutine:
 
 		done: bool = False
 
-		if (isinstance(result, EndReasonType)) and (result == EndReasonType.EndOfExecution):
+		if (IsEnum(result, EndReasonType)) and (result == EndReasonType.EndOfExecution):
 			done = True
 
 		if done == False:
@@ -421,7 +424,7 @@ class FPyRoutine:
 				# and the yieldCommand get interpretted as WaitForFrame
 				# Format: yield {WaitForTime: 'seconds'}
 				if "WaitForTime" in yieldCommand:
-					checkf(CommonLibrary.IsIntOrFloat(yieldCommand["WaitForTime"]), "FPyRoutine.Update: yieldCommand with key 'WaitForTime' does NOT have a numeric value.")
+					checkf(CommonLibrary.IsIntOrFloat(yieldCommand["WaitForTime"]), f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. yieldCommand with key 'WaitForTime' does NOT have a numeric value.")
 
 					waitForTimeByObject = True
 				# WaitForEnum
@@ -448,7 +451,7 @@ class FPyRoutine:
 				if self.WaitForFrame < 0:
 					self.WaitForFrame = 0
 
-					checkf(False, "FPyRoutine.Update: yield return value of type 'int' is used for WaitForFrame. yield return value must be >= 0.")
+					checkf(False, f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. yield return value of type 'int' is used for WaitForFrame. yield return value must be >= 0.")
 				else:
 					self.bWaitForFrame		 = True
 					self.WaitForFrameCounter = 0
@@ -459,7 +462,7 @@ class FPyRoutine:
 				if self.WaitForFrameType.Get() < 0:
 					self.WaitForFrameType = None
 
-					checkf(False, "FPyRoutine.Update: yield return value of type 'FPyRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.")
+					checkf(False, f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. yield return value of type 'FPyRoutine.FrameType' is used for WaitForFrame. yield return value must be >= 0.")
 				else:
 					self.bWaitForFrame		 = True
 					self.WaitForFrameCounter = 0
@@ -470,7 +473,7 @@ class FPyRoutine:
 				if self.WaitForTime < 0.0:
 					self.WaitForTime = 0.0
 
-					checkf(False, "FPyRoutine.Run: yield return value of type 'float' is used for WaitForTime. yield return value must be >= 0.0f.")
+					checkf(False, f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. yield return value of type 'float' is used for WaitForTime. yield return value must be >= 0.0f.")
 				else:
 					self.bWaitForTime	  = True
 					self.WaitForTimeTimer = 0.0
@@ -481,7 +484,7 @@ class FPyRoutine:
 				if self.WaitForTimeType.Get() < 0.0:
 					self.WaitForTimeType = None
 
-					checkf(False, "FPyRoutine.Run: yield return value of type 'FPyRoutine.FTimeType' is used for WaitForTime. yield return value must be >= 0.0f.")
+					checkf(False, f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. yield return value of type 'FPyRoutine.FTimeType' is used for WaitForTime. yield return value must be >= 0.0f.")
 				else:
 					self.bWaitForTime	  = True
 					self.WaitForTimeTimer = 0.0
@@ -509,7 +512,7 @@ class FPyRoutine:
 				self.WaitForListenMessage = yieldCommand
 				
 				if self.WaitForListenMessage == INVALID_LISTEN_MESSAGE:
-					checkf(False, "FPyRoutine.Update: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.")
+					checkf(False, f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.")
 				else:
 					self.bWaitForListenMessage = True
 			# WaitForListenMessageType
@@ -517,7 +520,7 @@ class FPyRoutine:
 				self.WaitForListenMessageType = yieldCommand
 				
 				if self.WaitForListenMessageType.Get() == INVALID_LISTEN_MESSAGE:
-					checkf(False, "FPyRoutine.Update: yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.")
+					checkf(False, f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. yield return value of type 'string' is used for WaitForListenMessage. yield return value must NOT be empty.")
 				else:
 					self.bWaitForListenMessage = True
 			# WaitForEnum
@@ -534,7 +537,7 @@ class FPyRoutine:
 				pass
             # INVALID Type
 			else:
-				checkf(False, "FPyRoutine.Update: Invalid Type: " + str(type(yieldCommand)) + " for yield. yield return value must be of type: int, FPyRoutine.FrameType, float, FJsRoutine.TimeType, FJsRoutine, FJsRoutine.BoolType, string, or FJsRoutine.ListenMessageType.")
+				checkf(False, f"{context}: Coroutine: {self.CoroutineImpl.__qualname__}. Invalid Type: {type(yieldCommand)} for yield. yield return value must be of type: int, FPyRoutine.FrameType, float, FJsRoutine.TimeType, FJsRoutine, FJsRoutine.BoolType, string, or FJsRoutine.ListenMessageType.")
         # Finished
 		else:
 			if (self.EndReason == EndReasonType.EEndReason_MAX) and (self.TickCount > 0):

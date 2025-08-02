@@ -4,6 +4,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
+#include "CsMacro_Cached.h"
 #include "Managers/Performance/CsManager_Performance_Delegates.h"
 
 #include "CsManager_Performance.generated.h"
@@ -13,11 +14,16 @@ struct FCsRoutine;
 class UUserWidget;
 class ICsPerformanceUI;
 
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsManager_Performance)
+
 UCLASS(transient, BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSPERFORMANCE_API UCsManager_Performance : public UObject
 {
 	GENERATED_UCLASS_BODY()
-public:
+
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsManager_Performance);
 
 // Singleton
 #pragma region

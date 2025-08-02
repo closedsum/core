@@ -104,3 +104,54 @@ namespace NCsOpenAI_SpeechToTextModel
 }
 
 #pragma endregion OpenAI: SpeechToTextModel
+
+// OpenAI: Voice
+#pragma region
+
+/**
+* Describes the voice use for any Audio generated from OpenAI's Text to Speech Service.
+*/
+UENUM(BlueprintType)
+enum class ECsOpenAI_Voice : uint8
+{
+	ALLOY				UMETA(DisplayName = "alloy"),
+	ASH					UMETA(DisplayName = "ash"),
+	BALLAD				UMETA(DisplayName = "ballad"),
+	CORAL				UMETA(DisplayName = "coral"),
+	ECHO				UMETA(DisplayName = "echo"),
+	FABLE				UMETA(DisplayName = "fable"),
+	ONYX				UMETA(DisplayName = "onyx"),
+	NOVA				UMETA(DisplayName = "nova"),
+	SAGE				UMETA(DisplayName = "sage"),
+	SHIMMER				UMETA(DisplayName = "shimmer"),
+	VERSE				UMETA(DisplayName = "verse"),
+	ECsOpenAI_Voice_MAX	UMETA(Hidden),
+};
+
+struct CSGENAI_API EMCsOpenAI_Voice : public TCsEnumMap<ECsOpenAI_Voice>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsOpenAI_Voice, ECsOpenAI_Voice)
+};
+
+namespace NCsOpenAI_Voice
+{
+	using Type = ECsOpenAI_Voice;
+
+	namespace Ref
+	{
+		extern CSGENAI_API const Type ALLOY;
+		extern CSGENAI_API const Type ASH;
+		extern CSGENAI_API const Type BALLAD;
+		extern CSGENAI_API const Type CORAL;
+		extern CSGENAI_API const Type ECHO;
+		extern CSGENAI_API const Type FABLE;
+		extern CSGENAI_API const Type ONYX;
+		extern CSGENAI_API const Type NOVA;
+		extern CSGENAI_API const Type SAGE;
+		extern CSGENAI_API const Type SHIMMER;
+		extern CSGENAI_API const Type VERSE;
+		extern CSGENAI_API const Type ECsOpenAI_Voice_MAX;
+	}
+}
+
+#pragma endregion OpenAI: Voice

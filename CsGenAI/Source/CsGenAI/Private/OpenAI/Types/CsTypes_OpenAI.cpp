@@ -36,7 +36,7 @@ namespace NCsOpenAI_TextToSpeechModel
 	}
 }
 
-#pragma endregion TextToSpeechModel
+#pragma endregion OpenAI: TextToSpeechModel
 
 // OpenAI: SpeechToTextModel
 #pragma region
@@ -52,4 +52,30 @@ namespace NCsOpenAI_SpeechToTextModel
 	}
 }
 
-#pragma endregion SpeechToTextModel
+#pragma endregion OpenAI: SpeechToTextModel
+
+// OpenAI: Voice
+#pragma region
+
+namespace NCsOpenAI_Voice
+{
+	using EnumMapType = EMCsOpenAI_Voice;
+
+	namespace Ref
+	{
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ALLOY, "allow");
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ASH, "ash");
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(BALLAD, "ballad");
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(CORAL, "coral");
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECHO, "echo");
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(FABLE, "fable");
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ONYX, "onyx");
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(NOVA, "nova");
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(SAGE, "sage");
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(SHIMMER, "shimmer");
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(VERSE, "verse");	
+		CSGENAI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsOpenAI_Voice_MAX, "MAX");
+	}
+}
+
+#pragma endregion OpenAI: Voice

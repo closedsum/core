@@ -17,21 +17,23 @@
 #include "Game/CsLibrary_GameInstance.h"
 #endif // #if WITH_EDITOR
 
+// Cached
+#pragma region
+
+CS_START_CACHED_FUNCTION_NAME_NESTED_2(NCsPerformance, NManager, Library)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsPerformance::NManager::FLibrary, GetSafeContextRoot)
+	CS_DEFINE_CACHED_FUNCTION_NAME(NCsPerformance::NManager::FLibrary, GetSafe)
+CS_END_CACHED_FUNCTION_NAME_NESTED_2
+
+#pragma endregion Cached
+
 namespace NCsPerformance
 {
 	namespace NManager
 	{
-		namespace NLibrary
-		{
-			namespace NCached
-			{
-				namespace Str
-				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPerformance::NManager::FLibrary, GetSafeContextRoot);
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPerformance::NManager::FLibrary, GetSafe);
-				}
-			}
-		}
+		using LogClassType = NCsPerformance::FLog;
+
+		CS_DEFINE_STATIC_LOG_LEVEL(FLibrary, LogClassType::Warning);
 
 		// ContextRoot
 		#pragma region
@@ -43,16 +45,14 @@ namespace NCsPerformance
 			return CsGameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			return CsGameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
 		{
-			using namespace NCsPerformance::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeContextRoot;
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafeContextRoot);
 
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
@@ -73,7 +73,7 @@ namespace NCsPerformance
 			return Manager_Performance;
 		}
 
-		UCsManager_Performance* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &NCsUI::FLog::Warning*/)
+		UCsManager_Performance* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -92,7 +92,7 @@ namespace NCsPerformance
 			return Manager_Performance;
 		}
 
-		UCsManager_Performance* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) /*= &NCsUI::FLog::Warning*/)
+		UCsManager_Performance* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, CS_FN_PARAM_DEFAULT_LOG_LEVEL_COMMENT)
 		{
 			OutSuccess = false;
 
@@ -117,9 +117,7 @@ namespace NCsPerformance
 
 		UCsManager_Performance* FLibrary::GetSafe(const UObject* ContextObject)
 		{
-			using namespace NCsPerformance::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafe;
+			CS_SET_CONTEXT_AS_FUNCTION_NAME(GetSafe);
 
 			return GetSafe(Context, ContextObject, nullptr);
 		}

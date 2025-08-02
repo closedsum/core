@@ -125,6 +125,35 @@ class NPyVideo:
             return True
 
         @staticmethod
+        def IsValidFileNameRaiseError(context: str, file_name: str) -> bool:
+            """
+            Check if a given file name is a valid file name.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+
+            Example:
+                NPyVideo.FLibrary.IsValidFileNameRaiseError(context, "test.mp4")
+
+            Args:
+                context:   (str): The calling context.
+                file_name: (str): The file name to check.
+            Returns:
+                bool: True if the file name is a valid file name, False otherwise.
+            """
+            ThisType = __class__
+            try:
+                IsStringNotEmptyRaiseError(context, file_name)
+            except Exception as e:
+                raise e
+            
+            parts = file_name.split(".")
+            
+            if len(parts) != 2:
+                raise Exception(f"{context}: file_name: {file_name} is NOT a valid file name.")
+            
+            extension: str = "." + parts[1]
+            return ThisType.IsValidExtensionRaiseError(context, extension)
+        
+        @staticmethod
         def GetDurationRaiseError(context: str, file_path: str) -> float:
             """
             Get the duration of a video.
@@ -190,7 +219,13 @@ class NPyVideo:
                 return "TikTok"
             # YouTube
             if url.startswith("https://www.youtube.com/") or url.startswith("http://www.youtube.com/"):
-                return "YouTube"        
+                return "YouTube"
+            # Other
+            if url.startswith("https://") or url.startswith("http://"):
+                # STATIC
+                # TODO: NOTE: For now only support .mp4
+                if url.endswith(".mp4"):
+                    return "STATIC"        
             return ""
             
         @staticmethod
@@ -221,6 +256,20 @@ class NPyVideo:
                 raise Exception(f"{context}: URL: {url} is NOT a valid YouTube URL.")
             return True
 
+        @staticmethod
+        def IsURL_STATIC_RaiseError(context: str, url: str) -> bool:
+            """
+            Check if a URL is a valid STATIC URL.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+            """
+            ThisType = __class__
+
+            video_type: str = ThisType.GetVideoType(context, url)
+
+            if video_type != "STATIC":
+                raise Exception(f"{context}: URL: {url} is NOT a valid STATIC URL.")
+            return True
+        
         class FDownload:
             class FParams:
                 """
@@ -235,6 +284,10 @@ class NPyVideo:
                 """
                 The path to save the video to.
                 """
+                bDeleteExisting: bool = True
+                """
+                Whether to delete the existing file at the SavePath if it exists.
+                """
                 MaxTotalPixels: int = 0
                 """
                 The maximum total number of pixels of the video.
@@ -248,12 +301,14 @@ class NPyVideo:
                 def __init__(self):
                     self.URL: str = ""
                     self.SavePath: str = ""
+                    self.bDeleteExisting: bool = True
                     self.MaxTotalPixels: int = 1920 * 1080
                     self.Info: Dict[str, any] = {}
 
                 def Reset(self):
                     self.URL = ""
                     self.SavePath = ""
+                    self.bDeleteExisting: bool = True
                     self.MaxTotalPixels: int = 1920 * 1080
                     self.Info = {}
 

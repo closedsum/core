@@ -5,10 +5,14 @@
 #include "Blueprint/UserWidget.h"
 // Interface
 #include "UI/CsPerformanceUI.h"
+// Types
+#include "CsMacro_Cached.h"
 
 #include "CsPerformanceUIImpl.generated.h"
 
 class UTextBlock;
+
+CS_FWD_DECLARE_CACHED_FUNCTION_NAME(CsPerformanceUIImpl)
 
 UCLASS(Blueprintable)
 class CSPERFORMANCE_API UCsPerformanceUIImpl : public UUserWidget,
@@ -16,7 +20,9 @@ class CSPERFORMANCE_API UCsPerformanceUIImpl : public UUserWidget,
 {
 	GENERATED_UCLASS_BODY()
 
-public:
+private:
+
+	CS_USING_CACHED_FUNCTION_NAME(CsPerformanceUIImpl);
 
 // UUserWidget Interface
 #pragma region

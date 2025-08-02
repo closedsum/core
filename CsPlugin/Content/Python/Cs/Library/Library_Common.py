@@ -80,7 +80,7 @@ class NPyCommon:
             ThisType = __class__
 
             result: bool = type(s) is str
-            ThisType.checkf(result, f"{context}: s: {str(s)} is NOT a string.")
+            ThisType.checkf(result, f"{context}: s: {str(s)} of type: {type(s)} is NOT a string.")
             return result
         @staticmethod
         def IsStringChecked2(s: str) -> bool:
@@ -97,7 +97,7 @@ class NPyCommon:
             ThisType = __class__
 
             result: bool = type(s) is str
-            ThisType.checkf(result, f"{__class__.IsStringChecked2.__qualname__}: s: {str(s)} is NOT a string.")
+            ThisType.checkf(result, f"{__class__.IsStringChecked2.__qualname__}: s: {str(s)} of type: {type(s)} is NOT a string.")
             return result
         @staticmethod
         def IsStringRaiseError(context: str, s: str) -> bool:
@@ -117,7 +117,7 @@ class NPyCommon:
             result: bool = type(s) is str
 
             if not result:
-                raise Exception(f"{context}: s: {str(s)} is NOT a string.")
+                raise Exception(f"{context}: s: {str(s)} of type: {type(s)} is NOT a string.")
             return result
         @staticmethod
         def IsStringRaiseError2(s: str) -> bool:
@@ -137,7 +137,7 @@ class NPyCommon:
             result: bool = type(s) is str
 
             if not result:
-                raise Exception(f"{context}: s: {str(s)} is NOT a string.")
+                raise Exception(f"{context}: s: {str(s)} of type: {type(s)} is NOT a string.")
             return result
         @staticmethod
         def IsStringNotEmptyChecked(context, s) -> bool:
@@ -436,6 +436,24 @@ class NPyCommon:
             ThisType.checkf(result, f"{context}: a: {str(a)} of type: {type(a)} is NOT of type: {type(c)} | {c.__module__}.{c.__qualname__ }.")
             return result
         @staticmethod
+        def IsEnum(a: any, c: any) -> bool:
+            """
+            Get whether or not 'a' is of an enum of type 'c'.
+
+            Args:
+                a: (any): The object to check.
+                c: (any): The enum type to check.
+            Returns:
+                bool: True if 'a' is of an enum of type 'c', False otherwise.
+            """
+            ThisType = __class__
+
+            if not ThisType.IsValidObject(a):
+                return False
+            if not issubclass(c, enum.Enum):
+                return False
+            return str(type(a)) == str(c)
+        @staticmethod
         def IsFunction(func: any) -> bool:
             """
             Get whether or not 'func' is a function. 
@@ -557,6 +575,31 @@ class NPyCommon:
                 return False
             return key in d
         @staticmethod
+        def DoesKeyExistRaiseError(context: str, d: dict, key: str) -> bool:
+            """
+            Get whether or not 'key' is a key for dictionary 'd'.
+             Assert if NOT.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+
+            Args:
+                context (str): The calling context.
+                d:      (dict): The dictionary to check.
+                key:    (str):  The key to check.
+            Returns:
+                bool: True if 'key' is a key for dictionary 'd', False otherwise.
+            """ 
+            ThisType = __class__
+
+            try:
+                ThisType.IsValidDictRaiseError(context, d)
+                ThisType.IsStringRaiseError(context, key)
+            except Exception as e:
+                raise e
+
+            if key not in d:
+                raise Exception(f"{context}: o does NOT contain key: {key}")
+            return True
+        @staticmethod
         def DoesKeyNotExistChecked(context: str, d: dict, key: str) -> bool:
             """
             Get whether or not 'key' is NOT a key for dictionary 'd'.
@@ -630,6 +673,27 @@ class NPyCommon:
             ThisType.check(ThisType.DoesKeyExistChecked(context, d, key))
             ThisType.checkf(type(d[key]) is bool, f"{context}: d[{key}]: {str(d[key])} is NOT of type: bool")
             return True
+        @staticmethod
+        def GetKeyRaiseError(context: str, d: dict, key: str) -> any:
+            """
+            Get the value of 'key' from dictionary 'd'.
+             Assert if NOT.
+                NOTE: Should ONLY be called on Non-Main Thread (NOT Game Thread).
+
+            Args:
+                context (str): The calling context.
+                d:      (dict): The dictionary to check.
+                key:    (str):  The key to check.
+            Returns:
+                any: The value of 'key' from dictionary 'd'.
+            """
+            ThisType = __class__
+
+            try:
+                ThisType.DoesKeyExistRaiseError(context, d, key)
+            except Exception as e:
+                raise e
+            return d[key]
         @staticmethod
         def IsIntChecked(context: str, a: int) -> bool:
             """

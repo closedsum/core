@@ -22,16 +22,10 @@
 // Cached
 #pragma region
 
-namespace NCsPerformanceUIImpl
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsPerformanceUIImpl, Init);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsPerformanceUIImpl)
+	// AActor Interface
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsPerformanceUIImpl, Init)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -54,10 +48,6 @@ UCsPerformanceUIImpl::UCsPerformanceUIImpl(const FObjectInitializer& ObjectIniti
 	StatUnit()
 {
 }
-
-#define USING_NS_CACHED using namespace NCsPerformanceUIImpl::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsPerformanceUIImpl::NCached; \
-	const FString& Context = Str::__FunctionName
 
 // UUserWidget Interface
 #pragma region
@@ -89,9 +79,9 @@ void UCsPerformanceUIImpl::NativeTick(const FGeometry& MyGeometry, float InDelta
 
 	if (bToggle)
 	{
-		//SetVisibility(bShow ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+		SetVisibility(bShow ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	}
-	SetVisibility(ESlateVisibility::HitTestInvisible);
+	//SetVisibility(ESlateVisibility::HitTestInvisible);
 
 	// FPS
 	{
@@ -115,7 +105,7 @@ void UCsPerformanceUIImpl::NativeTick(const FGeometry& MyGeometry, float InDelta
 
 void UCsPerformanceUIImpl::Init(UObject* InRoot)
 {
-	SET_CONTEXT(Init);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Init);
 
 	MyRoot = InRoot;
 
@@ -144,15 +134,15 @@ void UCsPerformanceUIImpl::Init(UObject* InRoot)
 
 	for (UTextBlock* Text : FPS_Texts)
 	{
-		//Text->SetVisibility(bShowFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
-		Text->SetVisibility(ESlateVisibility::HitTestInvisible);
+		Text->SetVisibility(bShowFPS ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+		//Text->SetVisibility(ESlateVisibility::HitTestInvisible);
 	}
 
 	StatUnit.Outer = this;
 	StatUnit.Init();
 
-	//SetVisibility(bShow ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
-	SetVisibility(ESlateVisibility::HitTestInvisible);
+	SetVisibility(bShow ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
+	//SetVisibility(ESlateVisibility::HitTestInvisible);
 }
 
 #pragma endregion ICsPerformanceUI
@@ -498,6 +488,3 @@ void UCsPerformanceUIImpl::OnToggle_FPS(bool IsEnabled)
 }
 
 #pragma endregion FPS
-
-#undef USING_NS_CACHED
-#undef SET_CONTEXT

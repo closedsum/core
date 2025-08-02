@@ -32,19 +32,12 @@
 // Cached
 #pragma region
 
-namespace NCsManagerPerformance
-{
-	namespace NCached
-	{
-		namespace Str
-		{
-			// Singleton
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Performance, Init);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Performance, CreatePerformanceWidget);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Performance, ConditionalCreatePerformanceWidget);
-		}
-	}
-}
+CS_START_CACHED_FUNCTION_NAME(CsManager_Performance)
+	// Singleton
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Performance, Init)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Performance, CreatePerformanceWidget)
+	CS_DEFINE_CACHED_FUNCTION_NAME(UCsManager_Performance, ConditionalCreatePerformanceWidget)
+CS_END_CACHED_FUNCTION_NAME
 
 #pragma endregion Cached
 
@@ -59,10 +52,6 @@ UCsManager_Performance::UCsManager_Performance(const FObjectInitializer& ObjectI
 {
 
 }
-
-#define USING_NS_CACHED using namespace NCsManagerPerformance::NCached;
-#define SET_CONTEXT(__FunctionName) using namespace NCsManagerPerformance::NCached; \
-	const FString& Context = Str::__FunctionName
 
 // Singleton
 #pragma region
@@ -114,9 +103,7 @@ UCsManager_Performance::UCsManager_Performance(const FObjectInitializer& ObjectI
 
 /*static*/ void UCsManager_Performance::Init(UObject* InRoot, UObject* InOuter /*= nullptr*/)
 {
-	using namespace NCsManagerPerformance::NCached;
-
-	const FString& Context = Str::Init;
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(Init);
 
 	const FCsSettings_Manager_Performance& Settings = FCsSettings_Manager_Performance::Get();
 
@@ -229,7 +216,7 @@ void UCsManager_Performance::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Performance::CreatePerformanceWidget()
 {
-	SET_CONTEXT(CreatePerformanceWidget);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(CreatePerformanceWidget);
 
 	if (IsValid(PerformanceWidget))
 	{
@@ -268,7 +255,7 @@ void UCsManager_Performance::CreatePerformanceWidget()
 
 void UCsManager_Performance::ConditionalCreatePerformanceWidget()
 {
-	SET_CONTEXT(ConditionalCreatePerformanceWidget);
+	CS_SET_CONTEXT_AS_FUNCTION_NAME(ConditionalCreatePerformanceWidget);
 
 	if (!IsValid(PerformanceWidget))
 	{
@@ -295,6 +282,3 @@ void UCsManager_Performance::ConditionalCreatePerformanceWidget()
 		PerformanceWidget->AddToViewport(ZOrder);
 	}
 }
-
-#undef USING_NS_CACHED
-#undef SET_CONTEXT
